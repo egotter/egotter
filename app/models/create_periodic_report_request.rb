@@ -22,7 +22,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
-  attr_accessor :send_only_if_changed, :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials, :check_twitter_user
+  attr_accessor :send_only_if_changed, :check_web_access, :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials, :check_twitter_user
   attr_accessor :worker_context
 
   def perform!
@@ -44,6 +44,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     return if check_following_status && !validate_following_status!
     return if check_interval && !validate_interval!
     return if check_allotted_messages_count && !validate_messages_count!
+    return if check_web_access && !validate_web_access!
 
     true
   end
@@ -74,12 +75,17 @@ class CreatePeriodicReportRequest < ApplicationRecord
     AllottedMessagesCountValidator.new(self).validate_and_deliver!
   end
 
+  def validate_web_access!
+    WebAccessValidator.new(self).validate_and_deliver!
+  end
+
   module Instrumentation
     %i(
       validate_credentials!
       validate_following_status!
       validate_interval!
       validate_messages_count!
+      validate_web_access!
       create_new_twitter_user_record
       send_report?
       report_options_builder
@@ -296,6 +302,23 @@ class CreatePeriodicReportRequest < ApplicationRecord
     def deliver!
       jid = CreatePeriodicReportMessageWorker.perform_async(user_id, sending_soft_limited: true)
       @request.update(status: 'soft_limited,message_skipped') unless jid
+    end
+  end
+
+  class WebAccessValidator < Validator
+    def validate!
+      user = @request.user
+      if PeriodicReport.web_access_hard_limited?(user)
+        @request.update(status: 'too_little_access')
+        false
+      else
+        true
+      end
+    end
+
+    def deliver!
+      jid = CreatePeriodicReportMessageWorker.perform_async(user_id, web_access_hard_limited: true)
+      @request.update(status: 'too_little_access,message_skipped') unless jid
     end
   end
 

@@ -53,6 +53,11 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
+  describe '.web_access_hard_limited_message' do
+    subject { described_class.web_access_hard_limited_message(user.id) }
+    it { is_expected.to be_truthy }
+  end
+
   describe '.interval_too_short_message' do
     subject { described_class.interval_too_short_message(user.id) }
     it { is_expected.to be_truthy }
@@ -256,7 +261,7 @@ RSpec.describe PeriodicReport do
     context 'messages_allotted? returns true' do
       before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(true) }
       it do
-        expect(described_class).to receive(:no_access_days_user?).with(user).and_return('result')
+        expect(described_class).to receive(:web_access_soft_limited?).with(user).and_return('result')
         is_expected.to eq('result')
       end
     end
@@ -324,25 +329,6 @@ RSpec.describe PeriodicReport do
     end
   end
 
-  describe '.no_access_days_user?' do
-    subject { described_class.no_access_days_user?(user) }
-
-    context "user doesn't have access_days" do
-      it { is_expected.to be_nil }
-    end
-
-    context "user has recent access_days" do
-      let(:user) { create(:user, with_access_days: 1) }
-      it { is_expected.to be_falsey }
-    end
-
-    context "user has access_days but the value is a long time ago" do
-      let(:user) { create(:user, with_access_days: 1) }
-      before { user.access_days.last.update!(date: 1.month.ago.to_date) }
-      it { is_expected.to be_truthy }
-    end
-  end
-
   describe '.allotted_messages_left?' do
     subject { described_class.allotted_messages_left?(user) }
 
@@ -359,10 +345,37 @@ RSpec.describe PeriodicReport do
 
   describe '.messages_allotted?' do
     subject { described_class.messages_allotted?(user) }
-
     it do
       expect(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received?).with(user.uid).and_return('result')
       is_expected.to eq('result')
+    end
+  end
+
+  describe '.web_access_soft_limited?' do
+    subject { described_class.web_access_soft_limited?(user) }
+
+    context 'last access is 1 day ago' do
+      before { AccessDay.create!(user_id: user.id, date: 1.day.ago.to_date) }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'last access is 6 days ago' do
+      before { AccessDay.create!(user_id: user.id, date: 6.days.ago.to_date) }
+      it { is_expected.to be_truthy }
+    end
+  end
+
+  describe '.web_access_hard_limited?' do
+    subject { described_class.web_access_hard_limited?(user) }
+
+    context 'last access is 6 days ago' do
+      before { AccessDay.create!(user_id: user.id, date: 6.days.ago.to_date) }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'last access is 8 days ago' do
+      before { AccessDay.create!(user_id: user.id, date: 8.days.ago.to_date) }
+      it { is_expected.to be_truthy }
     end
   end
 

@@ -145,6 +145,18 @@ class PeriodicReport < ApplicationRecord
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
     end
 
+    def web_access_hard_limited_message(user_id)
+      user = User.find(user_id)
+      template = Rails.root.join('app/views/periodic_reports/web_access_hard_limited.ja.text.erb')
+      url_params = campaign_params('web_access_hard_limited').merge(og_tag: false)
+      message = ERB.new(template.read).result_with_hash(
+          access_day: user.access_days.last,
+          url: root_url(url_params),
+      )
+
+      new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
+    end
+
     def interval_too_short_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/interval_too_short.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
@@ -394,13 +406,14 @@ class PeriodicReport < ApplicationRecord
     end
   end
 
-  ACCESS_DAYS_HARD_LIMIT = 1.week
+  ACCESS_DAYS_SOFT_LIMIT = 5.days
+  ACCESS_DAYS_HARD_LIMIT = 7.days
 
   def send_remind_access_message?
     return false if dont_send_remind_message
 
     if self.class.messages_allotted?(user)
-      self.class.no_access_days_user?(user)
+      self.class.web_access_soft_limited?(user)
     else
       true
     end
@@ -451,19 +464,22 @@ class PeriodicReport < ApplicationRecord
       remaining_ttl && remaining_ttl < REMAINING_TTL_HARD_LIMIT
     end
 
-    def no_access_days_user?(user)
-      access_day = user.access_days.last
-      logger.info "#{self}##{__method__} access_days not found user_id=#{user.id}" if access_day.nil?
-
-      access_day && access_day.date < ACCESS_DAYS_HARD_LIMIT.ago
-    end
-
     def allotted_messages_left?(user, count: 4)
       GlobalSendDirectMessageCountByUser.new.count(user.uid) <= count
     end
 
     def messages_allotted?(user)
       GlobalDirectMessageReceivedFlag.new.received?(user.uid)
+    end
+
+    def web_access_soft_limited?(user)
+      access_day = user.access_days.last
+      access_day && access_day.date < ACCESS_DAYS_SOFT_LIMIT.ago
+    end
+
+    def web_access_hard_limited?(user)
+      access_day = user.access_days.last
+      access_day && access_day.date < ACCESS_DAYS_HARD_LIMIT.ago
     end
   end
 

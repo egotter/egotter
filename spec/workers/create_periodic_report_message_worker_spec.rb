@@ -131,6 +131,16 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       end
     end
 
+    context 'options[:web_access_hard_limited] is specified' do
+      let(:user_id) { user.id }
+      let(:options) { {web_access_hard_limited: true} }
+      it do
+        expect(worker).to receive(:handle_weird_error).with(user).and_call_original
+        expect(PeriodicReport).to receive_message_chain(:web_access_hard_limited_message, :deliver!).with(user.id).with(no_args)
+        subject
+      end
+    end
+
     context 'options[:allotted_messages_will_expire] is specified' do
       let(:user_id) { user.id }
       let(:options) { {allotted_messages_will_expire: true} }

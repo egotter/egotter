@@ -38,6 +38,7 @@ class CreatePeriodicReportMessageWorker
   #   not_following
   #   request_interval_too_short
   #   sending_soft_limited
+  #   web_access_hard_limited
   #   scheduled_job_exists and scheduled_jid
   #   scheduled_job_created and scheduled_jid
   #   allotted_messages_will_expire
@@ -107,6 +108,13 @@ class CreatePeriodicReportMessageWorker
     if options[:sending_soft_limited]
       handle_weird_error(user) do
         PeriodicReport.sending_soft_limited_message(user_id).deliver!
+      end
+      return
+    end
+
+    if options[:web_access_hard_limited]
+      handle_weird_error(user) do
+        PeriodicReport.web_access_hard_limited_message(user_id).deliver!
       end
       return
     end

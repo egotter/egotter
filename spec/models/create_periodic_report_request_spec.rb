@@ -105,6 +105,12 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
       before { request.check_allotted_messages_count = true }
       include_examples 'request is validated'
     end
+
+    context 'check_web_access == true' do
+      let(:validator_class) { described_class::WebAccessValidator }
+      before { request.check_web_access = true }
+      include_examples 'request is validated'
+    end
   end
 
   describe '#create_new_twitter_user_record' do
@@ -447,5 +453,36 @@ RSpec.describe CreatePeriodicReportRequest::ScheduledJob, type: :model do
 
   describe '.find_by' do
     # It's difficult to test Sidekiq::ScheduledSet because Sidekiq's API does not have a testing mode
+  end
+end
+
+RSpec.describe CreatePeriodicReportRequest::WebAccessValidator, type: :model do
+  let(:user) { create(:user) }
+  let(:request) { CreatePeriodicReportRequest.create(user_id: user.id) }
+  let(:instance) { described_class.new(request) }
+
+  before { allow(request).to receive(:user).and_return(user) }
+
+  describe '#validate!' do
+    subject { instance.validate! }
+
+    context 'web_access is limited' do
+      before { allow(PeriodicReport).to receive(:web_access_hard_limited?).with(user).and_return(true) }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'web_access is not limited' do
+      before { allow(PeriodicReport).to receive(:web_access_hard_limited?).with(user).and_return(false) }
+      it { is_expected.to be_truthy }
+    end
+  end
+
+  describe '#deliver!' do
+    subject { instance.deliver! }
+    it do
+      expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
+          with(request.user_id, web_access_hard_limited: true).and_return('jid')
+      subject
+    end
   end
 end
