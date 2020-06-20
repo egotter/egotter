@@ -154,7 +154,7 @@ RSpec.describe PeriodicReport do
   describe '.request_id_text' do
     subject { described_class.request_id_text(user, 1, 'CreateUserRequestedPeriodicReportWorker') }
     before { user.create_periodic_report_setting! }
-    it { is_expected.to be_truthy }
+    it { is_expected.to satisfy { |result| !result.include?('er') } }
   end
 
   describe '.remaining_ttl_text' do
