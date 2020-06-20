@@ -256,7 +256,10 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     context 'user is found' do
       let(:request) { create(:create_periodic_report_request, user: user) }
 
-      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
+      before do
+        allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user)
+        allow(EgotterFollower).to receive(:exists?).with(uid: user.uid).and_return(true)
+      end
 
       it do
         expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request)

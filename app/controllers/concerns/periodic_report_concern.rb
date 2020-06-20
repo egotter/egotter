@@ -93,7 +93,9 @@ module Concerns::PeriodicReportConcern
   end
 
   def enqueue_user_received_periodic_report(dm)
-    if (user = User.find_by(uid: dm.sender_id)) && user.authorized? && CreatePeriodicReportRequest.sufficient_interval?(user.id)
+    if (user = User.find_by(uid: dm.sender_id)) && user.authorized? &&
+        CreatePeriodicReportRequest.sufficient_interval?(user.id) &&
+        EgotterFollower.exists?(uid: user.uid)
       DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
 
       request = CreatePeriodicReportRequest.create(user_id: user.id)
