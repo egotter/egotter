@@ -36,7 +36,16 @@ class SendReceivedMessageWorker
         text.match?(Concerns::PeriodicReportConcern::RESTART_REGEXP) ||
         text.match?(Concerns::PeriodicReportConcern::RECEIVED_REGEXP) ||
         text.match?(Concerns::PeriodicReportConcern::CONTINUE_EXACT_REGEXP) ||
-        QUICK_REPLIES.any? { |regexp| regexp.match?(text) }
+        QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
+        text.match?(/\Aリムられ通知(\s|　)*(送信|受信|継続|今すぐ)?\z/) ||
+        text == 'リムられ' ||
+        text == '通知' ||
+        text == '再開' ||
+        text == '継続' ||
+        text == '今すぐ' ||
+        text == 'あ' ||
+        text == 'は' ||
+        text == 'り'
   end
 
   def send_message_to_slack(sender_uid, text)
