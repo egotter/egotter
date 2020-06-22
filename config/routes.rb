@@ -156,7 +156,6 @@ Rails.application.routes.draw do
   post 'settings/update_report_interval', to: 'settings#update_report_interval', as: :update_report_interval
   get 'settings/follow_requests', to: "settings#follow_requests"
   get 'settings/unfollow_requests', to: "settings#unfollow_requests"
-  get 'settings/create_test_requests', to: "settings#create_test_report_requests"
   get 'settings/twitter_users', to: "settings#twitter_users"
 
   namespace :admin do

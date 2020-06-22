@@ -431,11 +431,6 @@ ja:
     unfollow_requests:
       title: 'フォロー解除 履歴'
       return: '設定ページへ戻る'
-    create_test_report_requests:
-      title: 'リムられ通知テスト履歴'
-      description: 'リムられ通知テストの送信履歴です。'
-      sent: '送信済み'
-      not_changed: '更新なし'
     twitter_users:
       title: 'データ更新履歴'
       description: 'データ更新の履歴です。データは、検索した時やリムられ通知の時に更新されます。'
