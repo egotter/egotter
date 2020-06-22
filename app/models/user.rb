@@ -43,12 +43,9 @@ class User < ApplicationRecord
   with_options dependent: :destroy, validate: false, autosave: false do |obj|
     order_by_desc = -> { order(created_at: :desc) }
 
-    obj.has_many :prompt_reports,                order_by_desc
     obj.has_many :search_reports,                order_by_desc
     obj.has_many :news_reports,                  order_by_desc
     obj.has_many :welcome_messages,              order_by_desc
-    obj.has_many :create_prompt_report_requests, order_by_desc
-    obj.has_many :create_prompt_report_logs,     order_by_desc
     obj.has_many :follow_requests,               order_by_desc
     obj.has_many :unfollow_requests,             order_by_desc
     obj.has_many :reset_egotter_requests,        order_by_desc
@@ -90,16 +87,6 @@ class User < ApplicationRecord
   scope :enough_permission_level, -> do
     includes(:notification_setting)
         .where("notification_settings.permission_level = '#{NotificationSetting::PROPER_PERMISSION}'")
-        .references(:notification_settings)
-  end
-  scope :prompt_report_enabled, -> do
-    includes(:notification_setting)
-        .where('notification_settings.dm = TRUE')
-        .references(:notification_settings)
-  end
-  scope :prompt_report_interval_ok, -> do
-    includes(:notification_setting)
-        .where('last_dm_at IS NULL OR last_dm_at < NOW() - INTERVAL notification_settings.report_interval SECOND')
         .references(:notification_settings)
   end
 
@@ -232,10 +219,6 @@ class User < ApplicationRecord
 
   def purchased_search_count
     orders.unexpired.last.search_count
-  end
-
-  def latest_prompt_report
-    prompt_reports.reorder(created_at: :desc).first
   end
 
   include Concerns::LastSessionAnalytics

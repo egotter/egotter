@@ -11,10 +11,6 @@ module ReportsHelper
     via_dm? || via_onesignal?
   end
 
-  def via_prompt_report?
-    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'prompt'
-  end
-
   def via_periodic_report?
     params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'periodic'
   end
@@ -29,9 +25,5 @@ module ReportsHelper
 
   def via_welcome_message?
     params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'welcome'
-  end
-
-  def via_warning_message?
-    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'warning'
   end
 end

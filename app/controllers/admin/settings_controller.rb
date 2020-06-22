@@ -14,11 +14,6 @@ module Admin
       render template: 'settings/unfollow_requests'
     end
 
-    def create_prompt_report_requests
-      @requests = fetch_user.create_prompt_report_requests.includes(:logs).limit(20)
-      render template: 'settings/create_prompt_report_requests'
-    end
-
     private
 
     def fetch_user

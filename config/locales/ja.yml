@@ -366,29 +366,6 @@ ja:
       delete_tweets:
         title: "ツイート削除"
         move_to: 'に移動しました'
-    prompt_report:
-      title: 'リムられ通知設定'
-      not_coming:
-        title: 'リムられ通知がこない場合'
-        button: 'リムられ通知を再開する'
-        note_html: '※一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>'
-      reporting_test:
-        title: "リムられ通知のテスト"
-        button: 'リムられ通知をテスト送信する'
-        history: '履歴'
-        note: '通知が届かない方はお試しください'
-      latest:
-        title: "最新のリムられ通知"
-        see_html: '<a href="https://twitter.com/messages/%{user_uid}-%{egotter_uid}" target="_blank">通知DMを見る</a>'
-        not_sent: 'リムられ通知はこれから送信されます。'
-      status:
-        title: "通知ステータス"
-        error_html: '<span class="text-warning">失敗：%{text}</span>'
-        normal: '正常'
-        history: '履歴'
-      interval:
-        title: "通知間隔"
-        note: "通知の間隔は目安です"
     general:
       title: "ユーザー情報"
       screen_name:
@@ -454,11 +431,6 @@ ja:
     unfollow_requests:
       title: 'フォロー解除 履歴'
       return: '設定ページへ戻る'
-    create_prompt_report_requests:
-      title: 'リムられ通知履歴'
-      description: 'リムられ通知は、最後にアクセスしてからのフォロワーの変化を集計します。そのため、頻繁にえごったーを見る方には通知があまり届かないことがあります。'
-      sent: '送信済み'
-      not_changed: '更新なし'
     create_test_report_requests:
       title: 'リムられ通知テスト履歴'
       description: 'リムられ通知テストの送信履歴です。'
@@ -1982,9 +1954,6 @@ ja:
     blocked_detected_with_count: '@ego_tter がブロックされています。%{seconds}秒後にトップページへ移動します。'
   tweet_text:
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
-  push_notification:
-    you_are_removed: '%{count}人にリムられました'
-    not_removed: '集計期間にリムられはありませんでした'
   dm:
     no_diffs: "フォロー・フォロワーに変化はありません。"
     new_friends: "新しいフォロー： %{users}"

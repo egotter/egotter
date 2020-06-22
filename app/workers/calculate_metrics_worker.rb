@@ -50,7 +50,7 @@ class CalculateMetricsWorker
             [FollowRequest, CreateFollowLog],
             [UnfollowRequest, CreateUnfollowLog],
             [TweetRequest],
-            [ForbiddenUser, NotFoundUser, BlockedUser],
+            [ForbiddenUser, NotFoundUser],
             [ResetEgotterRequest, ResetEgotterLog],
             [DeleteTweetsRequest, DeleteTweetsLog],
             [ResetCacheRequest, ResetCacheLog],

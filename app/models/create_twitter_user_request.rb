@@ -29,7 +29,6 @@ class CreateTwitterUserRequest < ApplicationRecord
   validates :uid, presence: true
 
   # context:
-  #   :prompt_reports
   #   :periodic_reports
   def perform!(context = nil)
     validate_request!
