@@ -13,19 +13,28 @@ class ProfilesController < ApplicationController
   before_action unless: :twitter_crawler? do
     !not_found_screen_name? && !forbidden_screen_name?
   end
+
+  before_action do
+    self.sidebar_disabled = true
+  end
+
   before_action :create_search_log
 
   def show
-    self.sidebar_disabled = true
     @user = TwitterDB::User.find_by(screen_name: params[:screen_name])
-    @user = TwitterUser.latest_by(screen_name: params[:screen_name]) unless @user
-    @user = build_twitter_user_by(screen_name: params[:screen_name]) unless @user # It's possible to be redirected
+
+    if twitter_crawler?
+      redirect_to not_found_path(screen_name: params[:screen_name]) unless @user
+    else
+      @user = TwitterUser.latest_by(screen_name: params[:screen_name]) unless @user
+      @user = build_twitter_user_by(screen_name: params[:screen_name]) unless @user # It's possible to be redirected
+    end
+
     return if performed?
     @display_time = l((@user.updated_at || Time.zone.now).in_time_zone('Tokyo'), format: :profile_short)
   end
 
   def latest
-    self.sidebar_disabled = true
     @user = build_twitter_user_by(screen_name: params[:screen_name]) # It's possible to be redirected
   end
 
