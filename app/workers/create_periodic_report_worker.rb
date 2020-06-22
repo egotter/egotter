@@ -25,17 +25,12 @@ class CreatePeriodicReportWorker
     logger.info "The job of #{self.class} is skipped request_id=#{request_id} options=#{options.inspect}"
   end
 
-  def user_requested_job?
-    self.class == CreateUserRequestedPeriodicReportWorker
+  def timeout_in(*args)
+    60.seconds
   end
 
-  def batch_requested_job?
-    self.class == CreatePeriodicReportWorker
-  end
-
-  def sending_dm_limited?(uid)
-    !GlobalDirectMessageReceivedFlag.new.exists?(uid) &&
-        GlobalDirectMessageLimitation.new.limited?
+  def after_timeout(request_id, options = {})
+    logger.warn "The job of #{self.class} timed out request_id=#{request_id} options=#{options.inspect}"
   end
 
   # options:
@@ -69,5 +64,20 @@ class CreatePeriodicReportWorker
     notify_airbrake(e, request_id: request_id, options: options)
     logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
+  end
+
+  private
+
+  def user_requested_job?
+    self.class == CreateUserRequestedPeriodicReportWorker
+  end
+
+  def batch_requested_job?
+    self.class == CreatePeriodicReportWorker
+  end
+
+  def sending_dm_limited?(uid)
+    !GlobalDirectMessageReceivedFlag.new.exists?(uid) &&
+        GlobalDirectMessageLimitation.new.limited?
   end
 end
