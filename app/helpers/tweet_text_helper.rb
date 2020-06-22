@@ -1,8 +1,4 @@
 module TweetTextHelper
-  def short_url
-    Util::UrlShortener.shorten(request.original_url)
-  end
-
   def error_text
     t('tweet_text.something_is_wrong', kaomoji: Kaomoji.happy, url: 'http://egotter.com')
   end
