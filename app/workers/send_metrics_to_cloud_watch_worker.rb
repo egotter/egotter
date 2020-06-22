@@ -276,7 +276,6 @@ class SendMetricsToCloudWatchWorker
     duration = {created_at: 10.minutes.ago..Time.zone.now}
 
     [
-        CreatePromptReportRequest,
         CreateTwitterUserRequest,
         DeleteTweetsRequest,
         FollowRequest,
