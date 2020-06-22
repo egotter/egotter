@@ -52,7 +52,7 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   def build_twitter_user(context = nil)
     fetched_user = fetch_user
-    raise SoftSuspended.new('suspended') if fetched_user[:suspended]
+    raise SoftSuspended.new("suspended screen_name=#{fetched_user[:screen_name]}") if fetched_user[:suspended]
 
     twitter_user = build_twitter_user_by(fetched_user)
     relations = fetch_relations(twitter_user, context)
