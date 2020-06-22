@@ -11,14 +11,6 @@ class FollowsController < ApplicationController
     end
   end
 
-  before_action do
-    if action_name == 'create'
-      create_search_log(uid: params[:uid])
-    else
-      create_search_log
-    end
-  end
-
   before_action only: :create do
     if params[:uid].to_i == User::EGOTTER_UID
       CreateEgotterFollowerWorker.perform_async(current_user.id)

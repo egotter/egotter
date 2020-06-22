@@ -24,11 +24,6 @@ class TokimekiUnfollowController < ApplicationController
     end
   end
 
-  before_action do
-    push_referer
-    create_search_log
-  end
-
   def new
   end
 

@@ -1,8 +1,4 @@
 class MiscController < ApplicationController
-
-  before_action :push_referer, only: %i(menu)
-  before_action :create_search_log, only: %i(menu)
-
   def maintenance
     render file: "#{Rails.root}/public/503.html", formats: %i(html), layout: false, status: :service_unavailable
   end

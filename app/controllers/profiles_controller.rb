@@ -18,8 +18,6 @@ class ProfilesController < ApplicationController
     self.sidebar_disabled = true
   end
 
-  before_action :create_search_log
-
   def show
     @user = TwitterDB::User.find_by(screen_name: params[:screen_name])
 

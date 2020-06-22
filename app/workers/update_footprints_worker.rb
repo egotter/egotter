@@ -3,8 +3,7 @@ class UpdateFootprintsWorker
   sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
   def unique_key(search_log_id, options = {})
-    options = options.with_indifferent_access
-    options['user_id']
+    options['user_id'] || options[:user_id]
   end
 
   def unique_in
@@ -26,7 +25,7 @@ class UpdateFootprintsWorker
       user.save! if user.changed?
     end
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{search_log_id}"
+    logger.warn "#{e.inspect} search_log_id=#{search_log_id}"
     logger.info e.backtrace.join("\n")
   end
 
@@ -41,7 +40,7 @@ class UpdateFootprintsWorker
       user[:last_access_at] = log.created_at
     end
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{log.inspect}"
+    logger.warn "#{e.inspect} log=#{log.inspect}"
     logger.info e.backtrace.join("\n")
   end
 
@@ -56,7 +55,7 @@ class UpdateFootprintsWorker
       user[:last_search_at] = log.created_at
     end
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{log.inspect}"
+    logger.warn "#{e.inspect} log=#{log.inspect}"
     logger.info e.backtrace.join("\n")
   end
 end

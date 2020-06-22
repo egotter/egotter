@@ -4,11 +4,6 @@ RSpec.describe HomeController, type: :controller do
 
   describe 'GET #new' do
     it do
-      expect(controller).to receive(:create_search_log)
-      get :new
-    end
-
-    it do
       expect(controller).not_to receive(:require_login!)
       get :new
     end

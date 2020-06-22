@@ -10,13 +10,22 @@ module Concerns::Logging
 
   end
 
-  def create_search_log(options = {})
+  def access_log_disabled
+    @access_log_disabled
+  end
+
+  def access_log_disabled=(flag)
+    @access_log_disabled = flag
+  end
+
+  def create_access_log(options = {})
+    return if access_log_disabled
+
     if from_crawler?
       return create_crawler_log
     end
 
     uid, screen_name = find_uid_and_screen_name
-    referral = find_referral(pushed_referers)
 
     attrs = {
       session_id:  egotter_visit_id,
@@ -25,26 +34,21 @@ module Concerns::Logging
       screen_name: screen_name,
       controller:  controller_name,
       action:      action_name,
-      cache_hit:   false,
-      ego_surfing: user_signed_in? && current_user.uid == uid.to_i,
       method:      request.method,
       path:        request.original_fullpath.to_s.truncate(180),
-      status:      200,
-      via:         params[:via] ? params[:via] : '',
+      status:      response.status,
+      via:         params[:via] ? params[:via].to_s.truncate(180) : '',
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
       user_agent:  ensure_utf8(request.user_agent.to_s.truncate(180)),
       referer:     request.referer.to_s.truncate(180),
-      referral:    referral,
-      channel:     find_channel(referral),
-      medium:      params[:medium] ? params[:medium] : '',
-      ab_test:     params[:ab_test] ? params[:ab_test] : '',
       created_at:  Time.zone.now
     }
 
     attrs.update(options) if options.any?
     CreateSearchLogWorker.perform_async(attrs)
+    CreateAccessDayWorker.perform_async(current_user.id) if user_signed_in?
 
     if via_dm?
       job_options = {token: params[:token], read_at: attrs[:created_at]}
@@ -56,10 +60,10 @@ module Concerns::Logging
       end
     end
   rescue Encoding::UndefinedConversionError => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} params=#{params.inspect} user_agent=#{request.user_agent}"
     notify_airbrake(e)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} params=#{params.inspect} user_agent=#{request.user_agent}"
     notify_airbrake(e)
   end
 

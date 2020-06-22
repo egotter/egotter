@@ -29,7 +29,6 @@ module Concerns::CheckExistenceConcern
       # Even if this value is not set, the sidebar will not be displayed because @twitter_user is not set.
       self.sidebar_disabled = true
     end
-    before_action :create_search_log
     before_action :set_user
     before_action :set_screen_name
     before_action :set_canonical_url

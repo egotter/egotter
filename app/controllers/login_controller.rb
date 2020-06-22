@@ -2,8 +2,6 @@ class LoginController < ApplicationController
 
   before_action :require_login!, only: %i(after_sign_in after_sign_up)
   before_action :reject_crawler, except: :goodbye
-  before_action :push_referer, except: :goodbye
-  before_action :create_search_log
 
   def goodbye
     unless user_signed_in?

@@ -17,11 +17,6 @@ class UnfriendsController < ::Page::Base
     end
   end
 
-  before_action only: %i(new) do
-    push_referer
-    create_search_log
-  end
-
   def new
   end
 

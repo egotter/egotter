@@ -1,4 +1,7 @@
 class SearchCountController < ApplicationController
+
+  before_action { self.access_log_disabled = true }
+
   DEFAULT_COUNT = 275067 # 2019/08/27
 
   def new

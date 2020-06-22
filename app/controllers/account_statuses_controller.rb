@@ -5,8 +5,6 @@ class AccountStatusesController < ApplicationController
   before_action :reject_crawler
   before_action { valid_uid?(params[:uid]) }
 
-  before_action { create_search_log }
-
   before_action { AccountStatusAccessFlag.new.accessed(current_user.id) }
 
   before_action do
