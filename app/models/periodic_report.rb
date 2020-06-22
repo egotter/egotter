@@ -339,6 +339,7 @@ class PeriodicReport < ApplicationRecord
       super(user, campaign_params('report_timeline').merge(options))
     end
 
+    # ID-000-000-24h-ttt-0101-0-b
     def request_id_text(user, request_id, worker_context)
       setting = user.periodic_report_setting
       access_day = user.access_days.last
@@ -349,6 +350,7 @@ class PeriodicReport < ApplicationRecord
           remaining_ttl_text(GlobalDirectMessageReceivedFlag.new.remaining(user.uid)),
           setting.period_flags,
           access_day ? access_day.short_date : '0000',
+          GlobalSendDirectMessageCountByUser.new.count(user.uid),
           worker_context_text(worker_context)
       ].join('-')
 
