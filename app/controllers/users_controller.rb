@@ -1,6 +1,5 @@
 class UsersController < ApplicationController
   before_action :require_login!
-  before_action :create_search_log
 
   after_action { CreateTwitterDBUserWorker.perform_async([current_user.uid], user_id: current_user.id, enqueued_by: 'UsersController') }
 

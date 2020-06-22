@@ -4,7 +4,6 @@ class OrdersController < ApplicationController
 
   before_action :require_login!, except: :checkout_session_completed
   before_action :has_already_purchased?, only: :create
-  before_action :create_search_log
 
   after_action only: %i(create destroy checkout_session_completed) do
     order =

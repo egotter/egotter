@@ -2,7 +2,6 @@ module Admin
   class SettingsController < ApplicationController
 
     before_action :require_admin!
-    before_action :create_search_log
 
     def follow_requests
       @requests = fetch_user.follow_requests.limit(20)

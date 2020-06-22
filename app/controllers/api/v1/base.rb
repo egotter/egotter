@@ -3,6 +3,8 @@ module Api
     class Base < ApplicationController
       include Concerns::ApiRequestConcern
 
+      before_action { self.access_log_disabled = true }
+
       SUMMARY_LIMIT = 20
 
       def summary

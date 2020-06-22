@@ -23,7 +23,6 @@ module Concerns::SearchRequestConcern
     before_action(only: %i(show all)) { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) } # Call after #twitter_user_persisted?
 
     before_action(only: %i(show all)) { set_new_screen_name_if_changed }
-    before_action(only: %i(show all)) { enqueue_logging_job }
     before_action(only: %i(show all)) { search_request_concern_bm_finish }
   end
 
@@ -35,10 +34,5 @@ module Concerns::SearchRequestConcern
 
     @twitter_user = TwitterUser.with_delay.latest_by(uid: @twitter_user.uid)
     @twitter_user.screen_name = @new_screen_name if @new_screen_name
-  end
-
-  def enqueue_logging_job
-    push_referer
-    create_search_log
   end
 end

@@ -2,7 +2,6 @@ class SettingsController < ApplicationController
   include Concerns::JobQueueingConcern
 
   before_action :require_login!
-  before_action :create_search_log
 
   def index
     enqueue_update_authorized

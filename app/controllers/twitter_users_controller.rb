@@ -14,7 +14,7 @@ class TwitterUsersController < ApplicationController
   before_action { !@self_search && !protected_search?(@twitter_user) && !blocked_search?(@twitter_user) }
   before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
 
-  before_action { create_search_log }
+  before_action { self.access_log_disabled = true }
 
   # First access of background-update
   def create

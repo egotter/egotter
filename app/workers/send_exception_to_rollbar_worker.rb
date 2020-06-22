@@ -14,7 +14,7 @@ class SendExceptionToRollbarWorker
   rescue => e
     logger.warn "#{e.class} #{e.message}"
     logger.info e.backtrace.join("\n")
-    logger.info "#{JSON.pretty_generate(data)}"
+    logger.debug "#{JSON.pretty_generate(data)}" if Rails.env.production?
   end
 
   def traverse(key, hash)

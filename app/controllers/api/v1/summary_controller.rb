@@ -3,6 +3,8 @@ module Api
     class SummaryController < ApplicationController
       include Concerns::ApiRequestConcern
 
+      before_action { self.access_log_disabled = true }
+
       def summary
         render json: {
             one_sided_friends: @twitter_user.one_sided_friendships.size,

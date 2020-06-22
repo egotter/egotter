@@ -35,7 +35,6 @@ module Concerns::SearchRequestInstrumentationConcern
     too_many_searches?
     too_many_requests?
     set_new_screen_name_if_changed
-    enqueue_logging_job
     enqueue_update_authorized
     enqueue_update_egotter_friendship
     enqueue_audience_insight

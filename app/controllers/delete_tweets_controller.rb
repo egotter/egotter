@@ -1,8 +1,6 @@
 class DeleteTweetsController < ApplicationController
   before_action :require_login!, only: [:show, :delete]
 
-  before_action { create_search_log }
-
   def new
   end
 

@@ -17,18 +17,6 @@ class SearchesController < ApplicationController
   before_action { !@self_search && !protected_search?(@twitter_user) && !blocked_search?(@twitter_user) }
   before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
 
-  before_action do
-    push_referer
-
-    if session[:sign_in_from].present?
-      create_search_log(referer: session.delete(:sign_in_from))
-    elsif session[:sign_out_from].present?
-      create_search_log(referer: session.delete(:sign_out_from))
-    else
-      create_search_log
-    end
-  end
-
   def create
     CreateSearchHistoryWorker.perform_async(egotter_visit_id, current_user_id, @twitter_user.uid, current_visit&.id, via: params[:via])
 

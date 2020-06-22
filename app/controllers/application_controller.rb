@@ -13,6 +13,10 @@ class ApplicationController < ActionController::Base
   include Concerns::BypassFlashMessagesConcern
   include Concerns::Logging
 
+  after_action do
+    create_access_log if response.successful? || response.redirection?
+  end
+
   before_action :set_locale
 
   def set_locale

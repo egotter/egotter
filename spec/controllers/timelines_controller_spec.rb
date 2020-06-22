@@ -22,7 +22,6 @@ RSpec.describe TimelinesController, type: :controller do
       expect(controller).to receive(:too_many_searches?).with(twitter_user).and_return(false)
       expect(controller).to receive(:too_many_requests?).with(twitter_user).and_return(false)
       expect(controller).to receive(:set_new_screen_name_if_changed)
-      expect(controller).to receive(:enqueue_logging_job)
       subject
     end
 
@@ -47,7 +46,6 @@ RSpec.describe TimelinesController, type: :controller do
         expect(controller).to receive(:too_many_searches?).with(twitter_user).and_return(false)
         expect(controller).to receive(:too_many_requests?).with(twitter_user).and_return(false)
         expect(controller).to receive(:set_new_screen_name_if_changed)
-        expect(controller).to receive(:enqueue_logging_job)
         subject
       end
     end

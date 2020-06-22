@@ -11,12 +11,6 @@ class ClustersController < ApplicationController
     @twitter_user = TwitterUser.latest_by(uid: @tu.uid)
     remove_instance_variable(:@tu)
   end
-  before_action only: %i(new create show) do
-    if request.format.html?
-      push_referer
-      create_search_log
-    end
-  end
 
   def new
     @title = t('clusters.new.plain_title')
