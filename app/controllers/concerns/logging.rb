@@ -122,8 +122,6 @@ module Concerns::Logging
   end
 
   def create_sign_in_log(user, context:, via:, follow:, tweet:, referer:, ab_test: '')
-    referral = find_referral(pushed_referers)
-
     attrs = {
       session_id:  egotter_visit_id,
       user_id:     user.id,
@@ -138,29 +136,12 @@ module Concerns::Logging
       browser:     request.browser,
       user_agent:  request.user_agent.to_s.truncate(180),
       referer:     referer.to_s.truncate(180),
-      referral:    referral,
-      channel:     find_channel(referral),
-      ab_test:     ab_test,
       created_at:  Time.zone.now
     }
     CreateSignInLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
     notify_airbrake(e)
-  end
-
-  def push_referer
-    referer = request.referer.to_s.truncate(180)
-    if referer.present? && !referer.start_with?('https://egotter.com')
-      ::Util::RefererList.new(Redis.client).push(egotter_visit_id, referer)
-    end
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
-    notify_airbrake(e)
-  end
-
-  def pushed_referers
-    ::Util::RefererList.new(Redis.client).to_a(egotter_visit_id)
   end
 
   private
