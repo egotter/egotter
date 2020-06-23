@@ -126,8 +126,10 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
     end
 
     [
+        CreateTwitterUserRequest::Unauthorized,
         CreateTwitterUserRequest::TooShortCreateInterval,
-        CreateTwitterUserRequest::NotChanged
+        CreateTwitterUserRequest::TooLittleFriends,
+        CreateTwitterUserRequest::NotChanged,
     ].each do |error|
       context "#{error} is raised" do
         before { allow(CreateTwitterUserTask).to receive(:new).and_raise(error) }
