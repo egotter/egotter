@@ -1,4 +1,5 @@
 require_relative './logging'
+require_relative './job_history'
 
 module UniqueJob
   module Util
