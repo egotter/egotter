@@ -25,7 +25,6 @@ class FetchUserForCachingWorker
 
   # options:
   #   user_id
-  #   enqueued_at
   def perform(uid_or_screen_name, options = {})
     client = options['user_id'] ? User.find(options['user_id']).api_client : Bot.api_client
     client.user(uid_or_screen_name)
