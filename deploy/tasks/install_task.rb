@@ -149,9 +149,7 @@ module Tasks
       end
 
       def update_sidekiq
-        run_copy('./setup/etc/init.d/sidekiq*', '/etc/init.d')
         run_copy('./setup/etc/init/sidekiq*', '/etc/init')
-        run_copy('./setup/etc/init.d/patient_sidekiqctl.rb', '/etc/init.d/patient_sidekiqctl.rb')
         self
       end
 

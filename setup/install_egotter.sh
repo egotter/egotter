@@ -96,9 +96,7 @@ chkconfig mysqld off
 service mysqld stop
 
 # sidekiq
-cp -f ./setup/etc/init.d/sidekiq* /etc/init.d
 cp -f ./setup/etc/init/sidekiq* /etc/init
-cp -f ./setup/etc/init.d/patient_sidekiqctl.rb /etc/init.d
 # start sidekiq
 
 # puma

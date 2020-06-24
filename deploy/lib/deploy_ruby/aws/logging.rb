@@ -6,7 +6,7 @@ module DeployRuby
       end
 
       def failure(str)
-        logger.info "\e[31m#{str}\e[0m" # red
+        logger.error "\e[31m#{str}\e[0m" # red
       end
 
       def green(str)
@@ -14,7 +14,7 @@ module DeployRuby
       end
 
       def red(str)
-        logger.info "\e[31m#{str}\e[0m"
+        logger.error "\e[31m#{str}\e[0m"
       end
 
       def logger
