@@ -1,4 +1,6 @@
-Sidekiq.logger.level = Logger::DEBUG
+unless File.basename($0) == 'rake'
+  Sidekiq.logger.level = Logger::DEBUG
+end
 
 database = Rails.env.test? ? 1 : 0
 
