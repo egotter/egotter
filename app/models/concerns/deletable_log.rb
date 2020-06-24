@@ -21,13 +21,14 @@ module Concerns::DeletableLog
       end_time = time.end_of_month.to_s(:db)
       puts "start_time=#{start_time} end_time=#{end_time}"
 
-      logs = where(created_at: start_time..end_time)
-      logs_count = logs.select(:id).find_in_batches(batch_size: 100_000).lazy.map(&:size).sum
+      logs = where(created_at: start_time..end_time).select(:id)
+      logs_count = logs.find_in_batches(batch_size: 100_000).lazy.map(&:size).sum
       puts "Delete #{logs_count} records from #{table_name}"
 
       if logs.any?
-        logs.select(:id).find_in_batches(batch_size: 100_000) do |logs_array|
+        logs.find_in_batches(batch_size: 100_000) do |logs_array|
           where(id: logs_array.map(&:id)).delete_all
+          print '.'
         end
       end
     end
