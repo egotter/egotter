@@ -6,7 +6,6 @@ class CreateSearchLogWorker
     log = SearchLog.create!(attrs)
 
     unless log.crawler?
-      UpdateFootprintsWorker.perform_async(log.id, user_id: log.user_id) if log.with_login?
       UpdateVisitorWorker.perform_async(log.slice(:session_id, :user_id, :created_at))
     end
   rescue => e
