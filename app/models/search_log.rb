@@ -13,6 +13,7 @@
 #  ego_surfing :boolean          default(FALSE), not null
 #  method      :string(191)      default(""), not null
 #  path        :string(191)      default(""), not null
+#  params      :string(191)
 #  status      :integer          default(-1), not null
 #  via         :string(191)      default(""), not null
 #  device_type :string(191)      default(""), not null

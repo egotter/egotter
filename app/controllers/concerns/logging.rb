@@ -23,6 +23,7 @@ module Concerns::Logging
     return create_crawler_log if from_crawler?
 
     uid, screen_name = find_uid_and_screen_name
+    save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
 
     attrs = {
       session_id:  egotter_visit_id,
@@ -32,7 +33,8 @@ module Concerns::Logging
       controller:  controller_name,
       action:      action_name,
       method:      request.method,
-      path:        request.original_fullpath.to_s.truncate(180),
+      path:        request.path.to_s.truncate(180),
+      params:      save_params.empty? ? '' : save_params.to_json.truncate(180),
       status:      response.status,
       via:         params[:via] ? params[:via].to_s.truncate(180) : '',
       device_type: request.device_type,
