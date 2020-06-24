@@ -20,10 +20,7 @@ module Concerns::Logging
 
   def create_access_log(options = {})
     return if access_log_disabled
-
-    if from_crawler?
-      return create_crawler_log
-    end
+    return create_crawler_log if from_crawler?
 
     uid, screen_name = find_uid_and_screen_name
 
@@ -103,6 +100,8 @@ module Concerns::Logging
   end
 
   def create_crawler_log
+    params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+
     attrs = {
       controller:  controller_name,
       action:      action_name,
@@ -111,7 +110,8 @@ module Concerns::Logging
       browser:     request.browser,
       ip:          request.ip,
       method:      request.method,
-      path:        request.original_fullpath.to_s.truncate(180),
+      path:        request.path.to_s.truncate(180),
+      params:      params.empty? ? '' : params.to_json.truncate(180),
       status:      response.status,
       user_agent:  request.user_agent.to_s.truncate(180),
     }

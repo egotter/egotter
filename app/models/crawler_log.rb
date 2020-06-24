@@ -11,6 +11,7 @@
 #  ip          :string(191)      default(""), not null
 #  method      :string(191)      default(""), not null
 #  path        :string(191)      default(""), not null
+#  params      :string(191)
 #  status      :integer          default(-1), not null
 #  user_agent  :string(191)      default(""), not null
 #  created_at  :datetime         not null

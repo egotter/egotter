@@ -12,7 +12,7 @@ module Concerns::ApiRequestConcern
     before_action -> { valid_uid?(params[:uid]) }
     before_action -> { twitter_user_persisted?(params[:uid]) }
     before_action -> { twitter_db_user_persisted?(params[:uid]) }
-    before_action -> { @twitter_user = TwitterUser.latest_by(uid: params[:uid]) }
+    before_action -> { @twitter_user = ::TwitterUser.latest_by(uid: params[:uid]) }
     before_action -> { !protected_search?(@twitter_user) }
   end
 end

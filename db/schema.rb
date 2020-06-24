@@ -240,6 +240,7 @@ ActiveRecord::Schema.define(version: 2020_05_27_090719) do
     t.string "ip", default: "", null: false
     t.string "method", default: "", null: false
     t.string "path", default: "", null: false
+    t.string "params"
     t.integer "status", default: -1, null: false
     t.string "user_agent", default: "", null: false
     t.datetime "created_at", null: false
