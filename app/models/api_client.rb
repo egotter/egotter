@@ -24,6 +24,7 @@ class ApiClient
     end
   rescue => e
     update_authorization_status(e)
+    create_not_found_user(e, method, *args)
     raise
   end
 
@@ -32,6 +33,12 @@ class ApiClient
       if (user = User.select(:id).find_by_token(@client.access_token, @client.access_token_secret))
         UpdateAuthorizedWorker.perform_async(user.id)
       end
+    end
+  end
+
+  def create_not_found_user(e, method, *args)
+    if AccountStatus.not_found?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
+      CreateNotFoundUserWorker.perform_async(args[0])
     end
   end
 

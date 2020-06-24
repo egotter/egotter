@@ -8,7 +8,7 @@ class NotFoundController < ApplicationController
   private
 
   def delete_resource_async
-    DeleteNotFoundUserWorker.new.perform(params[:screen_name])
+    # Do nothing
   end
 
   def resource_found?

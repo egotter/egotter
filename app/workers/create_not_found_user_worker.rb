@@ -14,10 +14,10 @@ class CreateNotFoundUserWorker
   #   uid
   def perform(screen_name, options = {})
     NotFoundUser.create!(screen_name: screen_name)
+    DeleteNotFoundUserWorker.perform_in(15.minutes, screen_name)
   rescue ActiveRecord::RecordNotUnique => e
-    logger.info e.message.truncate(100)
+    # Do nothing
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{screen_name}"
-    logger.info e.backtrace.join("\n")
+    logger.warn "#{e.inspect} screen_name=#{screen_name}"
   end
 end

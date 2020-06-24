@@ -12,7 +12,6 @@ module Concerns::TwitterUsersConcern
     user = request_context_client.user(screen_name)
     twitter_user = ::TwitterUser.build_by(user: user)
 
-    DeleteNotFoundUserWorker.perform_async(screen_name)
     DeleteForbiddenUserWorker.perform_async(screen_name)
 
     twitter_user
@@ -21,7 +20,6 @@ module Concerns::TwitterUsersConcern
     status = AccountStatus.new(ex: e)
 
     if status.not_found?
-      CreateNotFoundUserWorker.perform_async(screen_name)
       redirect_to not_found_path(screen_name: screen_name)
     elsif status.suspended?
       CreateForbiddenUserWorker.perform_async(screen_name)

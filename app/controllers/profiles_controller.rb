@@ -6,7 +6,6 @@ class ProfilesController < ApplicationController
   rescue => e
     notify_airbrake(e)
   else
-    DeleteNotFoundUserWorker.new.perform(params[:screen_name])
     DeleteForbiddenUserWorker.new.perform(params[:screen_name])
   end
 

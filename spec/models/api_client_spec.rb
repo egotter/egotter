@@ -36,9 +36,12 @@ RSpec.describe ApiClient, type: :model do
     end
 
     context 'exception is raised' do
+      let(:error) { NameError.new }
+      before { allow(client).to receive(:respond_to?).with(:user).and_raise(error) }
       it do
-        expect(instance).to receive(:update_authorization_status).with(anything)
-        expect { subject }.to raise_error(NameError) # Or NoMethodError
+        expect(instance).to receive(:update_authorization_status).with(error)
+        expect(instance).to receive(:create_not_found_user).with(error, :user, 1)
+        expect { subject }.to raise_error(error) # Or NoMethodError
       end
     end
   end
@@ -57,6 +60,18 @@ RSpec.describe ApiClient, type: :model do
       end
       it do
         expect(UpdateAuthorizedWorker).to receive(:perform_async).with(user.id)
+        subject
+      end
+    end
+  end
+
+  describe '#create_not_found_user' do
+    let(:error) { Twitter::Error::NotFound.new('User not found.') }
+    subject { instance.create_not_found_user(error, :user, 'name') }
+
+    context 'token is invalid' do
+      it do
+        expect(CreateNotFoundUserWorker).to receive(:perform_async).with('name')
         subject
       end
     end

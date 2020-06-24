@@ -27,7 +27,7 @@ class AccountStatusesController < ApplicationController
 
       if searchee
         if status.not_found?
-          CreateNotFoundUserWorker.perform_async(searchee.screen_name)
+          # Do nothing
         elsif status.suspended?
           CreateForbiddenUserWorker.perform_async(searchee.screen_name)
         end

@@ -16,12 +16,10 @@ class SearchRequestValidator
 
   def not_found_user?(screen_name)
     client.user(screen_name)
-    DeleteNotFoundUserWorker.perform_async(screen_name)
     false
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     if AccountStatus.not_found?(e)
-      CreateNotFoundUserWorker.perform_async(screen_name)
       true
     else
       false

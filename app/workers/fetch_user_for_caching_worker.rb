@@ -33,7 +33,7 @@ class FetchUserForCachingWorker
     status = AccountStatus.new(ex: e)
 
     if status.not_found?
-      CreateNotFoundUserWorker.perform_async(uid_or_screen_name) if uid_or_screen_name.class == String
+      # Do nothing
     elsif status.suspended?
       CreateForbiddenUserWorker.perform_async(uid_or_screen_name) if uid_or_screen_name.class == String
     elsif status.unauthorized? || status.too_many_requests?
