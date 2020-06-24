@@ -41,6 +41,7 @@ RSpec.describe ApiClient, type: :model do
       it do
         expect(instance).to receive(:update_authorization_status).with(error)
         expect(instance).to receive(:create_not_found_user).with(error, :user, 1)
+        expect(instance).to receive(:create_forbidden_user).with(error, :user, 1)
         expect { subject }.to raise_error(error) # Or NoMethodError
       end
     end
@@ -68,12 +69,18 @@ RSpec.describe ApiClient, type: :model do
   describe '#create_not_found_user' do
     let(:error) { Twitter::Error::NotFound.new('User not found.') }
     subject { instance.create_not_found_user(error, :user, 'name') }
+    it do
+      expect(CreateNotFoundUserWorker).to receive(:perform_async).with('name')
+      subject
+    end
+  end
 
-    context 'token is invalid' do
-      it do
-        expect(CreateNotFoundUserWorker).to receive(:perform_async).with('name')
-        subject
-      end
+  describe '#create_forbidden_user' do
+    let(:error) { Twitter::Error::Forbidden.new('User has been suspended.') }
+    subject { instance.create_forbidden_user(error, :user, 'name') }
+    it do
+      expect(CreateForbiddenUserWorker).to receive(:perform_async).with('name')
+      subject
     end
   end
 

@@ -25,6 +25,7 @@ class ApiClient
   rescue => e
     update_authorization_status(e)
     create_not_found_user(e, method, *args)
+    create_forbidden_user(e, method, *args)
     raise
   end
 
@@ -39,6 +40,12 @@ class ApiClient
   def create_not_found_user(e, method, *args)
     if AccountStatus.not_found?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
       CreateNotFoundUserWorker.perform_async(args[0])
+    end
+  end
+
+  def create_forbidden_user(e, method, *args)
+    if AccountStatus.suspended?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
+      CreateForbiddenUserWorker.perform_async(args[0])
     end
   end
 

@@ -8,7 +8,7 @@ class ForbiddenController < ApplicationController
   private
 
   def delete_resource_async
-    DeleteForbiddenUserWorker.new.perform(params[:screen_name])
+    # Do nothing
   end
 
   def resource_found?

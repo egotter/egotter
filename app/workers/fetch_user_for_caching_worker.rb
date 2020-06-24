@@ -32,11 +32,7 @@ class FetchUserForCachingWorker
   rescue => e
     status = AccountStatus.new(ex: e)
 
-    if status.not_found?
-      # Do nothing
-    elsif status.suspended?
-      CreateForbiddenUserWorker.perform_async(uid_or_screen_name) if uid_or_screen_name.class == String
-    elsif status.unauthorized? || status.too_many_requests?
+    if status.not_found? || status.suspended? || status.unauthorized? || status.too_many_requests?
     else
       logger.warn "#{e.inspect} #{uid_or_screen_name} #{options.inspect}"
       logger.info e.backtrace.join("\n")

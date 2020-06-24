@@ -10,11 +10,7 @@ module Concerns::TwitterUsersConcern
   # See also #not_found_user? in #not_found_screen_name? or #forbidden_user? in #forbidden_screen_name?
   def build_twitter_user_by(screen_name:)
     user = request_context_client.user(screen_name)
-    twitter_user = ::TwitterUser.build_by(user: user)
-
-    DeleteForbiddenUserWorker.perform_async(screen_name)
-
-    twitter_user
+    ::TwitterUser.build_by(user: user)
   rescue => e
     notify_airbrake(e)
     status = AccountStatus.new(ex: e)
@@ -22,7 +18,6 @@ module Concerns::TwitterUsersConcern
     if status.not_found?
       redirect_to not_found_path(screen_name: screen_name)
     elsif status.suspended?
-      CreateForbiddenUserWorker.perform_async(screen_name)
       redirect_to forbidden_path(screen_name: screen_name)
     else
       logger.info "#{self.class}##{action_name} in #build_twitter_user_by #{screen_name} #{current_user_id} #{e.class} #{e.message}}"

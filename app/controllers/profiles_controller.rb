@@ -5,8 +5,6 @@ class ProfilesController < ApplicationController
     request_context_client.user(params[:screen_name])
   rescue => e
     notify_airbrake(e)
-  else
-    DeleteForbiddenUserWorker.new.perform(params[:screen_name])
   end
 
   before_action unless: :twitter_crawler? do

@@ -13,8 +13,8 @@ class DeleteForbiddenUserWorker
   def perform(screen_name)
     ForbiddenUser.find_by(screen_name: screen_name)&.delete
   rescue ActiveRecord::RecordNotUnique => e
-    logger.info e.message.truncate(100)
+    # Do nothing
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{screen_name}"
+    logger.warn "#{e.inspect} screen_name=#{screen_name}"
   end
 end

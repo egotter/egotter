@@ -28,12 +28,10 @@ class SearchRequestValidator
 
   def forbidden_user?(screen_name)
     client.user(screen_name)
-    DeleteForbiddenUserWorker.perform_async(screen_name)
     false
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     if AccountStatus.suspended?(e)
-      CreateForbiddenUserWorker.perform_async(screen_name)
       true
     else
       false

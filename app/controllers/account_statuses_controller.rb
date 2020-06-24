@@ -21,18 +21,6 @@ class AccountStatusesController < ApplicationController
       render json: {authorized: false, uid: uid}
     elsif status.not_found? || status.suspended?
       # It's strange to reach here because you can search.
-
-      searchee = TwitterUser.latest_by(uid: uid)
-      searchee = TwitterDB::User.find_by(uid: uid) unless searchee
-
-      if searchee
-        if status.not_found?
-          # Do nothing
-        elsif status.suspended?
-          CreateForbiddenUserWorker.perform_async(searchee.screen_name)
-        end
-      end
-
       render json: {authorized: true, uid: uid, suspended: status.suspended?, not_found: status.not_found?}
     else
       CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, force_update: true)
