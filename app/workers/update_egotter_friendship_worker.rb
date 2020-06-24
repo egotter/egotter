@@ -42,7 +42,7 @@ class UpdateEgotterFriendshipWorker
     elsif ServiceStatus.connection_reset_by_peer?(e)
       retry
     else
-      logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
+      logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
       logger.info e.backtrace.join("\n")
     end
   end

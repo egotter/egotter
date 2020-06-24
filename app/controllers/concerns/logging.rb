@@ -112,12 +112,12 @@ module Concerns::Logging
       ip:          request.ip,
       method:      request.method,
       path:        request.original_fullpath.to_s.truncate(180),
-      status:      200,
+      status:      response.status,
       user_agent:  request.user_agent.to_s.truncate(180),
     }
     CreateCrawlerLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
     notify_airbrake(e)
   end
 
