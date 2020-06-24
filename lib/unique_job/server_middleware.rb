@@ -1,3 +1,5 @@
+require_relative './util'
+
 module UniqueJob
   class ServerMiddleware
     include Util

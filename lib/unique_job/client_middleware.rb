@@ -1,3 +1,5 @@
+require_relative './util'
+
 module UniqueJob
   class ClientMiddleware
     include Util
