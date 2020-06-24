@@ -279,7 +279,6 @@ class SendMetricsToCloudWatchWorker
         CreateTwitterUserRequest,
         DeleteTweetsRequest,
         FollowRequest,
-        ImportTwitterUserRequest,
         ResetCacheRequest,
         ResetEgotterRequest,
         TweetRequest,
