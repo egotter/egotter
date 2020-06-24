@@ -1,0 +1,12 @@
+/var/egotter/log/deploy.log {
+  dateext
+  dateformat _%Y%m%d
+  daily
+  missingok
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+  sharedscripts
+}
