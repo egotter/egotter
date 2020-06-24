@@ -7,10 +7,6 @@ class ForbiddenController < ApplicationController
 
   private
 
-  def delete_resource_async
-    # Do nothing
-  end
-
   def resource_found?
     !ForbiddenUser.exists?(screen_name: params[:screen_name]) &&
         !forbidden_user?(params[:screen_name]) &&

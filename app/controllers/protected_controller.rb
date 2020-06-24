@@ -7,9 +7,6 @@ class ProtectedController < ApplicationController
 
   private
 
-  def delete_resource_async
-  end
-
   def resource_found?
     !protected_user?(params[:screen_name]) && params['redirect'] != 'false'
   end

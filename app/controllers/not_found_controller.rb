@@ -7,10 +7,6 @@ class NotFoundController < ApplicationController
 
   private
 
-  def delete_resource_async
-    # Do nothing
-  end
-
   def resource_found?
     !NotFoundUser.exists?(screen_name: params[:screen_name]) &&
         !not_found_user?(params[:screen_name]) &&

@@ -10,8 +10,6 @@ module Concerns::CheckExistenceConcern
       request_context_client.user(params[:screen_name])
     rescue => e
       notify_airbrake(e)
-    else
-      delete_resource_async
     end
 
     before_action unless: :twitter_crawler? do
