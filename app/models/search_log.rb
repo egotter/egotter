@@ -38,6 +38,8 @@
 #
 
 class SearchLog < ApplicationRecord
+  include Concerns::DeletableLog
+
   belongs_to :user, optional: true
 
   before_validation :truncate_attrs
