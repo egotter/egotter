@@ -16,7 +16,13 @@ class SharesController < ApplicationController
   private
 
   def egotter_share_url
-    via = "share#{l(Time.zone.now.in_time_zone('Tokyo'), format: :share_text_short)}"
-    root_url(via: via)
+    time = l(Time.zone.now, format: :date_hyphen)
+    params = {
+        utm_source: 'share_tweet',
+        utm_medium: 'tweet',
+        utm_campaign: "share_tweet_#{time}",
+        via: "share_tweet_share#{time}"
+    }
+    root_url(params)
   end
 end
