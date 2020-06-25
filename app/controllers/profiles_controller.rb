@@ -17,13 +17,8 @@ class ProfilesController < ApplicationController
 
   def show
     @user = TwitterDB::User.find_by(screen_name: params[:screen_name])
-
-    if twitter_crawler?
-      redirect_to not_found_path(screen_name: params[:screen_name]) unless @user
-    else
-      @user = TwitterUser.latest_by(screen_name: params[:screen_name]) unless @user
-      @user = build_twitter_user_by(screen_name: params[:screen_name]) unless @user # It's possible to be redirected
-    end
+    @user = TwitterUser.latest_by(screen_name: params[:screen_name]) unless @user
+    @user = build_twitter_user_by(screen_name: params[:screen_name]) unless @user # It's possible to be redirected
 
     return if performed?
     @display_time = l((@user.updated_at || Time.zone.now).in_time_zone('Tokyo'), format: :profile_short)
