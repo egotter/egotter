@@ -32,8 +32,6 @@ class AssembleTwitterUserRequest < ApplicationRecord
 
     return unless validate_record_friends!
 
-    bm('Unfollowership') { import_unfollowership }
-
     [
         BlockFriendship
     ].each do |klass|
@@ -51,6 +49,7 @@ class AssembleTwitterUserRequest < ApplicationRecord
         S3::InactiveFollowership,
         S3::InactiveMutualFriendship,
         S3::Unfriendship,
+        S3::Unfollowership,
     ].each do |klass|
       bm("#{klass}(s3)") do
         uids = twitter_user.calc_uids_for(klass)
@@ -92,15 +91,6 @@ class AssembleTwitterUserRequest < ApplicationRecord
     end
 
     true
-  end
-
-  def import_unfollowership
-    Unfollowership.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
-      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: twitter_user.user_id, compressed: true, force_update: true, enqueued_by: self.class)
-    end
-  rescue => e
-    logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
-    logger.info e.backtrace.join("\n")
   end
 
   def import_favorite_friendship

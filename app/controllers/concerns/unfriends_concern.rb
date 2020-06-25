@@ -27,6 +27,8 @@ module Concerns::UnfriendsConcern
 
     if controller_name == 'unfriends'
       mention_names = @twitter_user.unfriends(limit: 3).map(&:mention_name)
+    elsif controller_name == 'unfollowers'
+      mention_names = @twitter_user.unfollowers(limit: 3).map(&:mention_name)
     else
       mention_names = @twitter_user.users_by(controller_name: controller_name).
           select(:screen_name).limit(3).map(&:mention_name)

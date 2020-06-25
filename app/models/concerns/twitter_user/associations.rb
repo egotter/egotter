@@ -51,13 +51,13 @@ module Concerns::TwitterUser::Associations
     # all other records of twitter_users return same unfriendships.
     with_options default_options.merge(primary_key: :uid, foreign_key: :from_uid) do |obj|
       # obj.has_many :unfriendships,     order_by_sequence_asc
-      obj.has_many :unfollowerships,   order_by_sequence_asc
+      # obj.has_many :unfollowerships,   order_by_sequence_asc
       obj.has_many :block_friendships, order_by_sequence_asc
     end
 
     with_options default_options.merge(class_name: 'TwitterDB::User') do |obj|
       # obj.has_many :unfriends,     through: :unfriendships
-      obj.has_many :unfollowers,   through: :unfollowerships
+      # obj.has_many :unfollowers,   through: :unfollowerships
       obj.has_many :block_friends, through: :block_friendships
     end
   end
@@ -142,6 +142,14 @@ module Concerns::TwitterUser::Associations
     end
   end
 
+  def unfollowerships
+    if (from_s3 = S3::Unfollowership.where(uid: uid))
+      RelationshipProxy.new(from_s3)
+    else
+      Unfollowership.where(from_uid: uid).order(sequence: :asc)
+    end
+  end
+
   def mutual_friends(limit: 10_000, inactive: nil)
     TwitterDB::User.where_and_order_by_field(uids: mutual_friend_uids.take(limit), inactive: inactive)
   end
@@ -176,6 +184,10 @@ module Concerns::TwitterUser::Associations
 
   def unfriends(limit: 100_000)
     TwitterDB::User.where_and_order_by_field(uids: unfriend_uids.take(limit))
+  end
+
+  def unfollowers(limit: 100_000)
+    TwitterDB::User.where_and_order_by_field(uids: unfollower_uids.take(limit))
   end
 
   def mutual_friend_uids

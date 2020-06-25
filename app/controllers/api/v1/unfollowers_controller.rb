@@ -5,8 +5,8 @@ module Api
       private
 
       def summary_uids(limit: SUMMARY_LIMIT)
-        relation = @twitter_user.unfollowerships
-        [relation.limit(limit).pluck(:follower_uid), relation.size]
+        resources = @twitter_user.unfollowerships
+        [resources.limit(limit).pluck(:follower_uid), resources.size]
       end
 
       def list_users

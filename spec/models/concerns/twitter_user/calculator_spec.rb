@@ -68,6 +68,14 @@ RSpec.describe Concerns::TwitterUser::Calculator do
         subject
       end
     end
+
+    context 'S3::Unfollowership is passed' do
+      let(:klass) { S3::Unfollowership }
+      it do
+        expect(twitter_user).to receive(:calc_unfollower_uids)
+        subject
+      end
+    end
   end
 
   describe '#calc_one_sided_friend_uids' do
