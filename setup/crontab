@@ -1,9 +1,7 @@
 RAKE='/var/egotter/bin/cron/rake.sh'
 RUNNER='/var/egotter/bin/cron/runner.sh'
 
-# 40 19 * * *     /bin/sh -c "/bin/rm -rf /efs_twitter/*remove_ok"
 # 20 19 * * *     /bin/sh -c "$RAKE tmp:cache:clear"
-# 30 19 * * *     /bin/sh -c "$RAKE cache_directories:rotate"
 # * * * * *       /bin/sh -c "$RAKE bots:update_authorized"
 # 30 * * * *      /bin/sh -c "$RAKE orders:update_stripe_attributes"
 # 45 * * * *      /bin/sh -c "$RAKE periodic_reports:send_remind_messages"
