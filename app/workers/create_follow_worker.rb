@@ -47,11 +47,4 @@ class CreateFollowWorker
     logger.warn "Don't retry. #{e.class} #{e.message} request_id=#{request_id} options=#{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
     logger.info e.backtrace.join("\n")
   end
-
-  def self.fetch_one
-    if Sidekiq::Queue.new('follow').size == 0
-      request = FollowRequest.requests_for_egotter.order(created_at: :desc).first
-      CreateFollowWorker.perform_async(request.id) if request
-    end
-  end
 end

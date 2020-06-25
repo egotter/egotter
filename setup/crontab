@@ -9,7 +9,6 @@ RUNNER='/var/egotter/bin/cron/runner.sh'
 # 1-51/10 * * * * /bin/sh -c "$RUNNER 'SendMetricsToSlackWorker.perform_async'"
 # 6-56/10 * * * * /bin/sh -c "$RUNNER 'CalculateMetricsWorker.perform_async'"
 # * * * * *       /bin/sh -c "$RUNNER 'SendMetricsToCloudWatchWorker.new.perform'"
-# * * * * *       /bin/sh -c "$RUNNER 'CreateFollowWorker.fetch_one'"
 
 # PeriodicReport(morning)
 # 25 22 * * * /bin/sh -c "$RAKE servers:launch"
