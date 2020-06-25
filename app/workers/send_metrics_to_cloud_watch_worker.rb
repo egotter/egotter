@@ -29,9 +29,11 @@ class SendMetricsToCloudWatchWorker
        send_requests_metrics
        send_bots_metrics
     ).each do |method_name|
-      send(method_name)
+      Timeout.timeout(10.seconds) do
+        send(method_name)
+      end
     rescue => e
-      logger.warn "#{method_name} #{e.class} #{e.message}"
+      logger.warn "#{e.inspect} method_name=#{method_name}"
       notify_airbrake(e, method_name: method_name)
     end
 
