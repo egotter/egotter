@@ -23,7 +23,6 @@ class SendMetricsToCloudWatchWorker
        send_periodic_reports_metrics
        send_create_periodic_report_requests_metrics
        send_search_error_logs_metrics
-       send_twitter_db_users_metrics
        send_search_histories_metrics
        send_sign_in_logs_metrics
        send_requests_metrics
@@ -221,13 +220,16 @@ class SendMetricsToCloudWatchWorker
 
   def send_twitter_db_users_metrics
     namespace = "TwitterDBUsers#{"/#{Rails.env}" unless Rails.env.production?}"
-    options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
 
-    duration = {created_at: 10.minutes.ago..Time.zone.now}
-    put_metric_data('RecordsCreateCount', TwitterDB::User.where(duration).size, options)
+    [1.minute].each do |duration|
+      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
 
-    duration = {updated_at: 10.minutes.ago..Time.zone.now}
-    put_metric_data('RecordsUpdateCount', TwitterDB::User.where(duration).size, options)
+      condition = {created_at: duration.ago..Time.zone.now}
+      put_metric_data('RecordsCreateCount', TwitterDB::User.where(condition).size, options)
+
+      condition = {updated_at: duration.ago..Time.zone.now}
+      put_metric_data('RecordsUpdateCount', TwitterDB::User.where(condition).size, options)
+    end
   end
 
   def send_search_histories_metrics
