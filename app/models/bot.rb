@@ -35,6 +35,20 @@ class Bot < ApplicationRecord
       end
     end
 
+    def invalidate_expired_credentials
+      verify_credentials.each do |cred|
+        bot = find(cred[:id])
+        bot.authorized = cred[:authorized]
+        if bot.changed?
+          bot.save!
+
+          message = "Bot#authorized is changed #{bot.saved_changes}"
+          SlackClient.bot.send_message(message)
+          logger.warn message
+        end
+      end
+    end
+
     def verify_credentials
       processed = Queue.new
       all.each do |bot|
