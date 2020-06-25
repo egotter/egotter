@@ -19,7 +19,6 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
       expect(request).to receive(:import_unfollowership)
 
       [
-          Unfriendship,
           BlockFriendship
       ].each do |klass|
         expect(klass).to receive(:import_by!).with(twitter_user: twitter_user)
@@ -31,7 +30,8 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
           S3::MutualFriendship,
           S3::InactiveFriendship,
           S3::InactiveFollowership,
-          S3::InactiveMutualFriendship
+          S3::InactiveMutualFriendship,
+          S3::Unfriendship,
       ].each do |klass|
         expect(twitter_user).to receive(:calc_uids_for).with(klass).and_return("result of #{klass}")
         expect(klass).to receive(:import_from!).with(twitter_user.uid, "result of #{klass}")

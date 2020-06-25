@@ -25,8 +25,12 @@ module Concerns::UnfriendsConcern
 
     @navbar_title = t(".navbar_title")
 
-    mention_names = @twitter_user.users_by(controller_name: controller_name).
-        select(:screen_name).limit(3).map(&:mention_name)
+    if controller_name == 'unfriends'
+      mention_names = @twitter_user.unfriends(limit: 3).map(&:mention_name)
+    else
+      mention_names = @twitter_user.users_by(controller_name: controller_name).
+          select(:screen_name).limit(3).map(&:mention_name)
+    end
 
     @tweet_text_for_empty_users = t('unfriends.show.tweet_empty_text', url: unfriends_top_url(via: current_via('tweet_for_empty')))
 

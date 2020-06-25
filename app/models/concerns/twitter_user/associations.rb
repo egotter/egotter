@@ -50,13 +50,13 @@ module Concerns::TwitterUser::Associations
     # IMPORTANT: The primary key of these associations is uid. If you update unfriendships,
     # all other records of twitter_users return same unfriendships.
     with_options default_options.merge(primary_key: :uid, foreign_key: :from_uid) do |obj|
-      obj.has_many :unfriendships,     order_by_sequence_asc
+      # obj.has_many :unfriendships,     order_by_sequence_asc
       obj.has_many :unfollowerships,   order_by_sequence_asc
       obj.has_many :block_friendships, order_by_sequence_asc
     end
 
     with_options default_options.merge(class_name: 'TwitterDB::User') do |obj|
-      obj.has_many :unfriends,     through: :unfriendships
+      # obj.has_many :unfriends,     through: :unfriendships
       obj.has_many :unfollowers,   through: :unfollowerships
       obj.has_many :block_friends, through: :block_friendships
     end
@@ -134,24 +134,32 @@ module Concerns::TwitterUser::Associations
     end
   end
 
+  def unfriendships
+    if (from_s3 = S3::Unfriendship.where(uid: uid))
+      RelationshipProxy.new(from_s3)
+    else
+      Unfriendship.where(from_uid: uid).order(sequence: :asc)
+    end
+  end
+
   def mutual_friends(limit: 10_000, inactive: nil)
     TwitterDB::User.where_and_order_by_field(uids: mutual_friend_uids.take(limit), inactive: inactive)
   end
 
   def one_sided_friends(limit: 10_000)
-    TwitterDB::User.where_and_order_by_field(uids: one_sided_friendships.pluck(:friend_uid).take(limit))
+    TwitterDB::User.where_and_order_by_field(uids: one_sided_friend_uids.take(limit))
   end
 
   def one_sided_followers(limit: 10_000)
-    TwitterDB::User.where_and_order_by_field(uids: one_sided_followerships.pluck(:follower_uid).take(limit))
+    TwitterDB::User.where_and_order_by_field(uids: one_sided_follower_uids.take(limit))
   end
 
   def inactive_friends(limit: 10_000)
-    TwitterDB::User.where_and_order_by_field(uids: inactive_friendships.pluck(:friend_uid).take(limit))
+    TwitterDB::User.where_and_order_by_field(uids: inactive_friend_uids.take(limit))
   end
 
   def inactive_followers(limit: 10_000)
-    TwitterDB::User.where_and_order_by_field(uids: inactive_followerships.pluck(:follower_uid).take(limit))
+    TwitterDB::User.where_and_order_by_field(uids: inactive_follower_uids.take(limit))
   end
 
   def inactive_mutual_friends(limit: 10_000)
@@ -164,6 +172,10 @@ module Concerns::TwitterUser::Associations
 
   def followers(limit: 100_000, inactive: nil)
     TwitterDB::User.where_and_order_by_field(uids: follower_uids.take(limit), inactive: inactive)
+  end
+
+  def unfriends(limit: 100_000)
+    TwitterDB::User.where_and_order_by_field(uids: unfriend_uids.take(limit))
   end
 
   def mutual_friend_uids
@@ -188,6 +200,10 @@ module Concerns::TwitterUser::Associations
 
   def inactive_follower_uids
     inactive_followerships.pluck(:follower_uid)
+  end
+
+  def unfriend_uids
+    unfriendships.pluck(:friend_uid)
   end
 
   def unfollower_uids

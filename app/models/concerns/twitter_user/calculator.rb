@@ -22,6 +22,8 @@ module Concerns::TwitterUser::Calculator
       calc_inactive_follower_uids
     elsif klass == S3::InactiveMutualFriendship
       calc_inactive_mutual_friend_uids
+    elsif klass == S3::Unfriendship
+      calc_unfriend_uids
     else
       raise "#{__method__} Invalid klass is passed klass=#{klass}"
     end

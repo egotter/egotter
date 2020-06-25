@@ -14,8 +14,8 @@ module S3
       end
 
       def where(uid: nil)
-        obj = client.read(uid)
-        obj ? new(decode(obj)['uids']) : nil
+        text = client.read(uid)
+        (text && !text.empty?) ? new(decode(text)['uids']) : nil
       rescue Aws::S3::Errors::NoSuchKey => e
         nil
       end
@@ -37,8 +37,8 @@ module S3
         }.to_json
       end
 
-      def decode(obj)
-        obj = ::S3::Util.parse_json(obj)
+      def decode(text)
+        obj = ::S3::Util.parse_json(text)
         obj['uids'] = ::S3::Util.unpack(obj['uids'])
         obj
       end

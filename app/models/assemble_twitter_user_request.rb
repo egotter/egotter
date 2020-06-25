@@ -35,7 +35,6 @@ class AssembleTwitterUserRequest < ApplicationRecord
     bm('Unfollowership') { import_unfollowership }
 
     [
-        Unfriendship,
         BlockFriendship
     ].each do |klass|
       bm(klass.to_s) { klass.import_by!(twitter_user: twitter_user) }
@@ -50,7 +49,8 @@ class AssembleTwitterUserRequest < ApplicationRecord
         S3::MutualFriendship,
         S3::InactiveFriendship,
         S3::InactiveFollowership,
-        S3::InactiveMutualFriendship
+        S3::InactiveMutualFriendship,
+        S3::Unfriendship,
     ].each do |klass|
       bm("#{klass}(s3)") do
         uids = twitter_user.calc_uids_for(klass)
