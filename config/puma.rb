@@ -45,14 +45,4 @@ if ENV.fetch("RAILS_ENV") == 'production'
   bind 'unix:///tmp/puma.sock'
   stdout_redirect "#{Dir.pwd}/log/puma.log", "#{Dir.pwd}/log/puma.log", true
   preload_app!
-
-  before_fork do
-    PumaWorkerKiller.config do |config|
-      config.ram           = ENV.fetch("PUMA_WORKER_KILLER_RAM") { 3887 } # mb
-      config.frequency     = 10 # seconds
-      config.percent_usage = ENV.fetch("PUMA_WORKER_KILLER_PERCENT_USAGE") { 0.90 }
-      config.rolling_restart_frequency = 1.week
-    end
-    PumaWorkerKiller.start
-  end
 end
