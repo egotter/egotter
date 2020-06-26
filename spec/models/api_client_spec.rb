@@ -70,7 +70,7 @@ RSpec.describe ApiClient, type: :model do
     let(:error) { Twitter::Error::NotFound.new('User not found.') }
     subject { instance.create_not_found_user(error, :user, 'name') }
     it do
-      expect(CreateNotFoundUserWorker).to receive(:perform_async).with('name')
+      expect(CreateNotFoundUserWorker).to receive(:perform_async).with('name', anything)
       subject
     end
   end
@@ -79,7 +79,7 @@ RSpec.describe ApiClient, type: :model do
     let(:error) { Twitter::Error::Forbidden.new('User has been suspended.') }
     subject { instance.create_forbidden_user(error, :user, 'name') }
     it do
-      expect(CreateForbiddenUserWorker).to receive(:perform_async).with('name')
+      expect(CreateForbiddenUserWorker).to receive(:perform_async).with('name', anything)
       subject
     end
   end

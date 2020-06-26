@@ -20,7 +20,7 @@ module Concerns::TwitterUsersConcern
     elsif status.suspended?
       redirect_to forbidden_path(screen_name: screen_name)
     else
-      logger.info "#{self.class}##{action_name} in #build_twitter_user_by #{screen_name} #{current_user_id} #{e.class} #{e.message}}"
+      logger.info "#{self.class}##{action_name} in #build_twitter_user_by #{e.inspect} screen_name=#{screen_name} user_id=#{current_user_id}}"
       respond_with_error(:bad_request, twitter_exception_messages(e, screen_name))
     end
 
@@ -34,7 +34,7 @@ module Concerns::TwitterUsersConcern
     notify_airbrake(e)
     status = AccountStatus.new(ex: e)
     if !status.suspended? && !status.not_found? && !status.unauthorized?
-      logger.warn "#{self.class}##{action_name} in #build_twitter_user_by_uid #{uid} #{current_user_id} #{e.class} #{e.message}}"
+      logger.warn "#{self.class}##{action_name} in #build_twitter_user_by_uid #{e.inspect} uid=#{uid} user_id=#{current_user_id}}"
     end
 
     respond_with_error(:bad_request, twitter_exception_messages(e, "ID #{uid}"))

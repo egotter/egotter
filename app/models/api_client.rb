@@ -39,13 +39,13 @@ class ApiClient
 
   def create_not_found_user(e, method, *args)
     if AccountStatus.not_found?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
-      CreateNotFoundUserWorker.perform_async(args[0])
+      CreateNotFoundUserWorker.perform_async(args[0], location: (caller[0][/`([^']*)'/, 1] rescue ''))
     end
   end
 
   def create_forbidden_user(e, method, *args)
     if AccountStatus.suspended?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
-      CreateForbiddenUserWorker.perform_async(args[0])
+      CreateForbiddenUserWorker.perform_async(args[0], location: (caller[0][/`([^']*)'/, 1] rescue ''))
     end
   end
 
