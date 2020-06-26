@@ -23,6 +23,13 @@ class TweetRequest < ApplicationRecord
 
   validates :user_id, presence: true
   validates :text, format: %r[#{Rails.env.production? ? 'https://egotter\.com' : 'https://egotter\.com|http://localhost:3000'}]
+  validates :text, length: {maximum: 180}
+
+  before_validation :truncate_text
+
+  def truncate_text
+    self.text = self.text.truncate(180) if self.text
+  end
 
   def perform!
     tweet = client.update(text)
