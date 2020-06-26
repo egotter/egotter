@@ -29,9 +29,10 @@ module Concerns::UnfriendsConcern
       mention_names = @twitter_user.unfriends(limit: 3).map(&:mention_name)
     elsif controller_name == 'unfollowers'
       mention_names = @twitter_user.unfollowers(limit: 3).map(&:mention_name)
+    elsif controller_name == 'blocking_or_blocked'
+      mention_names = @twitter_user.mutual_unfriends(limit: 3).map(&:mention_name)
     else
-      mention_names = @twitter_user.users_by(controller_name: controller_name).
-          select(:screen_name).limit(3).map(&:mention_name)
+      raise "Invalid controller_name value=#{controller_name}"
     end
 
     @tweet_text_for_empty_users = t('unfriends.show.tweet_empty_text', url: unfriends_top_url(via: current_via('tweet_for_empty')))
@@ -52,7 +53,7 @@ module Concerns::UnfriendsConcern
     Timeout.timeout(2.seconds) do
       values[:unfriends] = twitter_user.unfriendships.size
       values[:unfollowers] = twitter_user.unfollowerships.size
-      values[:blocking_or_blocked] = twitter_user.block_friendships.size
+      values[:blocking_or_blocked] = twitter_user.mutual_unfriendships.size
     end
 
     values

@@ -57,7 +57,7 @@ class TwitterUser < ApplicationRecord
         mutual_friends: mutual_friendships.size,
         unfriends: unfriendships.size,
         unfollowers: unfollowerships.size,
-        blocking_or_blocked: block_friendships.size
+        blocking_or_blocked: mutual_unfriendships.size
     }
   end
 end

@@ -23,7 +23,7 @@ class BlockFriendship < ApplicationRecord
 
   class << self
     def import_by!(twitter_user:)
-      uids = twitter_user.calc_block_friend_uids
+      uids = twitter_user.calc_mutual_unfriend_uids
       import_from!(twitter_user.uid, uids)
       uids
     end

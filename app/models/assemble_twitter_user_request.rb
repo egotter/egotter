@@ -33,15 +33,6 @@ class AssembleTwitterUserRequest < ApplicationRecord
     return unless validate_record_friends!
 
     [
-        BlockFriendship
-    ].each do |klass|
-      bm(klass.to_s) { klass.import_by!(twitter_user: twitter_user) }
-    rescue => e
-      logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"
-      logger.info e.backtrace.join("\n")
-    end
-
-    [
         S3::OneSidedFriendship,
         S3::OneSidedFollowership,
         S3::MutualFriendship,
@@ -50,6 +41,7 @@ class AssembleTwitterUserRequest < ApplicationRecord
         S3::InactiveMutualFriendship,
         S3::Unfriendship,
         S3::Unfollowership,
+        S3::MutualUnfriendship,
     ].each do |klass|
       bm("#{klass}(s3)") do
         uids = twitter_user.calc_uids_for(klass)

@@ -45,21 +45,6 @@ module Concerns::TwitterUser::Associations
       obj.has_many :favorite_friends,        through: :favorite_friendships
       obj.has_many :close_friends,           through: :close_friendships
     end
-
-    # Aliases of twitter_db_user.*
-    # IMPORTANT: The primary key of these associations is uid. If you update unfriendships,
-    # all other records of twitter_users return same unfriendships.
-    with_options default_options.merge(primary_key: :uid, foreign_key: :from_uid) do |obj|
-      # obj.has_many :unfriendships,     order_by_sequence_asc
-      # obj.has_many :unfollowerships,   order_by_sequence_asc
-      obj.has_many :block_friendships, order_by_sequence_asc
-    end
-
-    with_options default_options.merge(class_name: 'TwitterDB::User') do |obj|
-      # obj.has_many :unfriends,     through: :unfriendships
-      # obj.has_many :unfollowers,   through: :unfollowerships
-      obj.has_many :block_friends, through: :block_friendships
-    end
   end
 
   class RelationshipProxy
@@ -134,6 +119,14 @@ module Concerns::TwitterUser::Associations
     end
   end
 
+  def mutual_unfriendships
+    if (from_s3 = S3::MutualUnfriendship.where(uid: uid))
+      RelationshipProxy.new(from_s3)
+    else
+      BlockFriendship.where(from_uid: uid).order(sequence: :asc)
+    end
+  end
+
   def unfriendships
     if (from_s3 = S3::Unfriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
@@ -182,6 +175,10 @@ module Concerns::TwitterUser::Associations
     TwitterDB::User.where_and_order_by_field(uids: follower_uids.take(limit), inactive: inactive)
   end
 
+  def mutual_unfriends(limit: 100_000)
+    TwitterDB::User.where_and_order_by_field(uids: mutual_unfriend_uids.take(limit))
+  end
+
   def unfriends(limit: 100_000)
     TwitterDB::User.where_and_order_by_field(uids: unfriend_uids.take(limit))
   end
@@ -212,6 +209,10 @@ module Concerns::TwitterUser::Associations
 
   def inactive_follower_uids
     inactive_followerships.pluck(:follower_uid)
+  end
+
+  def mutual_unfriend_uids
+    mutual_unfriendships.pluck(:friend_uid)
   end
 
   def unfriend_uids
@@ -253,12 +254,7 @@ module Concerns::TwitterUser::Associations
   end
 
   def users_by(controller_name:, limit: 300)
-    users =
-        if controller_name == 'blocking_or_blocked'
-          send(:block_friends)
-        else
-          send(controller_name)
-        end
+    users = send(controller_name)
     users.is_a?(Array) ? users.take(limit) : users.limit(limit)
   end
 

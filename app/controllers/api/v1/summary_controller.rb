@@ -12,7 +12,7 @@ module Api
             mutual_friends: @twitter_user.mutual_friendships.size,
             unfriends: @twitter_user.unfriendships.size,
             unfollowers: @twitter_user.unfollowerships.size,
-            blocking_or_blocked: @twitter_user.block_friendships.size
+            blocking_or_blocked: @twitter_user.mutual_unfriendships.size
         }
       end
     end
