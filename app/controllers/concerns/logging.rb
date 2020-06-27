@@ -71,6 +71,8 @@ module Concerns::Logging
     message = ActionController::Base.helpers.strip_tags(message)
     message += ex.message if ex
 
+    save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+
     attrs = {
         session_id:  egotter_visit_id,
         user_id:     current_user_id,
@@ -82,7 +84,8 @@ module Concerns::Logging
         action:      action_name,
         xhr:         !!request.xhr?,
         method:      request.method,
-        path:        request.original_fullpath.to_s.truncate(180),
+        path:        request.path.to_s.truncate(180),
+        params:      save_params.empty? ? '' : save_params.to_json.truncate(180),
         status:      performed? ? response.status : 500,
         via:         params[:via] ? params[:via] : '',
         device_type: request.device_type,
@@ -101,7 +104,7 @@ module Concerns::Logging
   end
 
   def create_crawler_log
-    params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+    save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
 
     attrs = {
       controller:  controller_name,
@@ -112,7 +115,7 @@ module Concerns::Logging
       ip:          request.ip,
       method:      request.method,
       path:        request.path.to_s.truncate(180),
-      params:      params.empty? ? '' : params.to_json.truncate(180),
+      params:      save_params.empty? ? '' : save_params.to_json.truncate(180),
       status:      response.status,
       user_agent:  request.user_agent.to_s.truncate(180),
     }

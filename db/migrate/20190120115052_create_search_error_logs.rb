@@ -14,6 +14,7 @@ class CreateSearchErrorLogs < ActiveRecord::Migration[4.2]
       t.boolean :xhr,         null: false, default: false
       t.string  :method,      null: false, default: ''
       t.string  :path,        null: false, default: ''
+      t.string  :params,      null: true
       t.integer :status,      null: false, default: -1
       t.string  :via,         null: false, default: ''
 
