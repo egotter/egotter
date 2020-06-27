@@ -5,6 +5,6 @@ cmd="/usr/local/bin/bundle exec rails runner $1"
 
 SECONDS=0
 
-echo "`date` $cmd started" >>$log 2>&1
+echo "$(date) \e[33m$cmd started\e[m" >>$log 2>&1
 cd /var/egotter && RAILS_ENV=production $cmd >>$log 2>&1
-echo "`date` $cmd finished elapsed=$SECONDS" >>$log 2>&1
+echo "$(date) \e[33m$cmd finished elapsed=${SECONDS}\e[m" >>$log 2>&1
