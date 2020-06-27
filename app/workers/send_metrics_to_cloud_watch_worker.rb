@@ -277,10 +277,12 @@ class SendMetricsToCloudWatchWorker
 
   def send_requests_metrics
     namespace = "Requests#{"/#{Rails.env}" unless Rails.env.production?}"
-    duration = {created_at: 10.minutes.ago..Time.zone.now}
+    duration = 1.minute
+    condition = {created_at: duration.ago..Time.zone.now}
 
     [
         CreateTwitterUserRequest,
+        AssembleTwitterUserRequest,
         DeleteTweetsRequest,
         FollowRequest,
         ResetCacheRequest,
@@ -288,12 +290,12 @@ class SendMetricsToCloudWatchWorker
         TweetRequest,
         UnfollowRequest,
     ].each do |klass|
-      finished_count = klass.where(duration).where.not(finished_at: nil).count
-      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Finished', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
+      finished_count = klass.where(condition).where.not(finished_at: nil).count
+      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Status', value: 'finished'}, {name: 'Duration', value: duration.inspect}]}
       put_metric_data('FinishCount', finished_count, options) if finished_count > 0
 
-      unfinished_count = klass.where(duration).where(finished_at: nil).count
-      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Finished', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
+      unfinished_count = klass.where(condition).where(finished_at: nil).count
+      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Status', value: 'not_finished'}, {name: 'Duration', value: duration.inspect}]}
       put_metric_data('NotFinishedCount', unfinished_count, options) if unfinished_count > 0
     end
   end
