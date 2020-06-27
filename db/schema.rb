@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_27_090719) do
+ActiveRecord::Schema.define(version: 2020_06_22_103618) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -928,6 +928,7 @@ ActiveRecord::Schema.define(version: 2020_05_27_090719) do
     t.string "device_type", default: "", null: false
     t.string "os", default: "", null: false
     t.string "browser", default: "", null: false
+    t.string "ip"
     t.string "user_agent", default: "", null: false
     t.string "referer", default: "", null: false
     t.datetime "created_at", null: false
@@ -967,6 +968,7 @@ ActiveRecord::Schema.define(version: 2020_05_27_090719) do
     t.string "device_type", default: "", null: false
     t.string "os", default: "", null: false
     t.string "browser", default: "", null: false
+    t.string "ip"
     t.string "user_agent", default: "", null: false
     t.text "referer"
     t.string "referral", default: "", null: false

@@ -19,6 +19,7 @@
 #  device_type :string(191)      default(""), not null
 #  os          :string(191)      default(""), not null
 #  browser     :string(191)      default(""), not null
+#  ip          :string(191)
 #  user_agent  :string(191)      default(""), not null
 #  referer     :string(191)      default(""), not null
 #  created_at  :datetime         not null

@@ -20,6 +20,7 @@ class CreateSearchErrorLogs < ActiveRecord::Migration[4.2]
       t.string  :device_type, null: false, default: ''
       t.string  :os,          null: false, default: ''
       t.string  :browser,     null: false, default: ''
+      t.string  :ip,          null: true
       t.string  :user_agent,  null: false, default: ''
       t.string  :referer,     null: false, default: ''
 
