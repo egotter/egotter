@@ -241,6 +241,7 @@ GEM
     httpclient (2.8.3)
     i18n (1.8.3)
       concurrent-ruby (~> 1.0)
+    idn-ruby (0.1.0)
     jaro_winkler (1.5.4)
     jmespath (1.4.0)
     jquery-rails (4.3.5)
@@ -454,6 +455,9 @@ GEM
     tilt (2.0.10)
     timeout_job (0.1.1)
       sidekiq (> 6.0, < 7.0)
+    twitter-text (3.1.0)
+      idn-ruby
+      unf (~> 0.1.0)
     twitter_with_auto_pagination (0.15.1)
       activesupport
       parallel
@@ -550,6 +554,7 @@ DEPENDENCIES
   therubyracer
   timeout_job
   twitter!
+  twitter-text
   twitter_with_auto_pagination
   tzinfo-data
   uglifier (>= 1.3.0)
