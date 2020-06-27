@@ -334,6 +334,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
   rescue CreateTwitterUserRequest::Unauthorized,
       CreateTwitterUserRequest::TooShortCreateInterval,
       CreateTwitterUserRequest::TooLittleFriends,
+      CreateTwitterUserRequest::SoftSuspended,
       CreateTwitterUserRequest::NotChanged => e
     logger.info "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
   rescue => e
