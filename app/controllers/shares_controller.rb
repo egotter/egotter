@@ -1,3 +1,4 @@
+# TODO Remove later
 class SharesController < ApplicationController
   before_action :reject_crawler
   before_action :require_login!

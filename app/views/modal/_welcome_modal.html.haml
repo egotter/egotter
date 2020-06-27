@@ -1,12 +1,12 @@
 -# This modal is always embedded because it is used in settings page.
-- data = {url: shares_path(via: current_via('share_egotter_modal')), success_message: t('.share.success'), error_message: t('.share.error')}
+- data = {url: api_v1_share_tweets_path(via: current_via('share_egotter_modal')), success_message: t('.share.success'), error_message: t('.share.error')}
 = modal_dialog id: 'share-modal', title: t('.share.title_html'), button: {positive: t('.share.ok'), negative: t('.share.cancel')}, data: data do
   %img.d-block.mx-auto{src: image_path('/egotter_thanks_840x483.png'), width: request.from_pc? ? '400' : '300'}
   %p.mt-3= t('.share.note_for_count_html', count: SearchCountLimitation.current_sharing_bonus(current_user))
   %small
     %textarea{rows: '3', style: 'width: 100%; -webkit-appearance: none;'}= t('.follow.tweet_text', kaomoji: Kaomoji.happy)
     = t('.share.note_html')
-    https://egotter.com #egotter
+    https://egotter.com
 
 - if params[:follow_dialog] == '1'
   - data = {url: follows_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')}

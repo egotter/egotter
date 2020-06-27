@@ -163,6 +163,7 @@ module Tasks
 
       def update_misc
         [
+            'sudo yum install -y libidn-devel',
             'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status',
             'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
             'sudo rm -rf /var/tmp/aws-mon/*',

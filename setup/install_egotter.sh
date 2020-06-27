@@ -27,6 +27,7 @@ yum update -y
 yum groupinstall -y "Development Tools"
 yum install -y git tmux dstat htop monit tree nginx httpd-tools
 yum install -y openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel
+yum install -y libidn-devel # twitter-text gem
 # set +e
 # rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 # set -e

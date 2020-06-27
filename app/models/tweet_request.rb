@@ -22,8 +22,6 @@ class TweetRequest < ApplicationRecord
   belongs_to :user
 
   validates :user_id, presence: true
-  validates :text, format: %r[#{Rails.env.production? ? 'https://egotter\.com' : 'https://egotter\.com|http://localhost:3000'}]
-  validates :text, length: {maximum: 180}
 
   before_validation :truncate_text
 
@@ -32,12 +30,37 @@ class TweetRequest < ApplicationRecord
   end
 
   def perform!
-    tweet = client.update(text)
+    tweet = client.update(text + ' ' + self.class.share_suffix)
     update(tweet_id: tweet.id)
     tweet
   end
 
   def client
     @client ||= user.api_client.twitter
+  end
+
+  class << self
+    def share_suffix
+      time = I18n.l(Time.zone.now, format: :date_hyphen)
+      params = {
+          utm_source: 'share_tweet',
+          utm_medium: 'tweet',
+          utm_campaign: "share_tweet_#{time}",
+          via: "share_tweet_#{time}"
+      }
+      '#egotter ' + Rails.application.routes.url_helpers.root_url(params)
+    end
+  end
+
+  class TextValidator
+    include Twitter::TwitterText::Validation
+
+    def initialize(text)
+      @text = text
+    end
+
+    def valid?
+      parse_tweet(@text)[:valid]
+    end
   end
 end
