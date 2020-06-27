@@ -330,7 +330,7 @@ describe Concerns::ValidationConcern, type: :controller do
         allow(controller).to receive(:sign_in_path).with(anything).and_return('sign_in_path')
       end
       it do
-        expect(controller).to receive(:create_search_error_log).with(any_args)
+        expect(controller).to receive(:create_error_log).with(any_args)
         expect(controller).to receive(:render).with(hash_including(template: 'home/new', status: :unauthorized))
         subject
       end

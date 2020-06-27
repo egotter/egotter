@@ -60,6 +60,6 @@ class ApplicationController < ActionController::Base
       redirect_to root_path_for(controller: controller_name), alert: message
     end
 
-    create_search_error_log(location, message, ex)
+    create_error_log(location, message, ex)
   end
 end

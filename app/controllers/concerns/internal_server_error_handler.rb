@@ -18,7 +18,7 @@ module Concerns::InternalServerErrorHandler
     notify_airbrake(ex, request_details_json)
 
     message = internal_server_error_message
-    create_search_error_log(__method__, message, ex)
+    create_error_log(__method__, message, ex)
 
     if request.xhr?
       render json: {error: message}, status: :internal_server_error

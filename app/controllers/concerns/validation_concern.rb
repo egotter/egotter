@@ -18,7 +18,7 @@ module Concerns::ValidationConcern
       respond_with_error(:unauthorized, message)
     else
       message = t('before_sign_in.need_login_html', url: sign_in_path(via: current_via(__method__), redirect_path: request.fullpath))
-      create_search_error_log(__method__, message)
+      create_error_log(__method__, message)
       flash.now[:alert] = message
       @has_error = true
       render template: 'home/new', formats: %i(html), status: :unauthorized
@@ -48,7 +48,7 @@ module Concerns::ValidationConcern
       @screen_name = @twitter_user.screen_name
       @redirect_path = timeline_path(screen_name: @screen_name)
       @via = params['via'].presence || current_via('render_template')
-      create_search_error_log(__method__, '')
+      create_error_log(__method__, '')
       render template: 'searches/create', formats: %i(html), layout: false
     else
       respond_with_error(:bad_request, t('application.twitter_user_not_found'))
@@ -177,7 +177,7 @@ module Concerns::ValidationConcern
 
       url = sign_in_path(via: current_via(__method__), redirect_path: request.fullpath)
       message = search_limitation_soft_limited_message(user[:screen_name], url)
-      create_search_error_log(__method__, message)
+      create_error_log(__method__, message)
       true
     else
       false
@@ -202,7 +202,7 @@ module Concerns::ValidationConcern
       # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
       set_bypassed_notice_message('too_many_searches')
       redirect_to profile_path(screen_name: twitter_user.screen_name)
-      create_search_error_log(__method__, message)
+      create_error_log(__method__, message)
     end
 
     true
@@ -220,7 +220,7 @@ module Concerns::ValidationConcern
       respond_with_error(:bad_request, message)
     else
       redirect_to profile_path(screen_name: twitter_user.screen_name), alert: message
-      create_search_error_log(__method__, message)
+      create_error_log(__method__, message)
     end
 
     true
