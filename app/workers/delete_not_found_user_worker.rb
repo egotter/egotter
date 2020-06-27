@@ -15,6 +15,6 @@ class DeleteNotFoundUserWorker
   rescue ActiveRecord::RecordNotUnique => e
     # Do nothing
   rescue => e
-    logger.warn "#{e.inspect} screen_name=#{screen_name}"
+    logger.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
   end
 end
