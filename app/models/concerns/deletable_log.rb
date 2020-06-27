@@ -5,6 +5,10 @@ module Concerns::DeletableLog
 
   class_methods do
     def delete_old_logs(year, month)
+      unless File.basename($0) == 'rake'
+        raise "Don't call #{self}##{__method__} outside Rake tasks"
+      end
+
       first_log = order(created_at: :asc).first
       if first_log.nil?
         puts "#{table_name} is empty table"
@@ -21,14 +25,20 @@ module Concerns::DeletableLog
       end_time = time.end_of_month.to_s(:db)
       puts "start_time=#{start_time} end_time=#{end_time}"
 
+      sigint = Util::Sigint.new.trap
+
       logs = where(created_at: start_time..end_time).select(:id)
-      logs_count = logs.find_in_batches(batch_size: 100_000).lazy.map(&:size).sum
+      logs_count = logs.find_in_batches(batch_size: 10_000).lazy.map(&:size).sum
       puts "Delete #{logs_count} records from #{table_name}"
 
+      return if sigint.trapped?
+
       if logs.any?
-        logs.find_in_batches(batch_size: 100_000) do |logs_array|
+        logs.find_in_batches(batch_size: 10_000) do |logs_array|
           where(id: logs_array.map(&:id)).delete_all
           print '.'
+
+          return if sigint.trapped?
         end
       end
     end
