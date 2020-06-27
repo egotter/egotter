@@ -290,12 +290,12 @@ class SendMetricsToCloudWatchWorker
         TweetRequest,
         UnfollowRequest,
     ].each do |klass|
+      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Duration', value: duration.inspect}]}
+
       finished_count = klass.where(condition).where.not(finished_at: nil).count
-      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Status', value: 'finished'}, {name: 'Duration', value: duration.inspect}]}
       put_metric_data('FinishCount', finished_count, options) if finished_count > 0
 
       unfinished_count = klass.where(condition).where(finished_at: nil).count
-      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Status', value: 'not_finished'}, {name: 'Duration', value: duration.inspect}]}
       put_metric_data('NotFinishedCount', unfinished_count, options) if unfinished_count > 0
     end
   end
