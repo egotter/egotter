@@ -11,7 +11,7 @@ class AssembleTwitterUserWorker
   end
 
   def after_skip(*args)
-    logger.warn "The job of #{self.class} is skipped args=#{args.inspect}"
+    logger.info "The job of #{self.class} is skipped args=#{args.inspect}"
   end
 
   def expire_in
