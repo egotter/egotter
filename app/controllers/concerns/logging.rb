@@ -40,6 +40,7 @@ module Concerns::Logging
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
+      ip:          request.ip,
       user_agent:  ensure_utf8(request.user_agent.to_s.truncate(180)),
       referer:     request.referer.to_s.truncate(180),
       created_at:  Time.zone.now
