@@ -23,12 +23,12 @@ module Tasks
       def run_copy(src_path, dst_path)
         if !src_path.include?('*') && !dst_path.include?('*')
           if exec_command("sudo test -f #{dst_path}", exception: false, colored: false)
-            diff_src = dst_path
+            diff_src = src_path
           else
             diff_src = '/dev/null'
           end
 
-          unless exec_command("sudo colordiff -u #{diff_src} #{dst_path}", exception: false, colored: false)
+          unless exec_command("sudo colordiff -u #{dst_path} #{diff_src}", exception: false, colored: false)
             exec_command("sudo cp -f #{src_path} #{dst_path}")
           end
         else
