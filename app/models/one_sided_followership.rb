@@ -27,5 +27,9 @@ class OneSidedFollowership < ApplicationRecord
       import_from!(twitter_user.uid, uids)
       uids
     end
+
+    def delete_by_uid(uid)
+      where(from_uid: uid).delete_all if exists?(from_uid: uid)
+    end
   end
 end
