@@ -57,6 +57,8 @@ class AssembleTwitterUserRequest < ApplicationRecord
     # cleanup
     OneSidedFriendship.delete_by_uid(twitter_user.uid)
     OneSidedFollowership.delete_by_uid(twitter_user.uid)
+    InactiveFriendship.delete_by_uid(twitter_user.uid)
+    InactiveFollowership.delete_by_uid(twitter_user.uid)
   end
 
   def validate_record_creation_order!
