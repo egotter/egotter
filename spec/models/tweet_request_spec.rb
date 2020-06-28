@@ -19,13 +19,13 @@ RSpec.describe TweetRequest, type: :model do
       end
     end
 
-    [
-        'Hello.',
-    ].each do |str|
-      context "text is #{str}" do
-        let(:text) { str }
-        it { is_expected.to be_falsey }
-      end
-    end
+    # [
+    #     'Hello.',
+    # ].each do |str|
+    #   context "text is #{str}" do
+    #     let(:text) { str }
+    #     it { is_expected.to be_falsey }
+    #   end
+    # end
   end
 end
