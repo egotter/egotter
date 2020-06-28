@@ -28,13 +28,12 @@ module Concerns::DeletableLog
       sigint = Util::Sigint.new.trap
 
       logs = where(created_at: start_time..end_time).select(:id)
-      logs_count = logs.find_in_batches(batch_size: 10_000).lazy.map(&:size).sum
-      puts "Delete #{logs_count} records from #{table_name}"
+      puts "Delete #{logs.size} records from #{table_name}"
 
       return if sigint.trapped?
 
-      if logs.any?
-        logs.find_in_batches(batch_size: 10_000) do |logs_array|
+      if logs.size > 0
+        logs.find_in_batches(batch_size: 1000) do |logs_array|
           where(id: logs_array.map(&:id)).delete_all
           print '.'
 
