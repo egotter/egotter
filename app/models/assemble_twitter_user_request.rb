@@ -47,6 +47,11 @@ class AssembleTwitterUserRequest < ApplicationRecord
         uids = twitter_user.calc_uids_for(klass)
         klass.import_from!(twitter_user.uid, uids)
       end
+
+      # cleanup
+      if klass == S3::OneSidedFriendship
+        OneSidedFriendship.delete_by_uid(twitter_user.uid)
+      end
     rescue => e
       logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"
       logger.info e.backtrace.join("\n")
