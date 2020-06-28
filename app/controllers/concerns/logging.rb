@@ -21,6 +21,7 @@ module Concerns::Logging
   def create_access_log(options = {})
     return if access_log_disabled
     return create_crawler_log if from_crawler?
+    return if request.user_agent == 'ApacheBench/2.3' && request.ip == '127.0.0.1'
 
     uid, screen_name = find_uid_and_screen_name
     save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
