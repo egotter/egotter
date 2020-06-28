@@ -9,27 +9,38 @@ RSpec.describe PeriodicReport do
     let(:end_date) { Time.zone.now }
     let(:unfriends) { %w(a b c) }
     let(:total_unfollowers) { %w(x1 y1 z1) }
-
-    subject do
-      described_class.periodic_message(
-          user.id,
+    let(:options) do
+      {
           request_id: request.id,
           start_date: start_date,
           end_date: end_date,
           unfriends: unfriends,
           unfollowers: unfollowers,
           total_unfollowers: total_unfollowers
-      )
+      }
     end
+
+    subject { described_class.periodic_message(user.id, options) }
 
     context 'unfollowers.size is greater than 1' do
       let(:unfollowers) { %w(x y z) }
       it { is_expected.to be_truthy }
     end
 
-    context 'unfollowers.size is 1' do
+    context 'unfollowers.size is 0' do
       let(:unfollowers) { [] }
       it { is_expected.to be_truthy }
+
+      context 'followers count decreased' do
+        before do
+          options.merge!(first_followers_count: 2)
+          options.merge!(last_followers_count: 1)
+        end
+        it do
+          expect(described_class).to receive(:followers_count_decreased?).with(2, 1).and_call_original
+          is_expected.to be_truthy
+        end
+      end
     end
   end
 

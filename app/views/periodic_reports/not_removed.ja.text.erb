@@ -4,7 +4,7 @@
 <%= aggregation_period %>
 
 フォロワー数：
-<%= followers_count_change %>
+<%= followers_count_change %><%= ' ※リムられていなくてもフォロワー数が1〜2人変わることがあります' if followers_count_notice %>
 
 最新のリムられ：
 <%= total_unfollower_urls.join("\n") %>

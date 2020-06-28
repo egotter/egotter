@@ -78,6 +78,7 @@ class PeriodicReport < ApplicationRecord
           aggregation_period: calc_aggregation_period(start_date, end_date),
           period_name: pick_period_name,
           followers_count_change: calc_followers_count_change(options[:first_followers_count], options[:last_followers_count], options[:latest_followers_count]),
+          followers_count_notice: unfollowers.empty? && followers_count_decreased?(options[:first_followers_count], options[:last_followers_count]),
           first_friends_count: options[:first_friends_count],
           first_followers_count: options[:first_followers_count],
           last_friends_count: options[:last_friends_count],
@@ -327,8 +328,12 @@ class PeriodicReport < ApplicationRecord
       if first_count && last_count
         "#{first_count} - #{last_count}"
       else
-        latest_count.to_s
+        latest_count || '-1'
       end
+    end
+
+    def followers_count_decreased?(first_count, last_count)
+      first_count && last_count && first_count > last_count
     end
 
     def profile_url(screen_name, options)
