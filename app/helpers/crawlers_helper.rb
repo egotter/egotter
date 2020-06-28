@@ -37,7 +37,7 @@ module CrawlersHelper
       'ias-jp/3.1',
       'TTD-Content',
       'Barkrowler',
-      'Hatena Antenna',
+      'Hatena',
       'Daum/4.1',
       'TrendsmapResolver',
       'YaK/1.0',
@@ -46,25 +46,34 @@ module CrawlersHelper
       'YandexMobileBot',
       'Yeti/1.1',
       'zgrab/0.x',
+      '%E3%82%A6%E3%82%A4%E3%83%AB%E3%82%B9%E3%83%90%E3%82%B9%E3%82%BF%E3%83%BC%20for%20Mac/1', # ウイルスバスター for Mac/1
+      'LightspeedSystemsCrawler',
+      'Nuzzel',
+      'iCoreService',
+      'NetSystemsResearch',
+      'DoCoMo/2.0',
+      'Clipbox/2.2.5',
+      'AHC/2.1',
   ]
   CRAWLERS_REGEXP = Regexp.union(CRAWLER_WORDS)
 
-  CRAWLERS_FULL_UA = [
+  CRAWLER_FULL_NAMES = [
       'WWWC/1.13',
       'Chrome',
-      'Hatena::UserAgent/0.02',
-      'Hatena-Favicon2 (http://www.hatena.ne.jp/faq/)',
-      'Mozilla/5.0 (compatible; TrendsmapResolver/0.1)',
       'Mozilla/5.0 (compatible; evc-batch/2.0)',
-      'Mozilla/5.0 zgrab/0.x',
       'Ruby',
       'bot',
+      'AWS Security Scanner',
+      'Mozilla/5.0',
+      'ceron.jp/1.0',
+      'help@dataminr.com',
       '',
   ]
+  CRAWLER_FULL_NAMES_REGEXP = Regexp.new('\A(' + CRAWLER_FULL_NAMES.map { |name| name.gsub('(', '\(').gsub(')', '\)') }.join('|') + ')\z')
 
   def from_minor_crawler?(user_agent)
     ua = user_agent.to_s
-    ua.include?('Bot') || CRAWLERS_FULL_UA.include?(ua) || ua.match?(CRAWLERS_REGEXP)
+    ua.include?('Bot') || ua.match?(CRAWLERS_REGEXP) || ua.match?(CRAWLER_FULL_NAMES_REGEXP)
   end
 
   def maybe_bot?
