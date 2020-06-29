@@ -34,6 +34,7 @@ class User < ApplicationRecord
   has_many :visits, class_name: 'Ahoy::Visit'
 
   include Concerns::User::ApiAccess
+  include Concerns::User::Purchases
   include Concerns::TwitterUser::Inflections
   include Concerns::Visitor::Activeness
 
@@ -207,18 +208,6 @@ class User < ApplicationRecord
 
   def admin?
     uid == ADMIN_UID
-  end
-
-  def has_valid_subscription?
-    orders.unexpired.any?
-  end
-
-  def purchased_plan_name
-    orders.unexpired.last.name
-  end
-
-  def purchased_search_count
-    orders.unexpired.last.search_count
   end
 
   include Concerns::LastSessionAnalytics
