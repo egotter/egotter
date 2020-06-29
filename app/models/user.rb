@@ -210,6 +210,10 @@ class User < ApplicationRecord
     uid == ADMIN_UID
   end
 
+  def add_atmark_to_periodic_report?
+    has_valid_subscription?
+  end
+
   include Concerns::LastSessionAnalytics
 
   def last_session_duration

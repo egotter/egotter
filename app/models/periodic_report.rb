@@ -87,9 +87,9 @@ class PeriodicReport < ApplicationRecord
           unfollowers_count: options[:unfollowers_count],
           unfriends: options[:unfriends],
           unfollowers: unfollowers,
-          unfollower_urls: unfollowers.map { |name| "#{name} #{profile_url(name, url_options)}" },
+          unfollower_urls: generate_profile_urls(unfollowers, url_options, add_atmark: user.add_atmark_to_periodic_report?),
           total_unfollowers: total_unfollowers,
-          total_unfollower_urls: total_unfollowers.map { |name| "#{name} #{profile_url(name, url_options)}" },
+          total_unfollower_urls: generate_profile_urls(total_unfollowers, url_options, add_atmark: user.add_atmark_to_periodic_report?),
           regular_subscription: !StopPeriodicReportRequest.exists?(user_id: user.id),
           request_id_text: request_id_text(user, options[:request_id], options[:worker_context]),
           timeline_url: timeline_url(user, url_options),
@@ -337,8 +337,11 @@ class PeriodicReport < ApplicationRecord
       first_count && last_count && first_count > last_count
     end
 
-    def profile_url(screen_name, options)
-      super(screen_name, campaign_params('report_profile').merge(options))
+    def generate_profile_urls(screen_names, options, add_atmark: false)
+      url_options = campaign_params('report_profile').merge(options)
+      screen_names.map do |screen_name|
+        "#{'@' if add_atmark}#{screen_name} #{profile_url(screen_name, url_options)}"
+      end
     end
 
     def timeline_url(user, options)
