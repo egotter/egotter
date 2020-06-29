@@ -157,6 +157,7 @@ class PeriodicReport < ApplicationRecord
       message = ERB.new(template.read).result_with_hash(
           access_day: user.access_days.last,
           url: root_url(url_params),
+          pricing_url: pricing_url(via: 'web_access_hard_limited_message', og_tag: 'false'),
       )
 
       new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
@@ -244,7 +245,8 @@ class PeriodicReport < ApplicationRecord
     def not_following_message
       template = Rails.root.join('app/views/periodic_reports/not_following.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          url: sign_in_url(force_login: true, follow: true, via: 'not_following_message', og_tag: 'false')
+          url: sign_in_url(force_login: true, follow: true, via: 'not_following_message', og_tag: 'false'),
+          pricing_url: pricing_url(via: 'not_following_message', og_tag: 'false'),
       )
 
       new(user: nil, message: message, token: nil)

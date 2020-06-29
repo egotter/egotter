@@ -50,9 +50,9 @@ class CreatePeriodicReportWorker
     request.worker_context = self.class
     request.check_credentials = true
     request.check_interval = user_requested_job? && !options.has_key?('scheduled_request')
-    request.check_following_status = user_requested_job?
+    request.check_following_status = !request.user.has_valid_subscription? && user_requested_job?
     request.check_allotted_messages_count = batch_requested_job?
-    request.check_web_access = user_requested_job?
+    request.check_web_access = !request.user.has_valid_subscription? && user_requested_job?
     request.send_only_if_changed = options['send_only_if_changed']
 
     options['create_twitter_user'] = true unless options.has_key?('create_twitter_user')
