@@ -2,19 +2,44 @@
 
 var Welcome = {};
 
-class ShareDialog {
-  constructor() {
-    this.$el = $('#share-modal');
-    this.cache_key = 'share_dialog';
+class ModalDialog {
+  constructor($el) {
+    this.$el = $el;
+    this.cache_key = $el.attr('id');
     this.cache = window['sessionStorage'] || {};
+  }
+
+  show(force) {
+    if (force) {
+      this.$el.modal();
+    } else {
+      if (!this.cache[this.cache_key]) {
+        console.log('show', this.$el);
+        this.cache[this.cache_key] = true;
+        this.$el.modal('show');
+      } else {
+        console.log('already shown', this.$el);
+      }
+    }
+  }
+
+  on(event, fn) {
+    this.$el.on(event, fn);
+  }
+}
+
+class ShareDialog extends ModalDialog {
+  constructor() {
+    super($('#share-modal'));
 
     var $el = this.$el;
 
     $el.find('button.positive').on('click', function () {
       var tweet = $el.find('textarea').val();
+      var url = $el.data('url');
 
-      $.post($el.data('url'), {text: tweet}).done(function (res) {
-        console.log('ShareDialog', res);
+      $.post(url, {text: tweet}).done(function (res) {
+        console.log(url, res);
         SnackMessage.success($el.data('success-message'));
 
       }).fail(function (xhr) {
@@ -28,33 +53,13 @@ class ShareDialog {
       $el.modal('hide');
     });
   }
-
-  show(force) {
-    if (force) {
-      this.$el.modal();
-    } else {
-      if (!this.cache[this.cache_key]) {
-        console.log('show share-dialog', this.$el);
-        this.cache[this.cache_key] = true;
-        this.$el.modal('show');
-      } else {
-        console.log('share-dialog is already shown');
-      }
-    }
-  }
-
-  on(event, fn) {
-    this.$el.on(event, fn);
-  }
 }
 
 Welcome.ShareDialog = ShareDialog;
 
-class FollowDialog {
+class FollowDialog extends ModalDialog {
   constructor() {
-    this.$el = $('#follow-modal');
-    this.cache_key = 'follow_dialog';
-    this.cache = window['sessionStorage'] || {};
+    super($('#follow-modal'));
 
     var $el = this.$el;
 
@@ -68,21 +73,12 @@ class FollowDialog {
       $el.modal('hide');
     });
   }
-
-  show() {
-    if (!this.cache[this.cache_key]) {
-      console.log('show follow-dialog', this.$el);
-      this.cache[this.cache_key] = true;
-      this.$el.modal();
-    } else {
-      console.log('follow-dialog is already shown');
-    }
-  }
 }
 
-class ReviveDialog {
+class ReviveDialog extends ModalDialog {
   constructor() {
-    this.$el = $('#revive-modal');
+    super($('#revive-modal'));
+
     var $el = this.$el;
     var url = $el.data('url');
 
@@ -90,10 +86,6 @@ class ReviveDialog {
       window.open(url, '_blank');
       $el.modal('hide');
     });
-  }
-
-  show() {
-    this.$el.modal();
   }
 }
 
@@ -121,28 +113,48 @@ class Util {
   }
 }
 
-Welcome.showFollowDialogAndShareDialog = function (followingEgotter) {
-  var shareDialog = new ShareDialog();
-  var followDialog = new FollowDialog();
+class ModalQueue {
+  constructor() {
+    this.ary = [];
+  }
 
-  if (Util.showReviveDialog()) {
-    new ReviveDialog().show();
-  } else {
-    if (Util.showFollowDialog() && Util.showShareDialog()) {
-      shareDialog.on('hidden.bs.modal', function hidden() {
-        if (!followingEgotter) {
-          followDialog.show();
-        }
-      });
-      shareDialog.show();
-    } else if (Util.getParameterByName('follow_dialog') === '1') {
-      if (!followingEgotter) {
-        followDialog.show();
-      }
-    } else if (Util.getParameterByName('share_dialog') === '1') {
-      shareDialog.show();
+  add($el) {
+    var ary = this.ary;
+    ary.push($el);
+    var self = this;
+
+    $el.on('hidden.bs.modal', function () {
+      self.next();
+    });
+  }
+
+  start() {
+    if (this.ary.length >= 1) {
+      this.ary.pop().show();
     }
   }
+
+  next() {
+    this.start();
+  }
+}
+
+Welcome.showFollowDialogAndShareDialog = function (followingEgotter) {
+  var queue = new ModalQueue();
+
+  if (Util.showReviveDialog()) {
+    queue.add(new ReviveDialog());
+  }
+
+  if (Util.showFollowDialog() && !followingEgotter) {
+    queue.add(new FollowDialog());
+  }
+
+  if (Util.showShareDialog()) {
+    queue.add(new ShareDialog());
+  }
+
+  queue.start();
 };
 
 window.Welcome = Welcome;
