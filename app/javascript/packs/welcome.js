@@ -6,19 +6,19 @@ class ModalDialog {
   constructor($el) {
     this.$el = $el;
     this.cache_key = $el.attr('id');
-    this.cache = window['sessionStorage'] || {};
+    this.cache = new Egotter.Cache();
   }
 
   show(force) {
     if (force) {
       this.$el.modal();
     } else {
-      if (!this.cache[this.cache_key]) {
-        console.log('show', this.$el);
-        this.cache[this.cache_key] = true;
-        this.$el.modal('show');
-      } else {
+      if (this.cache.read(this.cache_key)) {
         console.log('already shown', this.$el);
+      } else {
+        console.log('show', this.$el);
+        this.cache.write(this.cache_key, true);
+        this.$el.modal('show');
       }
     }
   }
