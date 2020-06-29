@@ -94,6 +94,7 @@ class PeriodicReport < ApplicationRecord
           request_id_text: request_id_text(user, options[:request_id], options[:worker_context]),
           timeline_url: timeline_url(user, url_options),
           settings_url: settings_url(url_options),
+          faq_url: support_url(url_options),
       )
 
       new(user: user, message: message, token: token)
