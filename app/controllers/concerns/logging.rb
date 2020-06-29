@@ -47,7 +47,6 @@ module Concerns::Logging
       created_at:  Time.zone.now
     }
 
-    attrs.update(options) if options.any?
     CreateSearchLogWorker.perform_async(attrs)
     CreateAccessDayWorker.perform_async(current_user.id) if user_signed_in?
 
@@ -61,10 +60,10 @@ module Concerns::Logging
       end
     end
   rescue Encoding::UndefinedConversionError => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} params=#{params.inspect} user_agent=#{request.user_agent}"
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
     notify_airbrake(e)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} params=#{params.inspect} user_agent=#{request.user_agent}"
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
     notify_airbrake(e)
   end
 
@@ -103,7 +102,7 @@ module Concerns::Logging
 
     CreateSearchErrorLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
     notify_airbrake(e)
   end
 
@@ -129,7 +128,7 @@ module Concerns::Logging
     notify_airbrake(e)
   end
 
-  def create_sign_in_log(user, context:, via:, follow:, tweet:, referer:, ab_test: '')
+  def create_sign_in_log(user, context:, via:, follow:, tweet:, referer:)
     attrs = {
       session_id:  egotter_visit_id,
       user_id:     user.id,
@@ -149,7 +148,7 @@ module Concerns::Logging
     }
     CreateSignInLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} action_name=#{action_name}"
     notify_airbrake(e)
   end
 

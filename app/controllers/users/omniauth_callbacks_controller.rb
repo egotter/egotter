@@ -22,14 +22,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def twitter
     via = session[:sign_in_via] ? session.delete(:sign_in_via) : ''
     referer = session[:sign_in_referer] ? session.delete(:sign_in_referer) : ''
-    ab_test = session[:sign_in_ab_test] ? session.delete(:sign_in_ab_test) : ''
     follow = 'true' == session.delete(:sign_in_follow)
     force_login = 'true' == session.delete(:force_login)
 
     save_context = nil
     begin
       user = User.update_or_create_with_token!(user_params) do |user, context|
-        create_sign_in_log(user, context: context, via: via, follow: follow, tweet: false, referer: referer, ab_test: ab_test)
+        create_sign_in_log(user, context: context, via: via, follow: follow, tweet: false, referer: referer)
         CreateWelcomeMessageWorker.perform_async(user.id) if context == :create
         UpdatePermissionLevelWorker.perform_async(user.id)
         save_context = context
