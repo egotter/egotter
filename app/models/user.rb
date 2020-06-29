@@ -211,7 +211,7 @@ class User < ApplicationRecord
   end
 
   def add_atmark_to_periodic_report?
-    has_valid_subscription?
+    has_valid_subscription? || 1.weeks.ago < created_at
   end
 
   include Concerns::LastSessionAnalytics

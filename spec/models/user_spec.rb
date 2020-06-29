@@ -42,7 +42,7 @@ RSpec.describe User, type: :model do
 
     context 'With new uid' do
       it 'creates new user' do
-        expect { subject }.to change {User.all.size}.by(1)
+        expect { subject }.to change { User.all.size }.by(1)
 
         user = User.last
         expect(user.slice(values.keys)).to match(values)
@@ -52,7 +52,7 @@ RSpec.describe User, type: :model do
     context 'With persisted uid' do
       before { create(:user, uid: values[:uid]) }
       it 'updates the user' do
-        expect { subject }.to_not change {User.all.size}
+        expect { subject }.to_not change { User.all.size }
 
         user = User.last
         expect(user.slice(values.keys)).to match(values)
@@ -116,7 +116,7 @@ RSpec.describe User, type: :model do
     context 'last access is more than the last 3 days' do
       let(:days_count) { 3 }
       before { user.update!(last_access_at: (days_count + 1).days.ago) }
-      it { expect(user.active_access?(days_count)).to be_falsey}
+      it { expect(user.active_access?(days_count)).to be_falsey }
     end
   end
 
@@ -132,7 +132,7 @@ RSpec.describe User, type: :model do
     context 'last access is more than the last 3 days' do
       let(:days_count) { 3 }
       before { user.update!(last_access_at: (days_count + 1).days.ago) }
-      it { expect(user.inactive_access?(days_count)).to be_truthy}
+      it { expect(user.inactive_access?(days_count)).to be_truthy }
     end
   end
 
@@ -207,6 +207,20 @@ RSpec.describe User, type: :model do
     context 'Not enough permission_level' do
       let(:level) { 'read-write' }
       it { is_expected.to be_empty }
+    end
+  end
+
+  describe '#add_atmark_to_periodic_report?' do
+    subject { user.add_atmark_to_periodic_report? }
+    before { user.save! }
+
+    context 'user is created now' do
+      it { is_expected.to be_truthy }
+    end
+
+    context 'user is created a long time ago' do
+      before { user.update!(created_at: 1.month.ago) }
+      it { is_expected.to be_falsey }
     end
   end
 end
