@@ -10,7 +10,7 @@ class ProcessWebhookEventWorker
   end
 
   def unique_in
-    1.second
+    3.seconds
   end
 
   def after_skip(*args)
