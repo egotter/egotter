@@ -129,6 +129,8 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
         CreateTwitterUserRequest::Unauthorized,
         CreateTwitterUserRequest::TooShortCreateInterval,
         CreateTwitterUserRequest::TooLittleFriends,
+        CreateTwitterUserRequest::SoftSuspended,
+        CreateTwitterUserRequest::TemporarilyLocked,
         CreateTwitterUserRequest::NotChanged,
     ].each do |error|
       context "#{error} is raised" do

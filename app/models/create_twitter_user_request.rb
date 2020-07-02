@@ -254,7 +254,7 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class TemporarilyLocked < Error
-    def initialize(uid)
+    def initialize(uid = nil)
       if (user = User.find_by(uid: uid))
         super("locked screen_name=#{user.screen_name}")
       else
