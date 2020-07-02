@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe SendExceptionToRollbarWorker do
   describe '#traverse_hash' do
     let(:worker) { described_class.new }
-    subject { worker.traverse_hash('exception', hash) }
+    subject { worker.send(:traverse_hash, 'exception', hash) }
 
     context 'One level nested' do
       let(:hash) { {'exception' => 'found'} }

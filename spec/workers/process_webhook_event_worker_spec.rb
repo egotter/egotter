@@ -11,7 +11,7 @@ RSpec.describe ProcessWebhookEventWorker do
   describe '#after_skip' do
     subject { worker.after_skip('event') }
     it do
-      expect(worker.logger).to receive(:warn).with(instance_of(String))
+      expect(worker.logger).to receive(:info).with(instance_of(String))
       subject
     end
   end
