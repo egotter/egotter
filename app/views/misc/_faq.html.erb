@@ -1,4 +1,4 @@
-<h3 class="h5 my-5">えごったー全般</h3>
+<h3 class="h5 my-5">えごったー 全般</h3>
 
 
 <img class="img-fluid" style="width: auto; max-height: 300px;" src="<%= image_path '/faq/q1_840x450.png' %>" alt="えごったーとは何ですか？">
@@ -18,8 +18,14 @@
 <div class="text-primary mt-3 mb-1">えごったーを使ったことは誰かにバレますか？</div>
 <div class="mb-5">バレません。通信内容は暗号化されているため、このWebサイトの利用状況を他の人に知られることはありません。</div>
 
+<div class="text-primary mt-3 mb-1">えごったーを使うと勝手にツイートされますか？</div>
+<div class="mb-5">勝手にツイートすることはありませんのでご安心ください。</div>
 
-<h3 class="h5 my-5">リムられ通知</h3>
+<div class="text-primary mt-3 mb-1">えごったーを使うとDMを勝手に見られますか？</div>
+<div class="mb-5">DMを勝手に見ることはありませんのでご安心ください。</div>
+
+
+<h3 class="h5 my-5">リムられ通知 全般</h3>
 
 
 <div class="text-primary mt-3 mb-1">リムられ通知とは何ですか？</div>
@@ -31,6 +37,9 @@
 <div class="text-primary mt-3 mb-1">リムられ通知の有効期限とは何ですか？</div>
 <div class="mb-5">ツイッターの仕様上、DMを一方的に送り続けることはできません。そのため、リムられ通知を受け取るには、定期的に @ego_tter にDMを送る必要があります。これがリムられ通知の有効期限です。これは<span class="egotter-pink">ツイッターの仕様</span>です。</div>
 
+<div class="text-primary mt-3 mb-1">リムられ通知が止まりました。再開することはできますか？</div>
+<div class="mb-5">リムられ通知はいつでも再開できます。「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてみてください。止まっている理由がある場合は、返信のDMに解決方法が書かれています。</div>
+
 <div class="text-primary mt-3 mb-1">リムられ通知の有効期限がすぐに切れるのはどうしてですか？</div>
 <div class="mb-5"><span class="egotter-pink">ツイッターの仕様</span>です。相手からDMの送信がないと、通知DMを送り続けることができないのです。</div>
 
@@ -41,10 +50,29 @@
 <div class="mb-5">Webサイトにログインしてください。@ego_tter のフォローだけではリムられ通知は届きません。</div>
 
 <div class="text-primary mt-3 mb-1">リムられ通知はどれくらいの頻度で届きますか？</div>
-<div class="mb-5">今のところは、朝・昼・夜の1日3回届きます。届く回数を調整する機能は今後用意する予定です。</div>
+<div class="mb-5">今のところは、朝・昼・夜の1日3回届きます。届く回数は<a href="<%= settings_path %>">設定ページ</a>から変更できます。</div>
 
 <div class="text-primary mt-3 mb-1">リムられ通知をすぐに受け取ることはできますか？</div>
 <div class="mb-5">@ego_tter に「リムられ通知 今すぐ送信」とDMしてください。そうすれば、すぐにリムられ通知が届きます。</div>
+
+
+<h3 class="h5 my-5">リムられ通知をDMで操作する</h3>
+
+
+<div class="text-primary mt-3 mb-1">リムられ通知をDMで操作する方法を教えてください</div>
+<div class="mb-5">
+  決められたメッセージをDMで送ることで、リムられ通知をDMで操作することができます。<br>
+  <br>
+  「<strong><%= t('quick_replies.prompt_reports.label3') %></strong>」とDMする<br>
+  リムられ通知をすぐに送信します。もし送信できない場合は、その理由が返信のDMに書かれています。<br>
+  これ以降、リムられ通知は定期的に届くようになります。<br>
+  <br>
+  「<strong><%= t('quick_replies.prompt_reports.label5') %></strong>」とDMする<br>
+  リムられ通知の定期的な送信を停止します。<br>
+  <br>
+  「<strong><%= t('quick_replies.prompt_reports.label4') %></strong>」とDMする<br>
+  リムられ通知の定期的な送信を再開します。<br>
+</div>
 
 
 <h3 class="h5 my-5">データの正確性</h3>
@@ -98,7 +126,7 @@
 
 
 <div class="text-primary mt-3 mb-1">昔のえごったーの機能はもう使えないのですか？</div>
-<div class="mb-5">必要であれば復活させますのでどの機能がほしいか　@ego_tter　までお気軽にご連絡ください。</div>
+<div class="mb-5">必要であれば復活させますのでどの機能がほしいか @ego_tter までお気軽にご連絡ください。</div>
 
 <div class="text-primary mt-3 mb-1">Webサイトをクロールしてもよいですか？</div>
 <div class="mb-5">機械的なものか人が手作業したものかを問わず、えごったーWebサイトのデータ収集は全て禁止です。</div>
