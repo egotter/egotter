@@ -112,9 +112,9 @@ class PeriodicReport < ApplicationRecord
 
     def remind_access_message
       template = Rails.root.join('app/views/periodic_reports/remind_access.ja.text.erb')
-      url_params = campaign_params('remind_access').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)
       message = ERB.new(template.read).result_with_hash(
-          url: root_url(url_params),
+          url: root_url(campaign_params('remind_access').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
+          support_url: support_url(campaign_params('remind_access_support').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
       )
 
       new(user: nil, message: message, token: nil)
@@ -142,9 +142,9 @@ class PeriodicReport < ApplicationRecord
 
     def sending_soft_limited_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/sending_soft_limited.ja.text.erb')
-      url_params = campaign_params('soft_limited').merge(og_tag: false)
       message = ERB.new(template.read).result_with_hash(
-          url: support_url(url_params),
+          url: support_url(campaign_params('soft_limited').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
+          support_url: support_url(campaign_params('soft_limited_support').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
       )
 
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -153,11 +153,11 @@ class PeriodicReport < ApplicationRecord
     def web_access_hard_limited_message(user_id)
       user = User.find(user_id)
       template = Rails.root.join('app/views/periodic_reports/web_access_hard_limited.ja.text.erb')
-      url_params = campaign_params('web_access_hard_limited').merge(og_tag: false)
       message = ERB.new(template.read).result_with_hash(
           access_day: user.access_days.last,
-          url: root_url(url_params),
-          pricing_url: pricing_url(via: 'web_access_hard_limited_message', og_tag: 'false'),
+          url: root_url(campaign_params('web_access_hard_limited').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
+          pricing_url: pricing_url(campaign_params('web_access_hard_limited_pricing').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
+          support_url: support_url(campaign_params('web_access_hard_limited_support').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
       )
 
       new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
@@ -166,7 +166,8 @@ class PeriodicReport < ApplicationRecord
     def interval_too_short_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/interval_too_short.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          interval: I18n.t('datetime.distance_in_words.x_minutes', count: CreatePeriodicReportRequest::SHORT_INTERVAL / 1.minute)
+          interval: I18n.t('datetime.distance_in_words.x_minutes', count: CreatePeriodicReportRequest::SHORT_INTERVAL / 1.minute),
+          support_url: support_url,
       )
 
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -179,7 +180,8 @@ class PeriodicReport < ApplicationRecord
         template = Rails.root.join('app/views/periodic_reports/scheduled_job_exists.ja.text.erb')
         message = ERB.new(template.read).result_with_hash(
             interval: date_helper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
-            sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at)
+            sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at),
+            support_url: support_url,
         )
 
         new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -196,7 +198,8 @@ class PeriodicReport < ApplicationRecord
         template = Rails.root.join('app/views/periodic_reports/scheduled_job_created.ja.text.erb')
         message = ERB.new(template.read).result_with_hash(
             interval: date_helper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
-            sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at)
+            sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at),
+            support_url: support_url,
         )
 
         new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -209,7 +212,8 @@ class PeriodicReport < ApplicationRecord
     def request_interval_too_short_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/request_interval_too_short.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          interval: I18n.t('datetime.distance_in_words.x_seconds', count: CreatePeriodicReportWorker::UNIQUE_IN)
+          interval: I18n.t('datetime.distance_in_words.x_seconds', count: CreatePeriodicReportWorker::UNIQUE_IN),
+          support_url: support_url,
       )
 
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -217,7 +221,9 @@ class PeriodicReport < ApplicationRecord
 
     def cannot_send_messages_message
       template = Rails.root.join('app/views/periodic_reports/cannot_send_messages.ja.text.erb')
-      message = ERB.new(template.read).result
+      message = ERB.new(template.read).result_with_hash(
+          support_url: support_url,
+      )
 
       new(user: nil, message: message, token: nil)
     end
@@ -227,6 +233,7 @@ class PeriodicReport < ApplicationRecord
       message = ERB.new(template.read).result_with_hash(
           sign_in_url: sign_in_url(via: 'unauthorized_message', og_tag: 'false'),
           sign_in_and_follow_url: sign_in_url(follow: true, via: 'unauthorized_message', og_tag: 'false'),
+          support_url: support_url,
       )
 
       new(user: nil, message: message, token: nil)
@@ -237,6 +244,7 @@ class PeriodicReport < ApplicationRecord
       message = ERB.new(template.read).result_with_hash(
           sign_in_url: sign_in_url(via: 'unregistered_message', og_tag: 'false'),
           sign_in_and_follow_url: sign_in_url(follow: true, via: 'unregistered_message', og_tag: 'false'),
+          support_url: support_url,
       )
 
       new(user: nil, message: message, token: nil)
@@ -247,6 +255,7 @@ class PeriodicReport < ApplicationRecord
       message = ERB.new(template.read).result_with_hash(
           url: sign_in_url(force_login: true, follow: true, via: 'not_following_message', og_tag: 'false'),
           pricing_url: pricing_url(via: 'not_following_message', og_tag: 'false'),
+          support_url: support_url(via: 'not_following_message', og_tag: 'false'),
       )
 
       new(user: nil, message: message, token: nil)
@@ -255,7 +264,8 @@ class PeriodicReport < ApplicationRecord
     def permission_level_not_enough_message
       template = Rails.root.join('app/views/periodic_reports/permission_level_not_enough.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          url: sign_in_url(force_login: true, via: 'permission_level_not_enough_message', og_tag: 'false')
+          url: sign_in_url(force_login: true, via: 'permission_level_not_enough_message', og_tag: 'false'),
+          support_url: support_url(via: 'permission_level_not_enough_message', og_tag: 'false'),
       )
 
       new(user: nil, message: message, token: nil)
@@ -263,14 +273,18 @@ class PeriodicReport < ApplicationRecord
 
     def restart_requested_message
       template = Rails.root.join('app/views/periodic_reports/restart_requested.ja.text.erb')
-      message = ERB.new(template.read).result
+      message = ERB.new(template.read).result_with_hash(
+          support_url: support_url,
+      )
 
       new(user: nil, message: message, token: nil)
     end
 
     def stop_requested_message
       template = Rails.root.join('app/views/periodic_reports/stop_requested.ja.text.erb')
-      message = ERB.new(template.read).result
+      message = ERB.new(template.read).result_with_hash(
+          support_url: support_url,
+      )
 
       new(user: nil, message: message, token: nil)
     end
