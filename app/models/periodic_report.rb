@@ -65,7 +65,7 @@ class PeriodicReport < ApplicationRecord
       template = unfollowers.empty? ? TEMPLATES[:not_removed] : TEMPLATES[:removed]
 
       token = generate_token
-      url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', og_tag: 'false'}
+      url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report'}
 
       I18n.backend.store_translations :ja, persons: {one: '%{count}人', other: '%{count}人'}
 
@@ -102,9 +102,8 @@ class PeriodicReport < ApplicationRecord
 
     def remind_reply_message
       template = Rails.root.join('app/views/periodic_reports/remind_reply.ja.text.erb')
-      url_params = campaign_params('remind_reply').merge(og_tag: false)
       message = ERB.new(template.read).result_with_hash(
-          url: support_url(url_params),
+          url: support_url(campaign_params('remind_reply')),
       )
 
       new(user: nil, message: message, token: nil)
@@ -113,8 +112,8 @@ class PeriodicReport < ApplicationRecord
     def remind_access_message
       template = Rails.root.join('app/views/periodic_reports/remind_access.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          url: root_url(campaign_params('remind_access').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
-          support_url: support_url(campaign_params('remind_access_support').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
+          url: root_url(campaign_params('remind_access')),
+          support_url: support_url(campaign_params('remind_access_support')),
       )
 
       new(user: nil, message: message, token: nil)
@@ -130,11 +129,9 @@ class PeriodicReport < ApplicationRecord
         ttl = 5.minutes + rand(300)
       end
 
-      url_params = campaign_params('will_expire').merge(og_tag: false)
-
       message = ERB.new(template.read).result_with_hash(
           interval: date_helper.distance_of_time_in_words(ttl),
-          url: support_url(url_params),
+          url: support_url(campaign_params('will_expire_support')),
       )
 
       new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
@@ -143,8 +140,8 @@ class PeriodicReport < ApplicationRecord
     def sending_soft_limited_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/sending_soft_limited.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          url: support_url(campaign_params('soft_limited').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
-          support_url: support_url(campaign_params('soft_limited_support').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
+          url: support_url(campaign_params('soft_limited')),
+          support_url: support_url(campaign_params('soft_limited_support')),
       )
 
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -155,9 +152,9 @@ class PeriodicReport < ApplicationRecord
       template = Rails.root.join('app/views/periodic_reports/web_access_hard_limited.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           access_day: user.access_days.last,
-          url: root_url(campaign_params('web_access_hard_limited').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
-          pricing_url: pricing_url(campaign_params('web_access_hard_limited_pricing').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
-          support_url: support_url(campaign_params('web_access_hard_limited_support').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)),
+          url: root_url(campaign_params('web_access_hard_limited')),
+          pricing_url: pricing_url(campaign_params('web_access_hard_limited_pricing')),
+          support_url: support_url(campaign_params('web_access_hard_limited_support')),
       )
 
       new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
@@ -167,7 +164,7 @@ class PeriodicReport < ApplicationRecord
       template = Rails.root.join('app/views/periodic_reports/interval_too_short.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           interval: I18n.t('datetime.distance_in_words.x_minutes', count: CreatePeriodicReportRequest::SHORT_INTERVAL / 1.minute),
-          support_url: support_url,
+          support_url: support_url(campaign_params('interval_too_short_support')),
       )
 
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -181,7 +178,7 @@ class PeriodicReport < ApplicationRecord
         message = ERB.new(template.read).result_with_hash(
             interval: date_helper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
             sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at),
-            support_url: support_url,
+            support_url: support_url(campaign_params('scheduled_job_exists_support')),
         )
 
         new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -199,7 +196,7 @@ class PeriodicReport < ApplicationRecord
         message = ERB.new(template.read).result_with_hash(
             interval: date_helper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
             sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at),
-            support_url: support_url,
+            support_url: support_url(campaign_params('scheduled_job_created_support')),
         )
 
         new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -213,7 +210,7 @@ class PeriodicReport < ApplicationRecord
       template = Rails.root.join('app/views/periodic_reports/request_interval_too_short.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           interval: I18n.t('datetime.distance_in_words.x_seconds', count: CreatePeriodicReportWorker::UNIQUE_IN),
-          support_url: support_url,
+          support_url: support_url(campaign_params('request_interval_too_short_support')),
       )
 
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -222,7 +219,7 @@ class PeriodicReport < ApplicationRecord
     def cannot_send_messages_message
       template = Rails.root.join('app/views/periodic_reports/cannot_send_messages.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          support_url: support_url,
+          support_url: support_url(campaign_params('cannot_send_messages_support')),
       )
 
       new(user: nil, message: message, token: nil)
@@ -231,9 +228,9 @@ class PeriodicReport < ApplicationRecord
     def unauthorized_message
       template = Rails.root.join('app/views/periodic_reports/unauthorized.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          sign_in_url: sign_in_url(via: 'unauthorized_message', og_tag: 'false'),
-          sign_in_and_follow_url: sign_in_url(follow: true, via: 'unauthorized_message', og_tag: 'false'),
-          support_url: support_url,
+          sign_in_url: sign_in_url(via: 'unauthorized_message'),
+          sign_in_and_follow_url: sign_in_url(follow: true, via: 'unauthorized_message'),
+          support_url: support_url(campaign_params('unauthorized_support')),
       )
 
       new(user: nil, message: message, token: nil)
@@ -242,9 +239,9 @@ class PeriodicReport < ApplicationRecord
     def unregistered_message
       template = Rails.root.join('app/views/periodic_reports/unregistered.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          sign_in_url: sign_in_url(via: 'unregistered_message', og_tag: 'false'),
-          sign_in_and_follow_url: sign_in_url(follow: true, via: 'unregistered_message', og_tag: 'false'),
-          support_url: support_url,
+          sign_in_url: sign_in_url(via: 'unregistered_message'),
+          sign_in_and_follow_url: sign_in_url(follow: true, via: 'unregistered_message'),
+          support_url: support_url(campaign_params('unregistered_support')),
       )
 
       new(user: nil, message: message, token: nil)
@@ -253,9 +250,9 @@ class PeriodicReport < ApplicationRecord
     def not_following_message
       template = Rails.root.join('app/views/periodic_reports/not_following.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          url: sign_in_url(force_login: true, follow: true, via: 'not_following_message', og_tag: 'false'),
-          pricing_url: pricing_url(via: 'not_following_message', og_tag: 'false'),
-          support_url: support_url(via: 'not_following_message', og_tag: 'false'),
+          url: sign_in_url(force_login: true, follow: true, via: 'not_following_message'),
+          pricing_url: pricing_url(campaign_params('not_following_support')),
+          support_url: support_url(campaign_params('not_following_support')),
       )
 
       new(user: nil, message: message, token: nil)
@@ -264,8 +261,8 @@ class PeriodicReport < ApplicationRecord
     def permission_level_not_enough_message
       template = Rails.root.join('app/views/periodic_reports/permission_level_not_enough.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          url: sign_in_url(force_login: true, via: 'permission_level_not_enough_message', og_tag: 'false'),
-          support_url: support_url(via: 'permission_level_not_enough_message', og_tag: 'false'),
+          url: sign_in_url(force_login: true, via: 'permission_level_not_enough_message'),
+          support_url: support_url(campaign_params('permission_level_not_enough_support')),
       )
 
       new(user: nil, message: message, token: nil)
@@ -274,7 +271,7 @@ class PeriodicReport < ApplicationRecord
     def restart_requested_message
       template = Rails.root.join('app/views/periodic_reports/restart_requested.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          support_url: support_url,
+          support_url: support_url(campaign_params('restart_requested_support')),
       )
 
       new(user: nil, message: message, token: nil)
@@ -283,7 +280,7 @@ class PeriodicReport < ApplicationRecord
     def stop_requested_message
       template = Rails.root.join('app/views/periodic_reports/stop_requested.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          support_url: support_url,
+          support_url: support_url(campaign_params('stop_requested_support')),
       )
 
       new(user: nil, message: message, token: nil)
@@ -302,7 +299,7 @@ class PeriodicReport < ApplicationRecord
       end
 
       token = generate_token
-      url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', og_tag: 'false'}
+      url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report'}
 
       I18n.backend.store_translations :ja, persons: {one: '%{count}人', other: '%{count}人'}
 
@@ -360,8 +357,24 @@ class PeriodicReport < ApplicationRecord
       end
     end
 
+    def root_url(options)
+      super({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+    end
+
+    def sign_in_url(options)
+      super({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+    end
+
     def timeline_url(user, options)
-      super(user, campaign_params('report_timeline').merge(options))
+      super(user, {share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+    end
+
+    def pricing_url(options)
+      super({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+    end
+
+    def support_url(options)
+      super({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
     end
 
     # ID-000-000-24h-ttt-0101-0-b
@@ -416,7 +429,12 @@ class PeriodicReport < ApplicationRecord
     end
 
     def campaign_params(name)
-      {utm_source: name, utm_medium: 'dm', utm_campaign: "#{name}_#{I18n.l(Time.zone.now, format: :date_hyphen)}"}
+      {
+          via: name,
+          utm_source: name,
+          utm_medium: 'dm',
+          utm_campaign: "#{name}_#{I18n.l(Time.zone.now, format: :date_hyphen)}",
+      }
     end
 
     def date_helper
