@@ -2,17 +2,15 @@
 
 set -ex
 
-if ! command -v mecab &>/dev/null; then
+cur=$(pwd)
+dir=${cur}/.mecab
+PATH=$PATH:${dir}/bin
+
+if which mecab >/dev/null 2>&1; then
   echo "mecab found: $(mecab --version)"
   exit
 fi
 
-cur=$(pwd)
-
-dir=${pwd}/.mecab
-if [ ! -d $dir ]; then
-  mkdir $dir
-fi
 cd $dir
 
 wget -O mecab-0.996.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE"
@@ -28,7 +26,5 @@ cd mecab-ipadic-2.7.0-20070801
 ./configure --prefix=$dir --with-mecab-config=${dir}/bin/mecab-config --with-charset=utf8
 make && sudo make install
 sudo ldconfig
-
-PATH=$PATH:${dir}/bin
 
 cd $cur
