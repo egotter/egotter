@@ -63,9 +63,12 @@ gem 'airbrake'
 gem 'oj'
 gem 'gretel'
 gem 'stripe'
-gem 'ahoy_matey'
 gem 'webpacker', '~> 4.0'
 gem 'twitter-text'
+
+# Analytics
+gem 'ahoy_matey'
+gem 'blazer'
 
 # Google
 gem 'google-api-client', require: false
@@ -82,7 +85,6 @@ gem 'dogstatsd-ruby', require: false
 gem 'ddtrace', github: 'egotter/dd-trace-rb', branch: '0.34-stable', require: false
 
 group :development, :production do
-  gem 'blazer'
   gem 'sitemap_generator' # Be required at runtime
   gem 'rb-readline' # Must
 end
