@@ -1,7 +1,7 @@
+os: linux
 dist: xenial
 language: ruby
 cache: bundler
-sudo: required
 rvm:
   - 2.6.4
 before_install:
@@ -9,7 +9,7 @@ before_install:
   - sh ./setup/install_mecab_travis.sh
 install: bundle install --without development production --deployment
 script:
-  - bundle exec rake db:create db:schema:load
+  - RAILS_ENV=test bundle exec rake db:create db:schema:load
   - bundle exec rspec
 services:
   - mysql
