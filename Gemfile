@@ -77,8 +77,8 @@ gem 'webpacker', '~> 4.0'
 gem 'twitter-text'
 
 # Datadog APM
-gem 'dogstatsd-ruby'
-gem 'ddtrace', github: 'egotter/dd-trace-rb', branch: '0.34-stable'
+gem 'dogstatsd-ruby', require: false
+gem 'ddtrace', github: 'egotter/dd-trace-rb', branch: '0.34-stable', require: false
 
 group :development, :production do
   gem 'blazer'

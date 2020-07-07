@@ -1,5 +1,3 @@
-require 'datadog/statsd'
-
 class SendMetricsToCloudWatchWorker
   include Sidekiq::Worker
   include Concerns::AirbrakeErrorHandler
@@ -38,22 +36,6 @@ class SendMetricsToCloudWatchWorker
 
     client.update
   end
-
-  # def datadog(values, ga_active_users, rate_limits)
-  #   statsd = Datadog::Statsd.new('localhost', 8125)
-  #
-  #   values.each do |name, size, latency|
-  #     statsd.gauge("sidekiq.queues.#{name}.size", size)
-  #     statsd.gauge("sidekiq.queues.#{name}.latency", latency)
-  #   end
-  #   statsd.gauge('google.analytics.active_users', ga_active_users)
-  #
-  #   rate_limits.each do |rl|
-  #     %i(verify_credentials friend_ids follower_ids).each do |endpoint|
-  #       statsd.gauge("twitter.rate_limits.#{endpoint}.remaining", rl[endpoint][:remaining], tags: ["bot_id:#{rl[:id]}"])
-  #     end
-  #   end
-  # end
 
   private
 
