@@ -44,9 +44,6 @@ gem 'activerecord-import'
 gem 'sidekiq', '< 7'
 gem 'expire_job'
 gem 'timeout_job'
-# gem 'sidekiq-unique-jobs'
-# gem 'sidekiq-benchmark'
-# gem 'sidekiq-status'
 gem 'sinatra', require: false
 gem 'hiredis'
 gem 'redis', require: %w[redis redis/connection/hiredis]
