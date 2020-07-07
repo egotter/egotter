@@ -13,4 +13,4 @@ script:
   - bundle exec rspec
 services:
   - mysql
-  - redis-server
+  - redis
