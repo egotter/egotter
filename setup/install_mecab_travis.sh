@@ -3,7 +3,7 @@
 set -ex
 
 if ! command -v mecab &>/dev/null; then
-  echo "mecab found"
+  echo "mecab found: $(mecab --version)"
   exit
 fi
 
