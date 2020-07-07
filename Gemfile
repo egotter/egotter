@@ -62,16 +62,20 @@ gem 'rollbar'
 gem 'airbrake'
 gem 'oj'
 gem 'gretel'
+gem 'stripe'
+gem 'ahoy_matey'
+gem 'webpacker', '~> 4.0'
+gem 'twitter-text'
+
+# Google
 gem 'google-api-client', require: false
+
+# AWS
 gem 'aws-sdk-cloudwatch', require: false
 gem 'aws-sdk-s3'
 gem 'aws-sdk-dynamodb'
 gem 'aws-sdk-ec2', require: false
 gem 'aws-sdk-elasticloadbalancingv2', require: false
-gem 'stripe'
-gem 'ahoy_matey'
-gem 'webpacker', '~> 4.0'
-gem 'twitter-text'
 
 # Datadog APM
 gem 'dogstatsd-ruby', require: false
