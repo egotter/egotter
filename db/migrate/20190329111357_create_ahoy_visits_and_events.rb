@@ -28,11 +28,11 @@ class CreateAhoyVisitsAndEvents < ActiveRecord::Migration[5.2]
       # t.string :city
 
       # utm parameters
-      # t.string :utm_source
-      # t.string :utm_medium
-      # t.string :utm_term
-      # t.string :utm_content
-      # t.string :utm_campaign
+      t.string :utm_source
+      t.string :utm_medium
+      t.string :utm_term
+      t.string :utm_content
+      t.string :utm_campaign
 
       # native apps
       # t.string :app_version

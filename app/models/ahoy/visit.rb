@@ -14,6 +14,11 @@
 #  browser          :string(191)
 #  os               :string(191)
 #  device_type      :string(191)
+#  utm_source       :string(191)
+#  utm_medium       :string(191)
+#  utm_term         :string(191)
+#  utm_content      :string(191)
+#  utm_campaign     :string(191)
 #  started_at       :datetime         not null
 #
 # Indexes

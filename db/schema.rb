@@ -57,6 +57,11 @@ ActiveRecord::Schema.define(version: 2020_05_27_090719) do
     t.string "browser"
     t.string "os"
     t.string "device_type"
+    t.string "utm_source"
+    t.string "utm_medium"
+    t.string "utm_term"
+    t.string "utm_content"
+    t.string "utm_campaign"
     t.timestamp "started_at", null: false
     t.index ["started_at"], name: "index_ahoy_visits_on_started_at"
     t.index ["user_id"], name: "index_ahoy_visits_on_user_id"
