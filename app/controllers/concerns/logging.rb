@@ -147,6 +147,12 @@ module Concerns::Logging
       created_at:  Time.zone.now
     }
     CreateSignInLogWorker.perform_async(attrs)
+
+    event_name = context == :create ? 'Sign up' : 'Sign in'
+    event_params = {via: via}.reject { |_, v| v.blank? }
+    event_params = nil if event_params.blank?
+    ahoy.track(event_name, event_params)
+
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} action_name=#{action_name}"
     notify_airbrake(e)
