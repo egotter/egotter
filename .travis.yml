@@ -1,7 +1,10 @@
 os: linux
 dist: xenial
 language: ruby
-cache: bundler
+cache:
+  bundler: true
+  directories:
+    - .mecab
 rvm:
   - 2.6.4
 before_install:
