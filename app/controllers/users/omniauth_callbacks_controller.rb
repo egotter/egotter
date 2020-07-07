@@ -39,6 +39,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
 
     sign_in user, event: :authentication
+    track_sign_in_event(context: save_context, via: via)
     redirect_to after_callback_path(save_context: save_context, force_login: force_login)
 
     @user = user

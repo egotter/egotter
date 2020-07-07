@@ -13,8 +13,10 @@ class ApplicationController < ActionController::Base
   include Concerns::BypassFlashMessagesConcern
   include Concerns::Logging
 
+  skip_before_action :track_ahoy_visit, if: -> { apache_bench? }
+
   after_action do
-    create_access_log if response.successful? || response.redirection?
+    create_access_log if create_access_log?
   end
 
   before_action :set_locale

@@ -18,10 +18,16 @@ module Concerns::Logging
     @access_log_disabled = flag
   end
 
+  def create_access_log?
+    !access_log_disabled && !apache_bench? && (response.successful? || response.redirection?)
+  end
+
+  def apache_bench?
+    request.user_agent == 'ApacheBench/2.3' && request.ip == '127.0.0.1'
+  end
+
   def create_access_log(options = {})
-    return if access_log_disabled
     return create_crawler_log if from_crawler?
-    return if request.user_agent == 'ApacheBench/2.3' && request.ip == '127.0.0.1'
 
     uid, screen_name = find_uid_and_screen_name
     save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
@@ -147,12 +153,16 @@ module Concerns::Logging
       created_at:  Time.zone.now
     }
     CreateSignInLogWorker.perform_async(attrs)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} action_name=#{action_name}"
+    notify_airbrake(e)
+  end
 
+  def track_sign_in_event(context:, via:)
     event_name = context == :create ? 'Sign up' : 'Sign in'
     event_params = {via: via}.reject { |_, v| v.blank? }
     event_params = nil if event_params.blank?
     ahoy.track(event_name, event_params)
-
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} action_name=#{action_name}"
     notify_airbrake(e)
