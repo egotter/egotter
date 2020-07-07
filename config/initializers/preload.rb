@@ -18,7 +18,7 @@
 
 ::Efs.class
 ::Efs::TwitterUser.class
-::Efs::TwitterUser.cache_client
+::Efs::TwitterUser.cache_client unless Rails.env.test? # For database creation on TravisCI
 ::Efs::Tweet.class
 ::Efs::StatusTweet.class
 ::Efs::FavoriteTweet.class
