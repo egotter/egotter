@@ -5,7 +5,7 @@ sudo: required
 rvm:
   - 2.6.4
 before_install:
-  - sudo apt-get -y install libidn-dev
+  - sudo apt-get -y install libidn11-dev
   - sh ./setup/install_mecab_travis.sh
 install: bundle install --without development production --deployment
 script:
