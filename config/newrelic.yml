@@ -1,11 +1,9 @@
 #
 # This file configures the New Relic Agent.  New Relic monitors Ruby, Java,
-# .NET, PHP, Python and Node applications with deep visibility and low
+# .NET, PHP, Python, Node, and Go applications with deep visibility and low
 # overhead.  For more information, visit www.newrelic.com.
 #
-# Generated January 21, 2016
-# 
-# This configuration file is custom generated for Teruki Shinohara - ts_3156@yahoo.co.jp
+# Generated July 07, 2020, for version 6.11.0.365
 #
 # For full documentation of agent configuration options, please refer to
 # https://docs.newrelic.com/docs/agents/ruby-agent/installation-configuration/ruby-agent-configuration
@@ -31,10 +29,6 @@ common: &default_settings
 development:
   <<: *default_settings
   app_name: egotter (Development)
-
-  # NOTE: There is substantial overhead when running in developer mode.
-  # Do not use for production or load testing.
-  developer_mode: true
 
 test:
   <<: *default_settings

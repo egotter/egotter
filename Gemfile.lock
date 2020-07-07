@@ -272,7 +272,7 @@ GEM
     mustermann (1.0.3)
     mysql2 (0.5.3)
     naught (1.1.0)
-    newrelic_rpm (6.7.0.359)
+    newrelic_rpm (6.11.0.365)
     nio4r (2.5.2)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
