@@ -42,7 +42,7 @@ class UsageCount
   end
 
   def exists?
-    redis.exists(key)
+    redis.exists?(key)
   end
 
   def set(num)

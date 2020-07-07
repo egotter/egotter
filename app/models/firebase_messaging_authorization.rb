@@ -12,7 +12,7 @@ class FirebaseMessagingAuthorization
 
   def fetch
     if block_given?
-      if @redis.exists(@key)
+      if @redis.exists?(@key)
         @redis.get(@key)
       else
         block_result = yield

@@ -16,7 +16,7 @@ class GlobalDirectMessageLimitation
   end
 
   def limited?
-    @redis.exists(@key)
+    @redis.exists?(@key)
   end
 
   def remaining

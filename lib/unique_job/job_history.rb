@@ -22,7 +22,7 @@ module UniqueJob
     end
 
     def exists?(val)
-      redis.exists(key(val))
+      redis.exists?(key(val))
     end
 
     def add(val)

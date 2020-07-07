@@ -39,7 +39,7 @@ module Util
     end
 
     def exists?(word)
-      redis.exists(normalize_key(word))
+      redis.exists?(normalize_key(word))
     end
 
     def set(word, json)
