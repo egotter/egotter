@@ -497,10 +497,11 @@ class PeriodicReport < ApplicationRecord
     event = self.class.build_direct_message_event(user.uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)
   rescue => e
-    if DirectMessageStatus.cannot_send_messages?(e)
+    if DirectMessageStatus.cannot_send_messages?(e) ||
+        DirectMessageStatus.cannot_find_specified_user?(e)
       # Do nothing
     else
-      logger.warn "#{self}##{__method__} sending remind message is failed #{e.inspect} user_id=#{user_id}"
+      logger.warn "#{self.class}##{__method__} sending remind message is failed #{e.inspect} user_id=#{user_id}"
     end
   end
 
