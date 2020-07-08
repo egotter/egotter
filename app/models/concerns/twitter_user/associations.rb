@@ -143,47 +143,49 @@ module Concerns::TwitterUser::Associations
     end
   end
 
-  def mutual_friends(limit: 10_000, inactive: nil)
+  FETCH_USERS_LIMIT = 10000
+
+  def mutual_friends(limit: FETCH_USERS_LIMIT, inactive: nil)
     TwitterDB::User.where_and_order_by_field(uids: mutual_friend_uids.take(limit), inactive: inactive)
   end
 
-  def one_sided_friends(limit: 10_000)
+  def one_sided_friends(limit: FETCH_USERS_LIMIT)
     TwitterDB::User.where_and_order_by_field(uids: one_sided_friend_uids.take(limit))
   end
 
-  def one_sided_followers(limit: 10_000)
+  def one_sided_followers(limit: FETCH_USERS_LIMIT)
     TwitterDB::User.where_and_order_by_field(uids: one_sided_follower_uids.take(limit))
   end
 
-  def inactive_friends(limit: 10_000)
+  def inactive_friends(limit: FETCH_USERS_LIMIT)
     TwitterDB::User.where_and_order_by_field(uids: inactive_friend_uids.take(limit))
   end
 
-  def inactive_followers(limit: 10_000)
+  def inactive_followers(limit: FETCH_USERS_LIMIT)
     TwitterDB::User.where_and_order_by_field(uids: inactive_follower_uids.take(limit))
   end
 
-  def inactive_mutual_friends(limit: 10_000)
+  def inactive_mutual_friends(limit: FETCH_USERS_LIMIT)
     TwitterDB::User.where_and_order_by_field(uids: inactive_mutual_friend_uids.take(limit))
   end
 
-  def friends(limit: 100_000, inactive: nil)
+  def friends(limit: FETCH_USERS_LIMIT, inactive: nil)
     TwitterDB::User.where_and_order_by_field(uids: friend_uids.take(limit), inactive: inactive)
   end
 
-  def followers(limit: 100_000, inactive: nil)
+  def followers(limit: FETCH_USERS_LIMIT, inactive: nil)
     TwitterDB::User.where_and_order_by_field(uids: follower_uids.take(limit), inactive: inactive)
   end
 
-  def mutual_unfriends(limit: 100_000)
+  def mutual_unfriends(limit: FETCH_USERS_LIMIT)
     TwitterDB::User.where_and_order_by_field(uids: mutual_unfriend_uids.take(limit))
   end
 
-  def unfriends(limit: 100_000)
+  def unfriends(limit: FETCH_USERS_LIMIT)
     TwitterDB::User.where_and_order_by_field(uids: unfriend_uids.take(limit))
   end
 
-  def unfollowers(limit: 100_000)
+  def unfollowers(limit: FETCH_USERS_LIMIT)
     TwitterDB::User.where_and_order_by_field(uids: unfollower_uids.take(limit))
   end
 
