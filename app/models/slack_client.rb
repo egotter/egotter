@@ -31,7 +31,16 @@ class SlackClient
   def send_message(text, title: nil)
     text = format(text) if text.is_a?(Hash)
     text = "#{title}\n#{text}" if title
-    HTTParty.post(@webhook, body: {text: text}.to_json)
+
+    uri = URI.parse(@webhook)
+    https = Net::HTTP.new(uri.host, uri.port)
+    https.use_ssl = true
+    https.open_timeout = 3
+    https.read_timeout = 3
+    req = Net::HTTP::Post.new(uri)
+    req['Content-Type'] = 'application/json'
+    req.body = {text: text}.to_json
+    https.request(req).body
   end
 
   def format(hash)
