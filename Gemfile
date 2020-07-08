@@ -41,12 +41,6 @@ gem 'twitter', github: 'egotter/twitter'
 gem 'parallel'
 gem 'memoist'
 gem 'activerecord-import'
-gem 'sidekiq', '< 7'
-gem 'expire_job'
-gem 'timeout_job'
-gem 'sinatra', require: false
-gem 'hiredis'
-gem 'redis', require: %w[redis redis/connection/hiredis]
 gem 'newrelic_rpm'
 gem 'httparty'
 gem 'rack-timeout'
@@ -65,6 +59,14 @@ gem 'gretel'
 gem 'stripe'
 gem 'webpacker', '~> 4.0'
 gem 'twitter-text'
+
+# Sidekiq
+gem 'sidekiq', '< 7'
+gem 'expire_job'
+gem 'timeout_job'
+gem 'sinatra', require: false
+gem 'hiredis'
+gem 'redis', require: %w[redis redis/connection/hiredis]
 
 # Analytics
 gem 'ahoy_matey'
