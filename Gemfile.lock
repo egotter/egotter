@@ -117,7 +117,6 @@ GEM
     aws-sigv4 (1.2.1)
       aws-eventstream (~> 1, >= 1.0.2)
     bcrypt (3.1.13)
-    bindex (0.8.1)
     blazer (2.2.5)
       activerecord (>= 5)
       chartkick (>= 3.2)
@@ -125,7 +124,6 @@ GEM
       safely_block (>= 0.1.1)
     buftok (0.2.0)
     builder (3.2.4)
-    byebug (11.1.3)
     chartkick (3.3.1)
     coderay (1.1.3)
     concurrent-ruby (1.1.6)
@@ -446,11 +444,6 @@ GEM
     unicode-display_width (1.7.0)
     warden (1.2.8)
       rack (>= 2.0.6)
-    web-console (3.7.0)
-      actionview (>= 5.0)
-      activemodel (>= 5.0)
-      bindex (>= 0.4.0)
-      railties (>= 5.0)
     webpacker (4.2.2)
       activesupport (>= 4.2)
       rack-proxy (>= 0.6.1)
@@ -474,7 +467,6 @@ DEPENDENCIES
   aws-sdk-elasticloadbalancingv2
   aws-sdk-s3
   blazer
-  byebug
   ddtrace!
   devise
   dogstatsd-ruby
@@ -520,7 +512,6 @@ DEPENDENCIES
   twitter_with_auto_pagination
   tzinfo-data
   uglifier (>= 1.3.0)
-  web-console (>= 3.3.0)
   webpacker (~> 4.0)
 
 BUNDLED WITH
