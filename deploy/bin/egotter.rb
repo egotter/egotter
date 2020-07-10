@@ -71,12 +71,12 @@ def main(params)
     return
   end
 
-  Tasks::TaskBuilder.logger.info "deploy started params=#{params.inspect}"
+  Tasks::TaskBuilder.logger.info "deploy started params=#{params.inspect}" unless params['list']
   task = Tasks::TaskBuilder.build(params)
   task.run
-  Tasks::TaskBuilder.logger.info "deploy finished params=#{params.inspect}"
+  Tasks::TaskBuilder.logger.info "deploy finished params=#{params.inspect}" unless params['list']
 
-  if !task.action.to_s.empty? && task.action != :list
+  unless params['list']
     system("git tag #{task.action}-#{params['role']}-#{Time.now.to_i}")
     system('git push origin --tags')
   end
