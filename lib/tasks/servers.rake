@@ -1,8 +1,11 @@
 namespace :servers do
   desc 'Launch'
-  task launch: :environment do
+  task launch: :environment do |task|
 
     require_relative '../../deploy/bin/egotter'
+    logger = Tasks::TaskBuilder.logger
+
+    logger.info "#{task.name} started"
 
     begin
       params = {
@@ -12,7 +15,7 @@ namespace :servers do
       }
       Tasks::TaskBuilder.build(params).run
     rescue => e
-      puts "adjust task failed params=#{params.inspect} exception=#{e.inspect}"
+      logger.warn "adjust task failed params=#{params.inspect} exception=#{e.inspect}"
     end
 
     begin
@@ -23,15 +26,19 @@ namespace :servers do
       }
       Tasks::TaskBuilder.build(params).run
     rescue => e
-      puts "launch task failed params=#{params.inspect} exception=#{e.inspect}"
+      logger.warn "launch task failed params=#{params.inspect} exception=#{e.inspect}"
     end
 
+    logger.info "#{task.name} finished"
   end
 
   desc 'Terminate'
-  task terminate: :environment do
+  task terminate: :environment do |task|
 
     require_relative '../../deploy/bin/egotter'
+    logger = Tasks::TaskBuilder.logger
+
+    logger.info "#{task.name} started"
 
     begin
       params = {
@@ -41,7 +48,7 @@ namespace :servers do
       }
       Tasks::TaskBuilder.build(params).run
     rescue => e
-      puts "adjust task failed params=#{params.inspect} exception=#{e.inspect}"
+      logger.warn "adjust task failed params=#{params.inspect} exception=#{e.inspect}"
     end
 
     begin
@@ -52,8 +59,9 @@ namespace :servers do
       }
       Tasks::TaskBuilder.build(params).run
     rescue => e
-      puts "launch task failed params=#{params.inspect} exception=#{e.inspect}"
+      logger.warn "launch task failed params=#{params.inspect} exception=#{e.inspect}"
     end
 
+    logger.info "#{task.name} finished"
   end
 end
