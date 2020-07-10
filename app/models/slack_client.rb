@@ -48,7 +48,7 @@ class SlackClient
         if hash.empty?
           'Empty'
         else
-          key_length = hash.keys.max_by {|k| k.to_s.length}.length
+          key_length = hash.keys.max_by { |k| k.to_s.length }.length
           hash.map do |key, value|
             sprintf("%#{key_length}s %s", key, value)
           end.join("\n")
@@ -58,11 +58,9 @@ class SlackClient
   end
 
   class << self
-    def method_missing(method, *args)
-      if URLS[method]
+    URLS.keys.each do |method|
+      define_method(method) do |*args, &blk|
         new(webhook: URLS[method])
-      else
-        super
       end
     end
   end

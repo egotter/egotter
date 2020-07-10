@@ -8,7 +8,7 @@ class DeleteTweetsTask
 
   def start!
     if request.logs.empty?
-      send_message_to_slack('Started', request)
+      SendDeleteTweetsNotFinishedWorker.perform_in(30.minutes, request.id, user_id: request.user_id)
     end
 
     @log = DeleteTweetsLog.create_by(request: request)
@@ -25,7 +25,6 @@ class DeleteTweetsTask
       request.finished!
       request.tweet_finished_message if request.tweet
       request.send_finished_message
-      send_message_to_slack('Finished', request)
 
     rescue DeleteTweetsRequest::InvalidToken => e
       Rails.logger.info "#{e.inspect} request=#{request.inspect}"
@@ -46,11 +45,5 @@ class DeleteTweetsTask
     end
 
     self
-  end
-
-  def send_message_to_slack(status, request)
-    SlackClient.delete_tweets.send_message("#{status} `#{request.id}` `#{request.user_id}` `#{request.tweet}`")
-  rescue => e
-    Rails.logger.warn "#{self.class} Sending a message to slack is failed #{e.inspect}"
   end
 end
