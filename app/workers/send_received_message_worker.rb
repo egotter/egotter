@@ -52,9 +52,17 @@ class SendReceivedMessageWorker
     screen_name = fetch_screen_name(sender_uid)
     text = dm_url(screen_name) + "\n" + text
     SlackClient.received_messages.send_message(text, title: "`#{screen_name}` `#{sender_uid}`")
+
+    if recently_tweets_deleted_user?(sender_uid)
+      SlackClient.delete_tweets.send_message(text, title: "`#{screen_name}` `#{sender_uid}`")
+    end
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
     notify_airbrake(e, sender_uid: sender_uid, text: text)
+  end
+
+  def recently_tweets_deleted_user?(uid)
+    (user = User.find_by(uid: uid)) && DeleteTweetsRequest.order(created_at: :desc).limit(10).pluck(:user_id).include?(user.id)
   end
 
   def fetch_screen_name(uid)
