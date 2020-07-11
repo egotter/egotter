@@ -1,3 +1,5 @@
+require 'net/http'
+
 class SlackClient
   URLS = {
       monitoring:                  ENV['SLACK_METRICS_WEBHOOK_URL'],
@@ -39,6 +41,7 @@ class SlackClient
     https.read_timeout = 3
     req = Net::HTTP::Post.new(uri)
     req['Content-Type'] = 'application/json'
+    req['User-Agent'] = 'egotter'
     req.body = {text: text}.to_json
     https.request(req).body
   end
