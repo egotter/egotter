@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_27_090719) do
+ActiveRecord::Schema.define(version: 2020_07_11_163334) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1131,6 +1131,13 @@ ActiveRecord::Schema.define(version: 2020_05_27_090719) do
     t.string "medium", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_tracks_on_created_at"
+  end
+
+  create_table "trends", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "woe_id", null: false
+    t.json "properties"
+    t.timestamp "time", null: false
+    t.index ["time"], name: "index_trends_on_time"
   end
 
   create_table "tweet_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
