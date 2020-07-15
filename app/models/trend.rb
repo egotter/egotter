@@ -16,8 +16,9 @@ class Trend < ApplicationRecord
 
   class << self
     def save_current_trends
+      time = Time.zone.now.change(min: 0, sec: 0)
       Bot.api_client.twitter.trends(JAPAN_WOE_ID).each do |trend|
-        create!(woe_id: JAPAN_WOE_ID, properties: trend, time: Time.zone.now)
+        create!(woe_id: JAPAN_WOE_ID, properties: trend, time: time)
       end
     end
   end
