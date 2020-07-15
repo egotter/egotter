@@ -86,7 +86,6 @@ gem 'ddtrace', github: 'egotter/dd-trace-rb', branch: '0.34-stable', require: fa
 
 group :development, :production do
   gem 'sitemap_generator' # Be required at runtime
-  gem 'rb-readline' # Must
 end
 
 group :development, :test do

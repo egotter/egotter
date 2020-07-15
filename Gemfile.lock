@@ -327,7 +327,6 @@ GEM
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    rb-readline (0.5.5)
     rbtree3 (0.6.0)
     redis (4.2.1)
     ref (2.0.0)
@@ -494,7 +493,6 @@ DEPENDENCIES
   rack-user_agent
   rails (~> 5.2)
   rails_autolink
-  rb-readline
   redis
   rollbar
   rspec-rails
