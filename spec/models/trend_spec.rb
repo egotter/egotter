@@ -6,6 +6,9 @@ RSpec.describe Trend, type: :model do
     subject { described_class.save_current_trends }
     before do
       allow(Bot).to receive_message_chain(:api_client, :twitter, :trends).
+          with(described_class::WORLD_WOE_ID).and_return(trends)
+
+      allow(Bot).to receive_message_chain(:api_client, :twitter, :trends).
           with(described_class::JAPAN_WOE_ID).and_return(trends)
     end
     it { is_expected.to be_truthy }
