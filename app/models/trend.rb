@@ -21,7 +21,7 @@ class Trend < ApplicationRecord
 
       [WORLD_WOE_ID, JAPAN_WOE_ID].each do |woe_id|
         Bot.api_client.twitter.trends(woe_id).each do |trend|
-          create!(woe_id: JAPAN_WOE_ID, properties: trend, time: time)
+          create!(woe_id: woe_id, properties: trend, time: time)
         end
       end
     end
