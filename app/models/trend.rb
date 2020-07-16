@@ -2,10 +2,13 @@
 #
 # Table name: trends
 #
-#  id         :bigint(8)        not null, primary key
-#  woe_id     :bigint(8)        not null
-#  properties :json
-#  time       :datetime         not null
+#  id           :bigint(8)        not null, primary key
+#  woe_id       :bigint(8)        not null
+#  rank         :integer
+#  tweet_volume :integer
+#  name         :string(191)
+#  properties   :json
+#  time         :datetime         not null
 #
 # Indexes
 #
@@ -20,8 +23,8 @@ class Trend < ApplicationRecord
       time = Time.zone.now.change(min: 0, sec: 0)
 
       [WORLD_WOE_ID, JAPAN_WOE_ID].each do |woe_id|
-        Bot.api_client.twitter.trends(woe_id).each do |trend|
-          create!(woe_id: woe_id, properties: trend, time: time)
+        Bot.api_client.twitter.trends(woe_id).each.with_index do |trend, i|
+          create!(woe_id: woe_id, rank: i + 1, tweet_volume: trend.tweet_volume, name: trend.name, properties: trend, time: time)
         end
       end
     end

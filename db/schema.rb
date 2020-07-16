@@ -1135,6 +1135,9 @@ ActiveRecord::Schema.define(version: 2020_07_11_163334) do
 
   create_table "trends", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "woe_id", null: false
+    t.integer "rank"
+    t.integer "tweet_volume"
+    t.string "name"
     t.json "properties"
     t.timestamp "time", null: false
     t.index ["time"], name: "index_trends_on_time"
