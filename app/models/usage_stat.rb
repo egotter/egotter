@@ -13,6 +13,7 @@
 #  hashtags_json       :text(65535)      not null
 #  mentions_json       :text(65535)      not null
 #  tweet_clusters_json :text(65535)      not null
+#  words_count         :json
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
@@ -141,8 +142,13 @@ class UsageStat < ApplicationRecord
         breakdown_json:      extract_breakdown(@statuses).to_json,
         hashtags_json:       extract_hashtags(@statuses).to_json,
         mentions_json:       extract_mentions(@statuses).to_json,
-        tweet_clusters_json: Misc2.tweet_clusters(@statuses, limit: 100).to_json
+        tweet_clusters_json: Misc2.tweet_clusters(@statuses, limit: 100).to_json # TODO Remove later
       )
+
+      if stat.respond_to?(:words_count)
+        stat.words_count = calc_words_count(@statuses)
+      end
+
       stat
     end
 
@@ -192,6 +198,28 @@ class UsageStat < ApplicationRecord
       statuses.reject(&:retweet?).select(&:mentions?).map(&:mention_uids).flatten.
         each_with_object(Hash.new(0)) { |uid, memo| memo[uid.to_s.to_sym] += 1 }.
         sort_by { |u, c| -c }.to_h
+    end
+
+    require 'mecab'
+
+    def calc_words_count(tweets)
+      tagger = MeCab::Tagger.new("-d #{`mecab-config --dicdir`.chomp}/mecab-ipadic-neologd/")
+
+      texts = tweets.map { |t| t.text.gsub(%r{(https?://)?[\w/\.\-]+}, '').gsub(/\n/, ' ') }
+
+      words = texts.each_slice(1000).map do |text_array|
+        tagger.parse(text_array.join(' ')).split("\n").map { |l| l.split("\t") }.select { |word, desc| desc && !desc.match?(/^(助詞|助動詞|記号)/) }.map(&:first)
+      end.flatten
+
+      words_count = words.each_with_object(Hash.new(0)) { |word, memo| memo[word] += 1 }.sort_by { |k, v| -v }.to_h
+
+      words_count.to_a.each do |word, count|
+        if word.include?(' ') || word.match?(/^(\p{hiragana}){2}$/) ||  word.length == 1 || count == 1
+          words_count.delete(word)
+        end
+      end
+
+      words_count
     end
   end
 
