@@ -107,13 +107,13 @@ class UsageStat < ApplicationRecord
   end
 
   def most_active_hour
-    max_value = hour.map { |obj| obj[:y] }.max
-    hour.find { |obj| obj[:y] == max_value }.try(:fetch, :name, nil)
+    max_value = chart_data(:hour).map { |obj| obj[:y] }.max
+    chart_data(:hour).find { |obj| obj[:y] == max_value }.try(:fetch, :name, nil)
   end
 
   def most_active_wday
-    max_value = wday.map { |obj| obj[:y] }.max
-    wday.find { |obj| obj[:y] == max_value }.try(:fetch, :name, nil)
+    max_value = chart_data(:wday).map { |obj| obj[:y] }.max
+    chart_data(:wday).find { |obj| obj[:y] == max_value }.try(:fetch, :name, nil)
   end
 
   def mention_uids
@@ -133,6 +133,8 @@ class UsageStat < ApplicationRecord
         Misc.usage_stats_hour_series_data(times)
       when :hour_drilldown
         Misc.usage_stats_hour_drilldown_series(times)
+      when :usage_time
+        Misc.twitter_addiction_series(times)
       else
         raise "Invalid name value=#{name}"
       end
@@ -157,27 +159,25 @@ class UsageStat < ApplicationRecord
         @statuses = TwitterUser.latest_by(uid: @uid).status_tweets
       end
 
-      stat = UsageStat.find_or_initialize_by(uid: uid)
-      wday, wday_drilldown, hour, hour_drilldown, usage_time = calc(@statuses)
-      tweet_times = @statuses.map(&:tweeted_at).select { |t| t > 1.year.ago }.map(&:to_i)
+      times = @statuses.map(&:tweeted_at).select { |t| t > 1.year.ago }
       text = @statuses.map(&:text).join(' ').gsub(/[\n']/, ' ')
 
-      stat.assign_attributes(
-        wday_json:           wday.to_json,
-        wday_drilldown_json: wday_drilldown.to_json,
-        hour_json:           hour.to_json,
-        hour_drilldown_json: hour_drilldown.to_json,
-        usage_time_json:     usage_time.to_json,
-        breakdown_json:      extract_breakdown(@statuses).to_json,
-        hashtags_json:       extract_hashtags(@statuses).to_json,
-        mentions_json:       extract_mentions(@statuses).to_json,
-        tweet_clusters_json: '',
-        tweet_times:         tweet_times,
-        tweet_clusters:      TweetCluster.new.count_words(text),
-        words_count:         WordCloud.new.count_words(text),
-      )
-
-      stat
+      UsageStat.find_or_initialize_by(uid: uid).tap do |stat|
+        stat.assign_attributes(
+            wday_json:           '',
+            wday_drilldown_json: '',
+            hour_json:           '',
+            hour_drilldown_json: '',
+            usage_time_json:     '',
+            breakdown_json:      extract_breakdown(@statuses).to_json,
+            hashtags_json:       extract_hashtags(@statuses).to_json,
+            mentions_json:       extract_mentions(@statuses).to_json,
+            tweet_clusters_json: '',
+            tweet_times:         times.map(&:to_i),
+            tweet_clusters:      TweetCluster.new.count_words(text),
+            words_count:         WordCloud.new.count_words(text),
+            )
+      end
     end
 
     def statuses(statuses)
@@ -186,20 +186,6 @@ class UsageStat < ApplicationRecord
     end
 
     private
-
-    def calc(statuses)
-      return [{}, {}, {}, {}, {}] if statuses.empty?
-      one_year_ago = 365.days.ago
-      times = statuses.map(&:tweeted_at).select { |time| time > one_year_ago }
-
-      [
-          Misc.usage_stats_wday_series_data(times),
-          Misc.usage_stats_wday_drilldown_series(times),
-          Misc.usage_stats_hour_series_data(times),
-          Misc.usage_stats_hour_drilldown_series(times),
-          Misc.twitter_addiction_series(times)
-      ]
-    end
 
     def extract_breakdown(statuses)
       tweets = statuses.to_a

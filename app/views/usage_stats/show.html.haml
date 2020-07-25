@@ -32,7 +32,7 @@
 
 :javascript
   $(function () {
-    var usageTime = #{@stat.usage_time.to_json.html_safe};
+    var usageTime = #{@stat.chart_data(:usage_time).to_json.html_safe};
     var hashtags = #{@stat.hashtags.to_a.take(10).map { |word, count| {name: word, y: count} }.to_json.html_safe};
     var cloud = #{@stat.hashtags.to_a.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }.to_json.html_safe};
 
