@@ -1229,15 +1229,15 @@ ja:
     show:
       navbar_title: 'クラスタ判定'
       crumb_title: "入っているクラスタ"
-      page_description: "%{user} が入っているクラスタを表示します。"
+      page_description: "クラスタとは、「あるユーザーが入っているグループ」のことです。えごったーでは、@%{user} がよくツイートするジャンルやフォロー関係からクラスタを判定しています。"
       title: "%{user} のクラスタ判定 - %{clusters}"
-      page_title: "%{user} のクラスタ判定 - %{clusters}"
+      page_title: "@%{user} のクラスタ判定 - %{clusters}"
       content_title: "%{user} のクラスタ判定"
-      description: "%{user} のクラスタは、%{clusters}です。検索されたユーザーが入っているクラスタをさくっと見付けることができます。"
-      lead_002: "クラスタとは、「あるユーザーが入っているグループ」のことです。えごったーでは、よくツイートするジャンルやフォロー関係からクラスタを判定しています。"
-      lead_003: '%{user} のクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
-      lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
-      tweet: ".%{user} のクラスタ ↓\n%{clusters}\n#egotter %{url}"
+      description: "@%{user} のクラスタは、%{clusters}です。検索されたユーザーが入っているクラスタをさくっと見付けることができます。"
+      tweet: |
+        .@%{user} のクラスタ ↓
+        %{clusters}
+        #egotter %{url}
       clusters_level: "クラスタレベル"
       clusters_cloud: "クラスタクラウド"
       cluster_name: "%{name}クラスタ"

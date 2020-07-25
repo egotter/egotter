@@ -5,33 +5,37 @@
 
 - breadcrumb :cluster, @twitter_user.screen_name
 
-- page_title = t('.page_title', user: @twitter_user.mention_name, clusters: @cluster_names.take(3).join(' '))
+- page_title = t('.page_title', user: @twitter_user.screen_name, clusters: @cluster_names.take(3).join(' '))
 - title page_title
-- set_meta_tags description: t('clusters.show.description', user: @twitter_user.mention_name, clusters: @cluster_names.take(3).join(' '))
+- set_meta_tags description: t('clusters.show.description', user: @twitter_user.screen_name, clusters: @cluster_names.take(3).join(' '))
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
 %h2.h4.text-center.my-5= page_title
-
-.mb-5= t('clusters.show.lead_002', user: @twitter_user.mention_name)
+.mb-5= t('clusters.show.page_description', user: @twitter_user.screen_name)
 
 = render partial: 'common/search_form', locals: {via: current_via('top_input')}
 = render(partial: 'adsense/ad', locals: {vertical: :top})
 
 .share-buttons
   .inner
-    - text = t('clusters.show.tweet', user: mention_name(@twitter_user.screen_name), clusters: @cluster_names.take(3).join("\n"), url: cluster_url(@twitter_user))
+    - text = t('clusters.show.tweet', user: @twitter_user.screen_name, clusters: @cluster_names.take(3).join("\n"), url: cluster_url(@twitter_user))
     = render partial: 'twitter/tweet_button', locals: {text: text}
 
 %h2.h3.text-center.mt-5= t('clusters.show.clusters_level')
-#clusters-graph.chart
+#clusters-container.my-3
 = render partial: 'twitter/tweet_box', locals: {text: text, twitter_user: @twitter_user}
 
-= render partial: 'clusters/cluster', cached: true, collection: @cluster_names
+%table.text-center.table.table-bordered.table-condensed
+  %tr
+    %th.text-secondary Cluster
+  - @cluster_names.take(30).each do |cluster|
+    %tr
+      %td.text-secondary= cluster
 
 :javascript
   $(function () {
       var options = $.extend(true, {}, window.usage_stats_column_chart_options);
       options.series[0].data = #{raw @graph.to_json};
-      $('#clusters-graph').highcharts(options);
+      $('#clusters-container').highcharts(options);
   });

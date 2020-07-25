@@ -171,10 +171,7 @@ module Concerns::Logging
   private
 
   def find_uid_and_screen_name
-    if instance_variable_defined?(:@tu) && !@tu.nil? # create
-      uid = @tu.uid
-      screen_name = @tu.screen_name
-    elsif instance_variable_defined?(:@twitter_user) && !@twitter_user.nil?
+    if instance_variable_defined?(:@twitter_user) && !@twitter_user.nil?
       uid = @twitter_user.uid
       screen_name = @twitter_user.screen_name
     else

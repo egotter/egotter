@@ -102,7 +102,7 @@ Rails.application.routes.draw do
 
   resources :word_clouds, only: %i(show), param: :screen_name
 
-  resources :clusters, only: %i(create show), param: :screen_name
+  resources :clusters, only: %i(show), param: :screen_name
   get 'clusters', to: 'clusters#new', as: :clusters_top
 
   get '/searches/:screen_name/favoriting', to: redirect('/favorite_friends/%{screen_name}')
