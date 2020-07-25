@@ -10,6 +10,7 @@
     - if show_common_friends?(twitter_user)
       %li.list-group-item= link_to t('timelines.feeds.common_friends.title'), obj.common_friend_path(twitter_user)
       %li.list-group-item= link_to t('timelines.feeds.common_followers.title'), obj.common_follower_path(twitter_user)
+    %li.list-group-item= link_to t('timelines.feeds.word_clouds.title'), obj.word_cloud_path(twitter_user)
     %li.list-group-item= link_to t('timelines.feeds.clusters.title'), obj.cluster_path(twitter_user)
     %li.list-group-item= link_to t('timelines.feeds.unfriends.title'), obj.unfriend_path(twitter_user)
     %li.list-group-item= link_to t('timelines.feeds.unfollowers.title'), obj.unfollower_path(twitter_user)
