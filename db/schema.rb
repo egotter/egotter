@@ -1326,6 +1326,7 @@ ActiveRecord::Schema.define(version: 2020_07_11_163334) do
     t.text "hashtags_json", null: false
     t.text "mentions_json", null: false
     t.text "tweet_clusters_json", null: false
+    t.json "tweet_clusters"
     t.json "words_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
