@@ -208,6 +208,9 @@ ja:
       usage_stats:
         title: 'ツイッター利用状況'
         description: '@%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。'
+      word_clouds:
+        title: 'ワードクラウド'
+        description: '@%{user} のツイートでワードクラウドを作成します。'
       clusters:
         title: 'クラスタ分析'
         description: '@%{user} が入っているクラスタを表示します。'
@@ -258,6 +261,7 @@ ja:
         title: 'ツイートを予約投稿'
         description_html: 'ツイート予約投稿で @%{user} のツイートを<br>時間指定で作成することができます。'
         open: 'ツイート予約投稿を開く'
+      view_more: '続きを見る'
   usage_stats:
     show:
       navbar_title: 'ツイッター利用状況分析'
@@ -1192,6 +1196,17 @@ ja:
     all:
       <<: *replying_and_replied_show
       crumb_title: "一気に見る"
+  word_clouds:
+    new:
+      crumb_title: 'ワードクラウド'
+    show:
+      navbar_title: 'ワードクラウド'
+      crumb_title: "ワードクラウド"
+      page_description: "@%{user} ツイートからワードクラウドを作成します。"
+      title: "%{user} のワードクラウド"
+      page_title: "@%{user} のワードクラウド"
+      content_title: "%{user} のワードクラウド"
+      description: "@%{user} がよくツイートする単語がワードクラウドには含まれています。ワードクラウドは検索されたユーザーの口癖から作成されます。"
   clusters:
     new:
       navbar_title: 'クラスタ判定'
@@ -1776,7 +1791,6 @@ ja:
     inactive: "非アクティブのみ"
     protected: "鍵付きのみ"
   dictionary:
-    view_more: "続きを見る"
     see_more: "もっと見る"
     see_at_once_more: "一気に見る"
     do_tweet: "ツイートする"

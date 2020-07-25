@@ -142,12 +142,9 @@ class UsageStat < ApplicationRecord
         breakdown_json:      extract_breakdown(@statuses).to_json,
         hashtags_json:       extract_hashtags(@statuses).to_json,
         mentions_json:       extract_mentions(@statuses).to_json,
-        tweet_clusters_json: Misc2.tweet_clusters(@statuses, limit: 100).to_json # TODO Remove later
+        tweet_clusters_json: Misc2.tweet_clusters(@statuses, limit: 100).to_json, # TODO Remove later
+        words_count:         calc_words_count(@statuses),
       )
-
-      if stat.respond_to?(:words_count)
-        stat.words_count = calc_words_count(@statuses)
-      end
 
       stat
     end

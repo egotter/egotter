@@ -23,14 +23,10 @@
     - text = t('clusters.show.tweet', user: mention_name(@twitter_user.screen_name), clusters: @cluster_names.take(3).join("\n"), url: cluster_url(@twitter_user))
     = render partial: 'twitter/tweet_button', locals: {text: text}
 
-
-%h2.h3.clusters= t('clusters.show.clusters_level')
+%h2.h3.text-center.mt-5= t('clusters.show.clusters_level')
 #clusters-graph.chart
 = render partial: 'twitter/tweet_box', locals: {text: text, twitter_user: @twitter_user}
-%hr
-%h2.h3.clusters= t('clusters.show.clusters_cloud')
-#clusters-word-cloud.chart{style: 'height: 220px;'}
-%hr
+
 = render partial: 'clusters/cluster', cached: true, collection: @cluster_names
 
 :javascript
@@ -38,7 +34,4 @@
       var options = $.extend(true, {}, window.usage_stats_column_chart_options);
       options.series[0].data = #{raw @graph.to_json};
       $('#clusters-graph').highcharts(options);
-
-      var width = $('#clusters-word-cloud').width();
-      wordCloud('#clusters-word-cloud', #{raw @word_cloud.to_json}, width, 220);
   });

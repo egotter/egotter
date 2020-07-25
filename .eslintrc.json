@@ -17,6 +17,7 @@
   "globals": {
     "$": true,
     "ga": true,
+    "d3": true,
     "Egotter": true,
     "Snackbar": true,
     "SnackMessage": true,

@@ -1,0 +1,37 @@
+- content_for :canonical_url do
+  %link{href: word_cloud_url(@twitter_user), rel: 'canonical'}
+
+- content_for :navbar_title, t(".navbar_title")
+
+- breadcrumb :word_cloud, @twitter_user.screen_name
+
+- page_title = t('.page_title', user: @twitter_user.screen_name)
+- title page_title
+- set_meta_tags description: t('word_clouds.show.description', user: @twitter_user.screen_name)
+
+= render partial: 'twitter/profile', locals: {user: @twitter_user}
+
+%h2.h4.text-center.my-5= page_title
+.mb-5= t('word_clouds.show.page_description', user: @twitter_user.screen_name)
+
+#word-cloud-container.my-3{style: 'height: 300px;'}
+
+%table.text-center.table.table-bordered.table-condensed
+  %tr
+    %th.text-secondary Word
+    %th.text-secondary Count
+  - @words_count.take(30).each do |stat|
+    %tr
+      %td.text-secondary= stat[:word]
+      %td.text-secondary= stat[:count]
+
+%script{src: '//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js', type: 'text/javascript'}
+%script{src: '//cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js', type: 'text/javascript'}
+
+:javascript
+  $(function () {
+      var data = #{raw @words_count.to_json};
+      var container = $('#word-cloud-container');
+      var smartphone = #{request.device_type == :smartphone};
+      new WordCloud('#' + container.attr('id'), data, container.width(), container.height(), smartphone);
+  });

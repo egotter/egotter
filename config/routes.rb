@@ -100,6 +100,8 @@ Rails.application.routes.draw do
   get 'conversations', to: redirect('/')
   get 'relationships', to: redirect('/')
 
+  resources :word_clouds, only: %i(show), param: :screen_name
+
   resources :clusters, only: %i(create show), param: :screen_name
   get 'clusters', to: 'clusters#new', as: :clusters_top
 

@@ -1,0 +1,40 @@
+<div class="<%= menu_name %> feed-item p-3 p-lg-5">
+  <h3 class="h4 text-center"><%= feed_title %></h3>
+  <div class="text-center"><%= feed_description %></div>
+
+  <%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
+
+  <% container_id = "id-#{usage_stat.words_count.object_id}" %>
+  <div id="<%= container_id %>" class="my-3" style="height: 300px;"></div>
+
+  <%= link_to(t('timelines.feeds.view_more'), word_cloud_path(twitter_user), class: 'btn btn-primary btn-block btn-view-more') %>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" type="text/javascript"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js" type="text/javascript"></script>
+
+<script>
+  $(function () {
+    var menuName = '<%= menu_name %>';
+    var fromCrawler = <%= from_crawler? %>;
+
+    function drawWordCloud() {
+      $("div[data-replaced-by='" + menuName + "']").remove();
+      var data = <%= raw usage_stat.words_count.map { |word, count| {word: word, count: count} }.to_json %>;
+      var container = $('#<%= container_id %>');
+      var smartphone = <%= request.device_type == :smartphone %>;
+      new WordCloud('#' + container.attr('id'), data, container.width(), container.height(), smartphone);
+    }
+
+    if (fromCrawler) {
+      drawWordCloud();
+    } else {
+      $('.placeholder-wrapper.' + menuName)
+          .lazyload()
+          .one('appear', function () {
+            console.log('appear', menuName);
+            drawWordCloud();
+          });
+    }
+  });
+</script>

@@ -77,6 +77,11 @@ crumb :latest_profile do |screen_name|
   parent :root
 end
 
+crumb :word_cloud do |screen_name|
+  link t('word_clouds.new.crumb_title'), word_cloud_path(screen_name: screen_name, via: current_via("breadcrumb_word_cloud"))
+  parent :timeline, screen_name
+end
+
 crumb :cluster do |screen_name|
   link t('clusters.new.crumb_title'), cluster_path(screen_name: screen_name, via: current_via("breadcrumb_cluster"))
   parent :timeline, screen_name

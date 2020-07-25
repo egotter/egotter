@@ -29,3 +29,4 @@ import "./home";
 import "./follow_and_unfollow";
 import "./sort_and_filter";
 import "./periodic_report_setting";
+import "./word_cloud";
