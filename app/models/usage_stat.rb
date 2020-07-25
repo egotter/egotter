@@ -155,9 +155,8 @@ class UsageStat < ApplicationRecord
     end
 
     def build
-      if @statuses.blank?
-        @statuses = TwitterUser.latest_by(uid: @uid).status_tweets
-      end
+      @statuses = TwitterUser.latest_by(uid: @uid)&.status_tweets if @statuses.blank?
+      return if @statuses.blank?
 
       times = @statuses.map(&:tweeted_at).select { |t| t > 1.year.ago }
       text = @statuses.map(&:text).join(' ').gsub(/[\n']/, ' ')
