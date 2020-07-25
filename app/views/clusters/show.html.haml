@@ -5,9 +5,9 @@
 
 - breadcrumb :cluster, @twitter_user.screen_name
 
-- page_title = t('.page_title', user: @twitter_user.screen_name, clusters: @cluster_names.take(3).join(' '))
+- page_title = t('.page_title', user: @twitter_user.screen_name, clusters: @cluster_names_str)
 - title page_title
-- set_meta_tags description: t('clusters.show.description', user: @twitter_user.screen_name, clusters: @cluster_names.take(3).join(' '))
+- set_meta_tags description: t('clusters.show.description', user: @twitter_user.screen_name, clusters: @cluster_names_str)
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
@@ -17,25 +17,25 @@
 = render partial: 'common/search_form', locals: {via: current_via('top_input')}
 = render(partial: 'adsense/ad', locals: {vertical: :top})
 
-.share-buttons
-  .inner
-    - text = t('clusters.show.tweet', user: @twitter_user.screen_name, clusters: @cluster_names.take(3).join("\n"), url: cluster_url(@twitter_user))
-    = render partial: 'twitter/tweet_button', locals: {text: text}
-
 %h2.h3.text-center.mt-5= t('clusters.show.clusters_level')
 #clusters-container.my-3
-= render partial: 'twitter/tweet_box', locals: {text: text, twitter_user: @twitter_user}
+= render partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user}
 
 %table.text-center.table.table-bordered.table-condensed
   %tr
     %th.text-secondary Cluster
-  - @cluster_names.take(30).each do |cluster|
+    %th.text-secondary Count
+  - @clusters.each do |word, count|
     %tr
-      %td.text-secondary= cluster
+      %td.text-secondary= word
+      %td.text-secondary= count
 
 :javascript
   $(function () {
-      var options = $.extend(true, {}, window.usage_stats_column_chart_options);
-      options.series[0].data = #{raw @graph.to_json};
-      $('#clusters-container').highcharts(options);
+    // var text = ''
+    // new TweetCluster().countWords(text);
+
+    var options = $.extend(true, {}, window.usage_stats_column_chart_options);
+    options.series[0].data = #{raw  @clusters.map { |word, count| {name: word, y: count}}.to_json };
+    $('#clusters-container').highcharts(options);
   });

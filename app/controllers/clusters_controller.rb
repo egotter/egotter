@@ -6,12 +6,12 @@ class ClustersController < ApplicationController
   end
 
   def show
-    if (stat = UsageStat.find_by(uid: @twitter_user.uid))
-      clusters = stat.tweet_clusters
-      @cluster_names = clusters.keys.take(10).map { |name| t('clusters.show.cluster_name', name: name) }
-      @graph = clusters.to_a.take(30).map { |word, count| {name: word, y: count} }
-    else
-      @cluster_names = @graph = []
-    end
+    text = @twitter_user.status_tweets.map(&:text).join('').gsub(/[\n']/, ' ')
+    @clusters = UsageStat::TweetCluster.new.count_words(text).take(30)
+
+    clusters = @clusters.take(3).map { |word, _| t('.cluster_name', name: word) }.join("\n")
+    @tweet_text = t('clusters.show.tweet', user: @twitter_user.screen_name, clusters: clusters, url: cluster_url(@twitter_user))
+
+    @cluster_names_str = @clusters.take(3).map(&:first).join(' ')
   end
 end
