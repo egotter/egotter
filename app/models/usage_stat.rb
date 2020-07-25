@@ -13,6 +13,7 @@
 #  hashtags_json       :text(65535)      not null
 #  mentions_json       :text(65535)      not null
 #  tweet_clusters_json :text(65535)      not null
+#  tweet_times         :json
 #  tweet_clusters      :json
 #  words_count         :json
 #  created_at          :datetime         not null
@@ -94,10 +95,10 @@ class UsageStat < ApplicationRecord
       links_count:            tweets.reject(&:retweet?).select(&:urls?).size,
       hashtags_count:         tweets.reject(&:retweet?).select(&:hashtags?).size,
       locations_count:        tweets.reject(&:retweet?).select(&:location?).size,
-      wday:                   wday,
-      wday_drilldown:         wday_drilldown,
-      hour:                   hour,
-      hour_drilldown:         hour_drilldown,
+      wday:                   chart_data(:wday),
+      wday_drilldown:         chart_data(:wday_drilldown),
+      hour:                   chart_data(:hour),
+      hour_drilldown:         chart_data(:hour_drilldown),
       breakdown:              breakdown
     }
   rescue => e
@@ -119,6 +120,27 @@ class UsageStat < ApplicationRecord
     mentions.keys.map(&:to_s).map(&:to_i)
   end
 
+  def chart_data(name)
+    if tweet_times
+      times = tweet_times.map { |t| Time.zone.at(t) }
+
+      case name
+      when :wday
+        Misc.usage_stats_wday_series_data(times)
+      when :wday_drilldown
+        Misc.usage_stats_wday_drilldown_series(times)
+      when :hour
+        Misc.usage_stats_hour_series_data(times)
+      when :hour_drilldown
+        Misc.usage_stats_hour_drilldown_series(times)
+      else
+        raise "Invalid name value=#{name}"
+      end
+    else
+      send(name)
+    end
+  end
+
   def self.builder(uid)
     Builder.new(uid)
   end
@@ -131,8 +153,13 @@ class UsageStat < ApplicationRecord
     end
 
     def build
+      if @statuses.blank?
+        @statuses = TwitterUser.latest_by(uid: @uid).status_tweets
+      end
+
       stat = UsageStat.find_or_initialize_by(uid: uid)
       wday, wday_drilldown, hour, hour_drilldown, usage_time = calc(@statuses)
+      tweet_times = @statuses.map(&:tweeted_at).select { |t| t > 1.year.ago }.map(&:to_i)
       text = @statuses.map(&:text).join(' ').gsub(/[\n']/, ' ')
 
       stat.assign_attributes(
@@ -145,6 +172,7 @@ class UsageStat < ApplicationRecord
         hashtags_json:       extract_hashtags(@statuses).to_json,
         mentions_json:       extract_mentions(@statuses).to_json,
         tweet_clusters_json: '',
+        tweet_times:         tweet_times,
         tweet_clusters:      TweetCluster.new.count_words(text).take(100),
         words_count:         calc_words_count(@statuses),
       )
@@ -162,8 +190,15 @@ class UsageStat < ApplicationRecord
     def calc(statuses)
       return [{}, {}, {}, {}, {}] if statuses.empty?
       one_year_ago = 365.days.ago
-      times = statuses.map(&:tweeted_at).select { |time| time > one_year_ago  }
-      Misc.usage_stats(times, day_names: I18n.t('date.abbr_day_names'))
+      times = statuses.map(&:tweeted_at).select { |time| time > one_year_ago }
+
+      [
+          Misc.usage_stats_wday_series_data(times),
+          Misc.usage_stats_wday_drilldown_series(times),
+          Misc.usage_stats_hour_series_data(times),
+          Misc.usage_stats_hour_drilldown_series(times),
+          Misc.twitter_addiction_series(times)
+      ]
     end
 
     def extract_breakdown(statuses)
@@ -251,7 +286,7 @@ class UsageStat < ApplicationRecord
     #   {:name=>"Fri", :y=>81,  :drilldown=>"Fri"},
     #   {:name=>"Sat", :y=>90,  :drilldown=>"Sat"}
     # ]
-    def usage_stats_wday_series_data(times, day_names:)
+    def usage_stats_wday_series_data(times, day_names: I18n.t('date.abbr_day_names'))
       count_wday(times).map do |wday, count|
         {name: day_names[wday], y: count, drilldown: day_names[wday]}
       end
@@ -269,7 +304,7 @@ class UsageStat < ApplicationRecord
     #     :id=>"Mon",
     #     :data=> [ ["0", 22], ["1", 11], ... , ["22", 9], ["23", 14] ]
     #   }
-    def usage_stats_wday_drilldown_series(times, day_names:)
+    def usage_stats_wday_drilldown_series(times, day_names: I18n.t('date.abbr_day_names'))
       counts =
           EVERY_DAY.each_with_object(WDAY_NIL_COUNT.dup) do |wday, memo|
             memo[wday] = count_hour(times.select { |t| t.wday == wday })
@@ -298,7 +333,7 @@ class UsageStat < ApplicationRecord
     #   {:name=>"1", :id=>"1", :data=>[["Sun", 12], ["Mon", 11], ["Tue", 5], ["Wed", 5], ["Thu", 0], ["Fri", 8], ["Sat", 6]]},
     #   ...
     # ]
-    def usage_stats_hour_drilldown_series(times, day_names:)
+    def usage_stats_hour_drilldown_series(times, day_names: I18n.t('date.abbr_day_names'))
       counts =
           EVERY_HOUR.each_with_object(HOUR_NIL_COUNT.dup) do |hour, memo|
             memo[hour] = count_wday(times.select { |t| t.hour == hour })
@@ -318,7 +353,7 @@ class UsageStat < ApplicationRecord
     #   {:name=>"Fri", :y=>10.61773211567732},
     #   {:name=>"Sat", :y=>12.115753424657534}
     # ]
-    def twitter_addiction_series(times, day_names:)
+    def twitter_addiction_series(times, day_names: I18n.t('date.abbr_day_names'))
       max_duration = 5.minutes
       wday_count =
           EVERY_DAY.each_with_object(WDAY_NIL_COUNT.dup) do |wday, memo|
@@ -335,16 +370,6 @@ class UsageStat < ApplicationRecord
       wday_count.map do |wday, seconds|
         {name: day_names[wday], y: (seconds.nil? ? nil : seconds / weeks / 60)}
       end
-    end
-
-    def usage_stats(tweet_times, day_names: %w(Sun Mon Tue Wed Thu Fri Sat))
-      [
-          usage_stats_wday_series_data(tweet_times, day_names: day_names),
-          usage_stats_wday_drilldown_series(tweet_times, day_names: day_names),
-          usage_stats_hour_series_data(tweet_times),
-          usage_stats_hour_drilldown_series(tweet_times, day_names: day_names),
-          twitter_addiction_series(tweet_times, day_names: day_names)
-      ]
     end
   end
 

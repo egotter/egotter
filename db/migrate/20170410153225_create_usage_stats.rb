@@ -11,6 +11,7 @@ class CreateUsageStats < ActiveRecord::Migration[4.2]
       t.text   :hashtags_json,       null: false
       t.text   :mentions_json,       null: false
       t.text   :tweet_clusters_json, null: false
+      t.json   :tweet_times
       t.json   :tweet_clusters
       t.json   :words_count
 
