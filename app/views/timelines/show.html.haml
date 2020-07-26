@@ -43,13 +43,13 @@
     .col-12.mb-5
       = feed_item :users, twitter_user: @twitter_user, feed_name: 'common_followers', feed_title: t('timelines.feeds.common_followers.title'), feed_description: t('timelines.feeds.common_followers.description', user1: @twitter_user.screen_name, user2: current_user.screen_name), page_url: common_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_common_followers_summary_path(uid: @twitter_user.uid)
 
-  - if @twitter_user.usage_stat&.words_count
+  - if (words_count = @twitter_user.usage_stat&.words_count)
     .col-12.mb-5
-      = render partial: 'timelines/feeds/word_cloud', locals: {menu_name: :word_clouds, feed_title: t('timelines.feeds.word_clouds.title'), feed_description: t('timelines.feeds.word_clouds.description', user: @twitter_user.screen_name), usage_stat: @twitter_user.usage_stat, twitter_user: @twitter_user}
+      = render partial: 'timelines/feeds/word_cloud', locals: {menu_name: :word_clouds, feed_title: t('timelines.feeds.word_clouds.title'), feed_description: t('timelines.feeds.word_clouds.description', user: @twitter_user.screen_name), words_count: words_count, twitter_user: @twitter_user}
 
-  - if @twitter_user.usage_stat&.tweet_clusters
+  - if (tweet_clusters = @twitter_user.usage_stat&.sorted_tweet_clusters)
     .col-12.mb-5
-      = render partial: 'timelines/feeds/chart', locals: {menu_name: :clusters, feed_title: t('timelines.feeds.clusters.title'), feed_description: t('timelines.feeds.clusters.description', user: @twitter_user.screen_name), graph: @twitter_user.usage_stat.tweet_clusters.to_a.take(30).map { |word, count| {name: word, y: count} }, twitter_user: @twitter_user}
+      = render partial: 'timelines/feeds/chart', locals: {menu_name: :clusters, feed_title: t('timelines.feeds.clusters.title'), feed_description: t('timelines.feeds.clusters.description', user: @twitter_user.screen_name), graph: tweet_clusters.to_a.take(30).map { |word, count| {name: word, y: count} }, twitter_user: @twitter_user}
 
   .col-12.mb-5
     = feed_item :users, twitter_user: @twitter_user, feed_name: 'unfriends', feed_title: t('timelines.feeds.unfriends.title'), feed_description: t('timelines.feeds.unfriends.description', user: @twitter_user.screen_name), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_unfriends_summary_path(uid: @twitter_user.uid, via: current_via("feed_unfriends"))

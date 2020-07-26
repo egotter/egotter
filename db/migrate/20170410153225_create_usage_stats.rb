@@ -16,8 +16,9 @@ class CreateUsageStats < ActiveRecord::Migration[4.2]
       t.json   :words_count
 
       t.timestamps null: false
+
+      t.index :uid, unique: true
+      t.index :created_at
     end
-    add_index :usage_stats, :uid, unique: true
-    add_index :usage_stats, :created_at
   end
 end
