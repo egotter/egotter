@@ -35,14 +35,14 @@ module Concerns::ValidationConcern
       true
     else
       unless only_validation
-        respond_with_error(:bad_request, TwitterUser.human_attribute_name(:uid) + t('errors.messages.invalid'))
+        respond_with_error(:bad_request, ::TwitterUser.human_attribute_name(:uid) + t('errors.messages.invalid'))
       end
       false
     end
   end
 
   def twitter_user_persisted?(uid)
-    return true if TwitterUser.with_delay.exists?(uid: uid)
+    return true if ::TwitterUser.with_delay.exists?(uid: uid)
 
     if !from_crawler? && controller_name == 'timelines' && action_name == 'show'
       @screen_name = @twitter_user.screen_name
@@ -185,7 +185,7 @@ module Concerns::ValidationConcern
   end
 
   def screen_name_changed?(twitter_user)
-    latest = TwitterUser.latest_by(uid: twitter_user.uid)
+    latest = ::TwitterUser.latest_by(uid: twitter_user.uid)
     latest && latest.screen_name != twitter_user.screen_name
   end
 
