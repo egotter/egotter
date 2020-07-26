@@ -57,15 +57,10 @@ module Concerns::TwitterUser::Profile
     delegate *METHOD_NAME_KEYS, to: :profile
   end
 
-  # A url written on profile page as a home page url
   def url
-    return nil if entities.nil? || entities.url.nil? || entities.url.urls.nil?
-
-    urls = entities.url.urls
-    urls.any? ? (urls[0].expanded_url || urls[0].url) : nil
+    entities[:url][:urls][0][:expanded_url]
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{entities}"
-    nil
+    profile[:url]
   end
 
   def account_created_at

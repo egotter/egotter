@@ -12,11 +12,27 @@ module Concerns::TwitterDB::User::Builder
       user[:account_created_at] = user[:created_at]
       user[:status_created_at] = user[:status] ? user[:status][:created_at] : nil
 
-      if user[:description].to_s.length >= 180
-        user[:description] = user[:description].truncate(180)
+      if user[:description]
+        begin
+          user[:entities][:description][:urls].each do |entity|
+            user[:description].gsub!(entity[:url], entity[:expanded_url])
+          end
+        rescue => e
+        end
+
+        if user[:description].length >= 180
+          user[:description] = user[:description].truncate(180)
+        end
+
+        user[:description] = user[:description].gsub(/\R/, ' ')
       end
 
-      user[:description] = user[:description].to_s.gsub(/\R/, ' ')
+      if user[:url]
+        begin
+          user[:url] = user[:entities][:url][:urls][0][:expanded_url]
+        rescue => e
+        end
+      end
 
       %i(url profile_image_url_https profile_banner_url).each do |key|
         user[key] = '' if !user.has_key?(key) || user[key].nil?
