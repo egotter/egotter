@@ -40,7 +40,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     sign_in user, event: :authentication
     track_sign_in_event(context: save_context, via: via)
-    redirect_to after_callback_path(save_context: save_context, force_login: force_login)
+    redirect_to after_callback_path(user, save_context: save_context, force_login: force_login)
 
     @user = user
     @follow = follow
@@ -68,8 +68,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   private
 
-  def after_callback_path(save_context:, force_login: false)
-    options = {redirect_path: after_callback_redirect_path(save_context: save_context, force_login: force_login)}
+  def after_callback_path(user, save_context:, force_login: false)
+    options = {redirect_path: after_callback_redirect_path(user, save_context: save_context, force_login: force_login)}
     if save_context == :create
       after_sign_up_path(options)
     else
@@ -77,7 +77,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
   end
 
-  def after_callback_redirect_path(save_context:, force_login:)
+  def after_callback_redirect_path(user, save_context:, force_login:)
     url = session.delete(:redirect_path)
     url = start_path(save_context: save_context, via: "after_sign_in_#{save_context}") if url.blank?
 
@@ -87,7 +87,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       url = append_query_params(sanitized_redirect_path(url), follow_dialog: 1, share_dialog: 1)
     end
 
-    logger.info {"after_callback_redirect_path save_context=#{save_context} force_login=#{force_login} url=#{url}"}
+    url = url.sub(':screen_name', user.screen_name) if url.include?(':screen_name')
 
     url
   end

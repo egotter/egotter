@@ -5,7 +5,7 @@
 %h2.h5.my-4= subheader
 .mb-3= lead
 
-= sign_in_with_twitter_link(nil, 'button', class: 'btn btn-primary btn-block')
+= sign_in_with_twitter_link(@sign_in_redirect_path, 'button', class: 'btn btn-primary btn-block')
 .egotter-pink.text-right
   %i.fas.fa-check
   = t('.check_001')
