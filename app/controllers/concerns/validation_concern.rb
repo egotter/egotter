@@ -100,7 +100,7 @@ module Concerns::ValidationConcern
     if Validations::ScreenNameValidator::REGEXP.match?(screen_name)
       true
     else
-      respond_with_error(:bad_request, ::TwitterUser.human_attribute_name(:screen_name) + t('errors.messages.invalid'))
+      respond_with_error(:bad_request, ::TwitterUser.human_attribute_name(:screen_name) + t('errors.messages.invalid_screen_name'))
       false
     end
   end

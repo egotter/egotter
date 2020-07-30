@@ -7,6 +7,7 @@ class WaitingController < ApplicationController
 
   def new
     @redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(@twitter_user, via: current_via('waiting_redirect')))
+    @redirect_path.sub!(':screen_name', @twitter_user.screen_name) if @redirect_path.include?(':screen_name')
     @jid = params[:jid]
   end
 end

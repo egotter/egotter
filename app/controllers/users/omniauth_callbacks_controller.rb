@@ -80,16 +80,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def after_callback_redirect_path(user, save_context:, force_login:)
     url = session.delete(:redirect_path)
     url = start_path(save_context: save_context, via: "after_sign_in_#{save_context}") if url.blank?
+    url = sanitized_redirect_path(url)
+    url = url.sub!(':screen_name', user.screen_name) if url.include?(':screen_name')
 
-    if save_context == :update && force_login
-      url = append_query_params(sanitized_redirect_path(url), revive_dialog: 1)
-    else
-      url = append_query_params(sanitized_redirect_path(url), follow_dialog: 1, share_dialog: 1)
-    end
-
-    url = url.sub(':screen_name', user.screen_name) if url.include?(':screen_name')
-
-    url
+    options = (save_context == :update && force_login) ? {revive_dialog: 1} : {follow_dialog: 1, share_dialog: 1}
+    append_query_params(url, options)
   end
 
   def after_failure_message(reason)

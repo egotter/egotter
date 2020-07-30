@@ -1,8 +1,10 @@
 <% form_tag_id = search_form_id %>
 <% input_tag_id = search_input_id %>
+<% redirect_path ||= '' %>
 
 <%= form_tag searches_path(via: current_via('search_form')), id: form_tag_id, class: 'text-left', method: :post do %>
   <input type="hidden" name="via" value="<%= via %>">
+  <input type="hidden" name="redirect_path" value="<%= redirect_path %>">
   <input type="hidden" name="render_time" value="<%= Time.zone.now.to_s(:db) %>">
 
   <label for="screen_name" class="sr-only"><%= t('searches.common.twitter_id') %></label>
