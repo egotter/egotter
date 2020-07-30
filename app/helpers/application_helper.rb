@@ -3,15 +3,20 @@ module ApplicationHelper
     ENV['MAINTENANCE'] == '1'
   end
 
+  def top_page?
+    (controller_name == 'home' && action_name == 'new') ||
+        (controller_name == 'friends' && action_name == 'new') ||
+        (controller_name == 'unfriends' && action_name == 'new') ||
+        (controller_name == 'one_sided_friends' && action_name == 'new') ||
+        (controller_name == 'inactive_friends' && action_name == 'new') ||
+        (controller_name == 'clusters' && action_name == 'new') ||
+        (controller_name == 'delete_tweets' && action_name == 'new') ||
+        (controller_name == 'personality_insights' && action_name == 'new') ||
+        (controller_name == 'tokimeki_unfollow' && action_name == 'new')
+  end
+
   def show_header?
-    top = controller_name == 'home' && action_name == 'new'
-    friends = controller_name == 'friends' && action_name == 'new'
-    unfriends = controller_name == 'unfriends' && action_name == 'new'
-    one_sided_friends = controller_name == 'one_sided_friends' && action_name == 'new'
-    inactive_friends = controller_name == 'inactive_friends' && action_name == 'new'
-    clusters = controller_name == 'clusters' && action_name == 'new'
-    tokimeki = controller_name == 'tokimeki_unfollow' && action_name == 'new'
-    !top && !friends && !unfriends && !one_sided_friends && !inactive_friends && !clusters && !tokimeki
+    !top_page?
   end
 
   def show_sidebar?
@@ -28,18 +33,10 @@ module ApplicationHelper
   end
 
   def wrap_in_container?
-    top = controller_name == 'home' && action_name == 'new'
     start = controller_name == 'home' && action_name == 'start'
     waiting = controller_name == 'waiting' && action_name == 'new'
-    one_sided_friends = controller_name == 'one_sided_friends' && action_name == 'new'
-    unfriends = controller_name == 'unfriends' && action_name == 'new'
-    inactive_friends = controller_name == 'inactive_friends' && action_name == 'new'
-    friends = controller_name == 'friends' && action_name == 'new'
-    clusters = controller_name == 'clusters' && action_name == 'new'
-    delete_tweets = controller_name == 'delete_tweets' && action_name == 'new'
     settings = controller_name == 'settings' && action_name == 'index'
-    tokimeki = controller_name == 'tokimeki_unfollow' && action_name == 'new'
-    !@has_error && !top && !start && !waiting && !unfriends && !one_sided_friends && !inactive_friends && !friends && !clusters && !delete_tweets && !settings && !tokimeki
+    !@has_error && !top_page? && !start && !waiting && !settings
   end
 
   def show_common_friends?(twitter_user)
