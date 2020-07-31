@@ -105,6 +105,9 @@ Rails.application.routes.draw do
   resources :clusters, only: %i(show), param: :screen_name
   get 'clusters', to: 'clusters#new', as: :clusters_top
 
+  resources :personality_insights, only: %i(show), param: :screen_name
+  get 'personality_insights', to: 'personality_insights#new', as: :personality_insights_top
+
   get '/searches/:screen_name/favoriting', to: redirect('/favorite_friends/%{screen_name}')
   %i(
       close_friends

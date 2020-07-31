@@ -1,0 +1,136 @@
+- content_for :canonical_url do
+  %link{href: personality_insight_url(@twitter_user), rel: 'canonical'}
+
+- content_for :navbar_title, t(".navbar_title")
+
+- breadcrumb :personality_insight, @twitter_user.screen_name
+
+- page_title = t('.page_title', user: @twitter_user.screen_name)
+- title page_title
+- set_meta_tags description: t('.meta_description', user: @twitter_user.screen_name)
+
+= render partial: 'twitter/profile', locals: {user: @twitter_user}
+
+%h2.h4.text-center.my-5= page_title
+.mb-5= t('.page_description_html', user: @twitter_user.screen_name, words: @insight.word_count, accuracy: analysis_accuracy(@insight.word_count))
+
+= render partial: 'common/search_form', locals: {via: current_via('top_input'), redirect_path: personality_insight_path(screen_name: ':screen_name')}
+= render(partial: 'adsense/ad', locals: {vertical: :top})
+
+-# Personality
+- trait_ids = %w(big5_openness big5_conscientiousness big5_extraversion big5_agreeableness big5_neuroticism)
+- description = t('.personality_description', {user: @twitter_user.screen_name, url: personality_insights_top_url}.merge(@insight.personality_scores))
+= render partial: 'traits', locals: {parent: 'personality', title: t('.personality_title'), description: description, traits: @insight.personality_traits, trait_ids: trait_ids, twitter_user: @twitter_user, hidden_at_first: false}
+
+-#%h2.h4.text-center.my-5= t('.personality_facets_title')
+-#%div= t('.personality_facets_description')
+
+-# Facets
+-# = render partial: 'facets', locals: {parent: 'big5_openness', facet_ids: %w(facet_adventurousness facet_artistic_interests facet_emotionality facet_imagination facet_intellect facet_liberalism)}
+-# = render partial: 'facets', locals: {parent: 'big5_conscientiousness', facet_ids: %w(facet_achievement_striving facet_cautiousness facet_dutifulness facet_orderliness facet_self_discipline facet_self_efficacy)}
+-# = render partial: 'facets', locals: {parent: 'big5_extraversion', facet_ids: %w(facet_activity_level facet_assertiveness facet_cheerfulness facet_excitement_seeking facet_friendliness facet_gregariousness)}
+-# = render partial: 'facets', locals: {parent: 'big5_agreeableness', facet_ids: %w(facet_altruism facet_cooperation facet_modesty facet_morality facet_sympathy facet_trust)}
+-# = render partial: 'facets', locals: {parent: 'big5_neuroticism', facet_ids: %w(facet_anger facet_anxiety facet_depression facet_immoderation facet_self_consciousness facet_vulnerability)}
+
+-# Needs
+-# - trait_ids = %w(need_challenge need_closeness need_curiosity need_excitement need_harmony need_ideal need_liberty need_love need_practicality need_self_expression need_stability need_structure)
+-# = render partial: 'traits', locals: {parent: 'needs', title: t('.needs_title'), description: t('.needs_description', user: @twitter_user.screen_name, url: personality_insights_top_url), traits: @insight.needs_traits, trait_ids: trait_ids, twitter_user: @twitter_user}
+
+-# Values
+-# - trait_ids = %w(value_conservation value_hedonism value_openness_to_change value_self_enhancement value_self_transcendence)
+-# = render partial: 'traits', locals: {parent: 'values', title: t('.values_title'), description: t('.values_description', user: @twitter_user.screen_name, url: personality_insights_top_url), traits: @insight.needs_values,  trait_ids: trait_ids, twitter_user: @twitter_user}
+
+= javascript_pack_tag 'personality_insight'
+
+:css
+  .hidden-at-first {
+    height: 80px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #000, #fff);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+:javascript
+  function clickSeeMore (id, self) {
+    $('#' + id).css('height', 'auto').css('background', '#fff').css('color', '#000');
+    $('#' + self.id).hide();
+    return false;
+  }
+
+  function setSummary(summary) {
+    $('#comprehensive-evaluation0').append(summary[0]);
+    $('#comprehensive-evaluation1').append(summary[1]);
+    $('#comprehensive-evaluation2').append(summary[2]);
+    $('#comprehensive-evaluation3').append(summary[3]);
+
+    var textArea = $('#personality-tweet').find('textarea');
+    textArea.val(textArea.val().replace('__SUMMARY__', summary[0]));
+  }
+
+  function setCps(likekycps, unlikelycps) {
+    var comma = '、';
+    var sentences = [];
+
+    likekycps.forEach(function (item) {
+      sentences.push(item.name);
+    });
+    $('#likelycps-evaluation').prepend(sentences.join(comma));
+
+    sentences = [];
+    unlikelycps.forEach(function (item) {
+      sentences.push(item.name);
+    });
+    $('#unlikelycps-evaluation').prepend(sentences.join(comma));
+  }
+
+  $(function () {
+    var data = #{raw @insight.profile.to_json};
+    var insight = new PersonalityInsight();
+    var i18n = new PersonalityInsight.I18n();
+
+    setSummary(insight.getSummary(data));
+    setCps.apply(null, insight.getConsumptionPreferences(data['consumption_preferences']));
+
+    insight.drawTraits('personality-chart', data['personality']);
+
+    // insight.drawTraits('needs-chart', data['needs']);
+    // var container = $('#needs-traits');
+    // data['needs'].forEach(function (trait) {
+    //   var traitId = trait['trait_id'];
+    //   var name = i18n.t(traitId);
+    //   container.find('#' + traitId).find('.title').text(name);
+    // });
+
+    // insight.drawTraits('values-chart', data['values']);
+    // var container = $('#values-traits');
+    // data['values'].forEach(function (trait, index) {
+    //   var traitId = trait['trait_id'];
+    //   var name = i18n.t(traitId);
+    //   container.find('#' + traitId).find('.title').text(name);
+    // });
+
+    // data['personality'].forEach(function (trait, index) {
+    //   var traitId = trait['trait_id'];
+    //   var score = Math.floor(trait['raw_score'] * 100);
+    //   $('#' + traitId + '-title').find('.title').text(i18n.t(traitId)).end().find('.score').text(score);
+    //   $('#' + traitId + '-description').html(i18n.t('long_description.' + traitId).replace(/\n/g, '<br>'));
+    //   $('#' + traitId + '-high').html(i18n.t('long_description.' + traitId + '_high').replace(/\n/g, '<br>'));
+    //   $('#' + traitId + '-low').html(i18n.t('long_description.' + traitId + '_low').replace(/\n/g, '<br>'));
+    //   $('#' + traitId + '-facets-title').html(i18n.t('long_description.' + traitId + '_facets_title'));
+    //   $('#' + traitId + '-facets-description').html(i18n.t('long_description.' + traitId + '_facets_description'));
+    //
+    //   var facets = trait['children'];
+    //   insight.drawFacets(traitId + '-chart', facets);
+    //
+    //   var container = $('#' + traitId + '-facets');
+    //   facets.forEach(function (facet, index) {
+    //     var facetId = facet['trait_id'];
+    //     var name = i18n.t(facetId);
+    //     var score = Math.floor(facet['raw_score'] * 100);
+    //     var desc = i18n.t('description.' + facetId);
+    //     container.find('#' + facetId).find('.title').text(name).end().find('.score').text(score).end().find('.description').text(desc);
+    //   });
+    // });
+
+  });

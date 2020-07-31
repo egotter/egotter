@@ -86,3 +86,8 @@ crumb :cluster do |screen_name|
   link t('clusters.new.crumb_title'), cluster_path(screen_name: screen_name, via: current_via("breadcrumb_cluster"))
   parent :timeline, screen_name
 end
+
+crumb :personality_insight do |screen_name|
+  link t('personality_insights.show.crumb_title'), personality_insight_path(screen_name: screen_name, via: current_via("breadcrumb_personality_insight"))
+  parent :timeline, screen_name
+end

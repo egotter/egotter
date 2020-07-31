@@ -1,0 +1,25 @@
+.card
+  .card-body
+    %h5.card-title{id: "#{parent}-title"}
+      %span.title
+      %small
+        %span.score
+        %span= t('.score')
+    %div{id: "#{parent}-description"}
+    .row
+      .col-sm-12.col-md-6
+        %div{id: "#{parent}-high"}
+      .col-sm-12.col-md-6
+        %div{id: "#{parent}-low"}
+    %h5.card-title.mt-5.mb-4{id: "#{parent}-facets-title"}
+    %div{id: "#{parent}-facets-description"}
+    %div{id: "#{parent}-chart"}= t('.loading')
+    .hidden-at-first{id: "#{parent}-facets"}
+      - facet_ids.each do |id|
+        .mb-4{id: id}
+          %span.title
+          %small
+            %span.score
+            %span= t('.score')
+          .description
+    %button.btn.btn-primary.btn-sm{id: "#{parent}-facets-see-more", onclick: "clickSeeMore('#{parent}-facets', this);"}= t('.see_more')

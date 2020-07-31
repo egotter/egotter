@@ -1,0 +1,18 @@
+%h5.card-title= title
+.my-4
+  #comprehensive-evaluation0.text-primary.mb-4= t('.you_are', user: twitter_user.screen_name)
+  #comprehensive-evaluation1.mb-4
+  #comprehensive-evaluation2.text-primary.mb-4= t('.you_are', user: twitter_user.screen_name)
+  #comprehensive-evaluation3.mb-4
+  #likelycps-evaluation.mb-4= t('.behavior_likely')
+  #unlikelycps-evaluation.mb-4= t('.behavior_unlikely')
+%div{id: "#{parent}-tweet"}= render(partial: 'twitter/tweet_box', locals: {text: description, twitter_user: twitter_user})
+%div{id: "#{parent}-chart", style:  'height: 300px;'}= t('.loading')
+%div{id: "#{parent}-traits", class: hidden_at_first ? 'hidden-at-first' : ''}
+  - trait_ids.each do |id|
+    - trait = traits.find { |t| t['trait_id'] == id }
+    .my-5{id: id}
+      %h5.card-title= t(".trait_names.#{id}")
+      .description= t(".trait_descriptions.#{id}_html", user: @twitter_user.screen_name, score_details: personality_insight_score_details(trait), description_details: personality_insight_description_details(trait))
+- if hidden_at_first
+  %button.btn.btn-outline-primary.btn-sm{id: "#{parent}-see-more", onclick: "clickSeeMore('#{parent}-traits', this);"}= t('.see_more')

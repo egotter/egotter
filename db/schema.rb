@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_11_163334) do
+ActiveRecord::Schema.define(version: 2020_07_27_094136) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -807,6 +807,15 @@ ActiveRecord::Schema.define(version: 2020_07_11_163334) do
     t.index ["token"], name: "index_periodic_reports_on_token", unique: true
     t.index ["user_id", "created_at"], name: "index_periodic_reports_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_periodic_reports_on_user_id"
+  end
+
+  create_table "personality_insights", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "uid", null: false
+    t.json "profile"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_personality_insights_on_created_at"
+    t.index ["uid"], name: "index_personality_insights_on_uid", unique: true
   end
 
   create_table "polling_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
