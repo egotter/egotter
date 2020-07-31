@@ -1481,7 +1481,7 @@ ja:
       <<: *personality_insights_new
       personality_is_being_analyzed: '@%{user} の性格を分析中です。30秒後に再度アクセスしてみてください。<a href="%{url}" class="btn btn-primary">@%{user} の分析結果を見る</a>'
       tweets_not_enough: 'ツイートが少なすぎるため @%{user} の性格分析に失敗しました。'
-      analyzing_failed: 'アクセスが多すぎるため @%{user} の性格分析に失敗しました。時間をおいてから再度アクセスしてみてください。'
+      analyzing_failed: 'アクセスが多すぎるため @%{user} の性格分析に失敗しました。%{count}秒ほど時間をおいてから再度アクセスしてみてください。'
       rate_limited: '1日の分析回数を使い切りました。時間をおいてから再度アクセスしてみてください。'
       navbar_title: 'ツイッター性格診断'
       crumb_title: 'ツイッター性格診断'

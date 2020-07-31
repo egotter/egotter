@@ -7,7 +7,7 @@ class CreatePersonalityInsightWorker
   end
 
   def expire_in
-    10.minutes
+    1.minutes
   end
 
   MIN_TWEETS = 10

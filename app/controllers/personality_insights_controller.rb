@@ -18,7 +18,7 @@ class PersonalityInsightsController < ApplicationController
     elsif insight.tweets_not_enough?
       redirect_to personality_insights_top_path, alert: t('.show.tweets_not_enough', user: @twitter_user.screen_name)
     elsif insight.analyzing_failed?
-      redirect_to personality_insights_top_path, alert: t('.show.analyzing_failed', user: @twitter_user.screen_name)
+      redirect_to personality_insights_top_path, alert: t('.show.analyzing_failed', user: @twitter_user.screen_name, count: CreatePersonalityInsightWorker.new.expire_in.seconds)
     end
   end
 
