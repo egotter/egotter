@@ -1,3 +1,5 @@
+<% redirect_path ||= '' %>
+
 <style type=text/css>
   /* extra small and small */
   @media (max-width: 767.98px) {
@@ -47,7 +49,7 @@
   </div>
   <!-- The right side of the screen-->
   <div class="right-side text-center mx-auto p-3 p-md-0">
-    <%= render partial: 'shared/right_side', locals: right_side %>
+    <%= render partial: 'shared/right_side', locals: {redirect_path: redirect_path}.merge(right_side) %>
   </div>
 </div>
 

@@ -4419,10 +4419,20 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
+lodash._getnative@^3.0.0:
+  version "3.9.1"
+  resolved "https://registry.yarnpkg.com/lodash._getnative/-/lodash._getnative-3.9.1.tgz#570bc7dede46d61cdcde687d65d3eecbaa3aaff5"
+  integrity sha1-VwvH3t5G1hzc3mh9ZdPuy6o6r/U=
+
 lodash._reinterpolate@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"
   integrity sha1-DM8tiRZq8Ds2Y8eWU4t1rG4RTZ0=
+
+lodash.assignin@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.assignin/-/lodash.assignin-4.2.0.tgz#ba8df5fb841eb0a3e8044232b0e263a8dc6a28a2"
+  integrity sha1-uo31+4QesKPoBEIysOJjqNxqKKI=
 
 lodash.get@^4.0:
   version "4.4.2"
@@ -4434,10 +4444,51 @@ lodash.has@^4.0:
   resolved "https://registry.yarnpkg.com/lodash.has/-/lodash.has-4.5.2.tgz#d19f4dc1095058cccbe2b0cdf4ee0fe4aa37c862"
   integrity sha1-0Z9NwQlQWMzL4rDN9O4P5Ko3yGI=
 
+lodash.includes@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/lodash.includes/-/lodash.includes-4.3.0.tgz#60bb98a87cb923c68ca1e51325483314849f553f"
+  integrity sha1-YLuYqHy5I8aMoeUTJUgzFISfVT8=
+
+lodash.isarguments@^3.0.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/lodash.isarguments/-/lodash.isarguments-3.1.0.tgz#2f573d85c6a24289ff00663b491c1d338ff3458a"
+  integrity sha1-L1c9hcaiQon/AGY7SRwdM4/zRYo=
+
+lodash.isarray@^3.0.0:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/lodash.isarray/-/lodash.isarray-3.0.4.tgz#79e4eb88c36a8122af86f844aa9bcd851b5fbb55"
+  integrity sha1-eeTriMNqgSKvhvhEqpvNhRtfu1U=
+
+lodash.keys@^3.0.0:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/lodash.keys/-/lodash.keys-3.1.2.tgz#4dbc0472b156be50a0b286855d1bd0b0c656098a"
+  integrity sha1-TbwEcrFWvlCgsoaFXRvQsMZWCYo=
+  dependencies:
+    lodash._getnative "^3.0.0"
+    lodash.isarguments "^3.0.0"
+    lodash.isarray "^3.0.0"
+
+lodash.keys@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.keys/-/lodash.keys-4.2.0.tgz#a08602ac12e4fb83f91fc1fb7a360a4d9ba35205"
+  integrity sha1-oIYCrBLk+4P5H8H7ejYKTZujUgU=
+
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
+
+lodash.pairs@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/lodash.pairs/-/lodash.pairs-3.0.1.tgz#bbe08d5786eeeaa09a15c91ebf0dcb7d2be326a9"
+  integrity sha1-u+CNV4bu6qCaFckevw3LfSvjJqk=
+  dependencies:
+    lodash.keys "^3.0.0"
+
+lodash.pick@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
+  integrity sha1-UvBWEP/53tQiYRRB7R/BI6AwAbM=
 
 lodash.template@^4.5.0:
   version "4.5.0"
@@ -4542,6 +4593,11 @@ map-visit@^1.0.0:
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
   dependencies:
     object-visit "^1.0.0"
+
+marked@^0.3.18:
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-0.3.19.tgz#5d47f709c4c9fc3c216b6d46127280f40b39d790"
+  integrity sha512-ea2eGWOqNxPcXv8dyERdSr/6FmzvWwzjMxpfGB/sbMccXoct+xY+YukPD+QTUZwyvK7BZwcr4m21WBOW41pAkg==
 
 md5.js@^1.3.4:
   version "1.3.5"
@@ -5444,6 +5500,55 @@ performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
+
+personality-consumption-preferences@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/personality-consumption-preferences/-/personality-consumption-preferences-0.0.6.tgz#a9b1accc7ea6cab095208f32173046280f829e0c"
+  integrity sha512-wFca/+JPRXfcs3AxmYZhI9vOb0Oi6nTI61rWS81EpzFNcOa4YP18mZekKYKkAKOf0LPHi8tfzXRrX/kl7p5EOw==
+  dependencies:
+    lodash.assignin "^4.2.0"
+    lodash.includes "^4.3.0"
+    lodash.keys "^4.2.0"
+    lodash.pairs "^3.0.1"
+    lodash.pick "^4.4.0"
+
+personality-text-summary@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/personality-text-summary/-/personality-text-summary-2.2.0.tgz#3a72e96878050fcf455c1f71e87618321506772a"
+  integrity sha512-kfWx8ORFbE5B70a6QqY9rDf+EMfs2kf3XtvOVCx0I18LayJK4Ht21Y+wruuukhGSxi66qbJvfucZ8Wp8ewmslQ==
+  dependencies:
+    lodash.includes "^4.3.0"
+    lodash.keys "^4.2.0"
+    lodash.pick "^4.4.0"
+
+personality-trait-descriptions@^2.0.5, personality-trait-descriptions@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/personality-trait-descriptions/-/personality-trait-descriptions-2.1.0.tgz#c94f3bf3024e491dbf8241fb828f81044f0a1a03"
+  integrity sha512-48LzvGri1ZyjcFhyXWxneIjxibBERZTJODmBkRNYMzp+VUzVrUaYFQx6HlyjCVw08CuvvgNPxI88UQsgmcd/eQ==
+  dependencies:
+    lodash.includes "^4.3.0"
+    lodash.keys "^4.2.0"
+    lodash.pairs "^3.0.1"
+    lodash.pick "^4.4.0"
+    marked "^0.3.18"
+    remove-markdown "^0.2.2"
+
+personality-trait-info@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/personality-trait-info/-/personality-trait-info-3.0.5.tgz#e77d48ee750217e35680ee0bad53575dee4d4724"
+  integrity sha512-hh7tcxJ/bkLOYsXlCzlBZoDOIzz7aXNoRqO7o8mH/JwPEKoJPpx5kMp7l2YtGbTOAeIGxqxGHTvdEBko7qq+1Q==
+  dependencies:
+    personality-trait-descriptions "^2.0.5"
+    personality-trait-names "^2.0.5"
+    underscore "^1.8.3"
+
+personality-trait-names@^2.0.5:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/personality-trait-names/-/personality-trait-names-2.2.0.tgz#57e27cd4c44aba54aa4a3c19832e14ab4a4da19f"
+  integrity sha512-hTk8NXnPowyFkg6VsC6d5xb+AKRV9oXXF0BgViU/hmcr7QAFE5pTKJj3aJNPYfsivJFwxDjBG2tKQD8A6RK9xw==
+  dependencies:
+    lodash.pairs "^3.0.1"
+    lodash.pick "^4.4.0"
 
 pify@^2.0.0, pify@^2.3.0:
   version "2.3.0"
@@ -6470,6 +6575,11 @@ regjsparser@^0.6.4:
   integrity sha512-64O87/dPDgfk8/RQqC4gkZoGyyWFIEUTTh80CU6CWuK5vkCGyekIx+oKcEIYtP/RAxSQltCZHCNu/mdd7fqlJw==
   dependencies:
     jsesc "~0.5.0"
+
+remove-markdown@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/remove-markdown/-/remove-markdown-0.2.2.tgz#66b0ceeba9fb77ca9636bb1b0307ce21a32a12a6"
+  integrity sha1-ZrDO66n7d8qWNrsbAwfOIaMqEqY=
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"
@@ -7550,6 +7660,11 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+underscore@^1.8.3:
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.10.2.tgz#73d6aa3668f3188e4adb0f1943bd12cfd7efaaaf"
+  integrity sha512-N4P+Q/BuyuEKFJ43B9gYuOj4TQUHXX+j2FqguVOpjkssLUUrnJofCcBccJSCoeturDoZU6GorDTHSvUDlSQbTg==
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"

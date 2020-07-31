@@ -253,6 +253,10 @@ ja:
       inactive_followers:
         title: '最近いないフォロワー'
         description: '@%{user} のフォロワーのうち、最近ツイートしていないユーザーです。'
+      personality_insights:
+        title: 'ツイッター性格診断'
+        description_html: 'ツイートから @%{user} の性格を推定してみましょう。ツイッター性格診断は、言語学的分析とパーソナリティ理論を応用し、これまでのツイートから @%{user} の特徴を推測します。'
+        open: '@%{user} の性格を分析する'
       delete_tweets:
         title: 'ツイートを一括削除'
         description_html: 'ツイートクリーナーで @%{user} のツイートを<br>一括で削除することができます。'
@@ -1460,16 +1464,117 @@ ja:
         tweet_after_finishing: "削除の完了後にツイートする"
         ok: "はい、削除します"
         cancel: "いいえ"
-    log:
-      errors:
-        default_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
-        Unauthorized_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
-        InvalidToken_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
-        Unknown_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
-        TweetsNotFound_html: '完了しました。削除対象のツイートは 0 です。'
-        Continue_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
-        TooManyRequests_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
-        Timeout_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
+  personality_insights:
+    new: &personality_insights_new
+      page_title: 'ツイッター性格診断'
+      simple_title: 'ツイッター性格診断'
+      footer_title: 'ツイッター性格診断'
+      meta_description: 'ツイートからその人の性格を推定してみましょう。ツイッター性格診断は、言語学的分析とパーソナリティ理論を応用し、これまでのツイートからその人の特徴を推測します。'
+      right_side:
+        header: 'ツイッター性格診断'
+        subheader: '「自分の知らない自分」を見つける'
+        lead_html: '性格診断・心理テストの究極系<br>話題のツイート性格分析を今すぐチェック'
+      redirection_modal:
+        title: '@%{user} でログイン中です'
+        body: '@%{user} のツイッター性格診断結果へ移動しますか？'
+    show:
+      <<: *personality_insights_new
+      personality_is_being_analyzed: '@%{user} の性格を分析中です。30秒後に再度アクセスしてみてください。<a href="%{url}" class="btn btn-primary">@%{user} の分析結果を見る</a>'
+      tweets_not_enough: 'ツイートが少なすぎるため @%{user} の性格分析に失敗しました。'
+      analyzing_failed: 'アクセスが多すぎるため @%{user} の性格分析に失敗しました。時間をおいてから再度アクセスしてみてください。'
+      rate_limited: '1日の分析回数を使い切りました。時間をおいてから再度アクセスしてみてください。'
+      navbar_title: 'ツイッター性格診断'
+      crumb_title: 'ツイッター性格診断'
+      page_title:  'ツイッター性格診断'
+      page_description_html: |
+        ツイッター性格診断は、言語学的分析とパーソナリティ理論を応用し、これまでのツイートから @%{user} の特徴を推測します。<br>
+        <br>
+        @%{user} の分析に使った単語数は <span class="text-primary">%{words}</span> です。%{accuracy}
+      meta_description: 'ツイートから @%{user} の性格を推定してみましょう。ツイッター性格診断は、言語学的分析とパーソナリティ理論を応用し、これまでのツイートから @%{user} の特徴を推測します。'
+      words_analyzed: '分析に使った単語数: %{count}'
+      analysis_accuracy: '結果の正確性: '
+      accuracy:
+        very_strong: "確度が非常に高い解析結果です。6000単語以上含まれており、質の高い、統計的にも有意な解析結果が得られています。"
+        strong: "確度が高い解析結果です。統計的にも有意です。6000単語以上あれば、さらに確度の高い解析が可能になります。"
+        decent: "適正な解析結果です。この解析結果は被診断者の一般的な印象を表しており、参考にはなります。3500単語以上に増やし、さらに確度の高い解析を行うことをお勧めします。"
+        weak: "確度が低い解析結果です。この単語数ですと、的確な解析が出来ません。適正な解析を可能にするため、少なくとも1500単語以上に増やすことをお勧めします。"
+      percentile_top: '上位から<span class="text-primary">%{value}%</span>'
+      percentile_bottom: '下位から<span class="text-primary">%{value}%</span>%'
+      personality_title: '個性の分析結果'
+      personality_description: |
+        .@%{user} の性格は、__SUMMARY__
+
+        知的好奇心：%{big5_openness}点
+        誠実性：%{big5_conscientiousness}点
+        外向性：%{big5_extraversion}点
+        協調性：%{big5_agreeableness}点
+        感情起伏：%{big5_neuroticism}点
+
+        #ツイッター性格診断 #egotter %{url}
+      needs_title: '欲求'
+      needs_description: '@%{user} の欲求を12項目に分けて説明します。'
+      values_title: '価値観'
+      values_description: '@%{user} の価値観を5項目に分けて説明します。'
+      personality_facets_title: '「個性」の5要素の詳細'
+      personality_facets_description: |
+        20世紀の大部分の間、心理学者は、個人の性格特性は幼少期または人生を通してのいずれかの間に学習されると考えられていました。
+        しかし近年の研究では、性格特性は実質的に遺伝性であることが明らかになっています。例えば、一卵性双生児は離れて育てられた場合であっても、非常に似たような性格特性を示します。
+      score: '点'
+      loading: 'Loading...'
+      see_more: '詳しく見る'
+    traits: &personality_insights_traits
+      score: '点'
+      percent: '%'
+      from_top: '上位から'
+      from_bottom: '下位から'
+      loading: 'Loading...'
+      see_more: '詳しく見る'
+      you_are: '@%{user} は'
+      behavior_likely: 'という傾向があります。'
+      behavior_unlikely: 'という傾向は低そうです。'
+      trait_names:
+        big5_agreeableness: '協調性'
+        big5_conscientiousness: '誠実性'
+        big5_extraversion: '外向性'
+        big5_neuroticism: '感情起伏'
+        big5_openness: '知的好奇心'
+      trait_descriptions:
+        score_details: '%{score}点、偏差値%{deviation}、%{percentile}%'
+        big5_openness_html: |
+          芸術、感情、冒険、非日常的なアイデア、想像力、好奇心などに対してオープンである傾向のことです。
+          @%{user} の知的好奇心は、<span class="text-primary">%{score_details}</span>に位置しています。
+          @%{user} は、%{description_details}
+        big5_conscientiousness_html: |
+          自己規律を示し、忠実に行動し、外部の期待に応えようと努力する傾向のことです。
+          @%{user} の誠実性は、<span class="text-primary">%{score_details}</span>に位置しています。
+          @%{user} は、%{description_details}
+        big5_extraversion_html: |
+          社会的な交流を楽しみ、行動中心のアプローチをとる傾向のことです。
+          @%{user} の外向性は、<span class="text-primary">%{score_details}</span>に位置しています。
+          @%{user} は、%{description_details}
+        big5_agreeableness_html: |
+          他の人と仲良くなることを大切にし、他人と自分の利益を妥協することを厭わない傾向のことです。
+          @%{user} の協調性は、<span class="text-primary">%{score_details}</span>に位置しています。
+          @%{user} は、%{description_details}
+        big5_neuroticism_html: |
+          怒り、不安、抑うつなどのネガティブな感情を経験する傾向のことです。
+          @%{user} の感情起伏は、<span class="text-primary">%{score_details}</span>に位置しています。
+          @%{user} は、%{description_details}
+      trait_high_descriptions:
+        big5_openness: '知的好奇心があり、落ち着きがあり、美に敏感で、新しいことを試そうとするタイプです。'
+        big5_conscientiousness: '自己統制をし、誠実、あるいは外部の期待や評価に応えようとするタイプです。'
+        big5_extraversion: 'よりエネルギッシュで、社交的なタイプです。グループ内で目立つこと、話しをすること、自分を主張することが好きです。'
+        big5_agreeableness: '他人とうまくやっていくことを重要視するタイプです。人間の本性に関して楽観的な見方をしています。'
+        big5_neuroticism: '否定的な感情を抱いたり、取り乱したりするタイプです。'
+      trait_low_descriptions:
+        big5_openness: '平穏を好み、率直で、複雑なものや曖昧なもの、取るに足らないものに対して関心を持たないタイプです。'
+        big5_conscientiousness: '計画に従うより、自発的に物事を行うことを好むタイプです。'
+        big5_extraversion: '刺激をあまり求めず、人とのかかわりを避けるタイプです。但しそれは、臆病、非友好的、反社会的であるということではありません。'
+        big5_agreeableness: '他人より自分の興味を優先するタイプです。 他人の言葉の裏を考えてしまう傾向があります。'
+        big5_neuroticism: '穏やかで、あまり怒らないタイプです。'
+    facets:
+      <<: *personality_insights_traits
+
   quick_replies:
     continue:
       label: 'リムられ通知継続'
