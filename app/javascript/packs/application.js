@@ -31,3 +31,4 @@ import "./sort_and_filter";
 import "./periodic_report_setting";
 import "./word_cloud";
 import "./tweet_cluster";
+import "./friend_network";
