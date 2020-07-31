@@ -1,11 +1,16 @@
 .tweet-preview-box{class: text.object_id}
   %textarea.p-2{readonly: 'readonly', rows: [text.scan(/\R/).size + 3, 6].max}= text
 .tweet-box.text-right
-  = link_to t('dictionary.do_copy'), intent_url(text), class: "btn btn-outline-primary btn-copy #{text.object_id}"
-  = link_to t('dictionary.do_tweet'), intent_url(text), class: "btn btn-primary btn-tweet #{text.object_id}"
+  = link_to t('dictionary.do_copy'), '#', class: "btn btn-outline-primary btn-copy #{text.object_id}"
+  = link_to t('dictionary.do_tweet'), '#', class: "btn btn-primary btn-tweet #{text.object_id}"
 
 :javascript
   $(function () {
+      function openWindow(text) {
+        var url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text);
+        window.open(url, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');
+      }
+
     var id = '#{text.object_id}';
     var eventCategory = '#{controller_name}##{action_name}';
     var twitterUser = {
@@ -13,8 +18,10 @@
       uid: '#{twitter_user.uid}',
       screenName: "#{twitter_user.screen_name}"
     };
+    var textarea = $('.tweet-preview-box.' + id + ' textarea');
 
-    $('.tweet-preview-box.' + id + ' textarea').on('click', function () {
+    // Click textarea
+    textarea.on('click', function () {
       $(this).select();
 
       ga('send', {
@@ -25,8 +32,9 @@
       });
     });
 
+    // Click copy button
     $('.btn-copy.' + id).on('click', function () {
-      window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');
+      openWindow(textarea.val());
 
       ga('send', {
         hitType: 'event',
@@ -38,8 +46,9 @@
       return false;
     });
 
+    // Click tweet button
     $('.btn-tweet.' + id).on('click', function () {
-      window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');
+      openWindow(textarea.val());
 
       ga('send', {
         hitType: 'event',

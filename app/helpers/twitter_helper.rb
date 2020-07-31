@@ -27,11 +27,6 @@ module TwitterHelper
     link_to time_ago, tweet_url(tweet.user&.screen_name, tweet_id), target: '_blank', rel: 'nofollow'
   end
 
-  def intent_url(text, params = {})
-    params = params.merge(text: text).to_param
-    "https://twitter.com/intent/tweet?#{params}"
-  end
-
   # @screen_name -> <a href="/timelines/[screen_name]">@screen_name</a>
   def linkify(text)
     url = timeline_path(screen_name: '__SN__', via: 'link_by_linkify').sub(/__SN__/, '\\\1')
