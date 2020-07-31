@@ -6,7 +6,6 @@
     "eslint-loader": "^4.0.0",
     "personality-consumption-preferences": "^0.0.6",
     "personality-text-summary": "^2.2.0",
-    "personality-trait-descriptions": "^2.1.0",
     "personality-trait-info": "^3.0.5"
   },
   "devDependencies": {

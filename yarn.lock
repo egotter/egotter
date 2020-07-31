@@ -5521,7 +5521,7 @@ personality-text-summary@^2.2.0:
     lodash.keys "^4.2.0"
     lodash.pick "^4.4.0"
 
-personality-trait-descriptions@^2.0.5, personality-trait-descriptions@^2.1.0:
+personality-trait-descriptions@^2.0.5:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/personality-trait-descriptions/-/personality-trait-descriptions-2.1.0.tgz#c94f3bf3024e491dbf8241fb828f81044f0a1a03"
   integrity sha512-48LzvGri1ZyjcFhyXWxneIjxibBERZTJODmBkRNYMzp+VUzVrUaYFQx6HlyjCVw08CuvvgNPxI88UQsgmcd/eQ==
