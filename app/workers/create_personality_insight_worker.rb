@@ -6,8 +6,12 @@ class CreatePersonalityInsightWorker
     uid
   end
 
+  def unique_in
+    1.minute
+  end
+
   def expire_in
-    1.minutes
+    10.minutes
   end
 
   MIN_TWEETS = 10
