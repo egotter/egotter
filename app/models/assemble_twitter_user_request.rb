@@ -61,6 +61,8 @@ class AssembleTwitterUserRequest < ApplicationRecord
     InactiveFollowership.delete_by_uid(twitter_user.uid)
   end
 
+  private
+
   def validate_record_creation_order!
     latest = TwitterUser.latest_by(uid: twitter_user.uid)
 

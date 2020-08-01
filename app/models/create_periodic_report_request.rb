@@ -348,11 +348,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
     TwitterUser.where(uid: user.uid).size != records_count
   end
 
-  def assemble_twitter_user_record
-    assemble_request = AssembleTwitterUserRequest.create!(twitter_user: TwitterUser.latest_by(uid: user.uid))
-    AssembleTwitterUserWorker.perform_async(assemble_request.id)
-  end
-
   class ReportOptionsBuilder
     PERIOD_START = 1.day
 
