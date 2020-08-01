@@ -25,6 +25,16 @@
 #summary-values.mb-4
 #likelycps-evaluation.mb-4= t('.behavior_likely')
 #unlikelycps-evaluation.mb-4= t('.behavior_unlikely')
+
+- if personality_insight_very_low_agreeableness?(@insight)
+  .text-danger.mb-4= t('.very_low_agreeableness', user: @twitter_user.screen_name)
+- elsif personality_insight_low_agreeableness?(@insight)
+  .text-warning.mb-4= t('.low_agreeableness', user: @twitter_user.screen_name)
+- if personality_insight_very_high_neuroticism?(@insight)
+  .text-danger.mb-4= t('.very_high_neuroticism', user: @twitter_user.screen_name)
+- elsif personality_insight_high_neuroticism?(@insight)
+  .text-warning.mb-4= t('.high_neuroticism', user: @twitter_user.screen_name)
+
 #summary-tweet= render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: t('.summary_description', {user: @twitter_user.screen_name, url: personality_insights_top_url}.merge(@insight.personality_scores)), twitter_user: @twitter_user})
 
 -# Personality

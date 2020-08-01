@@ -30,6 +30,23 @@ module PersonalityInsightsHelper
     trait_id.split('_').slice(1..).join('-').capitalize
   end
 
+  # All traits with percentage values between 32% and 68% are inside the common people.
+  def personality_insight_low_agreeableness?(insight)
+    insight.agreeableness_trait['percentile'] < 0.18
+  end
+
+  def personality_insight_very_low_agreeableness?(insight)
+    insight.agreeableness_trait['percentile'] < 0.10
+  end
+
+  def personality_insight_high_neuroticism?(insight)
+    insight.neuroticism_trait['percentile'] > 0.68
+  end
+
+  def personality_insight_very_high_neuroticism?(insight)
+    insight.neuroticism_trait['percentile'] > 0.90
+  end
+
   private
 
   def percentile_to_deviation(value)
