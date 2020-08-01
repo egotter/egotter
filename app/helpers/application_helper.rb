@@ -43,10 +43,6 @@ module ApplicationHelper
     user_signed_in? && current_user.uid != twitter_user.uid.to_i && current_user.twitter_user
   end
 
-  def show_friends_stat?(twitter_user)
-    %w(unfriends unfollowers blocking_or_blocked).exclude?(controller_name) && twitter_user.usage_stat
-  end
-
   def show_redirection_modal?
     user_signed_in? && !@has_error && flash[:alert].blank?
   end

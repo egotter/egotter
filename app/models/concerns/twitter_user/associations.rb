@@ -17,7 +17,6 @@ module Concerns::TwitterUser::Associations
 
     with_options({primary_key: :uid, foreign_key: :uid}.update(default_options)) do |obj|
       obj.has_one :usage_stat
-      obj.has_one :score
     end
 
     with_options({primary_key: :uid, foreign_key: :from_uid}.update(default_options)) do |obj|

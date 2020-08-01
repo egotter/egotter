@@ -740,18 +740,6 @@ ja:
     all:
       <<: *favorite_friends_show
       crumb_title: "一気に見る"
-  scores:
-    show:
-      crumb_title: "ツイッター戦闘力"
-      page_title: "%{user} のツイッター戦闘力"
-      content_title: "%{user} のツイッター戦闘力"
-      title: "ツイッター戦闘力"
-      score_text_html: ".%{user} のツイッター戦闘力は <span class='score-value'>%{score}</span><span class='score-suffix'></span> です…！\n"
-      will_win: "\n↓ 勝てる人たち！\n%{users}\n"
-      will_loose: "\n↓ 負ける人たち…\n%{users}\n"
-      page_description: "%{user} のツイッター戦闘力分析です。Klout Scoreを利用して、フォロー・フォロワー・ツイートから総合的な影響力を算出します。"
-      meta_description: '%{user} のツイッター戦闘力は %{score} です…！'
-      see_more: 'もっと見る'
   one_sided_friends:
     new:
       navbar_title: '片思いチェック'

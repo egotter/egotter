@@ -19,7 +19,6 @@ end
   audience_insights
   close_friends
   favorite_friends
-  scores
   usage_stats
   unfriends
   unfollowers
