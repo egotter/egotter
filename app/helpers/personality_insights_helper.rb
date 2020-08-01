@@ -13,9 +13,17 @@ module PersonalityInsightsHelper
 
   def personality_insight_score_details(trait)
     score = sprintf('%d', trait['raw_score'] * 100)
-    percentile = (trait['percentile'] > 0.5 ? t('personality_insights.traits.from_top') : t('personality_insights.traits.from_bottom')) + sprintf('%d', percentile_inverse(trait['percentile']))
-    deviation = percentile_to_deviation(trait['percentile'])
-    t('personality_insights.traits.score_details', score: score, percentile: percentile, deviation: deviation)
+    percentile = trait['percentile']
+
+    if percentile < 0.01 || percentile > 0.99
+      percent = t('personality_insights.traits.less_than_one_percent')
+    else
+      percent = sprintf('%d', percentile_inverse(percentile)) + '%'
+    end
+    percentile_text = (percentile > 0.5 ? t('personality_insights.traits.from_top') : t('personality_insights.traits.from_bottom')) + percent
+    deviation = percentile_to_deviation(percentile)
+
+    t('personality_insights.traits.score_details', score: score, percentile: percentile_text, deviation: deviation)
   end
 
   def personality_insight_description_details(trait)

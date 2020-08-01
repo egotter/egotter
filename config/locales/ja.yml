@@ -1665,9 +1665,10 @@ ja:
       percent: '%'
       from_top: '上位から'
       from_bottom: '下位から'
+      less_than_one_percent: '1%未満'
       loading: 'Loading...'
       see_more: '詳しく見る'
-      score_details: '%{score}点、偏差値%{deviation}、%{percentile}%'
+      score_details: '%{score}点、偏差値%{deviation}、%{percentile}'
       trait_tweet_html: |
         .@%{user} の%{name}は、<span class="text-primary">%{score_details}</span>に位置しています。
         @%{user} は、%{description_details} #egotter %{url}
