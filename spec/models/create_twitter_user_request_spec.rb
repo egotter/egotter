@@ -25,7 +25,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   end
 
   describe 'validate_request!' do
-    subject { request.validate_request! }
+    subject { request.send(:validate_request!) }
 
     before do
       allow(request).to receive(:user).and_return(user)
@@ -50,7 +50,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   describe '#build_twitter_user' do
     let(:fetched_user) { {id: 1, screen_name: 'sn'} }
     let(:relations_result) { {friend_ids: 'ids1', follower_ids: 'ids2'} }
-    subject { request.build_twitter_user('context') }
+    subject { request.send(:build_twitter_user, 'context') }
 
     it do
       expect(request).to receive(:fetch_user).and_return(fetched_user)
@@ -73,7 +73,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe '#validate_twitter_user!' do
     let(:twitter_user) { build(:twitter_user) }
-    subject { request.validate_twitter_user!(twitter_user) }
+    subject { request.send(:validate_twitter_user!, twitter_user) }
 
     shared_context 'twitter_user is persisted' do
       before { allow(TwitterUser).to receive(:exists?).with(uid: request.uid).and_return(true) }
@@ -118,7 +118,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   describe '#assemble_twitter_user' do
     let(:twitter_user) { build(:twitter_user) }
     let(:relations) { {user_timeline: 'ut', mentions_timeline: 'mt', search: 's', favorites: 'f'} }
-    subject { request.assemble_twitter_user(twitter_user, relations) }
+    subject { request.send(:assemble_twitter_user, twitter_user, relations) }
     it do
       expect(request).to receive(:attach_user_timeline).with(twitter_user, 'ut')
       expect(request).to receive(:attach_mentions_timeline).with(twitter_user, 'mt', 's')
@@ -130,7 +130,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe '#save_twitter_user' do
     let(:twitter_user) { build(:twitter_user, id: 1) }
-    subject { request.save_twitter_user(twitter_user) }
+    subject { request.send(:save_twitter_user, twitter_user) }
     it do
       expect(twitter_user).to receive(:save!)
       expect(request).to receive(:update).with(twitter_user_id: 1)
@@ -140,7 +140,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe '#fetch_user' do
     let(:client) { double('client') }
-    subject { request.fetch_user }
+    subject { request.send(:fetch_user) }
     before { allow(request).to receive(:client).and_return(client) }
     it do
       expect(client).to receive(:user).with(request.uid).and_return('result')
@@ -149,7 +149,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   end
 
   describe '#build_twitter_user_by' do
-    subject { request.build_twitter_user_by('user') }
+    subject { request.send(:build_twitter_user_by, 'user') }
     it do
       expect(TwitterUser).to receive(:build_by).with(user: 'user').and_return('result')
       is_expected.to eq('result')
@@ -157,7 +157,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   end
 
   describe '#fetch_relations' do
-    subject { request.fetch_relations('twitter_user', 'context') }
+    subject { request.send(:fetch_relations, 'twitter_user', 'context') }
     it do
       expect(TwitterUserFetcher).to receive_message_chain(:new, :fetch).
           with(twitter_user: 'twitter_user', login_user: 'user', context: 'context').with(no_args).and_return('result')
@@ -167,7 +167,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe '#attach_friend_uids' do
     let(:twitter_user) { instance_double(TwitterUser) }
-    subject { request.attach_friend_uids(twitter_user, 'uids') }
+    subject { request.send(:attach_friend_uids, twitter_user, 'uids') }
     it do
       expect(twitter_user).to receive(:attach_friend_uids).with('uids').and_return('result')
       is_expected.to eq('result')
@@ -176,7 +176,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe '#attach_follower_uids' do
     let(:twitter_user) { instance_double(TwitterUser) }
-    subject { request.attach_follower_uids(twitter_user, 'uids') }
+    subject { request.send(:attach_follower_uids, twitter_user, 'uids') }
     it do
       expect(twitter_user).to receive(:attach_follower_uids).with('uids').and_return('result')
       is_expected.to eq('result')
@@ -185,7 +185,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe '#attach_user_timeline' do
     let(:twitter_user) { instance_double(TwitterUser) }
-    subject { request.attach_user_timeline(twitter_user, 'tweets') }
+    subject { request.send(:attach_user_timeline, twitter_user, 'tweets') }
     it do
       expect(twitter_user).to receive(:attach_user_timeline).with('tweets').and_return('result')
       is_expected.to eq('result')
@@ -194,7 +194,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe '#attach_mentions_timeline' do
     let(:twitter_user) { instance_double(TwitterUser) }
-    subject { request.attach_mentions_timeline(twitter_user, 'tweets', 'search_result') }
+    subject { request.send(:attach_mentions_timeline, twitter_user, 'tweets', 'search_result') }
     it do
       expect(twitter_user).to receive(:attach_mentions_timeline).with('tweets', 'search_result').and_return('result')
       is_expected.to eq('result')
@@ -203,7 +203,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe '#attach_favorite_tweets' do
     let(:twitter_user) { instance_double(TwitterUser) }
-    subject { request.attach_favorite_tweets(twitter_user, 'tweets') }
+    subject { request.send(:attach_favorite_tweets, twitter_user, 'tweets') }
     it do
       expect(twitter_user).to receive(:attach_favorite_tweets).with('tweets').and_return('result')
       is_expected.to eq('result')
@@ -211,7 +211,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   end
 
   describe '#diff_values_empty?' do
-    subject { request.diff_values_empty?('twitter_user') }
+    subject { request.send(:diff_values_empty?, 'twitter_user') }
     it do
       expect(TwitterUser).to receive_message_chain(:latest_by, :diff, :empty?).
           with(uid: request.uid).with('twitter_user').with(no_args).and_return('result')
@@ -221,7 +221,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe '#exception_handler' do
     let(:error) { RuntimeError.new }
-    subject { request.exception_handler(error) }
+    subject { request.send(:exception_handler, error) }
 
     context 'error is retryable' do
       before { allow(ServiceStatus).to receive(:retryable_error?).with(error).and_return(true) }
@@ -230,7 +230,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
     context 'retry is repeated' do
       before { allow(ServiceStatus).to receive(:retryable_error?).with(error).and_return(true) }
-      it { expect { 4.times { request.exception_handler(error) } }.to raise_error(described_class::RetryExhausted) }
+      it { expect { 4.times { request.send(:exception_handler, error) } }.to raise_error(described_class::RetryExhausted) }
     end
 
     [described_class::TooShortCreateInterval, described_class::TooManyFriends, described_class::NotChanged].each do |klass|

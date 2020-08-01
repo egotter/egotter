@@ -8,7 +8,7 @@ class CreateTwitterUserTask
 
   # Create a record or raise an exception
   # context:
-  #   :periodic_reports
+  #   :reporting
   def start!(context = nil)
     @log = CreateTwitterUserLog.create_by(request: request)
 

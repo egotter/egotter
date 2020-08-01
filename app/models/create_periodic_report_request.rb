@@ -329,7 +329,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
         uid: user.uid)
 
     task = CreateTwitterUserTask.new(request)
-    task.start!(:periodic_reports)
+    task.start!(:reporting)
 
   rescue CreateTwitterUserRequest::Unauthorized,
       CreateTwitterUserRequest::TooShortCreateInterval,

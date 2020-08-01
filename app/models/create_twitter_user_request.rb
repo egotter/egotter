@@ -29,7 +29,7 @@ class CreateTwitterUserRequest < ApplicationRecord
   validates :uid, presence: true
 
   # context:
-  #   :periodic_reports
+  #   :reporting
   def perform!(context = nil)
     validate_request!
 
@@ -42,6 +42,8 @@ class CreateTwitterUserRequest < ApplicationRecord
     twitter_user
   end
 
+  private
+
   def validate_request!
     raise AlreadyFinished if finished?
     raise Unauthorized if user&.unauthorized?
@@ -49,7 +51,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     raise TooShortCreateInterval if TwitterUser.select(:id, :created_at).latest_by(uid: uid)&.too_short_create_interval?
   end
 
-  def build_twitter_user(context = nil)
+  def build_twitter_user(context)
     fetched_user = fetch_user
     raise SoftSuspended.new("suspended screen_name=#{fetched_user[:screen_name]}") if fetched_user[:suspended]
 
