@@ -103,7 +103,8 @@
     $('#summary-values').append(summary[3]);
 
     var textArea = $('#summary-tweet').find('.textarea');
-    textArea.html(textArea.html().replace('__SUMMARY__', summary[0]));
+    var html = '<span class="text-primary">' + summary[0] + '</span>';
+    textArea.html(textArea.html().replace('__SUMMARY__', html));
   }
 
   function setCps(likekycps, unlikelycps) {
