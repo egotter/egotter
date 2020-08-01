@@ -1,24 +1,33 @@
-.tweet-preview-box{class: text.object_id}
-  %textarea.p-2{readonly: 'readonly', rows: [text.scan(/\R/).size + 3, 6].max}= text
-.tweet-box.text-right
-  = link_to t('dictionary.do_copy'), '#', class: "btn btn-outline-primary btn-copy #{text.object_id}"
-  = link_to t('dictionary.do_tweet'), '#', class: "btn btn-primary btn-tweet #{text.object_id}"
+- wrapper_tag ||= 'textarea'
+
+%div{id: "text-#{text.object_id}"}
+  -# textarea
+  .tweet-preview-box.p-2
+    - if wrapper_tag == 'textarea'
+      %textarea.textarea{readonly: 'readonly', rows: [text.scan(/\R/).size + 3, 6].max}= text
+    - else
+      .textarea= text.gsub("\n", '<br>').html_safe
+
+  -# buttons
+  .tweet-box.text-right
+    = link_to t('.copy'), '#', class: 'btn btn-outline-primary btn-copy'
+    = link_to t('.tweet'), '#', class: 'btn btn-primary btn-tweet'
 
 :javascript
   $(function () {
-      function openWindow(text) {
-        var url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text);
-        window.open(url, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');
-      }
+    function openWindow(text) {
+      var url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text);
+      window.open(url, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');
+    }
 
-    var id = '#{text.object_id}';
     var eventCategory = '#{controller_name}##{action_name}';
     var twitterUser = {
       userId: '#{current_user&.id}',
       uid: '#{twitter_user.uid}',
       screenName: "#{twitter_user.screen_name}"
     };
-    var textarea = $('.tweet-preview-box.' + id + ' textarea');
+    var container = $('#text-#{text.object_id}');
+    var textarea = container.find('.textarea');
 
     // Click textarea
     textarea.on('click', function () {
@@ -33,8 +42,8 @@
     });
 
     // Click copy button
-    $('.btn-copy.' + id).on('click', function () {
-      openWindow(textarea.val());
+    container.find('.btn-copy').on('click', function () {
+      openWindow(textarea.val() || textarea.text());
 
       ga('send', {
         hitType: 'event',
@@ -47,8 +56,8 @@
     });
 
     // Click tweet button
-    $('.btn-tweet.' + id).on('click', function () {
-      openWindow(textarea.val());
+    container.find('.btn-tweet').on('click', function () {
+      openWindow(textarea.val() || textarea.text());
 
       ga('send', {
         hitType: 'event',

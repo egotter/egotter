@@ -36,6 +36,46 @@ class PersonalityInsight < ApplicationRecord
     profile['personality']
   end
 
+  def openness_trait
+    profile['personality'].find { |t| t['trait_id'] == 'big5_openness' }
+  end
+
+  def conscientiousness_trait
+    profile['personality'].find { |t| t['trait_id'] == 'big5_conscientiousness' }
+  end
+
+  def extraversion_trait
+    profile['personality'].find { |t| t['trait_id'] == 'big5_extraversion' }
+  end
+
+  def agreeableness_trait
+    profile['personality'].find { |t| t['trait_id'] == 'big5_agreeableness' }
+  end
+
+  def neuroticism_trait
+    profile['personality'].find { |t| t['trait_id'] == 'big5_neuroticism' }
+  end
+
+  def openness_facets
+    openness_trait['children']
+  end
+
+  def conscientiousness_facets
+    conscientiousness_trait['children']
+  end
+
+  def extraversion_facets
+    extraversion_trait['children']
+  end
+
+  def agreeableness_facets
+    agreeableness_trait['children']
+  end
+
+  def neuroticism_facets
+    neuroticism_trait['children']
+  end
+
   def needs_traits
     profile['needs']
   end

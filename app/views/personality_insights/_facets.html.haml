@@ -1,25 +1,30 @@
-.card
-  .card-body
-    %h5.card-title{id: "#{parent}-title"}
-      %span.title
-      %small
-        %span.score
-        %span= t('.score')
-    %div{id: "#{parent}-description"}
-    .row
-      .col-sm-12.col-md-6
-        %div{id: "#{parent}-high"}
-      .col-sm-12.col-md-6
-        %div{id: "#{parent}-low"}
-    %h5.card-title.mt-5.mb-4{id: "#{parent}-facets-title"}
-    %div{id: "#{parent}-facets-description"}
-    %div{id: "#{parent}-chart"}= t('.loading')
-    .hidden-at-first{id: "#{parent}-facets"}
-      - facet_ids.each do |id|
-        .mb-4{id: id}
-          %span.title
-          %small
-            %span.score
-            %span= t('.score')
-          .description
-    %button.btn.btn-primary.btn-sm{id: "#{parent}-facets-see-more", onclick: "clickSeeMore('#{parent}-facets', this);"}= t('.see_more')
+- trait_name = t(".trait_names.#{trait['trait_id']}")
+%h3.text-center.my-4= title
+.mb-4= t('.your_score_is_html', user: twitter_user.screen_name, name: trait_name, score_details: personality_insight_score_details(trait))
+.mb-4= description
+.row.my-4
+  .col-sm-12.col-md-6
+    %h6= t('.if_you_are_high', name: trait_name)
+    %ul
+      - high_terms.each do |term|
+        %li= term
+  .col-sm-12.col-md-6
+    %h6= t('.if_you_are_low', name: trait_name)
+    %ul
+      - low_terms.each do |term|
+        %li= term
+%div= t('.trait_drilldown', user: twitter_user.screen_name, trait: trait_name, facets: facet_ids.map { |id| t(".trait_names.#{id}") }.join(', '))
+%div{id: "#{parent}-chart", style:  'height: 300px;'}= t('.loading')
+%div{id: "#{parent}-traits", class: hidden_at_first ? 'hidden-at-first' : ''}
+  - facet_ids.each do |id|
+    - facet = facets.find { |f| f['trait_id'] == id }
+    .my-5{id: id}
+      - facet_name = t(".trait_names.#{id}")
+      %h5
+        = facet_name
+        %small.text-muted= personality_insight_to_upper_case(id)
+      .my-2= t(".trait_descriptions.#{id}", default: 'not found')
+      - tweet_text = t(".trait_tweet_html", user: twitter_user.screen_name, name: facet_name, score_details: personality_insight_score_details(facet), description_details: personality_insight_description_details(facet), url: personality_insights_top_url)
+      = render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: tweet_text, twitter_user: twitter_user})
+- if hidden_at_first
+  %button.btn.btn-outline-primary.btn-sm{id: "#{parent}-see-more", onclick: "clickSeeMore('#{parent}-traits', this);"}= t('.see_more')

@@ -22,7 +22,11 @@ class PersonalityInsight {
       return trait['raw_score'] * 100;
     });
 
-    this.drawPolarChart(selector, categories, scores);
+    var percentile = traits.map(function (trait) {
+      return trait['percentile'] * 100;
+    });
+
+    this.drawPolarChart(selector, categories, scores, percentile);
   }
 
   drawFacets(selector, facets) {
@@ -36,10 +40,14 @@ class PersonalityInsight {
       return facet['raw_score'] * 100;
     });
 
-    this.drawPolarChart(selector, categories, scores);
+    var percentile = facets.map(function (facet) {
+      return facet['percentile'] * 100;
+    });
+
+    this.drawPolarChart(selector, categories, scores, percentile);
   }
 
-  drawPolarChart(selector, categories, scores) {
+  drawPolarChart(selector, categories, scores, percentile) {
     Highcharts.chart(selector, {
       chart: {
         polar: true,
@@ -60,7 +68,14 @@ class PersonalityInsight {
       },
       legend: {enabled: false},
       series: [{
+        name: 'Score',
         data: scores,
+        color: '#058DC7',
+        pointPlacement: 'on'
+      },{
+        name: 'Percentile',
+        data: percentile,
+        color: '#ED561B',
         pointPlacement: 'on'
       }],
       credits: {enabled: false}
