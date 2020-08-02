@@ -50,10 +50,7 @@ class FilterButton {
         $button.find('.filter-count').text('');
       }
 
-      var value = '';
-      $.each(selectedValues, function (_, v) {
-        value += v + ',';
-      });
+      var value = selectedValues.join(',');
 
       console.log('filter', value);
       callback({filter: value});

@@ -30,17 +30,17 @@
 .mb-5= feed_item :users, twitter_user: @twitter_user, feed_name: 'close_friends', feed_title: t('timelines.feeds.close_friends.title'), feed_description: t('timelines.feeds.close_friends.description', user: @twitter_user.screen_name), page_url: close_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_close_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_close_friends"))
 
 - if @twitter_user.usage_stat
-  .mb-5= feed_item :chart, menu_name: :usage_stats, feed_title: t('timelines.feeds.usage_stats.title'), feed_description: t('timelines.feeds.usage_stats.description', user: @twitter_user.screen_name), graph: @twitter_user.usage_stat.chart_data(:wday), twitter_user: @twitter_user
+  .mb-5= feed_item :chart, feed_name: :usage_stats, feed_title: t('timelines.feeds.usage_stats.title'), feed_description: t('timelines.feeds.usage_stats.description', user: @twitter_user.screen_name), graph: @twitter_user.usage_stat.chart_data(:wday), twitter_user: @twitter_user
 
 - if show_common_friends?(@twitter_user)
   .mb-5= feed_item :users, twitter_user: @twitter_user, feed_name: 'common_friends', feed_title: t('timelines.feeds.common_friends.title'), feed_description: t('timelines.feeds.common_friends.description', user1: @twitter_user.screen_name, user2: current_user.screen_name), page_url: common_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_common_friends_summary_path(uid: @twitter_user.uid)
   .mb-5= feed_item :users, twitter_user: @twitter_user, feed_name: 'common_followers', feed_title: t('timelines.feeds.common_followers.title'), feed_description: t('timelines.feeds.common_followers.description', user1: @twitter_user.screen_name, user2: current_user.screen_name), page_url: common_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_common_followers_summary_path(uid: @twitter_user.uid)
 
 - if (words_count = @twitter_user.usage_stat&.words_count)
-  .mb-5= feed_item :word_cloud, menu_name: :word_clouds, feed_title: t('timelines.feeds.word_clouds.title'), feed_description: t('timelines.feeds.word_clouds.description', user: @twitter_user.screen_name), words_count: words_count, twitter_user: @twitter_user
+  .mb-5= feed_item :word_cloud, feed_name: :word_clouds, feed_title: t('timelines.feeds.word_clouds.title'), feed_description: t('timelines.feeds.word_clouds.description', user: @twitter_user.screen_name), words_count: words_count, twitter_user: @twitter_user
 
 - if (tweet_clusters = @twitter_user.usage_stat&.sorted_tweet_clusters)
-  .mb-5= feed_item :chart, menu_name: :clusters, feed_title: t('timelines.feeds.clusters.title'), feed_description: t('timelines.feeds.clusters.description', user: @twitter_user.screen_name), graph: tweet_clusters.to_a.take(30).map { |word, count| {name: word, y: count} }, twitter_user: @twitter_user
+  .mb-5= feed_item :chart, feed_name: :clusters, feed_title: t('timelines.feeds.clusters.title'), feed_description: t('timelines.feeds.clusters.description', user: @twitter_user.screen_name), graph: tweet_clusters.to_a.take(30).map { |word, count| {name: word, y: count} }, twitter_user: @twitter_user
 
 .mb-5= feed_item :users, twitter_user: @twitter_user, feed_name: 'unfriends', feed_title: t('timelines.feeds.unfriends.title'), feed_description: t('timelines.feeds.unfriends.description', user: @twitter_user.screen_name), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_unfriends_summary_path(uid: @twitter_user.uid, via: current_via("feed_unfriends"))
 .mb-0= feed_item :users, twitter_user: @twitter_user, feed_name: 'unfollowers', feed_title: t('timelines.feeds.unfollowers.title'), feed_description: t('timelines.feeds.unfollowers.description', user: @twitter_user.screen_name), page_url: unfollower_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_unfollowers_summary_path(uid: @twitter_user.uid, via: current_via("feed_unfollowers"))

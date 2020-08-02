@@ -1,36 +1,35 @@
-<div class="<%= menu_name %> feed-item p-3 p-lg-5">
+<div class="card p-3">
   <h3 class="h4 text-center"><%= feed_title %></h3>
   <div class="text-center"><%= feed_description %></div>
 
-  <%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
+  <%= render partial: 'timelines/placeholder', locals: {menu_name: feed_name, menu_or_users: 'menu'} %>
 
   <div id="<%= graph.object_id %>" class="mb-5" style="height: 120px;"></div>
 
-  <% url = search_path_for(menu_name, twitter_user.screen_name) %>
+  <% url = search_path_for(feed_name, twitter_user.screen_name) %>
   <%= link_to(t('timelines.feeds.view_more'), url, class: 'btn btn-primary btn-block btn-view-more') %>
 </div>
 
 <script>
   $(function () {
-    var menuName = '<%= menu_name %>';
     var fromCrawler = <%= from_crawler? %>;
+    var feedName = '<%= feed_name %>';
+    var placeholderSelector = '.placeholder-wrapper.' + feedName;
 
     function drawChart() {
-      $("div[data-replaced-by='" + menuName + "']").remove();
+      $("div[data-replaced-by='" + feedName + "']").remove();
 
-      var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
-      graph_option.series[0].data = <%= raw graph.to_json %>;
-      graph_option.yAxis.visible = false;
-      $('#<%= graph.object_id %>').highcharts(graph_option);
+      var chartConfig = $.extend(true, {}, window.usage_stats_column_chart_options);
+      chartConfig.series[0].data = <%= raw graph.to_json %>;
+      chartConfig.yAxis.visible = false;
+      $('#<%= graph.object_id %>').highcharts(chartConfig);
     }
 
     if (fromCrawler) {
       drawChart();
     } else {
-      $('.placeholder-wrapper.' + menuName)
-          .lazyload()
-          .one('appear', function () {
-            console.log('appear', menuName);
+      $(placeholderSelector).lazyload().one('appear', function () {
+            console.log('appear', feedName);
             drawChart();
           });
     }

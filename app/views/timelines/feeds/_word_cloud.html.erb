@@ -1,8 +1,8 @@
-<div class="<%= menu_name %> feed-item p-3 p-lg-5">
+<div class="<%= feed_name %> p-3">
   <h3 class="h4 text-center"><%= feed_title %></h3>
   <div class="text-center"><%= feed_description %></div>
 
-  <%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
+  <%= render partial: 'timelines/placeholder', locals: {menu_name: feed_name, menu_or_users: 'menu'} %>
 
   <% container_id = "id-#{words_count.object_id}" %>
   <div id="<%= container_id %>" class="my-3" style="height: 300px;"></div>
@@ -12,11 +12,12 @@
 
 <script>
   $(function () {
-    var menuName = '<%= menu_name %>';
     var fromCrawler = <%= from_crawler? %>;
+    var feedName = '<%= feed_name %>';
+    var placeholderSelector = '.placeholder-wrapper.' + feedName;
 
     function drawWordCloud() {
-      $("div[data-replaced-by='" + menuName + "']").remove();
+      $("div[data-replaced-by='" + feedName + "']").remove();
       var data = <%= raw words_count.map { |word, count| {word: word, count: count} }.to_json %>;
       var container = $('#<%= container_id %>');
       var smartphone = <%= request.device_type == :smartphone %>;
@@ -26,12 +27,10 @@
     if (fromCrawler) {
       drawWordCloud();
     } else {
-      $('.placeholder-wrapper.' + menuName)
-          .lazyload()
-          .one('appear', function () {
-            console.log('appear', menuName);
-            drawWordCloud();
-          });
+      $(placeholderSelector).lazyload().one('appear', function () {
+        console.log('appear', feedName);
+        drawWordCloud();
+      });
     }
   });
 </script>

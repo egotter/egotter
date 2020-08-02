@@ -1,23 +1,21 @@
 class FeedItem {
-  constructor(url, feedName) {
-    var box = $('.' + feedName + '.feed-item');
-    var placeholder = $('.' + feedName + '.placeholder-wrapper');
-
+  constructor(url, feedName, boxSelector, placeholderSelector) {
     $.get(url).done(function (res) {
       console.log(feedName, res);
-      placeholder.hide();
+      $(placeholderSelector).hide();
+      var box = $(boxSelector);
 
       if (!res || !res.users || res.users.length <= 0) {
         box.find('.result-not-found').show();
       } else {
         var template = window.templates['user'];
 
-        $.each(res.users, function () {
-          var user = this;
+        res.users.forEach(function (user) {
           user.menu_name = feedName;
           var rendered = Mustache.render(template, user);
           box.find('.users').append(rendered);
         });
+
         box.find('.btn-view-more .count').text(res.count);
         box.find('.btn-view-more').show();
         box.find('.show-result').show();

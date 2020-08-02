@@ -1,7 +1,7 @@
-<div class="audience-insight-on-timeline p-3 p-lg-5">
+<div class="audience-insight-on-timeline card p-3">
   <h3 class="text-center"><%= t('timelines.feeds.audience_insights.title') %></h3>
   <div class="text-center my-3"><%= t('timelines.feeds.audience_insights.description', user: twitter_user.screen_name, friends: twitter_user.friends_count, followers: twitter_user.followers_count) %></div>
-  <div class="chart-container"></div>
+  <div class="chart-container" style="height: 200px;"></div>
   <div class="text-center mt-3">
     <%= link_to t('timelines.feeds.view_more'), audience_insight_path(twitter_user), class: 'btn btn-primary btn-block' %>
   </div>
