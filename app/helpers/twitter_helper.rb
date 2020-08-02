@@ -32,20 +32,25 @@ module TwitterHelper
   LINKIFY_USERNAME_URL_BASE = 'https://egotter.com/timelines/' # timeline_path
 
   def linkify(text)
+    return '' if text.blank?
+
     link_attribute_block = lambda do |entity, attributes|
       if entity[:screen_name]
         attributes.delete(:rel)
         attributes[:href] = "#{LINKIFY_USERNAME_URL_BASE}#{entity[:screen_name]}?via=link_by_linkify"
       end
     end
-    link_text_block = lambda do |entity, text|
+    link_text_block = lambda do |entity, str|
       if entity[:url]
-        text.remove(/^https?:\/\/(www\.)?/)
+        str.remove(/^https?:\/\/(www\.)?/)
       else
-        text
+        str
       end
     end
     auto_link(text, username_include_symbol: true, link_attribute_block: link_attribute_block, link_text_block: link_text_block).html_safe
+  rescue => e
+    logger.warn "linkify: #{e.inspect} text=#{text}"
+    text
   end
 
   def mention_name(screen_name)
