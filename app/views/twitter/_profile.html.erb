@@ -128,7 +128,7 @@
     </div>
 
     <% if user.description? %>
-      <div class="my-3"><%= auto_linking(user.description) %></div>
+      <div class="my-3"><%= linkify(user.description) %></div>
     <% end %>
 
     <% if user.location? %>

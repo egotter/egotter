@@ -1,4 +1,6 @@
 module TwitterHelper
+  include Twitter::TwitterText::Autolink
+
   def user_url(screen_name)
     "https://twitter.com/#{screen_name}"
   end
@@ -27,10 +29,23 @@ module TwitterHelper
     link_to time_ago, tweet_url(tweet.user&.screen_name, tweet_id), target: '_blank', rel: 'nofollow'
   end
 
-  # @screen_name -> <a href="/timelines/[screen_name]">@screen_name</a>
+  LINKIFY_USERNAME_URL_BASE = 'https://egotter.com/timelines/' # timeline_path
+
   def linkify(text)
-    url = timeline_path(screen_name: '__SN__', via: 'link_by_linkify').sub(/__SN__/, '\\\1')
-    text.gsub(/@(\w+)/, %Q{<a href="#{url}">\\0</a>}).html_safe
+    link_attribute_block = lambda do |entity, attributes|
+      if entity[:screen_name]
+        attributes.delete(:rel)
+        attributes[:href] = "#{LINKIFY_USERNAME_URL_BASE}#{entity[:screen_name]}?via=link_by_linkify"
+      end
+    end
+    link_text_block = lambda do |entity, text|
+      if entity[:url]
+        text.remove(/^https?:\/\/(www\.)?/)
+      else
+        text
+      end
+    end
+    auto_link(text, username_include_symbol: true, link_attribute_block: link_attribute_block, link_text_block: link_text_block).html_safe
   end
 
   def mention_name(screen_name)
@@ -51,12 +66,5 @@ module TwitterHelper
 
   def bigger_icon_img(user, options = {})
     image_tag bigger_icon_url(user), {size: '73x73', alt: user.screen_name}.merge(options)
-  end
-
-  def auto_linking(text)
-    auto_link(text, html: {target: '_blank', rel: 'nofollow'})
-  rescue => e
-    logger.info "auto_linking: ##{e.class} #{e.message} #{text}"
-    text
   end
 end

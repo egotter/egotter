@@ -17,7 +17,7 @@
     var placeholderSelector = '.placeholder-wrapper.' + feedName;
 
     function drawWordCloud() {
-      $("div[data-replaced-by='" + feedName + "']").remove();
+      $(placeholderSelector).remove();
       var data = <%= raw words_count.map { |word, count| {word: word, count: count} }.to_json %>;
       var container = $('#<%= container_id %>');
       var smartphone = <%= request.device_type == :smartphone %>;

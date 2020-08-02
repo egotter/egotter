@@ -1,4 +1,4 @@
-- via = current_via if !defined?(via) || via.blank?
+- via ||= current_via
 - logger.info { "User is rendered by #{user.class} in #{controller_name}##{action_name}" }
 - user = TwitterUserDecorator.new(user)
 
@@ -7,11 +7,11 @@
     = render partial: 'adsense/ad', locals: {vertical: :slit}
 
 %div{class: grid_class}
-  .card.mb-3.mb-lg-5
+  .card.mb-3
     .row.no-gutters
-      .col-auto
+      .col-auto.p-1
         = search_link user.screen_name, via do
-          = image_tag bigger_icon_url(user), class: 'rounded', style: 'max-width: 90px; width: 100%;', alt: user.screen_name
+          = image_tag bigger_icon_url(user), class: 'rounded-circle', style: 'max-width: 50px; width: 100%;', alt: user.screen_name
       .col
         .card-body
           - if current_user_follower_uids.include?(user.uid_i)
@@ -22,8 +22,8 @@
             = search_link user.screen_name, via
             = user.name_with_icon
             = user.status_labels
-          %p.card-text{style: 'font-size: 14px;'}= linkify(user.description)
-          %p.card-text
+          .card-text{style: 'font-size: 14px;'}= linkify(user.description)
+          .card-text
             = link_to friend_path(user) do
               %strong.text-black= user.delimited_friends_count
               %span.text-muted= TwitterUser.human_attribute_name(:friends)
