@@ -38,7 +38,6 @@ module Concerns::SearchRequestInstrumentationConcern
     enqueue_update_authorized
     enqueue_update_egotter_friendship
     enqueue_audience_insight
-    find_or_create_chart_builder
   ).each do |method_name|
     define_method(method_name) do |*args, &blk|
       start = Time.zone.now

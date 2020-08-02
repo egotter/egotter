@@ -67,6 +67,24 @@ class AudienceInsight < ApplicationRecord
     end
   end
 
+  def chart_data(name)
+    times = categories.map { |date| Time.zone.parse(date).to_i * 1000 } # milliseconds
+    data = []
+
+    case name
+    when :friends
+      data = friends[:data]
+    when :followers
+      data = followers[:data]
+    when :new_friends
+      data = new_friends[:data]
+    when :new_followers
+      data = new_followers[:data]
+    end
+
+    times.zip(data)
+  end
+
   def fresh?
     if new_record?
       false

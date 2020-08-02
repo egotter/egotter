@@ -162,8 +162,6 @@ ja:
       reload_this_page: "ページを更新する"
       reinvestigate: "再度チェックする"
       sign_in_and_investigate: "ログインして分析する"
-      view_more: '続きを見る'
-      view_more_hacked_with_num_html: '乗っ取りツイートを確認する <span class="badge">%{num}</span>'
       empty_result_with_details_html: |
         結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br>
         <br>
@@ -178,7 +176,6 @@ ja:
       audience_insight:
         title: 'オーディエンス分析'
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
-        view_more: '続きを見る'
     feeds:
       summary:
         one_sided_friends: '片思いフォロー'
@@ -201,7 +198,7 @@ ja:
         description: '@%{user} がフォローされているユーザーです。'
       audience_insights:
         title: 'オーディエンス分析'
-        description: '@%{user} のフォロー数 / フォロワー数の推移を表示します。'
+        description: '@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。'
       close_friends:
         title: '仲良しランキング'
         description: '@%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。'
@@ -291,29 +288,26 @@ ja:
   audience_insights:
     show:
       navbar_title: "オーディエンス分析"
-      title: "オーディエンス分析"
       crumb_title: "オーディエンス分析"
-      page_title: "%{user} のオーディエンス分析"
-      content_title: "%{user} のオーディエンス分析"
-      meta_title: "%{user} のオーディエンス分析"
-      page_description: "%{user} のツイッター オーディエンス分析です。フォロー数 / フォロワー数 / ツイート数の時系列推移が分かります。"
-      meta_description: "%{user} のツイッター オーディエンス分析です。フォロー数 / フォロワー数 / ツイート数の時系列推移が分かります。"
+      page_title: "@%{user} のオーディエンス分析"
+      meta_title: "@%{user} のオーディエンス分析"
+      page_description_html: |
+        @%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。<br>
+        <br>
+        オーディエンス分析のデータは @%{user} がえごったーで検索されるたびに更新されます。
+      meta_description: "@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。"
       friends:
         title: 'フォロー数'
-        note: 'フォロー数の時系列推移です。ツイッターのプロフィールに書いてあるフォロー数の変化が日付毎に分かります。'
+        description: '@%{user} のフォロー数の日次推移です。ツイッターのプロフィールに書いてあるフォロー数の変化が日付毎に分かります。'
       followers:
         title: 'フォロワー数'
-        note: 'フォロワー数の時系列推移です。ツイッターのプロフィールに書いてあるフォロワー数の変化が日付毎に分かります。'
+        description: '@%{user} のフォロワー数の日次推移です。ツイッターのプロフィールに書いてあるフォロワー数の変化が日付毎に分かります。'
       new_friends:
         title: '新しいフォロー'
-        note: '新しいフォローの時系列推移です。合計フォロー数が減っていても、新しい人をフォローすれば数値が増えます。例：2人リムーブした + 3人フォローした = 新しいフォローは3人'
+        description: '@%{user} の新しいフォローの日次推移です。合計フォロー数が減っていても、新しい人をフォローすれば数値が増えます。例：2人リムーブした + 3人フォローした = 新しいフォローは3人'
       new_followers:
         title: '新しいフォロワー'
-        note: '新しいフォロワーの時系列推移です。合計フォロワー数が減っていても、新しい人からフォローされれば数値が増えます。例：2人からリムられた + 3人からフォローされた = 新しいフォロワーは3人'
-      tweets:
-        title: 'ツイート'
-        note: '日付ごとのツイート数です。公式リツイートやリプライも含んでいます。'
-      see_more: 'もっと見る'
+        description: '@%{user} の新しいフォロワーの日次推移です。合計フォロワー数が減っていても、新しい人からフォローされれば数値が増えます。例：2人からリムられた + 3人からフォローされた = 新しいフォロワーは3人'
   settings:
     title: "設定"
     index:

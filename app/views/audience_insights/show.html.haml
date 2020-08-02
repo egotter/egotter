@@ -1,45 +1,70 @@
 - content_for :canonical_url do
-  %link{href: @canonical_url, rel: 'canonical'}
+  %link{href: audience_insight_url(@twitter_user), rel: 'canonical'}
 
-- breadcrumb @breadcrumb_name, @twitter_user.screen_name
+- breadcrumb :audience_insight, @twitter_user.screen_name
 
 - title @page_title
-- set_meta_tags description: @meta_description, title: @meta_title
+- set_meta_tags description: t('.meta_description', user: @twitter_user.screen_name, friends: @twitter_user.friends_count, followers: @twitter_user.followers_count), title: t('.meta_title', user: @twitter_user.screen_name)
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
 %h2.h4.text-center.my-5= @page_title
-.mb-5= @page_description
+.mb-5= t('.page_description_html', user: @twitter_user.screen_name, friends: @twitter_user.friends_count, followers: @twitter_user.followers_count)
+
+= render partial: 'common/search_form', locals: {via: current_via('top_input'), redirect_path: audience_insight_path(screen_name: ':screen_name')}
+= render partial: 'adsense/ad', locals: {vertical: :top}
 
 %h3.h5.text-center.my-5= t('.friends.title')
-.mb-5= t('.friends.note')
-.chart-container.friends{style: 'height: 250px;'}
+.mb-5= t('.friends.description', user: @twitter_user.screen_name)
+#friends-chart{style: 'height: 250px;'}
 
 %h3.h5.text-center.my-5= t('.followers.title')
-.mb-5= t('.followers.note')
-.chart-container.followers{style: 'height: 250px;'}
+.mb-5= t('.followers.description', user: @twitter_user.screen_name)
+#followers-chart{style: 'height: 250px;'}
 
 %h3.h5.text-center.my-5= t('.new_friends.title')
-.mb-5= t('.new_friends.note')
-.chart-container.new-friends{style: 'height: 250px;'}
+.mb-5= t('.new_friends.description', user: @twitter_user.screen_name)
+#new-friends-chart{style: 'height: 250px;'}
 
 %h3.h5.text-center.my-5= t('.new_followers.title')
-.mb-5= t('.new_followers.note')
-.chart-container.new-followers{style: 'height: 250px;'}
+.mb-5= t('.new_followers.description', user: @twitter_user.screen_name)
+#new-followers-chart{style: 'height: 250px;'}
+
+%table.text-center.table.table-bordered.table-condensed.my-5
+  %tr
+    %th.text-secondary Date
+    %th.text-secondary Friends
+    %th.text-secondary Followers
+  - @insight.categories.zip(@insight.friends[:data], @insight.followers[:data]).each do |date, friend, follower|
+    %tr
+      %td.text-secondary= date
+      %td.text-secondary= friend
+      %td.text-secondary= follower
+
+%table.text-center.table.table-bordered.table-condensed.my-5
+  %tr
+    %th.text-secondary Date
+    %th.text-secondary New friends
+    %th.text-secondary New followers
+  - @insight.categories.zip(@insight.new_friends[:data], @insight.new_followers[:data]).each do |date, new_friend, new_follower|
+    %tr
+      %td.text-secondary= date
+      %td.text-secondary= new_friend
+      %td.text-secondary= new_follower
 
 :javascript
   $(function () {
-    var categories = #{@chart_builder.categories.to_json.html_safe};
+    var insight = new AudienceInsight();
 
-    var series = [#{@chart_builder.friends.to_json.html_safe}];
-    AudienceInsights.drawChart('.chart-container.friends', categories, series);
+    var friends = #{raw @insight.chart_data(:friends).to_json};
+    insight.drawChart($('#friends-chart')[0], [{name: 'friends', data: friends}]);
 
-    series = [#{@chart_builder.followers.to_json.html_safe}];
-    AudienceInsights.drawChart('.chart-container.followers', categories, series);
+    var followers = #{raw @insight.chart_data(:followers).to_json};
+    insight.drawChart($('#followers-chart')[0], [{name: 'followers', data: followers}]);
 
-    series = [#{@chart_builder.new_friends.to_json.html_safe}];
-    AudienceInsights.drawChart('.chart-container.new-friends', categories, series);
+    var newFriends = #{raw @insight.chart_data(:new_friends).to_json};
+    insight.drawChart($('#new-friends-chart')[0], [{name: 'new friends', data: newFriends}]);
 
-    series = [#{@chart_builder.new_followers.to_json.html_safe}];
-    AudienceInsights.drawChart('.chart-container.new-followers', categories, series);
+    var newFollowers = #{raw @insight.chart_data(:new_followers).to_json};
+    insight.drawChart($('#new-followers-chart')[0], [{name: 'new followers', data: newFollowers}]);
   });

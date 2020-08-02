@@ -24,8 +24,8 @@
 
 .mb-5= feed_item :summary, twitter_user: @twitter_user
 
-- if @chart_builder
-  .mb-5= feed_item :audience_insight, twitter_user: @twitter_user, chart_builder: @chart_builder
+- if @twitter_user.audience_insight
+  .mb-5= feed_item :audience_insight, twitter_user: @twitter_user, audience_insight: @twitter_user.audience_insight
 
 .mb-5= feed_item :users, twitter_user: @twitter_user, feed_name: 'close_friends', feed_title: t('timelines.feeds.close_friends.title'), feed_description: t('timelines.feeds.close_friends.description', user: @twitter_user.screen_name), page_url: close_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_close_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_close_friends"))
 

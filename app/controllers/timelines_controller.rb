@@ -1,7 +1,6 @@
 class TimelinesController < ApplicationController
   include Concerns::JobQueueingConcern
   include Concerns::SearchRequestConcern
-  include Concerns::AudienceInsights
 
   before_action do
     unless from_crawler?
@@ -17,6 +16,5 @@ class TimelinesController < ApplicationController
   after_action { UsageCount.increment }
 
   def show
-    @chart_builder = find_or_create_chart_builder(@twitter_user)
   end
 end
