@@ -20,7 +20,7 @@
   %span.or-text= t('.or')
   %span.thin-border
 
-= render partial: 'common/search_form', locals: {via: current_via('input'), redirect_path: redirect_path}
+= render partial: 'shared/search_form', locals: {via: current_via('input'), redirect_path: redirect_path}
 .egotter-pink.text-right
   %i.fas.fa-check
   = t('.check_003')
