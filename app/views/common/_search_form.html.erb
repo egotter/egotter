@@ -1,8 +1,6 @@
-<% form_tag_id = search_form_id %>
-<% input_tag_id = search_input_id %>
 <% redirect_path ||= '' %>
 
-<%= form_tag searches_path(via: current_via('search_form')), id: form_tag_id, class: 'text-left', method: :post do %>
+<%= form_tag searches_path(via: current_via('search_form')), class: 'text-left', method: :post do %>
   <input type="hidden" name="via" value="<%= via %>">
   <input type="hidden" name="redirect_path" value="<%= redirect_path %>">
   <input type="hidden" name="render_time" value="<%= Time.zone.now.to_s(:db) %>">
@@ -12,7 +10,7 @@
     <div class="input-group-prepend">
       <div class="input-group-text">@</div>
     </div>
-    <input type="search" id="<%= input_tag_id %>"
+    <input type="search"
            name="screen_name"
            class="form-control"
            placeholder="<%= t('searches.common.search_by_twitter_id') %>"
@@ -24,17 +22,3 @@
     </span>
   </div>
 <% end %>
-
-<script>
-  <% unless current_user_friend_screen_names_rendered? %>
-  window.current_user_friend_screen_names = <%= raw current_user_friend_screen_names.to_json %>;
-  <% end %>
-
-  $(function () {
-    $("#<%= input_tag_id %>").autocomplete({
-      source: window.current_user_friend_screen_names || [],
-      minLength: 2,
-      appendTo: "#<%= form_tag_id %>"
-    });
-  });
-</script>
