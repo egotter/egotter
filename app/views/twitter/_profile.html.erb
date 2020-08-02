@@ -1,7 +1,7 @@
 <% user = user.twitter_db_user if switch_to_twitter_db_user?(user) %>
 <% logger.info { "Profile is rendered by #{user.class} in #{controller_name}##{action_name}" } %>
 <% user = TwitterUserDecorator.new(user) %>
-<% always_expanded = false unless defined?(always_expanded) %>
+<% always_expanded ||= false %>
 
 <style type=text/css>
   /* extra small */
@@ -52,7 +52,7 @@
   }
 </style>
 
-<div class="profile-header <%= 'd-none d-md-block' unless always_expanded %>">
+<div class="profile-header mt-3 <%= 'd-none d-md-block' unless always_expanded %>">
   <%#= Profile banner %>
   <div class="profile-banner">
     <% if user.profile_banner_url? %>
@@ -66,7 +66,9 @@
     <%#= Profile icon %>
     <div class="profile-icon-wrapper">
       <% if user.profile_icon_url? %>
-        <%= image_tag user.profile_icon_url_for(request), class: 'profile-icon rounded-circle ml-1', alt: user.screen_name %>
+        <%= link_to user.profile_icon_url_for(request) do %>
+          <%= image_tag user.profile_icon_url_for(request), class: 'profile-icon rounded-circle ml-1', alt: user.screen_name %>
+        <% end %>
       <% else %>
         <div style="background-color: #868e96;" class="profile-icon rounded-circle ml-1"></div>
       <% end %>
@@ -132,16 +134,16 @@
     <% end %>
 
     <% if user.location? %>
-      <i class="fas fa-map-marker text-muted"></i>&nbsp;<%= user.location %>
+      <div class="small my-1"><i class="fas fa-map-marker text-muted"></i>&nbsp;<%= user.location %></div>
     <% end %>
 
     <% if user.url? %>
-      <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url, user.url, style: 'word-break: break-all;', target: '_blank', rel: 'nofollow') %>
+      <div class="small my-1"><i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url.remove(/^https?:\/\//).truncate(30), user.url, style: 'word-break: break-all;', target: '_blank', rel: 'nofollow') %></div>
     <% end %>
 
     <% if user.account_created_at? %>
       <% birthday = user.account_created_at.in_time_zone('Tokyo') %>
-      <div class="my-3"><i class="fas fa-birthday-cake text-muted"></i>&nbsp;<%= t('.birthday', date: l(birthday, format: :birthday)) %></div>
+      <div class="small my-1"><i class="fas fa-birthday-cake text-muted"></i>&nbsp;<%= t('.birthday', date: l(birthday, format: :birthday)) %></div>
     <% end %>
 
     <div class="row justify-content-between m-3">

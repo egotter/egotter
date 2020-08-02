@@ -22,7 +22,9 @@
   <hr class="p-0 m-0">
 
   <% if user_signed_in? %>
-    <div class="text-center text-black py-3"><%= t('.logged_in', user: current_user.screen_name) %></div>
+    <div class="text-center text-black py-3">
+      <%= link_to t('.logged_in', user: current_user.screen_name), timeline_path(current_user) %>
+    </div>
     <hr class="p-0 m-0">
 
     <div class="text-center py-3">
