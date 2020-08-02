@@ -45,7 +45,6 @@ class User < ApplicationRecord
     order_by_desc = -> { order(created_at: :desc) }
 
     obj.has_many :search_reports,                order_by_desc
-    obj.has_many :news_reports,                  order_by_desc
     obj.has_many :welcome_messages,              order_by_desc
     obj.has_many :follow_requests,               order_by_desc
     obj.has_many :unfollow_requests,             order_by_desc
@@ -76,12 +75,6 @@ class User < ApplicationRecord
     includes(:notification_setting)
         .where('notification_settings.dm = ?', true)
         .where('last_dm_at IS NULL OR last_dm_at < ?', NotificationSetting::DM_INTERVAL.ago)
-        .references(:notification_settings)
-  end
-  scope :can_send_news, -> do
-    includes(:notification_setting)
-        .where('notification_settings.news = ?', true)
-        .where('last_dm_at IS NULL OR last_news_at < ?', NotificationSetting::NEWS_INTERVAL.ago)
         .references(:notification_settings)
   end
 

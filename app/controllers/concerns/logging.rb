@@ -61,7 +61,6 @@ module Concerns::Logging
       case
         when via_periodic_report? then UpdatePeriodicReportWorker.perform_async(job_options)
         when via_search_report?   then UpdateSearchReportWorker.perform_async(job_options)
-        when via_news_report?     then UpdateNewsReportWorker.perform_async(job_options)
         when via_welcome_message? then UpdateWelcomeMessageWorker.perform_async(job_options)
       end
     end

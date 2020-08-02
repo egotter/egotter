@@ -19,10 +19,6 @@ module ReportsHelper
     params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'search'
   end
 
-  def via_news_report?
-    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'news'
-  end
-
   def via_welcome_message?
     params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'welcome'
   end

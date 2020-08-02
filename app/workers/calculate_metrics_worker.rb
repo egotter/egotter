@@ -53,7 +53,7 @@ class CalculateMetricsWorker
             [ResetEgotterRequest, ResetEgotterLog],
             [DeleteTweetsRequest, DeleteTweetsLog],
             [ResetCacheRequest, ResetCacheLog],
-            [SearchReport, NewsReport, WelcomeMessage],
+            [SearchReport, WelcomeMessage],
             Tokimeki::User,
         ].flatten
 
