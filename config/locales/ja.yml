@@ -287,6 +287,7 @@ ja:
       wday_suffix: "曜日"
   audience_insights:
     show:
+      not_found: '@%{user} のデータ取得に失敗しました。お手数ですが再度検索してみてください。<a href="%{url}" class="btn btn-primary">@%{user} を検索する</a>'
       navbar_title: "オーディエンス分析"
       crumb_title: "オーディエンス分析"
       page_title: "@%{user} のオーディエンス分析"
