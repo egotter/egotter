@@ -90,7 +90,7 @@ module Concerns::TwitterUser::Profile
       # #build_twitter_user_by_uid in WaitingController returns new record and
       # profile header on #new action renders the record
       begin
-        attrs = Oj.load(profile_text.presence || '{}')
+        attrs = Oj.strict_load(profile_text.presence || '{}')
       rescue => e
         attrs = {}
       end
@@ -102,7 +102,7 @@ module Concerns::TwitterUser::Profile
         if (hash = fetch_profile).blank?
           @profile = Hashie::Mash.new({})
         else
-          hash = Oj.load(hash, symbol_keys: true) if hash.class == String
+          hash = Oj.strict_load(hash, symbol_keys: true) if hash.class == String
           @profile = Hashie::Mash.new(hash)
         end
       end

@@ -28,7 +28,7 @@ module S3
     end
 
     def parse_json(text)
-      Oj.load(text)
+      Oj.strict_load(text)
     end
 
     module_function :parse_json

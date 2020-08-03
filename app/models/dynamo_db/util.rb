@@ -3,7 +3,7 @@
 module DynamoDB
   module Util
     def parse_json(text)
-      Oj.load(text, symbol_keys: true)
+      Oj.strict_load(text, symbol_keys: true)
     rescue Oj::ParseError => e
       raise TypeError.new("#{text} is not a valid JSON source.")
     end
