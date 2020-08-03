@@ -1630,13 +1630,9 @@ ja:
         - 感情的に安定している
         - 嫌なことは忘れる
       needs_title: '欲求'
-      needs_description: '@%{user} の欲求を12項目に分けて説明します。'
+      needs_description: 'これまでは @%{user} の個性を5因子に分けて分析してきました。ここでは、@%{user} の欲求を12項目に分けて分析します。'
       values_title: '価値観'
-      values_description: '@%{user} の価値観を5項目に分けて説明します。'
-      personality_facets_title: '「個性」の5要素の詳細'
-      personality_facets_description: |
-        20世紀の大部分の間、心理学者は、個人の性格特性は幼少期または人生を通してのいずれかの間に学習されると考えられていました。
-        しかし近年の研究では、性格特性は実質的に遺伝性であることが明らかになっています。例えば、一卵性双生児は離れて育てられた場合であっても、非常に似たような性格特性を示します。
+      values_description: '最後に、@%{user} の価値観を5項目に分けて分析します。'
       score: '点'
       loading: 'Loading...'
       see_more: '詳しく見る'
@@ -1650,11 +1646,11 @@ ja:
       from_bottom: '下位から'
       less_than_one_percent: '1%未満'
       loading: 'Loading...'
-      see_more: '詳しく見る'
       score_details: '%{score}点、偏差値%{deviation}、%{percentile}'
       trait_tweet_html: |
         .@%{user} の%{name}は、<span class="text-primary">%{score_details}</span>に位置しています。
-        @%{user} は、%{description_details} #egotter %{url}
+        @%{user} は、%{description_details} #egotter #ツイッター性格診断 %{url}
+      needs_doesnt_have_descriptions: 'この分析には各項目の説明はありません。'
       trait_names:
         big5_agreeableness: '協調性'
         big5_conscientiousness: '誠実性'
@@ -1740,7 +1736,7 @@ ja:
         facet_trust: "他人から誠実さと善意に対して信頼されている度合い。"
         facet_anger: "怒りや不満を表現しないまでも経験する傾向。"
         facet_anxiety: "困難なことやトラブルにこだわる傾向;不安や懸念を抱えやすい。"
-        facet_depression: "罪悪感、悲しみ、絶望、または孤独の感情を抱きやすい傾向。 **このデモでは、精神病を診断することはできません。 **"
+        facet_depression: "罪悪感、悲しみ、絶望、または孤独の感情を抱きやすい傾向。"
         facet_immoderation: "欲望と衝動を抑えたり遅らせたりするよりも、それらのままに行動する傾向。"
         facet_self_consciousness: "拒絶と当惑に関する関心;内気。"
         facet_vulnerability: "困難な状況でのストレスや圧力への対処の困難さ。"
@@ -1797,6 +1793,23 @@ ja:
         facet_anger: '特に物事があなたの考えるとおりに行かないときにかっとなる性格です'
         facet_excitement_seeking: 'リスクを取ることで高揚し、忙しくないと退屈に感じます'
         facet_cooperation: '文句を言うような気難しさがなく、対立を回避しようとします'
+        need_challenge: '名声、競争、栄光につながる体験を好みます。'
+        need_closeness: '帰属、郷愁、親密さにつながる体験を好みます。'
+        need_curiosity: '発見、専門性、知識獲得につながる体験を好みます。'
+        need_excitement: 'お祭り騒ぎ、期待、うきうきした気分につながる体験を好みます。'
+        need_harmony: '幸福、礼儀、丁寧さにつながる体験を好みます。'
+        need_ideal: '洗練、崇高さ、優越感、満足感につながる体験を好みます。'
+        need_liberty: '現代性、可能性拡大、束縛脱出、自発性、斬新さにつながる体験を好みます。'
+        need_love: 'つながり、親近感につながる体験を好みます。'
+        need_practicality: '効率、実用性、高価値、利便性につながる体験を好みます。'
+        need_self_expression: '自己表現、自己啓発、個人的強みにつながる体験を好みます。'
+        need_stability: '安定、信憑性、信用性につながる体験を好みます。'
+        need_structure: '組織への帰属、率直さ、明瞭さ、信頼性につながる体験を好みます。'
+        value_conservation: '伝統について、自分が属するグループに敬意を払い、それらのガイダンスに従います。'
+        value_hedonism: '生活を楽しむことについて、人生を最大限に楽しもうとしています。'
+        value_openness_to_change: '自主性について、最高の成果が得られるよう、自分自身で目標を設定する傾向があります。'
+        value_self_enhancement: '成功することについて、自分自身を向上させ、自分が有能な人であることを実証する機会を探しています。'
+        value_self_transcendence: '他人への支援について、自分のまわりの人々を世話することは重要であると考えます。'
       trait_low_descriptions:
         big5_openness: '平穏を好み、率直で、複雑なものや曖昧なもの、取るに足らないものに対して関心を持たないタイプです。'
         big5_conscientiousness: '計画に従うより、自発的に物事を行うことを好むタイプです。'
@@ -1833,6 +1846,23 @@ ja:
         facet_anger: '滅多に怒りません'
         facet_excitement_seeking: '穏やかで和める、安全な活動を好みます'
         facet_cooperation: '他人と対立することに尻込みしません'
+        need_challenge: '名声、競争、栄光につながる体験にはさほど興味がありません。'
+        need_closeness: '帰属、郷愁、親密さにつながる体験にはさほど興味がありません。'
+        need_curiosity: '発見、専門性、知識獲得につながる体験にはさほど興味がありません。'
+        need_excitement: 'お祭り騒ぎ、期待、うきうきした気分につながる体験にはさほど興味がありません。'
+        need_harmony: '幸福、礼儀、丁寧さにつながる体験にはさほど興味がありません。'
+        need_ideal: '洗練、崇高さ、優越感、満足感につながる体験にはさほど興味がありません。'
+        need_liberty: '現代性、可能性拡大、束縛脱出、自発性、斬新さにつながる体験にはさほど興味がありません。'
+        need_love: 'つながり、親近感につながる体験にはさほど興味がありません。'
+        need_practicality: '効率、実用性、高価値、利便性につながる体験にはさほど興味がありません。'
+        need_self_expression: '自己表現、自己啓発、個人的強みにつながる体験にはさほど興味がありません。'
+        need_stability: '安定、信憑性、信用性につながる体験にはさほど興味がありません。'
+        need_structure: '組織への帰属、率直さ、明瞭さ、信頼性につながる体験にはさほど興味がありません。'
+        value_conservation: '伝統について、人が通った道よりもわが道を行くことを大切にします。'
+        value_hedonism: '生活を楽しむことについて、単なる個人の楽しみよりも大きな目標を伴う行動を優先します。'
+        value_openness_to_change: '自主性について、他人が自分の行動の指揮をとることを受け入れます。'
+        value_self_enhancement: '成功することについて、自分の才能を誇示することにあまり拘らず意思決定します。'
+        value_self_transcendence: '他人への支援について、人は干渉されずに自分で物事に対処できると思われています。'
     facets:
       <<: *personality_insights_traits
       your_score_is_html: '@%{user} の%{name}は、<span class="text-primary">%{score_details}</span>でした。'

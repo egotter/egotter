@@ -15,7 +15,7 @@
         %li= term
 %div= t('.trait_drilldown', user: twitter_user.screen_name, trait: trait_name, facets: facet_ids.map { |id| t(".trait_names.#{id}") }.join(', '))
 %div{id: "#{parent}-chart", style:  'height: 300px;'}= t('.loading')
-%div{id: "#{parent}-traits", class: hidden_at_first ? 'hidden-at-first' : ''}
+%div{id: "#{parent}-traits"}
   - facet_ids.each do |id|
     - facet = facets.find { |f| f['trait_id'] == id }
     .my-5{id: id}
@@ -26,5 +26,3 @@
       .my-2= t(".trait_descriptions.#{id}", default: 'not found')
       - tweet_text = t(".trait_tweet_html", user: twitter_user.screen_name, name: facet_name, score_details: personality_insight_score_details(facet), description_details: personality_insight_description_details(facet), url: personality_insights_top_url)
       = render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: tweet_text, twitter_user: twitter_user})
-- if hidden_at_first
-  %button.btn.btn-outline-primary.btn-sm{id: "#{parent}-see-more", onclick: "clickSeeMore('#{parent}-traits', this);"}= t('.see_more')

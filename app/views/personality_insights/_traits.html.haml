@@ -1,16 +1,17 @@
 %h3.text-center.my-4= title
 %div= description
 %div{id: "#{parent}-chart", style:  'height: 300px;'}= t('.loading')
-%div{id: "#{parent}-traits", class: hidden_at_first ? 'hidden-at-first' : ''}
-  - trait_ids.each do |id|
-    - trait = traits.find { |t| t['trait_id'] == id }
-    .my-5{id: id}
-      - name = t(".trait_names.#{id}")
-      %h5
-        = name
-        %small.text-muted= personality_insight_to_upper_case(id)
-      .my-2= t(".trait_descriptions.#{id}", default: 'not found')
-      - tweet_text = t(".trait_tweet_html", user: twitter_user.screen_name, name: name, score_details: personality_insight_score_details(trait), description_details: personality_insight_description_details(trait), url: personality_insights_top_url)
-      = render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: tweet_text, twitter_user: twitter_user})
-- if hidden_at_first
-  %button.btn.btn-outline-primary.btn-sm{id: "#{parent}-see-more", onclick: "clickSeeMore('#{parent}-traits', this);"}= t('.see_more')
+- if parent == 'needs'
+  = t('.needs_doesnt_have_descriptions')
+- else
+  %div{id: "#{parent}-traits"}
+    - trait_ids.each do |id|
+      - trait = traits.find { |t| t['trait_id'] == id }
+      .my-5{id: id}
+        - name = t(".trait_names.#{id}")
+        %h5
+          = name
+          %small.text-muted= personality_insight_to_upper_case(id)
+        .my-2= t(".trait_descriptions.#{id}", default: 'not found')
+        - tweet_text = t(".trait_tweet_html", user: twitter_user.screen_name, name: name, score_details: personality_insight_score_details(trait), description_details: personality_insight_description_details(trait), url: personality_insights_top_url)
+        = render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: tweet_text, twitter_user: twitter_user})

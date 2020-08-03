@@ -102,8 +102,6 @@ class I18n {
   }
 }
 
-window.PersonalityInsight.I18n = I18n;
-
 var jaSortLikely = [
   'consumption_preferences_movie_musical',
   'consumption_preferences_automobile_ownership_cost',

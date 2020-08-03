@@ -40,62 +40,51 @@
 -# Personality
 - trait_ids = %w(big5_openness big5_conscientiousness big5_extraversion big5_agreeableness big5_neuroticism)
 - trait_names = trait_ids.map { |id| t("personality_insights.traits.trait_names.#{id}") }
-= render partial: 'traits', locals: {parent: 'personality', title: t('.personality_title'), description: t('.personality_description', user: @twitter_user.screen_name, traits: trait_names.join(', ')), traits: @insight.personality_traits, trait_ids: trait_ids, twitter_user: @twitter_user, hidden_at_first: false}
+= render partial: 'traits', locals: {parent: 'personality', title: t('.personality_title'), description: t('.personality_description', user: @twitter_user.screen_name, traits: trait_names.join(', ')), traits: @insight.personality_traits, trait_ids: trait_ids, twitter_user: @twitter_user}
 
 %hr
 
 -# Facets
 - facet_ids = %w(facet_adventurousness facet_artistic_interests facet_emotionality facet_imagination facet_intellect facet_liberalism)
-= render partial: 'facets', locals: {parent: 'big5_openness', title: t('.big5_openness_details_title'), description: t('.big5_openness_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_openness_details_high_terms'), low_terms: t('.big5_openness_details_low_terms'), facets: @insight.openness_facets, facet_ids: facet_ids, trait: @insight.openness_trait, twitter_user: @twitter_user, hidden_at_first: false}
+= render partial: 'facets', locals: {parent: 'big5_openness', title: t('.big5_openness_details_title'), description: t('.big5_openness_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_openness_details_high_terms'), low_terms: t('.big5_openness_details_low_terms'), facets: @insight.openness_facets, facet_ids: facet_ids, trait: @insight.openness_trait, twitter_user: @twitter_user}
 
 %hr
 
 - facet_ids = %w(facet_achievement_striving facet_cautiousness facet_dutifulness facet_orderliness facet_self_discipline facet_self_efficacy)
-= render partial: 'facets', locals: {parent: 'big5_conscientiousness', title: t('.big5_conscientiousness_details_title'), description: t('.big5_conscientiousness_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_conscientiousness_details_high_terms'), low_terms: t('.big5_conscientiousness_details_low_terms'), facets: @insight.conscientiousness_facets, facet_ids: facet_ids, trait: @insight.conscientiousness_trait, twitter_user: @twitter_user, hidden_at_first: false}
+= render partial: 'facets', locals: {parent: 'big5_conscientiousness', title: t('.big5_conscientiousness_details_title'), description: t('.big5_conscientiousness_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_conscientiousness_details_high_terms'), low_terms: t('.big5_conscientiousness_details_low_terms'), facets: @insight.conscientiousness_facets, facet_ids: facet_ids, trait: @insight.conscientiousness_trait, twitter_user: @twitter_user}
 
 %hr
 
 - facet_ids = %w(facet_activity_level facet_assertiveness facet_cheerfulness facet_excitement_seeking facet_friendliness facet_gregariousness)
-= render partial: 'facets', locals: {parent: 'big5_extraversion', title: t('.big5_extraversion_details_title'), description: t('.big5_extraversion_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_extraversion_details_high_terms'), low_terms: t('.big5_extraversion_details_low_terms'), facets: @insight.extraversion_facets, facet_ids: facet_ids, trait: @insight.extraversion_trait, twitter_user: @twitter_user, hidden_at_first: false}
+= render partial: 'facets', locals: {parent: 'big5_extraversion', title: t('.big5_extraversion_details_title'), description: t('.big5_extraversion_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_extraversion_details_high_terms'), low_terms: t('.big5_extraversion_details_low_terms'), facets: @insight.extraversion_facets, facet_ids: facet_ids, trait: @insight.extraversion_trait, twitter_user: @twitter_user}
 
 %hr
 
 - facet_ids = %w(facet_altruism facet_cooperation facet_modesty facet_morality facet_sympathy facet_trust)
-= render partial: 'facets', locals: {parent: 'big5_agreeableness', title: t('.big5_agreeableness_details_title'), description: t('.big5_agreeableness_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_agreeableness_details_high_terms'), low_terms: t('.big5_agreeableness_details_low_terms'), facets: @insight.agreeableness_facets, facet_ids: facet_ids, trait: @insight.agreeableness_trait, twitter_user: @twitter_user, hidden_at_first: false}
+= render partial: 'facets', locals: {parent: 'big5_agreeableness', title: t('.big5_agreeableness_details_title'), description: t('.big5_agreeableness_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_agreeableness_details_high_terms'), low_terms: t('.big5_agreeableness_details_low_terms'), facets: @insight.agreeableness_facets, facet_ids: facet_ids, trait: @insight.agreeableness_trait, twitter_user: @twitter_user}
 
 %hr
 
 - facet_ids = %w(facet_anger facet_anxiety facet_depression facet_immoderation facet_self_consciousness facet_vulnerability)
-= render partial: 'facets', locals: {parent: 'big5_neuroticism', title: t('.big5_neuroticism_details_title'), description: t('.big5_neuroticism_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_neuroticism_details_high_terms'), low_terms: t('.big5_neuroticism_details_low_terms'), facets: @insight.neuroticism_facets, facet_ids: facet_ids, trait: @insight.neuroticism_trait, twitter_user: @twitter_user, hidden_at_first: false}
+= render partial: 'facets', locals: {parent: 'big5_neuroticism', title: t('.big5_neuroticism_details_title'), description: t('.big5_neuroticism_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_neuroticism_details_high_terms'), low_terms: t('.big5_neuroticism_details_low_terms'), facets: @insight.neuroticism_facets, facet_ids: facet_ids, trait: @insight.neuroticism_trait, twitter_user: @twitter_user}
+
+%hr
 
 -# Needs
--# - trait_ids = %w(need_challenge need_closeness need_curiosity need_excitement need_harmony need_ideal need_liberty need_love need_practicality need_self_expression need_stability need_structure)
--# - description = t('.needs_description', user: @twitter_user.screen_name, url: personality_insights_top_url)
--# = render partial: 'traits', locals: {parent: 'needs', title: t('.needs_title'), description: description, traits: @insight.needs_traits, trait_ids: trait_ids, twitter_user: @twitter_user, hidden_at_first: false}
+- trait_ids = %w(need_challenge need_closeness need_curiosity need_excitement need_harmony need_ideal need_liberty need_love need_practicality need_self_expression need_stability need_structure)
+- description = t('.needs_description', user: @twitter_user.screen_name)
+= render partial: 'traits', locals: {parent: 'needs', title: t('.needs_title'), description: description, traits: @insight.needs_traits, trait_ids: trait_ids, twitter_user: @twitter_user}
+
+%hr
 
 -# Values
--# - trait_ids = %w(value_conservation value_hedonism value_openness_to_change value_self_enhancement value_self_transcendence)
--# - description = t('.values_description', user: @twitter_user.screen_name, url: personality_insights_top_url)
--# = render partial: 'traits', locals: {parent: 'values', title: t('.values_title'), description: description, traits: @insight.values_traits,  trait_ids: trait_ids, twitter_user: @twitter_user, hidden_at_first: false}
+- trait_ids = %w(value_conservation value_hedonism value_openness_to_change value_self_enhancement value_self_transcendence)
+- description = t('.values_description', user: @twitter_user.screen_name, url: personality_insights_top_url)
+= render partial: 'traits', locals: {parent: 'values', title: t('.values_title'), description: description, traits: @insight.values_traits,  trait_ids: trait_ids, twitter_user: @twitter_user}
 
 = javascript_pack_tag 'personality_insight'
 
-:css
-  .hidden-at-first {
-    height: 80px;
-    overflow: hidden;
-    background: linear-gradient(180deg, #000, #fff);
-    -webkit-background-clip: text;
-    color: transparent;
-  }
-
 :javascript
-  function clickSeeMore (id, self) {
-    $('#' + id).css('height', 'auto').css('background', '#fff').css('color', '#000');
-    $('#' + self.id).hide();
-    return false;
-  }
-
   function setSummary(summary) {
     $('#summary-traits').append(summary[0]);
     $('#summary-facets').append(summary[1]);
@@ -126,32 +115,17 @@
   $(function () {
     var data = #{raw @insight.profile.to_json};
     var insight = new PersonalityInsight();
-    var i18n = new PersonalityInsight.I18n();
 
     setSummary(insight.getSummary(data));
     setCps.apply(null, insight.getConsumptionPreferences(data['consumption_preferences']));
 
     insight.drawTraits('personality-chart', data['personality']);
 
-    // insight.drawTraits('needs-chart', data['needs']);
-    // var container = $('#needs-traits');
-    // data['needs'].forEach(function (trait) {
-    //   var traitId = trait['trait_id'];
-    //   var name = i18n.t(traitId);
-    //   container.find('#' + traitId).find('.title').text(name);
-    // });
-
-    // insight.drawTraits('values-chart', data['values']);
-    // var container = $('#values-traits');
-    // data['values'].forEach(function (trait, index) {
-    //   var traitId = trait['trait_id'];
-    //   var name = i18n.t(traitId);
-    //   container.find('#' + traitId).find('.title').text(name);
-    // });
-
     data['personality'].forEach(function (trait, index) {
       var facets = trait['children'];
       insight.drawFacets(trait['trait_id'] + '-chart', facets);
     });
 
+    insight.drawTraits('needs-chart', data['needs']);
+    insight.drawTraits('values-chart', data['values']);
   });
