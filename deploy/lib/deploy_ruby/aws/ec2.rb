@@ -64,16 +64,18 @@ module DeployRuby
       end
 
       def test_ssh_connection(public_ip)
+        max_retries = 60
         cmd = "ssh -q -i ~/.ssh/egotter.pem ec2-user@#{public_ip} exit"
-        30.times do |n|
-          logger.info "waiting for test_ssh_connection #{public_ip}"
+
+        max_retries.times do |n|
+          logger.info "waiting for test_ssh_connection #{public_ip}#{"(attempts left #{max_retries - n}/#{max_retries})" if n > 0}"
           if system(cmd, exception: false)
             break
           else
             sleep 5
           end
 
-          if n == 29
+          if n == max_retries - 1
             red 'test_ssh_connection is failed'
             exit
           end
