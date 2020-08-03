@@ -37,10 +37,14 @@
 
 #summary-tweet= render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: t('.summary_description', {user: @twitter_user.screen_name, url: personality_insights_top_url}.merge(@insight.personality_scores)), twitter_user: @twitter_user})
 
+= render(partial: 'adsense/ad', locals: {vertical: :middle})
+
 -# Personality
 - trait_ids = %w(big5_openness big5_conscientiousness big5_extraversion big5_agreeableness big5_neuroticism)
 - trait_names = trait_ids.map { |id| t("personality_insights.traits.trait_names.#{id}") }
 = render partial: 'traits', locals: {parent: 'personality', title: t('.personality_title'), description: t('.personality_description', user: @twitter_user.screen_name, traits: trait_names.join(', ')), traits: @insight.personality_traits, trait_ids: trait_ids, twitter_user: @twitter_user}
+
+= render(partial: 'adsense/ad', locals: {vertical: :middle})
 
 %hr
 
@@ -48,25 +52,35 @@
 - facet_ids = %w(facet_adventurousness facet_artistic_interests facet_emotionality facet_imagination facet_intellect facet_liberalism)
 = render partial: 'facets', locals: {parent: 'big5_openness', title: t('.big5_openness_details_title'), description: t('.big5_openness_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_openness_details_high_terms'), low_terms: t('.big5_openness_details_low_terms'), facets: @insight.openness_facets, facet_ids: facet_ids, trait: @insight.openness_trait, twitter_user: @twitter_user}
 
+= render(partial: 'adsense/ad', locals: {vertical: :middle})
+
 %hr
 
 - facet_ids = %w(facet_achievement_striving facet_cautiousness facet_dutifulness facet_orderliness facet_self_discipline facet_self_efficacy)
 = render partial: 'facets', locals: {parent: 'big5_conscientiousness', title: t('.big5_conscientiousness_details_title'), description: t('.big5_conscientiousness_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_conscientiousness_details_high_terms'), low_terms: t('.big5_conscientiousness_details_low_terms'), facets: @insight.conscientiousness_facets, facet_ids: facet_ids, trait: @insight.conscientiousness_trait, twitter_user: @twitter_user}
+
+= render(partial: 'adsense/ad', locals: {vertical: :middle})
 
 %hr
 
 - facet_ids = %w(facet_activity_level facet_assertiveness facet_cheerfulness facet_excitement_seeking facet_friendliness facet_gregariousness)
 = render partial: 'facets', locals: {parent: 'big5_extraversion', title: t('.big5_extraversion_details_title'), description: t('.big5_extraversion_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_extraversion_details_high_terms'), low_terms: t('.big5_extraversion_details_low_terms'), facets: @insight.extraversion_facets, facet_ids: facet_ids, trait: @insight.extraversion_trait, twitter_user: @twitter_user}
 
+= render(partial: 'adsense/ad', locals: {vertical: :middle})
+
 %hr
 
 - facet_ids = %w(facet_altruism facet_cooperation facet_modesty facet_morality facet_sympathy facet_trust)
 = render partial: 'facets', locals: {parent: 'big5_agreeableness', title: t('.big5_agreeableness_details_title'), description: t('.big5_agreeableness_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_agreeableness_details_high_terms'), low_terms: t('.big5_agreeableness_details_low_terms'), facets: @insight.agreeableness_facets, facet_ids: facet_ids, trait: @insight.agreeableness_trait, twitter_user: @twitter_user}
 
+= render(partial: 'adsense/ad', locals: {vertical: :middle})
+
 %hr
 
 - facet_ids = %w(facet_anger facet_anxiety facet_depression facet_immoderation facet_self_consciousness facet_vulnerability)
 = render partial: 'facets', locals: {parent: 'big5_neuroticism', title: t('.big5_neuroticism_details_title'), description: t('.big5_neuroticism_details_description_html', user: @twitter_user.screen_name), high_terms: t('.big5_neuroticism_details_high_terms'), low_terms: t('.big5_neuroticism_details_low_terms'), facets: @insight.neuroticism_facets, facet_ids: facet_ids, trait: @insight.neuroticism_trait, twitter_user: @twitter_user}
+
+= render(partial: 'adsense/ad', locals: {vertical: :middle})
 
 %hr
 
@@ -81,6 +95,8 @@
 - trait_ids = %w(value_conservation value_hedonism value_openness_to_change value_self_enhancement value_self_transcendence)
 - description = t('.values_description', user: @twitter_user.screen_name, url: personality_insights_top_url)
 = render partial: 'traits', locals: {parent: 'values', title: t('.values_title'), description: description, traits: @insight.values_traits,  trait_ids: trait_ids, twitter_user: @twitter_user}
+
+= render(partial: 'adsense/ad', locals: {vertical: :bottom})
 
 = javascript_pack_tag 'personality_insight'
 
