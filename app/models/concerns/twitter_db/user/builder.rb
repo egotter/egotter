@@ -24,7 +24,7 @@ module Concerns::TwitterDB::User::Builder
           user[:description] = user[:description].truncate(180)
         end
 
-        user[:description] = user[:description].gsub(/\R/, ' ')
+        user[:description] = user[:description]
       end
 
       if user[:url]

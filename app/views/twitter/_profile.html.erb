@@ -130,7 +130,7 @@
     </div>
 
     <% if user.description? %>
-      <div class="my-3"><%= linkify(user.description) %></div>
+      <div class="my-3"><%= linkify(user.description).gsub("\n", '<br>').html_safe %></div>
     <% end %>
 
     <% if user.location? %>
