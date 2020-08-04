@@ -15,6 +15,6 @@ class UsageStatsController < ApplicationController
   private
 
   def set_stat
-    @stat = UsageStat.find_or_initialize_by(uid: @twitter_user.uid)
+    @stat = UsageStat.find_by(uid: @twitter_user.uid)
   end
 end
