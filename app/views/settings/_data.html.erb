@@ -1,19 +1,6 @@
 <h2 class="h4 text-center my-5"><i class="fas fa-database"></i><%= t('.title') %></h2>
 
 <div class="row">
-  <div class="col-4"><%= t('.updated_at') %></div>
-  <div class="col-8">
-    <div>
-      <%= (twitter_user = TwitterUser.latest_by(uid: current_user.uid)) ? l(twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) : t('.no_records') %>
-      <span><a href="<%= settings_twitter_users_path %>"><%= t('.history') %></a></span>
-    </div>
-    <div class="text-muted notes"><%= t('.note') %></div>
-  </div>
-</div>
-
-<hr>
-
-<div class="row">
   <div class="col-4"><%= t('.reset_cache.title') %></div>
   <div class="col-8">
     <div>

@@ -15,20 +15,20 @@
 .mb-5= t('.page_description', user: @twitter_user.mention_name)
 
 %h3.h5.text-center 曜日ごとのツイッター利用時間 (分)
-.usage-time-chart
+.usage-time-chart.my-3{style: 'height: 180px;'}
 = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user})
 
 = render(partial: 'adsense/ad', locals: {vertical: :top})
 
-%h3.h5.text-center よく使うハッシュタグ
-.hashtags-chart
+- if @stat.hashtags.any?
+  %h3.h5.text-center よく使うハッシュタグ
+  .hashtags-chart.my-3{style: 'height: 180px;'}
 
-%h3.h5.text-center ハッシュタグクラウド (クリックできます)
-.cloud-chart{style: 'height: 220px;'}
+  %h3.h5.text-center ハッシュタグクラウド (クリックできます)
+  .cloud-chart.my-3{style: 'height: 220px;'}
 
-.tweet-box-wrapper
-  - text = t('searches.usage_stats.usage_hashtags', user: @twitter_user.mention_name, hashtags: @stat.hashtags.to_h.keys.take(5).join(' '), url: usage_stat_url(@twitter_user))
-  = render(partial: 'twitter/tweet_box', locals: {text: text, twitter_user: @twitter_user})
+  - text = t('searches.usage_stats.usage_hashtags', user: @twitter_user.screen_name, hashtags: @stat.hashtags.to_h.keys.take(5).join(' '), url: usage_stat_url(@twitter_user))
+  = render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: text, twitter_user: @twitter_user})
 
 :javascript
   $(function () {

@@ -1,4 +1,4 @@
-%ul.nav.nav-tabs.nav-justified
+%ul.nav.nav-tabs.nav-justified.mb-3
   - tabs.each.with_index do |tab, i|
     %li.nav-item
       - if tab.has_key?(:name)
@@ -8,4 +8,3 @@
           = (tab[:count] && tab[:count] > 0) ? tab[:count] : t('.analyzing')
       - else
         = link_to tab[:text].html_safe, tab[:url], class: ('nav-link active' if active_tab == i)
-.vertical-spacing

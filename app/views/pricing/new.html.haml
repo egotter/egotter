@@ -108,8 +108,7 @@
     %tr
       %td
       %td
-        %div= link_to t('.enterprice_inquiry_by_email'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-primary'
-        .vertical-spacing
+        .mb-3= link_to t('.enterprice_inquiry_by_email'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-primary'
         %div
           = link_to t('.enterprice_inquiry_by_dm'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-outline-primary'
           %span{style: 'font-size: small;'}= t('.enterprice_inquiry_by_dm_note_html')

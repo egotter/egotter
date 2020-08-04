@@ -1,59 +1,38 @@
 %h2.h4.text-center.my-5= UsageStat.human_attribute_name(:friends_stat)
 
-.friends-stat-wrapper.text-center
-  .row
-    = button_tag class: 'btn btn-outline-primary btn-lg' do
-      = stat[:friends_count]
-      %br
-      %span.name
-        = UsageStat.human_attribute_name(:friends_count)
-    = button_tag class: 'btn btn-outline-primary btn-lg' do
-      = stat[:one_sided_friends_count]
-      %br
-      %span.name
-        = UsageStat.human_attribute_name(:one_sided_friends_count)
-    = button_tag class: 'btn btn-outline-primary btn-lg' do
-      = number_to_percentage(stat[:one_sided_friends_rate] * 100, precision: 1)
-      %br
-      %span.name
-        = UsageStat.human_attribute_name(:one_sided_friends_rate)
-    = button_tag class: 'btn btn-outline-primary btn-lg' do
-      = stat[:followers_count]
-      %br
-      %span.name
-        = UsageStat.human_attribute_name(:followers_count)
-    = button_tag class: 'btn btn-outline-primary btn-lg' do
-      = stat[:one_sided_followers_count]
-      %br
-      %span.name
-        = UsageStat.human_attribute_name(:one_sided_followers_count)
-    = button_tag class: 'btn btn-outline-primary btn-lg' do
-      = number_to_percentage(stat[:one_sided_followers_rate] * 100, precision: 1)
-      %br
-      %span.name
-        = UsageStat.human_attribute_name(:one_sided_followers_rate)
-    = button_tag class: 'btn btn-outline-primary btn-lg' do
-      = stat[:mutual_friends_count]
-      %br
-      %span.name
-        = UsageStat.human_attribute_name(:mutual_friends_count)
-    = button_tag class: 'btn btn-outline-primary btn-lg' do
-      = number_to_percentage(stat[:follow_back_rate] * 100, precision: 1)
-      %br
-      %span.name
-        = UsageStat.human_attribute_name(:follow_back_rate)
-    = button_tag class: 'btn btn-outline-primary btn-lg' do
-      = number_to_percentage(stat[:mutual_friends_rate] * 100, precision: 1)
-      %br
-      %span.name
-        = UsageStat.human_attribute_name(:mutual_friends_rate)
+.text-center
+  = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
+    = stat[:friends_count]
+    .small= UsageStat.human_attribute_name(:friends_count)
+  = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
+    = stat[:one_sided_friends_count]
+    .small= UsageStat.human_attribute_name(:one_sided_friends_count)
+  = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
+    = number_to_percentage(stat[:one_sided_friends_rate] * 100, precision: 1)
+    .small= UsageStat.human_attribute_name(:one_sided_friends_rate)
+  = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
+    = stat[:followers_count]
+    .small= UsageStat.human_attribute_name(:followers_count)
+  = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
+    = stat[:one_sided_followers_count]
+    .small= UsageStat.human_attribute_name(:one_sided_followers_count)
+  = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
+    = number_to_percentage(stat[:one_sided_followers_rate] * 100, precision: 1)
+    .small= UsageStat.human_attribute_name(:one_sided_followers_rate)
+  = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
+    = stat[:mutual_friends_count]
+    .small= UsageStat.human_attribute_name(:mutual_friends_count)
+  = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
+    = number_to_percentage(stat[:follow_back_rate] * 100, precision: 1)
+    .small= UsageStat.human_attribute_name(:follow_back_rate)
+  = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
+    = number_to_percentage(stat[:mutual_friends_rate] * 100, precision: 1)
+    .small= UsageStat.human_attribute_name(:mutual_friends_rate)
 
-  .friends-stat-bar-chart{style: 'height: 200px;'}
+.friends-stat-bar-chart.my-5{style: 'height: 200px;'}
 
-.tweet-box-wrapper
-  - tweet_text = t('usage_stats.friends_stat.tweet', user: twitter_user.mention_name, one_sided_friends: stat[:one_sided_friends_count], one_sided_followers: stat[:one_sided_followers_count], mutual_friends: stat[:mutual_friends_count], url: url)
-  = render(partial: 'twitter/tweet_box', locals: {text: tweet_text, twitter_user: twitter_user})
-.vertical-spacing
+- tweet_text = t('usage_stats.friends_stat.tweet', user: twitter_user.screen_name, one_sided_friends: stat[:one_sided_friends_count], one_sided_followers: stat[:one_sided_followers_count], mutual_friends: stat[:mutual_friends_count], url: url)
+= render(partial: 'twitter/tweet_box', locals: {text: tweet_text, twitter_user: twitter_user})
 
 :javascript
   (function () {

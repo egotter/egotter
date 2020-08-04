@@ -42,10 +42,6 @@ class SettingsController < ApplicationController
     @requests = current_user.create_prompt_report_requests.includes(:logs).limit(20)
   end
 
-  def twitter_users
-    @twitter_users = TwitterUser.where(uid: current_user.uid).order(created_at: :desc).limit(20)
-  end
-
   private
 
   def pick_sent_value
