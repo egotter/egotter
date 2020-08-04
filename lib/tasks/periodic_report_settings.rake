@@ -1,7 +1,7 @@
 namespace :periodic_report_settings do
   desc 'Create'
   task create: :environment do
-    sigint = Util::Sigint.new.trap
+    sigint = Sigint.new.trap
 
     start = ENV['START'] ? ENV['START'].to_i : 1
     processed_count = 0

@@ -1,7 +1,7 @@
 namespace :notification_settings do
   desc 'update permission_level'
   task update_permission_level: :environment do
-    sigint = Util::Sigint.new.trap
+    sigint = Sigint.new.trap
 
     # Avoid circular dependency
     ApiClient
@@ -57,7 +57,7 @@ namespace :notification_settings do
 
   desc 'update report_interval'
   task update_report_interval: :environment do
-    sigint = Util::Sigint.new.trap
+    sigint = Sigint.new.trap
 
     # Avoid circular dependency
     ApiClient

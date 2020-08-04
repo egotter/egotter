@@ -5,7 +5,7 @@ module Concerns::User::NotFoundAndForbidden
 
   class_methods do
     def update_uid_batch
-      sigint = Util::Sigint.new.trap
+      sigint = Sigint.new.trap
 
       # Avoid circular dependency
       Bot

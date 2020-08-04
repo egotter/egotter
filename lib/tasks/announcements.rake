@@ -1,7 +1,7 @@
 namespace :announcements do
   desc 'Add'
   task add: :environment do
-    sigint = Util::Sigint.new.trap
+    sigint = Sigint.new.trap
 
     text = ENV['TEXT']
     rotate = ENV['ROTATE'] == 'false' ? false : true

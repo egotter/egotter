@@ -1,7 +1,7 @@
 namespace :users do
   desc 'update authorized'
   task update_authorized: :environment do
-    sigint = Util::Sigint.new.trap
+    sigint = Sigint.new.trap
 
     # Avoid circular dependency
     ApiClient

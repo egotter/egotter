@@ -1,7 +1,7 @@
 namespace :twitter_users do
   desc 'create'
   task create: :environment do
-    sigint = Util::Sigint.new.trap
+    sigint = Sigint.new.trap
 
     uids = ENV['UIDS'].split(',').map(&:to_i)
     created_ids = []
@@ -38,7 +38,7 @@ namespace :twitter_users do
 
   desc 'check'
   task check: :environment do
-    sigint = Util::Sigint.new.trap
+    sigint = Sigint.new.trap
 
     STDOUT.sync = true
     Rails.logger.level = Logger::WARN
@@ -69,7 +69,7 @@ namespace :twitter_users do
 
   desc 'Update friends_count and followers_count'
   task update_friends_count: :environment do
-    sigint = Util::Sigint.new.trap
+    sigint = Sigint.new.trap
 
     start = ENV['START'] ? ENV['START'].to_i : 1
     error_ids = []

@@ -1,7 +1,7 @@
 namespace :usage_stats do
   desc 'create'
   task create: :environment do
-    sigint = Util::Sigint.new.trap
+    sigint = Sigint.new.trap
 
     processed = 0
     skipped = 0
@@ -39,7 +39,7 @@ namespace :usage_stats do
 
   desc 'update'
   task update: :environment do
-    sigint = Util::Sigint.new.trap
+    sigint = Sigint.new.trap
     processed = 0
     start = Time.zone.now
 

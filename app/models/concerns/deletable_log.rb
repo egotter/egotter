@@ -25,7 +25,7 @@ module Concerns::DeletableLog
       end_time = time.end_of_month.to_s(:db)
       puts "start_time=#{start_time} end_time=#{end_time}"
 
-      sigint = Util::Sigint.new.trap
+      sigint = Sigint.new.trap
 
       logs = where(created_at: start_time..end_time).select(:id)
       puts "Delete #{logs.size} records from #{table_name}"

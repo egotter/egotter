@@ -2,7 +2,7 @@ namespace :efs do
   namespace :twitter_users do
     desc 'Import Efs::TwitterUser'
     task import_from_s3: :environment do
-      sigint = Util::Sigint.new.trap
+      sigint = Sigint.new.trap
 
       start_id = (ENV['START_ID'] || 1).to_i
       end_id = (ENV['END_ID'] || TwitterUser.maximum(:id)).to_i
