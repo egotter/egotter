@@ -1,45 +1,20 @@
 class UsageStatsController < ApplicationController
   include Concerns::SearchRequestConcern
-  include Concerns::JobQueueingConcern
-  include TweetTextHelper
 
-  before_action only: %i(check_for_updates) do
-    uid = params[:uid].to_i
-    valid_uid?(uid) && twitter_user_persisted?(uid) && !protected_search?(TwitterUser.latest_by(uid: uid))
+  before_action(only: :show) do
+    unless set_stat
+      redirect_to root_path, alert: t('.show.not_found_html', user: @twitter_user.screen_name, url: timeline_path(@twitter_user))
+    end
   end
 
   def show
-    @breadcrumb_name = controller_name.singularize.to_sym
-    @canonical_url = send("#{controller_name.singularize}_url", @twitter_user)
-    @page_title = t('.page_title', user: @twitter_user.mention_name)
-    @content_title = t('.content_title', user: @twitter_user.mention_name)
-
-    @meta_title = t('.meta_title', {user: @twitter_user.mention_name})
-
-    @page_description = t('.page_description', user: @twitter_user.mention_name)
-    @meta_description = t('.meta_description', {user: @twitter_user.mention_name})
-
-    @stat = UsageStat.find_or_initialize_by(uid: @twitter_user.uid)
-
-    @navbar_title = t(".navbar_title")
-
-    @tweet_text = usage_time_text(@stat.chart_data(:usage_time), @twitter_user)
-
-    if !from_crawler? && user_signed_in?
-      @jid = UpdateUsageStatWorker.perform_async(@twitter_user.uid, user_id: current_user.id, location: controller_name)
-    end
+    @page_title = t('.page_title', user: @twitter_user.screen_name)
+    @usage_time = @stat.chart_data(:usage_time)
   end
 
-  def check_for_updates
-    stat = UsageStat.find_by(uid: params[:uid])
-    started_at = (Time.zone.at(params[:started_at].to_i).to_s(:db) rescue '')
-    return render json: params.slice(:uid, :jid, :interval, :retry_count).merge(started_at: started_at), status: 202 unless stat
+  private
 
-    if params[:updated_at] == '-1' ||
-        (params[:updated_at].to_s.match(/\A\d+\z/) && stat.updated_at > Time.zone.at(params[:updated_at].to_i))
-      return render json: {found: true}
-    end
-
-    render json: params.slice(:uid, :jid, :interval, :retry_count).merge(started_at: started_at), status: 202
+  def set_stat
+    @stat = UsageStat.find_or_initialize_by(uid: @twitter_user.uid)
   end
 end

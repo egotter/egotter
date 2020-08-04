@@ -83,7 +83,6 @@ ja:
         fifth: "重度の廃人…！ ツイッターやめますか？ 人間やめますか？"
       usage_active_time: ".%{user} がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
       usage_kind: ".%{user} のツイートのうち、%{mentions}%はメンション、%{media}%は画像付き、%{urls}%はリンク付き、%{hashtags}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
-      usage_hashtags: ".@%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
   waiting:
     new:
       analyzing: "%{user} のデータを分析中"
@@ -265,21 +264,34 @@ ja:
       view_more: '続きを見る'
   usage_stats:
     show:
+      not_found_html: '@%{user} のデータ取得に失敗しました。お手数ですが再度検索してみてください。<a href="%{url}" class="btn btn-primary">@%{user} を検索する</a>'
       navbar_title: 'ツイッター利用状況分析'
       title: "ツイッター利用状況"
       crumb_title: "ツイッター利用状況"
-      page_title: "%{user} のツイッター利用状況"
-      content_title: "%{user} のツイッター利用状況"
-      meta_title: "%{user} のツイッター利用状況 分析"
-      page_description: "%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。"
-      meta_description: "%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。"
-      tweet_text: "%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}% #egotter %{url}"
-      see_more: 'もっと見る'
+      page_title: "@%{user} のツイッター利用状況"
+      meta_title: "@%{user} のツイッター利用状況 分析"
+      page_description: "@%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。"
+      meta_description: "@%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。"
+      usage_time_by_day_title: '曜日ごとのツイッター利用時間 (分)'
+      hashtags_title: 'よく使うハッシュタグ'
+      hashtags_cloud_title: ' ハッシュタグクラウド'
+      hashtags_tweet_text: ".@%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
     friends_stat:
       tweet: ".@%{user} のフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人です。 #egotter %{url}"
-      existence: "フォロー返しあり"
-      nonexistence: "なし"
+      chart_categories:
+        existence: "フォロー返しあり"
+        nonexistence: "なし"
+        friends: 'フォロー'
+        followers: 'フォロワー'
     tweets_stat:
+      chart_categories:
+        existence: 'あり'
+        nonexistence: 'なし'
+        mention: "メンション"
+        media: "画像"
+        link: "リンク"
+        hashtag: "ハッシュタグ"
+        location: "位置情報"
       breakdown: |
         .@%{user} のツイートのうち、
         %{mentions}%はメンション、
@@ -289,12 +301,10 @@ ja:
         %{location}%は位置情報付きです。
         #egotter %{url}
       most_active: ".@%{user} のツイート分析 - もっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
-      existence: "あり"
-      nonexistence: "なし"
       wday_suffix: "曜日"
   audience_insights:
     show:
-      not_found: '@%{user} のデータ取得に失敗しました。お手数ですが再度検索してみてください。<a href="%{url}" class="btn btn-primary">@%{user} を検索する</a>'
+      not_found_html: '@%{user} のデータ取得に失敗しました。お手数ですが再度検索してみてください。<a href="%{url}" class="btn btn-primary">@%{user} を検索する</a>'
       navbar_title: "オーディエンス分析"
       crumb_title: "オーディエンス分析"
       page_title: "@%{user} のオーディエンス分析"
@@ -2358,8 +2368,6 @@ ja:
     egotter_is_blocked_html: '@%{user} は @ego_tter をブロックしています。えごったーを利用するには、ブロックを解除してください。'
     unauthorized_detected_with_count: 'ツイッター連携が無効になっています。%{seconds}秒後にトップページへ移動します。'
     blocked_detected_with_count: '@ego_tter がブロックされています。%{seconds}秒後にトップページへ移動します。'
-  tweet_text:
-    something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
   dm:
     no_diffs: "フォロー・フォロワーに変化はありません。"
     new_friends: "新しいフォロー： %{users}"
@@ -2449,8 +2457,6 @@ ja:
         tweets_per_wday: "曜日ごとのツイート数"
         tweets_per_hour: "時間帯ごとのツイート数"
         tweets_breakdown: "ツイートの内訳"
-        friends_count: "フォロー"
-        followers_count: "フォロワー"
         one_sided_friends_count: "片思い"
         one_sided_followers_count: "片思われ"
         mutual_friends_count: "相互フォロー"
@@ -2465,11 +2471,6 @@ ja:
         most_active_hour: "活発な時間"
         most_active_wday: "活発な曜日"
         tweets_interval: "ツイート間隔"
-        mentions_count: "メンション"
-        media_count: "画像"
-        links_count: "リンク"
-        hashtags_count: "ハッシュタグ"
-        locations_count: "位置情報"
       follow_request:
         uid: "ユーザー"
         error_class: "エラー"

@@ -1,53 +1,51 @@
 - content_for :canonical_url do
-  %link{href: @canonical_url, rel: 'canonical'}
+  %link{href: usage_stat_url(@twitter_user), rel: 'canonical'}
 
-- content_for :navbar_title, @navbar_title
+- content_for :navbar_title, t(".navbar_title")
 
-- breadcrumb @breadcrumb_name, @twitter_user.screen_name
+- breadcrumb :usage_stat, @twitter_user.screen_name
 
 - title @page_title
-- set_meta_tags description: @meta_description, title: @meta_title
+- set_meta_tags description: t('.meta_description', user: @twitter_user.screen_name), title: t('.meta_title', user: @twitter_user.screen_name)
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
 %h2.h4.text-center.my-5= @page_title
 
-.mb-5= t('.page_description', user: @twitter_user.mention_name)
+.mb-5= t('.page_description', user: @twitter_user.screen_name)
 
-%h3.h5.text-center 曜日ごとのツイッター利用時間 (分)
+%h3.h5.text-center= t('.usage_time_by_day_title')
 .usage-time-chart.my-3{style: 'height: 180px;'}
-= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user})
+= render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: usage_time_text(@usage_time, @twitter_user), twitter_user: @twitter_user})
 
 = render(partial: 'adsense/ad', locals: {vertical: :top})
 
 - if @stat.hashtags.any?
-  %h3.h5.text-center よく使うハッシュタグ
+  %h3.h5.text-center= t('.hashtags_title')
   .hashtags-chart.my-3{style: 'height: 180px;'}
 
-  %h3.h5.text-center ハッシュタグクラウド (クリックできます)
+  %h3.h5.text-center= t('.hashtags_cloud_title')
   .cloud-chart.my-3{style: 'height: 220px;'}
 
-  - text = t('searches.usage_stats.usage_hashtags', user: @twitter_user.screen_name, hashtags: @stat.hashtags.to_h.keys.take(5).join(' '), url: usage_stat_url(@twitter_user))
+  - text = t('.hashtags_tweet_text', user: @twitter_user.screen_name, hashtags: @stat.hashtags.to_h.keys.take(5).join(' '), url: usage_stat_url(@twitter_user))
   = render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: text, twitter_user: @twitter_user})
 
 :javascript
   $(function () {
-    var usageTime = #{@stat.chart_data(:usage_time).to_json.html_safe};
+    var usageTime = #{@usage_time.to_json.html_safe};
     var hashtags = #{@stat.hashtags.to_a.take(10).map { |word, count| {name: word, y: count} }.to_json.html_safe};
     var cloud = #{@stat.hashtags.to_a.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }.to_json.html_safe};
 
+    var stat = new UsageStat();
+
     if (usageTime) {
       console.log('usageTime', usageTime);
-      var chart = $.extend(true, {}, window.usage_stats_column_chart_options);
-      chart.series[0].data = usageTime;
-      $('.usage-time-chart').highcharts(chart);
+      stat.drawColumnChart($('.usage-time-chart')[0], usageTime, null);
     }
 
-    if (hashtags) {
+    if (hashtags && hashtags.length >= 1) {
       console.log('hashtags', hashtags);
-      var chart = $.extend(true, {}, window.usage_stats_column_chart_options);
-      chart.series[0].data = hashtags;
-      $('.hashtags-chart').highcharts(chart);
+      stat.drawColumnChart($('.hashtags-chart')[0], hashtags, null);
     }
 
     if (cloud) {
@@ -57,6 +55,5 @@
     }
   });
 
-- if @stat && @stat.persisted?
-  = render partial: 'usage_stats/tweets_stat', locals: {stat: @stat.tweets_stat, twitter_user: @twitter_user, url: @canonical_url}
-  = render partial: 'usage_stats/friends_stat', locals: {stat: @stat.friends_stat, twitter_user: @twitter_user, url: @canonical_url}
+= render partial: 'usage_stats/tweets_stat', locals: {stat: @stat.tweets_stat, twitter_user: @twitter_user, url: usage_stat_url(@twitter_user)}
+= render partial: 'usage_stats/friends_stat', locals: {stat: @stat.friends_stat, twitter_user: @twitter_user, url: usage_stat_url(@twitter_user)}

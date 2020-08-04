@@ -38,47 +38,26 @@
 
 :javascript
   (function () {
-    var wdayStat = $.extend(true, {}, window.usage_stats_column_chart_options);
-    wdayStat.series[0].data = #{stat[:wday].to_json.html_safe};
-    wdayStat.drilldown.series = #{stat[:wday_drilldown].to_json.html_safe};
-    $(function () { $('.wday-chart').highcharts(wdayStat);});
+    var i18n = {
+      yes: '#{t(".chart_categories.existence")}',
+      no: '#{t(".chart_categories.nonexistence")}',
+      mention: '#{t(".chart_categories.mention")}',
+      media: '#{t(".chart_categories.media")}',
+      link: '#{t(".chart_categories.link")}',
+      hashtag: '#{t(".chart_categories.hashtag")}',
+      location: '#{t(".chart_categories.location")}'
+    };
+    var stat = new UsageStat(i18n);
 
-    var hourStat = $.extend(true, {}, window.usage_stats_column_chart_options);
-    hourStat.series[0].data = #{stat[:hour].to_json.html_safe};
-    hourStat.drilldown.series = #{stat[:hour_drilldown].to_json.html_safe};
-    $(function () { $('.hour-chart').highcharts(hourStat);});
+    var wday = #{raw stat[:wday].to_json};
+    var wdayDrilldown = #{raw stat[:wday_drilldown].to_json};
+    stat.drawColumnChart($('.wday-chart')[0], wday, wdayDrilldown);
 
-    var breakdownStat = #{stat[:breakdown].to_json.html_safe};
-    var barChart = $.extend(true, {}, window.barChartOptions);
-    barChart.xAxis.categories = [
-      '#{UsageStat.human_attribute_name(:mentions_count)}',
-      '#{UsageStat.human_attribute_name(:media_count)}',
-      '#{UsageStat.human_attribute_name(:links_count)}',
-      '#{UsageStat.human_attribute_name(:hashtags_count)}',
-      '#{UsageStat.human_attribute_name(:locations_count)}'
-    ];
-    barChart.series = [{
-      name: '#{t("usage_stats.tweets_stat.nonexistence")}',
-      data: [
-        100.0 - breakdownStat.mentions * 100,
-        100.0 - breakdownStat.media * 100,
-        100.0 - breakdownStat.urls * 100,
-        100.0 - breakdownStat.hashtags * 100,
-        100.0 - breakdownStat.location * 100
-      ]
-    }, {
-      name: '#{t("usage_stats.tweets_stat.existence")}',
-      data: [
-        breakdownStat.mentions * 100,
-        breakdownStat.media * 100,
-        breakdownStat.urls * 100,
-        breakdownStat.hashtags * 100,
-        breakdownStat.location * 100
-      ]
-    }];
+    var hour = #{raw stat[:hour].to_json};
+    var hourDrilldown = #{raw stat[:hour_drilldown].to_json};
+    stat.drawColumnChart($('.hour-chart')[0], hour, hourDrilldown);
 
-    $(function () {
-      $('.breakdown-chart').highcharts(barChart);
-    });
+    var breakdown = #{raw stat[:breakdown].to_json};
+    stat.drawTweetsBarChart($('.breakdown-chart')[0], breakdown);
   })();
 

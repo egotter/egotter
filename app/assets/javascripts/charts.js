@@ -49,39 +49,3 @@ window.usage_stats_column_chart_options = {
     series: null
   }
 };
-
-window.barChartOptions = {
-  credits: false,
-  colors: ['rgba(181, 137, 0, 0.4)', 'rgba(42, 161, 152, 1.0'],
-  chart: {
-    type: 'bar',
-    marginTop: 0,
-    marginRight: 0,
-    spacingTop: 0,
-    spacingBottom: 0,
-    spacingLeft: 0
-  },
-  title: {
-    style: {color: '#777777'},
-    text: null
-  },
-  xAxis: {
-    categories: null
-  },
-  yAxis: {
-    min: 0,
-    max: 100,
-    title: {
-      text: null
-    }
-  },
-  legend: {
-    reversed: true
-  },
-  plotOptions: {
-    series: {
-      stacking: 'normal'
-    }
-  },
-  series: null
-};

@@ -36,24 +36,14 @@
 
 :javascript
   (function () {
-    var friendsStat = #{stat.to_json.html_safe};
-    var barChart = window.barChartOptions;
-    barChart.xAxis.categories = ['#{UsageStat.human_attribute_name(:friends_count)}', '#{UsageStat.human_attribute_name(:followers_count)}'];
-    barChart.series = [{
-      name: '#{t("usage_stats.friends_stat.nonexistence")}',
-      data: [
-        100.0 - 100.0 * friendsStat.follow_back_rate,
-        100.0 - 100.0 * friendsStat.followed_back_rate
-      ]
-    }, {
-      name: '#{t("usage_stats.friends_stat.existence")}',
-      data: [
-        100.0 * friendsStat.follow_back_rate,
-        100.0 * friendsStat.followed_back_rate
-      ]
-    }];
+    var i18n = {
+      yes: '#{t(".chart_categories.existence")}',
+      no: '#{t(".chart_categories.nonexistence")}',
+      friends: '#{t(".chart_categories.friends")}',
+      followers: '#{t(".chart_categories.followers")}'
+    };
+    var stat = new UsageStat(i18n);
 
-    $(function () {
-      $('.friends-stat-bar-chart').highcharts(barChart);
-    });
+    var friends = #{raw stat.to_json};
+    stat.drawFriendsBarChart($('.friends-stat-bar-chart')[0], friends)
   })();
