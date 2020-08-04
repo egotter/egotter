@@ -1,15 +1,19 @@
 module CloseFriendsHelper
-  def friend_map_users
-    uids = @twitter_user.close_friendships.limit(20).pluck(:friend_uid) << @twitter_user.uid.to_i
-    users = TwitterDB::User.where(uid: uids).index_by(&:uid)
-    uids.map { |uid| users[uid] }.compact
-  end
+  def friend_map_edges_and_nodes(twitter_user)
+    uids = twitter_user.close_friendships.limit(20).pluck(:friend_uid) << twitter_user.uid
+    users = TwitterDB::User.where_and_order_by_field(uids: uids)
 
-  def user2node(user)
-    {id: user.screen_name, url: normal_icon_url(user)}
-  end
+    edges = users.map do |user|
+      [twitter_user.screen_name, user.screen_name]
+    end
 
-  def user2link(source_user, target_user)
-    {source: source_user.screen_name, target: target_user.screen_name, value: 1, group: 0}
+    nodes = users.map do |user|
+      {
+          id: user.screen_name,
+          marker: {symbol: "url(#{user.profile_image_url_https})"}
+      }
+    end
+
+    [edges, nodes]
   end
 end

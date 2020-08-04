@@ -1,24 +1,9 @@
-<div class="user-items-chart">
-  <div id="friend-map" class="friend-map" style=""></div>
-  <%
-    users = friend_map_users
-
-    data = users.map do |user|
-      [@twitter_user.screen_name, user.screen_name]
-    end
-
-    nodes = users.map do |user|
-      {
-          id: user.screen_name,
-          marker: {symbol: "url(#{user.profile_image_url_https})"}
-      }
-    end
-  %>
-  <script>
-    $(function () {
-      var data = <%= raw data.to_json %>;
-      var nodes = <%= raw nodes.to_json %>;
-      new FriendNetwork('friend-map', data, nodes);
-    });
-  </script>
-</div>
+<div id="friend-map"></div>
+<% edges, nodes = friend_map_edges_and_nodes(@twitter_user) %>
+<script>
+  $(function () {
+    var data = <%= raw edges.to_json %>;
+    var nodes = <%= raw nodes.to_json %>;
+    new FriendNetwork('friend-map', data, nodes);
+  });
+</script>

@@ -293,12 +293,14 @@ ja:
         hashtag: "ハッシュタグ"
         location: "位置情報"
       breakdown: |
-        .@%{user} のツイートのうち、
-        %{mentions}%はメンション、
-        %{media}%は画像付き、
-        %{urls}%はリンク付き、
-        %{hashtags}%はハッシュタグ付き、
-        %{location}%は位置情報付きです。
+        .@%{user} のツイートの内訳
+
+        %{mentions}% はメンション
+        %{media}% は画像付き
+        %{urls}% はリンク付き
+        %{hashtags}% はハッシュタグ付き
+        %{location}% は位置情報付き
+
         #egotter %{url}
       most_active: ".@%{user} のツイート分析 - もっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
       wday_suffix: "曜日"
@@ -2457,6 +2459,8 @@ ja:
         tweets_per_wday: "曜日ごとのツイート数"
         tweets_per_hour: "時間帯ごとのツイート数"
         tweets_breakdown: "ツイートの内訳"
+        friends_count: "フォロー"
+        followers_count: "フォロワー"
         one_sided_friends_count: "片思い"
         one_sided_followers_count: "片思われ"
         mutual_friends_count: "相互フォロー"

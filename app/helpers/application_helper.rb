@@ -40,7 +40,7 @@ module ApplicationHelper
   end
 
   def show_common_friends?(twitter_user)
-    user_signed_in? && current_user.uid != twitter_user.uid.to_i && current_user.twitter_user
+    user_signed_in? && current_user.uid != twitter_user.uid && current_user.twitter_user
   end
 
   def show_redirection_modal?

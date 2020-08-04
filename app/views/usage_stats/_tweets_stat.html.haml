@@ -17,7 +17,10 @@
     = "#{stat[:most_active_wday]}#{t('usage_stats.tweets_stat.wday_suffix')}"
     .small= UsageStat.human_attribute_name(:most_active_wday)
   = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
-    = "#{stat[:tweets_interval]}#{t('datetime.prompts.minute')}"
+    - if stat[:tweets_interval] > 120
+      = "#{t('datetime.distance_in_words.about_x_hours', count: sprintf('%d', stat[:tweets_interval] / 60))}"
+    - else
+      = "#{t('datetime.distance_in_words.x_minutes', count: sprintf('%d', stat[:tweets_interval]))}"
     .small= UsageStat.human_attribute_name(:tweets_interval)
 
 %h2.h4.text-center.my-5= UsageStat.human_attribute_name(:tweets_per_wday)
@@ -26,14 +29,14 @@
 %h2.h4.text-center.my-5= UsageStat.human_attribute_name(:tweets_per_hour)
 .hour-chart.my-3{style: 'height: 180px;'}
 
-- tweet_text = t('usage_stats.tweets_stat.most_active', user: twitter_user.screen_name, wday: stat[:most_active_wday], hour: stat[:most_active_hour], url: url)
+- tweet_text = t('.most_active', user: twitter_user.screen_name, wday: stat[:most_active_wday], hour: stat[:most_active_hour], url: url)
 = render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: tweet_text, twitter_user: twitter_user})
 
 %h2.h4.text-center.my-5= UsageStat.human_attribute_name(:tweets_breakdown)
 .breakdown-chart{style: 'height: 220px;'}
 
 - i18n_options = ({user: twitter_user.screen_name, url: url}.merge(stat[:breakdown].map { |k, v| [k, (v * 100).round(1)] }.to_h) rescue {})
-- tweet_text = t('usage_stats.tweets_stat.breakdown', i18n_options)
+- tweet_text = t('.breakdown', i18n_options)
 = render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: tweet_text, twitter_user: twitter_user})
 
 :javascript
