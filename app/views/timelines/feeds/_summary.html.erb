@@ -1,62 +1,79 @@
 <% via = current_via('summary_on_timeline') %>
-<% unit = t('.unit') %>
-<% analyzing = t('.analyzing') %>
-<% zero = t('.zero') %>
+<% items = [
+    ['one_sided_friends', one_sided_friend_path(twitter_user, via: via), t('.one_sided_friends')],
+    ['one_sided_followers', one_sided_follower_path(twitter_user, via: via), t('.one_sided_followers')],
+    ['mutual_friends', mutual_friend_path(twitter_user, via: via), t('.mutual_friends')],
+    ['unfriends', unfriend_path(twitter_user, via: via), t('.unfriends')],
+    ['unfollowers', unfollower_path(twitter_user, via: via), t('.unfollowers')],
+    ['blocking_or_blocked', blocking_or_blocked_path(twitter_user, via: via), t('.blocking_or_blocked')]
+] %>
 
 <div class="summary-on-timeline">
   <div class="list-group">
-    <% [
-           ['one_sided_friends', one_sided_friend_path(twitter_user, via: via), t('.one_sided_friends')],
-           ['one_sided_followers', one_sided_follower_path(twitter_user, via: via), t('.one_sided_followers')],
-           ['mutual_friends', mutual_friend_path(twitter_user, via: via), t('.mutual_friends')],
-           ['unfriends', unfriend_path(twitter_user, via: via), t('.unfriends')],
-           ['unfollowers', unfollower_path(twitter_user, via: via), t('.unfollowers')],
-           ['blocking_or_blocked', blocking_or_blocked_path(twitter_user, via: via), t('.blocking_or_blocked')]
-       ].each do |name, url, title| %>
+    <% items.each do |name, url, title| %>
       <%= link_to url, class: 'list-group-item' do %>
         <div class="d-flex justify-content-between align-items-center">
-          <%= title %>
-          <span class="analyzing <%= name %>"><%= analyzing %></span>
-          <span class="zero text-muted <%= name %>" style="display: none;"><%= zero %></span>
-          <span class="result <%= name %>" style="display: none;">
-            <span class="count">0</span><%= unit %>
-          </span>
+          <div><%= title %></div>
+          <div>
+            <span class="analyzing <%= name %>"><%= t('.analyzing') %></span>
+            <span class="zero text-muted <%= name %>" style="display: none;"><%= t('.zero') %></span>
+            <span class="result <%= name %>" style="display: none;"><span class="count">0</span><%= t('.unit') %></span>
+            <span class="error text-muted" style="display: none;"><%= t('.error') %></span>
+          </div>
         </div>
+        <div class="small text-muted summary-description" style="display: none;"><%= summary_description(name) %></div>
       <% end %>
     <% end %>
   </div>
-  <div class="text-center text-muted mt-1"><%= t('.notice') %></div>
+
+  <div class="text-center text-muted mt-1">
+    <%= t('.notice') %>
+    <span class="small rounded p-1" onclick="toggleSummaryDescription();" style="cursor: pointer; border: 1px solid rgba(0,0,0,.125);">
+      <i class="far fa-question-circle"></i>
+      <%= t('.open_description') %>
+    </span>
+  </div>
 </div>
 
 <script>
+  function toggleSummaryDescription() {
+    var $elem = $('.summary-description');
+    if ($elem.css('display') === 'block') {
+      $elem.hide('normal');
+    } else {
+      $elem.show('normal');
+    }
+  }
+
   $(function () {
     var url = '<%= api_v1_summary_summary_path(uid: twitter_user.uid) %>';
-    var names = [
-      'one_sided_friends',
-      'one_sided_followers',
-      'mutual_friends',
-      'unfriends',
-      'unfollowers',
-      'blocking_or_blocked'
-    ];
+    var names = <%= raw items.map(&:first).to_json %>;
+    var parent = $('.summary-on-timeline');
 
     $.getJSON(url).done(function (res) {
       console.log('summary', res);
 
-      var parent = $('.summary-on-timeline');
       for (var i = 0; i < names.length; i++) {
         var name = names[i];
         var count = res[name];
 
+        parent.find('.analyzing.' + name).hide();
         if (count <= 0) {
           parent.find('.zero.' + name).show();
         } else {
           parent.find('.result.' + name).find('.count').text(count).end().show();
         }
-        parent.find('.analyzing.' + name).hide();
       }
-    }).fail(function (xhr) {
+    }).fail(function (xhr, textStatus, errorThrown) {
       console.warn('summary', xhr.responseText);
+      parent.find('.analyzing').hide();
+      parent.find('.error').show();
+
+      var message = xhr.responseText;
+      if (!message) {
+        message = xhr.status + ' (' + errorThrown + ')';
+      }
+      ToastMessage.warn(message);
     });
 
   });

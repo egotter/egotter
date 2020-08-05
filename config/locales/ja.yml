@@ -184,9 +184,18 @@ ja:
         unfollowers: 'リムーブされた'
         blocking_or_blocked: 'ブロックされた'
         notice: 'えごったーのデータは最初に使った時から保存されていきます'
+        open_description: '説明'
         unit: '人'
         analyzing: '分析中'
         zero: 'これから貯まります'
+        error: '更新エラー'
+        description:
+          one_sided_friends: '「あなたは相手をフォローしている、相手はあなたをフォローしていない」関係のことです。'
+          one_sided_followers: 'あなたは相手をフォローしていない、相手はあなたをフォローしている」関係のことです。'
+          mutual_friends: '「お互いにフォローしている」関係のことです。'
+          unfriends: '「あなたは相手のフォローを外した」関係のことです。'
+          unfollowers: '「あなたは相手からフォローを外された」関係のことです。'
+          blocking_or_blocked: '「あなたは相手からブロックされた」関係のことです。'
       statuses:
         title: 'ツイート'
       friends:
