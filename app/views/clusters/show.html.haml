@@ -35,7 +35,6 @@
     // var text = ''
     // new TweetCluster().countWords(text);
 
-    var options = $.extend(true, {}, window.usage_stats_column_chart_options);
-    options.series[0].data = #{raw  @clusters.map { |word, count| {name: word, y: count}}.to_json };
-    $('#clusters-container').highcharts(options);
+    var data = #{raw  @clusters.map { |word, count| {name: word, y: count}}.to_json };
+    new UsageStat().drawColumnChart($('#clusters-container')[0], data, null);
   });

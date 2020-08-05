@@ -18,10 +18,7 @@
 
     function drawChart() {
       $(placeholderSelector).remove();
-      var chartConfig = $.extend(true, {}, window.usage_stats_column_chart_options);
-      chartConfig.series[0].data = <%= raw graph.to_json %>;
-      chartConfig.yAxis.visible = false;
-      $('#<%= container_id %>').highcharts(chartConfig);
+      new UsageStat().drawColumnChart($('#<%= container_id %>')[0], <%= raw graph.to_json %>, null);
     }
 
     if (fromCrawler) {
