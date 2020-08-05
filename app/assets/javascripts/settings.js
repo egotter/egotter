@@ -44,27 +44,6 @@ Settings.enableUpdateReportIntervalButton = function (url, beforeChange) {
   });
 };
 
-Settings.enableDeleteTweetsButton = function (id, url) {
-  var $modal = $('#' + id);
-  $modal.find('.positive').on('click', function (e) {
-    $modal.modal('hide');
-    $('.delete-tweets-btn').attr('disabled', 'disabled')
-        .prop("disabled", true);
-
-    var tweet = $modal.find('#tweet-after-finishing').prop('checked');
-
-    $.post(url, {tweet: tweet}).done(function (res) {
-      console.log(res);
-
-      setTimeout(function () {
-        window.location.reload();
-      }, 3000);
-    }).fail(function (xhr) {
-      ToastMessage.warn(JSON.parse(xhr.responseText)['message']);
-    });
-  });
-};
-
 Settings.activateResetEgotterButton = function (id, url) {
   var $modal = $('#' + id);
   $modal.find('.positive').on('click', function (e) {
