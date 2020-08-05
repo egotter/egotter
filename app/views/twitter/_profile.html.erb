@@ -18,11 +18,12 @@
 
         .profile-icon-wrapper {
             width: 100%;
-            position: absolute;
-            transform: translateY(-40px);
+            position: relative;
         }
 
-        .profile-icon {
+        .profile-icon-image {
+            position: absolute;
+            transform: translateY(-40px);
             width: 80px;
             height: 80px;
             border: 2px solid #eee;
@@ -42,11 +43,12 @@
 
         .profile-icon-wrapper {
             width: 100%;
-            position: absolute;
-            transform: translateY(-60px);
+            position: relative;
         }
 
-        .profile-icon {
+        .profile-icon-image {
+            position: absolute;
+            transform: translateY(-60px);
             width: 120px;
             height: 120px;
             border: 2px solid #eee;
@@ -58,19 +60,8 @@
         max-height: 100%;
     }
 
-    .profile-icon-and-buttons {
-        width: 100%;
-        position: relative;
-    }
-
     .profile-buttons {
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
-
-    .profile-contents {
-        margin-top: 80px;
+        text-align: right;
     }
 </style>
 
@@ -86,64 +77,62 @@
     <% end %>
   </div>
 
-  <div class="profile-icon-and-buttons">
-    <%#= Profile icon %>
-    <div class="profile-icon-wrapper">
-      <% if user.profile_icon_url? %>
-        <%= link_to user.profile_icon_url_for(request) do %>
-          <%= image_tag user.profile_icon_url_for(request), class: 'profile-icon rounded-circle ml-1', alt: user.screen_name %>
-        <% end %>
-      <% else %>
-        <div style="background-color: #868e96;" class="profile-icon rounded-circle ml-1"></div>
+  <%#= Profile icon %>
+  <div class="profile-icon-wrapper">
+    <% if user.profile_icon_url? %>
+      <%= link_to user.profile_icon_url_for(request) do %>
+        <%= image_tag user.profile_icon_url_for(request), class: 'profile-icon-image rounded-circle ml-1', alt: user.screen_name %>
       <% end %>
+    <% else %>
+      <div style="background-color: #868e96;" class="profile-icon-image rounded-circle ml-1"></div>
+    <% end %>
+  </div>
+
+  <%#= Profile buttons %>
+  <div class="profile-buttons mt-1 mr-0 mr-sm-3">
+    <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
+
+    <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary d-none d-md-inline-block', target: '_blank' do %>
+      <i class="fab fa-twitter no-follow"></i>
+      <%= t('.twitter') %>
+    <% end %>
+
+    <div class="dropdown d-none d-md-inline-block">
+      <button type="button" class="btn btn-outline-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-h"></i>
+      </button>
+
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
+          <i class="fab fa-twitter no-follow text-muted"></i>
+          <%= t('.twitter') %>
+        <% end %>
+        <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
+          <i class="fas fa-ban text-muted"></i>
+          <%= t('.block') %>
+        <% end %>
+        <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
+          <i class="fas fa-volume-mute text-muted"></i>
+          <%= t('.mute') %>
+        <% end %>
+        <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
+          <i class="fas fa-flag text-muted"></i>
+          <%= t('.report_spam') %>
+        <% end %>
+      </div>
     </div>
 
-    <%#= Profile buttons %>
-    <div class="profile-buttons mr-0 mr-sm-3">
-      <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
-
-      <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary d-none d-md-inline-block', target: '_blank' do %>
+    <%# Display on extra small and small %>
+    <div class="d-inline-block d-md-none">
+      <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary', target: '_blank' do %>
         <i class="fab fa-twitter no-follow"></i>
-        <%= t('.twitter') %>
       <% end %>
 
-      <div class="dropdown d-none d-md-inline-block">
-        <button type="button" class="btn btn-outline-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-ellipsis-h"></i>
-        </button>
-
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
-            <i class="fab fa-twitter no-follow text-muted"></i>
-            <%= t('.twitter') %>
-          <% end %>
-          <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
-            <i class="fas fa-ban text-muted"></i>
-            <%= t('.block') %>
-          <% end %>
-          <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
-            <i class="fas fa-volume-mute text-muted"></i>
-            <%= t('.mute') %>
-          <% end %>
-          <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
-            <i class="fas fa-flag text-muted"></i>
-            <%= t('.report_spam') %>
-          <% end %>
-        </div>
-      </div>
-
-      <%# Display on extra small and small %>
-      <div class="d-inline-block d-md-none">
-        <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary', target: '_blank' do %>
-          <i class="fab fa-twitter no-follow"></i>
-        <% end %>
-
-        <button type="button" class="btn btn-outline-primary btn-profilemenu">
-          <i class="fas fa-ellipsis-h"></i>
-        </button>
-      </div>
-      <%= render partial: 'layouts/profilemenu', locals: {user: user} %>
+      <button type="button" class="btn btn-outline-primary btn-profilemenu">
+        <i class="fas fa-ellipsis-h"></i>
+      </button>
     </div>
+    <%= render partial: 'layouts/profilemenu', locals: {user: user} %>
   </div>
 
   <div class="profile-contents p-0 px-sm-3">

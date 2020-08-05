@@ -1,16 +1,32 @@
 <style type="text/css">
-  .sidemenu {
-    display: none;
-    color: white;
-    position: fixed;
-    top: 10px;
-    right: 0;
-    bottom: 10px;
-    overflow-y: auto;
-    width: 300px;
-    z-index: 9999;
-  }
+    .sidemenu {
+        display: none;
+        color: white;
+        position: fixed;
+        top: 10px;
+        right: 0;
+        bottom: 10px;
+        overflow-y: auto;
+        width: 300px;
+        z-index: 9999;
+    }
+
+    .fade-sidemenu {
+        display: none;
+        color: white;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        width: 100vw;
+        height: 100vh;
+        z-index: 9998;
+    }
 </style>
+
+<div class="fade-sidemenu"></div>
 
 <div class="sidemenu shadow bg-white">
   <div class="btn-sidemenu text-center py-3">
@@ -73,41 +89,47 @@
 
 <script>
   $(function () {
-    var sidemenu = $('.sidemenu');
+    var menu = $('.sidemenu');
     var btn = $('.btn-sidemenu');
     var isOpened = false;
 
-    sidemenu.sidebar({side: 'right'});
-    sidemenu.show();
+    menu.sidebar({side: 'right'});
+    menu.show();
 
     $('body').on('click', function (e) {
       var clicked = $(e.target);
 
       if (isOpened && clicked.data('toggle') === 'modal') {
-        sidemenu.trigger('sidebar:close');
+        menu.trigger('sidebar:close');
         return true;
       }
 
       if (isOpened && clicked.parents('.sidemenu').length === 0) {
-        sidemenu.trigger('sidebar:close');
+        menu.trigger('sidebar:close');
         return false;
       }
     });
 
-    sidemenu.on("sidebar:opened", function () {
+    menu.on("sidebar:opened", function () {
       isOpened = true
+      toggled();
     });
 
-    sidemenu.on("sidebar:closed", function () {
+    menu.on("sidebar:closed", function () {
       isOpened = false;
-    });
-
-    $('.btn-sidemenu-close').on('click', function () {
-      sidemenu.trigger('sidebar:close');
+      toggled();
     });
 
     btn.on('click', function () {
-      sidemenu.trigger('sidebar:toggle');
+      menu.trigger('sidebar:toggle');
     });
+
+    function toggled() {
+      if (isOpened) {
+        $('.fade-sidemenu').show();
+      } else {
+        $('.fade-sidemenu').hide();
+      }
+    }
   });
 </script>

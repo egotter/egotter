@@ -42,5 +42,6 @@
     - if user_signed_in?
       = link_to '#', class: 'text-white pl-3' do
         %i.fas.fa-bars.btn-sidemenu
+        = render partial: 'layouts/sidemenu'
     - else
       = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: root_path_for(controller: controller_name)), class: 'text-white pl-3'
