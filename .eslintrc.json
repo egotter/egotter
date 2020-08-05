@@ -21,7 +21,6 @@
     "d3": true,
     "Egotter": true,
     "Snackbar": true,
-    "SnackMessage": true,
     "ToastMessage": true,
     "Mustache": true,
     "AsyncLoader": true

@@ -40,14 +40,14 @@ class ShareDialog extends ModalDialog {
 
       $.post(url, {text: tweet}).done(function (res) {
         console.log(url, res);
-        SnackMessage.success($el.data('success-message'));
+        ToastMessage.info($el.data('success-message'));
 
       }).fail(function (xhr) {
         var reason = $el.data('error-message');
         if (xhr.status === 400 && xhr.responseText && JSON.parse(xhr.responseText)['reason']) {
           reason = JSON.parse(xhr.responseText)['reason'];
         }
-        SnackMessage.alert(reason);
+        ToastMessage.warn(reason);
       });
 
       $el.modal('hide');

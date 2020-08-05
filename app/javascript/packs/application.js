@@ -21,7 +21,6 @@ import "regenerator-runtime/runtime";
 import "./egotter";
 import "./cache";
 import "./modal_dialog";
-import "./snack_message";
 import "./toast_message";
 import "./welcome";
 import "./async_loader";
