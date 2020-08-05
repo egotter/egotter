@@ -4,52 +4,52 @@
 <% always_expanded ||= false %>
 
 <style type=text/css>
-  /* extra small */
-  @media (max-width: 575.98px) {
-    .profile-header {
-      border: none !important;
-      border-bottom: 1px solid #dee2e6 !important;
+    /* Extra small */
+    @media (max-width: 575.98px) {
+        .profile-header {
+            border: none !important;
+            border-bottom: 1px solid #dee2e6 !important;
+        }
     }
-  }
 
-  /* others */
-  @media (min-width: 576px) {
-    .profile-header {
-      border: 1px solid #dee2e6 !important;
+    /* Except extra small */
+    @media (min-width: 576px) {
+        .profile-header {
+            border: 1px solid #dee2e6 !important;
+        }
     }
-  }
 
-  .profile-banner {
-    max-height: 180px;
-    overflow: hidden;
-  }
+    .profile-banner {
+        max-height: 180px;
+        overflow: hidden;
+    }
 
-  .profile-icon-and-buttons {
-    width: 100%;
-    position: relative;
-  }
+    .profile-icon-and-buttons {
+        width: 100%;
+        position: relative;
+    }
 
-  .profile-icon-wrapper {
-    width: 100%;
-    position: absolute;
-    transform: translateY(-60px);
-  }
+    .profile-icon-wrapper {
+        width: 100%;
+        position: absolute;
+        transform: translateY(-60px);
+    }
 
-  .profile-icon {
-    width: 120px;
-    height: 120px;
-    border: 2px solid #eee;
-  }
+    .profile-icon {
+        width: 120px;
+        height: 120px;
+        border: 2px solid #eee;
+    }
 
-  .profile-buttons {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
+    .profile-buttons {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
 
-  .profile-contents {
-    margin-top: 80px;
-  }
+    .profile-contents {
+        margin-top: 80px;
+    }
 </style>
 
 <div class="profile-header mt-3 <%= 'd-none d-md-block' unless always_expanded %>">
@@ -138,7 +138,9 @@
     <% end %>
 
     <% if user.url? %>
-      <div class="small my-1"><i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url.remove(/^https?:\/\//).truncate(30), user.url, style: 'word-break: break-all;', target: '_blank', rel: 'nofollow') %></div>
+      <div class="small my-1">
+        <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url.remove(/^https?:\/\//).truncate(30), user.url, style: 'word-break: break-all;', target: '_blank', rel: 'nofollow') %>
+      </div>
     <% end %>
 
     <% if user.account_created_at? %>
@@ -158,7 +160,7 @@
           <%= link_to url do %>
             <strong class="text-black"><%= count %></strong>
             <br class="d-block d-lg-none">
-            <span class="text-muted"><%= TwitterUser.human_attribute_name(name) %></span>
+            <span class="text-muted small"><%= TwitterUser.human_attribute_name(name) %></span>
           <% end %>
         </div>
       <% end %>
