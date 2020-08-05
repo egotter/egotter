@@ -10,6 +10,23 @@
             border: none !important;
             border-bottom: 1px solid #dee2e6 !important;
         }
+
+        .profile-banner {
+            height: 120px;
+            text-align: center;
+        }
+
+        .profile-icon-wrapper {
+            width: 100%;
+            position: absolute;
+            transform: translateY(-40px);
+        }
+
+        .profile-icon {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #eee;
+        }
     }
 
     /* Except extra small */
@@ -17,28 +34,33 @@
         .profile-header {
             border: 1px solid #dee2e6 !important;
         }
+
+        .profile-banner {
+            height: 200px;
+            text-align: center;
+        }
+
+        .profile-icon-wrapper {
+            width: 100%;
+            position: absolute;
+            transform: translateY(-60px);
+        }
+
+        .profile-icon {
+            width: 120px;
+            height: 120px;
+            border: 2px solid #eee;
+        }
     }
 
-    .profile-banner {
-        max-height: 180px;
-        overflow: hidden;
+    .profile-banner img {
+        max-width: 100%;
+        max-height: 100%;
     }
 
     .profile-icon-and-buttons {
         width: 100%;
         position: relative;
-    }
-
-    .profile-icon-wrapper {
-        width: 100%;
-        position: absolute;
-        transform: translateY(-60px);
-    }
-
-    .profile-icon {
-        width: 120px;
-        height: 120px;
-        border: 2px solid #eee;
     }
 
     .profile-buttons {
@@ -56,7 +78,9 @@
   <%#= Profile banner %>
   <div class="profile-banner">
     <% if user.profile_banner_url? %>
-      <img class="w-100 h-auto" src="<%= user.profile_banner_url_for(request) %>">
+      <%= link_to user.profile_banner_url_for(request) do %>
+        <img src="<%= user.profile_banner_url_for(request) %>">
+      <% end %>
     <% else %>
       <div class="w-100 h-100" style="background-color: <%= user.profile_link_color_code %>;"></div>
     <% end %>
@@ -75,7 +99,7 @@
     </div>
 
     <%#= Profile buttons %>
-    <div class="profile-buttons mt-3 mr-0 mr-sm-3">
+    <div class="profile-buttons mr-0 mr-sm-3">
       <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
 
       <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary d-none d-md-inline-block', target: '_blank' do %>

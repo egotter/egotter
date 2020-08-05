@@ -46,7 +46,8 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def profile_banner_url_for(request)
-    suffix = request.from_pc? ? 'web_retina' : 'mobile_retina'
+    # suffix = request.from_pc? ? 'web_retina' : 'mobile_retina'
+    suffix = '1080x360'
     "#{profile_banner_url}/#{suffix}"
   end
 
