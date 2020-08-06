@@ -59,14 +59,15 @@
 
   <div class="main-content twitter users row"></div>
 
-  <div class="row text-center mt-5 mb-3">
-    <div class="col-6">
-      <%= link_to t('.see_more'), '#', class: 'see-more-btn btn btn-outline-secondary btn-lg' %>
+  <% if user_signed_in? %>
+    <div id="bottom-reached" class="text-center my-3">
+      <%= image_tag '/ajax-loader.gif' %>
     </div>
-    <div class="col-6">
-      <%= link_to t('.see_at_once_more'), send("all_#{controller_name}_path", @twitter_user), class: 'see-at-once-btn btn btn-primary btn-lg' %>
+  <% else %>
+    <div class="text-center">
+      <%= link_to t('.see_more'), sign_in_path(via: current_via('see_more_btn')), class: 'btn btn-outline-secondary btn-lg' %>
     </div>
-  </div>
+  <% end %>
 <% else %>
   <div class="alert alert-info small">
     <%= t('.reason_for_zero_html') %>
@@ -83,45 +84,39 @@
     var uid = '<%= @twitter_user.uid %>';
     var sortOrder = $('.sort-order-dropdown').data('sort-order');
     var filter = $('.filter-dropdown').data('filter');
-
     var params = {limit: 10, maxLimit: 10, sortOrder: sortOrder, filter: filter, gridClass: 'col-12', insertAd: true};
     var task = new FetchTask(url, uid, params);
-    task.fetch();
+
+    var callback = function (state) {
+      console.log('task.fetch', state);
+
+      if (state.completed) {
+        $('#bottom-reached').off('appear').remove();
+      } else if (state.loaded) {
+        $('#bottom-reached').find('img').hide();
+      }
+    }
+
+    task.fetch(callback);
 
     if (signedIn) {
-      $('.see-more-btn').on('click', function (e) {
-        e.stopPropagation();
-        task.fetch();
-        return false;
-      })
+      $('#bottom-reached').lazyload()
+          .on('appear', function () {
+            var $elem = $(this);
+            console.log('appear', $elem.attr('id'));
+            $elem.find('img').show();
+            task.fetch(callback);
+          });
 
       new SortButton(function (options) {
-        task.reset(options)
+        task.reset(options, callback)
       });
       new FilterButton(function (options) {
-        task.reset(options)
+        task.reset(options, callback)
       });
 
       new FollowButton('.twitter.users');
       new UnfollowButton('.twitter.users');
-
-    } else {
-      $('.see-more-btn').on('click', function (e) {
-        var url = '<%= sign_in_path(via: current_via('see_more_btn')) %>';
-        new SignInModal(url);
-        return false;
-      })
-
-      $('.sort-orders').on('click', function () {
-        var url = '<%= sign_in_path(via: current_via('sort_btn')) %>';
-        new SignInModal(url);
-        return false;
-      });
-      $('.filters').on('click', function () {
-        var url = '<%= sign_in_path(via: current_via('filter_btn')) %>';
-        new SignInModal(url);
-        return false;
-      });
     }
 
     var crawler =<%= from_crawler? %>;

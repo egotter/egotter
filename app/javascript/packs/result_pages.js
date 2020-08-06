@@ -106,7 +106,9 @@ class FetchTask {
       if (res.users.length > 0) {
         self.$emptyPlaceholders.hide();
       } else {
-        self.$emptyPlaceholders.show();
+        if (self.$usersContainer.is(':empty')) {
+          self.$emptyPlaceholders.show();
+        }
       }
 
       self.loading = false;

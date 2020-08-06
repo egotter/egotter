@@ -88,7 +88,7 @@ Rails.application.routes.draw do
     common_followers
     common_mutual_friends
   ).each do |controller_name|
-    get "#{controller_name}/:screen_name/all", to: "#{controller_name}#all", as: "all_#{controller_name}"
+    get "#{controller_name}/:screen_name/all", to: redirect("/#{controller_name}/%{screen_name}")
   end
   match 'statuses/:screen_name/oembed' => proc { [404, {'Content-Type' => 'text/plain'}, ''] }, via: :get
 

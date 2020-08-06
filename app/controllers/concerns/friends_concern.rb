@@ -11,13 +11,8 @@ module Concerns::FriendsConcern
     singular_name = controller_name.singularize
 
     @api_path = send("api_v1_#{controller_name}_list_path")
-    if action_name == 'show'
-      @breadcrumb_name = singular_name.to_sym
-      @canonical_url = send("#{singular_name}_url", @twitter_user)
-    else
-      @breadcrumb_name = "all_#{controller_name}".to_sym
-      @canonical_url = send("all_#{controller_name}_url", @twitter_user)
-    end
+    @breadcrumb_name = singular_name.to_sym
+    @canonical_url = send("#{singular_name}_url", @twitter_user)
 
     counts = view_context.current_counts(@twitter_user)
 

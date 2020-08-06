@@ -1,4 +1,4 @@
-class  Page::GoodFriends < ::Page::Base
+class Page::GoodFriends < ::Page::Base
   include TweetTextHelper
 
   def all
@@ -14,12 +14,8 @@ class  Page::GoodFriends < ::Page::Base
 
   def initialize_instance_variables
     @api_path = send("api_v1_#{controller_name}_list_path")
-    @breadcrumb_name, @canonical_url =
-      if action_name == 'show'
-        [controller_name.singularize.to_sym, send("#{controller_name.singularize}_url", @twitter_user)]
-      else
-        ["all_#{controller_name}".to_sym, send("all_#{controller_name}_url", @twitter_user)]
-      end
+    @breadcrumb_name = controller_name.singularize.to_sym
+    @canonical_url = send("#{controller_name.singularize}_url", @twitter_user)
 
     users = @twitter_user.users_by(controller_name: controller_name).limit(5)
 

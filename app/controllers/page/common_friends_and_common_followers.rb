@@ -15,12 +15,8 @@ class Page::CommonFriendsAndCommonFollowers < ::Page::Base
 
   def initialize_instance_variables
     @api_path = send("api_v1_#{controller_name}_list_path")
-    @breadcrumb_name, @canonical_url =
-      if action_name == 'show'
-        [controller_name.singularize.to_sym, send("#{controller_name.singularize}_url", @twitter_user)]
-      else
-        ["all_#{controller_name}".to_sym, send("all_#{controller_name}_url", @twitter_user)]
-      end
+    @breadcrumb_name = controller_name.singularize.to_sym
+    @canonical_url = send("#{controller_name.singularize}_url", @twitter_user)
 
     counts = view_context.current_counts(@twitter_user)
 

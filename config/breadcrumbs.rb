@@ -40,30 +40,6 @@ end
   end
 end
 
-%w(
-  friends
-  followers
-  close_friends
-  favorite_friends
-  inactive_friends
-  inactive_followers
-  inactive_mutual_friends
-  one_sided_friends
-  one_sided_followers
-  mutual_friends
-  replying
-  replied
-  replying_and_replied
-  common_friends
-  common_followers
-  common_mutual_friends
-).each do |name|
-  crumb "all_#{name}".to_sym do |screen_name|
-    link t('crumb_titles.all'), send("all_#{name}_path", screen_name: screen_name, via: current_via("breadcrumb_#{name}"))
-    parent "#{name.singularize}".to_sym, screen_name
-  end
-end
-
 crumb :profile do |screen_name, time|
   link t('profiles.show.crumb_title', user: screen_name, time: time), profile_path(screen_name: screen_name, via: current_via("breadcrumb_profile"))
   parent :root
