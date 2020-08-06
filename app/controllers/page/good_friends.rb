@@ -1,11 +1,6 @@
 class Page::GoodFriends < ::Page::Base
   include TweetTextHelper
 
-  def all
-    initialize_instance_variables
-    @collection = @twitter_user.users_by(controller_name: controller_name)
-  end
-
   def show
     initialize_instance_variables
   end

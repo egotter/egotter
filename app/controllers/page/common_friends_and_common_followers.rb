@@ -2,11 +2,6 @@ class Page::CommonFriendsAndCommonFollowers < ::Page::Base
   before_action(only: %i(show all)) { require_login! }
   before_action(only: %i(show all)) { twitter_user_persisted?(current_user.uid) }
 
-  def all
-    initialize_instance_variables
-    @collection = @twitter_user.common_users_by(controller_name: controller_name, friend: current_user.twitter_user)
-  end
-
   def show
     initialize_instance_variables
   end
