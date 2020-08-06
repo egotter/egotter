@@ -1,6 +1,5 @@
 class UnfriendsController < ::Page::Base
   include Concerns::UnfriendsConcern
-  include TweetTextHelper
 
   before_action(only: %i(show)) do
     if request.format.html?

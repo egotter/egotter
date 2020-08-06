@@ -5,6 +5,6 @@
         = link_to tab[:url], class: ('nav-link active' if active_tab == i) do
           = tab[:name]
           %br
-          = (tab[:count] && tab[:count] > 0) ? tab[:count] : t('.analyzing')
+            = (tab[:count] && tab[:count] > 0) ? tab[:count] : t('.zero')
       - else
         = link_to tab[:text].html_safe, tab[:url], class: ('nav-link active' if active_tab == i)

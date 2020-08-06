@@ -18,7 +18,7 @@
 <div class="text-right mb-4"><%= render partial: 'shared/sort_and_filter' %></div>
 
 <div class="empty-placeholders-wrapper" style="display: none;">
-  <%= t('filter.not_found') %>
+  <%= t('.not_found') %>
 </div>
 
 <div class="placeholders-wrapper">
@@ -32,8 +32,6 @@
 <div id="bottom-reached" class="text-center my-3">
   <%= image_tag '/ajax-loader.gif' %>
 </div>
-
-<%= javascript_pack_tag 'result_pages' %>
 
 <script>
   $(function () {

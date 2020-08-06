@@ -19,7 +19,7 @@
 
 %h2.h3.text-center.mt-5= t('clusters.show.clusters_level')
 #clusters-container.my-3
-= render partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user}
+= render partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: @tweet_text, twitter_user: @twitter_user}
 
 %table.text-center.table.table-bordered.table-condensed
   %tr

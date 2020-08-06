@@ -5,7 +5,7 @@
   var crawler = <%= from_crawler? %>;
   var os = '<%= request.os %>';
   var osVersion = '<%= request.os_version %>';
-  var removePage = <%= %w(unfriends unfollowers blocking_or_blocked).include?(controller_name) %>;
+  var removePage = <%= remove_related_page? %>;
   var viaDM = <%= via_dm? %>;
   var profileNotFound = <%= twitter_user.profile_not_found? %>;
   var tooShortCreateInterval = <%= twitter_user.too_short_create_interval? %>;

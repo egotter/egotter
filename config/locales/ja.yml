@@ -629,7 +629,7 @@ ja:
         <br>
         1. これは何？<br>
         えごったーに初めてログインしました。一緒に、リム通知の初期設定が完了しました。<br>
-        <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">続きを見る</a>
+        <a class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $(this).hide(); return false;" href="#">続きを見る</a>
         <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
           <br>
           2. えごったーって何？<br>
@@ -657,7 +657,7 @@ ja:
         <br>
         1. これは何？<br>
         えごったーにログインしました。リム通知は以前の設定を引き継いでいます。<br>
-        <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">続きを見る</a>
+        <a class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $(this).hide(); return false;" href="#">続きを見る</a>
         <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
           <br>
           2. えごったーって何？<br>
@@ -778,7 +778,7 @@ ja:
       page_description_html: |
         「片思い」とは、自分はフォローしているが、相手からはフォローされていない関係のことです。
         このページでは、@%{user} の片思い（=フォローだけしている）ユーザーを見ることができます。
-        <a id="show-page-description" class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $('#' + this.id).hide(); return false;" href="#">続きを読む</a>
+        <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
         <div id="hidden-page-description" style="display: none;">
           <a href="%{url}">片思いチェック</a>を使うことで、@%{user} の片思いは集計されています。
           <a href="%{url}">片思いチェック</a>を使えば、@%{user} だけでなく他のユーザーの片思いを集計することもできます。
@@ -901,12 +901,14 @@ ja:
       meta_title: "@%{user} のリムり分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       page_description_html: |
         「リムった」とは、フォローを解除した関係のことです。このページでは、%{user} がリムった（=フォローを解除した）ユーザーを見ることができます。
-        <a id="show-page-description" class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $('#' + this.id).hide(); return false;" href="#">続きを読む</a>
-        <span id="hidden-page-description" style="display: none;">
+        <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+        <div id="hidden-page-description" style="display: none;">
+        <br>
         リムったユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
-        %{user} のリムったユーザーを見たい場合は、定期的にこのページにアクセスしてください。
+        %{user} のリムったユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
+        <br>
         <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムったユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
-        </span>
+        </div>
       meta_description: "@%{user} がリムーブしたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       tweet:
         biginner:
@@ -916,12 +918,9 @@ ja:
       tweet_text: "%{users} さようなら(^ ^)/~ #egotter #リムられチェック %{url}"
       tweet_empty_text: "えごったーを使い始めたよ！ リムったらそっこーで分かるからね。(๑ᴖ｡ᴖ๑) #egotter #リムられチェック %{url}"
       see_more: 'もっと見る'
-      unfriends_tab_name: 'リムーブした'
-      unfollowers_tab_name: 'リムーブされた'
-      blocking_or_blocked_tab_name: 'ブロックされた'
-      unfriends_tab_html: 'リムーブした<br>%{num}'
-      unfollowers_tab_html: 'リムーブされた<br>%{num}'
-      blocking_or_blocked_tab_html: 'ブロックされた<br>%{num}'
+      unfriends_tab_name: 'リムーブ'
+      unfollowers_tab_name: 'リムられた'
+      blocking_or_blocked_tab_name: 'ブロられた'
     all:
       <<: *unfriends_show
       crumb_title: "一気に見る"
@@ -935,12 +934,14 @@ ja:
       meta_title: "@%{user} のリムられチェック - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       page_description_html: |
         「リムられ」とは、フォローを解除された関係のことです。このページでは、%{user} がリムられた（=フォローを解除された）ユーザーを見ることができます。
-        <a id="show-page-description" class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $('#' + this.id).hide(); return false;" href="#">続きを読む</a>
-        <span id="hidden-page-description" style="display: none;">
+        <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+        <div id="hidden-page-description" style="display: none;">
+        <br>
         リムられたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
-        %{user} のリムられたユーザーを見たい場合は、定期的にこのページにアクセスしてください。
+        %{user} のリムられたユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
+        <br>
         <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムられたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
-        </span>
+        </div>
       meta_description: "@%{user} のリムられを見るならここ！ 保存ユーザー数4,800万人突破のリムられチェック！ 無料で使えてスマホ対応OK！ 「リムられチェック」は一番使われているリムられ確認アプリです。"
       tweet_text: "%{users} お元気そうでなによりです。私をリムった後に、私より面白い人は見付かりましたか？(^ ^) #egotter #リムられチェック %{url}"
     all:
@@ -956,12 +957,14 @@ ja:
       meta_title: "@%{user} のブロられ分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       page_description_html: |
         「ブロられ」とは、ブロックされた関係のことです。このページでは、%{user} がブロられた（=ブロックされた）ユーザーを見ることができます。
-        <a id="show-page-description" class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $('#' + this.id).hide(); return false;" href="#">続きを読む</a>
-        <span id="hidden-page-description" style="display: none;">
+        <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+        <div id="hidden-page-description" style="display: none;">
+        <br>
         ブロックされたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
-        %{user} のブロックされたユーザーを見たい場合は、定期的にこのページにアクセスしてください。
+        %{user} のブロックされたユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
+        <br>
         <a href="%{url}">リムられチェック</a>を使うことで、%{user} のブロックされたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
-        </span>
+        </div>
       meta_description: "@%{user} がブロックされたかもしれないユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       tweet_text: "%{users} 私のことブロックしたんですか？(^ ^) #egotter #リムられチェック %{url}"
     all:
@@ -1081,8 +1084,22 @@ ja:
       <<: *inactive_mutual_friends_show
       crumb_title: "一気に見る"
   result_pages:
+    show:
+      not_found: "指定された条件での検索結果は0件でした。"
+      see_more: "もっと見る"
+      see_at_once_more: "一気に見る"
+      explanation_of_data_inconsistency_html: |
+        <strong>注意</strong> リムーブ、リムーブされた、ブロックされたのデータは、ツイッター自体の不整合により、<strong>一時的に結果が不正確になる</strong>ことがあります。<br>
+        <br>
+        より正確に結果を知りたい場合は、各ユーザーの分析ページから、ツイッターにアクセスして結果を確認してください。
+      reason_for_zero_html: |
+        <strong>メモ</strong> えごったーのデータは、初めて使ったときから貯まっていきます。そのため、項目によっては、<strong>最初のうちは結果が0件</strong>になります。<br>
+        <br>
+        えごったーでたくさん検索されるユーザーほど、早くデータが貯まっていきます。
+    all:
+      not_found: "指定された条件での検索結果は0件でした。"
     tabs:
-      analyzing: '分析中'
+      zero: '0'
   profiles:
     show:
       crumb_title: "@%{user} の %{time} のプロフィール"
@@ -1315,7 +1332,7 @@ ja:
       come_back: '@%{user} はアカウント削除から復帰しました。'
       displayed_data_is_html: |
         検索された @%{user} が見付かりません。アカウントが削除されています。
-        <a id="show-detailed-message" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
+        <a class="text-right" style="display: block;" onclick="$('#hidden-detailed-message').show(); $(this).hide(); return false;" href="#">詳しく見る</a>
         <div id="hidden-detailed-message" style="display: none;">
         <br>
         1. どういう時に起きる？<br>
@@ -1344,7 +1361,7 @@ ja:
       come_back: '@%{user} はアカウント凍結から復帰しました。'
       displayed_data_is_html: |
         検索された @%{user} が見付かりません。アカウントが凍結されています。
-        <a id="show-detailed-message" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
+        <a class="text-right" style="display: block;" onclick="$('#hidden-detailed-message').show(); $(this).hide(); return false;" href="#">詳しく見る</a>
         <div id="hidden-detailed-message" style="display: none;">
         <br>
         1. どういう時に起きる？<br>
@@ -2215,13 +2232,10 @@ ja:
       asc: "フォロワー 少ない順"
   filter:
     title: "絞り込み"
-    not_found: "指定された条件での検索結果は0件でした。"
     active: "アクティブのみ"
     inactive: "非アクティブのみ"
     protected: "鍵付きのみ"
   dictionary:
-    see_more: "もっと見る"
-    see_at_once_more: "一気に見る"
     delim: "、"
     honorific: "さん"
   before_sign_in:
@@ -2233,7 +2247,7 @@ ja:
       <br>
       <a class="btn btn-primary" href="%{sign_in_url}">ログインして増やす</a><br>
       <br>
-      <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
+      <a class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $(this).hide(); return false;" href="#">詳しく見る</a>
       <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
         <br>
         1. これは何？<br>
@@ -2264,7 +2278,7 @@ ja:
     something_wrong_with_error_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。（%{error}）'
     search_limitation_soft_limited_html: |
       検索されたユーザー @%{user} はフォローとフォロワーが多いため、<a class="btn btn-primary" href="%{url}">ログイン</a> した後のみ検索できます。<br>
-      <a id="show-detailed-message" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
+      <a class="text-right" style="display: block;" onclick="$('#hidden-detailed-message').show(); $(this).hide(); return false;" href="#">詳しく見る</a>
       <div id="hidden-detailed-message" style="display: none;">
         <br>
         1. これは何？<br>
@@ -2316,7 +2330,7 @@ ja:
       <a href="#" class="btn btn-outline-primary btn-checkout">購入して増やす</a>
       <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary">ツイートして増やす</a><br>
       <br>
-      <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
+      <a class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $(this).hide(); return false;" href="#">詳しく見る</a>
       <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
         <br>
         1. これは何？<br>
