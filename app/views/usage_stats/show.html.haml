@@ -16,7 +16,7 @@
 
 %h3.h5.text-center= t('.usage_time_by_day_title')
 .usage-time-chart.my-3{style: 'height: 180px;'}
-= render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: usage_time_text(@usage_time, @twitter_user), twitter_user: @twitter_user})
+= render(partial: 'twitter/tweet_box', locals: {text: usage_time_text(@usage_time, @twitter_user), twitter_user: @twitter_user})
 
 = render(partial: 'adsense/ad', locals: {vertical: :top})
 
@@ -28,7 +28,7 @@
   .cloud-chart.my-3{style: 'height: 220px;'}
 
   - text = t('.hashtags_tweet_text', user: @twitter_user.screen_name, hashtags: @stat.hashtags.to_h.keys.take(5).join(' '), url: usage_stat_url(@twitter_user))
-  = render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: text, twitter_user: @twitter_user})
+  = render(partial: 'twitter/tweet_box', locals: {text: text, twitter_user: @twitter_user})
 
 :javascript
   $(function () {

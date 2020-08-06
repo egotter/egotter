@@ -14,4 +14,4 @@
           %small.text-muted= personality_insight_to_upper_case(id)
         .my-2= t(".trait_descriptions.#{id}", default: 'not found')
         - tweet_text = t(".trait_tweet_html", user: twitter_user.screen_name, name: name, score_details: personality_insight_score_details(trait), description_details: personality_insight_description_details(trait), url: personality_insights_top_url)
-        = render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: tweet_text, twitter_user: twitter_user})
+        = render(partial: 'twitter/tweet_box', locals: {text: tweet_text, twitter_user: twitter_user})

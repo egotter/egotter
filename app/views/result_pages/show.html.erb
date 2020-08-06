@@ -25,13 +25,13 @@
 
 <% if remove_related_page? %>
   <div class="text-center"><%= t('unfriends.show.tweet.biginner.title_html') %></div>
-  <%= render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: @tweet_text_for_empty_users, twitter_user: @twitter_user}) %>
+  <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text_for_empty_users, twitter_user: @twitter_user}) %>
   <% if @tweet_text %>
     <div class="text-center mt-3"><%= t('unfriends.show.tweet.expert.title_html') %></div>
-    <%= render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: @tweet_text, twitter_user: @twitter_user}) %>
+    <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user}) %>
   <% end %>
 <% else %>
-  <%= render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: @tweet_text, twitter_user: @twitter_user}) %>
+  <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user}) %>
 <% end %>
 
 <%= render(partial: 'adsense/ad', locals: {vertical: :middle}) %>

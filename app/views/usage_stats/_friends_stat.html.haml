@@ -32,7 +32,7 @@
 .friends-stat-bar-chart.my-5{style: 'height: 200px;'}
 
 - tweet_text = t('usage_stats.friends_stat.tweet', user: twitter_user.screen_name, one_sided_friends: stat[:one_sided_friends_count], one_sided_followers: stat[:one_sided_followers_count], mutual_friends: stat[:mutual_friends_count], url: url)
-= render(partial: 'twitter/tweet_box', locals: {wrapper_tag: 'div', text: tweet_text, twitter_user: twitter_user})
+= render(partial: 'twitter/tweet_box', locals: {text: tweet_text, twitter_user: twitter_user})
 
 :javascript
   (function () {

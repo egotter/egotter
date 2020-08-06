@@ -1,12 +1,7 @@
-- wrapper_tag ||= 'textarea'
-
 %div{id: "text-#{text.object_id}"}
   -# textarea
   .tweet-preview-box.p-2
-    - if wrapper_tag == 'textarea'
-      %textarea.textarea{readonly: 'readonly', rows: [text.scan(/\R/).size + 3, 6].max}= text
-    - else
-      .textarea= text.gsub("\n", '<br>').html_safe
+    .textarea= text.gsub("\n", '<br>').html_safe
 
   -# buttons
   .tweet-box.text-right
