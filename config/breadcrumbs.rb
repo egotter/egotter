@@ -13,13 +13,11 @@ crumb :timeline do |screen_name|
 end
 
 %w(
+  statuses
   friends
   followers
-  statuses
-  audience_insights
   close_friends
   favorite_friends
-  usage_stats
   unfriends
   unfollowers
   blocking_or_blocked
@@ -37,7 +35,7 @@ end
   common_mutual_friends
 ).each do |name|
   crumb name.singularize.to_sym do |screen_name|
-    link t("#{name}.show.crumb_title"), send("#{name.singularize}_path", screen_name: screen_name, via: current_via("breadcrumb_#{name}"))
+    link current_crumb_title, send("#{name.singularize}_path", screen_name: screen_name, via: current_via("breadcrumb_#{name}"))
     parent :timeline, screen_name
   end
 end
@@ -61,7 +59,7 @@ end
   common_mutual_friends
 ).each do |name|
   crumb "all_#{name}".to_sym do |screen_name|
-    link t("#{name}.all.crumb_title"), send("all_#{name}_path", screen_name: screen_name, via: current_via("breadcrumb_#{name}"))
+    link t('crumb_titles.all'), send("all_#{name}_path", screen_name: screen_name, via: current_via("breadcrumb_#{name}"))
     parent "#{name.singularize}".to_sym, screen_name
   end
 end
@@ -77,12 +75,22 @@ crumb :latest_profile do |screen_name|
 end
 
 crumb :word_cloud do |screen_name|
-  link t('word_clouds.new.crumb_title'), word_cloud_path(screen_name: screen_name, via: current_via("breadcrumb_word_cloud"))
+  link t('word_clouds.show.crumb_title'), word_cloud_path(screen_name: screen_name, via: current_via("breadcrumb_word_cloud"))
   parent :timeline, screen_name
 end
 
 crumb :cluster do |screen_name|
   link t('clusters.new.crumb_title'), cluster_path(screen_name: screen_name, via: current_via("breadcrumb_cluster"))
+  parent :timeline, screen_name
+end
+
+crumb :usage_stat do |screen_name|
+  link t('usage_stats.show.crumb_title'), usage_stat_path(screen_name: screen_name, via: current_via("breadcrumb_usage_stat"))
+  parent :timeline, screen_name
+end
+
+crumb :audience_insight do |screen_name|
+  link t('audience_insights.show.crumb_title'), audience_insight_path(screen_name: screen_name, via: current_via("breadcrumb_audience_insight"))
   parent :timeline, screen_name
 end
 

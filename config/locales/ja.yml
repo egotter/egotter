@@ -275,7 +275,6 @@ ja:
     show:
       not_found_html: '@%{user} のデータ取得に失敗しました。お手数ですが再度検索してみてください。<a href="%{url}" class="btn btn-primary">@%{user} を検索する</a>'
       navbar_title: 'ツイッター利用状況分析'
-      title: "ツイッター利用状況"
       crumb_title: "ツイッター利用状況"
       page_title: "@%{user} のツイッター利用状況"
       meta_title: "@%{user} のツイッター利用状況 分析"
@@ -321,7 +320,7 @@ ja:
       page_title: "@%{user} のオーディエンス分析"
       meta_title: "@%{user} のオーディエンス分析"
       page_description_html: |
-        @%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。<br>
+        @%{user} のオーディエンス分析では、フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。<br>
         <br>
         オーディエンス分析のデータは @%{user} がえごったーで検索されるたびに更新されます。
       meta_description: "@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。"
@@ -719,25 +718,17 @@ ja:
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください。"
   close_friends:
     show: &close_friends_show
-      title: "仲良しランキング"
-      crumb_title: "仲良しランキング"
       tweet_text: |
         .%{user} の仲良しランキング ↓
         %{users}
         #egotter %{url}
-      see_more: 'もっと見る'
     all:
       <<: *close_friends_show
-      crumb_title: "一気に見る"
   favorite_friends:
     show: &favorite_friends_show
-      title: "いいねランキング"
-      crumb_title: "いいねランキング"
       tweet_text: ".%{user} のいいねランキング ↓\n%{users}\n#egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *favorite_friends_show
-      crumb_title: "一気に見る"
   one_sided_friends:
     new:
       footer_title: '片思いチェック'
@@ -753,31 +744,19 @@ ja:
         title: '@%{user} でログイン中です'
         body: '@%{user} の片思いフォロー分析結果へ移動しますか？'
     show: &one_sided_friends_show
-      crumb_title: "片思い分析"
-      title: "片思いフォロー"
       tweet_text: "%{user} の片思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *one_sided_friends_show
-      crumb_title: "一気に見る"
   one_sided_followers:
     show: &one_sided_followers_show
-      crumb_title: "片思われ分析"
-      title: "片思いフォロワー"
       tweet_text: "%{user} の片思いフォロワー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *one_sided_followers_show
-      crumb_title: "一気に見る"
   mutual_friends:
     show: &mutual_friends_show
-      crumb_title: "相互フォロー分析"
-      title: "相互フォロー"
       tweet_text: "%{user} の相互フォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *mutual_friends_show
-      crumb_title: "一気に見る"
   unfriends:
     new:
       page_title: 'リムられチェック - 保存ユーザー数4,800万人突破！スマホから使えて無料！ 一番使われているリムられチェックアプリです'
@@ -847,8 +826,6 @@ ja:
         リムられチェックアプリです。
       lead_004: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
     show: &unfriends_show
-      title: "リムり"
-      crumb_title: "リムーブした"
       tweet:
         biginner:
           title_html: 'えごったーを<span class="egotter-pink">これから使う</span>方向け'
@@ -856,53 +833,33 @@ ja:
           title_html: 'えごったーに<span class="egotter-pink">慣れてきた</span>方向け'
       tweet_text: "%{users} さようなら(^ ^)/~ #egotter #リムられチェック %{url}"
       tweet_empty_text: "えごったーを使い始めたよ！ リムったらそっこーで分かるからね。(๑ᴖ｡ᴖ๑) #egotter #リムられチェック %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *unfriends_show
-      crumb_title: "一気に見る"
   unfollowers:
     show: &unfollowers_show
-      title: "リムられチェック"
-      crumb_title: "リムられチェック"
       tweet_text: "%{users} お元気そうでなによりです。私をリムった後に、私より面白い人は見付かりましたか？(^ ^) #egotter #リムられチェック %{url}"
     all:
       <<: *unfollowers_show
-      crumb_title: "一気に見る"
   blocking_or_blocked:
     show: &blocking_or_blocked_show
-      title: "ブロックされたかも"
-      crumb_title: "ブロックされた"
       tweet_text: "%{users} 私のことブロックしたんですか？(^ ^) #egotter #リムられチェック %{url}"
     all:
       <<: *blocking_or_blocked_show
-      crumb_title: "一気に見る"
   common_friends:
     show: &common_friends_show
-      crumb_title: "共通フォロー分析"
-      title: "共通フォロー"
       tweet_text: "%{user} と %{user2} の共通フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *common_friends_show
-      crumb_title: "一気に見る"
   common_followers:
     show: &common_followers_show
-      crumb_title: "共通フォロワー分析"
-      title: "共通フォロワー"
       tweet_text: "%{user} と %{user2} の共通フォロワー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *common_followers_show
-      crumb_title: "一気に見る"
   common_mutual_friends:
     show: &common_mutual_friends_show
-      crumb_title: "共通相互フォロー分析"
-      title: "共通相互フォロー"
       tweet_text: "%{user} と %{user2} の共通相互フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *common_mutual_friends_show
-      crumb_title: "一気に見る"
   inactive_friends:
     new:
       footer_title: '最近いない人検索'
@@ -920,31 +877,19 @@ ja:
         title: '@%{user} でログイン中です'
         body: '@%{user} の最近いないフォロー分析結果へ移動しますか？'
     show: &inactive_friends_show
-      crumb_title: "最近いないフォロー分析"
-      title: "最近いないフォロー"
       tweet_text: "%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *inactive_friends_show
-      crumb_title: "一気に見る"
   inactive_followers:
     show: &inactive_followers_show
-      crumb_title: "最近いないフォロワー分析"
-      title: "最近いないフォロワー"
       tweet_text: "%{user} の最近いないフォロワー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *inactive_followers_show
-      crumb_title: "一気に見る"
   inactive_mutual_friends:
     show: &inactive_mutual_friends_show
-      crumb_title: "最近いない相互フォロー分析"
-      title: "最近いない相互フォロー"
       tweet_text: "%{user} の最近いない相互フォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *inactive_mutual_friends_show
-      crumb_title: "一気に見る"
   result_pages:
     show:
       not_found: "指定された条件での検索結果は0件でした。"
@@ -1106,6 +1051,28 @@ ja:
     common_friends: '共通フォロー分析'
     common_followers: '共通フォロワー分析'
     common_mutual_friends: '共通相互フォロー分析'
+  crumb_titles:
+    statuses: "ツイート"
+    friends: "フォローチェック"
+    followers: "フォロワーチェック"
+    unfriends: "リムーブした"
+    unfollowers: "リムられチェック"
+    blocking_or_blocked: "ブロックされた"
+    close_friends: "仲良しランキング"
+    favorite_friends: "いいねランキング"
+    one_sided_friends: "片思い分析"
+    one_sided_followers: "片思われ分析"
+    mutual_friends: "相互フォロー分析"
+    inactive_friends: "最近いないフォロー分析"
+    inactive_followers: "最近いないフォロワー分析"
+    inactive_mutual_friends: "最近いない相互フォロー分析"
+    replying: "@ツイート(自分から)"
+    replied: "@ツイート(他の人から)"
+    replying_and_replied: "@ツイート(相互)"
+    common_friends: "共通フォロー分析"
+    common_followers: "共通フォロワー分析"
+    common_mutual_friends: "共通相互フォロー分析"
+    all: "一気に見る"
   tabs:
     friends: 'フォロー'
     followers: 'フォロワー'
@@ -1158,61 +1125,37 @@ ja:
         title: '@%{user} でログイン中です'
         body: '@%{user} のフォローチェック結果へ移動しますか？'
     show: &friends_show
-      crumb_title: "フォローチェック"
-      title: "フォロー"
       tweet_text: "%{user} のフォロー分析 -  フォロー %{friends}人 フォロワー %{followers}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *friends_show
-      crumb_title: "一気に見る"
   followers:
     show: &followers_show
-      crumb_title: "フォロワーチェック"
-      title: "フォロワー"
       tweet_text: "%{user} のフォロワー分析 -  フォロワー %{followers}人 フォロワー %{followers}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *followers_show
-      crumb_title: "一気に見る"
   statuses:
     show:
-      crumb_title: "ツイート"
-      title: "ツイート"
   replying:
     show: &replying_show
-      crumb_title: "@ツイート(自分から)"
-      title: "@ツイート"
       tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *replying_show
-      crumb_title: "一気に見る"
   replied:
     show: &replied_show
-      crumb_title: "@ツイート(他の人から)"
-      title: "@ツイート"
       tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *replied_show
-      crumb_title: "一気に見る"
   replying_and_replied:
     show: &replying_and_replied_show
-      crumb_title: "@ツイート(相互)"
-      title: "@ツイート"
       tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
-      see_more: 'もっと見る'
     all:
       <<: *replying_and_replied_show
-      crumb_title: "一気に見る"
   word_clouds:
     new:
-      crumb_title: 'ワードクラウド'
     show:
       navbar_title: 'ワードクラウド'
       crumb_title: "ワードクラウド"
       page_description: "@%{user} ツイートからワードクラウドを作成します。"
-      title: "%{user} のワードクラウド"
       page_title: "@%{user} のワードクラウド"
       content_title: "%{user} のワードクラウド"
       description: "@%{user} がよくツイートする単語がワードクラウドには含まれています。ワードクラウドは検索されたユーザーの口癖から作成されます。"
@@ -1238,7 +1181,6 @@ ja:
       navbar_title: 'クラスタ判定'
       crumb_title: "入っているクラスタ"
       page_description: "クラスタとは、「あるユーザーが入っているグループ」のことです。えごったーでは、@%{user} がよくツイートするジャンルやフォロー関係からクラスタを判定しています。"
-      title: "%{user} のクラスタ判定 - %{clusters}"
       page_title: "@%{user} のクラスタ判定 - %{clusters}"
       content_title: "%{user} のクラスタ判定"
       description: "@%{user} のクラスタは、%{clusters}です。検索されたユーザーが入っているクラスタをさくっと見付けることができます。"

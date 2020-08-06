@@ -208,6 +208,53 @@ module ViewVariablesHelper
     end
   end
 
+  def current_crumb_title
+    case controller_name
+    when 'statuses'
+      t('crumb_titles.statuses')
+    when 'friends'
+      t('crumb_titles.friends')
+    when 'followers'
+      t('crumb_titles.followers')
+    when 'unfriends'
+      t('crumb_titles.unfriends')
+    when 'unfollowers'
+      t('crumb_titles.unfollowers')
+    when 'blocking_or_blocked'
+      t('crumb_titles.blocking_or_blocked')
+    when 'close_friends'
+      t('crumb_titles.close_friends')
+    when 'favorite_friends'
+      t('crumb_titles.favorite_friends')
+    when 'one_sided_friends'
+      t('crumb_titles.one_sided_friends')
+    when 'one_sided_followers'
+      t('crumb_titles.one_sided_followers')
+    when 'mutual_friends'
+      t('crumb_titles.mutual_friends')
+    when 'inactive_friends'
+      t('crumb_titles.inactive_friends')
+    when 'inactive_followers'
+      t('crumb_titles.inactive_followers')
+    when 'inactive_mutual_friends'
+      t('crumb_titles.inactive_mutual_friends')
+    when 'replying'
+      t('crumb_titles.replying')
+    when 'replied'
+      t('crumb_titles.replied')
+    when 'replying_and_replied'
+      t('crumb_titles.replying_and_replied')
+    when 'common_friends'
+      t('crumb_titles.common_friends')
+    when 'common_followers'
+      t('crumb_titles.common_followers')
+    when 'common_mutual_friends'
+      t('crumb_titles.common_mutual_friends')
+    else
+      raise "Invalid controller value=#{controller_name}"
+    end
+  end
+
   private
 
   def timeline_link(user)
