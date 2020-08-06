@@ -12,9 +12,7 @@ module Concerns::UnfriendsConcern
     singular_name = controller_name.singularize
 
     @api_path = send("api_v1_#{controller_name}_list_path")
-    @breadcrumb_name = singular_name.to_sym
     @canonical_url = send("#{singular_name}_url", @twitter_user)
-    @canonical_path = send("#{singular_name}_path", @twitter_user)
 
     if controller_name == 'unfriends'
       mention_names = @twitter_user.unfriends(limit: 3).map(&:mention_name)

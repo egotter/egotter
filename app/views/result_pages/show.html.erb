@@ -4,7 +4,7 @@
 
 <%= content_for :navbar_title, current_navbar_title %>
 
-<% breadcrumb @breadcrumb_name, @twitter_user.screen_name %>
+<% current_breadcrumb(@twitter_user) %>
 <% title current_page_title(@twitter_user) %>
 <% set_meta_tags description: current_meta_description(@twitter_user) %>
 

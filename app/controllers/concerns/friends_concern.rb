@@ -8,11 +8,8 @@ module Concerns::FriendsConcern
   end
 
   def initialize_instance_variables
-    singular_name = controller_name.singularize
-
     @api_path = send("api_v1_#{controller_name}_list_path")
-    @breadcrumb_name = singular_name.to_sym
-    @canonical_url = send("#{singular_name}_url", @twitter_user)
+    @canonical_url = send("#{controller_name.singularize}_url", @twitter_user)
 
     counts = view_context.current_counts(@twitter_user)
 
