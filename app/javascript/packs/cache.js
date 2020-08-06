@@ -1,8 +1,8 @@
 'use strict';
 
 class Cache {
-  constructor() {
-    this.ttl = 259200; // 3 days
+  constructor(ttl) {
+    this.ttl = ttl || 259200; // 3 days
     this.storage = window['sessionStorage'] || {};
   }
 
@@ -21,7 +21,7 @@ class Cache {
 
     var value = null;
 
-    if (this.current_time() - payload['time'] < this.ttl) {
+    if (this.time() - payload['time'] < this.ttl) {
       value = payload['value'];
     } else {
       this.delete(key);
@@ -31,7 +31,7 @@ class Cache {
   }
 
   write(key, value) {
-    var payload = JSON.stringify({time: this.current_time(), value: value});
+    var payload = JSON.stringify({time: this.time(), value: value});
     this.storage[key] = payload;
   }
 
@@ -39,7 +39,7 @@ class Cache {
     this.storage[key] = null;
   }
 
-  current_time() {
+  time() {
     return Math.floor(new Date().getTime() / 1000);
   }
 }

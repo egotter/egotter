@@ -1,10 +1,8 @@
 class ToastMessage {
   static ids = [];
 
-  static show(message, options = {}) {
-    var id = Math.random().toString(32).substring(10);
+  static show(message, options) {
     var opt = Object.assign({
-      id: id,
       title: 'Notification',
       body: message,
       time: this.currentTime(),
@@ -12,6 +10,14 @@ class ToastMessage {
       delay: 30000,
       animation: false
     }, options);
+
+    if (!opt['id']) {
+      opt['id'] = Math.random().toString(32).substring(10);
+    }
+
+    if (this.isAlreadyShown(opt['id'])) {
+      return;
+    }
 
     if (options['warn']) {
       opt['body'] = '<div class="text-danger">' + opt['body'] + '</div>';
@@ -29,21 +35,35 @@ class ToastMessage {
     $('#toast-container').append(toast);
 
     setTimeout(function () {
-      $('#' + id).toast('show');
+      $('#' + opt['id']).toast('show');
     }, 500);
 
-    this.ids.push(id);
+    this.ids.push(opt['id']);
 
-    return id;
+    return opt['id'];
   }
 
-  static info(message, options) {
+  static info(message, options = {}) {
     this.show(message, options);
   }
 
   static warn(message, options = {}) {
     options['warn'] = true;
     this.show(message, options);
+  }
+
+  static isAlreadyShown(id) {
+    var ttl = 300;
+    var cache = new Egotter.Cache(ttl);
+    var key = id + '-' + ttl;
+
+    if (cache.read(key)) {
+      console.log('already shown', key);
+      return true;
+    } else {
+      cache.write(key, true);
+      return false;
+    }
   }
 
   static clear() {

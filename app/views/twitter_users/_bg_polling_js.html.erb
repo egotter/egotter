@@ -38,7 +38,8 @@
 
     if (!signedIn) {
       if (removePage) {
-        ToastMessage.info($('#accurate-counting-box .inner').html());
+        var message = '<%= t('twitter_users.in_background.accurate_counting_html', url: sign_in_path(via: current_via('accurate_counting'), redirect_path: timeline_path(twitter_user, via: current_via('accurate_counting')))) %>';
+        ToastMessage.info(message);
       } else if (viaDM) {
         ToastMessage.info($('#via-dm-box .inner').html());
       } else if (!crawler) {
@@ -51,7 +52,8 @@
     }
 
     if (signedIn && !isEgotterFollower) {
-      ToastMessage.info('<%= t('twitter_users.in_background.is_not_egotter_follower_html', user: current_user&.screen_name, url: sign_in_path(follow: true)) %>');
+      var message = '<%= t('twitter_users.in_background.is_not_egotter_follower_html', user: current_user&.screen_name, url: sign_in_path(follow: true)) %>';
+      ToastMessage.info(message, {id: 'not_egotter_follower'});
       return;
     }
 
@@ -80,7 +82,7 @@
           twitterUser: twitterUser
         };
         new Polling(options).start();
-        ToastMessage.show('<%= t('twitter_users.in_background.updating_html', user: twitter_user.screen_name) %>');
+        ToastMessage.info('<%= t('twitter_users.in_background.updating_html', user: twitter_user.screen_name) %>');
       });
     });
 

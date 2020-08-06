@@ -36,10 +36,6 @@
   = t('twitter_users.in_background.invalid_token', user: twitter_user.screen_name)
   = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
 
-= alert_warning_box('accurate-counting-box') do |id, via|
-  = t('twitter_users.in_background.accurate_counting')
-  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
-
 = alert_warning_box('via-dm-box') do |id, via|
   = t('twitter_users.in_background.via_dm')
   = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
