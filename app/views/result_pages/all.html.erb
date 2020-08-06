@@ -4,7 +4,7 @@
 
 <% breadcrumb @breadcrumb_name, @twitter_user.screen_name %>
 <% title current_page_title(@twitter_user) %>
-<% set_meta_tags description: @meta_description %>
+<% set_meta_tags description: current_meta_description(@twitter_user) %>
 
 <%= render(partial: 'adsense/ad', locals: {vertical: :top}) %>
 

@@ -21,12 +21,9 @@ class  Page::GoodFriends < ::Page::Base
         ["all_#{controller_name}".to_sym, send("all_#{controller_name}_url", @twitter_user)]
       end
 
-    @meta_title = t('.meta_title', {user: @twitter_user.mention_name})
-
     users = @twitter_user.users_by(controller_name: controller_name).limit(5)
 
     @page_description = t('.page_description', user: @twitter_user.mention_name)
-    @meta_description = t('.meta_description', users: honorific_names(users.map(&:mention_name)))
 
     @navbar_title = t(".navbar_title")
 

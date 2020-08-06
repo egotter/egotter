@@ -21,9 +21,6 @@ module Concerns::FriendsConcern
 
     counts = view_context.current_counts(@twitter_user)
 
-    @meta_title = t('.meta_title', {user: @twitter_user.mention_name}.merge(counts))
-    @meta_description = t('.meta_description', {user: @twitter_user.mention_name}.merge(counts))
-
     default_description = t('.page_description', user: @twitter_user.screen_name)
     url = root_path_for(controller: controller_name)
     @page_description = t('.page_description_html', default: default_description, user: @twitter_user.screen_name, url: url)

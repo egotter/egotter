@@ -24,10 +24,7 @@ class Page::CommonFriendsAndCommonFollowers < ::Page::Base
 
     counts = view_context.current_counts(@twitter_user)
 
-    @meta_title = t('.meta_title', {user: @twitter_user.mention_name, user2: current_user.twitter_user.mention_name}.merge(counts))
-
     @page_description = t('.page_description', user: @twitter_user.mention_name, user2: current_user.twitter_user.mention_name)
-    @meta_description = t('.meta_description', {user: @twitter_user.mention_name, user2: current_user.twitter_user.mention_name}.merge(counts))
 
     @navbar_title = t(".navbar_title")
 

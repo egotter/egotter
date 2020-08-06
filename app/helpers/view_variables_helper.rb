@@ -56,4 +56,63 @@ module ViewVariablesHelper
       current_page_title(twitter_user)
     end
   end
+
+  def current_meta_title(twitter_user)
+    raise NotImplementedError
+  end
+
+  def current_meta_description(twitter_user)
+    if controller_name == 'statuses'
+      return t('meta_descriptions.statuses', user: twitter_user.screen_name)
+    elsif controller_name == 'close_friends'
+      return t('meta_descriptions.close_friends', user: twitter_user.screen_name)
+    elsif controller_name == 'favorite_friends'
+      return t('meta_descriptions.favorite_friends', user: twitter_user.screen_name)
+    end
+
+    values = {user: twitter_user.screen_name}.merge(current_counts(twitter_user))
+
+    case controller_name
+    when 'friends'
+      t('meta_descriptions.friends', values)
+    when 'followers'
+      t('meta_descriptions.followers', values)
+    when 'unfriends'
+      t('meta_descriptions.unfriends', values)
+    when 'unfollowers'
+      t('meta_descriptions.unfollowers', values)
+    when 'blocking_or_blocked'
+      t('meta_descriptions.blocking_or_blocked', values)
+    when 'close_friends'
+      t('meta_descriptions.close_friends', values)
+    when 'favorite_friends'
+      t('meta_descriptions.favorite_friends', values)
+    when 'one_sided_friends'
+      t('meta_descriptions.one_sided_friends', values)
+    when 'one_sided_followers'
+      t('meta_descriptions.one_sided_followers', values)
+    when 'mutual_friends'
+      t('meta_descriptions.mutual_friends', values)
+    when 'inactive_friends'
+      t('meta_descriptions.inactive_friends', values)
+    when 'inactive_followers'
+      t('meta_descriptions.inactive_followers', values)
+    when 'inactive_mutual_friends'
+      t('meta_descriptions.inactive_mutual_friends', values)
+    when 'replying'
+      t('meta_descriptions.replying', values)
+    when 'replied'
+      t('meta_descriptions.replied', values)
+    when 'replying_and_replied'
+      t('meta_descriptions.replying_and_replied', values)
+    when 'common_friends'
+      t('meta_descriptions.common_friends', values.merge(user2: current_user.screen_name))
+    when 'common_followers'
+      t('meta_descriptions.common_followers', values.merge(user2: current_user.screen_name))
+    when 'common_mutual_friends'
+      t('meta_descriptions.common_mutual_friends', values.merge(user2: current_user.screen_name))
+    else
+      raise "Invalid controller value=#{controller_name}"
+    end
+  end
 end

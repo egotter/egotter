@@ -7,7 +7,7 @@
 
 - page_title = current_page_title(@twitter_user)
 - title page_title
-- set_meta_tags description: t('statuses.show.meta_description', user: @twitter_user.mention_name)
+- set_meta_tags description: current_meta_description(@twitter_user)
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 

@@ -16,11 +16,7 @@ module Concerns::UnfriendsConcern
     @canonical_url = send("#{singular_name}_url", @twitter_user)
     @canonical_path = send("#{singular_name}_path", @twitter_user)
 
-    counts = view_context.current_counts(@twitter_user)
-    @meta_title = t('.meta_title', {user: @twitter_user.screen_name}.merge(counts))
-
     @page_description = t('.page_description_html', user: timeline_link(@twitter_user), url: unfriends_top_path(via: current_via('page_description')))
-    @meta_description = t('.meta_description', {user: @twitter_user.screen_name}.merge(counts))
 
     @navbar_title = t(".navbar_title")
 
