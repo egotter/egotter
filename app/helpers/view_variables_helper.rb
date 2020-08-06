@@ -83,10 +83,6 @@ module ViewVariablesHelper
       t('meta_descriptions.unfollowers', values)
     when 'blocking_or_blocked'
       t('meta_descriptions.blocking_or_blocked', values)
-    when 'close_friends'
-      t('meta_descriptions.close_friends', values)
-    when 'favorite_friends'
-      t('meta_descriptions.favorite_friends', values)
     when 'one_sided_friends'
       t('meta_descriptions.one_sided_friends', values)
     when 'one_sided_followers'
@@ -114,5 +110,107 @@ module ViewVariablesHelper
     else
       raise "Invalid controller value=#{controller_name}"
     end
+  end
+
+  def current_page_description(twitter_user)
+    values = {user: timeline_link(twitter_user), url: subroot_path}
+
+    case controller_name
+    when 'statuses'
+      t('page_descriptions.statuses_html', values)
+    when 'friends'
+      t('page_descriptions.friends_html', values)
+    when 'followers'
+      t('page_descriptions.followers_html', values)
+    when 'unfriends'
+      t('page_descriptions.unfriends_html', values)
+    when 'unfollowers'
+      t('page_descriptions.unfollowers_html', values)
+    when 'blocking_or_blocked'
+      t('page_descriptions.blocking_or_blocked_html', values)
+    when 'close_friends'
+      t('page_descriptions.close_friends_html', values)
+    when 'favorite_friends'
+      t('page_descriptions.favorite_friends_html', values)
+    when 'one_sided_friends'
+      t('page_descriptions.one_sided_friends_html', values)
+    when 'one_sided_followers'
+      t('page_descriptions.one_sided_followers_html', values)
+    when 'mutual_friends'
+      t('page_descriptions.mutual_friends_html', values)
+    when 'inactive_friends'
+      t('page_descriptions.inactive_friends_html', values)
+    when 'inactive_followers'
+      t('page_descriptions.inactive_followers_html', values)
+    when 'inactive_mutual_friends'
+      t('page_descriptions.inactive_mutual_friends_html', values)
+    when 'replying'
+      t('page_descriptions.replying_html', values)
+    when 'replied'
+      t('page_descriptions.replied_html', values)
+    when 'replying_and_replied'
+      t('page_descriptions.replying_and_replied_html', values)
+    when 'common_friends'
+      t('page_descriptions.common_friends_html', values.merge(user2: timeline_link(current_user)))
+    when 'common_followers'
+      t('page_descriptions.common_followers_html', values.merge(user2: timeline_link(current_user)))
+    when 'common_mutual_friends'
+      t('page_descriptions.common_mutual_friends_html', values.merge(user2: timeline_link(current_user)))
+    else
+      raise "Invalid controller value=#{controller_name}"
+    end.html_safe
+  end
+
+  def current_navbar_title
+    case controller_name
+    when 'statuses'
+      t('navbar_titles.statuses')
+    when 'friends'
+      t('navbar_titles.friends')
+    when 'followers'
+      t('navbar_titles.followers')
+    when 'unfriends'
+      t('navbar_titles.unfriends')
+    when 'unfollowers'
+      t('navbar_titles.unfollowers')
+    when 'blocking_or_blocked'
+      t('navbar_titles.blocking_or_blocked')
+    when 'close_friends'
+      t('navbar_titles.close_friends')
+    when 'favorite_friends'
+      t('navbar_titles.favorite_friends')
+    when 'one_sided_friends'
+      t('navbar_titles.one_sided_friends')
+    when 'one_sided_followers'
+      t('navbar_titles.one_sided_followers')
+    when 'mutual_friends'
+      t('navbar_titles.mutual_friends')
+    when 'inactive_friends'
+      t('navbar_titles.inactive_friends')
+    when 'inactive_followers'
+      t('navbar_titles.inactive_followers')
+    when 'inactive_mutual_friends'
+      t('navbar_titles.inactive_mutual_friends')
+    when 'replying'
+      t('navbar_titles.replying')
+    when 'replied'
+      t('navbar_titles.replied')
+    when 'replying_and_replied'
+      t('navbar_titles.replying_and_replied')
+    when 'common_friends'
+      t('navbar_titles.common_friends')
+    when 'common_followers'
+      t('navbar_titles.common_followers')
+    when 'common_mutual_friends'
+      t('navbar_titles.common_mutual_friends')
+    else
+      raise "Invalid controller value=#{controller_name}"
+    end
+  end
+
+  private
+
+  def timeline_link(user)
+    link_to('@' + user.screen_name, timeline_path(user, via: current_via('page_description')))
   end
 end

@@ -18,7 +18,7 @@
       %img.rounded{alt: "", height: "30", src: image_path('/logo_96x96.png')}
   %li
     - text = content_for?(:navbar_title) ? yield(:navbar_title) : t('.title')
-    = link_to text, root_path_for(controller: controller_name), class: 'text-white pl-2'
+    = link_to text, subroot_path, class: 'text-white pl-2'
 
   %li.d-none.d-md-block.right-item
     = link_to '#', class: 'btn btn-primary', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
@@ -32,7 +32,7 @@
     - if user_signed_in?
       = link_to mention_name(current_user.screen_name), settings_path(via: via), class: 'text-white pl-3'
     - else
-      = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: root_path_for(controller: controller_name)), class: 'text-white pl-3'
+      = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path), class: 'text-white pl-3'
 
   -# Display on extra small and small
   %li.d-block.d-md-none.right-item
@@ -44,4 +44,4 @@
         %i.fas.fa-bars.btn-sidemenu
         = render partial: 'layouts/sidemenu'
     - else
-      = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: root_path_for(controller: controller_name)), class: 'text-white pl-3'
+      = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path), class: 'text-white pl-3'

@@ -1,17 +1,17 @@
 - content_for :canonical_url do
   %link{href: status_url(@twitter_user), rel: 'canonical'}
 
-- content_for :navbar_title, @navbar_title
+- content_for :navbar_title, current_navbar_title
 
 - breadcrumb :status, @twitter_user.screen_name
 
-- page_title = current_page_title(@twitter_user)
-- title page_title
+- title current_page_title(@twitter_user)
 - set_meta_tags description: current_meta_description(@twitter_user)
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
-%h2.h2.text-center.my-5= page_title
+%h2.h2.text-center.my-5= current_page_title(@twitter_user)
+.mb-5= current_page_description(@twitter_user)
 
 #statuses.twitter.tweets.mx-auto
   - if @twitter_user.protected_account?

@@ -10,7 +10,7 @@ module Page
         if request.referer.to_s.empty?
           # Prevent from redirect loop
           url = kick_out_error_path('need_login', redirect_path: redirect_path)
-          redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_html', url: url)
+          redirect_to subroot_path, alert: t('before_sign_in.need_login_html', url: url)
         else
           redirect_to sign_in_path(via: via, redirect_path: redirect_path)
         end

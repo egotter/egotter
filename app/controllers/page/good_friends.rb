@@ -23,10 +23,6 @@ class  Page::GoodFriends < ::Page::Base
 
     users = @twitter_user.users_by(controller_name: controller_name).limit(5)
 
-    @page_description = t('.page_description', user: @twitter_user.mention_name)
-
-    @navbar_title = t(".navbar_title")
-
     @tweet_text = good_friends_text(users, @twitter_user)
   end
 

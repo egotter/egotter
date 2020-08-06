@@ -59,7 +59,7 @@ class ApplicationController < ActionController::Base
     if request.xhr?
       render json: {error: location.remove(/\?/), message: message}, status: code
     else
-      redirect_to root_path_for(controller: controller_name), alert: message
+      redirect_to subroot_path, alert: message
     end
 
     create_error_log(location, message, ex)

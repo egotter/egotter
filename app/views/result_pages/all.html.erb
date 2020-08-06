@@ -11,7 +11,7 @@
 <%= render partial: 'twitter/profile', locals: {user: @twitter_user} %>
 
 <h2 class="h4 text-center my-5"><%= current_content_title(@twitter_user) %></h2>
-<div class="mb-5"><%= raw @page_description %></div>
+<div class="mb-5"><%= current_page_description(@twitter_user) %></div>
 
 <%= render(partial: 'adsense/ad', locals: {vertical: :middle}) %>
 

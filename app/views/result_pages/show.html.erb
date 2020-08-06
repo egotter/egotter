@@ -2,7 +2,7 @@
   <link href="<%= @canonical_url %>" rel="canonical">
 <% end %>
 
-<%= content_for :navbar_title, @navbar_title %>
+<%= content_for :navbar_title, current_navbar_title %>
 
 <% breadcrumb @breadcrumb_name, @twitter_user.screen_name %>
 <% title current_page_title(@twitter_user) %>
@@ -17,7 +17,7 @@
 <%= render partial: 'twitter/profile', locals: {user: @twitter_user} %>
 
 <h2 class="h4 text-center my-5"><%= current_content_title(@twitter_user) %></h2>
-<div class="mb-5"><%= raw @page_description %></div>
+<div class="mb-5"><%= current_page_description(@twitter_user) %></div>
 
 <% if controller_name == 'close_friends' %>
   <div class="my-3"><%= render(partial: 'close_friends/friend_map', locals: {twitter_user: @twitter_user}) %></div>

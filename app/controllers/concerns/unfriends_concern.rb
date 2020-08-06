@@ -16,10 +16,6 @@ module Concerns::UnfriendsConcern
     @canonical_url = send("#{singular_name}_url", @twitter_user)
     @canonical_path = send("#{singular_name}_path", @twitter_user)
 
-    @page_description = t('.page_description_html', user: timeline_link(@twitter_user), url: unfriends_top_path(via: current_via('page_description')))
-
-    @navbar_title = t(".navbar_title")
-
     if controller_name == 'unfriends'
       mention_names = @twitter_user.unfriends(limit: 3).map(&:mention_name)
     elsif controller_name == 'unfollowers'
@@ -38,9 +34,5 @@ module Concerns::UnfriendsConcern
       names = '.' + mention_names.map { |name| honorific_name(name) }.join("\n") + "\n\n"
       @tweet_text = t('.tweet_text', users: names, url: unfriends_top_url(via: current_via('tweet_for_users')))
     end
-  end
-
-  def timeline_link(twitter_user)
-    view_context.link_to('@' + twitter_user.screen_name, view_context.timeline_path(twitter_user, via: view_context.current_via('page_description')))
   end
 end

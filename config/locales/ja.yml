@@ -719,10 +719,8 @@ ja:
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください。"
   close_friends:
     show: &close_friends_show
-      navbar_title: '仲良しランキング'
       title: "仲良しランキング"
       crumb_title: "仲良しランキング"
-      page_description: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
       tweet_text: |
         .%{user} の仲良しランキング ↓
         %{users}
@@ -733,10 +731,8 @@ ja:
       crumb_title: "一気に見る"
   favorite_friends:
     show: &favorite_friends_show
-      navbar_title: 'いいねランキング'
       title: "いいねランキング"
       crumb_title: "いいねランキング"
-      page_description: "%{user} がよくいいねするユーザーの一覧です。いいねの分析には、お気に入り登録を使っています。"
       tweet_text: ".%{user} のいいねランキング ↓\n%{users}\n#egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -744,8 +740,6 @@ ja:
       crumb_title: "一気に見る"
   one_sided_friends:
     new:
-      navbar_title: '片思いチェック'
-      plain_title: '片思いチェック - えごったー スマホでかんたん ツイッターのフォロー整理'
       footer_title: '片思いチェック'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       short_description: "自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
@@ -759,18 +753,8 @@ ja:
         title: '@%{user} でログイン中です'
         body: '@%{user} の片思いフォロー分析結果へ移動しますか？'
     show: &one_sided_friends_show
-      navbar_title: '片思いチェック'
       crumb_title: "片思い分析"
       title: "片思いフォロー"
-      page_description_html: |
-        「片思い」とは、自分はフォローしているが、相手からはフォローされていない関係のことです。
-        このページでは、@%{user} の片思い（=フォローだけしている）ユーザーを見ることができます。
-        <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
-        <div id="hidden-page-description" style="display: none;">
-          <a href="%{url}">片思いチェック</a>を使うことで、@%{user} の片思いは集計されています。
-          <a href="%{url}">片思いチェック</a>を使えば、@%{user} だけでなく他のユーザーの片思いを集計することもできます。
-          よく見られているページほど頻繁にデータが更新されるため、@%{user} の最新の片思いユーザーを見たい場合は、定期的にこのページにアクセスしてください。
-        </div>
       tweet_text: "%{user} の片思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -778,10 +762,8 @@ ja:
       crumb_title: "一気に見る"
   one_sided_followers:
     show: &one_sided_followers_show
-      navbar_title: '片思われチェック'
       crumb_title: "片思われ分析"
       title: "片思いフォロワー"
-      page_description: "%{user} のフォロワーのうち、フォロー返ししていないユーザーです。"
       tweet_text: "%{user} の片思いフォロワー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -789,10 +771,8 @@ ja:
       crumb_title: "一気に見る"
   mutual_friends:
     show: &mutual_friends_show
-      navbar_title: '相互フォロー分析'
       crumb_title: "相互フォロー分析"
       title: "相互フォロー"
-      page_description: "%{user} が相互フォローしているユーザーです。"
       tweet_text: "%{user} の相互フォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -800,7 +780,6 @@ ja:
       crumb_title: "一気に見る"
   unfriends:
     new:
-      navbar_title: 'リムられチェック'
       page_title: 'リムられチェック - 保存ユーザー数4,800万人突破！スマホから使えて無料！ 一番使われているリムられチェックアプリです'
       simple_title_html: 'リムられチェック'
       footer_title: 'リムられチェック'
@@ -868,19 +847,8 @@ ja:
         リムられチェックアプリです。
       lead_004: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
     show: &unfriends_show
-      navbar_title: 'リムられチェック'
       title: "リムり"
       crumb_title: "リムーブした"
-      page_description_html: |
-        「リムった」とは、フォローを解除した関係のことです。このページでは、%{user} がリムった（=フォローを解除した）ユーザーを見ることができます。
-        <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
-        <div id="hidden-page-description" style="display: none;">
-        <br>
-        リムったユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
-        %{user} のリムったユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
-        <br>
-        <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムったユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
-        </div>
       tweet:
         biginner:
           title_html: 'えごったーを<span class="egotter-pink">これから使う</span>方向け'
@@ -894,48 +862,24 @@ ja:
       crumb_title: "一気に見る"
   unfollowers:
     show: &unfollowers_show
-      navbar_title: 'リムられチェック'
       title: "リムられチェック"
       crumb_title: "リムられチェック"
-      page_description_html: |
-        「リムられ」とは、フォローを解除された関係のことです。このページでは、%{user} がリムられた（=フォローを解除された）ユーザーを見ることができます。
-        <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
-        <div id="hidden-page-description" style="display: none;">
-        <br>
-        リムられたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
-        %{user} のリムられたユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
-        <br>
-        <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムられたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
-        </div>
       tweet_text: "%{users} お元気そうでなによりです。私をリムった後に、私より面白い人は見付かりましたか？(^ ^) #egotter #リムられチェック %{url}"
     all:
       <<: *unfollowers_show
       crumb_title: "一気に見る"
   blocking_or_blocked:
     show: &blocking_or_blocked_show
-      navbar_title: 'リムられチェック'
       title: "ブロックされたかも"
       crumb_title: "ブロックされた"
-      page_description_html: |
-        「ブロられ」とは、ブロックされた関係のことです。このページでは、%{user} がブロられた（=ブロックされた）ユーザーを見ることができます。
-        <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
-        <div id="hidden-page-description" style="display: none;">
-        <br>
-        ブロックされたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
-        %{user} のブロックされたユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
-        <br>
-        <a href="%{url}">リムられチェック</a>を使うことで、%{user} のブロックされたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
-        </div>
       tweet_text: "%{users} 私のことブロックしたんですか？(^ ^) #egotter #リムられチェック %{url}"
     all:
       <<: *blocking_or_blocked_show
       crumb_title: "一気に見る"
   common_friends:
     show: &common_friends_show
-      navbar_title: '共通フォロー分析'
       crumb_title: "共通フォロー分析"
       title: "共通フォロー"
-      page_description: "%{user} と %{user2} の両方がフォローしているユーザーです。"
       tweet_text: "%{user} と %{user2} の共通フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -943,10 +887,8 @@ ja:
       crumb_title: "一気に見る"
   common_followers:
     show: &common_followers_show
-      navbar_title: '共通フォロワー分析'
       crumb_title: "共通フォロワー分析"
       title: "共通フォロワー"
-      page_description: "%{user} と %{user2} の両方がフォローされているユーザーです。"
       tweet_text: "%{user} と %{user2} の共通フォロワー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -954,10 +896,8 @@ ja:
       crumb_title: "一気に見る"
   common_mutual_friends:
     show: &common_mutual_friends_show
-      navbar_title: '共通相互フォロー分析'
       crumb_title: "共通相互フォロー分析"
       title: "共通相互フォロー"
-      page_description: "%{user} と %{user2} の両方が相互フォローしているユーザーです。"
       tweet_text: "%{user} と %{user2} の共通相互フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -965,8 +905,6 @@ ja:
       crumb_title: "一気に見る"
   inactive_friends:
     new:
-      navbar_title: '最近いないフォロー分析'
-      plain_title: '最近いない人検索 - えごったー スマホでかんたん ツイッターのフォロー整理'
       footer_title: '最近いない人検索'
       description: "保存ユーザー数4,800万人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
       short_description: "スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
@@ -982,10 +920,8 @@ ja:
         title: '@%{user} でログイン中です'
         body: '@%{user} の最近いないフォロー分析結果へ移動しますか？'
     show: &inactive_friends_show
-      navbar_title: '最近いないフォロー分析'
       crumb_title: "最近いないフォロー分析"
       title: "最近いないフォロー"
-      page_description: "%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーです。"
       tweet_text: "%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -993,10 +929,8 @@ ja:
       crumb_title: "一気に見る"
   inactive_followers:
     show: &inactive_followers_show
-      navbar_title: '最近いないフォロワー分析'
       crumb_title: "最近いないフォロワー分析"
       title: "最近いないフォロワー"
-      page_description: "%{user} のフォロワーのうち、最近ツイートしていないユーザーです。"
       tweet_text: "%{user} の最近いないフォロワー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -1004,10 +938,8 @@ ja:
       crumb_title: "一気に見る"
   inactive_mutual_friends:
     show: &inactive_mutual_friends_show
-      navbar_title: '最近いない相互フォロー分析'
       crumb_title: "最近いない相互フォロー分析"
       title: "最近いない相互フォロー"
-      page_description: "%{user} の相互フォローのうち、最近ツイートしていないユーザーです。"
       tweet_text: "%{user} の最近いない相互フォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -1095,6 +1027,85 @@ ja:
     common_mutual_friends: "@%{user} と %{user2} の両方が相互フォローしているユーザーの一覧 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
   content_titles:
     unfollowers: "@%{user} のリムられチェック"
+  page_descriptions:
+    statuses_html: "%{user} のツイートの一覧です。"
+    friends_html: "%{user} がフォローしているユーザーの一覧です。"
+    followers_html: "%{user} がフォローされているユーザーの一覧です。"
+    unfriends_html: |
+      「リムった」とは、フォローを解除した関係のことです。このページでは、%{user} がリムった（=フォローを解除した）ユーザーを見ることができます。
+      <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+      <div id="hidden-page-description" style="display: none;">
+      <br>
+      リムったユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
+      %{user} のリムったユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
+      <br>
+      <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムったユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
+      </div>
+    unfollowers_html: |
+      「リムられ」とは、フォローを解除された関係のことです。このページでは、%{user} がリムられた（=フォローを解除された）ユーザーを見ることができます。
+      <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+      <div id="hidden-page-description" style="display: none;">
+      <br>
+      リムられたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
+      %{user} のリムられたユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
+      <br>
+      <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムられたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
+      </div>
+    blocking_or_blocked_html: |
+      「ブロられ」とは、ブロックされた関係のことです。このページでは、%{user} がブロられた（=ブロックされた）ユーザーを見ることができます。
+      <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+      <div id="hidden-page-description" style="display: none;">
+      <br>
+      ブロックされたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
+      %{user} のブロックされたユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
+      <br>
+      <a href="%{url}">リムられチェック</a>を使うことで、%{user} のブロックされたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
+      </div>
+    close_friends_html: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
+    favorite_friends_html: "%{user} がよくいいねするユーザーの一覧です。いいねの分析には、お気に入り登録を使っています。"
+    one_sided_friends_html: |
+      「片思い」とは、自分はフォローしているが、相手からはフォローされていない関係のことです。
+      このページでは、@%{user} の片思い（=フォローだけしている）ユーザーを見ることができます。
+      <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+      <div id="hidden-page-description" style="display: none;">
+        <br>
+        <a href="%{url}">片思いチェック</a>を使うことで、@%{user} の片思いは集計されています。
+        <a href="%{url}">片思いチェック</a>を使えば、@%{user} だけでなく他のユーザーの片思いを集計することもできます。
+        <br>
+        よく見られているページほど頻繁にデータが更新されるため、@%{user} の最新の片思いユーザーを見たい場合は、定期的にこのページにアクセスしてください。
+      </div>
+    one_sided_followers_html: "%{user} のフォロワーのうち、フォロー返ししていないユーザーです。"
+    mutual_friends_html: "%{user} が相互フォローしているユーザーです。"
+    inactive_friends_html: "%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーです。"
+    inactive_followers_html: "%{user} のフォロワーのうち、最近ツイートしていないユーザーです。"
+    inactive_mutual_friends_html: "%{user} の相互フォローのうち、最近ツイートしていないユーザーです。"
+    replying_html: "%{user} が自分から@ツイートしたユーザーの一覧です。"
+    replied_html: "%{user} が@ツイートされたユーザーの一覧です。本人がログインしていない場合は検索して見付けるため、少し不正確です。"
+    replying_and_replied_html: "%{user} が自分からも相手からも@ツイートしているユーザーの一覧です。"
+    common_friends_html: "%{user} と %{user2} の両方がフォローしているユーザーです。"
+    common_followers_html: "%{user} と %{user2} の両方がフォローされているユーザーです。"
+    common_mutual_friends_html: "%{user} と %{user2} の両方が相互フォローしているユーザーです。"
+  navbar_titles:
+    statuses: 'ツイート分析'
+    friends: 'フォローチェック'
+    followers: 'フォロワー分析'
+    unfriends: 'リムられチェック'
+    unfollowers: 'リムられチェック'
+    blocking_or_blocked: 'リムられチェック'
+    close_friends: '仲良しランキング'
+    favorite_friends: 'いいねランキング'
+    one_sided_friends: '片思いチェック'
+    one_sided_followers: '片思われチェック'
+    mutual_friends: '相互フォロー分析'
+    inactive_friends: '最近いないフォロー分析'
+    inactive_followers: '最近いないフォロワー分析'
+    inactive_mutual_friends: '最近いない相互フォロー分析'
+    replying: '@ツイート(自分から)分析'
+    replied: '@ツイート(相手から)分析'
+    replying_and_replied: '@ツイート(相互)分析'
+    common_friends: '共通フォロー分析'
+    common_followers: '共通フォロワー分析'
+    common_mutual_friends: '共通相互フォロー分析'
   tabs:
     friends: 'フォロー'
     followers: 'フォロワー'
@@ -1132,8 +1143,6 @@ ja:
       analyze: '@%{user} を分析する'
   friends:
     new:
-      navbar_title: 'フォローチェック'
-      plain_title: 'フォローチェック - えごったー スマホでかんたん ツイッターのフォロー整理'
       simple_title: 'フォローチェック'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホからフォローチェック！"
       short_description: "フォローとフォロワーの一覧をさくっと見ることができます。"
@@ -1149,10 +1158,8 @@ ja:
         title: '@%{user} でログイン中です'
         body: '@%{user} のフォローチェック結果へ移動しますか？'
     show: &friends_show
-      navbar_title: 'フォローチェック'
       crumb_title: "フォローチェック"
       title: "フォロー"
-      page_description: "%{user} がフォローしているユーザーの一覧です。"
       tweet_text: "%{user} のフォロー分析 -  フォロー %{friends}人 フォロワー %{followers}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -1160,10 +1167,8 @@ ja:
       crumb_title: "一気に見る"
   followers:
     show: &followers_show
-      navbar_title: 'フォロワー分析'
       crumb_title: "フォロワーチェック"
       title: "フォロワー"
-      page_description: "%{user} がフォローされているユーザーの一覧です。"
       tweet_text: "%{user} のフォロワー分析 -  フォロワー %{followers}人 フォロワー %{followers}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -1171,15 +1176,12 @@ ja:
       crumb_title: "一気に見る"
   statuses:
     show:
-      navbar_title: 'ツイート分析'
       crumb_title: "ツイート"
       title: "ツイート"
   replying:
     show: &replying_show
-      navbar_title: '@ツイート(自分から)分析'
       crumb_title: "@ツイート(自分から)"
       title: "@ツイート"
-      page_description: "%{user} が自分から@ツイートしたユーザーの一覧です。"
       tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -1187,10 +1189,8 @@ ja:
       crumb_title: "一気に見る"
   replied:
     show: &replied_show
-      navbar_title: '@ツイート(他の人から)分析'
       crumb_title: "@ツイート(他の人から)"
       title: "@ツイート"
-      page_description: "%{user} が@ツイートされたユーザーの一覧です。本人がログインしていない場合は検索して見付けるため、少し不正確です。"
       tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -1198,10 +1198,8 @@ ja:
       crumb_title: "一気に見る"
   replying_and_replied:
     show: &replying_and_replied_show
-      navbar_title: '@ツイート(相互)分析'
       crumb_title: "@ツイート(相互)"
       title: "@ツイート"
-      page_description: "%{user} が自分からも相手からも@ツイートしているユーザーの一覧です。"
       tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
@@ -1220,8 +1218,7 @@ ja:
       description: "@%{user} がよくツイートする単語がワードクラウドには含まれています。ワードクラウドは検索されたユーザーの口癖から作成されます。"
   clusters:
     new:
-      navbar_title: 'クラスタ判定'
-      plain_title: 'クラスタ判定 - えごったー スマホでかんたん ツイッターのフォロー整理'
+      plain_title: 'クラスタ判定'
       crumb_title: 'クラスタ判定'
       footer_title: 'クラスタ判定'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホからクラスタ判定！ 検索されたユーザーが入っているクラスタをさくっと判定します。"
