@@ -36,9 +36,9 @@
 
 <%= render(partial: 'adsense/ad', locals: {vertical: :middle}) %>
 
-<div class="mb-3"><%= render partial: 'result_pages/tabs', locals: {tabs: @tabs, active_tab: @active_tab} %></div>
+<div class="mb-3"><%= render partial: 'result_pages/tabs', locals: {tabs: current_tabs(@twitter_user), active_tab: @active_tab} %></div>
 
-<% if (tab = @tabs[@active_tab]) && tab[:count] && tab[:count] >= 1 %>
+<% if (tab = current_tabs(@twitter_user)[@active_tab]) && tab.count && tab.count >= 1 %>
   <% if remove_related_page? %>
     <div class="alert alert-warning small">
       <%= t('.explanation_of_data_inconsistency_html') %>

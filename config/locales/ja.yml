@@ -732,8 +732,6 @@ ja:
         %{users}
         #egotter %{url}
       see_more: 'もっと見る'
-      close_friends_tab_html: '仲良しランキング<br>%{num}'
-      favorite_friends_tab_html: 'いいねランキング<br>%{num}'
     all:
       <<: *close_friends_show
       crumb_title: "一気に見る"
@@ -787,9 +785,6 @@ ja:
       meta_description: "%{user} がフォローしているユーザーのうち、フォロー返しされていないユーザーの一覧 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
       tweet_text: "%{user} の片思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
-      see_one_sided_friends_html: '片思いフォロー<br>%{num}'
-      see_one_sided_followers_html: '片思いフォロワー<br>%{num}'
-      see_mutual_friends_html: '相互フォロー<br>%{num}'
     all:
       <<: *one_sided_friends_show
       crumb_title: "一気に見る"
@@ -918,9 +913,6 @@ ja:
       tweet_text: "%{users} さようなら(^ ^)/~ #egotter #リムられチェック %{url}"
       tweet_empty_text: "えごったーを使い始めたよ！ リムったらそっこーで分かるからね。(๑ᴖ｡ᴖ๑) #egotter #リムられチェック %{url}"
       see_more: 'もっと見る'
-      unfriends_tab_name: 'リムーブ'
-      unfollowers_tab_name: 'リムられた'
-      blocking_or_blocked_tab_name: 'ブロられた'
     all:
       <<: *unfriends_show
       crumb_title: "一気に見る"
@@ -982,9 +974,6 @@ ja:
       meta_description: "%{user} と %{user2} の両方がフォローしているユーザーの一覧 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
       tweet_text: "%{user} と %{user2} の共通フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
-      see_common_friends_html: '共通フォロー<br>%{num}'
-      see_common_followers_html: '共通フォロワー<br>%{num}'
-      see_common_mutual_friends_html: '共通相互フォロー<br>%{num}'
     all:
       <<: *common_friends_show
       crumb_title: "一気に見る"
@@ -1047,9 +1036,6 @@ ja:
       meta_description: "%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーの一覧 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
       tweet_text: "%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
-      see_inactive_friends_html: '最近いないフォロー<br>%{num}'
-      see_inactive_followers_html: '最近いないフォロワー<br>%{num}'
-      see_inactive_mutual_friends_html: '最近いない相互フォロー<br>%{num}'
     all:
       <<: *inactive_friends_show
       crumb_title: "一気に見る"
@@ -1100,6 +1086,27 @@ ja:
       not_found: "指定された条件での検索結果は0件でした。"
     tabs:
       zero: '0'
+  tabs:
+    friends: 'フォロー'
+    followers: 'フォロワー'
+    unfriends: 'リムーブ'
+    unfollowers: 'リムられた'
+    blocking_or_blocked: 'ブロられた'
+    block: 'フォロワー'
+    close_friends: '仲良しランキング'
+    favorite_friends: 'いいねランキング'
+    one_sided_friends: '片思いフォロー'
+    one_sided_followers: '片思いフォロワー'
+    mutual_friends: '相互フォロー'
+    common_friends: '共通フォロー'
+    common_followers: '共通フォロワー'
+    common_mutual_friends: '共通相互フォロー'
+    inactive_friends: '最近いないフォロー'
+    inactive_followers: '最近いないフォロワー'
+    inactive_mutual_friends: '最近いない相互フォロー'
+    replying: '@ツイート(自分から)'
+    replied: '@ツイート(相手から)'
+    replying_and_replied: '@ツイート(相互)'
   profiles:
     show:
       crumb_title: "@%{user} の %{time} のプロフィール"
@@ -1138,14 +1145,12 @@ ja:
       crumb_title: "フォローチェック"
       page_title: "%{user} のフォロー"
       content_title: "%{user} のフォロー"
-      meta_title: "%{user} のフォロー分析 - フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}%"
+      meta_title: "%{user} のフォロー分析 - フォロー %{friends}人 フォロワー %{followers}人"
       title: "フォロー"
       page_description: "%{user} がフォローしているユーザーの一覧です。"
-      meta_description: "%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}%"
-      tweet_text: "%{user} のフォロー分析 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}% #egotter %{url}"
+      meta_description: "%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 フォロワー %{followers}人"
+      tweet_text: "%{user} のフォロー分析 -  フォロー %{friends}人 フォロワー %{followers}人 #egotter %{url}"
       see_more: 'もっと見る'
-      see_friends_html: 'フォロー<br>%{num}'
-      see_followers_html: 'フォロワー<br>%{num}'
     all:
       <<: *friends_show
       crumb_title: "一気に見る"
@@ -1155,11 +1160,11 @@ ja:
       crumb_title: "フォロワーチェック"
       page_title: "%{user} のフォロワー"
       content_title: "%{user} のフォロワー"
-      meta_title: "%{user} のフォロワー分析 - フォロワー %{followers}人 片思われ %{one_sided_followers}人 片思われ率 %{one_sided_followers_rate}%"
+      meta_title: "%{user} のフォロワー分析 - フォロワー %{followers}人 フォロワー %{followers}人"
       title: "フォロワー"
       page_description: "%{user} がフォローされているユーザーの一覧です。"
-      meta_description: "%{user} がフォローされているユーザーの一覧 -  フォロー %{followers}人 片思い %{one_sided_followers}人 片思い率 %{one_sided_followers_rate}%"
-      tweet_text: "%{user} のフォロワー分析 -  フォロワー %{followers}人 片思われ %{one_sided_followers}人 片思われ率 %{one_sided_followers_rate}% #egotter %{url}"
+      meta_description: "%{user} がフォローされているユーザーの一覧 -  フォロー %{followers}人 フォロワー %{followers}人"
+      tweet_text: "%{user} のフォロワー分析 -  フォロワー %{followers}人 フォロワー %{followers}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
       <<: *followers_show
@@ -1184,9 +1189,6 @@ ja:
       meta_description: "%{user} が自分から@ツイートしたユーザーの一覧 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
       tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
       see_more: 'もっと見る'
-      see_replying_html: '@ツイート(自分から)<br>%{num}'
-      see_replied_html: '@ツイート(他の人から)<br>%{num}'
-      see_replying_and_replied_html: '@ツイート(相互)<br>%{num}'
     all:
       <<: *replying_show
       crumb_title: "一気に見る"

@@ -33,15 +33,6 @@ class  Page::GoodFriends < ::Page::Base
     @navbar_title = t(".navbar_title")
 
     @tweet_text = good_friends_text(users, @twitter_user)
-
-    @tabs = tabs
-  end
-
-  def tabs
-    [
-      {text: t('close_friends.show.close_friends_tab_html', num: @twitter_user.close_friendships.size), url: close_friend_path(@twitter_user)},
-      {text: t('close_friends.show.favorite_friends_tab_html', num: @twitter_user.favorite_friendships.size), url: favorite_friend_path(@twitter_user)}
-    ]
   end
 
   def good_friends_text(users, twitter_user)

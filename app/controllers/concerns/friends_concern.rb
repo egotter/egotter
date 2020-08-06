@@ -21,7 +21,7 @@ module Concerns::FriendsConcern
     @page_title = t('.page_title', user: @twitter_user.mention_name)
     @content_title = t('.content_title', user: @twitter_user.mention_name)
 
-    counts = related_counts
+    counts = view_context.current_counts(@twitter_user)
 
     @meta_title = t('.meta_title', {user: @twitter_user.mention_name}.merge(counts))
     @meta_description = t('.meta_description', {user: @twitter_user.mention_name}.merge(counts))
@@ -33,7 +33,5 @@ module Concerns::FriendsConcern
     @navbar_title = t(".navbar_title")
 
     @tweet_text = t('.tweet_text', {user: @twitter_user.mention_name, url: @canonical_url}.merge(counts))
-
-    @tabs = tabs
   end
 end
