@@ -49,17 +49,7 @@ ja:
       egotter: "えごったー"
       twitter_id: "Twitter ID"
       search_by_twitter_id: "@TwitterID で検索"
-      search_xxx_by_egotter: "%{user} をえごったーで検索"
-      search_a_and_b: "%{user1} と %{user2} を共通検索"
-      search_by: "%{user} で検索"
-      search_first: "Twitter ID 1"
-      search_second: "Twitter ID 2"
       search: "検索"
-      empty_html: '結果は 0 件です。<br><br>※リムーブした、リムーブされた、新しいフォロー、新しいフォロワーは、これからデータがたまっていきます。<br><br>フォロー・フォロワーが多すぎる場合は、<a href="%{sign_in_path}">ログイン</a> しないと検索できないことがあります。その場合は、<a href="%{sign_in_path}">ログイン</a> してから再度検索してみてください。'
-      top: "トップ"
-      popular: "人気の分析"
-      related_pages: "関連ページ"
-      related_analysis: "%{user} の他の分析"
     new:
       pc:
         check_007: "フォロー外し"
@@ -460,36 +450,6 @@ ja:
     unfollow_requests:
       title: 'フォロー解除 履歴'
       return: '設定ページへ戻る'
-    tgl_btn:
-      updated: "更新しました"
-      email:
-        title: 'リムられ通知（メール）'
-        desc_html: 'フォローを外されたことを<span class="egotter-pink">メール</span>でお知らせ。'
-        note_html: 'メール通知は現在停止中です'
-      dm:
-        title: 'リムられ通知（DM）'
-        desc_html: 'フォローを外されたことを<span class="egotter-pink">DM</span>でお知らせ。'
-        note_html: ''
-      news:
-        title: '新機能のお知らせ（DM）'
-        desc_html: '配信は不定期です。'
-        note_html: ''
-      search:
-        title: '検索通知（DM）'
-        desc_html: 'えごったーで誰かに検索されたら通知します。配信はなる早です。'
-        note_html: ''
-      report_if_changed:
-        title: 'リムられに変化があったときのみ通知を送信する'
-        desc_html: '<span class="egotter-pink">新機能！</span>'
-        note_html: 'この設定がオンになっていると、リムられに変化があったときのみ、リムられ通知が届くようになります'
-      push_notification:
-        title: 'リムられ通知をプッシュ通知で受け取る'
-        desc_html: '<span class="egotter-pink">新機能！</span>'
-        note_html: |
-          この設定がオンになっていると、リムられ通知がスマホに直接届くようになります
-          <a href="https://play.google.com/store/apps/details?id=com.egotter&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1" target="_blank">
-            <img src="https://play.google.com/intl/en_us/badges/static/images/badges/ja_badge_web_generic.png" width="100px">
-          </a>
     periodic_report_setting:
       not_coming:
         button: '通知を再開する'
@@ -1097,11 +1057,6 @@ ja:
       redirection_modal:
         title: '@%{user} でログイン中です'
         body: '@%{user} のフォローチェック結果へ移動しますか？'
-  followers:
-  statuses:
-  replying:
-  replied:
-  replying_and_replied:
   word_clouds:
     new:
     show:
