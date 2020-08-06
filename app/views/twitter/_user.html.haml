@@ -10,7 +10,7 @@
   .card.mb-3
     .row.no-gutters
       .col-auto.p-1
-        = search_link user.screen_name, via do
+        = link_to timeline_path(user, via: via) do
           = image_tag bigger_icon_url(user), class: 'rounded-circle', style: 'max-width: 50px; width: 100%;', alt: user.screen_name
       .col
         .card-body
@@ -19,7 +19,7 @@
               %i.fas.fa-user
               = t('twitter.profile.labels.followed')
           %h6.card-title
-            = search_link user.screen_name, via
+            = link_to user.screen_name, timeline_path(user, via: via)
             = user.name_with_icon
             = user.status_labels
           .card-text{style: 'font-size: 14px;'}= linkify(user.description)
@@ -33,7 +33,7 @@
         .text-right
           = render partial: 'twitter/follow_button', locals: {user: user}
 
-          = search_link user.screen_name, via do
+          = link_to timeline_path(user, via: via) do
             %button.btn.btn-primary{type: 'button'}
               %i.fas.fa-search
               = t('twitter.user.search')

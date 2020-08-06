@@ -21,8 +21,18 @@ class Fetcher {
       $.getJSON(url, params).done(function (res) {
         console.log(self.constructor.name, 'done', res);
         resolve(res);
-      }).fail(function (xhr) {
-        console.log(self.constructor.name, 'fail', xhr.responseText);
+      }).fail(function (xhr, textStatus, errorThrown) {
+        var message;
+        try {
+          message = JSON.parse(xhr.responseText)['error'];
+        } catch (e) {
+          console.error(e);
+        }
+        if (!message) {
+          message = xhr.status + ' (' + errorThrown + ')';
+        }
+        console.warn(self.constructor.name, message);
+        ToastMessage.warn(message);
         reject(xhr);
       });
     });

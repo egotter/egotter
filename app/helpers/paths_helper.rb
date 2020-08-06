@@ -9,19 +9,6 @@ module PathsHelper
     end
   end
 
-  def search_link(screen_name, via, options = {}, &block)
-    if from_crawler?
-      url = timeline_path(screen_name: screen_name, via: via)
-    else
-      url = searches_path(screen_name: screen_name, via: via)
-      options.merge!(method: :post)
-    end
-
-    url = CGI::unescape(url) if options.delete(:unescape)
-
-    block_given? ? link_to(url, options, &block) : link_to(mention_name(screen_name), url, options)
-  end
-
   def current_via(suffix = nil)
     via = "#{controller_name}/#{action_name}"
     via += "/#{suffix}" if suffix
