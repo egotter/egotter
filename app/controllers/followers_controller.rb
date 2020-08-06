@@ -1,8 +1,7 @@
-class FollowersController < ::Page::Base
-  include Concerns::FriendsConcern
+class FollowersController < ApplicationController
+  include Concerns::SearchRequestConcern
 
   def show
-    initialize_instance_variables
     @active_tab = 1
     render template: 'result_pages/show' unless performed?
   end

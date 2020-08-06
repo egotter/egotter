@@ -1,5 +1,5 @@
 <% content_for :canonical_url do %>
-  <link href="<%= @canonical_url %>" rel="canonical">
+  <link href="<%= current_canonical_url(@twitter_user) %>" rel="canonical">
 <% end %>
 
 <%= content_for :navbar_title, current_navbar_title %>
@@ -25,13 +25,12 @@
 
 <% if remove_related_page? %>
   <div class="text-center"><%= t('unfriends.show.tweet.biginner.title_html') %></div>
-  <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text_for_empty_users, twitter_user: @twitter_user}) %>
-  <% if @tweet_text %>
-    <div class="text-center mt-3"><%= t('unfriends.show.tweet.expert.title_html') %></div>
-    <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user}) %>
-  <% end %>
+  <%= render(partial: 'twitter/tweet_box', locals: {text: t('unfriends.show.tweet_empty_text', url: unfriends_top_url(via: current_via('tweet_for_empty'))), twitter_user: @twitter_user}) %>
+
+  <div class="text-center mt-3"><%= t('unfriends.show.tweet.expert.title_html') %></div>
+  <%= render(partial: 'twitter/tweet_box', locals: {text: current_tweet_text(@twitter_user), twitter_user: @twitter_user}) %>
 <% else %>
-  <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user}) %>
+  <%= render(partial: 'twitter/tweet_box', locals: {text: current_tweet_text(@twitter_user), twitter_user: @twitter_user}) %>
 <% end %>
 
 <%= render(partial: 'adsense/ad', locals: {vertical: :middle}) %>
@@ -80,7 +79,7 @@
   $(function () {
     var signedIn = <%= user_signed_in? %>;
 
-    var url = '<%= @api_path %>';
+    var url = '<%= api_path %>';
     var uid = '<%= @twitter_user.uid %>';
     var sortOrder = $('.sort-order-dropdown').data('sort-order');
     var filter = $('.filter-dropdown').data('filter');

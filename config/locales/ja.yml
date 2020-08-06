@@ -717,17 +717,7 @@ ja:
       title: "メンテナンス中"
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください。"
   close_friends:
-    show:
-      tweet_text: |
-        .%{user} の仲良しランキング ↓
-        %{users}
-        #egotter %{url}
   favorite_friends:
-    show:
-      tweet_text: |
-        .%{user} のいいねランキング ↓
-        %{users}
-        #egotter %{url}
   one_sided_friends:
     new:
       footer_title: '片思いチェック'
@@ -742,14 +732,8 @@ ja:
       redirection_modal:
         title: '@%{user} でログイン中です'
         body: '@%{user} の片思いフォロー分析結果へ移動しますか？'
-    show:
-      tweet_text: "%{user} の片思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
   one_sided_followers:
-    show:
-      tweet_text: "%{user} の片思いフォロワー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
   mutual_friends:
-    show:
-      tweet_text: "%{user} の相互フォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
   unfriends:
     new:
       page_title: 'リムられチェック - 保存ユーザー数4,800万人突破！スマホから使えて無料！ 一番使われているリムられチェックアプリです'
@@ -824,23 +808,12 @@ ja:
           title_html: 'えごったーを<span class="egotter-pink">これから使う</span>方向け'
         expert:
           title_html: 'えごったーに<span class="egotter-pink">慣れてきた</span>方向け'
-      tweet_text: "%{users} さようなら(^ ^)/~ #egotter #リムられチェック %{url}"
       tweet_empty_text: "えごったーを使い始めたよ！ リムったらそっこーで分かるからね。(๑ᴖ｡ᴖ๑) #egotter #リムられチェック %{url}"
   unfollowers:
-    show:
-      tweet_text: "%{users} お元気そうでなによりです。私をリムった後に、私より面白い人は見付かりましたか？(^ ^) #egotter #リムられチェック %{url}"
   blocking_or_blocked:
-    show:
-      tweet_text: "%{users} 私のことブロックしたんですか？(^ ^) #egotter #リムられチェック %{url}"
   common_friends:
-    show:
-      tweet_text: "%{user} と %{user2} の共通フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
   common_followers:
-    show:
-      tweet_text: "%{user} と %{user2} の共通フォロワー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
   common_mutual_friends:
-    show:
-      tweet_text: "%{user} と %{user2} の共通相互フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
   inactive_friends:
     new:
       footer_title: '最近いない人検索'
@@ -857,14 +830,8 @@ ja:
       redirection_modal:
         title: '@%{user} でログイン中です'
         body: '@%{user} の最近いないフォロー分析結果へ移動しますか？'
-    show:
-      tweet_text: "%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
   inactive_followers:
-    show:
-      tweet_text: "%{user} の最近いないフォロワー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
   inactive_mutual_friends:
-    show:
-      tweet_text: "%{user} の最近いない相互フォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
   result_pages:
     show:
       not_found: "指定された条件での検索結果は0件でした。"
@@ -1044,6 +1011,41 @@ ja:
     common_friends: "共通フォロー分析"
     common_followers: "共通フォロワー分析"
     common_mutual_friends: "共通相互フォロー分析"
+  tweet_text:
+    friends: ".@%{user} のフォロー分析 -  フォロー %{friends}人 フォロワー %{followers}人 #egotter %{url}"
+    followers: ".@%{user} のフォロワー分析 -  フォロワー %{followers}人 フォロワー %{followers}人 #egotter %{url}"
+    unfriends: |
+      .%{users}
+
+      さようなら(^ ^)/~ #egotter #リムられチェック %{url}
+    unfollowers: |
+      .%{users}
+
+      お元気そうでなによりです。私をリムった後に、私より面白い人は見付かりましたか？(^ ^) #egotter #リムられチェック %{url}
+    blocking_or_blocked: |
+      .%{users}
+
+      私のことブロックしたんですか？(^ ^) #egotter #リムられチェック %{url}
+    close_friends: |
+      .@%{user} の仲良しランキング ↓
+      %{users}
+      #egotter %{url}
+    favorite_friends: |
+      .@%{user} のいいねランキング ↓
+      %{users}
+      #egotter %{url}
+    one_sided_friends: ".@%{user} の片思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
+    one_sided_followers: ".@%{user} の片思いフォロワー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
+    mutual_friends: ".@%{user} の相互フォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
+    inactive_friends: ".@%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
+    inactive_followers: ".@%{user} の最近いないフォロワー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
+    inactive_mutual_friends: ".@%{user} の最近いない相互フォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
+    replying: ".@%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
+    replied: ".@%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
+    replying_and_replied: ".@%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
+    common_friends: ".@%{user} と @%{user2} の共通フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
+    common_followers: ".@%{user} と @%{user2} の共通フォロワー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
+    common_mutual_friends: ".@%{user} と @%{user2} の共通相互フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
   tabs:
     friends: 'フォロー'
     followers: 'フォロワー'
@@ -1095,22 +1097,11 @@ ja:
       redirection_modal:
         title: '@%{user} でログイン中です'
         body: '@%{user} のフォローチェック結果へ移動しますか？'
-    show:
-      tweet_text: "%{user} のフォロー分析 -  フォロー %{friends}人 フォロワー %{followers}人 #egotter %{url}"
   followers:
-    show:
-      tweet_text: "%{user} のフォロワー分析 -  フォロワー %{followers}人 フォロワー %{followers}人 #egotter %{url}"
   statuses:
-    show:
   replying:
-    show:
-      tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
   replied:
-    show:
-      tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
   replying_and_replied:
-    show:
-      tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
   word_clouds:
     new:
     show:

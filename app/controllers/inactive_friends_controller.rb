@@ -1,5 +1,5 @@
-class InactiveFriendsController < ::Page::Base
-  include Concerns::FriendsConcern
+class InactiveFriendsController < ApplicationController
+  include Concerns::SearchRequestConcern
 
   before_action(only: %i(show)) do
     if request.format.html?
@@ -20,7 +20,6 @@ class InactiveFriendsController < ::Page::Base
   end
 
   def show
-    initialize_instance_variables
     @active_tab = 0
     render template: 'result_pages/show' unless performed?
   end

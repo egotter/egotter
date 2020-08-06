@@ -401,10 +401,6 @@ RSpec.describe Concerns::TwitterUser::Associations do
     end
   end
 
-  describe '#users_by' do
-
-  end
-
   describe '#common_users_by' do
 
   end

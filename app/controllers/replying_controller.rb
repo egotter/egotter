@@ -1,8 +1,7 @@
-class ReplyingController < ::Page::Base
-  include Concerns::FriendsConcern
+class ReplyingController < ApplicationController
+  include Concerns::SearchRequestConcern
 
   def show
-    initialize_instance_variables
     @active_tab = 0
     render template: 'result_pages/show' unless performed?
   end

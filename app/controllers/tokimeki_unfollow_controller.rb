@@ -1,6 +1,5 @@
 class TokimekiUnfollowController < ApplicationController
   include Concerns::SearchRequestConcern
-  include Concerns::UnfriendsConcern
 
   before_action :require_login!, only: %i(cleanup unfollow keep)
 

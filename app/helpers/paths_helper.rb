@@ -9,6 +9,10 @@ module PathsHelper
     end
   end
 
+  def api_path
+    send("api_v1_#{controller_name}_list_path", via: current_via)
+  end
+
   def current_via(suffix = nil)
     via = "#{controller_name}/#{action_name}"
     via += "/#{suffix}" if suffix

@@ -1,8 +1,7 @@
-class CloseFriendsController < ::Page::GoodFriends
-  include CloseFriendsHelper
+class CloseFriendsController < ApplicationController
+  include Concerns::SearchRequestConcern
 
   def show
-    super
     @active_tab = 0
     render template: 'result_pages/show' unless performed?
   end

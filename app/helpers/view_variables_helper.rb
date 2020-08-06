@@ -259,6 +259,62 @@ module ViewVariablesHelper
     breadcrumb controller_name.singularize.to_sym, twitter_user.screen_name
   end
 
+  def current_canonical_url(twitter_user)
+    send("#{controller_name.singularize}_url", twitter_user)
+  end
+
+  def current_tweet_text(twitter_user)
+    values = {user: twitter_user.screen_name, url: current_canonical_url(twitter_user)}.merge(current_counts(twitter_user))
+
+    case controller_name
+    when 'friends'
+      t('tweet_text.friends', values)
+    when 'followers'
+      t('tweet_text.followers', values)
+    when 'unfriends'
+      users = twitter_user.unfriends(limit: 3).map { |user| "@#{user.screen_name} #{t('dictionary.honorific')}" }
+      t('tweet_text.unfriends', values.merge(users: users.join("\n")))
+    when 'unfollowers'
+      users = twitter_user.unfollowers(limit: 3).map { |user| "@#{user.screen_name} #{t('dictionary.honorific')}" }
+      t('tweet_text.unfollowers', values.merge(users: users.join("\n")))
+    when 'blocking_or_blocked'
+      users = twitter_user.mutual_unfriends(limit: 3).map { |user| "@#{user.screen_name} #{t('dictionary.honorific')}" }
+      t('tweet_text.blocking_or_blocked', values.merge(users: users.join("\n")))
+    when 'close_friends'
+      users = twitter_user.close_friends.limit(5).map.with_index { |u, i| "#{i + 1}. @#{u.screen_name}" }
+      t('tweet_text.close_friends', values.merge(users: users.join("\n")))
+    when 'favorite_friends'
+      users = twitter_user.favorite_friends.limit(5).map.with_index { |u, i| "#{i + 1}. @#{u.screen_name}" }
+      t('tweet_text.favorite_friends', values.merge(users: users.join("\n")))
+    when 'one_sided_friends'
+      t('tweet_text.one_sided_friends', values)
+    when 'one_sided_followers'
+      t('tweet_text.one_sided_followers', values)
+    when 'mutual_friends'
+      t('tweet_text.mutual_friends', values)
+    when 'inactive_friends'
+      t('tweet_text.inactive_friends', values)
+    when 'inactive_followers'
+      t('tweet_text.inactive_followers', values)
+    when 'inactive_mutual_friends'
+      t('tweet_text.inactive_mutual_friends', values)
+    when 'replying'
+      t('tweet_text.replying', values)
+    when 'replied'
+      t('tweet_text.replied', values)
+    when 'replying_and_replied'
+      t('tweet_text.replying_and_replied', values)
+    when 'common_friends'
+      t('tweet_text.common_friends', values.merge(user2: current_user.twitter_user.screen_name))
+    when 'common_followers'
+      t('tweet_text.common_followers', values.merge(user2: current_user.twitter_user.screen_name))
+    when 'common_mutual_friends'
+      t('tweet_text.common_mutual_friends', values.merge(user2: current_user.twitter_user.screen_name))
+    else
+      raise "Invalid controller value=#{controller_name}"
+    end
+  end
+
   private
 
   def timeline_link(user)
