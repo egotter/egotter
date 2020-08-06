@@ -7,7 +7,7 @@
   <% container_id = "id-#{graph.object_id}" %>
   <div id="<%= container_id %>" class="mb-5" style="height: 120px;"></div>
 
-  <%= link_to(t('timelines.feeds.view_more'), search_path_for(feed_name, twitter_user.screen_name), class: 'btn btn-primary btn-block btn-view-more') %>
+  <%= link_to(t('timelines.feeds.view_more'), url, class: 'btn btn-primary btn-block btn-view-more') %>
 </div>
 
 <script>

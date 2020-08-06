@@ -9,22 +9,6 @@ module PathsHelper
     end
   end
 
-  def search_path_for(menu, screen_name)
-    via = current_via("search_path_for_#{menu}")
-    case menu.to_s
-      when 'omniauth_callbacks' then timeline_path(screen_name: screen_name, via: via)
-      when *%w(home searches waiting notifications search_histories login misc orders tokimeki_unfollow delete_tweets application) then timeline_path(screen_name: screen_name, via: via)
-      else send("#{menu.to_s.singularize}_path", screen_name: screen_name, via: via)
-    end
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{menu} #{screen_name}"
-
-    # TODO This method is undefined in view context
-    notify_airbrake(e) rescue nil
-
-    timeline_path(screen_name: screen_name, via: via)
-  end
-
   def search_link(screen_name, via, options = {}, &block)
     if from_crawler?
       url = timeline_path(screen_name: screen_name, via: via)
