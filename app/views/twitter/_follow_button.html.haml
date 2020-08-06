@@ -2,14 +2,14 @@
   - if current_user.uid != user.uid && !user.suspended?
     - is_following = current_user.is_following?(user.uid)
 
-    %a.btn.btn-success.follow{href: '#', data: {uid: user.uid, screen_name: user.screen_name}, style: "#{'display: none;' unless is_following}"}
+    %a.btn.btn-success.btn-sm.follow{href: '#', data: {uid: user.uid, screen_name: user.screen_name}, style: "#{'display: none;' unless is_following}"}
       %i.fas.fa-check
-      = t('twitter.follow_button.following')
+      = t('.following')
 
-    %a.btn.btn-outline-primary.no-follow{href: '#', data: {uid: user.uid, screen_name: user.screen_name}, style: "#{'display: none;' if is_following}"}
+    %a.btn.btn-outline-primary.btn-sm.no-follow{href: '#', data: {uid: user.uid, screen_name: user.screen_name}, style: "#{'display: none;' if is_following}"}
       %i.fas.fa-user-plus.text-primary
-      = t('twitter.follow_button.do_follow')
+      = t('.do_follow')
 - else
-  %a.btn.btn-outline-primary.no-follow-require-sign-in{href: sign_in_path(via: current_via('follow_btn'))}
+  %a.btn.btn-outline-primary.btn-sm.no-follow-require-sign-in{href: sign_in_path(via: current_via('follow_btn'))}
     %i.fas.fa-user-plus.text-primary
-    = t('twitter.follow_button.do_follow')
+    = t('.do_follow')

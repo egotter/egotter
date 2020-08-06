@@ -49,7 +49,6 @@ class FetchTask {
     this.maxLimit = options['maxLimit'];
     this.sortOrder = options['sortOrder'];
     this.filter = options['filter'];
-    this.gridClass = options['gridClass'];
     this.insertAd = options['insertAd'];
     this.loading = false;
 
@@ -91,7 +90,6 @@ class FetchTask {
       max_sequence: this.maxSequence,
       sort_order: this.sortOrder,
       filter: this.filter,
-      grid_class: this.gridClass,
       insert_ad: this.insertAd
     };
 

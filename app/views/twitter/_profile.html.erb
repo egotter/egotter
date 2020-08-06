@@ -143,7 +143,7 @@
     </div>
 
     <% if user.description? %>
-      <div class="my-3"><%= linkify(user.description).gsub("\n", '<br>').html_safe %></div>
+      <div class="small my-3"><%= linkify(user.description).gsub("\n", '<br>').html_safe %></div>
     <% end %>
 
     <% if user.location? %>
@@ -169,7 +169,7 @@
              [follower_path(user, via: via), user.delimited_followers_count, :followers],
              [usage_stat_path(user, via: via), user.percent_follow_back_rate, :follow_back_rate],
          ].each do |url, count, name| %>
-        <div class="col-6 col-md-3 mb-3">
+        <div class="small col-6 col-md-3 mb-3">
           <%= link_to url do %>
             <strong class="text-black"><%= count %></strong>
             <br class="d-block d-lg-none">

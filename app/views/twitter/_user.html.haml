@@ -3,10 +3,10 @@
 - user = TwitterUserDecorator.new(user)
 
 - if ad && defined?(user_counter) && user_counter == 3
-  .mb-3{class: grid_class}
+  .col-12.mb-3
     = render partial: 'adsense/ad', locals: {vertical: :slit}
 
-%div{class: grid_class}
+.col-12
   .card.mb-3
     .row.no-gutters
       .col-auto.p-1
@@ -22,8 +22,8 @@
             = link_to user.screen_name, timeline_path(user, via: via)
             = user.name_with_icon
             = user.status_labels
-          .card-text{style: 'font-size: 14px;'}= linkify(user.description)
-          .card-text
+          .card-text.small= linkify(user.description)
+          .card-text.small
             = link_to friend_path(user) do
               %strong.text-black= user.delimited_friends_count
               %span.text-muted= TwitterUser.human_attribute_name(:friends)
@@ -34,6 +34,6 @@
           = render partial: 'twitter/follow_button', locals: {user: user}
 
           = link_to timeline_path(user, via: via) do
-            %button.btn.btn-primary{type: 'button'}
+            %button.btn.btn-primary.btn-sm{type: 'button'}
               %i.fas.fa-search
-              = t('twitter.user.search')
+              = t('.search')
