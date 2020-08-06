@@ -8,7 +8,6 @@ class AudienceInsightsController < ApplicationController
   end
 
   def show
-    @page_title = t('.page_title', user: @twitter_user.screen_name)
   end
 
   private

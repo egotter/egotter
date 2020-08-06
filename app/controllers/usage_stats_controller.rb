@@ -8,7 +8,6 @@ class UsageStatsController < ApplicationController
   end
 
   def show
-    @page_title = t('.page_title', user: @twitter_user.screen_name)
     @usage_time = @stat.chart_data(:usage_time)
   end
 

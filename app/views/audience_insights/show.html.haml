@@ -3,12 +3,12 @@
 
 - breadcrumb :audience_insight, @twitter_user.screen_name
 
-- title @page_title
+- title t('.page_title', user: @twitter_user.screen_name)
 - set_meta_tags description: t('.meta_description', user: @twitter_user.screen_name, friends: @twitter_user.friends_count, followers: @twitter_user.followers_count), title: t('.meta_title', user: @twitter_user.screen_name)
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
-%h2.h4.text-center.my-5= @page_title
+%h2.h4.text-center.my-5= t('.page_title', user: @twitter_user.screen_name)
 .mb-5= t('.page_description_html', user: @twitter_user.screen_name, friends: @twitter_user.friends_count, followers: @twitter_user.followers_count)
 
 = render partial: 'shared/search_form', locals: {via: current_via('top_input'), redirect_path: audience_insight_path(screen_name: ':screen_name')}

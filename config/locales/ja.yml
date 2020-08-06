@@ -722,8 +722,6 @@ ja:
       navbar_title: '仲良しランキング'
       title: "仲良しランキング"
       crumb_title: "仲良しランキング"
-      page_title: "%{user} の仲良しランキング"
-      content_title: "%{user} の仲良しランキング"
       meta_title: "%{user} の仲良し分析"
       page_description: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
       meta_description: "%{users} いつもありがとう！ ☆_(*ﾟ∇ﾟ)ﾉ~☆ｷﾗｷﾗ"
@@ -740,8 +738,6 @@ ja:
       navbar_title: 'いいねランキング'
       title: "いいねランキング"
       crumb_title: "いいねランキング"
-      page_title: "%{user} のいいねランキング"
-      content_title: "%{user} のいいねランキング"
       meta_title: "%{user} のいいね分析"
       page_description: "%{user} がよくいいねするユーザーの一覧です。いいねの分析には、お気に入り登録を使っています。"
       meta_description: "%{users} いつもありがとう！ ☆_(*ﾟ∇ﾟ)ﾉ~☆ｷﾗｷﾗ"
@@ -769,8 +765,6 @@ ja:
     show: &one_sided_friends_show
       navbar_title: '片思いチェック'
       crumb_title: "片思い分析"
-      page_title: "%{user} の片思いフォロー"
-      content_title: "%{user} の片思いフォロー"
       meta_title: "%{user} の片思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
       title: "片思いフォロー"
       page_description_html: |
@@ -792,8 +786,6 @@ ja:
     show: &one_sided_followers_show
       navbar_title: '片思われチェック'
       crumb_title: "片思われ分析"
-      page_title: "%{user} の片思いフォロワー"
-      content_title: "%{user} の片思いフォロワー"
       meta_title: "%{user} の片思いフォロワー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
       title: "片思いフォロワー"
       page_description: "%{user} のフォロワーのうち、フォロー返ししていないユーザーです。"
@@ -807,8 +799,6 @@ ja:
     show: &mutual_friends_show
       navbar_title: '相互フォロー分析'
       crumb_title: "相互フォロー分析"
-      page_title: "%{user} 相互フォロー"
-      content_title: "%{user} 相互フォロー"
       meta_title: "%{user} の相互フォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
       title: "相互フォロー"
       page_description: "%{user} が相互フォローしているユーザーです。"
@@ -891,8 +881,6 @@ ja:
       navbar_title: 'リムられチェック'
       title: "リムり"
       crumb_title: "リムーブした"
-      page_title: "@%{user} のリムーブ"
-      content_title: "@%{user} のリムーブ"
       meta_title: "@%{user} のリムり分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       page_description_html: |
         「リムった」とは、フォローを解除した関係のことです。このページでは、%{user} がリムった（=フォローを解除した）ユーザーを見ることができます。
@@ -921,8 +909,6 @@ ja:
       navbar_title: 'リムられチェック'
       title: "リムられチェック"
       crumb_title: "リムられチェック"
-      page_title: "@%{user} のリムられチェック - %{user} のリムられを見るなら、保存ユーザー数4,800万人突破のリムられチェック！"
-      content_title: "@%{user} のリムられチェック"
       meta_title: "@%{user} のリムられチェック - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       page_description_html: |
         「リムられ」とは、フォローを解除された関係のことです。このページでは、%{user} がリムられた（=フォローを解除された）ユーザーを見ることができます。
@@ -944,8 +930,6 @@ ja:
       navbar_title: 'リムられチェック'
       title: "ブロックされたかも"
       crumb_title: "ブロックされた"
-      page_title: "@%{user} がブロックされたかも"
-      content_title: "@%{user} がブロックされたかも"
       meta_title: "@%{user} のブロられ分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       page_description_html: |
         「ブロられ」とは、ブロックされた関係のことです。このページでは、%{user} がブロられた（=ブロックされた）ユーザーを見ることができます。
@@ -966,8 +950,6 @@ ja:
     show: &common_friends_show
       navbar_title: '共通フォロー分析'
       crumb_title: "共通フォロー分析"
-      page_title: "%{user} と %{user2} の共通フォロー"
-      content_title: "%{user} と %{user2} の共通フォロー"
       meta_title: "%{user} と %{user2} の共通フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
       title: "共通フォロー"
       page_description: "%{user} と %{user2} の両方がフォローしているユーザーです。"
@@ -981,8 +963,6 @@ ja:
     show: &common_followers_show
       navbar_title: '共通フォロワー分析'
       crumb_title: "共通フォロワー分析"
-      page_title: "%{user} と %{user2} の共通フォロワー"
-      content_title: "%{user} と %{user2} の共通フォロワー"
       meta_title: "%{user} と %{user2} の共通フォロワー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
       title: "共通フォロワー"
       page_description: "%{user} と %{user2} の両方がフォローされているユーザーです。"
@@ -996,8 +976,6 @@ ja:
     show: &common_mutual_friends_show
       navbar_title: '共通相互フォロー分析'
       crumb_title: "共通相互フォロー分析"
-      page_title: "%{user} と %{user2} の共通相互フォロー"
-      content_title: "%{user} と %{user2} の共通相互フォロー"
       meta_title: "%{user} と %{user2} の共通相互フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
       title: "共通相互フォロー"
       page_description: "%{user} と %{user2} の両方が相互フォローしているユーザーです。"
@@ -1028,8 +1006,6 @@ ja:
     show: &inactive_friends_show
       navbar_title: '最近いないフォロー分析'
       crumb_title: "最近いないフォロー分析"
-      page_title: "%{user} の最近いないフォロー"
-      content_title: "%{user} の最近いないフォロー"
       meta_title: "%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
       title: "最近いないフォロー"
       page_description: "%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーです。"
@@ -1043,8 +1019,6 @@ ja:
     show: &inactive_followers_show
       navbar_title: '最近いないフォロワー分析'
       crumb_title: "最近いないフォロワー分析"
-      page_title: "%{user} の最近いないフォロワー"
-      content_title: "%{user} の最近いないフォロワー"
       meta_title: "%{user} の最近いないフォロワー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
       title: "最近いないフォロワー"
       page_description: "%{user} のフォロワーのうち、最近ツイートしていないユーザーです。"
@@ -1058,8 +1032,6 @@ ja:
     show: &inactive_mutual_friends_show
       navbar_title: '最近いない相互フォロー分析'
       crumb_title: "最近いない相互フォロー分析"
-      page_title: "%{user} の最近いない相互フォロー"
-      content_title: "%{user} の最近いない相互フォロー"
       meta_title: "%{user} の最近いない相互フォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
       title: "最近いない相互フォロー"
       page_description: "%{user} の相互フォローのうち、最近ツイートしていないユーザーです。"
@@ -1086,27 +1058,50 @@ ja:
       not_found: "指定された条件での検索結果は0件でした。"
     tabs:
       zero: '0'
+
+  page_titles:
+    statuses: "@%{user} のツイート"
+    friends: "@%{user} のフォロー"
+    followers: "@%{user} のフォロワー"
+    unfriends: "@%{user} のリムーブ"
+    unfollowers: "@%{user} のリムられチェック - @%{user} のリムられを見るなら、保存ユーザー数4,800万人突破のリムられチェック！"
+    blocking_or_blocked: "@%{user} がブロックされたかも"
+    close_friends: "@%{user} の仲良しランキング"
+    favorite_friends: "@%{user} のいいねランキング"
+    one_sided_friends: "@%{user} の片思いフォロー"
+    one_sided_followers: "@%{user} の片思いフォロワー"
+    mutual_friends: "@%{user} 相互フォロー"
+    inactive_friends: "@%{user} の最近いないフォロー"
+    inactive_followers: "@%{user} の最近いないフォロワー"
+    inactive_mutual_friends: "@%{user} の最近いない相互フォロー"
+    replying: "@%{user} の@ツイート(自分から)"
+    replied: "@%{user} の@ツイート(相手から)"
+    replying_and_replied: "@%{user} の@ツイート(相互)"
+    common_friends: "@%{user} と @%{user2} の共通フォロー"
+    common_followers: "@%{user} と @%{user2} の共通フォロワー"
+    common_mutual_friends: "@%{user} と @%{user2} の共通相互フォロー"
+  content_titles:
+    unfollowers: "@%{user} のリムられチェック"
   tabs:
     friends: 'フォロー'
     followers: 'フォロワー'
     unfriends: 'リムーブ'
     unfollowers: 'リムられた'
     blocking_or_blocked: 'ブロられた'
-    block: 'フォロワー'
     close_friends: '仲良しランキング'
     favorite_friends: 'いいねランキング'
     one_sided_friends: '片思いフォロー'
     one_sided_followers: '片思いフォロワー'
     mutual_friends: '相互フォロー'
-    common_friends: '共通フォロー'
-    common_followers: '共通フォロワー'
-    common_mutual_friends: '共通相互フォロー'
     inactive_friends: '最近いないフォロー'
     inactive_followers: '最近いないフォロワー'
     inactive_mutual_friends: '最近いない相互フォロー'
     replying: '@ツイート(自分から)'
     replied: '@ツイート(相手から)'
     replying_and_replied: '@ツイート(相互)'
+    common_friends: '共通フォロー'
+    common_followers: '共通フォロワー'
+    common_mutual_friends: '共通相互フォロー'
   profiles:
     show:
       crumb_title: "@%{user} の %{time} のプロフィール"
@@ -1143,8 +1138,6 @@ ja:
     show: &friends_show
       navbar_title: 'フォローチェック'
       crumb_title: "フォローチェック"
-      page_title: "%{user} のフォロー"
-      content_title: "%{user} のフォロー"
       meta_title: "%{user} のフォロー分析 - フォロー %{friends}人 フォロワー %{followers}人"
       title: "フォロー"
       page_description: "%{user} がフォローしているユーザーの一覧です。"
@@ -1158,8 +1151,6 @@ ja:
     show: &followers_show
       navbar_title: 'フォロワー分析'
       crumb_title: "フォロワーチェック"
-      page_title: "%{user} のフォロワー"
-      content_title: "%{user} のフォロワー"
       meta_title: "%{user} のフォロワー分析 - フォロワー %{followers}人 フォロワー %{followers}人"
       title: "フォロワー"
       page_description: "%{user} がフォローされているユーザーの一覧です。"
@@ -1174,15 +1165,11 @@ ja:
       navbar_title: 'ツイート分析'
       crumb_title: "ツイート"
       title: "ツイート"
-      page_title: "%{user} のツイート"
-      content_title: "%{user} のツイート"
       meta_description: "%{user} のツイート"
   replying:
     show: &replying_show
       navbar_title: '@ツイート(自分から)分析'
       crumb_title: "@ツイート(自分から)"
-      page_title: "%{user} の@ツイート(自分から)"
-      content_title: "%{user} の@ツイート(自分から)"
       meta_title: "%{user} の@ツイート - @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
       title: "@ツイート"
       page_description: "%{user} が自分から@ツイートしたユーザーの一覧です。"
@@ -1196,8 +1183,6 @@ ja:
     show: &replied_show
       navbar_title: '@ツイート(他の人から)分析'
       crumb_title: "@ツイート(他の人から)"
-      page_title: "%{user} の@ツイート(他の人から)"
-      content_title: "%{user} の@ツイート(他の人から)"
       meta_title: "%{user} の@ツイート - @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
       title: "@ツイート"
       page_description: "%{user} が@ツイートされたユーザーの一覧です。本人がログインしていない場合は検索して見付けるため、少し不正確です。"
@@ -1211,8 +1196,6 @@ ja:
     show: &replying_and_replied_show
       navbar_title: '@ツイート(相互)分析'
       crumb_title: "@ツイート(相互)"
-      page_title: "%{user} の@ツイート(相互)"
-      content_title: "%{user} の@ツイート(相互)"
       meta_title: "%{user} の@ツイート - @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
       title: "@ツイート"
       page_description: "%{user} が自分からも相手からも@ツイートしているユーザーの一覧です。"

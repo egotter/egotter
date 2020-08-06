@@ -21,8 +21,6 @@ class  Page::GoodFriends < ::Page::Base
         ["all_#{controller_name}".to_sym, send("all_#{controller_name}_url", @twitter_user)]
       end
 
-    @page_title = t('.page_title', user: @twitter_user.mention_name)
-    @content_title = t('.content_title', user: @twitter_user.mention_name)
     @meta_title = t('.meta_title', {user: @twitter_user.mention_name})
 
     users = @twitter_user.users_by(controller_name: controller_name).limit(5)

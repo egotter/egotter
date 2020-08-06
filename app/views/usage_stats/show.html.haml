@@ -5,12 +5,12 @@
 
 - breadcrumb :usage_stat, @twitter_user.screen_name
 
-- title @page_title
+- title t('.page_title', user: @twitter_user.screen_name)
 - set_meta_tags description: t('.meta_description', user: @twitter_user.screen_name), title: t('.meta_title', user: @twitter_user.screen_name)
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
-%h2.h4.text-center.my-5= @page_title
+%h2.h4.text-center.my-5= t('.page_title', user: @twitter_user.screen_name)
 
 .mb-5= t('.page_description', user: @twitter_user.screen_name)
 

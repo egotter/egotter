@@ -18,8 +18,6 @@ module Concerns::FriendsConcern
       @breadcrumb_name = "all_#{controller_name}".to_sym
       @canonical_url = send("all_#{controller_name}_url", @twitter_user)
     end
-    @page_title = t('.page_title', user: @twitter_user.mention_name)
-    @content_title = t('.content_title', user: @twitter_user.mention_name)
 
     counts = view_context.current_counts(@twitter_user)
 

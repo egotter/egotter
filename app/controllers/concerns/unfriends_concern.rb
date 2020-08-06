@@ -15,8 +15,6 @@ module Concerns::UnfriendsConcern
     @breadcrumb_name = singular_name.to_sym
     @canonical_url = send("#{singular_name}_url", @twitter_user)
     @canonical_path = send("#{singular_name}_path", @twitter_user)
-    @page_title = t('.page_title', user: @twitter_user.screen_name)
-    @content_title = t('.content_title', user: @twitter_user.screen_name)
 
     counts = view_context.current_counts(@twitter_user)
     @meta_title = t('.meta_title', {user: @twitter_user.screen_name}.merge(counts))
