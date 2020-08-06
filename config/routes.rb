@@ -35,7 +35,6 @@ Rails.application.routes.draw do
   %i(maintenance privacy_policy terms_of_service specified_commercial_transactions support).each do |name|
     get name, to: "misc##{name}", as: name
   end
-  get '/menu', to: redirect('/settings?via=routing_menu')
 
   %i(
     profiles
@@ -96,8 +95,6 @@ Rails.application.routes.draw do
   get 'unfriends', to: 'unfriends#new', as: :unfriends_top
   get 'inactive_friends', to: 'inactive_friends#new', as: :inactive_friends_top
   get 'friends', to: 'friends#new', as: :friends_top
-  get 'conversations', to: redirect('/')
-  get 'relationships', to: redirect('/')
 
   resources :word_clouds, only: %i(show), param: :screen_name
 
@@ -107,25 +104,7 @@ Rails.application.routes.draw do
   resources :personality_insights, only: %i(show), param: :screen_name
   get 'personality_insights', to: 'personality_insights#new', as: :personality_insights_top
 
-  get '/searches/:screen_name/favoriting', to: redirect('/favorite_friends/%{screen_name}')
-  %i(
-      close_friends
-      usage_stats
-      inactive_friends
-      friends
-      followers
-      blocking_or_blocked
-    ).each { |menu| get "/searches/:screen_name/#{menu}", to: redirect("/#{menu}/%{screen_name}") }
-  get '/searches/:screen_name/inactive_followers', to: redirect('/inactive_friends/%{screen_name}')
-  %w(
-      new_friends
-      new_followers
-    ).each { |menu| get "/searches/:screen_name/#{menu}", to: redirect("/#{menu.remove('new_')}/%{screen_name}") }
-  get '/searches/:screen_name/clusters_belong_to', to: redirect('/clusters/%{screen_name}')
-
   resources :searches, only: %i(create), param: :screen_name
-  get '/searches/:screen_name', to: redirect('/timelines/%{screen_name}')
-  get 'searches/:uid/waiting', to: redirect('/waiting/%{uid}')
   get 'waiting/:uid', to: 'waiting#new', as: :waiting
 
   resources :account_statuses, only: %i(show), param: :uid
@@ -153,7 +132,6 @@ Rails.application.routes.draw do
   post 'tokimeki_unfollow/unfollow', to: 'tokimeki_unfollow#unfollow', as: :tokimeki_unfollow_unfollow
   post 'tokimeki_unfollow/keep', to: 'tokimeki_unfollow#keep', as: :tokimeki_unfollow_keep
 
-  get 'notifications', to: redirect('/?notifications_not_found=1')
   resources :settings, only: :index
   resource :setting, only: :update
   post 'settings/update_report_interval', to: 'settings#update_report_interval', as: :update_report_interval
@@ -175,15 +153,9 @@ Rails.application.routes.draw do
   get 'webhook/twitter', to: 'webhook#challenge'
   post 'webhook/twitter', to: 'webhook#twitter'
 
-  get 'update_histories/:uid', to: redirect('/settings?via=routing_update_histories')
-
   get 'adsense', to: 'adsense#new'
   get 'search_histories', to: 'search_histories#new'
   get 'load_public_tweets', to: 'public_tweets#load', as: :load_public_tweets
-
-  get 'relationships/:src_uid/:dst_uid/waiting', to: redirect('/')
-  get 'relationships/:src_uid/:dst_uid/check_log', to: redirect('/')
-  get 'relationships/:src_screen_name/:dst_screen_name', to: redirect('/')
 
   %i(sign_in after_sign_in after_sign_up goodbye).each do |name|
     get name, to: "login##{name}", as: name

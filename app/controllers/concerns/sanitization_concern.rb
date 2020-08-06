@@ -4,7 +4,6 @@ module Concerns::SanitizationConcern
   extend ActiveSupport::Concern
 
   SAFE_CONTROLLERS = %w(
-      conversations
       clusters searches
       timelines
       scores

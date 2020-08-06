@@ -14,7 +14,6 @@ class Search
     replying
     replied
     replying_and_replied
-    conversations
     inactive_friends
     inactive_followers
     inactive_mutual_friends
