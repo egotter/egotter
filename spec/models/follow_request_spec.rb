@@ -28,8 +28,7 @@ RSpec.describe FollowRequest, type: :model do
       context 'temporarily_locked? returns true' do
         let(:status) { instance_double(AccountStatus) }
         before do
-          allow(AccountStatus).to receive(:new).with(anything).and_return(status)
-          allow(status).to receive(:temporarily_locked?).and_return(true)
+          allow(AccountStatus).to receive(:temporarily_locked?).with(anything).and_return(true)
         end
         it { expect { subject }.to raise_error(described_class::TemporarilyLocked) }
       end

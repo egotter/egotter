@@ -10,23 +10,6 @@ RSpec.describe ProfilesController, type: :controller do
 
   describe 'GET #show' do
     subject { get :show, params: {screen_name: screen_name} }
-
-    context 'The visitor is twitter crawler' do
-      before { allow(controller).to receive(:twitter_crawler?).and_return(true) }
-      it do
-        expect(controller).not_to receive(:not_found_screen_name?)
-        expect(controller).not_to receive(:forbidden_screen_name?)
-        is_expected.to have_http_status(:success)
-      end
-    end
-
-    context 'The visitor is NOT twitter crawler' do
-      before { allow(controller).to receive(:twitter_crawler?).and_return(false) }
-      it do
-        expect(controller).to receive(:not_found_screen_name?).and_return(false)
-        expect(controller).to receive(:forbidden_screen_name?).and_return(false)
-        is_expected.to have_http_status(:success)
-      end
-    end
+    it { is_expected.to have_http_status(:success) }
   end
 end

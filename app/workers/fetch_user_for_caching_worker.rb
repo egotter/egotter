@@ -29,9 +29,7 @@ class FetchUserForCachingWorker
     client = options['user_id'] ? User.find(options['user_id']).api_client : Bot.api_client
     client.user(uid_or_screen_name)
   rescue => e
-    status = AccountStatus.new(ex: e)
-
-    if status.not_found? || status.suspended? || status.unauthorized? || status.too_many_requests?
+    if AccountStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.unauthorized?(e) || AccountStatus.too_many_requests?(e)
     else
       logger.warn "#{e.inspect} #{uid_or_screen_name} #{options.inspect}"
       logger.info e.backtrace.join("\n")

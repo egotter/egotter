@@ -13,11 +13,10 @@ module Concerns::TwitterUsersConcern
     ::TwitterUser.build_by(user: user)
   rescue => e
     notify_airbrake(e)
-    status = AccountStatus.new(ex: e)
 
-    if status.not_found?
+    if AccountStatus.not_found?(e)
       redirect_to not_found_path(screen_name: screen_name)
-    elsif status.suspended?
+    elsif AccountStatus.suspended?(e)
       redirect_to forbidden_path(screen_name: screen_name)
     else
       logger.info "#{self.class}##{action_name} in #build_twitter_user_by #{e.inspect} screen_name=#{screen_name} user_id=#{current_user_id}}"
@@ -32,8 +31,7 @@ module Concerns::TwitterUsersConcern
     build_twitter_user_by(screen_name: screen_name)
   rescue => e
     notify_airbrake(e)
-    status = AccountStatus.new(ex: e)
-    if !status.suspended? && !status.not_found? && !status.unauthorized?
+    if !AccountStatus.suspended?(e) && !AccountStatus.not_found?(e) && !AccountStatus.unauthorized?(e)
       logger.warn "#{self.class}##{action_name} in #build_twitter_user_by_uid #{e.inspect} uid=#{uid} user_id=#{current_user_id}}"
     end
 

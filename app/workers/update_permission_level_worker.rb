@@ -32,11 +32,9 @@ class UpdatePermissionLevelWorker
     user.notification_setting.save! if user.notification_setting.changed?
 
   rescue => e
-    status = AccountStatus.new(ex: e)
-
-    if status.unauthorized?
+    if AccountStatus.unauthorized?(e)
       user.update!(authorized: false)
-    elsif status.not_found? || status.suspended? || status.too_many_requests?
+    elsif AccountStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.too_many_requests?(e)
     else
       logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
       notify_airbrake(e, user_id: user_id, options: options)

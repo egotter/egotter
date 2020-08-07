@@ -34,11 +34,9 @@ class UpdateAuthorizedWorker
     user.screen_name = t_user[:screen_name]
     user.save! if user.changed?
   rescue => e
-    status = AccountStatus.new(ex: e)
-
-    if status.unauthorized?
+    if AccountStatus.unauthorized?(e)
       user.update!(authorized: false)
-    elsif status.not_found? || status.suspended? || status.too_many_requests?
+    elsif AccountStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.too_many_requests?(e)
       # Do nothing
     else
       logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
