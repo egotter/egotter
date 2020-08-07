@@ -4,7 +4,7 @@
       <ol class="breadcrumb">
         <% links.each.with_index do |link, i| %>
           <% next if link.key == :root && links.size >= 3 %>
-          <% next if link.key == :root && links.size == 2 && i == 0 && %i(profile latest_profile).include?(links[1].key) %>
+          <% next if link.key == :root && links.size == 2 && i == 0 && %i(profile).include?(links[1].key) %>
           <li class="breadcrumb-item">
             <% options = link.current? ? {class: 'active', 'aria-current' => 'page'} : {} %>
             <%= link_to link.text, link.url, options %>

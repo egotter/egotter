@@ -4,6 +4,8 @@
 - breadcrumb :profile, @screen_name
 
 .message-box.alert.alert-warning{style: 'display: none;'}
+.forbidden-reason.my-1{style: 'display: none;'}= t('.forbidden_reason_html', user: @screen_name)
+.not-found-reason.my-1{style: 'display: none;'}= t('.not_found_reason_html', user: @screen_name)
 
 - title t('.page_title', user: @screen_name)
 - set_meta_tags description: t('.meta_description', user: @screen_name)
@@ -40,6 +42,8 @@
             var message = res['message'];
             ToastMessage.warn(message);
             $('.message-box').text(message).show();
+            $('.forbidden-reason').show();
+            $('.not-found-reason').show();
           }
         }
       }).fail(function (xhr, textStatus, errorThrown) {

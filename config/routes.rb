@@ -114,14 +114,14 @@ Rails.application.routes.draw do
 
   resources :timelines, only: %i(show), param: :screen_name
 
-  resources :not_found, only: %i(show), param: :screen_name
-  get 'not_found/:screen_name/latest', to: 'not_found#latest', as: 'latest_not_found'
-  resources :forbidden, only: %i(show), param: :screen_name
-  get 'forbidden/:screen_name/latest', to: 'forbidden#latest', as: 'latest_forbidden'
-  resources :blocked, only: %i(show), param: :screen_name
-  get 'blocked/:screen_name/latest', to: 'blocked#latest', as: 'latest_blocked'
-  resources :protected, only: %i(show), param: :screen_name
-  get 'protected/:screen_name/latest', to: 'protected#latest', as: 'latest_protected'
+  get 'not_found/:screen_name', to: redirect("/profiles/%{screen_name}"), as: 'not_found'
+  get 'not_found/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
+  get 'forbidden/:screen_name', to: redirect("/profiles/%{screen_name}"), as: 'forbidden'
+  get 'forbidden/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
+  get 'blocked/:screen_name', to: redirect("/profiles/%{screen_name}"), as: 'blocked'
+  get 'blocked/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
+  get 'protected/:screen_name', to: redirect("/profiles/%{screen_name}"), as: 'protected'
+  get 'protected/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
 
   get 'follow', to: 'follows#show'
   resources :follows, only: %i(create)
