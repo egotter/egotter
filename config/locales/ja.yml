@@ -1028,18 +1028,11 @@ ja:
     common_mutual_friends: '共通相互フォロー'
   profiles:
     show:
-      crumb_title: "@%{user} の %{time} のプロフィール"
-      page_title: "@%{user} の %{time} のプロフィール"
-      meta_description: "@%{user} の %{time} のプロフィール"
-      displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。'
-      update: '@%{user} のプロフィールを更新する'
-      analyze: '@%{user} を分析する'
-    latest:
-      crumb_title: "@%{user} の最新プロフィール"
-      page_title: "@%{user} の最新プロフィール"
-      meta_description: "@%{user} の最新プロフィール"
-      displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。'
+      crumb_title: "@%{user} のプロフィール"
+      page_title: "@%{user} のプロフィール"
+      meta_description: "@%{user} の のプロフィール"
       see_on_twitter: '@%{user} をツイッターで見る'
+      update: '@%{user} のプロフィールを更新する'
       analyze: '@%{user} を分析する'
   friends:
     new:
@@ -1968,6 +1961,15 @@ ja:
   users:
     omniauth_callbacks:
       login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
+  api:
+    v1:
+      profiles:
+        show:
+          ok: '検索された @%{user} は見付かりました。'
+          not_found: '検索された @%{user} が見付かりません。アカウントが削除されています。'
+          suspended: '検索された @%{user} が見付かりません。アカウントが凍結されています。'
+          locked: '検索された @%{user} は一時的に凍結されています。'
+          error: '検索された @%{user} のデータ取得に失敗しました。ページを更新してみてください。'
   modal:
     welcome_modal:
       follow:
@@ -2242,16 +2244,7 @@ ja:
     unauthorized_detected_with_count: 'ツイッター連携が無効になっています。%{seconds}秒後にトップページへ移動します。'
     blocked_detected_with_count: '@ego_tter がブロックされています。%{seconds}秒後にトップページへ移動します。'
   dm:
-    no_diffs: "フォロー・フォロワーに変化はありません。"
-    new_friends: "新しいフォロー： %{users}"
-    new_followers: "新しいフォロワー： %{users}"
-    new_removing: "新しいリムーブ： %{users}"
-    new_removed: "新しいリムられ： %{users}"
-    omission: " ... 合計%{num}人"
     searchNotification:
-      title: 'えごったーで %{user} が検索されました。'
-      message: '結果を見る %{url} #egotter ※この検索通知は、誰かに検索された時のみ、最大で1時間に1回ほど届きます。'
-      timeline_button: '%{screen_name} さんの結果ページを見る'
       relationship:
         'true':
           'true': '検索した人は、@%{user} と相互フォローの人です。'
@@ -2260,9 +2253,6 @@ ja:
           'true': '検索した人は、@%{user} のフォロワーです。'
           'false': '検索した人は、@%{user} のフォローでもフォロワーでもありません。'
         none: '今回は分かりませんでした。'
-    updateNotification:
-      title: 'えごったーで %{user} のデータが自動更新されました。'
-      message: '結果を見る %{url} #egotter ※この自動更新通知は、最大で1日に1回ほど届きます。'
   onesignal:
     defaultNotification:
       title: 'えごったー'

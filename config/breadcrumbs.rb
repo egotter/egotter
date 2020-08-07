@@ -40,13 +40,8 @@ end
   end
 end
 
-crumb :profile do |screen_name, time|
-  link t('profiles.show.crumb_title', user: screen_name, time: time), profile_path(screen_name: screen_name, via: current_via("breadcrumb_profile"))
-  parent :root
-end
-
-crumb :latest_profile do |screen_name|
-  link t('profiles.latest.crumb_title', user: screen_name), latest_profile_path(screen_name: screen_name, via: current_via("breadcrumb_latest_profile"))
+crumb :profile do |screen_name|
+  link t('profiles.show.crumb_title', user: screen_name), profile_path(screen_name: screen_name, via: current_via("breadcrumb_profile"))
   parent :root
 end
 

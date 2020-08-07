@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       Search::API_V1_NAMES.each { |menu| get "#{menu}/summary", to: "#{menu}#summary" }
       Search::API_V1_NAMES.each { |menu| get "#{menu}/list", to: "#{menu}#list" }
       get "summary/summary", to: "summary#summary"
+      get 'profiles', to: 'profiles#show'
 
       post 'users/update_instance_id', to: 'users#update_instance_id'
       post 'users/update_device_token', to: 'users#update_device_token'
@@ -64,7 +65,7 @@ Rails.application.routes.draw do
     resources controller_name, only: %i(show), param: :screen_name
   end
 
-  get 'profiles/:screen_name/latest', to: 'profiles#latest', as: 'latest_profile'
+  get 'profiles/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
 
   %i(
     friends

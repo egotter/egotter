@@ -1,21 +1,45 @@
 - content_for :canonical_url do
-  %link{href: profile_url(@user), rel: 'canonical'}
+  %link{href: profile_url(screen_name: @screen_name), rel: 'canonical'}
 
-- breadcrumb :profile, @user.screen_name, @display_time
+- breadcrumb :profile, @screen_name
 
-- page_title = t('.page_title', user: @user.screen_name, time: @display_time)
-- title page_title
-- set_meta_tags description: t('.meta_description', user: @user.screen_name, time: @display_time)
+.message-box.alert.alert-warning{style: 'display: none;'}
 
-.mt-3
-  - url = latest_profile_path(screen_name: @user.screen_name, via: current_via('request_to_update_button'))
-  = link_to t('.update', user: @user.screen_name), url, class: 'btn btn-primary btn-block btn-lg'
+- title t('.page_title', user: @screen_name)
+- set_meta_tags description: t('.meta_description', user: @screen_name)
+
+.mt-3= link_to t('.see_on_twitter', user: @screen_name), user_url(@screen_name), class: 'btn btn-primary btn-block', target: '_blank'
 
 = render(partial: 'adsense/ad', locals: {vertical: :top})
 
-.mb-3
-  - url = searches_path(screen_name: @user.screen_name, via: current_via('analyze_button'))
-  = link_to t('.analyze', user: @user.screen_name), url, class: 'btn btn-primary btn-block btn-lg', method: :post
+.mb-3= link_to t('.analyze', user: @screen_name), timeline_path(screen_name: @screen_name, via: current_via('analyze_button')), class: 'btn btn-primary btn-block'
 
-.mb-3
-  = render partial: 'twitter/profile', locals: {user: @user, always_expanded: true}
+- if @user
+  .mb-3= render partial: 'twitter/profile', locals: {user: @user, always_expanded: true}
+
+:javascript
+  $(function() {
+    var fromCrawler = #{from_crawler?};
+
+    if (!fromCrawler) {
+      var url = '#{api_v1_profiles_path(screen_name: @screen_name)}';
+      $.get(url).done(function (res) {
+        var message = res['message'];
+        if (res['status'] !== 'ok') {
+          ToastMessage.warn(message);
+          $('.message-box').text(message).show();
+        }
+      }).fail(function (xhr, textStatus, errorThrown) {
+        var message;
+        try {
+          message = JSON.parse(xhr.responseText)['message'];
+        } catch (e) {
+          console.error(e);
+        }
+        if (!message) {
+          message = xhr.status + ' (' + errorThrown + ')';
+        }
+        ToastMessage.warn(message);
+      });
+    }
+  });
