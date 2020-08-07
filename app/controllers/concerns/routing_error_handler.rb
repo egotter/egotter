@@ -18,7 +18,8 @@ module Concerns::RoutingErrorHandler
       @screen_name = params['screen_name']
       @redirect_path = timeline_path(screen_name: @screen_name)
       @via = params['via'].presence || current_via('render_template')
-      render template: 'searches/create', formats: %i(html), layout: false
+      self.sidebar_disabled = true
+      render template: 'searches/create'
 
     elsif request.fullpath.match(%r{^/https:/egotter\.com(.+)})
       redirect = "https://egotter.com#{$1}"

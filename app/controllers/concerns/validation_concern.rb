@@ -44,15 +44,18 @@ module Concerns::ValidationConcern
   def twitter_user_persisted?(uid)
     return true if ::TwitterUser.with_delay.exists?(uid: uid)
 
-    if !from_crawler? && controller_name == 'timelines' && action_name == 'show'
-      @screen_name = @twitter_user.screen_name
-      @redirect_path = timeline_path(screen_name: @screen_name)
-      @via = params['via'].presence || current_via('render_template')
-      create_error_log(__method__, '')
-      render template: 'searches/create', formats: %i(html), layout: false
-    else
-      respond_with_error(:bad_request, t('application.twitter_user_not_found'))
+    if from_crawler? || request.xhr? || !user_signed_in?
+      url = sign_in_path(via: current_via('twitter_user_not_found'))
+      respond_with_error(:bad_request, t('application.twitter_user_not_found_html', url: url))
+      return
     end
+
+    @screen_name = @twitter_user.screen_name
+    @redirect_path = timeline_path(screen_name: @screen_name)
+    @via = params['via'].presence || current_via('render_template')
+    create_error_log(__method__, '')
+    self.sidebar_disabled = true
+    render template: 'searches/create'
 
     false
   end

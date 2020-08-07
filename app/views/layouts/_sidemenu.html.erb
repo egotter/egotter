@@ -93,6 +93,10 @@
     var btn = $('.btn-sidemenu');
     var isOpened = false;
 
+    if (!menu.sidebar) {
+      return;
+    }
+
     menu.sidebar({side: 'right'});
     menu.show();
 

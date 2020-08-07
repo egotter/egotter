@@ -75,6 +75,10 @@
     var btn = $('.btn-profilemenu');
     var isOpened = false;
 
+    if (!menu.sidebar) {
+      return;
+    }
+
     menu.sidebar({side: 'bottom'});
     menu.show();
 

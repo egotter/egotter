@@ -15,16 +15,19 @@ module ApplicationHelper
         (controller_name == 'tokimeki_unfollow' && action_name == 'new')
   end
 
+  def waiting_page?
+    controller_name == 'waiting'
+  end
+
   def show_header?
     !top_page?
   end
 
   def show_sidebar?
-    !sidebar_disabled && @twitter_user && action_name != 'all' &&
-        controller_name != 'waiting' && controller_name != 'tokimeki_unfollow'
+    !sidebar_disabled? && @twitter_user && !waiting_page? && controller_name != 'tokimeki_unfollow'
   end
 
-  def sidebar_disabled
+  def sidebar_disabled?
     @sidebar_disabled
   end
 
@@ -34,9 +37,8 @@ module ApplicationHelper
 
   def wrap_in_container?
     start = controller_name == 'home' && action_name == 'start'
-    waiting = controller_name == 'waiting' && action_name == 'new'
     settings = controller_name == 'settings' && action_name == 'index'
-    !@has_error && !top_page? && !start && !waiting && !settings
+    !@has_error && !top_page? && !start && !waiting_page? && !settings
   end
 
   def show_common_friends?(twitter_user)
