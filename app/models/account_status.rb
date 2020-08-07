@@ -62,4 +62,50 @@ class AccountStatus
       ex && ex.class == Twitter::Error::Forbidden && ex.message == "You are unable to follow more people at this time. Learn more <a href='http://support.twitter.com/articles/66885-i-can-t-follow-people-follow-limits'>here</a>."
     end
   end
+
+  class Cache
+    def initialize
+      @store = ActiveSupport::Cache::RedisCacheStore.new(
+          namespace: "#{Rails.env}:account_status",
+          expires_in: 3.minutes,
+          redis: Redis.client
+      )
+    end
+
+    def exists?(screen_name)
+      @store.exist?(screen_name)
+    end
+
+    def read(screen_name)
+      @store.read(screen_name)
+    end
+
+    def write(screen_name, value)
+      @store.write(screen_name, value)
+    end
+
+    def invalid?(screen_name)
+      @store.read(screen_name) == 'invalid'
+    end
+
+    def not_found?(screen_name)
+      @store.read(screen_name) == 'not_found'
+    end
+
+    def suspended?(screen_name)
+      @store.read(screen_name) == 'suspended'
+    end
+
+    def error?(screen_name)
+      @store.read(screen_name).start_with?('error:')
+    end
+
+    def locked?(screen_name)
+      @store.read(screen_name) == 'locked'
+    end
+
+    def ok?(screen_name)
+      @store.read(screen_name) == 'ok'
+    end
+  end
 end

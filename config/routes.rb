@@ -12,7 +12,7 @@ Rails.application.routes.draw do
       Search::API_V1_NAMES.each { |menu| get "#{menu}/summary", to: "#{menu}#summary" }
       Search::API_V1_NAMES.each { |menu| get "#{menu}/list", to: "#{menu}#list" }
       get "summary/summary", to: "summary#summary"
-      get 'profiles', to: 'profiles#show'
+      get 'account_statuses', to: 'account_statuses#show'
 
       post 'users/update_instance_id', to: 'users#update_instance_id'
       post 'users/update_device_token', to: 'users#update_device_token'

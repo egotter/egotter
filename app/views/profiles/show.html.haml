@@ -20,14 +20,27 @@
 :javascript
   $(function() {
     var fromCrawler = #{from_crawler?};
+    var url = '#{raw api_v1_account_statuses_path(screen_name: @screen_name)}';
+    var retryCount = 0;
 
-    if (!fromCrawler) {
-      var url = '#{api_v1_profiles_path(screen_name: @screen_name)}';
-      $.get(url).done(function (res) {
-        var message = res['message'];
-        if (res['status'] !== 'ok') {
-          ToastMessage.warn(message);
-          $('.message-box').text(message).show();
+    function fetch() {
+      if (retryCount >= 3) {
+        console.log('Retry exhausted')
+        return;
+      }
+
+      $.get(url, {retry_count: retryCount}).done(function (res) {
+        if (res['status'] === 'retry') {
+          retryCount++;
+          setTimeout(fetch, 2000);
+        } else {
+          if (res['status'] === 'ok') {
+            console.log('ok', retryCount);
+          } else {
+            var message = res['message'];
+            ToastMessage.warn(message);
+            $('.message-box').text(message).show();
+          }
         }
       }).fail(function (xhr, textStatus, errorThrown) {
         var message;
@@ -41,5 +54,9 @@
         }
         ToastMessage.warn(message);
       });
+    }
+
+    if (!fromCrawler) {
+      fetch();
     }
   });
