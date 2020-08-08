@@ -3,6 +3,11 @@
 
 - breadcrumb :profile, @screen_name
 
+- if @prev_name || @next_name
+  .row
+    .col-6.text-left= (@prev_name ? link_to('@' + @prev_name, profile_path(@prev_name), class: 'btn btn-outline-primary btn-sm') : '')
+    .col-6.text-right= (@next_name ? link_to('@' + @next_name, profile_path(@next_name), class: 'btn btn-outline-primary btn-sm') : '')
+
 .message-box.alert.alert-warning{style: 'display: none;'}
 .forbidden-reason.my-1{style: 'display: none;'}= t('.forbidden_reason_html', user: @screen_name)
 .not-found-reason.my-1{style: 'display: none;'}= t('.not_found_reason_html', user: @screen_name)

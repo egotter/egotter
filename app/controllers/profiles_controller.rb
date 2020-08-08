@@ -10,5 +10,18 @@ class ProfilesController < ApplicationController
     @user = TwitterUser.latest_by(screen_name: params[:screen_name]) unless @user
 
     @screen_name = params[:screen_name]
+
+    if params[:names].present?
+      @prev_name, @next_name = decrypt_names(params[:names])
+    end
+  end
+
+  private
+
+  def decrypt_names(content)
+    names = MessageEncryptor.new.decrypt(content).split(',')
+    names.map { |n| n == 'empty' ? nil : n }
+  rescue => e
+    nil
   end
 end
