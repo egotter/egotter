@@ -106,165 +106,30 @@ class AdBlockDetector {
 
 window.AdBlockDetector = AdBlockDetector;
 
-class UnauthorizedDetector {
-  constructor(options) {
-    Object.assign(this, options);
-  }
-
-  detect() {
-    var self = this;
-    $.get(this.url).done(function (res) {
-      console.log('accountStatus', res);
-
-      if (!res.authorized) {
-        self.unauthorized();
-      } else if (res.egotter_blocked) {
-        self.blocked();
-      }
-    }).fail(function (xhr) {
-      console.log('failed', self.url, xhr.responseText);
-    });
-  }
-
-  unauthorized() {
-    ToastMessage.warn(this.unauthorizedMessage);
-
-    if (this.force) {
-      var redirectPath = this.unauthorizedRedirectPath;
-      setTimeout(function () {
-        window.location.href = redirectPath;
-      }, 2000);
-    }
-
-    ga('send', {
-      hitType: 'event',
-      eventCategory: this.eventCategory,
-      eventAction: 'Unauthorized detected',
-      eventLabel: this.eventLabel
-    });
-  }
-
-  blocked() {
-    ToastMessage.warn(this.blockedMessage);
-
-    var redirectPath = this.blockedRedirectPath;
-    setTimeout(function () {
-      window.location.href = redirectPath;
-    }, 2000);
-
-    ga('send', {
-      hitType: 'event',
-      eventCategory: this.eventCategory,
-      eventAction: 'egotterBlocked detected',
-      eventLabel: this.eventLabel
-    });
-  }
-}
-
-window.UnauthorizedDetector = UnauthorizedDetector;
-
-class EgotterFollowerDetector {
-  constructor(options) {
-    Object.assign(this, options);
-  }
-
-  detect(callback) {
-    var self = this;
-    $.getJSON(this.url).done(function (res) {
-      console.log(self.constructor.name, 'done', res);
-      if (res.follow) {
-        callback();
-      } else {
-        self.notFollowing();
-      }
-    }).fail(function (xhr) {
-      console.log(self.constructor.name, 'failed', xhr.responseText);
-    });
-  }
-
-  notFollowing() {
-    var message = $('#follow-box .inner').html();
-    ToastMessage.warn(message);
-  }
-}
-
-window.EgotterFollowerDetector = EgotterFollowerDetector;
-
-class CreateTwitterUserRequest {
-  constructor(options) {
-    Object.assign(this, options);
-  }
-
-  perform(callback) {
-    var self = this;
-
-    var done = function (res) {
-      console.log(self.constructor.name, 'done', res);
-
-      if (res.jid) {
-        callback();
-      } else {
-        console.warn(self.constructor.name, "Job is not started.");
-        ToastMessage.info($('#update-this-page-box .inner').html());
-      }
-    };
-
-    var failed = function (xhr) {
-      console.warn(self.constructor.name, 'failed', xhr.responseText);
-
-      var error = self.parseError(xhr);
-
-      if (error === 'too_many_searches') {
-        ToastMessage.info($('#too-many-searches-box .inner').html());
-      } else {
-        ToastMessage.info($('#retry-later-box .inner').html());
-      }
-    };
-
-    var params = {uid: this.twitterUser.uid};
-    $.post(this.url, params).done(done).fail(failed);
-  }
-
-  parseError(xhr) {
-    var err = 'Something';
-    try {
-      err = JSON.parse(xhr.responseText)['error'];
-    } catch (e) {
-      console.error(e);
-    }
-    return err;
-  }
-}
-
-window.CreateTwitterUserRequest = CreateTwitterUserRequest;
-
 class Polling {
   constructor(options) {
     Object.assign(this, options);
   }
 
-  start() {
+  start(doneCallback, failCallback) {
     var self = this;
 
     var done = function (res) {
       console.log(self.constructor.name, 'done', res);
-      self.fetchChangesText(self.changesPath, function (message) {
-        ToastMessage.info(message);
-      });
+      doneCallback();
     };
 
     var stopped = function (res, reason) {
       console.warn(self.constructor.name, 'stopped', reason, res);
-      ToastMessage.info($('#request-to-update-box .inner').html());
+      failCallback('stopped');
     };
 
     var failed = function (xhr) {
       console.log(self.constructor.name, 'failed', xhr.responseText);
-      ToastMessage.warn($('#retry-later-box .inner').html());
+      failCallback('failed');
     };
 
-    var options = {retry_count: 0};
-    this.poll(this.url, options, done, stopped, failed);
+    this.poll(this.url, {retry_count: 0}, done, stopped, failed);
   }
 
   poll(path, options, done, stopped, failed) {
@@ -293,21 +158,23 @@ class Polling {
         })
         .fail(failed);
   }
+}
 
+window.Polling = Polling;
 
-  fetchChangesText(url, callback) {
-    var self = this;
-    $.get(url).done(function (res) {
-      var message = $('#refresh-box .inner');
-      if (res.text) {
-        message.find('.message').html(res.text);
-      }
-      callback(message.html());
+class FetchChangesText {
+  constructor(url) {
+    this.url = url;
+  }
+
+  fetch(callback) {
+    $.get(this.url).done(function (res) {
+      callback(res.text);
     }).fail(function (xhr) {
-      console.warn(self.constructor.name, 'failed', url, xhr.responseText);
-      callback($('#refresh-box .inner').html());
+      console.warn(self.constructor.name, 'failed', xhr.responseText);
+      callback();
     });
   }
 }
 
-window.Polling = Polling;
+window.FetchChangesText = FetchChangesText;

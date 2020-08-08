@@ -1,10 +1,11 @@
 <%= javascript_pack_tag 'bg_update' %>
 
 <script>
+  var jid = '<%= @jid %>';
   var signedIn = <%= user_signed_in? %>;
+  var invalidToken = <%= user_signed_in? && !current_user.authorized? %>;
+  var softLimited = <%= !user_signed_in? && SearchLimitation.soft_limited?(twitter_user) %>;
   var crawler = <%= from_crawler? %>;
-  var os = '<%= request.os %>';
-  var osVersion = '<%= request.os_version %>';
   var removePage = <%= remove_related_page? %>;
   var viaDM = <%= via_dm? %>;
   var profileNotFound = <%= twitter_user.profile_not_found? %>;
@@ -14,10 +15,8 @@
   var eventCategory = '<%= "#{controller_name}/#{action_name}" %>';
 
   var urls = {
-    twitter_users_changes: '<%= twitter_users_changes_path(uid: twitter_user.uid) %>',
-    twitter_user: '<%= twitter_user_path(uid: twitter_user.uid, via: current_via('update_box')) %>',
-    follow: '<%= follow_path(via: current_via('follow_box')) %>',
-    twitter_users: "<%= twitter_users_path(via: current_via('background_update')) %>",
+    twitter_users_changes: '<%= raw twitter_users_changes_path(uid: twitter_user.uid) %>',
+    twitter_user: '<%= raw twitter_user_path(uid: twitter_user.uid, via: current_via('update_box')) %>'
   };
 
   var twitterUser = {
@@ -34,55 +33,74 @@
       return;
     }
 
-    if (!signedIn) {
-      if (removePage) {
-        var message = '<%= t('twitter_users.in_background.accurate_counting_html', url: sign_in_path(via: current_via('accurate_counting'), redirect_path: timeline_path(twitter_user, via: current_via('accurate_counting')))) %>';
+    if (signedIn) {
+      if (invalidToken) {
+        var message = '<%= t('twitter_users.in_background.invalid_token_html', user: twitter_user.screen_name, url: sign_in_and_timeline_path(twitter_user, via: 'invalid_token')) %>';
         ToastMessage.info(message);
-      } else if (viaDM) {
-        ToastMessage.info($('#via-dm-box .inner').html());
-      } else if (!crawler) {
-        ToastMessage.info($('#sign-in-box .inner').html());
-      } else {
-        // Maybe crawler
-      }
-
-      return;
-    }
-
-    if (signedIn && !isEgotterFollower) {
-      var message = '<%= t('twitter_users.in_background.is_not_egotter_follower_html', user: current_user&.screen_name, url: sign_in_path(follow: true)) %>';
-      ToastMessage.info(message, {id: 'not_egotter_follower'});
-      return;
-    }
-
-    if (signedIn && periodicReportStopped) {
-      ToastMessage.info('<%= t('twitter_users.in_background.periodic_report_stopped_html') %>');
-      return;
-    }
-
-    var options = {url: urls.follow};
-    new EgotterFollowerDetector(options).detect(function () {
-      if (tooShortCreateInterval) {
-        console.warn("Don't start polling since the create interval is too short.", twitterUser);
-        ToastMessage.info($('#update-this-page-box .inner').html());
+        return;
+      } else if (!isEgotterFollower) {
+        var message = '<%= t('twitter_users.in_background.is_not_egotter_follower_html', user: current_user&.screen_name, url: sign_in_and_timeline_path(twitter_user, via: 'not_egotter_follower', follow: true)) %>';
+        ToastMessage.info(message, {id: 'not_egotter_follower'});
+        return;
+      } else if (periodicReportStopped) {
+        var message = '<%= t('twitter_users.in_background.periodic_report_stopped_html') %>';
+        ToastMessage.info(message, {id: 'periodic_report_stopped', ttl: 60});
         return;
       }
 
+    } else {
+      var message;
+      if (removePage) {
+        message = '<%= t('twitter_users.in_background.accurate_counting_html', url: sign_in_and_timeline_path(twitter_user, via: 'accurate_counting')) %>';
+      } else if (softLimited) {
+        message = '<%= t('twitter_users.in_background.soft_limited_html', user: twitter_user.screen_name, url: sign_in_and_timeline_path(twitter_user, via: 'soft_limited')) %>';
+      } else if (viaDM) {
+        message = '<%= t('twitter_users.in_background.via_dm_html', url: sign_in_and_timeline_path(twitter_user, via: 'via_dm')) %>';
+      } else if (!crawler) {
+        message = '<%= t('twitter_users.in_background.sign_in_html', url: sign_in_and_timeline_path(twitter_user, via: 'sign_in')) %>';
+      } else {
+        // Maybe crawler
+        message = '<%= t('twitter_users.in_background.sign_in_html', url: sign_in_and_timeline_path(twitter_user, via: 'sign_in')) %>';
+      }
+
+      if (message) {
+        ToastMessage.info(message);
+      }
+
+      return;
+    }
+
+    if (jid) {
+      console.log('jid', jid);
+
       var options = {
-        url: urls.twitter_users,
+        url: urls.twitter_user,
         twitterUser: twitterUser
       };
-      new CreateTwitterUserRequest(options).perform(function () {
-
-        var options = {
-          url: urls.twitter_user,
-          changesPath: urls.twitter_users_changes,
-          twitterUser: twitterUser
-        };
-        new Polling(options).start();
-        ToastMessage.info('<%= t('twitter_users.in_background.updating_html', user: twitter_user.screen_name) %>');
+      new Polling(options).start(function done() {
+        new FetchChangesText(urls.twitter_users_changes).fetch(function done(message) {
+          if (message) {
+            message += '<%= t('twitter_users.show.reload_page_html', url: timeline_path(twitter_user, via: current_via('reload_page'))) %>';
+          } else {
+            message = '<%= t('twitter_users.show.update_is_coming', user: twitter_user.screen_name, url: timeline_path(twitter_user, via: current_via('update_is_coming'))) %>';
+          }
+          ToastMessage.info(message);
+        });
+      }, function failed(reason) {
+        if (reason === 'stopped') {
+          var message = '<%= t('twitter_users.in_background.polling_stopped_html', url: timeline_path(twitter_user, via: current_via('polling_stopped')), time: time_ago_in_words_ja(twitter_user.created_at)) %>';
+          ToastMessage.info(message);
+        } else {
+          var message = '<%= t('twitter_users.in_background.failed_html', url: timeline_path(twitter_user, via: current_via('polling_failed'))) %>';
+          ToastMessage.info(message);
+        }
       });
-    });
+      ToastMessage.info('<%= t('twitter_users.in_background.updating_html', user: twitter_user.screen_name) %>');
+    } else {
+      console.warn("Job is not started.");
+      var message = '<%= t('twitter_users.in_background.displayed_data_is_html', url: timeline_path(twitter_user, via: current_via('job_not_started')), time: time_ago_in_words_ja(twitter_user.created_at)) %>';
+      ToastMessage.info(message, {id: 'job_not_started-<%= twitter_user.created_at.to_i %>', ttl: 60});
+    }
 
     if (!crawler) {
       var options = {
@@ -91,8 +109,8 @@
         redirectPath: "<%= root_path(via: current_via('secret_mode_detected')).html_safe %>",
         allowCognite: <%= ENV['ALLOW_COGNITE'] == '1' %>,
         signedIn: signedIn,
-        os: os,
-        osVersion: osVersion,
+        os: '<%= request.os %>',
+        osVersion: '<%= request.os_version %>',
         eventCategory: eventCategory,
         eventLabel: JSON.stringify(twitterUser)
       };

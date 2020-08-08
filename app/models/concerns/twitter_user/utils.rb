@@ -73,9 +73,4 @@ module Concerns::TwitterUser::Utils
     interval = CREATE_RECORD_INTERVAL unless interval
     interval.seconds.ago < created_at
   end
-
-  def next_creation_time(interval = nil)
-    interval = CREATE_RECORD_INTERVAL unless interval
-    created_at + interval.seconds
-  end
 end

@@ -1132,10 +1132,17 @@ ja:
       update_is_coming_with_timeout: '@%{user} のフォロー・フォロワーに変化がありました。（WTO）'
       update_is_coming_with_error: '@%{user} のフォロー・フォロワーに変化がありました。（WE）'
       new_record_created: '@%{user} のデータが新しく作成されました。'
+      reload_page_html: '<a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>'
     in_background:
-      latest: '表示されているデータは最新です。'
-      failed: 'データの更新に失敗しました。大半のエラーは一時的なものです。5〜10分ほど後に再度お試しください。'
-      profile_not_found_html: 'プロフィールを更新中です。10〜30秒後にページを更新してください。<a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>'
+      failed_html: >-
+        データの更新に失敗しました。大半のエラーは一時的なものです。5〜10分ほど後に再度お試しください。
+        <a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>
+      polling_stopped_html: >-
+        フォロー・フォロワーに変化はありませんでした。表示されているデータは <b>%{time}</b> に更新されたものです。
+        <a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>
+      profile_not_found_html: >-
+        プロフィールを更新中です。10〜30秒後にページを更新してください。
+        <a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>
       is_not_egotter_follower_html: >-
         @%{user} は <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> をフォローしていないため、自動更新が止まっています。
         <a href="%{url}" target="_blank" class="btn btn-primary">フォローする</a>
@@ -1143,39 +1150,27 @@ ja:
         リムられ通知の有効期限が切れているため、データの自動更新が止まっています。<br>
         <br>
         再開するには【リムられ通知 再開】と書いたDMを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に送ってください。
-        <a href="https://twitter.com/messages/compose?recipient_id=187385226&welcome_message_id=1260865386309775364" target="_blank" class="btn btn-primary">通知を再開する</a>
+        <a href="https://twitter.com/messages/compose?recipient_id=187385226&welcome_message_id=1260865386309775364" target="_blank" class="btn btn-primary">DM作成画面を開く</a>
       updating_html: '@%{user} のデータを更新中 <img src="/ajax-loader-blue.gif?a=1">'
-      update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
-      reload_page: 'ページを更新する'
-      request_to_update: '更新をリクエストする'
-      next_creation_is_html: '表示されているデータは <b>%{time}</b> に更新されました。次の更新は%{distance_of_time}です。その頃にまた検索してください。'
-      displayed_data_is_html: '表示されているデータは <b>%{time}</b> に更新されました。次の更新は「フォローまたはフォロワーに変化があったとき」です。'
-      go: '%{time}後'
-      soon: 'もうすぐ'
-      too_many_friends: '@%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
-      automated_update_stopped_html: |
-        @%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。
-        <a href="%{url}" class="btn btn-primary">フォローする</a>
-      automated_update_stopped_and_signing_in_html: |
-        @%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。<br>
-        <a href="%{url}" class="btn btn-primary">フォローする</a>
-        <a href="#" class="btn btn-outline-primary btn-just-followed" onclick="window.location.reload();">フォローしました</a>
-      automated_update_restarted_html: '@ego_tter のフォローありがとうございます。自動更新は再開されました。'
-      automated_update_not_restarted_and_signing_in_html: |
-        まだ @ego_tter をフォローしていないようです。自動更新は停止したままです。
-        <a href="%{url}" class="btn btn-primary">フォローする</a>
-        <a href="#" class="btn btn-outline-primary btn-just-followed" onclick="window.location.reload();">フォローしました</a>
-      invalid_token: '@%{user} のツイッター連携が無効になっているため、自動更新が止まっています。'
+      displayed_data_is_html: >-
+        表示されているデータは <b>%{time}</b> に更新されました。次の更新は「フォローまたはフォロワーに変化があったとき」です。
+        <a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>
+      before: '前'
+      soft_limited_html: >-
+        @%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。
+        <a href="%{url}" class="btn btn-outline-primary">ログインする</a>
+      invalid_token_html: >-
+        @%{user} のツイッター連携が無効になっているため、自動更新が止まっています。
+        <a href="%{url}" class="btn btn-outline-primary">ログインする</a>
       accurate_counting_html: >-
         リムられやブロられは、ログインすると結果がより正確になります。
         <a href="%{url}" class="btn btn-outline-primary">ログインする</a>
-      via_dm: 'Twitter DMからアクセスしている場合は、ログインするとリムられが正確に更新されます。'
-      lets_sign_in: 'ログインして検索すると、データが最新になり、検索回数が増えます。リムられ通知も届きます！'
-      do_sign_in: 'ログインする'
-      retry: '再度検索する'
-      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
-      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
-      share_me: "えごったーをシェアする"
+      via_dm_html: >-
+        Twitter DMからアクセスしている場合は、ログインするとリムられが正確に更新されます。
+        <a href="%{url}" class="btn btn-outline-primary">ログインする</a>
+      sign_in_html: >-
+        ログインして検索すると、データが最新になり、検索回数が増えます。リムられ通知も届きます。
+        <a href="%{url}" class="btn btn-outline-primary">ログインする</a>
   follows:
     create:
       success: '@%{user} のフォローに成功しました。残りは %{count}回 です。'

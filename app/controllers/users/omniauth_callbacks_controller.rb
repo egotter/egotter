@@ -16,7 +16,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     FetchUserForCachingWorker.perform_async(@user.uid, user_id: @user.id)
     FetchUserForCachingWorker.perform_async(@user.screen_name, user_id: @user.id)
 
-    enqueue_create_twitter_user_job_if_needed(@user.uid, user_id: @user.id, requested_by: 'sign_in')
+    enqueue_create_twitter_user_job_if_needed(@user.uid, user_id: @user.id)
   end
 
   def twitter

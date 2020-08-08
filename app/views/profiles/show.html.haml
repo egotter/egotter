@@ -10,11 +10,11 @@
 - title t('.page_title', user: @screen_name)
 - set_meta_tags description: t('.meta_description', user: @screen_name)
 
-.mt-3= link_to t('.see_on_twitter', user: @screen_name), user_url(@screen_name), class: 'btn btn-primary btn-block', target: '_blank'
+.mt-3.mb-1= link_to t('.see_on_twitter', user: @screen_name), user_url(@screen_name), class: 'btn btn-primary btn-block', target: '_blank'
 
 = render(partial: 'adsense/ad', locals: {vertical: :top})
 
-.mb-3= link_to t('.analyze', user: @screen_name), timeline_path(screen_name: @screen_name, via: current_via('analyze_button')), class: 'btn btn-primary btn-block'
+.mb-3.mt-1= link_to t('.analyze', user: @screen_name), timeline_path(screen_name: @screen_name, via: current_via('analyze_button')), class: 'btn btn-primary btn-block'
 
 - if @user
   .mb-3= render partial: 'twitter/profile', locals: {user: @user, always_expanded: true}

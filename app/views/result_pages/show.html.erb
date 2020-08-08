@@ -9,7 +9,7 @@
 <% set_meta_tags description: current_meta_description(@twitter_user) %>
 
 <% if remove_related_page? %>
-  <div class="mb-3"><%= render partial: 'twitter_users/bg_polling', locals: {twitter_user: @twitter_user} %></div>
+  <div class="mb-3"><%= render partial: 'twitter_users/bg_polling_js', locals: {twitter_user: @twitter_user} %></div>
 <% end %>
 
 <%= render(partial: 'adsense/ad', locals: {vertical: :top}) %>

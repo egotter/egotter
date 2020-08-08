@@ -1,16 +1,15 @@
 class TimelinesController < ApplicationController
   include Concerns::JobQueueingConcern
   include Concerns::SearchRequestConcern
+  include Concerns::SearchHistoriesConcern
 
   before_action do
-    unless from_crawler?
-      CreateSearchHistoryWorker.new.perform(@twitter_user.uid, session_id: egotter_visit_id, user_id: current_user_id, ahoy_visit_id: current_visit&.id, via: params[:via])
-    end
-
+    create_search_history(@twitter_user)
     enqueue_update_authorized
     enqueue_update_egotter_friendship
     enqueue_audience_insight(@twitter_user.uid)
     enqueue_assemble_twitter_user(@twitter_user)
+    @jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id)
   end
 
   after_action { UsageCount.increment }

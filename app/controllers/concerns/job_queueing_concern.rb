@@ -6,23 +6,24 @@ module Concerns::JobQueueingConcern
   included do
   end
 
-  def enqueue_create_twitter_user_job_if_needed(uid, user_id:, requested_by: '')
+  def enqueue_create_twitter_user_job_if_needed(uid, user_id:, force: false)
     return if from_crawler?
-    return if !user_signed_in? && via_dm?
+    return if !force && !user_signed_in?
     return if user_signed_in? && TooManyRequestsUsers.new.exists?(current_user.id)
+    return if TwitterUser.latest_by(uid: uid)&.too_short_create_interval?
 
     request = CreateTwitterUserRequest.create(
-        requested_by: requested_by,
+        requested_by: controller_name,
         session_id: egotter_visit_id,
         user_id: user_id,
         uid: uid,
         ahoy_visit_id: current_visit&.id)
 
     debug_info = {
-        requested_by: requested_by,
+        requested_by: controller_name,
         controller: controller_name,
         action: action_name,
-        user_id: current_user&.id,
+        user_id: user_id,
         uid: uid
     }
 
@@ -35,7 +36,7 @@ module Concerns::JobQueueingConcern
     end
 
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} uid=#{uid} user_id=#{user_id} requested_by=#{requested_by}"
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} uid=#{uid} user_id=#{user_id} requested_by=#{controller_name}"
   end
 
   def enqueue_assemble_twitter_user(twitter_user)

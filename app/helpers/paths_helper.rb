@@ -13,6 +13,11 @@ module PathsHelper
     send("api_v1_#{controller_name}_list_path", via: current_via)
   end
 
+  def sign_in_and_timeline_path(twitter_user, via:, follow: false)
+    via = current_via(via)
+    sign_in_path(follow: follow, via: via, redirect_path: timeline_path(twitter_user, via: via))
+  end
+
   def scheduled_tweets_url(via: nil, utm_source: nil, utm_medium: nil, utm_campaign: nil)
     params = {
         via: via,

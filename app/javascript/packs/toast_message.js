@@ -8,14 +8,15 @@ class ToastMessage {
       time: this.currentTime(),
       autohide: true,
       delay: 30000,
-      animation: false
+      animation: false,
+      ttl: 300
     }, options);
 
     if (!opt['id']) {
       opt['id'] = Math.random().toString(32).substring(10);
     }
 
-    if (this.isAlreadyShown(opt['id'])) {
+    if (this.isAlreadyShown(opt['id'], opt['ttl'])) {
       return;
     }
 
@@ -56,8 +57,7 @@ class ToastMessage {
     this.show(message, options);
   }
 
-  static isAlreadyShown(id) {
-    var ttl = 300;
+  static isAlreadyShown(id, ttl) {
     var cache = new Egotter.Cache(ttl);
     var key = id + '-' + ttl;
 

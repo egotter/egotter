@@ -1,6 +1,7 @@
 class SearchesController < ApplicationController
   include Concerns::JobQueueingConcern
   include Concerns::SanitizationConcern
+  include Concerns::SearchHistoriesConcern
   include PathsHelper
 
   before_action :reject_crawler
@@ -16,7 +17,7 @@ class SearchesController < ApplicationController
   before_action { search_limitation_soft_limited?(@twitter_user) }
   before_action { !@self_search && !protected_search?(@twitter_user) && !blocked_search?(@twitter_user) }
   before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
-  before_action { CreateSearchHistoryWorker.new.perform(@twitter_user.uid, session_id: egotter_visit_id, user_id: current_user_id, ahoy_visit_id: current_visit&.id, via: params[:via]) }
+  before_action { create_search_history(@twitter_user) }
 
   def create
     redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(@twitter_user, via: 'searches_create'))
@@ -25,7 +26,7 @@ class SearchesController < ApplicationController
     if TwitterUser.exists?(uid: @twitter_user.uid)
       redirect_to redirect_path
     else
-      jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id, requested_by: 'search')
+      jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id, force: true)
       redirect_to waiting_path(uid: @twitter_user.uid, redirect_path: redirect_path, jid: jid, via: current_via)
     end
   end

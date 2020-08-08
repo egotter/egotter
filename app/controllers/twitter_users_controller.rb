@@ -16,9 +16,10 @@ class TwitterUsersController < ApplicationController
 
   before_action { self.access_log_disabled = true }
 
+  # TODO Remove later
   # First access of background-update
   def create
-    jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id, requested_by: 'background')
+    jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id)
     render json: {uid: @twitter_user.uid, screen_name: @twitter_user.screen_name, jid: jid}
   end
 
