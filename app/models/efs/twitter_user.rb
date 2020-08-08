@@ -26,6 +26,9 @@ module Efs
         Rails.logger.debug { "#{self} Fetch by #{twitter_user_id}#{' HIT' if result} (#{time}ms)" }
 
         result
+      rescue => e
+        Rails.logger.warn "#{self}##{__method__} failed #{e.inspect} twitter_user_id=#{twitter_user_id}"
+        nil
       end
 
       def delete_by(twitter_user_id)

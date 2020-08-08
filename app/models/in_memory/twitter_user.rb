@@ -19,7 +19,7 @@ module InMemory
         data = client.read(twitter_user_id)
         data ? new(parse_json(decompress(data))) : nil
       rescue => e
-        Rails.logger.warn "#{self}##{__method__} failed #{e.inspect}"
+        Rails.logger.warn "#{self}##{__method__} failed #{e.inspect} twitter_user_id=#{twitter_user_id}"
         nil
       end
 
