@@ -2180,6 +2180,13 @@ ja:
           'true': '検索した人は、@%{user} のフォロワーです。'
           'false': '検索した人は、@%{user} のフォローでもフォロワーでもありません。'
         none: '今回は分かりませんでした。'
+    add_coupon: |
+      リツイートのご協力ありがとうございます。
+
+      お礼に、検索回数 %{count} 回分を付与しました。
+      有効期限：%{time}
+
+      今後ともえごったーのご利用をよろしくお願いいたします。
   onesignal:
     defaultNotification:
       title: 'えごったー'
@@ -2510,9 +2517,8 @@ ja:
       periodic_report_short: "%-m月%-d日 %-H時%-M分"
       delete_tweets_short: "%-H時%-M分"
       delete_tweets_long: "%-m月%-d日 %-H時%-M分"
-      next_creation_short: "%-H時%-M分"
-      next_creation_long: "%-m月%-d日 %-H時%-M分"
       order_short: "%-m月%-d日 %-H時"
+      coupon_short: "%-m月%-d日 %-H時%-M分"
       profile_short: "%-m月%-d日 %-H時"
       share_text_short: "%m%d%H%M"
       settings_short: "%m-%d %H:%M"
