@@ -1034,6 +1034,8 @@ ja:
       see_on_twitter: '@%{user} をツイッターで見る'
       update: '@%{user} のプロフィールを更新する'
       analyze: '@%{user} を分析する'
+      prev: '< @%{user}'
+      next: '@%{user} >'
       forbidden_reason_html: |
         <div class="text-right">
           <a class="btn btn-outline-primary btn-sm" onclick="$('#forbidden-reason-details').show(); $(this).hide(); return false;" href="#">「アカウント凍結」の意味 <i class="far fa-question-circle"></i></a>
