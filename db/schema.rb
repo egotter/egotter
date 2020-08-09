@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_27_094136) do
+ActiveRecord::Schema.define(version: 2020_08_09_015645) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -234,6 +234,16 @@ ActiveRecord::Schema.define(version: 2020_07_27_094136) do
     t.integer "sequence", null: false
     t.index ["friend_uid"], name: "index_close_friendships_on_friend_uid"
     t.index ["from_uid"], name: "index_close_friendships_on_from_uid"
+  end
+
+  create_table "coupons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "search_count", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_coupons_on_created_at"
+    t.index ["user_id"], name: "index_coupons_on_user_id"
   end
 
   create_table "crawler_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

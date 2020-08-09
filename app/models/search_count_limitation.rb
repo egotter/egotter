@@ -23,6 +23,10 @@ class SearchCountLimitation
         count += user.sharing_count * current_sharing_bonus(user)
       end
 
+      if user
+        count += user.valid_coupons_search_count
+      end
+
       count
     end
     alias max_count max_search_count

@@ -44,19 +44,20 @@ class User < ApplicationRecord
   with_options dependent: :destroy, validate: false, autosave: false do |obj|
     order_by_desc = -> { order(created_at: :desc) }
 
-    obj.has_many :search_reports,                order_by_desc
-    obj.has_many :welcome_messages,              order_by_desc
-    obj.has_many :follow_requests,               order_by_desc
-    obj.has_many :unfollow_requests,             order_by_desc
-    obj.has_many :reset_egotter_requests,        order_by_desc
-    obj.has_many :delete_tweets_requests,        order_by_desc
-    obj.has_many :reset_cache_requests,          order_by_desc
-    obj.has_many :tweet_requests,                order_by_desc
+    obj.has_many :search_reports,         order_by_desc
+    obj.has_many :welcome_messages,       order_by_desc
+    obj.has_many :follow_requests,        order_by_desc
+    obj.has_many :unfollow_requests,      order_by_desc
+    obj.has_many :reset_egotter_requests, order_by_desc
+    obj.has_many :delete_tweets_requests, order_by_desc
+    obj.has_many :reset_cache_requests,   order_by_desc
+    obj.has_many :tweet_requests,         order_by_desc
 
     obj.has_one :notification_setting
     obj.has_one :periodic_report_setting
     obj.has_one :credential_token
     obj.has_many :orders
+    obj.has_many :coupons
     obj.has_many :access_days
   end
 
@@ -71,12 +72,6 @@ class User < ApplicationRecord
   validates_with Validations::EmailValidator
 
   scope :authorized, -> { where(authorized: true) }
-  scope :can_send_dm, -> do
-    includes(:notification_setting)
-        .where('notification_settings.dm = ?', true)
-        .where('last_dm_at IS NULL OR last_dm_at < ?', NotificationSetting::DM_INTERVAL.ago)
-        .references(:notification_settings)
-  end
 
   scope :enough_permission_level, -> do
     includes(:notification_setting)
@@ -187,6 +182,10 @@ class User < ApplicationRecord
         where(deleted_at: nil).size
   end
   alias sharing_count sharing_egotter_count
+
+  def valid_coupons_search_count
+    coupons.where('expires_at > ?', Time.zone.now).sum(:search_count)
+  end
 
   def search_mode
     if following_egotter?

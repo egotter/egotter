@@ -4,8 +4,8 @@ default: &default
     soft_limit: 2000
     hard_limit: 60000
   search_count_limitation:
-    sign_in_bonus: 3
-    sharing_bonus: 2
+    sign_in_bonus: 2
+    sharing_bonus: 1
     anonymous: 2
     basic_plan: 10
   create_follow_limitation:
