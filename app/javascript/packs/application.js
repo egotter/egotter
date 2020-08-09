@@ -35,3 +35,4 @@ import "./audience_insight";
 import "./usage_stat";
 import "./delete_tweets_modal";
 import "./result_pages";
+import "./settings";

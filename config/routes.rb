@@ -134,16 +134,8 @@ Rails.application.routes.draw do
   post 'tokimeki_unfollow/keep', to: 'tokimeki_unfollow#keep', as: :tokimeki_unfollow_keep
 
   resources :settings, only: :index
-  resource :setting, only: :update
-  post 'settings/update_report_interval', to: 'settings#update_report_interval', as: :update_report_interval
   get 'settings/follow_requests', to: "settings#follow_requests"
   get 'settings/unfollow_requests', to: "settings#unfollow_requests"
-
-  namespace :admin do
-    get "settings/:user_id/follow_requests", to: "settings#follow_requests"
-    get "settings/:user_id/unfollow_requests", to: "settings#unfollow_requests"
-    get "settings/:user_id/create_prompt_report_requests", to: "settings#create_prompt_report_requests"
-  end
 
   get 'pricing', to: "pricing#new"
   resources :orders, only: %i(create destroy)

@@ -1,46 +1,12 @@
-<div class="settings">
-  <div class="container my-5"><%= render partial: 'general' %></div>
-  <div class="container my-5"><%= render partial: 'search' %></div>
+<div class="container my-5"><%= render partial: 'general' %></div>
+<div class="container my-5"><%= render partial: 'search' %></div>
 
-  <div class="container my-5">
-    <h2 class="h4 text-center my-5"><i class="far fa-envelope"></i><%= t('.notifications.title') %></h2>
-    <div class="tgl-buttons">
-      <%= render partial: 'periodic_report_setting' %>
-    </div>
+<div class="container my-5">
+  <h2 class="h4 text-center my-5"><i class="far fa-envelope"></i><%= t('.notifications.title') %></h2>
+  <div class="tgl-buttons">
+    <%= render partial: 'periodic_report_setting' %>
   </div>
-
-  <div class="container my-5"><%= render partial: 'data' %></div>
-  <div class="container my-5"><%= render partial: 'order' %></div>
 </div>
 
-<script>
-  $(function () {
-    $('.update-following').on('click', function () {
-      var $clicked = $(this);
-      new Twitter().follow($clicked.data('uid'));
-      return false;
-    });
-
-    (function () {
-      var url = '<%= setting_path %>';
-      attach_event_handler('email', url);
-      attach_event_handler('dm', url);
-      attach_event_handler('news', url);
-      attach_event_handler('search', url);
-      attach_event_handler('report_if_changed', url);
-    })();
-
-    (function () {
-      var url = '<%= update_report_interval_path %>';
-      var defaultValue = <%= NotificationSetting::DEFAULT_REPORT_INTERVAL %>;
-      var message = '<%= t('settings.index.report_interval.confirm') %>';
-      Settings.enableUpdateReportIntervalButton(url, function (value, label) {
-        if (value > defaultValue) {
-          return confirm(message.replace(/_INTERVAL_/, label));
-        } else {
-          return true;
-        }
-      });
-    })();
-  });
-</script>
+<div class="container my-5"><%= render partial: 'data' %></div>
+<div class="container my-5"><%= render partial: 'order' %></div>
