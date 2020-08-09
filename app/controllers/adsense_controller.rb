@@ -3,6 +3,7 @@ class AdsenseController < ApplicationController
 
   layout false
 
+  before_action :reject_crawler
   before_action { self.access_log_disabled = true }
 
   def new
