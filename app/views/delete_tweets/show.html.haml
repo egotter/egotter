@@ -21,6 +21,8 @@
   %b= t('.modal.warning2')
 .text-center.my-1
   %b= t('.modal.warning3')
+.text-center.my-1
+  %b= t('.modal.warning4')
 
 = modal_dialog(id: modal_id, title: t('.modal.title'), button: {positive: t('.modal.ok'), category: 'danger'}) do
   .mb-3= t('.modal.warning1', user: current_user.screen_name)
