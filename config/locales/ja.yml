@@ -2186,7 +2186,7 @@ ja:
       お礼に、検索回数 %{count} 回分を付与しました。
       有効期限：%{time}
 
-      今後ともえごったーのご利用をよろしくお願いいたします。
+      今後ともえごったーのご利用をよろしくお願いいたします。#egotter
   onesignal:
     defaultNotification:
       title: 'えごったー'

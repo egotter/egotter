@@ -24,6 +24,5 @@ namespace :coupons do
         User.egotter.api_client.twitter.create_direct_message(user.uid, I18n.t('dm.add_coupon', count: search_count, time: time))
       end
     end
-
   end
 end
