@@ -17,8 +17,7 @@ module S3
         tweets.map { |t| new(t) }
       end
 
-      def where(uid: nil, screen_name: nil)
-        uid = Bot.api_client.user(screen_name)[:id] unless uid # For debugging
+      def where(uid:)
         obj = client.read(uid)
         obj ? array_from(decode(obj)['tweets']) : []
       rescue Aws::S3::Errors::NoSuchKey => e
@@ -30,8 +29,7 @@ module S3
         client.write(uid, body)
       end
 
-      def delete(uid: nil, screen_name: nil)
-        uid = Bot.api_client.user(screen_name)[:id] unless uid # For debugging
+      def delete(uid:)
         client.delete(uid)
       end
 
