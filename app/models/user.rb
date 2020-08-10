@@ -81,7 +81,11 @@ class User < ApplicationRecord
 
   class << self
     def egotter
-      find_by(uid: User::EGOTTER_UID)
+      find_by(uid: EGOTTER_UID)
+    end
+
+    def admin
+      find_by(uid: ADMIN_UID)
     end
 
     def update_or_create_with_token!(values)
