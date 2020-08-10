@@ -6,6 +6,7 @@
 #  uid         :bigint(8)        not null
 #  screen_name :string(191)      not null
 #  authorized  :boolean          default(TRUE), not null
+#  locked      :boolean          default(FALSE), not null
 #  secret      :string(191)      not null
 #  token       :string(191)      not null
 #  created_at  :datetime         not null
