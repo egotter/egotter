@@ -204,7 +204,7 @@ module Concerns::ValidationConcern
     else
       # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
       set_bypassed_notice_message('too_many_searches')
-      redirect_to profile_path(screen_name: twitter_user.screen_name)
+      redirect_to profile_path(screen_name: twitter_user.screen_name, via: current_via(__method__))
       create_error_log(__method__, message)
     end
 

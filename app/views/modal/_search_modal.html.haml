@@ -13,12 +13,11 @@
     - else
       .text-center= link_to t('.sign_in'), sign_in_path(via: current_via('sign_in_button_on_search_modal')), class: 'btn btn-primary'
 
-  - if SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id) == 0
-    .alert.alert-info
-      - sign_in_url = sign_in_path(via: current_via('too_many_searches_search_modal'))
-      - pricing_url = pricing_path(via: current_via('too_many_searches_search_modal'))
-      - support_url = pricing_path(via: current_via('too_many_searches_search_modal'), anchor: 'enterprise-plan')
-      = search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
+  - unless SearchCountLimitation.count_remaining?(user: current_user, session_id: egotter_visit_id)
+    - sign_in_url = sign_in_path(via: current_via('too_many_searches_search_modal'))
+    - pricing_url = pricing_path(via: current_via('too_many_searches_search_modal'))
+    - support_url = pricing_path(via: current_via('too_many_searches_search_modal'), anchor: 'enterprise-plan')
+    = raw search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
 
   %h2.h4.text-center.my-5= t('.history')
   .twitter.users.row

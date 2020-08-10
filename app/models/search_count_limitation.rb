@@ -39,6 +39,10 @@ class SearchCountLimitation
     end
     alias remaining_count remaining_search_count
 
+    def count_remaining?(user: nil, session_id: nil)
+      remaining_search_count(user: user, session_id: session_id) >= 1
+    end
+
     def where_condition(user: nil, session_id: nil)
       condition =
           if user

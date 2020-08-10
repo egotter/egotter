@@ -504,6 +504,7 @@ ja:
         key: "価格"
         free: "無料（ログインのみ）"
         basic: "300円/月"
+        basic_num: "300"
         enterprice: "ご相談ください"
       price:
         key: ""
@@ -2008,32 +2009,6 @@ ja:
     need_login_html: 'このページを見るためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
-    too_many_searches_html: |
-      現在のプランで検索できる上限に達しました。%{limit}回/日<br>
-      <br>
-      <a class="btn btn-primary" href="%{sign_in_url}">ログインして増やす</a><br>
-      <br>
-      <a class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $(this).hide(); return false;" href="#">詳しく見る</a>
-      <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
-        <br>
-        1. これは何？<br>
-        えごったーで1日に検索できる回数の制限です。<br>
-        <br>
-        2. 次はいつ検索できるの？<br>
-        あと %{reset_in} ほど待てばまた検索できるようになります。<br>
-        <br>
-        3. 検索回数は増やせるの？<br>
-        ログインや「えごったーのシェア」に応じて、下記のように増やせます。<br>
-        <br>
-        <a class="btn btn-primary" href="%{sign_in_url}">ログイン</a>：%{sign_in_bonus}回/日<br>
-        <br>
-        <button class="btn btn-outline-primary" disabled>ツイートして増やす</button>：ツイート回数×%{sharing_bonus}回 ※先にログインが必要です<br>
-        <br>
-        <button class="btn btn-outline-primary" disabled>購入して増やす</button>：最大%{basic_plan}回/日 ※先にログインが必要です <a href="%{pricing_url}" target="_blank">※料金プランはこちら</a><br>
-        <br>
-        4. マーケティングでご利用の方へ<br>
-        ツイッターでの各種データ調査依頼については、<a href="%{support_url}" class="btn btn-outline-primary">問い合わせページ</a> からお問い合わせください。
-      </div>
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。<a href="%{url}">ログイン</a>して検索すると、結果がより正確になります。'
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
@@ -2090,33 +2065,6 @@ ja:
     ad_blocker_detected: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。広告ブロッカーを無効にしてご利用ください。'
     ad_blocker_detected_with_count: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。%{seconds}秒後にトップページへ移動します。'
   after_sign_in:
-    too_many_searches_html: |
-      現在のプランで検索できる上限に達しました。%{limit}回/日<br>
-      <br>
-      <a href="#" class="btn btn-outline-primary btn-checkout">購入して増やす</a>
-      <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary">ツイートして増やす</a><br>
-      <br>
-      <a class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $(this).hide(); return false;" href="#">詳しく見る</a>
-      <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
-        <br>
-        1. これは何？<br>
-        えごったーで1日に検索できる回数の制限です。<br>
-        <br>
-        2. 次はいつ検索できるの？<br>
-        あと %{reset_in} ほど待てばまた検索できるようになります。<br>
-        <br>
-        3. 検索回数は増やせるの？<br>
-        ログインや「えごったーのシェア」に応じて、下記のように増やせます。<br>
-        <br>
-        <button class="btn btn-outline-primary" disabled>ログイン済み</button>：%{sign_in_bonus}回/日<br>
-        <br>
-        <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary">ツイートして増やす</a>：ツイート回数×%{sharing_bonus}回<br>
-        <br>
-        <a href="#" class="btn btn-outline-primary btn-checkout">購入して増やす</a>：最大%{basic_plan}回/日 <a href="%{pricing_url}" target="_blank">※料金プランはこちら</a><br>
-        <br>
-        4. マーケティングでご利用の方へ<br>
-        ツイッターでの各種データ調査依頼については、<a href="%{support_url}" class="btn btn-outline-primary">問い合わせページ</a> からお問い合わせください。
-      </div>
     too_many_requests_with_reset_in: >
       一時的なエラーが起きました。ツイッターAPIが回復するまで %{seconds}秒 ほど待ってください。<br>
       <br>

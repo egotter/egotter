@@ -60,6 +60,9 @@
 <%= render partial: 'q', locals: {text: 'リムられ通知をすぐに受け取ることはできますか？'} %>
 <div class="mb-5">@ego_tter に「リムられ通知 今すぐ送信」とDMしてください。そうすれば、すぐにリムられ通知が届きます。</div>
 
+<%= render partial: 'q', locals: {text: 'リムられ通知に @ が付かなくなりました。理由は何ですか？'} %>
+<div class="mb-5">リムられ通知でユーザー名の前に @ が付くのは、有料プランのユーザーか、「えごったーの登録後1週間以内」のユーザーのみになります。</div>
+
 
 <h3 class="h5 my-5">リムられ通知をDMで操作する</h3>
 
@@ -78,7 +81,6 @@
   「<strong><%= t('quick_replies.prompt_reports.label4') %></strong>」とDMする<br>
   リムられ通知の定期的な送信を再開します。<br>
 </div>
-
 
 <h3 class="h5 my-5">データの正確性</h3>
 

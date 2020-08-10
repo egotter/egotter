@@ -10,7 +10,7 @@ module Concerns::BypassFlashMessagesConcern
         begin
           flash.now[:notice] = bypassed_notice_message
         rescue => e
-          logger.warn "Cannot create bypassed message for #{session[:bypassed_notice_message]}"
+          logger.warn "Cannot create bypassed message for #{session[:bypassed_notice_message]} error=#{e.inspect}"
         ensure
           session.delete(:bypassed_notice_message)
         end
@@ -36,6 +36,7 @@ module Concerns::BypassFlashMessagesConcern
         url = sign_in_path(via: current_via('search_limitation_soft_limited'))
         search_limitation_soft_limited_message('user', url) # The user name can be anything
       elsif session[:bypassed_notice_message] == 'too_many_searches'
+        @without_alert_container = true
         too_many_searches_message
       end
     end
