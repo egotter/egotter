@@ -4,7 +4,7 @@ class CreateTweetsWorker
 
   def perform(keyword)
     tweets = User.admin.api_client.search(keyword, count: 10).take(10)
-    ::Util::TweetsCache.set(keyword, tweets.to_json)
+    SearchedTweets.set(keyword, tweets.to_json)
   rescue => e
     logger.warn "#{self.class}: #{e.class} #{e.message} #{keyword}"
   end
