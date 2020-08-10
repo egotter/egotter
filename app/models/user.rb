@@ -110,6 +110,49 @@ class User < ApplicationRecord
     def find_by_token(token, secret)
       find_by(token: token, secret: secret)
     end
+
+    def authorized_ids(reload = false)
+      cache = ActiveSupport::Cache::RedisCacheStore.new(
+          namespace: "#{Rails.env}:#{__method__}",
+          expires_in: 20.minutes,
+          race_condition_ttl: 3.minutes,
+          redis: Redis.client
+      )
+      key = 'user_ids'
+
+      if !reload && cache.exist?(key)
+        JSON.parse(cache.read(key))
+      else
+        @mutex ||= Mutex.new
+        user_ids = nil
+        @mutex.synchronize {
+          user_ids = authorized.order(created_at: :desc).limit(100).pluck(:id)
+          cache.write('user_ids', user_ids.to_json)
+        }
+        user_ids
+      end
+    rescue => e
+      logger.warn "#{__method__} #{e.inspect} reload=#{reload}"
+      authorized.order(created_at: :desc).limit(100).pluck(:id)
+    end
+
+    def pick_authorized_id(candidate_ids = nil)
+      candidate_ids = authorized_ids if candidate_ids.nil?
+      user = nil
+
+      10.times do
+        begin
+          user = User.find(candidate_ids.sample)
+          user.api_client.verify_credentials
+        rescue => e
+          user = nil
+        else
+          break
+        end
+      end
+
+      user&.id
+    end
   end
 
   def to_param

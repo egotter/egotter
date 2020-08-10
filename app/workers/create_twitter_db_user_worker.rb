@@ -79,9 +79,13 @@ class CreateTwitterDBUserWorker
       @client_id = "user:#{user.id}"
       user.api_client
     else
-      bot = Bot.find(Bot.current_ids.sample)
-      @client_id = "bot:#{bot.id}"
-      bot.api_client
+      if (user_id = User.pick_authorized_id)
+        user = User.find(user_id)
+        @client_id = "anonymous:#{user.id}"
+        user.api_client
+      else
+        raise CredentialsNotFound.new("options=#{options.inspect}")
+      end
     end
   end
 
@@ -95,6 +99,9 @@ class CreateTwitterDBUserWorker
   end
 
   class RetryExhausted < StandardError
+  end
+
+  class CredentialsNotFound < StandardError
   end
 
   class << self

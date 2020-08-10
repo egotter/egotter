@@ -26,17 +26,15 @@ RSpec.describe CreateTwitterDBUserWorker do
 
     context '#fetch_and_import! raises exception' do
       let(:error) { RuntimeError.new }
-      let(:bot) { Bot.new }
       before { allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: client, force_update: 'fu').and_raise(error) }
 
       context 'the exception is retryable' do
         before do
           allow(worker).to receive(:exception_handler).with(error, options)
-          allow(Bot).to receive(:find).with(anything).and_return(bot)
         end
         it do
-          expect(bot).to receive(:api_client).and_return('bot_client')
-          allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: 'bot_client', force_update: 'fu')
+          expect(worker).to receive(:pick_client).with({}).and_return('client')
+          allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: 'client', force_update: 'fu')
           subject
         end
       end
@@ -44,7 +42,7 @@ RSpec.describe CreateTwitterDBUserWorker do
       context 'the exception is not retryable' do
         before { allow(worker).to receive(:exception_handler).with(error, options).and_raise(error) }
         it do
-          expect(Bot).not_to receive(:find)
+          expect(worker).not_to receive(:pick_client)
           expect { subject }.to raise_error(error)
         end
       end
@@ -98,15 +96,16 @@ RSpec.describe CreateTwitterDBUserWorker do
 
   describe '#pick_client' do
     let(:options) { {'user_id' => user_id} }
-    let(:bot) { Bot.new }
+    let(:user) { create(:user) }
     subject { worker.send(:pick_client, options) }
 
     shared_examples 'it returns bot client' do
       before do
-        allow(Bot).to receive(:find).with(anything).and_return(bot)
+        allow(User).to receive(:pick_authorized_id).and_return(user.id)
+        allow(User).to receive(:find).with(user.id).and_return(user)
       end
       it do
-        expect(bot).to receive(:api_client).and_return('result')
+        expect(user).to receive(:api_client).and_return('result')
         is_expected.to eq('result')
       end
     end
