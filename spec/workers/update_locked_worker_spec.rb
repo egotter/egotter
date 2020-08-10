@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UpdateAuthorizedWorker do
+RSpec.describe UpdateLockedWorker do
   let(:worker) { described_class.new }
 
   describe '#unique_key' do
@@ -38,7 +38,7 @@ RSpec.describe UpdateAuthorizedWorker do
     subject { worker.perform(user.id) }
     before { allow(User).to receive(:find).with(user.id).and_return(user) }
     it do
-      expect(user).to receive_message_chain(:api_client, :verify_credentials).and_return(screen_name: 'sn')
+      expect(user).to receive_message_chain(:api_client, :users)
       subject
     end
   end

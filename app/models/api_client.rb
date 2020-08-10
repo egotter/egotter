@@ -24,6 +24,7 @@ class ApiClient
     end
   rescue => e
     update_authorization_status(e)
+    update_lock_status(e)
     create_not_found_user(e, method, *args)
     create_forbidden_user(e, method, *args)
     raise
@@ -33,6 +34,14 @@ class ApiClient
     if AccountStatus.unauthorized?(e)
       if (user = User.select(:id).find_by_token(@client.access_token, @client.access_token_secret))
         UpdateAuthorizedWorker.perform_async(user.id)
+      end
+    end
+  end
+
+  def update_lock_status(e)
+    if AccountStatus.temporarily_locked?(e)
+      if (user = User.select(:id).find_by_token(@client.access_token, @client.access_token_secret))
+        UpdateLockedWorker.perform_async(user.id)
       end
     end
   end
@@ -93,6 +102,7 @@ class ApiClient
       end
     rescue => e
       @api_client.update_authorization_status(e)
+      @api_client.update_lock_status(e)
       raise
     end
   end

@@ -40,6 +40,7 @@ RSpec.describe ApiClient, type: :model do
       before { allow(client).to receive(:respond_to?).with(:user).and_raise(error) }
       it do
         expect(instance).to receive(:update_authorization_status).with(error)
+        expect(instance).to receive(:update_lock_status).with(error)
         expect(instance).to receive(:create_not_found_user).with(error, :user, 1)
         expect(instance).to receive(:create_forbidden_user).with(error, :user, 1)
         expect { subject }.to raise_error(error) # Or NoMethodError
@@ -61,6 +62,25 @@ RSpec.describe ApiClient, type: :model do
       end
       it do
         expect(UpdateAuthorizedWorker).to receive(:perform_async).with(user.id)
+        subject
+      end
+    end
+  end
+
+  describe '#update_lock_status' do
+    let(:error) { RuntimeError.new('error') }
+    subject { instance.update_lock_status(error) }
+
+    context 'user is locked' do
+      let(:client) { double('client', access_token: 'at', access_token_secret: 'ats') }
+      let(:user) { create(:user) }
+      before do
+        allow(AccountStatus).to receive(:temporarily_locked?).with(error).and_return(true)
+        allow(User).to receive_message_chain(:select, :find_by_token).
+            with(:id).with(client.access_token, client.access_token_secret).and_return(user)
+      end
+      it do
+        expect(UpdateLockedWorker).to receive(:perform_async).with(user.id)
         subject
       end
     end
@@ -150,6 +170,7 @@ RSpec.describe ApiClient::TwitterWrapper, type: :model do
       before { allow(twitter).to receive(:user).with(1).and_raise('error') }
       it do
         expect(api_client).to receive(:update_authorization_status).with(anything)
+        expect(api_client).to receive(:update_lock_status).with(anything)
         expect { subject }.to raise_error('error')
       end
     end

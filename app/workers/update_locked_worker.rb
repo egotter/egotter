@@ -1,4 +1,4 @@
-class UpdateAuthorizedWorker
+class UpdateLockedWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
@@ -19,7 +19,7 @@ class UpdateAuthorizedWorker
   end
 
   def after_timeout(*args)
-    UpdateAuthorizedWorker.perform_in(retry_in, *args)
+    UpdateLockedWorker.perform_in(retry_in, *args)
   end
 
   def retry_in
@@ -29,13 +29,10 @@ class UpdateAuthorizedWorker
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
-    t_user = user.api_client.verify_credentials
-
-    user.screen_name = t_user[:screen_name]
-    user.save! if user.changed?
+    user.api_client.users([user.id])
   rescue => e
-    if AccountStatus.unauthorized?(e)
-      user.update!(authorized: false)
+    if AccountStatus.temporarily_locked?(e)
+      user.update!(locked: true)
     elsif AccountStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.too_many_requests?(e)
       # Do nothing
     else
