@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe SearchCountLimitation, type: :model do
   context 'Constants' do
     it do
-      expect(described_class::SIGN_IN_BONUS).to eq(3)
-      expect(described_class::SHARING_BONUS).to eq(2)
+      expect(described_class::SIGN_IN_BONUS).to eq(2)
+      expect(described_class::SHARING_BONUS).to eq(1)
       expect(described_class::ANONYMOUS).to eq(2)
       expect(described_class::BASIC_PLAN).to eq(10)
     end
@@ -16,27 +16,31 @@ RSpec.describe SearchCountLimitation, type: :model do
     context 'User is passed' do
       let(:user) { instance_double(User) }
 
+      before do
+        allow(user).to receive(:valid_coupons_search_count).and_return(0)
+      end
+
       context 'user#has_valid_subscription? == false' do
         before do
-          allow(user).to receive(:has_valid_subscription?).with(no_args).and_return(false)
-          allow(user).to receive(:sharing_count).with(no_args).and_return(0)
+          allow(user).to receive(:has_valid_subscription?).and_return(false)
+          allow(user).to receive(:sharing_count).and_return(0)
         end
         it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS) }
       end
 
       context 'user#has_valid_subscription? == true' do
         before do
-          allow(user).to receive(:has_valid_subscription?).with(no_args).and_return(true)
-          allow(user).to receive(:purchased_search_count).with(no_args).and_return(100)
-          allow(user).to receive(:sharing_count).with(no_args).and_return(0)
+          allow(user).to receive(:has_valid_subscription?).and_return(true)
+          allow(user).to receive(:purchased_search_count).and_return(100)
+          allow(user).to receive(:sharing_count).and_return(0)
         end
         it { is_expected.to eq(100) }
       end
 
       context 'user#sharing_count == 2' do
         before do
-          allow(user).to receive(:has_valid_subscription?).with(no_args).and_return(false)
-          allow(user).to receive(:sharing_count).with(no_args).and_return(2)
+          allow(user).to receive(:has_valid_subscription?).and_return(false)
+          allow(user).to receive(:sharing_count).and_return(2)
           allow(described_class).to receive(:current_sharing_bonus).with(user).and_return(99)
         end
         it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS + 2 * 99) }

@@ -6,8 +6,8 @@ RSpec.describe Concerns::TwitterDB::User::Associations do
     subject { TwitterDB::User.where_and_order_by_field(uids: uids) }
 
     it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1..1000).to_a, nil).and_return(['result1'])
-      expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1001..1200).to_a, nil).and_return(['result2'])
+      expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1..1000).to_a, nil, anything).and_return(['result1'])
+      expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1001..1200).to_a, nil, anything).and_return(['result2'])
       is_expected.to eq(['result1', 'result2'])
     end
   end
@@ -34,8 +34,8 @@ RSpec.describe Concerns::TwitterDB::User::Associations do
     let(:uids) { (1..120).to_a }
     subject { TwitterDB::User.enqueue_update_job(uids) }
     it do
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..100).to_a, enqueued_by: 'where_and_order_by_field')
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((101..120).to_a, enqueued_by: 'where_and_order_by_field')
+      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..100).to_a, enqueued_by: an_instance_of(String))
+      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((101..120).to_a, enqueued_by: an_instance_of(String))
       subject
     end
   end
