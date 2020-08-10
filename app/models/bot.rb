@@ -23,7 +23,7 @@ class Bot < ApplicationRecord
 
   class << self
     def current_ids
-      where(authorized: true).pluck(:id)
+      where(authorized: true, locked: false).pluck(:id)
     end
 
     def api_client
@@ -40,6 +40,7 @@ class Bot < ApplicationRecord
       verify_credentials.each do |cred|
         bot = find(cred[:id])
         bot.authorized = cred[:authorized]
+        bot.locked = cred[:locked]
         if bot.changed?
           bot.save!
 
@@ -58,11 +59,14 @@ class Bot < ApplicationRecord
 
         begin
           bot.api_client.verify_credentials
+          bot.api_client.users([bot.id])
         rescue => e
           if AccountStatus.unauthorized?(e)
             authorized = false
           elsif AccountStatus.temporarily_locked?(e)
             locked = true
+          elsif AccountStatus.no_user_matches?(e)
+            # Do nothing
           else
             raise
           end
