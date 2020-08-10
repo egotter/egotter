@@ -3,7 +3,7 @@ module SearchCountLimitationHelper
   def search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
     options = {
         user_signed_in: user_signed_in?,
-        user: current_user.screen_name,
+        user: current_user&.screen_name,
         limit: SearchCountLimitation.max_search_count(current_user),
         sign_in_bonus: SearchCountLimitation::SIGN_IN_BONUS,
         sharing_bonus: SearchCountLimitation.current_sharing_bonus(current_user),
