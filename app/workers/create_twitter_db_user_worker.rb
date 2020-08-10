@@ -33,7 +33,7 @@ class CreateTwitterDBUserWorker
   rescue => e
     # Errno::EEXIST File exists @ dir_s_mkdir
     # Errno::ENOENT No such file or directory @ rb_sysopen
-    logger.warn DebugMessage.new(e, uids, options)
+    logger.warn DebugMessage.new(e, uids, @client_id, options)
     notify_airbrake(e)
   end
 
@@ -43,13 +43,13 @@ class CreateTwitterDBUserWorker
     TwitterDB::User::Batch.fetch_and_import!(uids, client: client, force_update: options['force_update'])
   rescue => e
     exception_handler(e, options)
-    client = Bot.api_client
+    client = pick_client({})
     retry
   end
 
   def exception_handler(e, options)
     if log_error?(e)
-      logger.warn "Retry with a bot client #{DebugMessage.new(e, nil, options)}"
+      logger.warn "Retry with a bot client #{DebugMessage.new(e, nil, @client_id, options)}"
     end
 
     @retries ||= 2
@@ -57,7 +57,7 @@ class CreateTwitterDBUserWorker
     if meet_requirements_for_retrying?(e) && @retries > 0
       @retries -= 1
     else
-      raise RetryExhausted.new(DebugMessage.new(e, nil, options))
+      raise RetryExhausted.new(DebugMessage.new(e, nil, @client_id, options))
     end
   end
 
@@ -76,18 +76,21 @@ class CreateTwitterDBUserWorker
 
   def pick_client(options)
     if options['user_id'] && options['user_id'] != -1 && (user = User.find_by(id: options['user_id'])) && user.authorized?
+      @client_id = "user:#{user.id}"
       user.api_client
     else
-      Bot.api_client
+      bot = Bot.find(Bot.current_ids.sample)
+      @client_id = "bot:#{bot.id}"
+      bot.api_client
     end
   end
 
   class DebugMessage < String
-    def initialize(e, uids, options)
+    def initialize(e, uids, client_id, options)
       e = e.inspect.truncate(150)
       uids = uids.inspect.truncate(150)
       options = options.inspect
-      super("#{e} uids=#{uids} options=#{options}")
+      super("#{e} client_id=#{client_id} uids=#{uids} options=#{options}")
     end
   end
 
