@@ -1495,6 +1495,7 @@ ActiveRecord::Schema.define(version: 2020_08_09_015645) do
     t.bigint "uid", null: false
     t.string "screen_name", null: false
     t.boolean "authorized", default: true, null: false
+    t.boolean "locked", default: false, null: false
     t.string "token", null: false
     t.string "secret", null: false
     t.string "email", default: "", null: false
