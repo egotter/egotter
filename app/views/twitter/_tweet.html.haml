@@ -1,13 +1,13 @@
 - user = TwitterUserDecorator.new(tweet.user)
 .card.mb-3
   .row.no-gutters
-    .col-auto
+    .col-auto.p-1
       = link_to timeline_path(user, via: current_via('icon')) do
-        = image_tag bigger_icon_url(user), class: 'rounded', style: 'max-width: 90px; width: 100%;', alt: user.screen_name
+        = image_tag bigger_icon_url(user), class: 'rounded-circle', style: 'max-width: 50px; width: 100%;', alt: user.screen_name
     .col
       .card-body
-        %h5.card-title.small
+        %h6.card-title.small
           = link_to user.screen_name, timeline_path(user, via: current_via('screen_name'))
           = user.name_with_icon
           = tweet_link(tweet)
-        %p.card-text.small= linkify(tweet.text)
+        .card-text.small= linkify(tweet.text)

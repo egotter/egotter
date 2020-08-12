@@ -1694,7 +1694,7 @@ ja:
       check_001: "パスワード不要"
       check_002: "ワンクリック登録"
       check_003: "気になるあの人を検索"
-      check_004_html: '現在<span class="search-count"></span>人が利用中'
+      check_004_html: '今日<span class="search-count"></span>人が利用中'
       check_005: "フォロワーの増減"
       check_006: "人気ランキング分析"
       or: " または "
@@ -1702,8 +1702,12 @@ ja:
       text003_html: '<span class="egotter-pink">350万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
     review_section:
       title: 'レビュー'
-      description_html: >
+      description_top_html: |
         これまでに<span class="egotter-pink">350万回</span>以上利用されたえごったーは、毎日たくさんの人にツイートされています。
+      description_bottom_html: |
+        えごったーはたくさんの人に利用されている安心のツールです。使い始めてからデータが貯まるので、<span class="egotter-pink">早く使うほどお得</span>です。
+      check1: '安心の実績'
+      check2: '満足率95%'
     announcement:
       title: "お知らせ"
     sign_in_button_at_bottom:

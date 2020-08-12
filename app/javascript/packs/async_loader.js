@@ -6,8 +6,12 @@ class AsyncLoader {
 
   load() {
     var selector = this.selector;
-    $.getJSON(this.url, function (data) {
+    var url = this.url;
+
+    $.get(url).done(function (data) {
       $(selector).html(data.html);
+    }).fail(function (xhr) {
+      console.warn(url, xhr.responseText);
     });
   }
 
@@ -15,12 +19,16 @@ class AsyncLoader {
     var url = this.url;
     var selector = this.selector;
     var $wrapper = $(this.selector);
+
     $wrapper
         .lazyload()
         .one('appear', function () {
           console.log('appear', selector);
-          $.getJSON(url, function (data) {
+
+          $.get(url).done(function (data) {
             $wrapper.html(data.html);
+          }).fail(function (xhr) {
+            console.warn(url, xhr.responseText);
           });
         });
   }
