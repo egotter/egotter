@@ -1703,9 +1703,11 @@ ja:
     review_section:
       title: 'レビュー'
       description_top_html: |
-        これまでに<span class="egotter-pink">350万回</span>以上利用されたえごったーは、毎日たくさんの人にツイートされています。
+        えごったーはこれまでに<span class="egotter-pink">350万回</span>以上利用されてきました。
+        たくさんの人がえごったーは便利だとツイートしています。
       description_bottom_html: |
-        えごったーはたくさんの人に利用されている安心のツールです。使い始めてからデータが貯まるので、<span class="egotter-pink">早く使うほどお得</span>です。
+        えごったーはたくさんの人に利用されている安心のツールです。
+        使い始めてからデータが貯まるので、<span class="egotter-pink">早く使うほどお得</span>です。
       check1: '安心の実績'
       check2: '満足率95%'
     announcement:

@@ -11,7 +11,7 @@
 <div class="summary-on-timeline">
   <div class="list-group">
     <% items.each do |name, url, title| %>
-      <%= link_to url, class: 'list-group-item' do %>
+      <%= link_to "#feed-#{name}", class: 'list-group-item' do %>
         <div class="d-flex justify-content-between align-items-center">
           <div><%= title %></div>
           <div>
