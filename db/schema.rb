@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_09_015645) do
+ActiveRecord::Schema.define(version: 2020_08_12_110427) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -571,6 +571,15 @@ ActiveRecord::Schema.define(version: 2020_08_09_015645) do
     t.integer "value"
     t.datetime "time"
     t.index ["time"], name: "index_gauges_on_time"
+  end
+
+  create_table "global_messages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.text "text", null: false
+    t.datetime "expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_global_messages_on_created_at"
+    t.index ["expires_at"], name: "index_global_messages_on_expires_at"
   end
 
   create_table "import_twitter_user_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
