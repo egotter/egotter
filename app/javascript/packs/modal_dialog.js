@@ -27,7 +27,7 @@ class SearchModal {
     });
 
     $modal.on('shown.bs.modal', function (e) {
-      $(e.target).find('input').focus();
+      $(e.target).find('input');
     });
   }
 }
