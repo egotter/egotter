@@ -1965,11 +1965,16 @@ ja:
         ok: "DM作成ページを開く"
     search_modal:
       title: 'えごったーで検索'
-      remaining_count_html: '残りの検索回数は %{count} 回です。'
+      remaining_count: '残りの検索回数 %{count} 回'
+      increase_count: '回数を増やす'
+      use_secretly: 'こっそり使いたい人向け'
+      use_a_little: '少しだけ使いたい人向け'
+      see_details: 'もっと詳しく'
+      settings: '設定ページ'
       sign_in: 'ログインして検索回数を増やす'
-      tweet: 'ツイートして増やす'
-      purchase: '購入して増やす'
-      pricing: '料金プラン'
+      purchase: '%{price}円で購入して増やす'
+      tweet: '1回だけツイートして増やす'
+      purchased: '購入済み'
       history: "検索履歴"
     redirection_modal:
       'yes': 'はい'

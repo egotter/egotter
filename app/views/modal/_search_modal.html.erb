@@ -1,0 +1,39 @@
+<%= modal_dialog id: 'search-modal', title: t('.title'), data: {url: search_histories_path}, size: 'modal-lg' do %>
+  <%= render partial: 'shared/search_form', locals: {via: current_via('search_modal_input')} %>
+  <div class="mt-1 mb-3 small">
+    <%= t('.remaining_count', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id)) %>
+    <a href="#" class="btn btn-outline-primary btn-sm" onclick="$('#increase-search-count').show(); $(this).hide(); return false;"><%= t('.increase_count') %> <i class="far fa-question-circle"></i></a>
+  </div>
+
+  <div id="increase-search-count" class="mb-3" style="display: none;">
+    <% if user_signed_in? %>
+      <% if current_user.has_valid_subscription? %>
+        <%= link_to current_user.purchased_plan_name, '#', class: 'btn btn-outline-primary btn-sm disabled' %>
+        <div class="mt-1 mb-3 text-muted"><%= t('.purchased') %> <span class="small"><a href="<%= settings_path(current_via('search_modal')) %>" class=""><%= t('.settings') %></a></span></div>
+      <% else %>
+        <div><a href="#" class="btn btn-outline-primary btn-checkout btn-sm"><%= t('.purchase', price: t('pricing.new.pricing.basic_num')) %></a></div>
+        <div class="mt-1 mb-3"><%= t('.use_secretly') %> <span class="small"><a href="#" class="btn-checkout"><%= t('.see_details') %></a></span></div>
+      <% end %>
+      <div><a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm"><%= t('.tweet') %></a></div>
+      <div class="mt-1 mb-3"><%= t('.use_a_little') %> <span class="small"><a href="#" data-target="#share-modal" data-toggle="modal"><%= t('.see_details') %></a></span></div>
+    <% else %>
+      <%= link_to t('.sign_in'), sign_in_path(via: current_via('search_modal')), class: 'btn btn-primary btn-sm' %>
+    <% end %>
+  </div>
+
+  <% unless SearchCountLimitation.count_remaining?(user: current_user, session_id: egotter_visit_id) %>
+    <% sign_in_url = sign_in_path(via: current_via('too_many_searches_search_modal')) %>
+    <% pricing_url = pricing_path(via: current_via('too_many_searches_search_modal')) %>
+    <% support_url = pricing_path(via: current_via('too_many_searches_search_modal'), anchor: 'enterprise-plan') %>
+    <%= raw too_many_searches_message_on_search_modal(sign_in_url, pricing_url, support_url)  %>
+  <% end %>
+
+  <h2 class="h4 text-center my-5"><%= t('.history') %></h2>
+  <div class="twitter users row"></div>
+<% end %>
+
+<script>
+  $(function () {
+    new SearchModal('search-modal');
+  });
+</script>
