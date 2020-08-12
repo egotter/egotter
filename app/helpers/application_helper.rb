@@ -19,6 +19,10 @@ module ApplicationHelper
     controller_name == 'waiting'
   end
 
+  def start_page?
+    controller_name == 'home' && action_name == 'start'
+  end
+
   def show_header?
     !top_page?
   end
@@ -36,9 +40,8 @@ module ApplicationHelper
   end
 
   def wrap_in_container?
-    start = controller_name == 'home' && action_name == 'start'
     settings = controller_name == 'settings' && action_name == 'index'
-    !@has_error && !top_page? && !start && !waiting_page? && !settings
+    !@has_error && !top_page? && !waiting_page? && !settings
   end
 
   def show_common_friends?(twitter_user)

@@ -255,8 +255,8 @@ module ViewVariablesHelper
     end
   end
 
-  def current_breadcrumb(twitter_user)
-    breadcrumb controller_name.singularize.to_sym, twitter_user.screen_name
+  def current_breadcrumb(user)
+    breadcrumb controller_name.singularize.to_sym, user.screen_name
   end
 
   def current_canonical_url(twitter_user)

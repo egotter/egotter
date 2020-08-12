@@ -24,13 +24,20 @@
     = link_to '#', class: "btn #{SearchCountLimitation.count_remaining?(user: current_user, session_id: egotter_visit_id) ? 'btn-outline-primary' : 'btn-outline-warning'}", 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
       %i.fas.fa-search.pr-1
       = t('.search_by_twitter_id')
-  %li.d-none.d-md-block
-    = link_to t('.pricing'), pricing_path(via: via), class: 'text-white pl-3'
-  %li.d-none.d-md-block
-    = link_to t('.notification'), start_path(anchor: 'notification', via: via), class: 'text-white pl-3'
+  %li.d-none.d-md-block.text-white
+    %i.far.fa-question-circle.pl-3
+    = link_to t('.start'), start_path(via: via), class: 'text-white'
+  %li.d-none.d-md-block.text-white
+    %i.fas.fa-yen-sign.pl-3
+    = link_to t('.pricing'), pricing_path(via: via), class: 'text-white'
+  %li.d-none.d-md-block.text-white
+    %i.far.fa-envelope.pl-3
+    = link_to t('.notification'), direct_messages_url('ego_tter'), class: 'text-white', target: '_blank'
   %li.d-none.d-md-block
     - if user_signed_in?
-      = link_to mention_name(current_user.screen_name), settings_path(via: via), class: 'text-white pl-3'
+      = link_to settings_path(via: via), class: 'text-white' do
+        %i.fas.fa-cog.pl-3
+        = current_user.screen_name
     - else
       = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path), class: 'text-white pl-3'
 

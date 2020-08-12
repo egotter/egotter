@@ -9,6 +9,10 @@ module TwitterHelper
     "https://twitter.com/messages/compose?recipient_id=#{uid}"
   end
 
+  def direct_messages_url(screen_name)
+    "https://twitter.com/direct_messages/create/#{screen_name}"
+  end
+
   def follow_intent_url(screen_name)
     "https://twitter.com/intent/follow?screen_name=#{screen_name}"
   end

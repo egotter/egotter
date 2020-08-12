@@ -10,6 +10,7 @@ ja:
       title: 'えごったー'
       sign_in: 'ログイン'
       search_by_twitter_id: "@TwitterID で検索"
+      start: '使い方'
       pricing: '料金プラン'
       notification: 'リムられ通知'
     meta_tags:
@@ -23,6 +24,7 @@ ja:
       sign_in: 'ログイン'
       config: '設定'
       search: '検索する'
+      start: '使い方'
       pricing: '料金プラン'
       notification: 'リムられ通知'
       sign_out: 'ログアウト'
@@ -114,31 +116,45 @@ ja:
           <br>
           設定ページは <a href="%{url}">こちら</a>
     start:
-      crumb_title: "@%{user}さん えごったーへようこそ！"
-      page_title: "@%{user}さん えごったーへようこそ！"
+      crumb_title: "えごったーの使い方"
+      page_title: "えごったーの使い方"
       meta_description: "@%{user}さん えごったーへようこそ！"
-      start_by: '@%{user} で始める'
-      message1_html: 'えごったーは、ツイッターのデータを分析することで、<span class="egotter-pink">仲良しランキング</span>、<span class="egotter-pink">リムられ（フォロー解除）</span>、入っているクラスタなどを分析していきます。'
-      message2: 'それでは、さっそく初めてみましょう。'
-      notification:
-        title: 'リムられ通知はDMで届きます'
-        message_html: '<span class="egotter-pink">リムられ通知</span>は、<span class="egotter-pink">DM</span>で届きます。@ego_tter からのDMが届くように、忘れずに設定しておいてください。'
-        button1: 'リムられ通知を見る'
-        button2: 'DMの設定を確認する'
-      revive_notification:
-        title: 'リムられ通知を復活させる'
-        message_html: |
-          <span class="egotter-pink">リムられ通知</span>は、一定期間アクセスがないと<span class="egotter-pink">止まります</span>。
-          止まってしまったリムられ通知を復活させるには、下記の3つの手順を行ってください。
-        step1_html: '1. @ego_tter に「リムられ通知 復活」と書いたDMを送信する <a href="https://twitter.com/messages/%{uid}-187385226?text=リムられ通知 復活" target="_blank">DM作成画面を開く</a>'
-        step2_html: '2. @ego_tter をフォローする <a href="https://twitter.com/ego_tter" target="_blank">@ego_tterのページを開く</a>'
-        step3_html: '3. えごったーWebで @%{user} を検索する <a href="%{url}" target="_blank">@%{user}を検索する</a>'
-        button: 'DM作成画面を開く'
-      question:
-        title: '質問はお気軽に'
-        message1_html: '何か<span class="egotter-pink">分からないこと</span>がありますか？'
-        message2_html: 'そんなときは、公式アカウント <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご質問ください。'
-        button: '@ego_tter に質問する'
+      desc1_html: 'このページでは、えごったーの使い方を説明しています。えごったーには、リムられ通知や仲良し分析などたくさんの機能があります。<br><br>自分に合った機能を見付けて、えごったーを便利に活用しましょう。'
+      q1: 'リムられ通知はどうやって見ればいいですか？'
+      q2: 'リムられ通知をすぐに受け取るにはどうすればいいですか？'
+      q3: '仲良し分析を見るにはどうすればいいですか？'
+      q4: '片思いフォローや他の分析を見るにはどうすればいいですか？'
+      q5: '分からないことは誰に質問すればいいですか？'
+      a1_html: |
+        リムられ通知はえごったーでもっとも人気な機能の1つです。リムられ通知は @ego_tter からDMで届きます。
+        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">リムられ通知DMを見る</a>
+      a1_anonymous_html: |
+        リムられ通知はえごったーでもっとも人気な機能の1つです。リムられ通知は @ego_tter からDMで届きます。えごったーにログインすればリムられ通知は設定完了です。
+        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">ログインして通知を受け取る</a>
+      a2_html: |
+        @ego_tter に「リムられ通知 今すぐ送信」とDMすることで、リムられ通知をすぐに受け取ることができます。
+        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">リムられ通知をすぐに受け取る</a>
+      a2_anonymous_html: |
+        @ego_tter に「リムられ通知 今すぐ送信」とDMすることで、リムられ通知をすぐに受け取ることができます。まずはえごったーにログインしてください。
+        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">ログインして通知を受け取る</a>
+      a3_html: |
+        仲良し分析では、@%{user} がいいね した/された ツイートから仲良しのユーザーを見付けます。
+        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">@%{user} の仲良し分析を見る</a>
+      a3_anonymous_html: |
+        仲良し分析では、いいね した/された ツイートから仲良しのユーザーを見付けます。
+        ログインして分析結果を見てみましょう。<a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">仲良し分析を見る</a>
+      a4_html: |
+        えごったーでは、@%{user} の片思いフォローやクラスタ分析など、たくさんの分析結果を見ることができます。
+        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">@%{user} の分析一覧を見る</a>
+      a4_anonymous_html: |
+        えごったーでは、片思いフォローやクラスタ分析など、たくさんの分析結果を見ることができます。
+        ログインして分析結果を見てみましょう。<a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">ログインして分析する</a>
+      a5_html: |
+        公式アカウントは <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> です。分からないことは何でもご質問ください。
+        <a href="https://twitter.com/ego_tter" target="_blank" class="btn btn-outline-primary btn-sm">@ego_tter をツイッターで見る</a><br>
+        <br>
+        よるある質問はこちらにまとまっています。
+        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">よくある質問を見る</a>
   timelines:
     show:
       navbar_title: '@%{user} の分析'
@@ -571,60 +587,8 @@ ja:
       signed_in: "既にログイン済みです。"
     after_sign_up:
       sign_up: 'サインアップ中'
-      success_html: |
-        ツイッターログインしました。リム通知は【%{status}】になっています。
-        この設定は <a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">設定ページ</a> から変更できます。<br>
-        <br>
-        1. これは何？<br>
-        えごったーに初めてログインしました。一緒に、リム通知の初期設定が完了しました。<br>
-        <a class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $(this).hide(); return false;" href="#">続きを見る</a>
-        <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
-          <br>
-          2. えごったーって何？<br>
-          これまでに<span class="egotter-pink">350万回</span>以上利用されたツイッター分析アプリです。
-          仲良しランキング、片思いチェック、リムられチェックなどの機能があります。<br>
-          <br>
-          3. リム通知って何？<br>
-          誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。えごったーにログインしていれば設定は完了しています。<br>
-          <br>
-          4. 次に何をすればよい？<br>
-          分析機能はいつでも使えます。リム通知は次の更新のタイミングで自動で届きます。<br>
-          <br>
-          5. リム通知が届かない？<br>
-          えごったーに初めてログインしてから数分以内に、@ego_tter からDMが届きましたか？ もし届いていないなら、DMが届くように設定してください。
-          リム通知はDMで届くため、<span class="egotter-pink">リム通知が必要であればこの設定は必須</span>です。<br>
-          <br>
-          6. 公式アカウントはある？<br>
-          @ego_tter が公式アカウントです。分からないことや気になることは、<a href="https://twitter.com/ego_tter" class="btn btn-outline-primary" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
-        </div>
     after_sign_in:
       sign_in: 'ログイン中'
-      success_html: |
-        ツイッターログインしました。リム通知は【%{status}】になっています。
-        この設定は <a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">設定ページ</a> から変更できます。<br>
-        <br>
-        1. これは何？<br>
-        えごったーにログインしました。リム通知は以前の設定を引き継いでいます。<br>
-        <a class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $(this).hide(); return false;" href="#">続きを見る</a>
-        <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
-          <br>
-          2. えごったーって何？<br>
-          これまでに<span class="egotter-pink">350万回</span>以上利用されたツイッター分析アプリです。
-          仲良しランキング、片思いチェック、リムられチェックなどの機能があります。<br>
-          <br>
-          3. リム通知って何？<br>
-          誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。えごったーにログインしていれば設定は完了しています。<br>
-          <br>
-          4. 次に何をすればよい？<br>
-          分析機能はいつでも使えます。リム通知は次の更新のタイミングで自動で届きます。<br>
-          <br>
-          5. リム通知が届かない？<br>
-          えごったーに初めてログインしてから数分以内に、@ego_tter からDMが届きましたか？ もし届いていないなら、DMが届くように設定してください。
-          リム通知はDMで届くため、<span class="egotter-pink">リム通知が必要であればこの設定は必須</span>です。<br>
-          <br>
-          6. 公式アカウントはある？<br>
-          @ego_tter が公式アカウントです。分からないことや気になることは、<a href="https://twitter.com/ego_tter" class="btn btn-outline-primary" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
-        </div>
   twitter:
     user:
       search: "検索する"

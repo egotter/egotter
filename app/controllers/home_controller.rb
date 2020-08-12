@@ -1,8 +1,6 @@
 class HomeController < ApplicationController
   include Concerns::JobQueueingConcern
 
-  before_action :require_login!, only: :start
-
   def new
     enqueue_update_authorized
     set_flash_message

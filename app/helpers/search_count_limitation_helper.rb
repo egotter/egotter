@@ -1,6 +1,6 @@
 module SearchCountLimitationHelper
 
-  def search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
+  def too_many_searches_message_on_search_modal(sign_in_url, pricing_url, support_url)
     options = {
         user_signed_in: user_signed_in?,
         user: current_user&.screen_name,

@@ -3,7 +3,7 @@ crumb :root do
 end
 
 crumb :start do |screen_name|
-  link t('home.start.crumb_title', user: screen_name), profile_path(screen_name: screen_name, via: current_via("breadcrumb_start"))
+  link t('home.start.crumb_title'), start_path(via: current_via("breadcrumb_start"))
   parent :root
 end
 

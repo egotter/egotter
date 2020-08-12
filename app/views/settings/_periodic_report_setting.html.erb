@@ -4,7 +4,7 @@
 
 <hr>
 
-<% url = sign_in_path(force_login: true, via: current_via('update_authorized_for_dm'), redirect_path: start_path(anchor: 'revive-notification', via: current_via('update_authorized_for_dm'))) %>
+<% url = sign_in_path(force_login: true, via: current_via('update_authorized_for_dm'), redirect_path: start_path(via: current_via('update_authorized_for_dm'))) %>
 <%= link_to t('.not_coming.button'), url, class: 'btn btn-primary' %>
 <span class="text-muted"><%= t('.not_coming.note_html') %></span>
 

@@ -1,0 +1,51 @@
+<div class="card">
+  <div class="card-body">
+    <div class="mb-4">
+      <% if user_signed_in %>
+        えごったーに @<%= user.screen_name %> としてログイン中です。<a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の分析を見る</a><br>
+        <br>
+        <% if StopPeriodicReportRequest.exists?(user_id: user.id) %>
+          リムられ通知は<span class="egotter-pink"> 停止中 </span>です。再開するには「<span class="egotter-pink">リムられ通知 再開</span>」と @ego_tter にDMしてください。<a href="#" class="small" target="_blank">DM作成画面を開く</a>
+        <% else %>
+          リムられ通知はDMで<span class="egotter-pink"> 配信中 </span>です。<a href="https://twitter.com/direct_messages/create/<%= user.screen_name %>" class="btn btn-outline-primary btn-sm" target="_blank">リムられ通知DMを見る</a>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="text-right">
+      <a class="btn btn-outline-primary btn-sm" onclick="$('#current-periodic-report-details-<%= id_hash %>').show(); $(this).hide(); return false;" href="#">詳しく見る
+        <i class="far fa-question-circle"></i></a>
+    </div>
+
+    <div id="current-periodic-report-details-<%= id_hash %>" style="display: none;">
+      <hr>
+      <div>1. えごったーとは何ですか？</div>
+      <div class="mb-4">これまでに<span class="egotter-pink">350万回</span>以上利用されたツイッター分析アプリです。<br>
+        仲良しランキング、片思いチェック、リムられチェックなどの機能があります。</div>
+
+      <div>2. リムられ通知とは何ですか？</div>
+      <div class="mb-4">誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。</div>
+
+      <div>3. リムられ通知はどのように届きますか？</div>
+      <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> からDMで届きます。
+        <a href="#" onclick="$('#sample_image1').show('slow'); $(this).hide(); return false;" target="_blank" class="small text-primary">サンプル画像を見る</a>
+        <div id="sample_image1" style="display: none;"><img src="<%= sample_image1_url %>" style="max-width: 600px;"></div>
+      </div>
+
+      <div>4. リムられ通知をすぐに受け取ることはできますか？</div>
+      <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に「<span class="egotter-pink">リムられ通知 今すぐ送信</span>」とDMすればすぐに届きます。
+        <a href="#" onclick="$('#sample_image2').show('slow'); $(this).hide(); return false;" target="_blank" class="small text-primary">サンプル画像を見る</a>
+        <div id="sample_image2" style="display: none;"><img src="<%= sample_image2_url %>" style="max-width: 600px;"></div>
+      </div>
+
+      <div>5. リムられ通知を停止することはできますか？</div>
+      <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に「<span class="egotter-pink">リムられ通知 停止</span>」とDMすればすぐに止めることができます。
+        <a href="#" onclick="$('#sample_image3').show('slow'); $(this).hide(); return false;" target="_blank" class="small text-primary">サンプル画像を見る</a>
+        <div id="sample_image3" style="display: none;"><img src="<%= sample_image3_url %>" style="max-width: 600px;"></div>
+      </div>
+
+      <div>6. @ego_tter にDMを送ることができません</div>
+      <div>「すべてのユーザーからメッセージを受信する」の設定をオンにしてください。これは<span cllass="egotter-pink">ツイッター公式の設定</span>です。<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/settings/safety" target="_blank">公式設定を開く</a></div>
+    </div>
+  </div>
+</div>

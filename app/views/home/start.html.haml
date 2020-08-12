@@ -1,63 +1,41 @@
 - content_for :canonical_url do
   %link{href: start_url(screen_name: @screen_name), rel: 'canonical'}
 
-- page_title = t('.page_title', user: @screen_name)
-- title page_title
+- breadcrumb :start
+- title t('.page_title')
 - set_meta_tags description: t('.meta_description', user: @screen_name)
 
-.container.my-5
-  .card.mx-auto{style: 'max-width: 500px;'}
-    .text-center.pt-3
-      = image_tag '/egotter_welcome_400x448.png', style: 'width: 50%;', class: 'img-rounded'
-    .card-body
-      %p.card-text
-        %div= t('.message1_html')
-        %div= t('.message2')
-      .text-center
-        - url = searches_path(screen_name: @screen_name, via: current_via('start_button'))
-        = link_to t('.start_by', user: @screen_name), url, class: 'btn btn-primary', method: :post
+%h2.h4.text-center.my-5= t('.page_title')
 
-.container
-  = render(partial: 'adsense/ad', locals: {vertical: :top})
+.my-5= t('.desc1_html')
 
-#notification.container.my-5
-  .card.mx-auto{style: 'max-width: 500px;'}
-    .card-body.pt-3
-      %h2.h5.card-title.text-center.mb-3= t('.notification.title')
-      .text-center
-        = image_tag '/egotter_email_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
-      %p.card-text
-        %div= t('.notification.message_html')
-      .text-center
-        - url = "https://twitter.com/messages/#{current_user.uid}-187385226"
-        = link_to t('.notification.button1'), url, target: '_blank', class: 'btn btn-primary mb-3'
-        - url = 'https://twitter.com/settings/safety'
-        = link_to t('.notification.button2'), url, target: '_blank', class: 'btn btn-outline-primary'
+= render partial: 'misc/q', locals: {text: t('.q1')}
+.mt-3.mb-5
+  - if user_signed_in?
+    = t('.a1_html', url: direct_messages_url('ego_tter'))
+  - else
+    = t('.a1_anonymous_html', url: sign_in_url(via: current_via('question1')))
 
-#revive-notification.container.my-5
-  .card.mx-auto{style: 'max-width: 500px;'}
-    .card-body.pt-3
-      %h2.h5.card-title.text-center.mb-3= t('.revive_notification.title')
-      .text-center
-        = image_tag '/egotter_email_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
-      %p.card-text
-        %div= t('.revive_notification.message_html')
-        .my-3= t('.revive_notification.step1_html', uid: current_user.uid)
-        .my-3= t('.revive_notification.step2_html')
-        .my-3= t('.revive_notification.step3_html', user: current_user.screen_name, url: timeline_path(current_user, via: current_via('revive_notification')))
-      .text-center
-        - url = "https://twitter.com/messages/#{current_user.uid}-187385226?text=リムられ通知 復活"
-        = link_to t('.revive_notification.button'), url, target: '_blank', class: 'btn btn-primary'
+= render partial: 'misc/q', locals: {text: t('.q2')}
+.mt-3.mb-5
+  - if user_signed_in?
+    = t('.a2_html', url: direct_messages_url('ego_tter'))
+  - else
+    = t('.a2_anonymous_html', url: sign_in_url(via: current_via('question2')))
 
-.container.my-5
-  .card.mx-auto{style: 'max-width: 500px;'}
-    .card-body.pt-3
-      %h2.h5.card-title.text-center.mb-3= t('.question.title')
-      .text-center
-        = image_tag '/egotter_chat_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
-      %p.card-text
-        %div= t('.question.message1_html')
-        %div= t('.question.message2_html')
-      .text-center
-        - url = 'https://twitter.com/ego_tter'
-        = link_to t('.question.button'), url, target: '_blank', class: 'btn btn-primary'
+= render partial: 'misc/q', locals: {text: t('.q3')}
+.mt-3.mb-5
+  - if user_signed_in?
+    = t('.a3_html', user: current_user.screen_name, url: favorite_friend_path(current_user, via: current_via('question3')))
+  - else
+    = t('.a3_anonymous_html', url: sign_in_url(via: current_via('question3'), redirect_path: favorite_friend_path(screen_name: ':screen_name', via: current_via('question3'))))
+
+= render partial: 'misc/q', locals: {text: t('.q4')}
+.mt-3.mb-5
+  - if user_signed_in?
+    = t('.a4_html', user: current_user.screen_name, url: timeline_path(current_user, via: current_via('question4')))
+  - else
+    = t('.a4_anonymous_html', url: sign_in_url(via: current_via('question4'), redirect_path: timeline_path(screen_name: ':screen_name', via: current_via('question4'))))
+
+= render partial: 'misc/q', locals: {text: t('.q5')}
+.mt-3.mb-5= t('.a5_html', url: support_path(via: current_via('question5')))
