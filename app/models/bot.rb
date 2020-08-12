@@ -79,7 +79,8 @@ class Bot < ApplicationRecord
 
     def rate_limit
       processed = Queue.new
-      all.each do |bot|
+      current_ids.each do |id|
+        bot = Bot.find(id)
         processed << {id: bot.id, rate_limit: bot.rate_limit}
       end
 
