@@ -31,12 +31,6 @@ module Concerns::TwitterUser::Utils
     end
   end
 
-  # TODO Remove later
-  def friend_uids=(uids)
-    logger.warn '#friend_uids= is deprecated'
-    @reserved_friend_uids = uids
-  end
-
   # #diff calls this method in context of new record
   def follower_uids
     if new_record?
@@ -53,18 +47,6 @@ module Concerns::TwitterUser::Utils
         @persisted_follower_uids = uids
       end
     end
-  end
-
-  # TODO Remove later
-  def follower_uids=(uids)
-    logger.warn '#follower_uids= is deprecated'
-    @reserved_follower_uids = uids
-  end
-
-  # TODO Remove later
-  def size
-    logger.warn 'TwitterUser#size is deprecated'
-    TwitterUser.where(uid: uid).size
   end
 
   CREATE_RECORD_INTERVAL = 30.minutes
