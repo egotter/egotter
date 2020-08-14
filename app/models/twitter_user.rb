@@ -39,13 +39,6 @@ class TwitterUser < ApplicationRecord
   include Concerns::TwitterUser::Persistence
   include Concerns::TwitterUser::Reset
 
-  def cache_key
-    case
-      when new_record? then super
-      else "#{self.class.model_name.cache_key}/#{id}" # do not use timestamps
-    end
-  end
-
   def to_param
     screen_name
   end
