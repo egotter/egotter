@@ -36,3 +36,6 @@ import "./usage_stat";
 import "./delete_tweets_modal";
 import "./result_pages";
 import "./settings";
+import "./timelines";
+import "./waiting";
+import "./bg_update";

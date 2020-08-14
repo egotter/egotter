@@ -1,5 +1,3 @@
-'use strict';
-
 class Waiting {
   constructor(path, options, done, keepOn, stopped, failed) {
     this.path = path;

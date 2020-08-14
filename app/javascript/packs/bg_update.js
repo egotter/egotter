@@ -1,5 +1,3 @@
-'use strict';
-
 class SecretModeDetector {
   constructor(options) {
     Object.assign(this, options);

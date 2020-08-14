@@ -1,5 +1,3 @@
-'use strict';
-
 class PeriodicReportSetting {
   constructor(url, confirmMessage) {
     this.url = url;

@@ -1,5 +1,3 @@
-'use strict';
-
 class Cache {
   constructor(ttl) {
     this.ttl = ttl || 259200; // 3 days

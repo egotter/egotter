@@ -1,5 +1,3 @@
-'use strict';
-
 class SearchModal {
   constructor(id) {
     var $modal = $('#' + id);
