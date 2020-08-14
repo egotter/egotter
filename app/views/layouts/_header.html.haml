@@ -36,7 +36,10 @@
   %li.d-none.d-md-block
     - if user_signed_in?
       = link_to settings_path(via: via), class: 'text-white' do
-        %i.fas.fa-cog.pl-3
+        - if current_user.has_valid_subscription?
+          %i.fas.fa-trophy.pl-3
+        - else
+          %i.fas.fa-cog.pl-3
         = current_user.screen_name
     - else
       = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path), class: 'text-white pl-3'

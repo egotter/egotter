@@ -45,7 +45,11 @@
 
     <div class="text-center py-3">
       <%= link_to settings_path(via: current_via('navmenu')) do %>
-        <i class="fas fa-cog"></i>
+        <% if current_user.has_valid_subscription? %>
+          <i class="fas fa-trophy"></i>
+        <% else %>
+          <i class="fas fa-cog"></i>
+        <% end %>
         <%= t('.config') %>
       <% end %>
     </div>
