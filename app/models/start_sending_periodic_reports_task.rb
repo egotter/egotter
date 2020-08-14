@@ -86,17 +86,17 @@ class StartSendingPeriodicReportsTask
 
   class << self
     def morning_user_ids
-      user_ids = (dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
+      user_ids = (premium_user_ids + dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
       reject_specific_period_stopped_user_ids(user_ids, :morning)
     end
 
     def afternoon_user_ids
-      user_ids = (dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
+      user_ids = (premium_user_ids + dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
       reject_specific_period_stopped_user_ids(user_ids, :afternoon)
     end
 
     def night_user_ids
-      (dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
+      (premium_user_ids + dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
     end
 
     def reject_specific_period_stopped_user_ids(user_ids, period_name)
@@ -137,6 +137,10 @@ class StartSendingPeriodicReportsTask
       reject_stop_requested_user_ids(user_ids)
     end
 
+    def premium_user_ids
+      User.premium.pluck(:id)
+    end
+
     def reject_stop_requested_user_ids(user_ids)
       StopPeriodicReportRequest.select(:id, :user_id).find_in_batches do |requests|
         user_ids -= requests.map(&:user_id)
@@ -144,7 +148,7 @@ class StartSendingPeriodicReportsTask
       user_ids
     end
 
-    def allotted_messages_will_expire_user_ids(reject_stop_requested: true, reject_remind_requested: true)
+    def allotted_messages_will_expire_user_ids(reject_stop_requested: true, reject_remind_requested: true, reject_premium: true)
       uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
       users = uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).select(:id, :uid) }.flatten
       users.sort_by! { |user| uids.index(user.uid) }
@@ -153,7 +157,8 @@ class StartSendingPeriodicReportsTask
             PeriodicReport.allotted_messages_left?(user)
       end.map(&:id)
       user_ids = reject_stop_requested ? reject_stop_requested_user_ids(user_ids) : user_ids
-      reject_remind_requested ? reject_remind_requested_user_ids(user_ids) : user_ids
+      user_ids = reject_remind_requested ? reject_remind_requested_user_ids(user_ids) : user_ids
+      reject_premium ? reject_premium_user_ids(user_ids) : user_ids
     end
 
     def reject_remind_requested_user_ids(user_ids)
@@ -161,6 +166,10 @@ class StartSendingPeriodicReportsTask
         user_ids -= requests.map(&:user_id)
       end
       user_ids
+    end
+
+    def reject_premium_user_ids(user_ids)
+      user_ids - User.premium.pluck(:id)
     end
   end
 end

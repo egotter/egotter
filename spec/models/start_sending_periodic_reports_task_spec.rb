@@ -59,25 +59,36 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
   describe '.morning_user_ids' do
     let(:user) { create(:user) }
     subject { described_class.morning_user_ids }
-    it do
-      expect(described_class).to receive(:reject_specific_period_stopped_user_ids).with([user.id], :morning).and_return('result')
-      is_expected.to eq('result')
+    before do
+      allow(described_class).to receive(:premium_user_ids).and_return([1, 2])
+      allow(described_class).to receive(:dm_received_user_ids).and_return([2, 3])
+      allow(described_class).to receive(:new_user_ids).with(any_args).and_return([3, 4])
+      allow(described_class).to receive(:reject_specific_period_stopped_user_ids).with([1, 2, 3, 4], :morning).and_return('result')
     end
+    it { is_expected.to eq('result') }
   end
 
   describe '.afternoon_user_ids' do
     let(:user) { create(:user) }
     subject { described_class.afternoon_user_ids }
-    it do
-      expect(described_class).to receive(:reject_specific_period_stopped_user_ids).with([user.id], :afternoon).and_return('result')
-      is_expected.to eq('result')
+    before do
+      allow(described_class).to receive(:premium_user_ids).and_return([1, 2])
+      allow(described_class).to receive(:dm_received_user_ids).and_return([2, 3])
+      allow(described_class).to receive(:new_user_ids).with(any_args).and_return([3, 4])
+      allow(described_class).to receive(:reject_specific_period_stopped_user_ids).with([1, 2, 3, 4], :afternoon).and_return('result')
     end
+    it { is_expected.to eq('result') }
   end
 
   describe '.night_user_ids' do
     let!(:user) { create(:user) }
     subject { described_class.night_user_ids }
-    it { is_expected.to eq([user.id]) }
+    before do
+      allow(described_class).to receive(:premium_user_ids).and_return([1, 2])
+      allow(described_class).to receive(:dm_received_user_ids).and_return([2, 3])
+      allow(described_class).to receive(:new_user_ids).with(any_args).and_return([3, 4])
+    end
+    it { is_expected.to eq([1, 2, 3, 4]) }
   end
 
   describe '#reject_specific_period_stopped_user_ids' do
@@ -133,6 +144,14 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
     it do
       expect(described_class).to receive(:reject_stop_requested_user_ids).with([users[1].id]).and_return('result')
       is_expected.to eq('result')
+    end
+  end
+
+  describe '.premium_user_ids' do
+    subject { User.premium.pluck(:id) }
+    it do
+      expect(User).to receive_message_chain(:premium, :pluck).with(no_args).with(:id)
+      subject
     end
   end
 
