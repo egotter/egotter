@@ -1,12 +1,18 @@
+<h2 class="h4 text-center my-5"><i class="far fa-address-card"></i>&nbsp;<%= t('settings.general.title') %></h2>
 <div class="container my-5"><%= render partial: 'general' %></div>
+
+<h2 class="h4 text-center my-5"><i class="fas fa-search"></i>&nbsp;<%= t('settings.search.title') %></h2>
 <div class="container my-5"><%= render partial: 'search' %></div>
 
 <div class="container my-5">
-  <h2 class="h4 text-center my-5"><i class="far fa-envelope"></i><%= t('.notifications.title') %></h2>
+  <h2 class="h4 text-center my-5"><i class="far fa-envelope"></i>&nbsp;<%= t('.notifications.title') %></h2>
   <div class="tgl-buttons">
     <%= render partial: 'periodic_report_setting' %>
   </div>
 </div>
 
+<h2 class="h4 text-center my-5"><i class="fas fa-database"></i>&nbsp;<%= t('settings.data.title') %></h2>
 <div class="container my-5"><%= render partial: 'data' %></div>
+
+<h2 id="orders-table" class="h4 text-center my-5"><i class="fas fa-shopping-cart"></i>&nbsp;<%= t('settings.order.order_histories') %></h2>
 <div class="container my-5"><%= render partial: 'order' %></div>

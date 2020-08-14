@@ -72,6 +72,14 @@ class Order < ApplicationRecord
     end
   end
 
+  def short_name
+    if name.include?('（')
+      name.split('（')[0]
+    else
+      name
+    end
+  end
+
   def stripe_customer
     @stripe_customer ||= (customer_id ? Customer.new(::Stripe::Customer.retrieve(customer_id)) : nil)
   end

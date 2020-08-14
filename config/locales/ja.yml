@@ -349,15 +349,13 @@ ja:
         title: "通知設定"
     order:
       order_histories: "購入履歴"
-      created_at: "（%{date}）"
-      not_canceled: '有効期限 キャンセルするまで'
-      canceled_at: "（%{date}）"
+      created_at: "%{date} に購入済み"
+      canceled_at: "%{date} にキャンセル済み"
       price: "%{price}円/月（税別）"
       search_count: "検索回数 %{count}回/日"
       follow_requests_count: "フォロー %{count}回/日"
       unfollow_requests_count: "フォロー解除 %{count}回/日"
       cancel: 'キャンセルする'
-      canceled: 'キャンセル済み'
       cancel_confirmation: '本当に「%{name}」をキャンセルしますか？'
       has_not_purchased: "まだ購入していません"
       see_plans: '料金プランを見る'
@@ -396,8 +394,6 @@ ja:
       screen_name:
         title: 'Twitter ID'
         display: '@%{name}'
-      email:
-        title: 'メール'
       authorized:
         title: 'ログイン連携'
         true: '有効'
@@ -406,8 +402,8 @@ ja:
         update_now_html: 'ログイン連携を更新する&nbsp;<i class="fas fa-sync"></i>'
       following_egotter:
         title: '@ego_tter のフォロー'
-        true: 'OK'
-        false: 'いいえ'
+        true: 'フォロー中'
+        false: 'フォローしていません'
         fast_mode: 'フォロー中は検索高速モード'
         follow_now: '@ego_tter をフォローする'
         note_html: 'フォローすると<span class="egotter-pink">検索や通知が高速</span>になります'
@@ -428,7 +424,7 @@ ja:
         title: '検索速度'
         fast: '高速モード'
         slow: '低速モード'
-        advantage: '検索やリムられ通知が早くなります'
+        advantage: '@ego_tter をフォロー中は検索やリムられ通知が早くなります'
         advise_html: '@ego_tter ををフォローすると<span class="egotter-pink">高速モード</span>になります'
       search_count:
         title: '検索回数'

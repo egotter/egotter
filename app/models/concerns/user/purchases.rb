@@ -14,11 +14,7 @@ module Concerns::User::Purchases
   end
 
   def purchased_plan_name
-    if (name = orders.unexpired.last.name) && name.include?('（')
-      name.split('（')[0]
-    else
-      name
-    end
+    orders.unexpired.last.short_name
   end
 
   def purchased_search_count
