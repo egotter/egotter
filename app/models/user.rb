@@ -79,6 +79,13 @@ class User < ApplicationRecord
         .references(:notification_settings)
   end
 
+  scope :premium, -> do
+    includes(:orders)
+        .where('orders.created_at is not null')
+        .where('orders.canceled_at is null')
+        .references(:orders)
+  end
+
   class << self
     def egotter
       find_by(uid: EGOTTER_UID)

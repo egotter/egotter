@@ -10,6 +10,7 @@ FactoryBot.define do
       with_settings { false }
       with_credential_token { false }
       with_access_days { false }
+      with_orders { false }
     end
 
     after(:create) do |user, evaluator|
@@ -27,6 +28,10 @@ FactoryBot.define do
           date = time.in_time_zone('Tokyo').to_date
           user.access_days.create!(date: date)
         end
+      end
+
+      if evaluator.with_orders
+        user.orders.create!(subscription_id: 'sub', canceled_at: nil)
       end
     end
   end

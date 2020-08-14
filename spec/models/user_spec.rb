@@ -206,6 +206,18 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe 'Scope premium' do
+    let!(:user) { create(:user, with_orders: true) }
+    before do
+      user2 = create(:user, with_orders: true)
+      user2.orders.last.update!(canceled_at: Time.zone.now)
+
+      create(:user)
+    end
+
+    it { expect(User.premium.pluck(:id)).to eq([user.id]) }
+  end
+
   describe '#add_atmark_to_periodic_report?' do
     subject { user.add_atmark_to_periodic_report? }
     before { user.save! }
