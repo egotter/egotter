@@ -1,6 +1,6 @@
 module SearchCountLimitationHelper
 
-  def too_many_searches_message_on_search_modal(sign_in_url, pricing_url, support_url)
+  def too_many_searches_message_on_search_modal(sign_in_url, pricing_url, inquiry_url)
     options = {
         user_signed_in: user_signed_in?,
         user: current_user&.screen_name,
@@ -12,7 +12,8 @@ module SearchCountLimitationHelper
         reset_in: SearchCountLimitation.search_count_reset_in_words(user: current_user, session_id: egotter_visit_id),
         sign_in_url: sign_in_url,
         pricing_url: pricing_url,
-        support_url: support_url,
+        inquiry_url: inquiry_url,
+        faq_url: support_path,
         id_hash: SecureRandom.urlsafe_base64(10),
     }
 

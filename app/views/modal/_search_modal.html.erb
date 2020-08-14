@@ -1,3 +1,4 @@
+<% render_search_modal_start_time = Time.zone.now %>
 <%= modal_dialog id: 'search-modal', title: t('.title'), data: {url: search_histories_path}, size: 'modal-lg' do %>
   <%= render partial: 'shared/search_form', locals: {via: current_via('search_modal_input')} %>
   <div class="mt-1 mb-3 small">
@@ -37,3 +38,4 @@
     new SearchModal('search-modal');
   });
 </script>
+<% logger.info "Benchmark RenderSearchModal total=#{Time.zone.now - render_search_modal_start_time}" %>
