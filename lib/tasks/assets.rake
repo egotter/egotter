@@ -12,6 +12,8 @@ namespace :assets do
   end
 end
 
-Rake::Task["assets:precompile"].enhance do
-  Rake::Task["assets:sync"].invoke
+if Rails.env.production?
+  Rake::Task["assets:precompile"].enhance do
+    Rake::Task["assets:sync"].invoke
+  end
 end
