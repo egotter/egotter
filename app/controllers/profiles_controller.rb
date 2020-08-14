@@ -3,6 +3,11 @@ class ProfilesController < ApplicationController
 
   before_action do
     self.sidebar_disabled = true
+
+    if flash.empty? && !SearchCountLimitation.count_remaining?(user: current_user, session_id: egotter_visit_id)
+      @without_alert_container = true
+      flash.now[:notice] = too_many_searches_message
+    end
   end
 
   def show
