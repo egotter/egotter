@@ -132,38 +132,6 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '#active_access?' do
-    let(:user) { create(:user) }
-
-    context 'last access is within the last 3 days' do
-      let(:days_count) { 3 }
-      before { user.update!(last_access_at: (days_count - 1).days.ago) }
-      it { expect(user.active_access?(days_count)).to be_truthy }
-    end
-
-    context 'last access is more than the last 3 days' do
-      let(:days_count) { 3 }
-      before { user.update!(last_access_at: (days_count + 1).days.ago) }
-      it { expect(user.active_access?(days_count)).to be_falsey }
-    end
-  end
-
-  describe '#inactive_access?' do
-    let(:user) { create(:user) }
-
-    context 'last access is within the last 3 days' do
-      let(:days_count) { 3 }
-      before { user.update!(last_access_at: (days_count - 1).days.ago) }
-      it { expect(user.inactive_access?(days_count)).to be_falsey }
-    end
-
-    context 'last access is more than the last 3 days' do
-      let(:days_count) { 3 }
-      before { user.update!(last_access_at: (days_count + 1).days.ago) }
-      it { expect(user.inactive_access?(days_count)).to be_truthy }
-    end
-  end
-
   describe '#is_following?' do
     let(:user) { create(:user) }
 

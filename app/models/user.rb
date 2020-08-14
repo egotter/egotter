@@ -37,7 +37,6 @@ class User < ApplicationRecord
   include Concerns::User::ApiAccess
   include Concerns::User::Purchases
   include Concerns::TwitterUser::Inflections
-  include Concerns::Visitor::Activeness
 
   def remember_created_at=(_)
   end
@@ -252,12 +251,5 @@ class User < ApplicationRecord
 
   def add_atmark_to_periodic_report?
     has_valid_subscription? || 1.weeks.ago < created_at
-  end
-
-  include Concerns::LastSessionAnalytics
-
-  def last_session_duration
-    period_end = last_access_at || created_at
-    (period_end - 30.minutes)..period_end
   end
 end

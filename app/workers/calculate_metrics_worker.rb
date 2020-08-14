@@ -161,12 +161,6 @@ class CalculateMetricsWorker
 
     stats = histories.each_with_object(Hash.new(0)).each { |his, memo| memo[his.via] += 1 }.sort_by { |_, v| -v }.to_h
     Gauge.create_by_hash('search_histories via', stats)
-
-    stats = histories.each_with_object(Hash.new(0)).each { |his, memo| memo[his.last_session_source] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('search_histories source', stats)
-
-    stats = histories.each_with_object(Hash.new(0)).each { |his, memo| memo[his.last_session_device_type] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('search_histories device_type', stats)
   end
 
   def send_visitors_metrics
@@ -178,15 +172,6 @@ class CalculateMetricsWorker
         unique_user_id: visitors.select('distinct user_id').count,
     }
     Gauge.create_by_hash('visitors', stats)
-
-    stats = visitors.each_with_object(Hash.new(0)).each { |vis, memo| memo[vis.last_session_via.to_s] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('visitors via', stats)
-
-    stats = visitors.each_with_object(Hash.new(0)).each { |vis, memo| memo[vis.last_session_source.to_s] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('visitors source', stats)
-
-    stats = visitors.each_with_object(Hash.new(0)).each { |vis, memo| memo[vis.last_session_device_type.to_s] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('visitors device_type', stats)
   end
 
   def send_user_metrics
@@ -197,17 +182,6 @@ class CalculateMetricsWorker
         last_access: User.where(last_access_at: condition_value).size
     }
     Gauge.create_by_hash('users', stats)
-
-    users = User.where(created_at: condition_value)
-
-    stats = users.each_with_object(Hash.new(0)).each { |user, memo| memo[user.last_session_via.to_s] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('users via', stats)
-
-    stats = users.each_with_object(Hash.new(0)).each { |user, memo| memo[user.last_session_source.to_s] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('users source', stats)
-
-    stats = users.each_with_object(Hash.new(0)).each { |user, memo| memo[user.last_session_device_type.to_s] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('users device_type', stats)
   end
 
   def send_sign_in_metrics
@@ -228,9 +202,6 @@ class CalculateMetricsWorker
 
     stats = logs.each_with_object(Hash.new(0)).each { |log, memo| memo[log.via] += 1 if log.context == 'update' }.sort_by { |_, v| -v }.to_h
     Gauge.create_by_hash('sign_in via (update)', stats)
-
-    stats = logs.each_with_object(Hash.new(0)).each { |log, memo| memo[log.last_session_source] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('sign_in source', stats)
 
     stats = logs.each_with_object(Hash.new(0)).each { |log, memo| memo[log.device_type] += 1 }.sort_by { |_, v| -v }.to_h
     Gauge.create_by_hash('sign_in device_type', stats)
@@ -255,9 +226,6 @@ class CalculateMetricsWorker
 
     stats = logs.each_with_object(Hash.new(0)).each { |log, memo| memo[log.via] += 1 }.sort_by { |_, v| -v }.to_h
     Gauge.create_by_hash('search_error via', stats)
-
-    stats = logs.each_with_object(Hash.new(0)).each { |log, memo| memo[log.last_session_source] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('search_error source', stats)
 
     stats = logs.each_with_object(Hash.new(0)).each { |log, memo| memo[log.device_type] += 1 }.sort_by { |_, v| -v }.to_h
     Gauge.create_by_hash('search_error device_type', stats)
