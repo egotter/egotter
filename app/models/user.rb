@@ -73,12 +73,6 @@ class User < ApplicationRecord
 
   scope :authorized, -> { where(authorized: true) }
 
-  scope :enough_permission_level, -> do
-    includes(:notification_setting)
-        .where("notification_settings.permission_level = '#{NotificationSetting::PROPER_PERMISSION}'")
-        .references(:notification_settings)
-  end
-
   scope :premium, -> do
     includes(:orders)
         .where('orders.created_at is not null')
