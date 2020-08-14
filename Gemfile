@@ -55,7 +55,7 @@ gem 'airbrake'
 gem 'oj'
 gem 'gretel'
 gem 'stripe'
-gem 'webpacker', '~> 4.0'
+gem 'webpacker', '~> 5.0'
 
 # Sidekiq
 gem 'sidekiq', '< 7'
