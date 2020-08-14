@@ -1,5 +1,5 @@
 class Decorator
-  extend Util::Memoization
+  extend Memoization
 
   def initialize(users)
     @users = users
