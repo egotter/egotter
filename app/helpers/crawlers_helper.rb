@@ -54,6 +54,7 @@ module CrawlersHelper
       'DoCoMo/2.0',
       'Clipbox/2.2.5',
       'AHC/2.1',
+      'admantx-ussy04/3.1',
   ]
   CRAWLERS_REGEXP = Regexp.union(CRAWLER_WORDS)
 
@@ -67,9 +68,10 @@ module CrawlersHelper
       'Mozilla/5.0',
       'ceron.jp/1.0',
       'help@dataminr.com',
+      'www.logicad.com',
       '',
   ]
-  CRAWLER_FULL_NAMES_REGEXP = Regexp.new('\A(' + CRAWLER_FULL_NAMES.map { |name| name.gsub('(', '\(').gsub(')', '\)') }.join('|') + ')\z')
+  CRAWLER_FULL_NAMES_REGEXP = Regexp.new('\A(' + CRAWLER_FULL_NAMES.map { |name| name.gsub('(', '\(').gsub(')', '\)').gsub('.', '\.') }.join('|') + ')\z')
 
   def from_minor_crawler?(user_agent)
     ua = user_agent.to_s
