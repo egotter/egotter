@@ -27,7 +27,7 @@ module Efs
 
         result
       rescue => e
-        Rails.logger.warn "#{self}##{__method__} failed #{e.inspect} twitter_user_id=#{twitter_user_id}"
+        Rails.logger.info { "#{self}##{__method__} failed #{e.inspect} twitter_user_id=#{twitter_user_id}" }
         nil
       end
 
