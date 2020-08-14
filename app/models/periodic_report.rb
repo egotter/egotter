@@ -103,7 +103,8 @@ class PeriodicReport < ApplicationRecord
     def remind_reply_message
       template = Rails.root.join('app/views/periodic_reports/remind_reply.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          url: support_url(campaign_params('remind_reply')),
+          support_url: support_url(campaign_params('remind_reply_support')),
+          pricing_url: pricing_url(campaign_params('remind_reply_pricing')),
       )
 
       new(user: nil, message: message, token: nil)
@@ -112,8 +113,9 @@ class PeriodicReport < ApplicationRecord
     def remind_access_message
       template = Rails.root.join('app/views/periodic_reports/remind_access.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          url: root_url(campaign_params('remind_access')),
+          root_url: root_url(campaign_params('remind_access_root')),
           support_url: support_url(campaign_params('remind_access_support')),
+          pricing_url: pricing_url(campaign_params('remind_access_pricing')),
       )
 
       new(user: nil, message: message, token: nil)
@@ -131,7 +133,8 @@ class PeriodicReport < ApplicationRecord
 
       message = ERB.new(template.read).result_with_hash(
           interval: date_helper.distance_of_time_in_words(ttl),
-          url: support_url(campaign_params('will_expire_support')),
+          support_url: support_url(campaign_params('will_expire_support')),
+          pricing_url: pricing_url(campaign_params('will_expire_pricing')),
       )
 
       new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
@@ -142,6 +145,7 @@ class PeriodicReport < ApplicationRecord
       message = ERB.new(template.read).result_with_hash(
           url: support_url(campaign_params('soft_limited')),
           support_url: support_url(campaign_params('soft_limited_support')),
+          pricing_url: pricing_url(campaign_params('soft_limited_pricing')),
       )
 
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -153,8 +157,8 @@ class PeriodicReport < ApplicationRecord
       message = ERB.new(template.read).result_with_hash(
           access_day: user.access_days.last,
           url: root_url(campaign_params('web_access_hard_limited')),
-          pricing_url: pricing_url(campaign_params('web_access_hard_limited_pricing')),
           support_url: support_url(campaign_params('web_access_hard_limited_support')),
+          pricing_url: pricing_url(campaign_params('web_access_hard_limited_pricing')),
       )
 
       new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
@@ -165,6 +169,7 @@ class PeriodicReport < ApplicationRecord
       message = ERB.new(template.read).result_with_hash(
           interval: I18n.t('datetime.distance_in_words.x_minutes', count: CreatePeriodicReportRequest::SHORT_INTERVAL / 1.minute),
           support_url: support_url(campaign_params('interval_too_short_support')),
+          pricing_url: pricing_url(campaign_params('interval_too_short_pricing')),
       )
 
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -197,6 +202,7 @@ class PeriodicReport < ApplicationRecord
             interval: date_helper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
             sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at),
             support_url: support_url(campaign_params('scheduled_job_created_support')),
+            pricing_url: pricing_url(campaign_params('scheduled_job_created_pricing')),
         )
 
         new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
