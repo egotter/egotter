@@ -1,93 +1,74 @@
-- check_icon = '<i class="fas fa-check text-primary"></i>'
+- content_for :canonical_url do
+  %link{href: pricing_url, rel: 'canonical'}
 
-= image_tag '/egotter_ask_me_840x483.png', style: 'max-width: 350px;', class: 'img-rounded d-block mx-auto my-3'
-.text-center.my-3= t('.ask_me_html')
+- breadcrumb :pricing
 
-%h3.text-center.my-5= t('.names.free')
+- set_meta_tags title: t('.meta_title'), description: t('.meta_description')
 
-%table.table.table-bordered
-  %tbody
-    %tr
-      %td= t('.pricing.key')
-      %td= t('.pricing.free')
-    %tr
-      %td= t('.audience.key')
-      %td= t('.audience.free')
-    %tr
-      %td= t('.search_count.key')
-      %td
-        = t('.search_count.free', count1: SearchCountLimitation::ANONYMOUS, count2: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS)
-        %span.text-muted.small= t('.search_count.free_note', count: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS)
-    %tr
-      %td= t('.follow_requests.key')
-      %td= CreateFollowLimitation::ANONYMOUS
-    %tr
-      %td= t('.unfollow_requests.key')
-      %td= CreateUnfollowLimitation::ANONYMOUS
-    %tr
-      %td= t('.remove_notification.key')
-      %td= raw check_icon
-    %tr
-      %td= t('.private_account.key')
-      %td= raw check_icon
-    -#%tr
-    -#  %td= t('.ad.key')
-    -#  %td= t('.ad.free_html')
-    -#%tr
-    -#  %td= t('.private.key')
-    -#  %td= t('.private.free_html')
-    -#%tr
-    -#  %td= t('.delete.key')
-    -#  %td= t('.delete.free_html')
-    -#%tr
-    -#  %td= t('.purchasing_method.key')
-    -#  %td= t('.purchasing_method.free')
-    %tr
-      %td
-      %td
-        - if user_signed_in?
-          .btn.btn-outline-primary.disabled= t('.has_purchased')
-        - else
-          = link_to t('.sign_in'), sign_in_path(via: current_via('pricing')), class: 'btn btn-primary'
+%h2.h4.text-center.my-5= t('.page_title')
+.my-3= t('.page_description_html')
 
-%h3.text-center.my-5= t('.names.basic')
+.card
+  .card-body
+    - if user_signed_in?
+      %h5.card-title= t('.your_plan_title', user: current_user.screen_name)
+      - if current_user.has_valid_subscription?
+        .card-text= t('.has_basic_plan_text_html', user: current_user.screen_name, plan: current_user.purchased_plan_name, url: settings_path(via: current_via('pricing')))
+      - else
+        .card-text= t('.has_free_plan_text_html', user: current_user.screen_name)
+    - else
+      %h5.card-title= t('.anonymous_plan_title')
+      .card-text= t('.has_no_plan_text_html', url: sign_in_path(via: current_via('pricing')))
 
-%table.table.table-bordered
-  %tbody
-    %tr
-      %td= t('.pricing.key')
-      %td= t('.pricing.basic')
-    %tr
-      %td= t('.audience.key')
-      %td= t('.audience.basic')
-    %tr
-      %td= t('.search_count.key')
-      %td.text-primary= t('.search_count.basic', count: SearchCountLimitation::BASIC_PLAN)
-    %tr
-      %td= t('.follow_requests.key')
-      %td.text-primary= t('.follow_requests.basic_html', count: CreateFollowLimitation::BASIC_PLAN)
-    %tr
-      %td= t('.unfollow_requests.key')
-      %td.text-primary= t('.unfollow_requests.basic_html', count: CreateUnfollowLimitation::BASIC_PLAN)
-    %tr
-      %td= t('.remove_notification.key')
-      %td= raw check_icon
-    %tr
-      %td= t('.private_account.key')
-      %td= raw check_icon
-    %tr
-      %td
-      %td= t('.money_back_guarantee', count: Order::TRIAL_DAYS)
-    %tr
-      %td
-      %td
-        - if user_signed_in?
-          - if current_user.has_valid_subscription?
-            .btn.btn-primary.disabled= t('.has_purchased')
-          - else
-            = render partial: 'stripe/checkout_button'
-        - else
-          = link_to t('.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
+%h3.h4.text-center.my-5= t('.free_plan_title')
+.my-3= t('.free_plan_text_html')
+.h4.my-4
+  %strong= t('.free_plan_price')
+.my-2
+  %i.fas.fa-check.text-primary
+  = t('.free_plan_search_count', min: SearchCountLimitation::ANONYMOUS, max: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS)
+.my-2
+  %i.fas.fa-check.text-primary
+  = t('.free_plan_notification')
+.my-2
+  %i.fas.fa-check.text-primary
+  = t('.free_plan_private')
+.my-2
+  %i.fas.fa-check.text-primary
+  = t('.free_plan_follow', count: CreateFollowLimitation::ANONYMOUS)
+.my-2
+  %i.fas.fa-check.text-primary
+  = t('.free_plan_unfollow', count: CreateUnfollowLimitation::ANONYMOUS)
+
+%hr
+
+%h3.h4.text-center.my-5= t('.basic_plan_title')
+.my-3= t('.basic_plan_text_html')
+.h4.my-4
+  %strong= t('.basic_plan_price', price: t('.pricing.basic_num'))
+.my-2
+  %i.fas.fa-check.text-primary
+  = t('.basic_plan_search_count', count: SearchCountLimitation::BASIC_PLAN)
+.my-2
+  %i.fas.fa-check.text-primary
+  = t('.basic_plan_follow', count: CreateFollowLimitation::BASIC_PLAN)
+.my-2
+  %i.fas.fa-check.text-primary
+  = t('.basic_plan_unfollow', count: CreateUnfollowLimitation::BASIC_PLAN)
+.my-2
+  %i.fas.fa-check.text-primary
+  = t('.basic_plan_money_back_guarantee', count: Order::TRIAL_DAYS)
+.my-2
+  - if user_signed_in?
+    - if current_user.has_valid_subscription?
+      .btn.btn-outline-primary.disabled= t('.basic_plan_purchased')
+    - else
+      = link_to t('.purchase'), '#', class: 'btn btn-primary btn-checkout'
+  - else
+    = link_to t('.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
+
+%hr
+
 
 %h3#enterprise-plan.text-center.my-5= t('.names.enterprice')
 

@@ -481,81 +481,56 @@ ja:
         confirm: 'ツイッターDMの仕組み上、この設定をオンにするとリムられ通知の送信が不安定になります。それでも本当によろしいですか？'
   pricing:
     new:
+      crumb_title: '料金プラン'
+      meta_title: '料金プラン'
+      meta_description: 'えごったーの料金プランです。'
+      page_title: '料金プラン'
+      page_description_html: |
+        えごったーの料金はほとんど無料です。勝手に課金されることはありませんのでご安心ください。<br>
+        <br>
+        えごったーでは、<span class="egotter-pink">こっそり使いたい</span>または<span class="egotter-pink">たくさん使いたい</span>という方向けに、一部だけ有料プランを用意しています。
+      your_plan_title: '@%{user} の現在のプラン'
+      anonymous_plan_title: 'あなたの現在のプラン'
+      has_no_plan_text_html: 'まだプランを購入していません。ログインすれば、無料のまま検索回数を増やすことができます。<a href="%{url}" class="btn btn-outline-primary btn-sm">ログインする</a>'
+      has_free_plan_text_html: 'まだプランを購入していません。'
+      has_basic_plan_text_html: '「%{plan}」を購入済みです。<a href="%{url}" class="btn btn-outline-primary btn-sm">設定ページ</a>'
+      free_plan_title: '無料で使いたい'
+      free_plan_text_html: 'えごったーを<span class="egotter-pink">無料で使いたい</span>方に適したプランです。ログインするだけでこの状態になります。'
+      free_plan_price: '0円/月'
+      free_plan_search_count: '検索回数 %{min}〜%{max} 回'
+      free_plan_notification: 'リム通知'
+      free_plan_private: '鍵アカウントの検索'
+      free_plan_follow: '1日のフォロー %{count} 回'
+      free_plan_unfollow: '1日のアンフォロー %{count} 回'
+      basic_plan_title: 'こっそり使いたい'
+      basic_plan_text_html: 'えごったーを<span class="egotter-pink">こっそり使いたい</span>方に適したプランです。無料プランの内容に加えて、検索回数、フォロー回数、アンフォロー回数が増えています。'
+      basic_plan_price: '%{price}円/月'
+      basic_plan_search_count: '検索回数 %{count} 回'
+      basic_plan_follow: '1日のフォロー %{count} 回'
+      basic_plan_unfollow: '1日のアンフォロー %{count} 回'
+      basic_plan_money_back_guarantee: "%{count}日間は100%返金保証"
+      basic_plan_purchased: "購入済み"
       sign_in: 'ログインする'
+      purchase: '購入する'
       plans: "料金プラン"
       names:
-        key: "プラン名"
-        free: "フリー"
-        basic: "ベーシック"
-        pro: "プロ"
         enterprice: "エンタープライズ"
-      audience:
-        key: "おすすめ"
-        free: "自分のみを検索したい方"
-        basic: "友達も検索したい方"
-        pro: "たくさん検索したい方"
-      follow_requests:
-        key: "1日のフォロー"
-        basic_html: '〜%{count}'
-      unfollow_requests:
-        key: "1日のフォロー解除"
-        basic_html: '〜%{count}'
-      remove_notification:
-        key: "リム通知"
-      private_account:
-        key: "鍵アカの検索"
-      search_count:
-        key: "検索回数"
-        free: "%{count1}〜%{count2}回/日"
-        free_note: "※ログインで%{count}回"
-        basic: "%{count}回/日"
-        pro: "10回"
-      ad:
-        key: '広告の非表示'
-      private:
-        key: "自分のデータを非公開"
-      delete:
-        key: "自分のデータを削除"
       pricing:
         key: "価格"
-        free: "無料（ログインのみ）"
-        basic: "300円/月"
         basic_num: "300"
-        enterprice: "ご相談ください"
+        enterprice: "15万円〜"
       price:
-        key: ""
-        free: ""
         basic: "300"
       delivery_date:
         key: "納期"
-        enterprice: "ご相談ください"
+        enterprice: "1週間〜"
       purchasing_method:
         key: "支払い方法"
-        free: ""
-        basic: "クレジットカード"
-        pro: "クレジットカード"
         enterprice: "クレジットカード、請求書"
-      learning:
-        free: ""
-        basic: "詳しく見る"
-        pro: "詳しく見る"
-      purchase_buttons:
-        free: ""
-        basic: "購入する"
-        pro: "購入する"
-      purchase_description:
-        free: ""
-        basic: "ベーシックプラン（%{count}日間は無料）"
-        pro: ""
-      has_purchased: "購入済み"
-      money_back_guarantee: "%{count}日間は100%返金保証"
       enterprice_description: "特定の商品に興味のあるユーザーの嗜好性調査、特定のユーザーのフォロー・フォロワー収集など、ツイッターに関する調査全般をお引き受けいたします。"
       enterprice_inquiry_by_email: "メールで問い合わせ"
       enterprice_inquiry_by_dm: "DMで問い合わせ"
       enterprice_inquiry_by_dm_note_html: '※DMですと見逃すことがあります。可能な限り、<span class="egotter-pink">メール</span>をご利用ください'
-      ask_me_html: |
-        ご不明な点は <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで
-        お気軽にご連絡ください。
   orders:
     create:
       success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'

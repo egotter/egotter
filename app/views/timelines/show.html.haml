@@ -7,9 +7,7 @@
 
 - breadcrumb :timeline, @twitter_user.screen_name
 
-- title = t('.page_title', user: @twitter_user.screen_name, removing: @twitter_user.unfriendships.size, removed: @twitter_user.unfollowerships.size)
-- description = t('.meta_description', user: @twitter_user.screen_name)
-- set_meta_tags title: title, site: '', description: description
+- set_meta_tags title: t('.page_title', user: @twitter_user.screen_name, removing: @twitter_user.unfriendships.size, removed: @twitter_user.unfollowerships.size), site: '', description: t('.meta_description', user: @twitter_user.screen_name)
 
 = render partial: 'twitter_users/bg_polling_js', locals: {twitter_user: @twitter_user}
 

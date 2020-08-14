@@ -7,6 +7,11 @@ crumb :start do |screen_name|
   parent :root
 end
 
+crumb :pricing do |screen_name|
+  link t('pricing.new.crumb_title'), pricing_path(via: current_via("breadcrumb_pricing"))
+  parent :root
+end
+
 crumb :timeline do |screen_name|
   link t('timelines.show.crumb_title', user: mention_name(screen_name)), timeline_path(screen_name: screen_name, via: current_via('breadcrumb_timeline'))
   parent :root
