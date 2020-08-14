@@ -74,9 +74,7 @@ class User < ApplicationRecord
   scope :authorized, -> { where(authorized: true) }
 
   scope :premium, -> do
-    includes(:orders)
-        .where('orders.created_at is not null')
-        .where('orders.canceled_at is null')
+    includes(:orders).merge(Order.unexpired)
         .references(:orders)
   end
 
