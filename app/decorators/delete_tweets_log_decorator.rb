@@ -30,7 +30,7 @@ class DeleteTweetsLogDecorator < ApplicationDecorator
       message = object.message
     end
 
-    message
+    message.html_safe
   end
 
   def time_for_view
