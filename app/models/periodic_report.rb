@@ -478,10 +478,12 @@ class PeriodicReport < ApplicationRecord
   end
 
   def send_remind_message_if_needed
-    if send_remind_reply_message?
-      send_remind_reply_message
-    elsif send_remind_access_message?
-      send_remind_access_message
+    unless user.has_valid_subscription?
+      if send_remind_reply_message?
+        send_remind_reply_message
+      elsif send_remind_access_message?
+        send_remind_access_message
+      end
     end
   end
 

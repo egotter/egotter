@@ -225,7 +225,8 @@ RSpec.describe PeriodicReport do
   end
 
   describe '#send_remind_message_if_needed' do
-    let(:report) { described_class.new }
+    let(:user) { create(:user) }
+    let(:report) { described_class.new(user_id: user.id) }
     subject { report.send_remind_message_if_needed }
 
     context 'send_remind_reply_message? returns true' do
