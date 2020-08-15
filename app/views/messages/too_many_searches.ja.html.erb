@@ -1,20 +1,35 @@
+<% id_hash = SecureRandom.urlsafe_base64(10) %>
+<% via = current_via(via: via) %>
+
 <div class="card">
   <div class="card-body">
     <div class="mb-3">
-      現在のプランで検索できる上限に達しました。<%= limit %>回/日<br>
+      現在のプランで検索できる上限に達しました。<%= SearchCountLimitation.max_search_count(current_user) %>回/日<br>
       <br>
       もっとたくさん検索することもできます。お好きなプランをお選びください。
     </div>
 
-    <% if user_signed_in %>
-      <div>1. <a href="#" class="btn btn-outline-primary btn-checkout btn-sm"><%= price %>円で購入して増やす</a></div>
-      <div class="mt-1 mb-3">こっそり使いたい方向け <span class="small"><a href="#" class="btn-checkout">もっと詳しく</a></span></div>
+    <% if user_signed_in? %>
+      <% if current_user.has_valid_subscription? %>
+        <div>1. <a href="#" class="btn btn-outline-primary disabled btn-sm"><%= t('pricing.new.pricing.basic_num') %>円で購入して増やす</a></div>
+        <div class="small mt-1 mb-3"><span class="text-muted">購入済み </span><a href="<%= settings_path(via: via) %>">設定ページ</a></div>
+      <% else %>
+        <div>1. <a href="#" class="btn btn-outline-primary btn-checkout btn-sm"><%= t('pricing.new.pricing.basic_num') %>円で購入して増やす</a></div>
+        <div class="mt-1 mb-3">こっそり使いたい方向け <span class="small"><a href="#" class="btn-checkout">もっと詳しく</a></span></div>
+      <% end %>
+
       <div>2. <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">1回だけツイートして増やす</a></div>
       <div class="mt-1 mb-3">少しだけ使いたい方向け <span class="small"><a href="#" data-target="#share-modal" data-toggle="modal">もっと詳しく</a></span></div>
-<!--      <div>3. <a href="#" class="btn btn-outline-primary btn-sm">定期ツイートして増やす</a></div>-->
-<!--      <div class="mt-1 mb-3">たくさん使いたい方向け <span class="small"><a href="#">もっと詳しく</a></span></div>-->
+
+      <%# if CreatePeriodicTweetRequest.exists?(user_id: current_user.id) %>
+<!--        <div>3. <a href="#" class="btn btn-outline-primary disabled btn-sm">定期ツイートして増やす</a></div>-->
+<!--        <div class="small mt-1 mb-3"><span class="text-muted">オンに設定済み </span><a href="<%#= settings_path(via: via) %>">設定ページ</a></div>-->
+      <%# else %>
+<!--        <div>3. <a href="#" data-target="#periodic-tweet-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">定期ツイートして増やす</a></div>-->
+<!--        <div class="mt-1 mb-3">たくさん使いたい方向け <span class="small"><a href="#" data-target="#periodic-tweet-modal" data-toggle="modal">もっと詳しく</a></span></div>-->
+      <%# end %>
     <% else %>
-      <div>1. <a class="btn btn-primary btn-sm" href="<%= sign_in_url %>">ログインして増やす</a></div>
+      <div>1. <a class="btn btn-primary btn-sm" href="<%= sign_in_path(via: via) %>">ログインして増やす</a></div>
       <div class="mt-1 mb-3">検索回数が増えて表示が早くなります</div>
     <% end %>
 
@@ -28,28 +43,28 @@
       <div>1. 検索回数の上限とは何ですか？</div>
       <div class="mb-3">えごったーで1日に検索できる回数の制限です。</div>
       <div>2. 次はいつ検索できますか？</div>
-      <div class="mb-3">あと <span class="text-primary"><%= reset_in %></span> ほど待てばまた検索できるようになります。</div>
+      <div class="mb-3">あと <span class="text-primary"><%= SearchCountLimitation.search_count_reset_in_words(user: current_user, session_id: egotter_visit_id) %></span> ほど待てばまた検索できるようになります。</div>
       <div>3. 検索回数は増やせますか？</div>
       <div class="mb-3">ログインやツイートに応じて下記のように増やせます。</div>
 
-      <% if user_signed_in %>
+      <% if user_signed_in? %>
         <div><button class="btn btn-outline-primary btn-sm" disabled>ログインして増やす</button></div>
-        <div class="mb-3"><%= sign_in_bonus %>回/日 <span class="text-muted small">@<%= user %> はログイン済みです</span></div>
+        <div class="mb-3"><%= SearchCountLimitation::SIGN_IN_BONUS %>回/日 <span class="text-muted small">@<%= current_user.screen_name %> はログイン済みです</span></div>
       <% else %>
-        <div><a class="btn btn-primary btn-sm" href="<%= sign_in_url %>">ログインして増やす</a></div>
-        <div class="mb-3"><%= sign_in_bonus %>回/日</div>
+        <div><a class="btn btn-primary btn-sm" href="<%= sign_in_path(via: via) %>">ログインして増やす</a></div>
+        <div class="mb-3"><%= SearchCountLimitation::SIGN_IN_BONUS %>回/日</div>
       <% end %>
 
       <div><a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">ツイートして増やす</a></div>
-      <div class="mb-3">ツイート回数x<%= sharing_bonus %>回</div>
+      <div class="mb-3">ツイート回数x<%= SearchCountLimitation.current_sharing_bonus(current_user) %>回</div>
       <div><a href="#" class="btn btn-outline-primary btn-checkout btn-sm">購入して増やす</a></div>
-      <div class="mb-3">最大<%= basic_plan %>回/日 <a href="<%= pricing_url %>" class="small">料金プランはこちら</a></div>
+      <div class="mb-3">最大<%= SearchCountLimitation::BASIC_PLAN %>回/日 <a href="<%= pricing_path(via: via) %>" class="small">料金プランはこちら</a></div>
       <div>4. マーケティングでご利用の方へ</div>
-      <div class="mb-3">ツイッターでの各種データ調査依頼については、<a href="<%= inquiry_url %>" class="btn btn-outline-primary btn-sm">問い合わせページ</a> からお問い合わせください。</div>
+      <div class="mb-3">ツイッターでの各種データ調査依頼については、<a href="<%= pricing_path(via: via, anchor: 'enterprise-plan') %>" class="btn btn-outline-primary btn-sm">問い合わせページ</a> からお問い合わせください。</div>
       <div>5. 公式アカウントはありますか？</div>
       <div class="mb-3">@ego_tter が公式アカウントです。<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/ego_tter" target="_blank">@ego_tter を見る</a></div>
       <div>6. よくある質問</div>
-      <div class="mb-3">よくある質問はこちらをご覧ください。<a class="btn btn-outline-primary btn-sm" href="<%= faq_url %>">よくある質問</a></div>
+      <div class="mb-3">よくある質問はこちらをご覧ください。<a class="btn btn-outline-primary btn-sm" href="<%= support_path(via: via) %>">よくある質問</a></div>
     </div>
   </div>
 </div>

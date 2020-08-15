@@ -159,23 +159,7 @@ module Concerns::AlertMessagesConcern
   end
 
   def too_many_searches_message
-    values = {
-        user_signed_in: user_signed_in?,
-        user: current_user&.screen_name,
-        limit: SearchCountLimitation.max_search_count(current_user),
-        sign_in_bonus: SearchCountLimitation::SIGN_IN_BONUS,
-        sharing_bonus: SearchCountLimitation.current_sharing_bonus(current_user),
-        basic_plan: SearchCountLimitation::BASIC_PLAN,
-        price: t('pricing.new.pricing.basic_num'),
-        reset_in: SearchCountLimitation.search_count_reset_in_words(user: current_user, session_id: egotter_visit_id),
-        sign_in_url: sign_in_path(via: current_via('too_many_searches_message')),
-        pricing_url: pricing_path(via: current_via('too_many_searches_message')),
-        inquiry_url: pricing_path(via: current_via('too_many_searches_message'), anchor: 'enterprise-plan'),
-        faq_url: support_path,
-        id_hash: SecureRandom.urlsafe_base64(10),
-    }
-
-    ERB.new(Rails.root.join('app/views/messages/too_many_searches.ja.html.erb').read).result_with_hash(values)
+    render_to_string template: 'messages/too_many_searches', locals: {via: 'too_many_searches_message'}, layout: false
   end
 
   def unknown_alert_message(ex)
