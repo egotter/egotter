@@ -73,20 +73,6 @@ class FollowDialog extends ModalDialog {
   }
 }
 
-class ReviveDialog extends ModalDialog {
-  constructor() {
-    super($('#revive-modal'));
-
-    var $el = this.$el;
-    var url = $el.data('url');
-
-    $el.find('button.positive').on('click', function () {
-      window.open(url, '_blank');
-      $el.modal('hide');
-    });
-  }
-}
-
 class Util {
   static showShareDialog() {
     return this.getParameterByName('share_dialog') === '1';
@@ -94,10 +80,6 @@ class Util {
 
   static showFollowDialog() {
     return this.getParameterByName('follow_dialog') === '1';
-  }
-
-  static showReviveDialog() {
-    return this.getParameterByName('revive_dialog') === '1';
   }
 
   static getParameterByName(name, url) {
@@ -139,10 +121,6 @@ class ModalQueue {
 
 Welcome.showFollowDialogAndShareDialog = function (followingEgotter) {
   var queue = new ModalQueue();
-
-  if (Util.showReviveDialog()) {
-    queue.add(new ReviveDialog());
-  }
 
   if (Util.showFollowDialog() && !followingEgotter) {
     queue.add(new FollowDialog());

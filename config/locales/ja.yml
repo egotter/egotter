@@ -1929,11 +1929,6 @@ ja:
         error: 'ツイートに失敗しました。テキストが長すぎたり、特殊な文字が入ったりしていませんか？'
         ok: "ツイートする"
         cancel: "やめておく"
-      revive:
-        title_html: 'リムられ通知を再開する'
-        body_html: 'リムられ通知を再開するには <a href="%{url}" class="btn btn-outline-primary" target="_blank">%{label}</a> と書いたDMを @ego_tter に送ってください。これで手続きは完了です。'
-        url: 'https://twitter.com/messages/%{uid}-187385226?text=%{label}'
-        ok: "DM作成ページを開く"
     search_modal:
       title: 'えごったーで検索'
       remaining_count: '残りの検索回数 %{count} 回'

@@ -81,8 +81,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     url = sanitized_redirect_path(url)
     url = url.sub!(':screen_name', user.screen_name) if url.include?(':screen_name')
 
-    options = (save_context == :update && force_login) ? {revive_dialog: 1} : {follow_dialog: 1, share_dialog: 1}
-    append_query_params(url, options)
+    append_query_params(url, follow_dialog: 1, share_dialog: 1)
   end
 
   def after_failure_message(reason)

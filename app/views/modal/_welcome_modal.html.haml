@@ -14,11 +14,6 @@
       %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
       .ml-3= t('.follow.note_html')
 
-- if params[:revive_dialog] == '1'
-  = modal_dialog id: 'revive-modal', title: t('.revive.title_html'), button: {positive: t('.revive.ok')}, data: {url: t('.revive.url', uid: current_user.uid, label: t('quick_replies.revive.label'))} do
-    %img.d-block.mx-auto{src: image_path('/egotter_revive_840x450.png'), height: request.from_pc? ? '200' : '140'}
-    .mt-3= t('.revive.body_html', label: t('quick_replies.revive.label'), url: t('.revive.url', uid: current_user.uid, label: t('quick_replies.revive.label')))
-
 :javascript
   $(function () {
     var followingEgotter = #{user_signed_in? && current_user.following_egotter?};
