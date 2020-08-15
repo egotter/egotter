@@ -91,10 +91,9 @@
 <hr>
 
 <script>
-  var url = '<%= api_v1_periodic_report_settings_path %>';
-  var confirmMessage = '<%= t('.send_only_if_changed.confirm') %>';
-
   $(function () {
+    var url = '<%= api_v1_periodic_report_settings_path %>';
+    var confirmMessage = '<%= t('.send_only_if_changed.confirm') %>';
     new PeriodicReportSetting(url, confirmMessage);
   });
 </script>

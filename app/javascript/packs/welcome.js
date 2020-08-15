@@ -32,6 +32,11 @@ class ShareDialog extends ModalDialog {
 
     var $el = this.$el;
 
+    if ($el.data('initialized')) {
+      return;
+    }
+    $el.data('initialized', true);
+
     $el.find('button.positive').on('click', function () {
       var tweet = $el.find('textarea').val();
       var url = $el.data('url');

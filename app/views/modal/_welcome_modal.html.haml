@@ -5,7 +5,6 @@
     %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
     .ml-3= t('.share.note_for_count_html', count: SearchCountLimitation.current_sharing_bonus(current_user))
   %textarea{rows: '3', class: 'small', style: 'width: 100%; -webkit-appearance: none;'}= t('.follow.tweet_text', kaomoji: Kaomoji.happy)
-  .small= t('.share.note_html')
 
 - if params[:follow_dialog] == '1'
   - data = {url: follows_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')}
@@ -18,4 +17,6 @@
   $(function () {
     var followingEgotter = #{user_signed_in? && current_user.following_egotter?};
     Welcome.showFollowDialogAndShareDialog(followingEgotter);
+
+    new Welcome.ShareDialog();
   });
