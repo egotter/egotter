@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Concerns::AirbrakeConcern
+  include Concerns::SearchCountLimitationConcern
   include ApplicationHelper
   include Concerns::InternalServerErrorHandler
   include Concerns::RoutingErrorHandler
@@ -27,10 +28,6 @@ class ApplicationController < ActionController::Base
 
   def default_url_options(options = {})
     {locale: I18n.locale}.merge options
-  end
-
-  before_action do
-    @search_count_limitation = SearchCountLimitation.new(user: current_user, session_id: egotter_visit_id)
   end
 
   # Prevent CSRF attacks by raising an exception.
