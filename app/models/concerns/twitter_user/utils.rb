@@ -55,6 +55,7 @@ module Concerns::TwitterUser::Utils
     uids = S3::Friendship.find_by(twitter_user_id: id)&.friend_uids if uids.nil?
     if uids.nil?
       logger.warn "#{__method__}: failed twitter_user_id=#{id} elapsed=#{Time.zone.now - created_at}"
+      logger.info caller.join("\n")
       []
     else
       uids
@@ -68,6 +69,7 @@ module Concerns::TwitterUser::Utils
     uids = S3::Followership.find_by(twitter_user_id: id)&.follower_uids if uids.nil?
     if uids.nil?
       logger.warn "#{__method__}: failed twitter_user_id=#{id} elapsed=#{Time.zone.now - created_at}"
+      logger.info caller.join("\n")
       []
     else
       uids
