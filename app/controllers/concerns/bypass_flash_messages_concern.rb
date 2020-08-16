@@ -10,7 +10,7 @@ module Concerns::BypassFlashMessagesConcern
         begin
           flash.now[:notice] = bypassed_notice_message
         rescue => e
-          logger.warn "Cannot create bypassed message for #{session[:bypassed_notice_message]} error=#{e.inspect}"
+          logger.warn "Cannot create bypassed message for #{session[:bypassed_notice_message]} #{e.inspect} user_id=#{current_user&.id} controller=#{controller_name} action=#{action_name}"
         ensure
           session.delete(:bypassed_notice_message)
         end
