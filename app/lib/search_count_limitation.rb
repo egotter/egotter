@@ -36,7 +36,7 @@ class SearchCountLimitation
     end
 
     def remaining_count(user: nil, session_id: nil)
-      [0, max_count(user) - current_search_count(user: user, session_id: session_id)].max
+      [0, max_count(user) - current_count(user: user, session_id: session_id)].max
     rescue => e
       Rails.logger.warn "##{__method__} Maybe invalid session_id class=#{session_id.class} inspect=#{session_id.inspect}"
       raise
@@ -58,12 +58,11 @@ class SearchCountLimitation
       condition.merge(created_at: SEARCH_COUNT_PERIOD.seconds.ago..Time.zone.now)
     end
 
-    def current_search_count(user: nil, session_id: nil)
+    def current_count(user: nil, session_id: nil)
       # The cause of "ActionView::Template::Error (can't quote Hash)" is invalid session_id.
       # e.g. {"public_id"=>"hash string"}
       SearchHistory.where(where_condition(user: user, session_id: session_id)).size
     end
-    alias current_count current_search_count
 
     def search_count_reset_in(user: nil, session_id: nil)
       record = SearchHistory.order(created_at: :asc).find_by(where_condition(user: user, session_id: session_id))

@@ -60,22 +60,22 @@ RSpec.describe SearchCountLimitation, type: :model do
 
     before do
       allow(described_class).to receive(:max_count).with(user).and_return(max_count)
-      allow(described_class).to receive(:current_search_count).with(user: user, session_id: session_id).and_return(current_count)
+      allow(described_class).to receive(:current_count).with(user: user, session_id: session_id).and_return(current_count)
     end
 
-    context 'max_count > current_search_count' do
+    context 'max_count > current_count' do
       let(:max_count) { 10 }
       let(:current_count) { 8 }
       it { is_expected.to eq(2) }
     end
 
-    context 'max_count < current_search_count' do
+    context 'max_count < current_count' do
       let(:max_count) { 10 }
       let(:current_count) { 12 }
       it { is_expected.to eq(0) }
     end
 
-    context 'max_count == current_search_count' do
+    context 'max_count == current_count' do
       let(:max_count) { 10 }
       let(:current_count) { 10 }
       it { is_expected.to eq(0) }
@@ -106,9 +106,9 @@ RSpec.describe SearchCountLimitation, type: :model do
     end
   end
 
-  describe '.current_search_count' do
+  describe '.current_count' do
     let(:uid) { 1 }
-    subject { described_class.current_search_count(user: user, session_id: session_id) }
+    subject { described_class.current_count(user: user, session_id: session_id) }
 
     context 'user is passed' do
       let(:user) { instance_double(User, id: 100) }
