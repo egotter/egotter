@@ -29,6 +29,10 @@ class ApplicationController < ActionController::Base
     {locale: I18n.locale}.merge options
   end
 
+  before_action do
+    @search_count_limitation = SearchCountLimitation.new(user: current_user, session_id: egotter_visit_id)
+  end
+
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception

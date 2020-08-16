@@ -10,57 +10,58 @@ RSpec.describe SearchCountLimitation, type: :model do
     end
   end
 
-  describe '.max_count' do
-    subject { SearchCountLimitation.max_count(user) }
+  let(:user) { create(:user) }
+  let(:session_id) { nil }
+  let(:instance) { described_class.new(user: user, session_id: session_id) }
 
-    context 'User is passed' do
-      let(:user) { create(:user) }
+  describe '#max_count' do
+    subject { instance.max_count }
 
+    it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS) }
+
+    context 'user has valid subscription' do
       before do
-        allow(user).to receive(:valid_coupons_search_count).and_return(0)
+        allow(user).to receive(:has_valid_subscription?).and_return(true)
+        allow(user).to receive(:purchased_search_count).and_return(1)
       end
-
-      context 'user#has_valid_subscription? == false' do
-        before do
-          allow(user).to receive(:has_valid_subscription?).and_return(false)
-          allow(user).to receive(:sharing_count).and_return(0)
-        end
-        it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS) }
-      end
-
-      context 'user#has_valid_subscription? == true' do
-        before do
-          allow(user).to receive(:has_valid_subscription?).and_return(true)
-          allow(user).to receive(:purchased_search_count).and_return(100)
-          allow(user).to receive(:sharing_count).and_return(0)
-        end
-        it { is_expected.to eq(100) }
-      end
-
-      context 'user#sharing_count == 2' do
-        before do
-          allow(user).to receive(:has_valid_subscription?).and_return(false)
-          allow(user).to receive(:sharing_count).and_return(2)
-          allow(described_class).to receive(:current_sharing_bonus).with(user).and_return(99)
-        end
-        it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS + 2 * 99) }
-      end
+      it { is_expected.to eq(1) }
     end
 
-    context 'nil is passed' do
+    context 'sharing_count is 1' do
+      before do
+        allow(user).to receive(:sharing_count).and_return(1)
+        allow(instance).to receive(:current_sharing_bonus).and_return(2)
+      end
+      it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS + 2) }
+    end
+
+    context 'valid_coupons_search_count is 1' do
+      before do
+        allow(user).to receive(:valid_coupons_search_count).and_return(1)
+      end
+      it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS + 1) }
+    end
+
+    context 'a record of CreatePeriodicTweetRequest exists' do
+      before do
+        allow(CreatePeriodicTweetRequest).to receive(:exists?).with(user_id: user.id).and_return(true)
+      end
+      it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS + described_class::PERIODIC_TWEET_BONUS) }
+    end
+
+    context 'user  is not passed' do
       let(:user) { nil }
       it { is_expected.to eq(described_class::ANONYMOUS) }
     end
   end
 
-  describe '.remaining_count' do
-    let(:user) { instance_double(User) }
+  describe '#remaining_count' do
     let(:session_id) { 'session_id' }
-    subject { described_class.remaining_count(user: user, session_id: session_id) }
+    subject { instance.remaining_count }
 
     before do
-      allow(described_class).to receive(:max_count).with(user).and_return(max_count)
-      allow(described_class).to receive(:current_count).with(user: user, session_id: session_id).and_return(current_count)
+      allow(instance).to receive(:max_count).and_return(max_count)
+      allow(instance).to receive(:current_count).and_return(current_count)
     end
 
     context 'max_count > current_count' do
@@ -82,8 +83,14 @@ RSpec.describe SearchCountLimitation, type: :model do
     end
   end
 
-  describe '.where_condition' do
-    subject { described_class.where_condition(user: user, session_id: session_id) }
+  describe '#count_remaining?' do
+    subject { instance.count_remaining? }
+    before { allow(instance).to receive(:remaining_count).and_return(1) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '#where_condition' do
+    subject { instance.send(:where_condition) }
 
     context 'User is passed' do
       let(:user) { instance_double(User, id: 100) }
@@ -106,9 +113,9 @@ RSpec.describe SearchCountLimitation, type: :model do
     end
   end
 
-  describe '.current_count' do
+  describe '#current_count' do
     let(:uid) { 1 }
-    subject { described_class.current_count(user: user, session_id: session_id) }
+    subject { instance.current_count }
 
     context 'user is passed' do
       let(:user) { instance_double(User, id: 100) }
@@ -137,8 +144,8 @@ RSpec.describe SearchCountLimitation, type: :model do
     end
   end
 
-  describe '.count_reset_in' do
-    subject { described_class.count_reset_in(user: user, session_id: session_id) }
+  describe '#count_reset_in' do
+    subject { instance.count_reset_in }
 
     context 'user is passed' do
       let(:user) { instance_double(User, id: 100) }
@@ -155,8 +162,7 @@ RSpec.describe SearchCountLimitation, type: :model do
   end
 
   describe '#current_sharing_bonus' do
-    let(:user) { create(:user) }
-    subject { described_class.current_sharing_bonus(user) }
+    subject { instance.current_sharing_bonus }
 
     before do
       twitter_user = double('twitter_user', followers_count: count)

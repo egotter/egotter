@@ -4,7 +4,7 @@
 <div class="card">
   <div class="card-body">
     <div class="mb-3">
-      現在のプランで検索できる上限に達しました。<%= SearchCountLimitation.max_count(current_user) %>回/日<br>
+      現在のプランで検索できる上限に達しました。<%= @search_count_limitation.max_count %>回/日<br>
       <br>
       もっとたくさん検索することもできます。お好きなプランをお選びください。
     </div>
@@ -43,7 +43,7 @@
       <div>1. 検索回数の上限とは何ですか？</div>
       <div class="mb-3">えごったーで1日に検索できる回数の制限です。</div>
       <div>2. 次はいつ検索できますか？</div>
-      <div class="mb-3">あと <span class="text-primary"><%= search_count_reset_in_words(SearchCountLimitation.count_reset_in(user: current_user, session_id: egotter_visit_id)) %></span> ほど待てばまた検索できるようになります。</div>
+      <div class="mb-3">あと <span class="text-primary"><%= search_count_reset_in_words(@search_count_limitation.count_reset_in) %></span> ほど待てばまた検索できるようになります。</div>
       <div>3. 検索回数は増やせますか？</div>
       <div class="mb-3">ログインやツイートに応じて下記のように増やせます。</div>
 
@@ -56,7 +56,7 @@
       <% end %>
 
       <div><a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">ツイートして増やす</a></div>
-      <div class="mb-3">ツイート回数x<%= SearchCountLimitation.current_sharing_bonus(current_user) %>回</div>
+      <div class="mb-3">ツイート回数x<%= @search_count_limitation.current_sharing_bonus %>回</div>
       <div><a href="#" class="btn btn-outline-primary btn-checkout btn-sm">購入して増やす</a></div>
       <div class="mb-3">最大<%= SearchCountLimitation::BASIC_PLAN %>回/日 <a href="<%= pricing_path(via: via) %>" class="small">料金プランはこちら</a></div>
       <div>4. マーケティングでご利用の方へ</div>

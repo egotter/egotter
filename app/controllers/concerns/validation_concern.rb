@@ -194,7 +194,7 @@ module Concerns::ValidationConcern
 
   def too_many_searches?(twitter_user)
     return false if from_crawler?
-    return false if SearchCountLimitation.count_remaining?(user: current_user, session_id: egotter_visit_id)
+    return false if @search_count_limitation.count_remaining?
     return false if current_search_histories.any? { |history| history.uid == twitter_user.uid }
 
     message = too_many_searches_message

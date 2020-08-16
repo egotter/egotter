@@ -48,7 +48,7 @@
       <%= t('.sharing_egotter.count', count: current_user.sharing_count) %>
     <% end %>
     <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary btn-sm"><%= t('.sharing_egotter.see_more') %></a>
-    <span class="text-muted small"><%= t('.sharing_egotter.promotion_html', hours: User::SHARE_EGOTTER_DURATION, count: SearchCountLimitation.current_sharing_bonus(current_user)) %></span>
+    <span class="text-muted small"><%= t('.sharing_egotter.promotion_html', hours: User::SHARE_EGOTTER_DURATION, count: @search_count_limitation.current_sharing_bonus) %></span>
   </div>
 </div>
 
