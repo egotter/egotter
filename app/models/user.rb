@@ -146,7 +146,8 @@ class User < ApplicationRecord
       10.times do
         begin
           user = User.find(candidate_ids.sample)
-          user.api_client.verify_credentials
+          user.api_client.twitter.verify_credentials
+          user.api_client.twitter.users([user.uid, user.id])
         rescue => e
           user = nil
         else

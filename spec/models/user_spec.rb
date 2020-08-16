@@ -118,7 +118,8 @@ RSpec.describe User, type: :model do
       user.save!
       allow(User).to receive(:authorized_ids).and_return([user.id])
       allow(User).to receive(:find).with(user.id).and_return(user)
-      allow(user).to receive_message_chain(:api_client, :verify_credentials)
+      allow(user).to receive_message_chain(:api_client, :twitter, :verify_credentials)
+      allow(user).to receive_message_chain(:api_client, :twitter, :users).with(no_args).with([user.uid, user.id])
     end
     it { is_expected.to eq(user.id) }
   end
