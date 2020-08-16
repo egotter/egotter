@@ -28,6 +28,10 @@ class SearchCountLimitation
         count += user.valid_coupons_search_count
       end
 
+      if user && CreatePeriodicTweetRequest.exists?(user_id: user.id)
+        count += PERIODIC_TWEET_BONUS
+      end
+
       count
     end
     alias max_count max_search_count
