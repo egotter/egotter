@@ -2,7 +2,7 @@
 <%= modal_dialog id: 'search-modal', title: t('.title'), data: {url: search_histories_path}, size: 'modal-lg' do %>
   <%= render partial: 'shared/search_form', locals: {via: current_via('search_modal_input')} %>
   <div class="mt-1 mb-3 small">
-    <%= t('.remaining_count', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id)) %>
+    <%= t('.remaining_count', count: SearchCountLimitation.remaining_count(user: current_user, session_id: egotter_visit_id)) %>
     <a href="#" class="btn btn-outline-primary btn-sm" onclick="$('#increase-search-count').show(); $(this).hide(); return false;"><%= t('.increase_count') %> <i class="far fa-question-circle"></i></a>
   </div>
 

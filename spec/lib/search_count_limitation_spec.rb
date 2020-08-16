@@ -53,10 +53,10 @@ RSpec.describe SearchCountLimitation, type: :model do
     end
   end
 
-  describe '.remaining_search_count' do
+  describe '.remaining_count' do
     let(:user) { instance_double(User) }
     let(:session_id) { 'session_id' }
-    subject { described_class.remaining_search_count(user: user, session_id: session_id) }
+    subject { described_class.remaining_count(user: user, session_id: session_id) }
 
     before do
       allow(described_class).to receive(:max_count).with(user).and_return(max_count)

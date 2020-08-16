@@ -39,7 +39,7 @@
   <div class="col-8">
     <div>
       <%= t('.search_count.count', count: SearchCountLimitation.max_count(current_user)) %>
-      <%= t('.search_count.remaining', count: SearchCountLimitation.remaining_search_count(user: current_user)) %>
+      <%= t('.search_count.remaining', count: SearchCountLimitation.remaining_count(user: current_user)) %>
       <span><a href="#" data-target="#search-modal" data-toggle="modal"><%= t('.search_count.history') %></a></span>
     </div>
     <div class="text-muted small"><%= t('.search_count.note', days: SearchCountLimitation::SEARCH_COUNT_PERIOD / 1.day) %></div>

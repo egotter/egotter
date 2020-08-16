@@ -35,16 +35,15 @@ class SearchCountLimitation
       count
     end
 
-    def remaining_search_count(user: nil, session_id: nil)
+    def remaining_count(user: nil, session_id: nil)
       [0, max_count(user) - current_search_count(user: user, session_id: session_id)].max
     rescue => e
       Rails.logger.warn "##{__method__} Maybe invalid session_id class=#{session_id.class} inspect=#{session_id.inspect}"
       raise
     end
-    alias remaining_count remaining_search_count
 
     def count_remaining?(user: nil, session_id: nil)
-      remaining_search_count(user: user, session_id: session_id) >= 1
+      remaining_count(user: user, session_id: session_id) >= 1
     end
 
     def where_condition(user: nil, session_id: nil)
