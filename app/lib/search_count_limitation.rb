@@ -9,7 +9,7 @@ class SearchCountLimitation
   SEARCH_COUNT_PERIOD = 1.day.to_i
 
   class << self
-    def max_search_count(user)
+    def max_count(user)
       count = ANONYMOUS
 
       if user
@@ -34,10 +34,9 @@ class SearchCountLimitation
 
       count
     end
-    alias max_count max_search_count
 
     def remaining_search_count(user: nil, session_id: nil)
-      [0, max_search_count(user) - current_search_count(user: user, session_id: session_id)].max
+      [0, max_count(user) - current_search_count(user: user, session_id: session_id)].max
     rescue => e
       Rails.logger.warn "##{__method__} Maybe invalid session_id class=#{session_id.class} inspect=#{session_id.inspect}"
       raise
