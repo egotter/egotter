@@ -6,6 +6,12 @@
     .ml-3= t('.share.note_for_count_html', count: SearchCountLimitation.current_sharing_bonus(current_user))
   %textarea{rows: '3', class: 'small', style: 'width: 100%; -webkit-appearance: none;'}= t('.follow.tweet_text', kaomoji: Kaomoji.happy)
 
+- data = {url: api_v1_create_periodic_tweet_requests_path(via: current_via('periodic_tweet_modal')), success_message: t('.periodic_tweet.success'), error_message: t('.periodic_tweet.error')}
+= modal_dialog id: 'periodic-tweet-modal', title: t('.periodic_tweet.title_html'), button: {positive: t('.periodic_tweet.ok'), negative: t('.periodic_tweet.cancel')}, data: data do
+  .d-flex.align-items-center.mb-3
+    %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
+    .ml-3= t('.periodic_tweet.text_html', count: SearchCountLimitation::PERIODIC_TWEET_BONUS)
+
 - if params[:follow_dialog] == '1'
   - data = {url: follows_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')}
   = modal_dialog id: 'follow-modal', title: t('.follow.title_html'), button: {positive: t('.follow.ok'), negative: t('.follow.cancel')}, data: data do
@@ -19,4 +25,5 @@
     Welcome.showFollowDialogAndShareDialog(followingEgotter);
 
     new Welcome.ShareDialog();
+    new Welcome.PeriodicTweetDialog();
   });

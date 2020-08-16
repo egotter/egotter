@@ -2,6 +2,7 @@ class SearchCountLimitation
 
   SIGN_IN_BONUS = Rails.configuration.x.constants['search_count_limitation']['sign_in_bonus']
   SHARING_BONUS = Rails.configuration.x.constants['search_count_limitation']['sharing_bonus']
+  PERIODIC_TWEET_BONUS = Rails.configuration.x.constants['search_count_limitation']['periodic_tweet_bonus']
   ANONYMOUS = Rails.configuration.x.constants['search_count_limitation']['anonymous']
   BASIC_PLAN = Rails.configuration.x.constants['search_count_limitation']['basic_plan']
 

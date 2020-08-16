@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_12_110427) do
+ActiveRecord::Schema.define(version: 2020_08_15_121443) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -302,6 +302,14 @@ ActiveRecord::Schema.define(version: 2020_08_12_110427) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_create_periodic_report_requests_on_created_at"
     t.index ["user_id"], name: "index_create_periodic_report_requests_on_user_id"
+  end
+
+  create_table "create_periodic_tweet_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_create_periodic_tweet_requests_on_created_at"
+    t.index ["user_id"], name: "index_create_periodic_tweet_requests_on_user_id", unique: true
   end
 
   create_table "create_prompt_report_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

@@ -6,6 +6,7 @@ default: &default
   search_count_limitation:
     sign_in_bonus: 2
     sharing_bonus: 1
+    periodic_tweet_bonus: 3
     anonymous: 2
     basic_plan: 10
   create_follow_limitation:

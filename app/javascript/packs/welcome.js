@@ -60,6 +60,36 @@ class ShareDialog extends ModalDialog {
 
 Welcome.ShareDialog = ShareDialog;
 
+class PeriodicTweetDialog extends ModalDialog {
+  constructor() {
+    super($('#periodic-tweet-modal'));
+
+    var $el = this.$el;
+
+    if ($el.data('initialized')) {
+      return;
+    }
+    $el.data('initialized', true);
+
+    $el.find('button.positive').on('click', function () {
+      var url = $el.data('url');
+
+      $.post(url, {value: true}).done(function (res) {
+        console.log(url, res);
+        ToastMessage.info($el.data('success-message'));
+
+      }).fail(function (xhr) {
+        console.warn(url, xhr.responseText);
+        ToastMessage.warn($el.data('error-message'));
+      });
+
+      $el.modal('hide');
+    });
+  }
+}
+
+Welcome.PeriodicTweetDialog = PeriodicTweetDialog;
+
 class FollowDialog extends ModalDialog {
   constructor() {
     super($('#follow-modal'));

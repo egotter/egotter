@@ -426,6 +426,10 @@ ja:
         slow: '低速モード'
         advantage: '@ego_tter をフォロー中は検索やリムられ通知が早くなります'
         advise_html: '@ego_tter ををフォローすると<span class="egotter-pink">高速モード</span>になります'
+      periodic_tweet:
+        title: '定期ツイート'
+        on_note: 'えごったーのことを 1回/日 自動的にツイートします'
+        off_note_html: 'オンにすると検索回数が <span class="egotter-pink">%{count}回/日</span> 増えます'
       search_count:
         title: '検索回数'
         count: '合計 %{count} 回'
@@ -1924,10 +1928,24 @@ ja:
       share:
         title_html: '<span class="egotter-pink">ツイート</span>で検索回数アップ'
         note_html: '※テキストの最後にえごったーのURLが付きます https://egotter.com'
-        note_for_count_html: '今ツイートしていただくと、<br>検索回数が <span class="egotter-pink">%{count}回分</span> 増えます。'
-        success: 'ツイートに成功しました。ありがとうございます！'
+        note_for_count_html: |
+          えごったーのことを1度だけツイートすると、<br>
+          検索回数が <span class="egotter-pink">%{count}回分</span> 増えます。<br>
+          <br>
+          <span class="small text-muted">※テキストの最後にえごったーのURLが付きます</span>
+        success: 'ツイートに成功しました。'
         error: 'ツイートに失敗しました。テキストが長すぎたり、特殊な文字が入ったりしていませんか？'
         ok: "ツイートする"
+        cancel: "やめておく"
+      periodic_tweet:
+        title_html: '<span class="egotter-pink">定期ツイート</span>で検索回数 大幅アップ'
+        text_html: |
+          定期的なツイートの設定をオンにすると、<br>検索回数が <span class="egotter-pink">%{count}回/日</span> 増えます。<br>
+          <br>
+          <span class="small text-muted">※えごったーのことを 1回/日 自動的にツイートします</span>
+        success: '定期ツイートの設定をオンにしました。'
+        error: '定期ツイートの設定に失敗しました。'
+        ok: "定期ツイートオン"
         cancel: "やめておく"
     search_modal:
       title: 'えごったーで検索'

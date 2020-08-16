@@ -75,3 +75,28 @@ class PeriodicReportSetting {
 }
 
 window.PeriodicReportSetting = PeriodicReportSetting;
+
+class PeriodicTweetSetting {
+  constructor(selector, url) {
+    this.url = url;
+    var self = this;
+
+    $(selector).on('change', function () {
+      var $checkbox = $(this);
+
+      var val = $checkbox.prop('checked');
+      console.log('changed', selector, val);
+      self.update(val);
+    });
+  }
+
+  update(val) {
+    $.post(this.url, {value: val}).done(function (res) {
+      console.log('res', res);
+    }).fail(function (xhr) {
+      console.warn(xhr.responseText);
+    });
+  }
+}
+
+window.PeriodicTweetSetting = PeriodicTweetSetting;

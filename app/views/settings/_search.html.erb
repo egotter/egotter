@@ -14,6 +14,27 @@
 <hr>
 
 <div class="row">
+  <div class="col-4">
+    <%= check_box_tag :periodic_tweet, true, @create_periodic_tweet_request, {id: 'periodic_tweet', class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="periodic_tweet"></label>
+  </div>
+
+  <div class="col-8">
+    <h6><%= t('.periodic_tweet.title') %></h6>
+    <div class="text-muted small"><%= t('.periodic_tweet.on_note') %></div>
+    <div class="text-muted small"><%= t('.periodic_tweet.off_note_html', count: SearchCountLimitation::PERIODIC_TWEET_BONUS) %></div>
+  </div>
+</div>
+<script>
+  $(function () {
+    var url = '<%= api_v1_create_periodic_tweet_requests_path(via: current_via) %>';
+    new PeriodicTweetSetting('#periodic_tweet', url);
+  });
+</script>
+
+<hr>
+
+<div class="row">
   <div class="col-4"><%= t('.search_count.title') %></div>
   <div class="col-8">
     <div>
