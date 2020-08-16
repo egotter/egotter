@@ -7,7 +7,7 @@ class UpdateAudienceInsightWorker
   end
 
   def unique_in
-    10.minute
+    3.minute
   end
 
   def retry_in
