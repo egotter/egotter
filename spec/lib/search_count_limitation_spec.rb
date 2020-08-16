@@ -14,7 +14,7 @@ RSpec.describe SearchCountLimitation, type: :model do
     subject { SearchCountLimitation.max_count(user) }
 
     context 'User is passed' do
-      let(:user) { instance_double(User) }
+      let(:user) { create(:user) }
 
       before do
         allow(user).to receive(:valid_coupons_search_count).and_return(0)
@@ -137,8 +137,8 @@ RSpec.describe SearchCountLimitation, type: :model do
     end
   end
 
-  describe '.search_count_reset_in' do
-    subject { described_class.search_count_reset_in(user: user, session_id: session_id) }
+  describe '.count_reset_in' do
+    subject { described_class.count_reset_in(user: user, session_id: session_id) }
 
     context 'user is passed' do
       let(:user) { instance_double(User, id: 100) }

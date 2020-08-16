@@ -64,11 +64,10 @@ class SearchCountLimitation
       SearchHistory.where(where_condition(user: user, session_id: session_id)).size
     end
 
-    def search_count_reset_in(user: nil, session_id: nil)
+    def count_reset_in(user: nil, session_id: nil)
       record = SearchHistory.order(created_at: :asc).find_by(where_condition(user: user, session_id: session_id))
       record ? [0, (record.created_at + SEARCH_COUNT_PERIOD.seconds - Time.zone.now).to_i].max : 0
     end
-    alias count_reset_in search_count_reset_in
 
     def current_sharing_bonus(user)
       if user&.authorized?
@@ -88,22 +87,6 @@ class SearchCountLimitation
       Rails.logger.warn "##{__method__} #{e.inspect} user_id=#{user&.id}"
       Rails.logger.info e.backtrace.join("\n")
       SHARING_BONUS
-    end
-
-    module DateHelper
-      extend ActionView::Helpers::DateHelper
-    end
-
-    def search_count_reset_in_words(user: nil, session_id: nil)
-      seconds = search_count_reset_in(user: user, session_id: session_id)
-
-      if seconds > 1.hour
-        I18n.t('datetime.distance_in_words.about_x_hours', count: (seconds / 3600).to_i)
-      elsif seconds > 10.minutes
-        I18n.t('datetime.distance_in_words.x_minutes', count: (seconds / 60).to_i)
-      else
-        I18n.t('datetime.distance_in_words.x_seconds', count: seconds.to_i)
-      end
     end
   end
 end

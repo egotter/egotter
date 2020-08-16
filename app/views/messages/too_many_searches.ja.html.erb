@@ -43,7 +43,7 @@
       <div>1. 検索回数の上限とは何ですか？</div>
       <div class="mb-3">えごったーで1日に検索できる回数の制限です。</div>
       <div>2. 次はいつ検索できますか？</div>
-      <div class="mb-3">あと <span class="text-primary"><%= SearchCountLimitation.search_count_reset_in_words(user: current_user, session_id: egotter_visit_id) %></span> ほど待てばまた検索できるようになります。</div>
+      <div class="mb-3">あと <span class="text-primary"><%= search_count_reset_in_words(SearchCountLimitation.count_reset_in(user: current_user, session_id: egotter_visit_id)) %></span> ほど待てばまた検索できるようになります。</div>
       <div>3. 検索回数は増やせますか？</div>
       <div class="mb-3">ログインやツイートに応じて下記のように増やせます。</div>
 
