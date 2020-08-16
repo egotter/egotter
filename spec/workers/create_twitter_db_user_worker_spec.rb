@@ -65,7 +65,7 @@ RSpec.describe CreateTwitterDBUserWorker do
 
       context 'retry is repeated' do
         it do
-          expect { 3.times { worker.send(:exception_handler, error, 'options') } }.to raise_error(described_class::RetryExhausted)
+          expect { 4.times { worker.send(:exception_handler, error, 'options') } }.to raise_error(described_class::RetryExhausted)
         end
       end
     end

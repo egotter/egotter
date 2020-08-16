@@ -52,7 +52,7 @@ class CreateTwitterDBUserWorker
       logger.warn "Retry with a bot client #{DebugMessage.new(e, nil, @client_id, options)}"
     end
 
-    @retries ||= 2
+    @retries ||= 3
 
     if meet_requirements_for_retrying?(e) && @retries > 0
       @retries -= 1
@@ -78,6 +78,8 @@ class CreateTwitterDBUserWorker
     if options['user_id'] && options['user_id'] != -1 && (user = User.find_by(id: options['user_id'])) && user.authorized?
       @client_id = "user:#{user.id}"
       user.api_client
+    elsif @retries && @retries == 0
+      Bot.api_client
     else
       if (user_id = User.pick_authorized_id)
         user = User.find(user_id)
