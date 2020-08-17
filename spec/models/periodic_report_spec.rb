@@ -204,11 +204,6 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
-  describe '.date_helper' do
-    subject { described_class.date_helper }
-    it { is_expected.to be_truthy }
-  end
-
   describe '#send_direct_message' do
     let(:report) { described_class.new(message: 'message') }
     let(:recipient) { double('recipient', uid: 2) }
@@ -217,9 +212,9 @@ RSpec.describe PeriodicReport do
     before { allow(report).to receive(:report_recipient).and_return(recipient) }
 
     it do
+      expect(report).to receive(:append_remind_message_if_needed).and_return(report.message)
       expect(described_class).to receive(:build_direct_message_event).with(recipient.uid, 'message').and_return('event')
       expect(report).to receive_message_chain(:report_sender, :api_client, :create_direct_message_event).with(event: 'event').and_return('dm')
-      expect(report).to receive(:send_remind_message_if_needed)
       is_expected.to eq('dm')
     end
   end

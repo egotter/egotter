@@ -469,14 +469,29 @@ class PeriodicReport < ApplicationRecord
   end
 
   def send_direct_message
-    event = self.class.build_direct_message_event(report_recipient.uid, message)
-    dm = report_sender.api_client.create_direct_message_event(event: event)
+    self.message = append_remind_message_if_needed(self.message)
 
-    send_remind_message_if_needed
+    if Rails.env.development?
+      self.message = '[dev] ' + self.message
+    end
 
-    dm
+    event = self.class.build_direct_message_event(report_recipient.uid, self.message)
+    report_sender.api_client.create_direct_message_event(event: event)
   end
 
+  def append_remind_message_if_needed(message)
+    unless user.has_valid_subscription?
+      if send_remind_reply_message?
+        message = self.class.remind_reply_message.message + "\n\n-------------------------------------------------\n\n" + message
+      elsif send_remind_access_message?
+        message = self.class.remind_access_message.message + "\n\n-------------------------------------------------\n\n" + message
+      end
+    end
+
+    message
+  end
+
+  # TODO Remove later
   def send_remind_message_if_needed
     unless user.has_valid_subscription?
       if send_remind_reply_message?
