@@ -17,7 +17,6 @@ module Egotter
     # the framework and any gems in your application.
 
     config.i18n.default_locale = :ja
-    config.eager_load_paths += %W(#{config.root}/lib)
     config.x.constants = Rails.application.config_for(:constants)
   end
 end
