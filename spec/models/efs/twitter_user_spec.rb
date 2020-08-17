@@ -23,23 +23,4 @@ RSpec.describe Efs::TwitterUser do
       end
     end
   end
-
-  describe '.import_from_s3!' do
-    subject { described_class.import_from_s3!(twitter_user) }
-    it do
-      expect(described_class).to receive(:import_from!).
-          with(twitter_user.id, twitter_user.uid, twitter_user.screen_name, '{"dummy": true}', 'friend_uids', 'follower_uids')
-      subject
-    end
-  end
-
-  describe '.work_direct' do
-    subject { described_class.work_direct(twitter_user) }
-    it { is_expected.to match(['{"dummy": true}', 'friend_uids', 'follower_uids']) }
-  end
-
-  describe '.work_in_threads' do
-    subject { described_class.work_in_threads(twitter_user) }
-    it { is_expected.to match(['{"dummy": true}', 'friend_uids', 'follower_uids']) }
-  end
 end

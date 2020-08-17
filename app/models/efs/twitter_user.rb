@@ -17,15 +17,8 @@ module Efs
 
     class << self
       def find_by(twitter_user_id)
-        start = Time.zone.now
-
         obj = cache_client.read(cache_key(twitter_user_id))
-        result = obj ? new(parse_json(decompress(obj))) : nil
-
-        time = sprintf("%.1f", Time.zone.now - start)
-        Rails.logger.debug { "#{self} Fetch by #{twitter_user_id}#{' HIT' if result} (#{time}ms)" }
-
-        result
+        obj ? new(parse_json(decompress(obj))) : nil
       rescue => e
         Rails.logger.info { "#{self}##{__method__} failed #{e.inspect} twitter_user_id=#{twitter_user_id}" }
         nil
@@ -37,7 +30,7 @@ module Efs
 
       def import_from!(twitter_user_id, uid, screen_name, profile, friend_uids, follower_uids)
         profile = parse_json(profile) if profile.class == String
-        json = {
+        payload = {
             twitter_user_id: twitter_user_id,
             uid: uid,
             screen_name: screen_name,
@@ -45,32 +38,7 @@ module Efs
             friend_uids: friend_uids,
             follower_uids: follower_uids
         }.to_json
-
-        cache_client.write(cache_key(twitter_user_id), compress(json))
-      end
-
-      def import_from_s3!(twitter_user, skip_if_found: false, threads: true)
-        return if skip_if_found && find_by(twitter_user.id)
-
-        ApplicationRecord.benchmark("#{self} Import from s3 by #{twitter_user.id}", level: :debug) do
-          profile, friend_uids, follower_uids = threads ? work_in_threads(twitter_user) : work_direct(twitter_user)
-          import_from!(twitter_user.id, twitter_user.uid, twitter_user.screen_name, profile, friend_uids, follower_uids)
-        end
-      end
-
-      def work_direct(twitter_user)
-        [
-            S3::Profile.find_by(twitter_user_id: twitter_user.id)[:user_info],
-            S3::Friendship.find_by(twitter_user_id: twitter_user.id)&.friend_uids,
-            S3::Followership.find_by(twitter_user_id: twitter_user.id)&.follower_uids
-        ]
-      end
-
-      def work_in_threads(twitter_user)
-        results = Parallel.map([S3::Profile, S3::Friendship, S3::Followership], in_threads: 3) do |klass|
-          klass.find_by(twitter_user_id: twitter_user.id)
-        end
-        [results[0][:user_info], results[1]&.friend_uids, results[2]&.follower_uids]
+        cache_client.write(cache_key(twitter_user_id), compress(payload))
       end
 
       def cache_key(twitter_user_id)
@@ -78,7 +46,6 @@ module Efs
       end
 
       # TODO Use Efs::Client
-      # TODO Remove redundant benchmark
 
       def cache_client
         @m ||= Mutex.new
