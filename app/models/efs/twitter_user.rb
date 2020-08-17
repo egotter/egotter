@@ -5,6 +5,8 @@ require 'active_support/cache/file_store'
 
 module Efs
   class TwitterUser
+    extend ::Efs::Util
+
     attr_reader :uid, :screen_name, :profile, :friend_uids, :follower_uids
 
     def initialize(attrs)
@@ -59,20 +61,6 @@ module Efs
             @cache_client = ActiveSupport::Cache::FileStore.new(dir, options)
           end
         end
-      end
-
-      def parse_json(text)
-        Oj.strict_load(text, symbol_keys: true)
-      rescue Oj::ParseError => e
-        raise TypeError.new("#{text} is not a valid JSON source.")
-      end
-
-      def compress(text)
-        Zlib::Deflate.deflate(text)
-      end
-
-      def decompress(data)
-        Zlib::Inflate.inflate(data)
       end
     end
   end
