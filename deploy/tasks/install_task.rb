@@ -1,6 +1,6 @@
 require 'erb'
 
-require_relative '../../lib/secret_file'
+require_relative '../../app/lib/secret_file'
 
 require_relative '../lib/deploy_ruby/aws/instance'
 require_relative './util'
