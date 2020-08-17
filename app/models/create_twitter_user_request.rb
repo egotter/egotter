@@ -226,8 +226,7 @@ class CreateTwitterUserRequest < ApplicationRecord
       @bm_perform['sum'] = @bm_perform.values.sum
       @bm_perform['elapsed'] = elapsed
 
-      Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{sprintf("%.3f sec", elapsed)}"
-      Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{@bm_perform.inspect}"
+      Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{sprintf("%.3f sec", elapsed)} #{@bm_perform.inspect}"
 
       result
     end
