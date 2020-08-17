@@ -73,7 +73,7 @@ class PeriodicReport < ApplicationRecord
           user: user,
           start_date: start_date,
           end_date: end_date,
-          date_range: date_helper.time_ago_in_words(start_date),
+          date_range: DateHelper.time_ago_in_words(start_date),
           removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: options[:unfollowers_count]),
           aggregation_period: calc_aggregation_period(start_date, end_date),
           period_name: pick_period_name,
@@ -132,7 +132,7 @@ class PeriodicReport < ApplicationRecord
       end
 
       message = ERB.new(template.read).result_with_hash(
-          interval: date_helper.distance_of_time_in_words(ttl),
+          interval: DateHelper.distance_of_time_in_words(ttl),
           support_url: support_url(campaign_params('will_expire_support')),
           pricing_url: pricing_url(campaign_params('will_expire_pricing')),
       )
@@ -181,8 +181,8 @@ class PeriodicReport < ApplicationRecord
       if scheduled_job
         template = Rails.root.join('app/views/periodic_reports/scheduled_job_exists.ja.text.erb')
         message = ERB.new(template.read).result_with_hash(
-            interval: date_helper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
-            sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at),
+            interval: DateHelper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
+            sent_at: DateHelper.time_ago_in_words(scheduled_job.perform_at),
             support_url: support_url(campaign_params('scheduled_job_exists_support')),
         )
 
@@ -199,8 +199,8 @@ class PeriodicReport < ApplicationRecord
       if scheduled_job
         template = Rails.root.join('app/views/periodic_reports/scheduled_job_created.ja.text.erb')
         message = ERB.new(template.read).result_with_hash(
-            interval: date_helper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
-            sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at),
+            interval: DateHelper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
+            sent_at: DateHelper.time_ago_in_words(scheduled_job.perform_at),
             support_url: support_url(campaign_params('scheduled_job_created_support')),
             pricing_url: pricing_url(campaign_params('scheduled_job_created_pricing')),
         )
@@ -313,7 +313,7 @@ class PeriodicReport < ApplicationRecord
           user: user,
           start_date: start_date,
           end_date: end_date,
-          date_range: date_helper.time_ago_in_words(start_date),
+          date_range: DateHelper.time_ago_in_words(start_date),
           removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: options[:unfollowers_count]),
           period_name: pick_period_name,
           unfriends: options[:unfriends],
@@ -462,10 +462,10 @@ class PeriodicReport < ApplicationRecord
           utm_campaign: "#{name}_#{I18n.l(Time.zone.now, format: :date_hyphen)}",
       }
     end
+  end
 
-    def date_helper
-      @date_helper ||= Class.new { include ActionView::Helpers::DateHelper }.new
-    end
+  module DateHelper
+    extend ActionView::Helpers::DateHelper
   end
 
   def send_direct_message
