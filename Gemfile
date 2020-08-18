@@ -59,6 +59,7 @@ gem 'webpacker', '~> 5.0'
 
 # Sidekiq
 gem 'sidekiq', '< 7'
+gem 'unique_job'
 gem 'expire_job'
 gem 'timeout_job'
 gem 'sinatra', require: false

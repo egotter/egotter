@@ -389,7 +389,7 @@ GEM
       tilt (>= 1.1, < 3)
     semantic_range (2.3.0)
     sexp_processor (4.15.0)
-    sidekiq (6.1.0)
+    sidekiq (6.1.1)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
@@ -440,6 +440,9 @@ GEM
       unf_ext
     unf_ext (0.0.7.7)
     unicode-display_width (1.7.0)
+    unique_job (0.2.1)
+      redis
+      sidekiq (> 6.0, < 7.0)
     warden (1.2.8)
       rack (>= 2.0.6)
     webpacker (5.1.1)
@@ -509,6 +512,7 @@ DEPENDENCIES
   twitter_with_auto_pagination
   tzinfo-data
   uglifier (>= 1.3.0)
+  unique_job
   webpacker (~> 5.0)
 
 BUNDLED WITH
