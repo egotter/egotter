@@ -1,9 +1,11 @@
 require 'twitter'
 
 # It is necessary to load the classes first because they may be called in Thread.
-require_relative '../../app/models/call_create_friendship_count'
-require_relative '../../app/models/call_user_timeline_count'
-require_relative '../../app/models/call_create_direct_message_event_count'
+require_relative '../../app/lib/egotter/sorted_set'
+require_relative '../../app/lib/egotter/async_sorted_set'
+require_relative '../../app/lib/call_create_friendship_count'
+require_relative '../../app/lib/call_user_timeline_count'
+require_relative '../../app/lib/call_create_direct_message_event_count'
 
 module Egotter
   module Twitter

@@ -1,5 +1,3 @@
-require_relative 'sorted_set'
-
 module Egotter
   class AsyncSortedSet < ::Egotter::SortedSet
 
