@@ -1963,7 +1963,7 @@ ja:
     redirection_modal:
       'yes': 'はい'
       'no': 'いいえ'
-    follow_modal:
+    create_follow_modal:
       title: 'フォローする'
       message_html: '@<span class="screen-name"></span> さんをフォローしますか？ 数が多い場合は凍結されないようゆっくりフォローしていきます。'
       history_link_html: 'フォローの履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">フォロー履歴</a> から見ることができます。'
@@ -1981,7 +1981,7 @@ ja:
         purchase: '購入する'
         purchased: '購入済み'
         login: 'ログインする'
-    unfollow_modal:
+    create_unfollow_modal:
       title: 'フォローを解除する'
       message_html: '@<span class="screen-name"></span> さんをフォロー解除しますか？ 数が多い場合は凍結されないようゆっくりフォロー解除していきます。'
       history_link_html: 'フォロー解除の履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">アンフォロー履歴</a> から見ることができます。'

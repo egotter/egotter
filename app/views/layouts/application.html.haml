@@ -76,8 +76,8 @@
     = render partial: 'modal/search_modal'
 
     - if user_signed_in?
-      = render partial: 'modal/follow_modal'
-      = render partial: 'modal/unfollow_modal'
+      = render partial: 'modal/create_follow_modal'
+      = render partial: 'modal/create_unfollow_modal'
       = render partial: 'modal/welcome_modal'
     -  else
       = modal_dialog id: 'sign-in-modal', title: t('.sign_in_modal.title'), body: t('.sign_in_modal.body'), button: {positive: t('.sign_in_modal.yes'), negative: t('.sign_in_modal.no')}
