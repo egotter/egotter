@@ -1,3 +1,6 @@
+# If I don't write this code, only DynamoDB::Client will be loaded and DynamoDB will not be loaded.
+DynamoDB
+
 module DynamoDB
   module Testing
     def initialize(klass, table, partition_key)
