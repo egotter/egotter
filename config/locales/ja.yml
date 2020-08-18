@@ -1937,16 +1937,16 @@ ja:
         error: 'ツイートに失敗しました。テキストが長すぎたり、特殊な文字が入ったりしていませんか？'
         ok: "ツイートする"
         cancel: "やめておく"
-      periodic_tweet:
-        title_html: '<span class="egotter-pink">定期ツイート</span>で検索回数 大幅アップ'
-        text_html: |
-          定期的なツイートの設定をオンにすると、<br>検索回数が <span class="egotter-pink">%{count}回/日</span> 増えます。<br>
-          <br>
-          <span class="small text-muted">※えごったーのことを 1回/日 自動的にツイートします</span>
-        success: '定期ツイートの設定をオンにしました。'
-        error: '定期ツイートの設定に失敗しました。'
-        ok: "定期ツイートオン"
-        cancel: "やめておく"
+    periodic_tweet_modal:
+      title_html: '<span class="egotter-pink">定期ツイート</span>で検索回数 大幅アップ'
+      text_html: |
+        定期的なツイートの設定をオンにすると、<br>検索回数が <span class="egotter-pink">%{count}回/日</span> 増えます。<br>
+        <br>
+        <span class="small text-muted">※えごったーのことを 1回/日 自動的にツイートします</span>
+      success: '定期ツイートの設定をオンにしました。'
+      error: '定期ツイートの設定に失敗しました。'
+      ok: "定期ツイートオン"
+      cancel: "やめておく"
     search_modal:
       title: 'えごったーで検索'
       remaining_count: '残りの検索回数 %{count} 回'
