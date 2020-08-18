@@ -37,7 +37,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     end
 
     context 'unauthorized? returns true' do
-      before { allow(user).to receive(:unauthorized?).and_return(true) }
+      before { allow(user).to receive(:authorized?).and_return(false) }
       it { expect { subject }.to raise_error(described_class::Unauthorized) }
     end
 

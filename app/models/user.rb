@@ -172,11 +172,6 @@ class User < ApplicationRecord
     end
   end
 
-  # TODO Remove later
-  def unauthorized?
-    !authorized?
-  end
-
   def current_friend_uids
     if instance_variable_defined?(:@current_friend_uids)
       @current_friend_uids

@@ -46,7 +46,7 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   def validate_request!
     raise AlreadyFinished if finished?
-    raise Unauthorized if user&.unauthorized?
+    raise Unauthorized if user && !user.authorized?
     # TODO Implement #too_short_create_interval? as class method
     raise TooShortCreateInterval if TwitterUser.select(:id, :created_at).latest_by(uid: uid)&.too_short_create_interval?
   end
