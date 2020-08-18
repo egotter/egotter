@@ -5,6 +5,8 @@ end
 database = Rails.env.test? ? 1 : 0
 
 Sidekiq.configure_server do |config|
+  Rails.application.eager_load!
+
   config.redis = {url: "redis://#{ENV['REDIS_HOST']}:6379/#{database}"}
   config.server_middleware do |chain|
     chain.add UniqueJob::ServerMiddleware
