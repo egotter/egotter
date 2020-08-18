@@ -560,10 +560,6 @@ class PeriodicReport < ApplicationRecord
               target: {recipient_id: uid},
               message_data: {
                   text: message,
-                  quick_reply: {
-                      type: 'options',
-                      options: quick_replies
-                  }
               }
           }
       }
