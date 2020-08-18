@@ -94,26 +94,4 @@ class SearchCountLimitation
         end
     condition.merge(created_at: SEARCH_COUNT_PERIOD.seconds.ago..Time.zone.now)
   end
-
-  class << self
-    def max_count(user)
-      new(user: user, session_id: nil).max_count
-    end
-
-    def remaining_count(user: nil, session_id: nil)
-      new(user: user, session_id: session_id).remaining_count
-    end
-
-    def count_remaining?(user: nil, session_id: nil)
-      new(user: user, session_id: session_id).count_remaining?
-    end
-
-    def count_reset_in(user: nil, session_id: nil)
-      new(user: user, session_id: session_id).count_reset_in
-    end
-
-    def current_sharing_bonus(user)
-      new(user: user, session_id: nil).current_sharing_bonus
-    end
-  end
 end
