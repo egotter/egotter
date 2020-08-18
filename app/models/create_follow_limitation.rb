@@ -1,7 +1,7 @@
 class CreateFollowLimitation
 
-  ANONYMOUS = Rails.configuration.x.constants['create_follow_limitation']['anonymous']
-  BASIC_PLAN = Rails.configuration.x.constants['create_follow_limitation']['basic_plan']
+  ANONYMOUS = Rails.configuration.x.constants[:create_follow_limitation][:anonymous]
+  BASIC_PLAN = Rails.configuration.x.constants[:create_follow_limitation][:basic_plan]
 
   CREATE_FOLLOW_PERIOD = 1.day.to_i
 

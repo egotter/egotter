@@ -27,7 +27,7 @@
 
 class UsageStat < ApplicationRecord
 
-  DEFAULT_SECONDS = Rails.configuration.x.constants['usage_stat_recently_created']
+  DEFAULT_SECONDS = Rails.configuration.x.constants[:usage_stat_recently_created]
 
   def fresh?(attr = :updated_at, seconds: DEFAULT_SECONDS)
     Time.zone.now - send(attr) < seconds

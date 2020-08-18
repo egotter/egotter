@@ -1,7 +1,7 @@
 class SearchLimitation
 
-  SOFT_LIMIT = Rails.configuration.x.constants['search_limitation']['soft_limit']
-  HARD_LIMIT = Rails.configuration.x.constants['search_limitation']['hard_limit']
+  SOFT_LIMIT = Rails.configuration.x.constants[:search_limitation][:soft_limit]
+  HARD_LIMIT = Rails.configuration.x.constants[:search_limitation][:hard_limit]
 
   class << self
     def limited?(user, signed_in: false)
