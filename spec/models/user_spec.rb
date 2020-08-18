@@ -201,6 +201,15 @@ RSpec.describe User, type: :model do
     it { expect(User.premium.pluck(:id)).to eq([user.id]) }
   end
 
+  describe '#sharing_count' do
+    subject { user.sharing_count }
+    before do
+      user.save!
+      user.tweet_requests.create!(tweet_id: 123, text: 'text')
+    end
+    it { is_expected.to eq(1) }
+  end
+
   describe '#add_atmark_to_periodic_report?' do
     subject { user.add_atmark_to_periodic_report? }
     before { user.save! }

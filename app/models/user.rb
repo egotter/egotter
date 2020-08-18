@@ -224,11 +224,10 @@ class User < ApplicationRecord
 
   SHARE_EGOTTER_DURATION = 1
 
-  def sharing_egotter_count
+  def sharing_count
     tweet_requests.where(created_at: SHARE_EGOTTER_DURATION.hour.ago..Time.zone.now).
         where(deleted_at: nil).size
   end
-  alias sharing_count sharing_egotter_count
 
   def valid_coupons_search_count
     coupons.where('expires_at > ?', Time.zone.now).sum(:search_count)
