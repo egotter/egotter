@@ -1,25 +1,16 @@
+<% via = current_via('search_modal') %>
+
 <% render_search_modal_start_time = Time.zone.now %>
 <%= modal_dialog id: 'search-modal', title: t('.title'), data: {url: search_histories_path}, size: 'modal-lg' do %>
-  <%= render partial: 'shared/search_form', locals: {via: current_via('search_modal_input')} %>
+  <%= render partial: 'shared/search_form', locals: {via: via} %>
   <div class="mt-1 mb-3 small">
     <%= t('.remaining_count', count: @search_count_limitation.remaining_count) %>
-    <a href="#" class="btn btn-outline-primary btn-sm" onclick="$('#increase-search-count').show(); $(this).hide(); return false;"><%= t('.increase_count') %> <i class="far fa-question-circle"></i></a>
+    <% btn_type = @search_count_limitation.count_remaining? ? 'btn-outline-primary' : 'btn-outline-warning' %>
+    <a href="#" class="btn <%= btn_type %> btn-sm" onclick="$('#increase-search-count').show(); $(this).hide(); return false;"><%= t('.increase_count') %> <i class="far fa-question-circle"></i></a>
   </div>
 
   <div id="increase-search-count" class="mb-3" style="display: none;">
-    <% if user_signed_in? %>
-      <% if current_user.has_valid_subscription? %>
-        <%= link_to current_user.purchased_plan_name, '#', class: 'btn btn-outline-primary btn-sm disabled' %>
-        <div class="mt-1 mb-3 text-muted"><%= t('.purchased') %> <span class="small"><a href="<%= settings_path(current_via('search_modal')) %>" class=""><%= t('.settings') %></a></span></div>
-      <% else %>
-        <div><a href="#" class="btn btn-outline-primary btn-checkout btn-sm"><%= t('.purchase', price: t('pricing.new.pricing.basic_num')) %></a></div>
-        <div class="mt-1 mb-3"><%= t('.use_secretly') %> <span class="small"><a href="#" class="btn-checkout"><%= t('.see_details') %></a></span></div>
-      <% end %>
-      <div><a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm"><%= t('.tweet') %></a></div>
-      <div class="mt-1 mb-3"><%= t('.use_a_little') %> <span class="small"><a href="#" data-target="#share-modal" data-toggle="modal"><%= t('.see_details') %></a></span></div>
-    <% else %>
-      <%= link_to t('.sign_in'), sign_in_path(via: current_via('search_modal')), class: 'btn btn-primary btn-sm' %>
-    <% end %>
+    <%= render template: 'messages/ways_to_increase_searches', locals: {via: via} %>
   </div>
 
   <% unless @search_count_limitation.count_remaining? %>
