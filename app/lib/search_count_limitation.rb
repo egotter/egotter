@@ -3,6 +3,7 @@ class SearchCountLimitation
   SIGN_IN_BONUS = Rails.configuration.x.constants[:search_count_limitation][:sign_in_bonus]
   SHARING_BONUS = Rails.configuration.x.constants[:search_count_limitation][:sharing_bonus]
   PERIODIC_TWEET_BONUS = Rails.configuration.x.constants[:search_count_limitation][:periodic_tweet_bonus]
+  CONTINUOUS_SIGN_IN_BONUS = Rails.configuration.x.constants[:search_count_limitation][:continuous_sign_in_bonus]
   ANONYMOUS = Rails.configuration.x.constants[:search_count_limitation][:anonymous]
   BASIC_PLAN = Rails.configuration.x.constants[:search_count_limitation][:basic_plan]
 
@@ -34,6 +35,10 @@ class SearchCountLimitation
 
     if @user && CreatePeriodicTweetRequest.exists?(user_id: @user.id)
       count += PERIODIC_TWEET_BONUS
+    end
+
+    if @user && @user.continuous_sign_in?
+      count += CONTINUOUS_SIGN_IN_BONUS
     end
 
     count

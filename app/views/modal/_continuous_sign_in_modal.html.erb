@@ -1,0 +1,13 @@
+<% if current_user.continuous_sign_in? %>
+  <%= modal_dialog id: 'continuous-sign-in-modal', title: t('.title_html'), button: {positive: t('.ok')} do %>
+    <div class="d-flex align-items-center mb-3">
+      <%= image_tag image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;' %>
+      <div class="ml-3"><%= t('.text_html', count: SearchCountLimitation::CONTINUOUS_SIGN_IN_BONUS) %></div>
+    </div>
+  <% end %>
+  <script>
+    $(function () {
+      new Welcome.ContinuousSignInDialog().show();
+    });
+  </script>
+<% end %>

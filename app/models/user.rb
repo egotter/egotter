@@ -164,7 +164,6 @@ class User < ApplicationRecord
   end
 
   def twitter_user
-    logger.info "Deprecated calling User#twitter_user #{(caller[0][/`([^']*)'/, 1] rescue '')}"
     if instance_variable_defined?(:@twitter_user)
       @twitter_user
     else
@@ -245,5 +244,10 @@ class User < ApplicationRecord
 
   def add_atmark_to_periodic_report?
     has_valid_subscription? || 1.weeks.ago < created_at
+  end
+
+  def continuous_sign_in?(ignore_today = true)
+    (ignore_today || access_days.where(date: Time.zone.now.in_time_zone('Tokyo').to_date).exists?) &&
+        access_days.where(date: 1.day.ago.in_time_zone('Tokyo').to_date).exists?
   end
 end

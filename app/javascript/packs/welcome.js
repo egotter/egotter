@@ -90,6 +90,14 @@ class PeriodicTweetDialog extends ModalDialog {
 
 Welcome.PeriodicTweetDialog = PeriodicTweetDialog;
 
+class ContinuousSignInDialog extends ModalDialog {
+  constructor() {
+    super($('#continuous-sign-in-modal'));
+  }
+}
+
+Welcome.ContinuousSignInDialog = ContinuousSignInDialog;
+
 class FollowDialog extends ModalDialog {
   constructor() {
     super($('#follow-modal'));

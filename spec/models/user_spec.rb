@@ -223,4 +223,10 @@ RSpec.describe User, type: :model do
       it { is_expected.to be_falsey }
     end
   end
+
+  describe '#continuous_sign_in?' do
+    let(:user) { create(:user, with_access_days: 1) }
+    subject { user.continuous_sign_in? }
+    it { is_expected.to be_truthy }
+  end
 end

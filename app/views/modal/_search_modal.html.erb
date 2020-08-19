@@ -6,7 +6,7 @@
   <div class="mt-1 mb-3 small">
     <%= t('.remaining_count', count: @search_count_limitation.remaining_count) %>
     <% btn_type = @search_count_limitation.count_remaining? ? 'btn-outline-primary' : 'btn-outline-warning' %>
-    <a href="#" class="btn <%= btn_type %> btn-sm" onclick="$('#increase-search-count').show(); $(this).hide(); return false;"><%= t('.increase_count') %> <i class="far fa-question-circle"></i></a>
+    <a href="#" class="btn <%= btn_type %> btn-sm" onclick="$('#increase-search-count').show('slow'); $(this).hide(); return false;"><%= t('.increase_count') %> <i class="far fa-question-circle"></i></a>
   </div>
 
   <div id="increase-search-count" class="mb-3" style="display: none;">

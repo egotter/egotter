@@ -1953,6 +1953,12 @@ ja:
       error: '定期ツイートの設定に失敗しました。'
       ok: "定期ツイートオン"
       cancel: "やめておく"
+    continuous_sign_in_modal:
+      title_html: '<span class="egotter-pink">ログインボーナス</span> ゲット'
+      text_html: |
+        2日連続 のログインで<br>
+        検索回数 <span class="egotter-pink">%{count}回</span> アップ
+      ok: '受け取る'
     search_modal:
       title: 'えごったーで検索'
       remaining_count: '残りの検索回数 %{count} 回'
