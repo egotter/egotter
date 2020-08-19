@@ -57,6 +57,12 @@
   = t('.basic_plan_unfollow', count: CreateUnfollowLimitation::BASIC_PLAN)
 .my-2
   %i.fas.fa-check.text-primary
+  = t('.basic_plan_atmark')
+.my-2
+  %i.fas.fa-check.text-primary
+  = t('.basic_plan_nonstop')
+.my-2
+  %i.fas.fa-check.text-primary
   = t('.basic_plan_money_back_guarantee', count: Order::TRIAL_DAYS)
 .my-2
   - if user_signed_in?
