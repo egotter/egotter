@@ -20,4 +20,14 @@ RSpec.describe SearchReport, type: :model do
       is_expected.to be_falsey
     end
   end
+
+  describe '.build_direct_message_event' do
+    subject { described_class.build_direct_message_event(1, 'message') }
+    it do
+      event = subject
+      expect(event[:message_create][:target][:recipient_id]).to eq(1)
+      expect(event[:message_create][:message_data][:text]).to eq('message')
+      expect(event[:message_create][:message_data][:quick_reply][:options][0][:label]).not_to include('missing')
+    end
+  end
 end

@@ -63,24 +63,22 @@ class SearchReport < ApplicationRecord
                   text: message,
                   quick_reply: {
                       type: 'options',
-                      options: QUICK_REPLY_OPTIONS
+                      options: [
+                          {
+                              label: I18n.t('quick_replies.search_reports.label1'),
+                              description: I18n.t('quick_replies.search_reports.description1')
+                          },
+                          {
+                              label: I18n.t('quick_replies.search_reports.label2'),
+                              description: I18n.t('quick_replies.search_reports.description2')
+                          }
+                      ]
                   }
               }
           }
       }
     end
   end
-
-  QUICK_REPLY_OPTIONS = [
-      {
-          label: I18n.t('quick_replies.search_reports.label1'),
-          description: I18n.t('quick_replies.search_reports.description1')
-      },
-      {
-          label: I18n.t('quick_replies.search_reports.label2'),
-          description: I18n.t('quick_replies.search_reports.description2')
-      }
-  ]
 
   def start_message
     template = Rails.root.join('app/views/search_reports/start.ja.text.erb')

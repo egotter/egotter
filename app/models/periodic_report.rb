@@ -549,10 +549,42 @@ class PeriodicReport < ApplicationRecord
   end
 
   class << self
+    def default_quick_reply_options
+      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
+      [
+          {
+              label: I18n.t('quick_replies.prompt_reports.label1'),
+              description: I18n.t('quick_replies.prompt_reports.description1')
+          },
+          {
+              label: I18n.t('quick_replies.prompt_reports.label3'),
+              description: I18n.t('quick_replies.prompt_reports.description3')
+          },
+          {
+              label: I18n.t('quick_replies.prompt_reports.label5'),
+              description: I18n.t('quick_replies.prompt_reports.description5')
+          }
+      ]
+    end
+
+    def unsubscribe_quick_reply_options
+      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
+      [
+          {
+              label: I18n.t('quick_replies.prompt_reports.label4'),
+              description: I18n.t('quick_replies.prompt_reports.description4')
+          },
+          {
+              label: I18n.t('quick_replies.prompt_reports.label3'),
+              description: I18n.t('quick_replies.prompt_reports.description3')
+          }
+      ]
+    end
+
     # options:
     #   unsubscribe
     def build_direct_message_event(uid, message, options = {})
-      quick_replies = options[:unsubscribe] ? UNSUBSCRIBE_QUICK_REPLY_OPTIONS : DEFAULT_QUICK_REPLY_OPTIONS
+      quick_replies = options[:unsubscribe] ? unsubscribe_quick_reply_options : default_quick_reply_options
 
       {
           type: 'message_create',
@@ -560,6 +592,10 @@ class PeriodicReport < ApplicationRecord
               target: {recipient_id: uid},
               message_data: {
                   text: message,
+                  quick_reply: {
+                      type: 'options',
+                      options: quick_replies
+                  }
               }
           }
       }
@@ -596,32 +632,6 @@ class PeriodicReport < ApplicationRecord
   def report_recipient
     self.class.messages_allotted?(user) ? user : User.egotter
   end
-
-  DEFAULT_QUICK_REPLY_OPTIONS = [
-      {
-          label: I18n.t('quick_replies.prompt_reports.label1'),
-          description: I18n.t('quick_replies.prompt_reports.description1')
-      },
-      {
-          label: I18n.t('quick_replies.prompt_reports.label3'),
-          description: I18n.t('quick_replies.prompt_reports.description3')
-      },
-      {
-          label: I18n.t('quick_replies.prompt_reports.label5'),
-          description: I18n.t('quick_replies.prompt_reports.description5')
-      }
-  ]
-
-  UNSUBSCRIBE_QUICK_REPLY_OPTIONS = [
-      {
-          label: I18n.t('quick_replies.prompt_reports.label4'),
-          description: I18n.t('quick_replies.prompt_reports.description4')
-      },
-      {
-          label: I18n.t('quick_replies.prompt_reports.label3'),
-          description: I18n.t('quick_replies.prompt_reports.description3')
-      }
-  ]
 
   module UrlHelpers
     def method_missing(method, *args, &block)
