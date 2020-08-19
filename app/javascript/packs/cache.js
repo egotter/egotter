@@ -1,6 +1,6 @@
 class Cache {
   constructor(ttl) {
-    this.ttl = ttl || 259200; // 3 days
+    this.ttl = ttl || 86400; // 60 * 60 * 24 = 1 day
     this.storage = window['sessionStorage'] || {};
   }
 

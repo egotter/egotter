@@ -3,7 +3,7 @@ var Welcome = {};
 class ModalDialog {
   constructor($el) {
     this.$el = $el;
-    this.cache_key = $el.attr('id');
+    this.cache_key = $el.attr('id') + '-' + moment().format("YYYYMMDD");
     this.cache = new Egotter.Cache();
   }
 
