@@ -1,4 +1,5 @@
 class SearchCountLimitation
+  extend Memoization
 
   SIGN_IN_BONUS = Rails.configuration.x.constants[:search_count_limitation][:sign_in_bonus]
   SHARING_BONUS = Rails.configuration.x.constants[:search_count_limitation][:sharing_bonus]
@@ -43,6 +44,7 @@ class SearchCountLimitation
 
     count
   end
+  memoize
 
   def remaining_count
     [0, max_count - current_count].max
@@ -50,21 +52,25 @@ class SearchCountLimitation
     Rails.logger.warn "##{__method__} Maybe invalid session_id class=#{@session_id.class} inspect=#{@session_id.inspect}"
     raise
   end
+  memoize
 
   def count_remaining?
     remaining_count >= 1
   end
+  memoize
 
   def current_count
     # The cause of "ActionView::Template::Error (can't quote Hash)" is invalid session_id.
     # e.g. {"public_id"=>"hash string"}
     SearchHistory.where(where_condition).size
   end
+  memoize
 
   def count_reset_in
     record = SearchHistory.order(created_at: :asc).find_by(where_condition)
     record ? [0, (record.created_at + SEARCH_COUNT_PERIOD.seconds - Time.zone.now).to_i].max : 0
   end
+  memoize
 
   def current_sharing_bonus
     if @user&.authorized?
@@ -85,6 +91,7 @@ class SearchCountLimitation
     Rails.logger.info e.backtrace.join("\n")
     SHARING_BONUS
   end
+  memoize
 
   private
 
@@ -99,4 +106,22 @@ class SearchCountLimitation
         end
     condition.merge(created_at: SEARCH_COUNT_PERIOD.seconds.ago..Time.zone.now)
   end
+
+  module Instrumentation
+    %i(
+        max_count
+        remaining_count
+        count_remaining?
+        current_count
+        count_reset_in
+        current_sharing_bonus
+      ).each do |method_name|
+      define_method(method_name) do |*args, &blk|
+        ApplicationRecord.benchmark("Benchmark #{self.class}##{method_name}", level: :info) do
+          method(method_name).super_method.call(*args, &blk)
+        end
+      end
+    end
+  end
+  prepend Instrumentation
 end
