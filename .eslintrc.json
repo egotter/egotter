@@ -18,6 +18,7 @@
     "$": true,
     "ga": true,
     "Highcharts": true,
+    "moment": true,
     "d3": true,
     "Egotter": true,
     "Snackbar": true,
