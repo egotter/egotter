@@ -37,6 +37,14 @@ class Cache {
     this.storage[key] = null;
   }
 
+  remaining(key) {
+    try {
+      return this.ttl - (this.time() - JSON.parse(this.storage[key])['time']);
+    } catch (err) {
+      return null;
+    }
+  }
+
   time() {
     return Math.floor(new Date().getTime() / 1000);
   }

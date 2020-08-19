@@ -12,9 +12,9 @@ class ModalDialog {
       this.$el.modal();
     } else {
       if (this.cache.read(this.cache_key)) {
-        console.log('already shown', this.$el);
+        console.log('already shown', this.$el, this.cache_key, this.cache.remaining(this.cache_key));
       } else {
-        console.log('show', this.$el);
+        console.log('show', this.$el, this.cache_key, this.cache.remaining(this.cache_key));
         this.cache.write(this.cache_key, true);
         this.$el.modal('show');
       }
