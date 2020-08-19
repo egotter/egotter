@@ -1930,17 +1930,26 @@ ja:
       follow:
         title_html: 'えごったーを<span class="egotter-pink">フォロー</span>しよう！'
         note_html: 'フォローすると<span class="egotter-pink">検索が早く</span>なります。<br><span class="egotter-pink">リムられ通知</span>も届きます。'
-        tweet_text: 'えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji}'
         ok: "フォローする"
         cancel: "やめておく"
       share:
         title_html: '<span class="egotter-pink">ツイート</span>で検索回数アップ'
-        note_html: '※テキストの最後にえごったーのURLが付きます https://egotter.com'
         note_for_count_html: |
           えごったーのことを1度だけツイートすると、<br>
           検索回数が <span class="egotter-pink">%{count}回分</span> 増えます。<br>
           <br>
           <span class="small text-muted">※テキストの最後にえごったーのURLが付きます</span>
+        tweets:
+          - 'えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ ٩(๑❛ᴗ❛๑)۶'
+          - 'えごったーっていうの使えば一瞬で誰にリムられたかとかわかるよ！🥳'
+          - 'えごったーすごいΣ(-᷅_-᷄๑)'
+          - 'えごったーのおかげでリムった人のID付きでDMくるの有能🥺'
+          - 'メンヘラにはえごったーさいきょう🥺'
+          - 'すげぇ今日誰にもリムられなかったwww'
+          - 'えごったー 面白い🤭😂\nランキングや個性の分析まである😘👍'
+          - 'えごったー天才だた、😳'
+          - 'えごったー？？ みたいなのをフォローしたらリム通知送ってくれますよ！！\n最高です、これw'
+        see_other_candidates: '他のテキストを見る'
         success: 'ツイートに成功しました。'
         error: 'ツイートに失敗しました。テキストが長すぎたり、特殊な文字が入ったりしていませんか？'
         ok: "ツイートする"
