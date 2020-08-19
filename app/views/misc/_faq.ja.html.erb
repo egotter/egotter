@@ -1,3 +1,5 @@
+<% via = current_via('faq') %>
+
 <h3 class="h5 my-5">えごったー 全般</h3>
 
 
@@ -5,9 +7,9 @@
 <div class="mb-5">
   ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるWebサイトです。<br><br>使い方は Twitter ID 入力するだけ！ いつでもすぐに結果を見ることができます。
   <% if user_signed_in? %>
-    <%= link_to t('.search', user: current_user.screen_name), timeline_path(current_via('faq')), class: 'btn btn-outline-primary btn-sm' %>
+    <%= link_to t('.search', user: current_user.screen_name), timeline_path(current_user, via: via), class: 'btn btn-outline-primary btn-sm' %>
   <% else %>
-    <%= link_to t('.sign_in'), sign_in_path(via: current_via('faq')), class: 'btn btn-outline-primary btn-sm' %>
+    <%= link_to t('.sign_in'), sign_in_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
   <% end %>
 </div>
 
@@ -53,7 +55,7 @@
 <div class="mb-5">
   Webサイトにログインすればその後は自動で届きます。
   <% unless user_signed_in? %>
-    <%= link_to t('.sign_in'), sign_in_path(via: current_via('faq')), class: 'btn btn-outline-primary btn-sm' %>
+    <%= link_to t('.sign_in'), sign_in_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
   <% end %>
 </div>
 
@@ -81,7 +83,7 @@
 <div class="mb-5">
   Webサイトにログインしてください。@ego_tter のフォローだけではリムられ通知は届きません。
   <% unless user_signed_in? %>
-    <%= link_to t('.sign_in'), sign_in_path(via: current_via('faq')), class: 'btn btn-outline-primary btn-sm' %>
+    <%= link_to t('.sign_in'), sign_in_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
   <% end %>
 </div>
 
@@ -89,7 +91,7 @@
 <div class="mb-5">
   今のところは、朝・昼・夜の1日3回届きます。届く回数は設定ページから変更できます。
   <% if user_signed_in? %>
-    <%= link_to t('.settings'), settings_path(via: current_via('faq')), class: 'btn btn-outline-primary btn-sm' %>
+    <%= link_to t('.settings'), settings_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
   <% end %>
 </div>
 
@@ -103,7 +105,7 @@
 <div class="mb-5">リムられ通知でユーザー名の前に @ が付くのは、有料プランのユーザーか、「えごったーの登録後1週間以内」のユーザーのみになります。</div>
 
 
-<h3 class="h5 my-5">リムられ通知をDMで操作する</h3>
+<h3 class="h5 my-5">リムられ通知 DMでの操作</h3>
 
 
 <%= render partial: 'q', locals: {text: 'リムられ通知をDMで操作する方法を教えてください'} %>
@@ -119,6 +121,23 @@
   <%= link_to t('quick_replies.prompt_reports.label4'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label4')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする<br>
   リムられ通知の定期的な送信を再開します。<br>
 </div>
+
+
+<h3 class="h5 my-5">検索回数の制限</h3>
+
+
+<%= render partial: 'q', locals: {text: 'えごったーでの検索回数とは何ですか？'} %>
+<div class="mb-5">えごったーで1日に分析できるユーザー数の制限のことです。<br><br>Webサイトへのログイン、えごったーの宣伝ツイート、 有料プランの購入をすることによって回数を増やすことができます。</div>
+
+<%= render partial: 'q', locals: {text: '検索回数を増やす方法を教えてください'} %>
+<div class="mb-5">
+  あなたは1日あたり <%= @search_count_limitation.max_count %>回 検索することができます。残りの検索回数は <%= @search_count_limitation.remaining_count %>回 です。<br>
+  <br>
+  もっとたくさん検索することもできます。お好きなプランをお選びください。<br>
+  <br>
+  <%= render template: 'messages/ways_to_increase_searches', locals: {via: via} %>
+</div>
+
 
 <h3 class="h5 my-5">データの正確性</h3>
 
