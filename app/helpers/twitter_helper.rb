@@ -5,8 +5,9 @@ module TwitterHelper
     "https://twitter.com/#{screen_name}"
   end
 
-  def direct_message_url(uid)
-    "https://twitter.com/messages/compose?recipient_id=#{uid}"
+  def direct_message_url(uid, text = nil)
+    text = "&text=#{URI.encode(text)}" if text
+    "https://twitter.com/messages/compose?recipient_id=#{uid}#{text}"
   end
 
   def direct_messages_url(screen_name)
@@ -19,7 +20,7 @@ module TwitterHelper
 
   def user_link(screen_name, options = {}, &block)
     options = options.merge(target: '_blank', rel: 'nofollow')
-    url = "https://twitter.com/#{screen_name}"
+    url = user_url(screen_name)
     block_given? ? link_to(url, options, &block) : link_to(mention_name(screen_name), url, options)
   end
 

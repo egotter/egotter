@@ -595,6 +595,12 @@ ja:
       title: "お問い合わせ"
       lead_html: '気になることや分からないことについて、お気軽にお問い合わせください。公式アカウントは <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> です。'
       faq: "よくあるご質問"
+    faq:
+      search: '@%{user} を分析する'
+      sign_in: 'ログインする'
+      see_on_twitter: '@%{user} をツイッターで見る'
+      settings: '設定ページを開く'
+      open_dm: 'DM作成画面を開く'
     terms_of_service:
       title: "利用規約"
     privacy_policy:

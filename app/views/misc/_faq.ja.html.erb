@@ -2,10 +2,23 @@
 
 
 <%= render partial: 'q', locals: {text: 'えごったーとは何ですか？'} %>
-<div class="mb-5">ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるWebサイトです。使い方は Twitter ID 入力するだけ！ いつでもすぐに結果を見ることができます。</div>
+<div class="mb-5">
+  ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるWebサイトです。<br><br>使い方は Twitter ID 入力するだけ！ いつでもすぐに結果を見ることができます。
+  <% if user_signed_in? %>
+    <%= link_to t('.search', user: current_user.screen_name), timeline_path(current_via('faq')), class: 'btn btn-outline-primary btn-sm' %>
+  <% else %>
+    <%= link_to t('.sign_in'), sign_in_path(via: current_via('faq')), class: 'btn btn-outline-primary btn-sm' %>
+  <% end %>
+</div>
 
 <%= render partial: 'q', locals: {text: 'えごったーに公式アカウントはありますか？'} %>
-<div class="mb-5"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> が公式アカウントです。気になることはいつでもご質問ください。質問する際はリプライですと見逃しが少なくなります。</div>
+<div class="mb-5">
+  <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> が公式アカウントです。気になることはいつでもご質問ください。質問する際はリプライですと見逃しが少なくなります。
+  <%= link_to t('.see_on_twitter', user: 'ego_tter'), user_url('ego_tter'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+</div>
+
+<%= render partial: 'q', locals: {text: '公式アカウントのフォローは必須ですか？'} %>
+<div class="mb-5">必須ではないです。@ego_tter をフォローしていると<span class="egotter-pink">データ更新が早くなる</span>という効果はありますが、フォローしていなくてもえごったーを使うことはできます。</div>
 
 
 <h3 class="h5 my-5">プライバシーとセキュリティ</h3>
@@ -15,7 +28,7 @@
 <div class="mb-5">安全です。TLS/SSLを用いた通信の暗号化により、プライバシーとセキュリティは強固に守られています。</div>
 
 <%= render partial: 'q', locals: {text: 'えごったーを使ったことは誰かにバレますか？'} %>
-<div class="mb-5">バレません。通信内容は暗号化されているため、このWebサイトの利用状況を他の人に知られることはありません。</div>
+<div class="mb-5">バレません。このWebサイトの利用状況を他の人に知られることはありません。<br><br>@ego_tter をフォローすることで、ツイッター公式の「共通のフォロー」に表示されてしまうことはあります。</div>
 
 <%= render partial: 'q', locals: {text: 'えごったーを使うと勝手にツイートされますか？'} %>
 <div class="mb-5">勝手にツイートすることはありませんのでご安心ください。</div>
@@ -24,41 +37,67 @@
 <div class="mb-5">DMを勝手に見ることはありませんのでご安心ください。</div>
 
 <%= render partial: 'q', locals: {text: 'なんでたくさんの権限が必要なんですか？'} %>
-<div class="mb-5">ツイッターの権限には種類が少ないため、「DMを送る」だけであっても、他の不要な権限まで自動でついてきてしまうんです。</div>
+<div class="mb-5"><span class="egotter-pink">ツイッターの仕様</span>です。「DMを送る」だけであっても、他の不要な権限まで自動的についてきてしまうんです。</div>
 
 <%= render partial: 'q', locals: {text: '他の人も検索できてよいのですか？'} %>
-<div class="mb-5">えごったーで検索できるのは「公開情報のみ」ですのでご安心ください。鍵アカウントについては、ログインしているユーザーに見る権限があるときだけ検索できます。</div>
+<div class="mb-5">えごったーで検索できるのは「公開情報のみ」ですのでご安心ください。<br><br>鍵アカウントについては、ログインしているユーザーに見る権限があるときだけ検索できます。</div>
 
 
 <h3 class="h5 my-5">リムられ通知 全般</h3>
 
 
 <%= render partial: 'q', locals: {text: 'リムられ通知とは何ですか？'} %>
-<div class="mb-5">「誰かにフォローを外されたこと」をDMで通知する機能のことです。Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。</div>
+<div class="mb-5">「誰かにフォローを外されたこと」をDMで通知する機能のことです。<br><br>Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。</div>
 
 <%= render partial: 'q', locals: {text: 'リムられ通知はどうすれば届きますか？'} %>
-<div class="mb-5">Webサイトにログインすればその後は自動で届きます。</div>
+<div class="mb-5">
+  Webサイトにログインすればその後は自動で届きます。
+  <% unless user_signed_in? %>
+    <%= link_to t('.sign_in'), sign_in_path(via: current_via('faq')), class: 'btn btn-outline-primary btn-sm' %>
+  <% end %>
+</div>
 
 <%= render partial: 'q', locals: {text: 'リムられ通知の有効期限とは何ですか？'} %>
 <div class="mb-5">ツイッターの仕様上、DMを一方的に送り続けることはできません。そのため、リムられ通知を受け取るには、定期的に @ego_tter にDMを送る必要があります。これがリムられ通知の有効期限です。これは<span class="egotter-pink">ツイッターの仕様</span>です。</div>
 
 <%= render partial: 'q', locals: {text: 'リムられ通知が止まりました。再開することはできますか？'} %>
-<div class="mb-5">リムられ通知はいつでも再開できます。「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてみてください。止まっている理由がある場合は、返信のDMに解決方法が書かれています。</div>
+<div class="mb-5">
+  リムられ通知はいつでも再開できます。「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてみてください。
+  <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %><br>
+  <br>
+  止まっている理由がある場合は、返信のDMに解決方法が書かれています。
+</div>
 
 <%= render partial: 'q', locals: {text: 'リムられ通知の有効期限がすぐに切れるのはどうしてですか？'} %>
 <div class="mb-5"><span class="egotter-pink">ツイッターの仕様</span>です。相手からDMの送信がないと、通知DMを送り続けることができないのです。</div>
 
 <%= render partial: 'q', locals: {text: "「#{t('quick_replies.prompt_reports.label3')}」は何回までできますか？"} %>
-<div class="mb-5">何回でもできます。リムられが増えたかな？と思うタイミングで「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてください。</div>
+<div class="mb-5">
+  何回でもできます。リムられが増えたかな？と思うタイミングで「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてください。
+  <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+</div>
 
 <%= render partial: 'q', locals: {text: '@ego_tter をフォローしたのにリムられ通知が届きません。どうしてですか？'} %>
-<div class="mb-5">Webサイトにログインしてください。@ego_tter のフォローだけではリムられ通知は届きません。</div>
+<div class="mb-5">
+  Webサイトにログインしてください。@ego_tter のフォローだけではリムられ通知は届きません。
+  <% unless user_signed_in? %>
+    <%= link_to t('.sign_in'), sign_in_path(via: current_via('faq')), class: 'btn btn-outline-primary btn-sm' %>
+  <% end %>
+</div>
 
 <%= render partial: 'q', locals: {text: 'リムられ通知はどれくらいの頻度で届きますか？'} %>
-<div class="mb-5">今のところは、朝・昼・夜の1日3回届きます。届く回数は<a href="<%= settings_path %>">設定ページ</a>から変更できます。</div>
+<div class="mb-5">
+  今のところは、朝・昼・夜の1日3回届きます。届く回数は設定ページから変更できます。
+  <% if user_signed_in? %>
+    <%= link_to t('.settings'), settings_path(via: current_via('faq')), class: 'btn btn-outline-primary btn-sm' %>
+  <% end %>
+</div>
 
 <%= render partial: 'q', locals: {text: 'リムられ通知をすぐに受け取ることはできますか？'} %>
-<div class="mb-5">@ego_tter に「リムられ通知 今すぐ送信」とDMしてください。そうすれば、すぐにリムられ通知が届きます。</div>
+<div class="mb-5">
+  @ego_tter に「リムられ通知 今すぐ送信」とDMしてください。そうすれば、すぐにリムられ通知が届きます。
+  <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+</div>
 
 <%= render partial: 'q', locals: {text: 'リムられ通知に @ が付かなくなりました。理由は何ですか？'} %>
 <div class="mb-5">リムられ通知でユーザー名の前に @ が付くのは、有料プランのユーザーか、「えごったーの登録後1週間以内」のユーザーのみになります。</div>
@@ -71,14 +110,13 @@
 <div class="mb-5">
   決められたメッセージをDMで送ることで、リムられ通知をDMで操作することができます。<br>
   <br>
-  「<strong><%= t('quick_replies.prompt_reports.label3') %></strong>」とDMする<br>
+  <%= link_to t('quick_replies.prompt_reports.label3'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする<br>
   リムられ通知をすぐに送信します。もし送信できない場合は、その理由が返信のDMに書かれています。<br>
-  これ以降、リムられ通知は定期的に届くようになります。<br>
   <br>
-  「<strong><%= t('quick_replies.prompt_reports.label5') %></strong>」とDMする<br>
+  <%= link_to t('quick_replies.prompt_reports.label5'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label5')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする<br>
   リムられ通知の定期的な送信を停止します。<br>
   <br>
-  「<strong><%= t('quick_replies.prompt_reports.label4') %></strong>」とDMする<br>
+  <%= link_to t('quick_replies.prompt_reports.label4'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label4')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする<br>
   リムられ通知の定期的な送信を再開します。<br>
 </div>
 
