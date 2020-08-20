@@ -699,14 +699,7 @@ ja:
         リムられチェックアプリです。
       lead_004: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
     show:
-      tweet:
-        biginner:
-          title_html: 'えごったーを<span class="egotter-pink">これから使う</span>方向け'
-        expert:
-          title_html: 'えごったーに<span class="egotter-pink">慣れてきた</span>方向け'
-      tweet_empty_text: |
-        えごったーを使い始めたよ！ リムったらそっこーで分かるからね。(๑ᴖ｡ᴖ๑)
-        #egotter #リムられチェック %{url}
+      tweet: '%{text} #egotter %{url}'
   unfollowers:
   blocking_or_blocked:
   common_friends:
@@ -1956,9 +1949,13 @@ ja:
           - 'えごったーのおかげでリムった人のID付きでDMくるの有能🥺'
           - 'メンヘラにはえごったーさいきょう🥺'
           - 'すげぇ今日誰にもリムられなかったwww'
-          - 'えごったー 面白い🤭😂\nランキングや個性の分析まである😘👍'
+          - |
+            えごったー 面白い🤭😂
+            ランキングや個性の分析まである😘👍
           - 'えごったー天才だた、😳'
-          - 'えごったー？？ みたいなのをフォローしたらリム通知送ってくれますよ！！\n最高です、これw'
+          - |
+            えごったー？？ みたいなのをフォローしたらリム通知送ってくれますよ！！
+            最高です、これw
         see_other_candidates: '他のテキストを見る'
         success: 'ツイートに成功しました。'
         error: 'ツイートに失敗しました。テキストが長すぎたり、特殊な文字が入ったりしていませんか？'

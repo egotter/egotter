@@ -24,11 +24,7 @@
 <% end %>
 
 <% if remove_related_page? %>
-  <div class="text-center"><%= t('unfriends.show.tweet.biginner.title_html') %></div>
-  <%= render(partial: 'twitter/tweet_box', locals: {text: t('unfriends.show.tweet_empty_text', url: unfriends_top_url(via: current_via)), twitter_user: @twitter_user}) %>
-
-  <div class="text-center mt-3"><%= t('unfriends.show.tweet.expert.title_html') %></div>
-  <%= render(partial: 'twitter/tweet_box', locals: {text: current_tweet_text(@twitter_user), twitter_user: @twitter_user}) %>
+  <%= render(partial: 'twitter/tweet_box', locals: {text: t('unfriends.show.tweet', text: t('modal.welcome_modal.share.tweets').sample, url: unfriends_top_url(via: current_via)), twitter_user: @twitter_user}) %>
 <% else %>
   <%= render(partial: 'twitter/tweet_box', locals: {text: current_tweet_text(@twitter_user), twitter_user: @twitter_user}) %>
 <% end %>
