@@ -19,9 +19,8 @@ class UsersController < ApplicationController
   def fetch_user
     current_user.api_client.user(current_user.uid)
   rescue Twitter::Error::Unauthorized => e
-    unless e.message == 'Invalid or expired token.'
-      logger.warn "#{controller_name}##{action_name} #{e.class} #{e.message} #{current_user.id}"
-      notify_airbrake(e)
+    unless AccountStatus.unauthorized?(e)
+      logger.warn "#{controller_name}##{action_name} #{e.inspect} user_id=#{current_user.id}"
     end
     nil
   end
