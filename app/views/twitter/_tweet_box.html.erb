@@ -1,14 +1,15 @@
-%div{id: "text-#{text.object_id}"}
-  -# textarea
-  .tweet-preview-box.p-2
-    .textarea= text.gsub("\n", '<br>').html_safe
+<% container_id = "text-#{text.object_id}" %>
+<div id="<%= container_id %>">
+  <div class="tweet-preview-box p-2">
+    <div class="textarea"><%= text.gsub("\n", '<br>').html_safe %></div>
+  </div>
+  <div class="tweet-box text-right">
+    <%= link_to t('.copy'), '#', class: 'btn btn-outline-primary btn-copy' %>
+    <%= link_to t('.tweet'), '#', class: 'btn btn-primary btn-tweet' %>
+  </div>
+</div>
 
-  -# buttons
-  .tweet-box.text-right
-    = link_to t('.copy'), '#', class: 'btn btn-outline-primary btn-copy'
-    = link_to t('.tweet'), '#', class: 'btn btn-primary btn-tweet'
-
-:javascript
+<script>
   $(function () {
     function openWindow(html) {
       var text = html.replace(/<br>/gm, "\n").replace(/<[^>]*>?/gm, '');
@@ -16,52 +17,54 @@
       window.open(url, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');
     }
 
-    var eventCategory = '#{controller_name}##{action_name}';
+    var eventCategory = '<%= "#{controller_name}##{action_name}" %>';
     var twitterUser = {
-      userId: '#{current_user&.id}',
-      uid: '#{twitter_user.uid}',
-      screenName: "#{twitter_user.screen_name}"
+      userId: '<%= current_user&.id %>',
+      uid: '<%= twitter_user.uid %>',
+      screenName: "<%= twitter_user.screen_name %>"
     };
-    var container = $('#text-#{text.object_id}');
+    var container = $('#<%= container_id %>');
     var textarea = container.find('.textarea');
 
     // Click textarea
     textarea.on('click', function () {
       $(this).select();
-
-      ga('send', {
+      var event = {
         hitType: 'event',
         eventCategory: eventCategory,
         eventAction: 'Textarea clicked',
         eventLabel: JSON.stringify(twitterUser)
-      });
+      };
+      console.log('event', event);
+      ga('send', event);
     });
 
     // Click copy button
     container.find('.btn-copy').on('click', function () {
       openWindow(textarea.val() || textarea.html());
-
-      ga('send', {
+      var event = {
         hitType: 'event',
         eventCategory: eventCategory,
         eventAction: 'Copy button clicked',
         eventLabel: JSON.stringify(twitterUser)
-      });
-
+      };
+      ga('send', event);
+      console.log('event', event);
       return false;
     });
 
     // Click tweet button
     container.find('.btn-tweet').on('click', function () {
       openWindow(textarea.val() || textarea.html());
-
-      ga('send', {
+      var event = {
         hitType: 'event',
         eventCategory: eventCategory,
         eventAction: 'Tweet button clicked',
         eventLabel: JSON.stringify(twitterUser)
-      });
-
+      };
+      ga('send', event);
+      console.log('event', event);
       return false;
     });
   });
+</script>
