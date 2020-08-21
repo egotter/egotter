@@ -14,7 +14,11 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def status_interval_avg_in_words
-    h.time_ago_in_words(Time.zone.now - status_interval_avg) rescue nil
+    if status_interval_avg == 0
+      0
+    else
+      h.time_ago_in_words(Time.zone.now - status_interval_avg) rescue nil
+    end
   end
 
   def percent_follow_back_rate

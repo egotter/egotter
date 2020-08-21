@@ -174,7 +174,7 @@
       </div>
       <div class="col-6 mb-3 small">
         <%= link_to usage_stat_path(user, via: via) do %>
-          <strong class="text-black"><%= user.status_interval_avg_in_words || t('.unknown_value') %></strong>
+          <strong class="text-black"><%= (value = user.status_interval_avg_in_words) == 0 ? '0' : (value || t('.unknown_value')) %></strong>
           <br class="d-block d-md-none">
           <span class="text-muted small"><%= t('.status_interval_avg') %></span>
         <% end %>
