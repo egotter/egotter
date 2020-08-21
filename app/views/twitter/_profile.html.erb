@@ -161,22 +161,50 @@
       <div class="small my-1"><i class="fas fa-birthday-cake text-muted"></i>&nbsp;<%= t('.birthday', date: l(birthday, format: :birthday)) %></div>
     <% end %>
 
-    <div class="row justify-content-between m-3">
+    <div class="row m-3">
       <% via = current_via('profile_header') %>
-      <% [
-             [status_path(user, via: via), user.delimited_statuses_count, :statuses],
-             [friend_path(user, via: via), user.delimited_friends_count, :friends],
-             [follower_path(user, via: via), user.delimited_followers_count, :followers],
-             [usage_stat_path(user, via: via), user.percent_follow_back_rate, :follow_back_rate],
-         ].each do |url, count, name| %>
-        <div class="small col-6 col-md-3 mb-3">
-          <%= link_to url do %>
-            <strong class="text-black"><%= count %></strong>
-            <br class="d-block d-lg-none">
-            <span class="text-muted small"><%= TwitterUser.human_attribute_name(name) %></span>
-          <% end %>
-        </div>
-      <% end %>
+      <div class="col-6 mb-3 small">
+        <%= link_to status_path(user, via: via) do %>
+          <strong class="text-black"><%= user.delimited_statuses_count %></strong>
+          <br class="d-block d-md-none">
+          <span class="text-muted small"><%= t('.statuses') %></span>
+        <% end %>
+      </div>
+      <div class="col-6 mb-3 small">
+        <%= link_to usage_stat_path(user, via: via) do %>
+          <strong class="text-black"><%= user.status_interval_avg_in_words || t('.unknown_value') %></strong>
+          <br class="d-block d-md-none">
+          <span class="text-muted small"><%= t('.status_interval_avg') %></span>
+        <% end %>
+      </div>
+      <div class="col-6 mb-3 small">
+        <%= link_to friend_path(user, via: via) do %>
+          <strong class="text-black"><%= user.delimited_friends_count %></strong>
+          <br class="d-block d-md-none">
+          <span class="text-muted small"><%= t('.friends') %></span>
+        <% end %>
+      </div>
+      <div class="col-6 mb-3 small">
+        <%= link_to usage_stat_path(user, via: via) do %>
+          <strong class="text-black"><%= user.reverse_percent_follow_back_rate || t('.unknown_value') %></strong>
+          <br class="d-block d-md-none">
+          <span class="text-muted small"><%= t('.reverse_follow_back_rate') %></span>
+        <% end %>
+      </div>
+      <div class="col-6 small">
+        <%= link_to follower_path(user, via: via) do %>
+          <strong class="text-black"><%= user.delimited_followers_count %></strong>
+          <br class="d-block d-md-none">
+          <span class="text-muted small"><%= t('.followers') %></span>
+        <% end %>
+      </div>
+      <div class="col-6 small">
+        <%= link_to usage_stat_path(user, via: via) do %>
+          <strong class="text-black"><%= user.percent_follow_back_rate || t('.unknown_value') %></strong>
+          <br class="d-block d-md-none">
+          <span class="text-muted small"><%= t('.follow_back_rate') %></span>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>

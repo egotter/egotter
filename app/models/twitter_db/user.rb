@@ -59,8 +59,16 @@ module TwitterDB
       self.protected
     end
 
+    def status_interval_avg
+      TwitterUser.latest_by(uid: uid)&.status_interval_avg
+    end
+
     def follow_back_rate
       TwitterUser.latest_by(uid: uid)&.follow_back_rate
+    end
+
+    def reverse_follow_back_rate
+      TwitterUser.latest_by(uid: uid)&.reverse_follow_back_rate
     end
 
     def to_param

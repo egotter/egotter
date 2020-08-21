@@ -575,7 +575,13 @@ ja:
       mute: "ミュートする"
       report_spam: "スパム報告する"
       birthday: '%{date} からツイッターを使っています'
-      unknown_follow_back_rate: '集計中'
+      statuses: 'ツイート'
+      friends: 'フォロー'
+      followers: 'フォロワー'
+      status_interval_avg: 'ツイート間隔'
+      reverse_follow_back_rate: 'フォロー返され率'
+      follow_back_rate: 'フォロー返し率'
+      unknown_value: '集計中'
       labels:
         suspended: "垢消し"
         blocked: "ブロック中"

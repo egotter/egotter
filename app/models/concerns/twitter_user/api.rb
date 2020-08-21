@@ -17,9 +17,27 @@ module Concerns::TwitterUser::Api
     (one_sided_followerships.size.to_f / follower_uids.size) rescue 0.0
   end
 
+  def status_interval_avg
+    tweets = status_tweets.map { |t| t.tweeted_at.to_i }.sort_by { |t| -t }.take(100)
+    tweets = tweets.slice(0, tweets.size - 1) if tweets.size.odd?
+    return 0.0 if tweets.empty?
+    times = tweets.each_slice(2).map { |t1, t2| t1 - t2 }
+    times.sum / times.size
+  rescue
+    0.0
+  end
+
   def follow_back_rate
     numerator = mutual_friendships.size
     denominator = follower_uids.size
+    (numerator == 0 || denominator == 0) ? 0.0 : numerator.to_f / denominator
+  rescue
+    0.0
+  end
+
+  def reverse_follow_back_rate
+    numerator = mutual_friendships.size
+    denominator = friend_uids.size
     (numerator == 0 || denominator == 0) ? 0.0 : numerator.to_f / denominator
   rescue
     0.0
