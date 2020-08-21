@@ -49,40 +49,29 @@ class Decorator
     else
       []
     end
-  rescue Twitter::Error::Unauthorized => e
-    unless AccountStatus.unauthorized?(e)
-      logger.warn "#{self.class}##{__method__} Return empty array. #{e.inspect} user_id=#{user&.id}"
-      logger.info self.inspect.truncate(100)
-      logger.info e.backtrace.join("\n")
-    end
-    []
-  rescue Twitter::Error::NotFound => e
-    unless AccountStatus.no_user_matches?(e)
-      logger.warn "#{self.class}##{__method__} Return an array includes all uids. #{e.inspect} user_id=#{user&.id}"
-      logger.info self.inspect.truncate(100)
-      logger.info e.backtrace.join("\n")
-    end
-    uids
   rescue => e
-    logger.warn "#{self.class}##{__method__} Return empty array. #{e.inspect} user_id=#{user&.id}"
-    logger.info self.inspect.truncate(100)
-    logger.info e.backtrace.join("\n")
-    []
+    if AccountStatus.unauthorized?(e)
+      []
+    elsif AccountStatus.no_user_matches?(e)
+      uids
+    else
+      logger.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{user&.id}"
+      logger.info e.backtrace.join("\n")
+      []
+    end
   end
   memoize
 
   def blocking_uids
     (remove_related_page? && user) ? client.blocked_ids : []
-  rescue Twitter::Error::Unauthorized => e
-    unless e.message == 'Invalid or expired token.'
-      logger.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{user&.id} #{self.inspect.truncate(100)}"
-      logger.info e.backtrace.join("\n")
-    end
-    []
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{user&.id} #{self.inspect.truncate(100)}"
-    logger.info e.backtrace.join("\n")
-    []
+    if AccountStatus.unauthorized?(e)
+      []
+    else
+      logger.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{user&.id}"
+      logger.info e.backtrace.join("\n")
+      []
+    end
   end
   memoize
 
