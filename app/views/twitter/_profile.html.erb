@@ -1,4 +1,6 @@
-<% user = user.twitter_db_user if switch_to_twitter_db_user?(user) %>
+<% if switch_to_twitter_db_user?(user) %>
+  <% user = user.twitter_db_user %>
+<% end %>
 <% logger.info { "Profile is rendered by #{user.class} in #{controller_name}##{action_name}" } %>
 <% user = TwitterUserDecorator.new(user) %>
 <% always_expanded ||= false %>
@@ -208,6 +210,7 @@
     </div>
   </div>
 </div>
+<div class="text-right small text-muted"><%= l(user.updated_at.in_time_zone('Tokyo'), format: :profile_header_long) %></div>
 
 <script>
   $(function () {

@@ -2557,6 +2557,7 @@ ja:
       order_short: "%-m月%-d日 %-H時"
       coupon_short: "%-m月%-d日 %-H時%-M分"
       profile_short: "%-m月%-d日 %-H時"
+      profile_header_long: "%Y年%-m月%-d日 %-H時%-M分"
       share_text_short: "%m%d%H%M"
       settings_short: "%m-%d %H:%M"
       short_hour: "%H:%M:%S"
