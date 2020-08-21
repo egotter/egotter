@@ -1,6 +1,4 @@
 module TwitterHelper
-  include Twitter::TwitterText::Autolink
-
   def user_url(screen_name)
     "https://twitter.com/#{screen_name}"
   end
@@ -52,11 +50,15 @@ module TwitterHelper
         str
       end
     end
-    auto_link(text, username_include_symbol: true, link_attribute_block: link_attribute_block, link_text_block: link_text_block).html_safe
+    TwitterTextAutoLink.auto_link(text, username_include_symbol: true, link_attribute_block: link_attribute_block, link_text_block: link_text_block).html_safe
   rescue => e
     logger.warn "linkify: #{e.inspect} text=#{text}"
     logger.info e.backtrace.join("\n")
     text
+  end
+
+  module TwitterTextAutoLink
+    extend Twitter::TwitterText::Autolink
   end
 
   def mention_name(screen_name)
@@ -67,15 +69,7 @@ module TwitterHelper
     user.profile_image_url_https.to_s
   end
 
-  def normal_icon_img(user, options = {})
-    image_tag normal_icon_url(user), {size: '48x48', alt: user.screen_name}.merge(options)
-  end
-
   def bigger_icon_url(user)
     user.profile_image_url_https.to_s.gsub(/_normal(\.jpe?g|\.png|\.gif)$/, '_bigger\1')
-  end
-
-  def bigger_icon_img(user, options = {})
-    image_tag bigger_icon_url(user), {size: '73x73', alt: user.screen_name}.merge(options)
   end
 end
