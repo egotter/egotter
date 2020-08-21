@@ -35,9 +35,7 @@
 
 <% if (tab = current_tabs(@twitter_user)[@active_tab]) && tab.count && tab.count >= 1 %>
   <% if remove_related_page? %>
-    <div class="alert alert-warning small">
-      <%= t('.explanation_of_data_inconsistency_html') %>
-    </div>
+    <%= t('.explanation_of_data_inconsistency_html') %>
   <% end %>
 
   <div class="text-right mb-4"><%= render partial: 'shared/sort_and_filter' %></div>
