@@ -1,6 +1,5 @@
 class CreateTweetWorker
   include Sidekiq::Worker
-  include Concerns::SearchCountSummary
   include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
 
@@ -31,10 +30,9 @@ class CreateTweetWorker
 
   def send_message_to_slack(request, tweet, options)
     user = request.user
-    params = search_count_summary(user)
+    params = SearchCountLimitation.new(user: user, session_id: nil).to_h
     params.merge!(
         request_id: request.id,
-        user_id: user.id,
         text: request.text + ' ',
         requested_by: options['requested_by']
     )

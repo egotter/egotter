@@ -195,4 +195,9 @@ RSpec.describe SearchCountLimitation, type: :model do
       it { is_expected.to eq(described_class::SHARING_BONUS) }
     end
   end
+
+  describe '#to_h' do
+    subject { instance.to_h }
+    it { is_expected.to be_truthy }
+  end
 end

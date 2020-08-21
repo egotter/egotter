@@ -93,6 +93,17 @@ class SearchCountLimitation
   end
   memoize
 
+  def to_h
+    {
+        user_id: @user&.id,
+        max: max_count,
+        remaining: remaining_count,
+        current: current_count,
+        sharing_bonus: current_sharing_bonus,
+        sharing_count: @user&.sharing_count,
+    }
+  end
+
   private
 
   def where_condition
