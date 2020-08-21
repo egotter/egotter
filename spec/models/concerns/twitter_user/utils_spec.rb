@@ -94,23 +94,22 @@ RSpec.describe Concerns::TwitterUser::Utils do
   end
 
   describe '#too_short_create_interval?' do
-    let(:interval) { TwitterUser::CREATE_RECORD_INTERVAL }
     subject { twitter_user.too_short_create_interval? }
 
     before { twitter_user.save!(validate: false) }
 
-    context 'The record was created more than [interval + 1 second] ago' do
-      before { twitter_user.update!(created_at: (interval + 1).seconds.ago) }
+    context 'The record was created 1 day ago' do
+      before { twitter_user.update!(created_at: 1.day.ago) }
       it { is_expected.to be_falsey }
     end
 
-    context 'The record was created less than [interval - 1 second] ago' do
-      before { twitter_user.update!(created_at: (interval - 1).seconds.ago) }
+    context 'The record was created 1 minute ago' do
+      before { twitter_user.update!(created_at: 1.minute.ago) }
       it { is_expected.to be_truthy }
     end
 
     context 'The record was created [interval] ago' do
-      before { twitter_user.update!(created_at: interval.seconds.ago) }
+      before { twitter_user.update!(created_at: TwitterUser::CREATE_RECORD_INTERVAL.ago) }
       it { is_expected.to be_falsey }
     end
   end

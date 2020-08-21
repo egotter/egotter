@@ -28,6 +28,12 @@ class CreateTwitterUserRequest < ApplicationRecord
   validates :user_id, presence: true
   validates :uid, presence: true
 
+  class << self
+    def too_short_request_interval?(uid:)
+      where(created_at: 1.minute.ago..Time.zone.now).where(uid: uid).exists?
+    end
+  end
+
   # context:
   #   :reporting
   def perform!(context = nil)
