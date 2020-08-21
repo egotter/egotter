@@ -211,7 +211,7 @@
   </div>
 </div>
 <% if user.updated_at %>
-  <div class="text-right small text-muted"><%= l(user.updated_at.in_time_zone('Tokyo'), format: :profile_header_long) %></div>
+  <div class="text-right small text-muted <%= 'd-none d-md-block' unless always_expanded %>"><%= l(user.updated_at.in_time_zone('Tokyo'), format: :profile_header_long) %></div>
 <% end %>
 
 <script>
