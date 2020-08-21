@@ -43,7 +43,7 @@
         return;
       } else if (!isPremium && periodicReportStopped) {
         var message = '<%= t('twitter_users.in_background.periodic_report_stopped_html') %>';
-        ToastMessage.info(message, {id: 'periodic_report_stopped', ttl: 60});
+        ToastMessage.info(message, {id: 'periodic_report_stopped', ttl: 300});
         return;
       }
 
