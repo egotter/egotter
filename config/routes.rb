@@ -127,7 +127,6 @@ Rails.application.routes.draw do
   get 'follow', to: 'follows#show'
   resources :follows, only: %i(create)
   resources :unfollows, only: %i(create)
-  resources :shares, only: %i(create)
 
   get 'tokimeki_unfollow', to: 'tokimeki_unfollow#new', as: :tokimeki_unfollow_top
   get 'tokimeki_unfollow/cleanup', to: 'tokimeki_unfollow#cleanup', as: :tokimeki_unfollow_cleanup
