@@ -29,13 +29,14 @@ class TwitterUserFetcher
       signatures.delete_if { |hash| hash[:method] == :user_timeline }
     end
 
-    fetch_results =
-      client.parallel do |batch|
-        signatures.each { |signature| batch.send(signature[:method], *signature[:args]) }
-      end
+    # fetch_results =
+    #   client.parallel do |batch|
+    #     signatures.each { |signature| batch.send(signature[:method], *signature[:args]) }
+    #   end
 
     signatures.each_with_object({}).with_index do |(item, memo), i|
-      memo[item[:method]] = fetch_results[i]
+      # memo[item[:method]] = fetch_results[i]
+      memo[item[:method]] = client.send(item[:method], *item[:args])
     end
   end
 
