@@ -11,7 +11,7 @@ namespace :servers do
       params = {
           'adjust' => true,
           'role' => 'web',
-          'count' => '4'
+          'count' => '6'
       }
       Tasks::TaskBuilder.build(params).run
     rescue => e
