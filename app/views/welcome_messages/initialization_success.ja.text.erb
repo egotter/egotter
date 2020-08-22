@@ -1,13 +1,13 @@
-@<%= screen_name %>のリムられ通知 初期設定が完了しました。
+リムられ通知 初期設定が完了しました。
 
 リムられ通知 初期設定：
 完了
 
 リムられ通知を受け取る：
-リムられ通知を受け取るには【<%= I18n.t('quick_replies.prompt_reports.label3') %>】をDMにコピペして送ってください
+【<%= I18n.t('quick_replies.prompt_reports.label3') %>】をDMにコピペして送ってください
 
 通知間隔：
-<%= I18n.t("settings.index.report_interval.#{report_interval}") %>
+朝、昼、夜に1回ずつ
 
 最新のデータ更新：<% if twitter_user %>
 <%= I18n.l(twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) %>
