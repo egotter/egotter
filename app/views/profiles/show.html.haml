@@ -27,7 +27,7 @@
 - if @indicator_names
   - @indicator_names.each do |name|
     - if name == @screen_name
-      = link_to(t('.see', user: name), '#', class: 'btn btn-outline-primary btn-sm btn-block mb-3 disabled', disabled: true)
+      = link_to(t('.seeing', user: name), '#', class: 'btn btn-outline-primary btn-sm btn-block mb-3 disabled', disabled: true)
     - else
       = link_to(t('.see', user: name), profile_path(name, {names: params[:names]}.merge(campaign_params('indicator_names'))), class: 'btn btn-outline-primary btn-sm btn-block mb-3')
 

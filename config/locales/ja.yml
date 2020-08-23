@@ -1065,6 +1065,7 @@ ja:
       prev: '< @%{user}'
       next: '@%{user} >'
       see: '@%{user} を見る'
+      seeing: '@%{user} を見ています'
       retry_exhausted: 'プロフィールの取得に失敗しました。数分後に再度お試しください'
       sign_in_html: '@%{user} の正確なステータスを取得するためにはログインが必要です。<a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>'
       updating_html: '@%{user} のステータスを更新中 <img src="/ajax-loader-blue.gif?a=1">'
