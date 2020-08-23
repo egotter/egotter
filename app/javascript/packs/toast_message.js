@@ -12,8 +12,10 @@ class ToastMessage {
       ttl: 300
     }, options);
 
-    if (!opt['id']) {
-      opt['id'] = Math.random().toString(32).substring(10);
+    if (opt['id']) {
+      opt['id'] = 'toast-' + opt['id'];
+    } else {
+      opt['id'] = 'toast-' + Math.random().toString(32).substring(10);
     }
 
     if (this.isAlreadyShown(opt['id'], opt['ttl'])) {
