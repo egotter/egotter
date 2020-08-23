@@ -172,16 +172,6 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
-  describe '.profile_url' do
-    subject { described_class.profile_url('name', a: 1) }
-    it { is_expected.to be_truthy }
-  end
-
-  describe '.timeline_url' do
-    subject { described_class.timeline_url(user, a: 1) }
-    it { is_expected.to be_truthy }
-  end
-
   describe '.request_id_text' do
     subject { described_class.request_id_text(user, 1, 'CreateUserRequestedPeriodicReportWorker') }
     before { user.create_periodic_report_setting! }
@@ -206,6 +196,11 @@ RSpec.describe PeriodicReport do
 
   describe '.campaign_params' do
     subject { described_class.campaign_params('name') }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.timeline_url' do
+    subject { described_class.timeline_url(user, {}) }
     it { is_expected.to be_truthy }
   end
 

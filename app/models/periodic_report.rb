@@ -373,26 +373,6 @@ class PeriodicReport < ApplicationRecord
       ''
     end
 
-    def root_url(options)
-      super({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
-    end
-
-    def sign_in_url(options)
-      super({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
-    end
-
-    def timeline_url(user, options)
-      super(user, {share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
-    end
-
-    def pricing_url(options)
-      super({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
-    end
-
-    def support_url(options)
-      super({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
-    end
-
     # ID-000-000-24h-ttt-0101-0-b
     def request_id_text(user, request_id, worker_context)
       setting = user.periodic_report_setting
@@ -443,16 +423,40 @@ class PeriodicReport < ApplicationRecord
       date = Time.zone.parse(date) if date.class == String
       date
     end
+  end
 
-    def campaign_params(name)
-      {
-          via: name,
-          utm_source: name,
-          utm_medium: 'dm',
-          utm_campaign: "#{name}_#{I18n.l(Time.zone.now, format: :date_hyphen)}",
-      }
+  extend CampaignsHelper
+
+  module UrlHelpers
+    def root_url(options)
+      Rails.application.routes.url_helpers.root_url({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+    end
+
+    def sign_in_url(options)
+      Rails.application.routes.url_helpers.sign_in_url({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+    end
+
+    def timeline_url(user, options)
+      Rails.application.routes.url_helpers.timeline_url(user, {share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+    end
+
+    def profile_url(*args)
+      Rails.application.routes.url_helpers.profile_url(*args)
+    end
+
+    def pricing_url(options)
+      Rails.application.routes.url_helpers.pricing_url({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+    end
+
+    def support_url(options)
+      Rails.application.routes.url_helpers.support_url({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+    end
+
+    def settings_url(*args)
+      Rails.application.routes.url_helpers.settings_url(*args)
     end
   end
+  extend UrlHelpers
 
   module DateHelper
     extend ActionView::Helpers::DateHelper
@@ -622,15 +626,4 @@ class PeriodicReport < ApplicationRecord
   def report_recipient
     self.class.messages_allotted?(user) ? user : User.egotter
   end
-
-  module UrlHelpers
-    def method_missing(method, *args, &block)
-      if method.to_s.end_with?('_url')
-        Rails.application.routes.url_helpers.send(method, *args, &block)
-      else
-        super
-      end
-    end
-  end
-  extend UrlHelpers
 end
