@@ -13,6 +13,6 @@ module Concerns::Report::HasToken
   end
 
   included do
-    validates :token, presence: true, uniqueness: true
+    validates :token, presence: true, uniqueness: {case_sensitive: true}
   end
 end

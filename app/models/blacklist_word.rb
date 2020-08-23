@@ -14,5 +14,5 @@
 #
 
 class BlacklistWord < ApplicationRecord
-  validates :text, uniqueness: true
+  validates :text, uniqueness: {case_sensitive: true}
 end

@@ -15,8 +15,8 @@
 #
 
 class CacheDirectory < ApplicationRecord
-  validates :name, uniqueness: true
-  validates :dir, uniqueness: true
+  validates :name, uniqueness: {case_sensitive: true}
+  validates :dir, uniqueness: {case_sensitive: true}
 
   def rotate!
     previous_dir = dir
