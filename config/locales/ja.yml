@@ -1066,7 +1066,8 @@ ja:
       next: '@%{user} >'
       see: '@%{user} を見る'
       retry_exhausted: 'プロフィールの取得に失敗しました。数分後に再度お試しください'
-      updating_html: '@%{user} のデータを更新中 <img src="/ajax-loader-blue.gif?a=1">'
+      sign_in_html: '@%{user} の正確なステータスを取得するためにはログインが必要です。<a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>'
+      updating_html: '@%{user} のステータスを更新中 <img src="/ajax-loader-blue.gif?a=1">'
       forbidden_reason_html: |
         <div class="text-right">
           <a class="btn btn-outline-primary btn-sm" onclick="$('#forbidden-reason-details').show(); $(this).hide(); return false;" href="#">「アカウント凍結」の意味 <i class="far fa-question-circle"></i></a>

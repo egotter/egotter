@@ -34,6 +34,16 @@
 :javascript
   $(function() {
     var fromCrawler = #{from_crawler?};
+    if (fromCrawler) {
+      return;
+    }
+
+    var userSignedIn = #{user_signed_in?};
+    if (!userSignedIn) {
+      ToastMessage.info('#{t('.sign_in_html', user: @screen_name, url: sign_in_path(redirect_path: profile_path(@screen_name, via: current_via('require_sign_in'))))}');
+      return;
+    }
+
     var url = '#{raw api_v1_account_statuses_path(screen_name: @screen_name)}';
     var retryCount = 0;
 
@@ -74,8 +84,6 @@
       });
     }
 
-    if (!fromCrawler) {
-      ToastMessage.info('#{t('.updating_html', user: @screen_name)}');
-      fetch();
-    }
+    ToastMessage.info('#{t('.updating_html', user: @screen_name)}');
+    fetch();
   });

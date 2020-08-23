@@ -14,6 +14,7 @@ module Concerns::SanitizationConcern
       /start
       /personality_insights
       /audience_insights
+      /profiles
   )
 
   SANITIZE_REDIRECT_PATH_REGEXP = Regexp.union(Search::API_V1_NAMES.map(&:to_s) + SAFE_CONTROLLERS)
