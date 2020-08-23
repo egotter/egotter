@@ -1319,10 +1319,8 @@ ActiveRecord::Schema.define(version: 2020_08_15_121443) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_twitter_users_on_created_at"
-    t.index ["screen_name", "user_id"], name: "index_twitter_users_on_screen_name_and_user_id"
     t.index ["screen_name"], name: "index_twitter_users_on_screen_name"
     t.index ["uid", "created_at"], name: "index_twitter_users_on_uid_and_created_at"
-    t.index ["uid", "user_id"], name: "index_twitter_users_on_uid_and_user_id"
     t.index ["uid"], name: "index_twitter_users_on_uid"
   end
 
