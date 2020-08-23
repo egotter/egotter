@@ -4,9 +4,9 @@
 - breadcrumb :profile, @screen_name
 
 - if @prev_name || @next_name
-  .row
-    .col-6.text-left= (@prev_name ? link_to(t('.prev', user: @prev_name), profile_path(@prev_name, names: params[:names]), class: 'btn btn-outline-primary btn-sm') : '')
-    .col-6.text-right= (@next_name ? link_to(t('.next', user: @next_name), profile_path(@next_name, names: params[:names]), class: 'btn btn-outline-primary btn-sm') : '')
+  .d-flex.justify-content-between.mb-3
+    %div= (@prev_name ? link_to(t('.prev', user: @prev_name), profile_path(@prev_name, names: params[:names], via: current_via('prev_name')), class: 'btn btn-outline-primary btn-sm') : '')
+    %div= (@next_name ? link_to(t('.next', user: @next_name), profile_path(@next_name, names: params[:names], via: current_via('prev_name')), class: 'btn btn-outline-primary btn-sm') : '')
 
 .message-box.alert.alert-warning{style: 'display: none;'}
 .forbidden-reason.my-1{style: 'display: none;'}= t('.forbidden_reason_html', user: @screen_name)
@@ -24,6 +24,13 @@
 - if @user
   .mb-3= render partial: 'twitter/profile', locals: {user: @user, always_expanded: true}
 
+- if @indicator_names
+  - @indicator_names.each do |name|
+    - if name == @screen_name
+      = link_to(t('.see', user: name), '#', class: 'btn btn-outline-primary btn-sm btn-block mb-3 disabled', disabled: true)
+    - else
+      = link_to(t('.see', user: name), profile_path(name, names: params[:names], via: current_via('indicator_names')), class: 'btn btn-outline-primary btn-sm btn-block mb-3')
+
 :javascript
   $(function() {
     var fromCrawler = #{from_crawler?};
@@ -32,7 +39,8 @@
 
     function fetch() {
       if (retryCount >= 3) {
-        console.log('Retry exhausted')
+        console.log('Retry exhausted', retryCount)
+        ToastMessage.info('#{t('.retry_exhausted')}');
         return;
       }
 
@@ -43,6 +51,7 @@
         } else {
           if (res['status'] === 'ok') {
             console.log('ok', retryCount);
+            ToastMessage.clear();
           } else {
             var message = res['message'];
             ToastMessage.warn(message);
@@ -66,6 +75,7 @@
     }
 
     if (!fromCrawler) {
+      ToastMessage.info('#{t('.updating_html', user: @screen_name)}');
       fetch();
     }
   });

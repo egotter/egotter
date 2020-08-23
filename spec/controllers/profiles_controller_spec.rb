@@ -13,9 +13,14 @@ RSpec.describe ProfilesController, type: :controller do
     it { is_expected.to have_http_status(:success) }
   end
 
-  describe '#decrypt_names' do
+  describe '#set_decrypt_names' do
     let(:encrypted_names) { MessageEncryptor.new.encrypt(['a', 'b', 'c'].join(',')) }
-    subject { controller.send(:decrypt_names, 'b', encrypted_names) }
-    it { is_expected.to eq(['a', 'c']) }
+    subject { controller.send(:set_decrypt_names, 'b', encrypted_names) }
+    it do
+      subject
+      expect(controller.instance_variable_get(:@indicator_names)).to eq(['a', 'b', 'c'])
+      expect(controller.instance_variable_get(:@prev_name)).to eq('a')
+      expect(controller.instance_variable_get(:@next_name)).to eq('c')
+    end
   end
 end
