@@ -9,6 +9,14 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
         subject
       end
     end
+
+    context 'delay is not passed' do
+      subject { described_class.new }
+      it do
+        delay = subject.instance_variable_get(:@delay)
+        expect(delay.call(123)).to eq(123)
+      end
+    end
   end
 
   describe '#start!' do
@@ -32,7 +40,12 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
   end
 
   describe '#start_sending!' do
-
+    let(:user) { create(:user) }
+    subject { described_class.new(user_ids: [user.id]).start_sending! }
+    it do
+      expect(CreatePeriodicReportWorker).to receive(:perform_in).with(any_args)
+      expect { subject }.to change { CreatePeriodicReportRequest.all.size }.by(1)
+    end
   end
 
   describe '#start_reminding!' do

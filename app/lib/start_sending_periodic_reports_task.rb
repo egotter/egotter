@@ -8,10 +8,15 @@ class StartSendingPeriodicReportsTask
 
     @start_date = start_date
     @end_date = end_date
-    @delay = delay
     @limit = limit
     @remind_only = remind_only
     @send_only_if_changed = send_only_if_changed
+
+    if delay
+      @delay = delay.respond_to?(:call) ? delay : Proc.new { delay }
+    else
+      @delay = Proc.new { |i| i }
+    end
   end
 
   def start!
@@ -26,23 +31,15 @@ class StartSendingPeriodicReportsTask
     user_ids = initialize_user_ids
     return if user_ids.empty?
 
-    last_request = CreatePeriodicReportRequest.order(created_at: :desc).first
-    last_request = CreatePeriodicReportRequest.new(created_at: 1.second.ago) unless last_request
+    max_id = CreatePeriodicReportRequest.maximum(:id) || 0
 
-    sleep 1 # Increase created_at of imported records
     requests = user_ids.map { |user_id| CreatePeriodicReportRequest.new(user_id: user_id, requested_by: 'batch') }
     CreatePeriodicReportRequest.import requests, validate: false
 
-    CreatePeriodicReportRequest.where('created_at > ?', last_request.created_at).find_each do |request|
+    CreatePeriodicReportRequest.where('id > ?', max_id).find_each.with_index do |request, i|
       next if request.status.present? || request.finished_at.present?
 
-      job_args = [request.id, user_id: request.user_id, create_twitter_user: true, send_only_if_changed: @send_only_if_changed]
-
-      if @delay
-        CreatePeriodicReportWorker.perform_in(@delay, *job_args)
-      else
-        CreatePeriodicReportWorker.perform_async(*job_args)
-      end
+      CreatePeriodicReportWorker.perform_in(@delay.call(i), request.id, user_id: request.user_id, create_twitter_user: true, send_only_if_changed: @send_only_if_changed)
     end
   end
 
@@ -53,12 +50,8 @@ class StartSendingPeriodicReportsTask
     requests = user_ids.map { |user_id| RemindPeriodicReportRequest.new(user_id: user_id) }
     RemindPeriodicReportRequest.import requests, validate: false
 
-    user_ids.each do |user_id|
-      if @delay
-        CreatePeriodicReportMessageWorker.perform_in(@delay, user_id, allotted_messages_will_expire: true)
-      else
-        CreatePeriodicReportMessageWorker.perform_async(user_id, allotted_messages_will_expire: true)
-      end
+    user_ids.each.with_index do |user_id, i|
+      CreatePeriodicReportMessageWorker.perform_in(@delay.call(i), user_id, allotted_messages_will_expire: true)
     end
   end
 
