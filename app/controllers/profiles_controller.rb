@@ -1,4 +1,5 @@
 class ProfilesController < ApplicationController
+  before_action { head :forbidden if twitter_crawler? }
   before_action :valid_screen_name?
 
   before_action do
@@ -16,7 +17,7 @@ class ProfilesController < ApplicationController
 
     @screen_name = params[:screen_name]
 
-    if user_signed_in? && params[:names].present?
+    if params[:names].present? && user_signed_in?
       set_decrypt_names(params[:screen_name], params[:names])
     end
   end
