@@ -21,6 +21,7 @@
 #  index_twitter_users_on_screen_name              (screen_name)
 #  index_twitter_users_on_screen_name_and_user_id  (screen_name,user_id)
 #  index_twitter_users_on_uid                      (uid)
+#  index_twitter_users_on_uid_and_created_at       (uid,created_at)
 #  index_twitter_users_on_uid_and_user_id          (uid,user_id)
 #
 

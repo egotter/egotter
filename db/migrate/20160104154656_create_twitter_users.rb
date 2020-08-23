@@ -18,6 +18,7 @@ class CreateTwitterUsers < ActiveRecord::Migration[4.2]
       t.index [:uid, :user_id]
       t.index [:screen_name, :user_id]
       t.index :created_at
+      t.index [:uid, :created_at]
     end
   end
 end
