@@ -2,14 +2,15 @@
 #
 # Table name: periodic_reports
 #
-#  id         :bigint(8)        not null, primary key
-#  user_id    :integer          not null
-#  read_at    :datetime
-#  token      :string(191)      not null
-#  message_id :string(191)      not null
-#  message    :string(191)      default(""), not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id           :bigint(8)        not null, primary key
+#  user_id      :integer          not null
+#  read_at      :datetime
+#  token        :string(191)      not null
+#  message_id   :string(191)      not null
+#  message      :string(191)      default(""), not null
+#  screen_names :json
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 # Indexes
 #
@@ -97,7 +98,8 @@ class PeriodicReport < ApplicationRecord
           faq_url: support_url(url_options),
       )
 
-      new(user: user, message: message, token: token)
+      selected_unfollowers = unfollowers.empty? ? total_unfollowers : unfollowers
+      new(user: user, message: message, token: token, screen_names: selected_unfollowers)
     end
 
     def remind_reply_message

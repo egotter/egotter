@@ -829,6 +829,7 @@ ActiveRecord::Schema.define(version: 2020_08_15_121443) do
     t.string "token", null: false
     t.string "message_id", null: false
     t.string "message", default: "", null: false
+    t.json "screen_names"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_periodic_reports_on_created_at"

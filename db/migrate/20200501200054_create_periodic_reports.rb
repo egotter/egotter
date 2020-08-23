@@ -6,6 +6,7 @@ class CreatePeriodicReports < ActiveRecord::Migration[5.2]
       t.string   :token,         null: false
       t.string   :message_id,    null: false
       t.string   :message,       null: false, default: ''
+      t.json     :screen_names
 
       t.timestamps null: false
 
