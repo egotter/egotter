@@ -16,16 +16,18 @@ class ProfilesController < ApplicationController
 
     @screen_name = params[:screen_name]
 
-    if params[:names].present?
-      @prev_name, @next_name = decrypt_names(params[:names])
+    if !from_crawler? && params[:names].present?
+      @prev_name, @next_name = decrypt_names(params[:screen_name], params[:names])
     end
   end
 
   private
 
-  def decrypt_names(content)
+  def decrypt_names(name, content)
     names = MessageEncryptor.new.decrypt(content).split(',')
-    names.map { |n| n == 'empty' ? nil : n }
+    if (index = names.index(name))
+      [names.fetch(index - 1), names.fetch(index + 1, names[0])]
+    end
   rescue => e
     nil
   end

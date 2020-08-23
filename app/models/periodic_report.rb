@@ -360,29 +360,17 @@ class PeriodicReport < ApplicationRecord
 
     def generate_profile_urls(screen_names, options, add_atmark: false)
       url_options = campaign_params('report_profile').merge(options)
-      indicator_names = encrypt_indicator_names(screen_names)
+      encrypted_names = encrypt_indicator_names(screen_names)
 
       screen_names.map.with_index do |screen_name, i|
-        "#{'@' if add_atmark || i < 2}#{screen_name} #{profile_url(screen_name, {names: indicator_names[i]}.merge(url_options))}"
+        "#{'@' if add_atmark || i < 2}#{screen_name} #{profile_url(screen_name, {names: encrypted_names}.merge(url_options))}"
       end
     end
 
     def encrypt_indicator_names(names)
-      encryptor = MessageEncryptor.new
-      names.map.with_index do |_, i|
-        if i == 0
-          value = ['empty', names[i + 1]]
-        elsif i == names.size - 1
-          value = [names[i - 1], 'empty']
-        else
-          value = [names[i - 1], names[i + 1]]
-        end
-
-        encryptor.encrypt(value.join(','))
-      end
+      MessageEncryptor.new.encrypt(names.join(','))
     rescue => e
-      logger.warn "#{__method__}: #{e.inspect} names=#{names.inspect}"
-      []
+      ''
     end
 
     def root_url(options)

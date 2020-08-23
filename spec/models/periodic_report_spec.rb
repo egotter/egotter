@@ -167,6 +167,11 @@ RSpec.describe PeriodicReport do
     it { is_expected.to eq('1 - 2') }
   end
 
+  describe '.encrypt_indicator_names' do
+    subject { described_class.encrypt_indicator_names(['a', 'b']) }
+    it { is_expected.to be_truthy }
+  end
+
   describe '.profile_url' do
     subject { described_class.profile_url('name', a: 1) }
     it { is_expected.to be_truthy }

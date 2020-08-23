@@ -12,4 +12,10 @@ RSpec.describe ProfilesController, type: :controller do
     subject { get :show, params: {screen_name: screen_name} }
     it { is_expected.to have_http_status(:success) }
   end
+
+  describe '#decrypt_names' do
+    let(:encrypted_names) { MessageEncryptor.new.encrypt(['a', 'b', 'c'].join(',')) }
+    subject { controller.send(:decrypt_names, 'b', encrypted_names) }
+    it { is_expected.to eq(['a', 'c']) }
+  end
 end
