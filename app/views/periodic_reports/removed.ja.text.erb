@@ -24,11 +24,6 @@
 通知ID：
 ID-<%= request_id_text %>
 
-<% if user.has_valid_subscription? %>
-プラン：
-@<%= user.screen_name %> は「<%= user.purchased_plan_name %>」を購入済みです。
-<% end %>
-
 通知の設定変更 <%= settings_url %>
 よくある質問 <%= faq_url %>
 
