@@ -6,6 +6,7 @@ module Concerns::SearchRequestConcern
   include Concerns::SearchRequestInstrumentationConcern
 
   included do
+    before_action(only: :show) { head :forbidden if twitter_crawler? }
     before_action(only: :show) { search_request_concern_bm_start }
     before_action(only: :show) { signed_in_user_authorized? }
     before_action(only: :show) { enough_permission_level? }
