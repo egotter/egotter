@@ -17,7 +17,8 @@ module Concerns::SearchRequestConcern
     before_action(only: :show) { !@self_search && !not_found_screen_name? && !forbidden_screen_name? }
     before_action(only: :show) { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
     before_action(only: :show) { search_limitation_soft_limited?(@twitter_user) }
-    before_action(only: :show) { !@self_search && !protected_search?(@twitter_user) && !blocked_search?(@twitter_user) }
+    before_action(only: :show) { !@self_search && !protected_search?(@twitter_user) }
+    before_action(only: :show) { !@self_search && !blocked_search?(@twitter_user) }
     before_action(only: :show) { twitter_user_persisted?(@twitter_user.uid) }
     before_action(only: :show) { twitter_db_user_persisted?(@twitter_user.uid) } # Not redirected
     before_action(only: :show) { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) } # Call after #twitter_user_persisted?

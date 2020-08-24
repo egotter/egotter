@@ -11,7 +11,8 @@ class TwitterUsersController < ApplicationController
   end
   before_action { @twitter_user = build_twitter_user_by_uid(params[:uid]) }
   before_action { search_limitation_soft_limited?(@twitter_user) }
-  before_action { !@self_search && !protected_search?(@twitter_user) && !blocked_search?(@twitter_user) }
+  before_action { !@self_search && !protected_search?(@twitter_user) }
+  before_action { !@self_search && !blocked_search?(@twitter_user) }
   before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
 
   before_action { self.access_log_disabled = true }

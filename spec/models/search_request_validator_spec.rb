@@ -64,4 +64,18 @@ RSpec.describe SearchRequestValidator, type: :model do
       it { is_expected.to be_falsey }
     end
   end
+
+  describe '#protected_user?' do
+    include_context 'user is not signed in'
+    subject { instance.protected_user?('name') }
+    before { allow(instance).to receive_message_chain(:client, :user).with(no_args).with('name').and_return(protected: true) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '#timeline_readable?' do
+    include_context 'user is not signed in'
+    subject { instance.timeline_readable?('name') }
+    before { allow(instance).to receive_message_chain(:client, :user_timeline).with(no_args).with('name', count: 1).and_return('result') }
+    it { is_expected.to be_truthy }
+  end
 end

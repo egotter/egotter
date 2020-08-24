@@ -160,13 +160,23 @@ module Concerns::ValidationConcern
     SearchRequestValidator.new(current_user).protected_user?(screen_name)
   end
 
+  def timeline_readable?(screen_name)
+    SearchRequestValidator.new(current_user).timeline_readable?(screen_name)
+  end
+  private :timeline_readable?
+
+  def search_yourself?(twitter_user)
+    user_signed_in? && current_user.uid == twitter_user.uid
+  end
+  private :search_yourself?
+
   def protected_search?(twitter_user)
-    protected_user?(twitter_user.screen_name).tap do |value|
-      redirect_to protected_path(screen_name: twitter_user.screen_name) if value
-    end
-  rescue => e
-    respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
-    false
+    return false if search_yourself?(twitter_user)
+    return false unless protected_user?(twitter_user.screen_name)
+    return false if timeline_readable?(twitter_user.screen_name)
+
+    redirect_to protected_path(screen_name: twitter_user.screen_name)
+    true
   end
 
   def search_limitation_soft_limited?(user)

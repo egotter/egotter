@@ -161,45 +161,40 @@ describe Concerns::ValidationConcern, type: :controller do
   end
 
   describe '#protected_search?' do
-    shared_context 'protected_user? returns true' do
-      before { allow(controller).to receive(:protected_user?).with(anything).and_return(true) }
-    end
-
-    shared_context 'protected_user? returns false' do
-      before { allow(controller).to receive(:protected_user?).with(anything).and_return(false) }
-    end
-
-    shared_context 'protected_user? raises an error' do
-      before { allow(controller).to receive(:protected_user?).with(anything).and_raise('error') }
-    end
-
     let(:twitter_user) { build(:twitter_user, with_relations: false) }
     subject { controller.protected_search?(twitter_user) }
 
-    context 'protected_user? returns true' do
-      include_context 'protected_user? returns true'
-      before do
-        allow(controller).to receive(:protected_path).with(anything).and_return('protected_path')
-      end
-      it do
-        expect(controller).to receive(:redirect_to).with('protected_path')
-        is_expected.to be_truthy
-      end
-    end
-
-    context 'protected_user? returns false' do
-      include_context 'protected_user? returns false'
+    context 'the user is not protected' do
+      before { allow(controller).to receive(:protected_user?).with(anything).and_return(false) }
       it { is_expected.to be_falsey }
     end
 
-    context 'protected_user? raises an error' do
-      include_context 'protected_user? raises an error'
-      before do
-        allow(controller).to receive(:twitter_exception_messages).with(any_args).and_return('message')
+    context 'the user is protected' do
+      before { allow(controller).to receive(:protected_user?).with(anything).and_return(true) }
+
+      context 'the user is searching yourself' do
+        before { allow(controller).to receive(:search_yourself?).with(anything).and_return(true) }
+        it { is_expected.to be_falsey }
       end
-      it do
-        expect(controller).to receive(:respond_with_error).with(:bad_request, instance_of(String))
-        is_expected.to be_falsey
+
+      context 'the user is not searching yourself' do
+        before { allow(controller).to receive(:search_yourself?).with(anything).and_return(false) }
+
+        context 'the timeline is readable' do
+          before { allow(controller).to receive(:timeline_readable?).with(anything).and_return(true) }
+          it { is_expected.to be_falsey }
+        end
+
+        context 'the timeline is not readable' do
+          before do
+            allow(controller).to receive(:timeline_readable?).with(anything).and_return(false)
+            allow(controller).to receive(:protected_path).with(anything).and_return('protected_path')
+          end
+          it do
+            expect(controller).to receive(:redirect_to).with('protected_path')
+            is_expected.to be_truthy
+          end
+        end
       end
     end
   end

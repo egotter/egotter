@@ -51,17 +51,21 @@ class SearchRequestValidator
   end
 
   def protected_user?(screen_name)
-    if user_signed_in?
-      client.user_timeline(screen_name, count: 1)
-      false
-    else
-      user = client.user(screen_name)
-      user[:protected]
-    end
+    user = client.user(screen_name)
+    user[:protected]
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     AccountStatus.protected?(e)
   end
+
+  def timeline_readable?(screen_name)
+    client.user_timeline(screen_name, count: 1)
+  rescue => e
+    logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
+    !AccountStatus.protected?(e)
+  end
+
+  private
 
   def user_signed_in?
     @user
