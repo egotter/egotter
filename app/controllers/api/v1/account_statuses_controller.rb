@@ -3,6 +3,9 @@ module Api
     class AccountStatusesController < ApplicationController
 
       skip_before_action :verify_authenticity_token
+
+      before_action :reject_crawler
+      before_action :require_login!
       before_action { valid_screen_name?(params[:screen_name]) }
 
       def show
