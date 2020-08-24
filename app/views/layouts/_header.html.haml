@@ -15,7 +15,7 @@
 %ul#orig-navbar.m-0.p-3
   %li
     = link_to root_path(via: via) do
-      %img.rounded{alt: "", height: "30", src: image_path('/logo_96x96.png')}
+      %img.rounded{alt: "", height: "30", src: image_path('/logo_transparent_96x96.png')}
   %li
     - text = content_for?(:navbar_title) ? yield(:navbar_title) : t('.title')
     = link_to text, subroot_path, class: 'text-white pl-2'
