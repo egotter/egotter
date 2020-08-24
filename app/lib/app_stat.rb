@@ -9,25 +9,19 @@ class AppStat
   end
 
   class DirectMessageStat
-    def initialize
-      @stats = [
-          GlobalTotalDirectMessageSentFlag,
-          GlobalTotalDirectMessageReceivedFlag,
-          GlobalDirectMessageSentFlag,
-          GlobalDirectMessageReceivedFlag,
-          GlobalSendDirectMessageCount,
-          GlobalActiveSendDirectMessageCount,
-          GlobalPassiveSendDirectMessageCount,
-          GlobalSendDirectMessageFromEgotterCount,
-          GlobalActiveSendDirectMessageFromEgotterCount,
-          GlobalPassiveSendDirectMessageFromEgotterCount
-      ].map { |klass| [klass, klass.new.size] }
-    end
-
     def to_s
-      @stats.map do |name, value|
-        "#{name} #{value}"
-      end.join("\n")
+      [
+          "TotalDirectMessageSentFlag #{GlobalTotalDirectMessageSentFlag.new.size}",
+          "TotalDirectMessageReceivedFlag #{GlobalTotalDirectMessageReceivedFlag.new.size}",
+          "DirectMessageSentFlag #{GlobalDirectMessageSentFlag.new.size}",
+          "DirectMessageReceivedFlag #{GlobalDirectMessageReceivedFlag.new.size}",
+          "SendDirectMessageCount #{GlobalSendDirectMessageCount.new.size}",
+          "ActiveSendDirectMessageCount #{GlobalActiveSendDirectMessageCount.new.size}",
+          "PassiveSendDirectMessageCount #{GlobalPassiveSendDirectMessageCount.new.size}",
+          "SendDirectMessageFromEgotterCount #{GlobalSendDirectMessageFromEgotterCount.new.size}",
+          "ActiveSendDirectMessageFromEgotterCount #{GlobalActiveSendDirectMessageFromEgotterCount.new.size}",
+          "PassiveSendDirectMessageFromEgotterCount #{GlobalPassiveSendDirectMessageFromEgotterCount.new.size}",
+      ].join("\n")
     end
   end
 

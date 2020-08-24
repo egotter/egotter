@@ -3,23 +3,21 @@ require 'active_support/concern'
 module Concerns::SanitizationConcern
   extend ActiveSupport::Concern
 
-  SAFE_CONTROLLERS = %w(
-      clusters searches
-      timelines
-      scores
-      tokimeki_unfollow
+  SAFE_REDIRECT_PATHS = %w(
+      /searches
+      /timelines
+      /clusters
+      /tokimeki_unfollow
       /delete_tweets
-      settings
-      not_found
+      /settings
       /start
       /personality_insights
       /audience_insights
       /profiles
   )
-
-  SANITIZE_REDIRECT_PATH_REGEXP = Regexp.union(Search::API_V1_NAMES.map(&:to_s) + SAFE_CONTROLLERS)
+  SAFE_REDIRECT_PATH_REGEXP = Regexp.union(((Search::API_V1_NAMES.map { |n| "/#{n}" } + SAFE_REDIRECT_PATHS)).uniq)
 
   def sanitized_redirect_path(path)
-    !path.match?(/http/) && path.length < 100 && path.match?(SANITIZE_REDIRECT_PATH_REGEXP) ? path : root_path
+    !path.match?(/http/) && path.length < 600 && path.match?(SAFE_REDIRECT_PATH_REGEXP) ? path : root_path
   end
 end

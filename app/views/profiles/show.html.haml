@@ -40,7 +40,7 @@
 
     var userSignedIn = #{user_signed_in?};
     if (!userSignedIn) {
-      ToastMessage.info('#{t('.sign_in_html', user: @screen_name, url: sign_in_path(redirect_path: profile_path(@screen_name, via: current_via('require_sign_in'))))}');
+      ToastMessage.info('#{t('.sign_in_html', user: @screen_name, url: sign_in_path(redirect_path: profile_path(@screen_name, names: params[:names], via: current_via('require_sign_in'))))}');
       return;
     }
 

@@ -9,8 +9,11 @@ Rails.application.routes.draw do
 
   namespace :api, {format: 'json'} do
     namespace :v1 do
-      Search::API_V1_NAMES.each { |menu| get "#{menu}/summary", to: "#{menu}#summary" }
-      Search::API_V1_NAMES.each { |menu| get "#{menu}/list", to: "#{menu}#list" }
+      Search::API_V1_NAMES.each do |menu|
+        get "#{menu}/summary", to: "#{menu}#summary"
+        get "#{menu}/list", to: "#{menu}#list"
+      end
+
       get "summary/summary", to: "summary#summary"
       get 'account_statuses', to: 'account_statuses#show'
 
