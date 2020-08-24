@@ -508,7 +508,8 @@ ja:
       basic_plan_search_count: '検索回数 %{count} 回'
       basic_plan_follow: '1日のフォロー %{count} 回'
       basic_plan_unfollow: '1日のアンフォロー %{count} 回'
-      basic_plan_atmark: 'リムられ通知のアットマーク'
+      basic_egotter_follow: '@ego_tter のフォローなしで高速検索'
+      basic_plan_atmark: 'リムられ通知の全員にアットマークが付く'
       basic_plan_nonstop: 'リムられ通知の連続送信'
       basic_plan_money_back_guarantee: "%{count}日間は100%返金保証"
       basic_plan_purchased: "購入済み"
