@@ -16,6 +16,12 @@ module Egotter
         CallCreateFriendshipCount.new.increment
       end
 
+      def unfollow(*args)
+        super
+      ensure
+        CallDestroyFriendshipCount.new.increment
+      end
+
       def user_timeline(*args)
         super
       ensure
