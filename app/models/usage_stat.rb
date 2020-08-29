@@ -381,9 +381,9 @@ class UsageStat < ApplicationRecord
     end
 
     def count_words(text)
-      text = text.gsub(%r{(https?://)?[\w/\.\-]+}, '').gsub(/\n/, ' ')
+      text = text.gsub(%r{(https?://)?[\w/.\-]+}, '').gsub(/\n/, ' ')
 
-      words = @tagger.parse(text).split("\n").map { |l| l.split("\t") }.select { |_, desc| desc && !desc.match?(/^(助詞|助動詞|記号)/) }.map(&:first)
+      words = parse(text).select { |_, desc| desc && !desc.match?(/^(助詞|助動詞|記号)/) }.map(&:first)
       words_count = words.each_with_object(Hash.new(0)) { |word, memo| memo[word] += 1 }
 
       words_count.to_a.each do |word, count|
@@ -393,6 +393,10 @@ class UsageStat < ApplicationRecord
       end
 
       words_count.sort_by { |_, v| -v }.to_h
+    end
+
+    def parse(text)
+      @tagger.parse(text).split("\n").map { |l| l.split("\t") }
     end
   end
 

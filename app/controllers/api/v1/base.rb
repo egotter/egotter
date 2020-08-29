@@ -49,6 +49,12 @@ module Api
         render json: response_json
       end
 
+      def words_count
+        text = list_users.map(&:description).join(' ')
+        words_count = UsageStat::WordCloud.new.count_words(text).map { |word, count| {word: word, count: count} }
+        render json: {words_count: words_count}
+      end
+
       private
 
       def to_summary_hash(user)

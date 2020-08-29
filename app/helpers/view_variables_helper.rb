@@ -315,6 +315,17 @@ module ViewVariablesHelper
     end
   end
 
+  def word_cloud_description(twitter_user)
+    case controller_name
+    when 'friends'
+      t('word_cloud_description.friends', user: twitter_user.screen_name)
+    when 'followers'
+      t('word_cloud_description.followers', user: twitter_user.screen_name)
+    else
+      raise "Invalid controller value=#{controller_name}"
+    end
+  end
+
   private
 
   def timeline_link(user)

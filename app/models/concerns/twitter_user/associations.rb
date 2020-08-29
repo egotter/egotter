@@ -21,13 +21,13 @@ module Concerns::TwitterUser::Associations
     end
 
     with_options({primary_key: :uid, foreign_key: :from_uid}.update(default_options)) do |obj|
-      obj.has_many :favorite_friendships,        order_by_sequence_asc
-      obj.has_many :close_friendships,           order_by_sequence_asc
+      obj.has_many :favorite_friendships, order_by_sequence_asc
+      obj.has_many :close_friendships, order_by_sequence_asc
     end
 
     with_options({class_name: 'TwitterDB::User'}.update(default_options)) do |obj|
-      obj.has_many :favorite_friends,        through: :favorite_friendships
-      obj.has_many :close_friends,           through: :close_friendships
+      obj.has_many :favorite_friends, through: :favorite_friendships
+      obj.has_many :close_friends, through: :close_friendships
     end
   end
 

@@ -10,7 +10,18 @@ module PathsHelper
   end
 
   def api_path
-    send("api_v1_#{controller_name}_list_path", via: current_via)
+    send("api_v1_#{controller_name}_list_path", via: current_via).html_safe
+  end
+
+  def api_words_count_path
+    case controller_name
+    when 'friends'
+      api_v1_friends_words_count_path(via: current_via)
+    when 'followers'
+      api_v1_followers_words_count_path(via: current_via)
+    else
+      raise "#{__method__} Invalid controller_name value=#{controller_name}"
+    end.html_safe
   end
 
   def sign_in_and_timeline_path(twitter_user, via:, follow: false)
