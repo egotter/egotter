@@ -733,6 +733,8 @@ ja:
   result_pages:
     show:
       not_found: "指定された条件での検索結果は0件でした。"
+      loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
+      updating: '更新中です。数分後に再度お試しください。'
       see_more: "もっと見る"
       explanation_of_data_inconsistency_html: |
         <div class="card mb-3">
