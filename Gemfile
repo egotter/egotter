@@ -109,7 +109,7 @@ group :development do
   gem 'rubocop', require: false
 end
 
-group :test do
+group :test, :development do
   gem 'rspec-rails'
   gem 'factory_bot_rails'
 end
