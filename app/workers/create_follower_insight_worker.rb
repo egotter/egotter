@@ -1,4 +1,4 @@
-class CreateFriendInsightWorker
+class CreateFollowerInsightWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
@@ -17,8 +17,8 @@ class CreateFriendInsightWorker
   # options:
   #   location
   def perform(uid, options = {})
-    unless FriendInsight.find_or_initialize_by(uid: uid).fresh?
-      FriendInsight.builder(uid).build&.save!
+    unless FollowerInsight.find_or_initialize_by(uid: uid).fresh?
+      FollowerInsight.builder(uid).build&.save!
     end
   rescue => e
     logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"

@@ -26,6 +26,8 @@ class AssembleTwitterUserRequest < ApplicationRecord
 
     UpdateUsageStatWorker.perform_async(twitter_user.uid, user_id: twitter_user.user_id, location: self.class)
     UpdateAudienceInsightWorker.perform_async(twitter_user.uid, location: self.class)
+    CreateFriendInsightWorker.perform_async(twitter_user.uid, location: self.class)
+    CreateFollowerInsightWorker.perform_async(twitter_user.uid, location: self.class)
 
     bm('FavoriteFriendship') { import_favorite_friendship }
     bm('CloseFriendship') { import_close_friendship }

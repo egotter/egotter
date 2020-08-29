@@ -1,6 +1,6 @@
 module Api
   module V1
-    class FriendInsightsController < ApplicationController
+    class FollowerInsightsController < ApplicationController
       include Concerns::ApiRequestConcern
 
       before_action { set_insight }
@@ -10,7 +10,7 @@ module Api
           words_count = @insight.profiles_count.sort_by { |_, v| -v }.map { |word, count| {word: word, count: count} }
           render json: {words_count: words_count}
         else
-          CreateFriendInsightWorker.perform_async(@twitter_user.uid)
+          CreateFollowerInsightWorker.perform_async(@twitter_user.uid)
           head :not_found
         end
       end
@@ -20,7 +20,7 @@ module Api
           words_count = @insight.locations_count.sort_by { |_, v| -v }.map { |word, count| {word: word, count: count} }
           render json: {words_count: words_count}
         else
-          CreateFriendInsightWorker.perform_async(@twitter_user.uid)
+          CreateFollowerInsightWorker.perform_async(@twitter_user.uid)
           head :not_found
         end
       end
@@ -28,7 +28,7 @@ module Api
       private
 
       def set_insight
-        @insight = FriendInsight.find_by(uid: @twitter_user.uid)
+        @insight = FollowerInsight.find_by(uid: @twitter_user.uid)
       end
     end
   end

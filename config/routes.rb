@@ -15,6 +15,8 @@ Rails.application.routes.draw do
       end
       get "friend_insights/profiles_count", to: "friend_insights#profiles_count"
       get "friend_insights/locations_count", to: "friend_insights#locations_count"
+      get "follower_insights/profiles_count", to: "follower_insights#profiles_count"
+      get "follower_insights/locations_count", to: "follower_insights#locations_count"
 
       get "summary/summary", to: "summary#summary"
       get 'account_statuses', to: 'account_statuses#show'
