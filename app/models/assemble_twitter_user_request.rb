@@ -29,8 +29,22 @@ class AssembleTwitterUserRequest < ApplicationRecord
     CreateFriendInsightWorker.perform_async(twitter_user.uid, location: self.class)
     CreateFollowerInsightWorker.perform_async(twitter_user.uid, location: self.class)
 
-    bm('FavoriteFriendship') { import_favorite_friendship }
-    bm('CloseFriendship') { import_close_friendship }
+    login_user = User.find_by(id: twitter_user.user_id)
+    [
+        S3::CloseFriendship,
+        S3::FavoriteFriendship,
+    ].each do |klass|
+      bm("#{klass}(s3)") do
+        uids = twitter_user.calc_uids_for(klass, login_user: login_user)
+        klass.import_from!(twitter_user.uid, uids)
+        uids.each_slice(100) do |uids_array|
+          CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids_array), user_id: twitter_user.user_id, compressed: true, enqueued_by: self.class)
+        end
+      end
+    rescue => e
+      logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"
+      logger.info e.backtrace.join("\n")
+    end
 
     return unless validate_record_friends!
 
@@ -57,6 +71,8 @@ class AssembleTwitterUserRequest < ApplicationRecord
     twitter_user.update(assembled_at: Time.zone.now)
 
     # cleanup
+    CloseFriendship.delete_by_uid(twitter_user.uid)
+    FavoriteFriendship.delete_by_uid(twitter_user.uid)
     OneSidedFriendship.delete_by_uid(twitter_user.uid)
     OneSidedFollowership.delete_by_uid(twitter_user.uid)
     InactiveFriendship.delete_by_uid(twitter_user.uid)
@@ -93,25 +109,6 @@ class AssembleTwitterUserRequest < ApplicationRecord
     end
 
     true
-  end
-
-  def import_favorite_friendship
-    FavoriteFriendship.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
-      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: twitter_user.user_id, compressed: true, enqueued_by: self.class)
-    end
-  rescue => e
-    logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
-    logger.info e.backtrace.join("\n")
-  end
-
-  def import_close_friendship
-    user = User.find_by(id: twitter_user.user_id)
-    CloseFriendship.import_by!(twitter_user: twitter_user, login_user: user).each_slice(100) do |uids|
-      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: twitter_user.user_id, compressed: true, enqueued_by: self.class)
-    end
-  rescue => e
-    logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
-    logger.info e.backtrace.join("\n")
   end
 
   module Instrumentation

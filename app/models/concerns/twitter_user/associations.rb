@@ -55,6 +55,22 @@ module Concerns::TwitterUser::Associations
     end
   end
 
+  def close_friendships
+    if (from_s3 = S3::CloseFriendship.where(uid: uid))
+      RelationshipProxy.new(from_s3)
+    else
+      CloseFriendship.where(from_uid: uid).order(sequence: :asc)
+    end
+  end
+
+  def favorite_friendships
+    if (from_s3 = S3::FavoriteFriendship.where(uid: uid))
+      RelationshipProxy.new(from_s3)
+    else
+      FavoriteFriendship.where(from_uid: uid).order(sequence: :asc)
+    end
+  end
+
   def mutual_friendships
     if (from_s3 = S3::MutualFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
@@ -129,6 +145,14 @@ module Concerns::TwitterUser::Associations
 
   FETCH_USERS_LIMIT = 10000
 
+  def close_friends(limit: FETCH_USERS_LIMIT)
+    TwitterDB::User.where_and_order_by_field(uids: close_friend_uids.take(limit))
+  end
+
+  def favorite_friends(limit: FETCH_USERS_LIMIT)
+    TwitterDB::User.where_and_order_by_field(uids: favorite_friend_uids.take(limit))
+  end
+
   def mutual_friends(limit: FETCH_USERS_LIMIT, inactive: nil)
     TwitterDB::User.where_and_order_by_field(uids: mutual_friend_uids.take(limit), inactive: inactive)
   end
@@ -171,6 +195,14 @@ module Concerns::TwitterUser::Associations
 
   def unfollowers(limit: FETCH_USERS_LIMIT)
     TwitterDB::User.where_and_order_by_field(uids: unfollower_uids.take(limit))
+  end
+
+  def close_friend_uids
+    close_friendships.pluck(:friend_uid)
+  end
+
+  def favorite_friend_uids
+    favorite_friendships.pluck(:friend_uid)
   end
 
   def mutual_friend_uids

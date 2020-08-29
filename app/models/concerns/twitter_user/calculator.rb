@@ -9,8 +9,12 @@ module Concerns::TwitterUser::Calculator
   class_methods do
   end
 
-  def calc_uids_for(klass)
-    if klass == S3::OneSidedFriendship
+  def calc_uids_for(klass, login_user: nil)
+    if klass == S3::CloseFriendship
+      calc_close_friend_uids(login_user: login_user)
+    elsif klass == S3::FavoriteFriendship
+      calc_favorite_uids
+    elsif klass == S3::OneSidedFriendship
       calc_one_sided_friend_uids
     elsif klass == S3::OneSidedFollowership
       calc_one_sided_follower_uids
@@ -45,14 +49,8 @@ module Concerns::TwitterUser::Calculator
     friend_uids & follower_uids
   end
 
-  # private
   def calc_favorite_uids
     favorite_tweets.map { |fav| fav&.user&.id }.compact
-  end
-
-  # private
-  def sort_by_count_desc(ids)
-    ids.each_with_object(Hash.new(0)) { |id, memo| memo[id] += 1 }.sort_by { |_, v| -v }.map(&:first)
   end
 
   def calc_favorite_friend_uids(uniq: true)
@@ -91,5 +89,11 @@ module Concerns::TwitterUser::Calculator
 
   def calc_unfollower_uids
     unfriends_builder.unfollowers.flatten
+  end
+
+  private
+
+  def sort_by_count_desc(ids)
+    ids.each_with_object(Hash.new(0)) { |id, memo| memo[id] += 1 }.sort_by { |_, v| -v }.map(&:first)
   end
 end
