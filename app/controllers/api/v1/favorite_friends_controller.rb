@@ -5,8 +5,8 @@ module Api
       private
 
       def summary_uids(limit: SUMMARY_LIMIT)
-        uids = @twitter_user.favorite_friendships.limit(limit).pluck(:friend_uid)
-        size = @twitter_user.favorite_friendships.size
+        uids = @twitter_user.favorite_friend_uids.take(limit)
+        size = @twitter_user.favorite_friend_uids.size
         [uids, size]
       end
 

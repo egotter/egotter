@@ -281,10 +281,10 @@ module ViewVariablesHelper
       users = twitter_user.mutual_unfriends(limit: 3).map { |user| "@#{user.screen_name} #{t('dictionary.honorific')}" }
       t('tweet_text.blocking_or_blocked', values.merge(users: users.join("\n")))
     when 'close_friends'
-      users = twitter_user.close_friends.limit(5).map.with_index { |u, i| "#{i + 1}. @#{u.screen_name}" }
+      users = twitter_user.close_friends(limit: 5).map.with_index { |u, i| "#{i + 1}. @#{u.screen_name}" }
       t('tweet_text.close_friends', values.merge(users: users.join("\n")))
     when 'favorite_friends'
-      users = twitter_user.favorite_friends.limit(5).map.with_index { |u, i| "#{i + 1}. @#{u.screen_name}" }
+      users = twitter_user.favorite_friends(limit: 5).map.with_index { |u, i| "#{i + 1}. @#{u.screen_name}" }
       t('tweet_text.favorite_friends', values.merge(users: users.join("\n")))
     when 'one_sided_friends'
       t('tweet_text.one_sided_friends', values)
