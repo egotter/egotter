@@ -36,7 +36,7 @@
   <div id="word-cloud-container" class="my-3" style="height: 300px;"></div>
   <script>
     $(function () {
-      var url = '<%= api_words_count_path %>';
+      var url = '<%= api_profiles_count_path %>';
       var uid = '<%= @twitter_user.uid %>';
 
       $.get(url, {uid: uid}).done(function (res) {

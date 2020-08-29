@@ -12,8 +12,9 @@ Rails.application.routes.draw do
       Search::API_V1_NAMES.each do |menu|
         get "#{menu}/summary", to: "#{menu}#summary"
         get "#{menu}/list", to: "#{menu}#list"
-        get "#{menu}/words_count", to: "#{menu}#words_count"
       end
+      get "friend_insights/profiles_count", to: "friend_insights#profiles_count"
+      get "friend_insights/locations_count", to: "friend_insights#locations_count"
 
       get "summary/summary", to: "summary#summary"
       get 'account_statuses', to: 'account_statuses#show'

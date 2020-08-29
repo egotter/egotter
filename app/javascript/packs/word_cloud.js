@@ -1,6 +1,15 @@
 class WordCloud {
+  // data = [
+  //   {word: 'w1', count: 1},
+  //   {word: 'w2', count: 2}
+  // ]
   constructor(selector, data, width, height, smartphone) {
-    data = data.splice(0, 1000);
+    if (data.length >= 300) {
+      data.sort(function (x, y) {
+        return d3.descending(x.count, y.count);
+      });
+      data = data.splice(0, 300);
+    }
 
     var random = d3.random.irwinHall(2);
 

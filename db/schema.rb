@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_15_121443) do
+ActiveRecord::Schema.define(version: 2020_08_29_145714) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -553,6 +553,16 @@ ActiveRecord::Schema.define(version: 2020_08_15_121443) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_forbidden_users_on_created_at"
     t.index ["screen_name"], name: "index_forbidden_users_on_screen_name", unique: true
+  end
+
+  create_table "friend_insights", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "uid", null: false
+    t.json "profiles_count"
+    t.json "locations_count"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_friend_insights_on_created_at"
+    t.index ["uid"], name: "index_friend_insights_on_uid", unique: true
   end
 
   create_table "friends", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4", force: :cascade do |t|
