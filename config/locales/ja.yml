@@ -1035,9 +1035,12 @@ ja:
       共通フォロワー %{common_followers}人
       共通相互フォロー %{common_mutual_friends}人
       #egotter %{url}
-  word_cloud_description:
+  profiles_word_cloud_description:
     friends: '@%{user} がフォローしているユーザーのプロフィールから作ったワードクラウドです。@%{user} がフォローしているユーザーの特徴を表しています。'
     followers: '@%{user} がフォローされているユーザーのプロフィールから作ったワードクラウドです。@%{user} がフォローされているユーザーの特徴を表しています。'
+  locations_word_cloud_description:
+    friends: '@%{user} がフォローしているユーザーのロケーションから作ったワードクラウドです。@%{user} がフォローしているユーザーの居る場所を表しています。'
+    followers: '@%{user} がフォローされているユーザーのロケーションから作ったワードクラウドです。@%{user} がフォローされているユーザーの居る場所を表しています。'
   tabs:
     friends: 'フォロー'
     followers: 'フォロワー'

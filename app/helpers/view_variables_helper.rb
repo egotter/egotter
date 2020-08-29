@@ -315,12 +315,23 @@ module ViewVariablesHelper
     end
   end
 
-  def word_cloud_description(twitter_user)
+  def profiles_word_cloud_description(twitter_user)
     case controller_name
     when 'friends'
-      t('word_cloud_description.friends', user: twitter_user.screen_name)
+      t('profiles_word_cloud_description.friends', user: twitter_user.screen_name)
     when 'followers'
-      t('word_cloud_description.followers', user: twitter_user.screen_name)
+      t('profiles_word_cloud_description.followers', user: twitter_user.screen_name)
+    else
+      raise "Invalid controller value=#{controller_name}"
+    end
+  end
+
+  def locations_word_cloud_description(twitter_user)
+    case controller_name
+    when 'friends'
+      t('locations_word_cloud_description.friends', user: twitter_user.screen_name)
+    when 'followers'
+      t('locations_word_cloud_description.followers', user: twitter_user.screen_name)
     else
       raise "Invalid controller value=#{controller_name}"
     end
