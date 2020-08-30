@@ -429,7 +429,7 @@ class UsageStat < ApplicationRecord
 
     def natto_parse(text)
       require 'natto'
-      dicdir ="#{`mecab-config --dicdir`.chomp}/mecab-ipadic-neologd/"
+      dicdir = "#{`mecab-config --dicdir`.chomp}/mecab-ipadic-neologd/"
       Natto::MeCab.new(dicdir: dicdir).parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
     end
 
@@ -437,8 +437,10 @@ class UsageStat < ApplicationRecord
       mecab_tagger.parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
     end
 
+    MAX_BYTESIZE = 40.kilobytes
+
     def truncate_text(text)
-      while text.bytesize > 900.kilobytes do
+      while text.bytesize > MAX_BYTESIZE do
         text = text.truncate(text.size * 0.9, omission: '')
       end
       text

@@ -46,7 +46,7 @@ class FollowerInsight < ApplicationRecord
     private
 
     def calc_profiles_count(users)
-      text = users.take(5000).map(&:description).join(' ')
+      text = users.take(200).map(&:description).join(' ')
       UsageStat::WordCloud.new.count_words(text)
     end
 
