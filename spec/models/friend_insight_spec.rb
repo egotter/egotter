@@ -29,7 +29,7 @@ RSpec.describe FriendInsight::Builder, type: :model do
     let(:users) { [double('User', description: 'hello'), double('User', description: 'world')] }
     subject { instance.send(:calc_profiles_count, users) }
     it do
-      expect(UsageStat::WordCloud).to receive_message_chain(:new, :count_words).with(no_args).with('hello world')
+      expect(WordCloud).to receive_message_chain(:new, :count_words).with(no_args).with('hello world')
       subject
     end
   end
@@ -38,7 +38,7 @@ RSpec.describe FriendInsight::Builder, type: :model do
     let(:users) { [double('User', location: 'hello'), double('User', location: 'world')] }
     subject { instance.send(:calc_locations_count, users) }
     it do
-      expect(UsageStat::WordCloud).to receive_message_chain(:new, :count_words).with(no_args).with('HELLO WORLD')
+      expect(WordCloud).to receive_message_chain(:new, :count_words).with(no_args).with('HELLO WORLD')
       subject
     end
   end
