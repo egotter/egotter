@@ -391,11 +391,6 @@ class UsageStat < ApplicationRecord
   end
 
   class WordCloud
-    def initialize
-      require 'mecab'
-      @tagger = MeCab::Tagger.new("-d #{`mecab-config --dicdir`.chomp}/mecab-ipadic-neologd/")
-    end
-
     def count_words(text)
       text = text.gsub(%r{(https?://)?[\w/.\-]+}, '').gsub(/\n/, ' ')
 
@@ -411,10 +406,26 @@ class UsageStat < ApplicationRecord
       words_count.sort_by { |_, v| -v }.to_h
     end
 
+    class << self
+      def mecab_model
+        if instance_variable_defined?(:@mecab_model)
+          @mecab_model
+        else
+          Rails.logger.info "#{self}: Initialize MeCab::Model"
+          require 'mecab'
+          @mecab_model = MeCab::Model.create("-d #{`mecab-config --dicdir`.chomp}/mecab-ipadic-neologd/")
+        end
+      end
+    end
+
     private
 
+    def mecab_tagger
+      self.class.mecab_model.createTagger
+    end
+
     def parse(text)
-      @tagger.parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
+      mecab_tagger.parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
     end
 
     def truncate_text(text)
