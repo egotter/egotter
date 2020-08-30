@@ -532,6 +532,7 @@ ActiveRecord::Schema.define(version: 2020_08_29_170519) do
     t.bigint "uid", null: false
     t.json "profiles_count"
     t.json "locations_count"
+    t.json "tweet_times"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_follower_insights_on_created_at"
@@ -569,6 +570,7 @@ ActiveRecord::Schema.define(version: 2020_08_29_170519) do
     t.bigint "uid", null: false
     t.json "profiles_count"
     t.json "locations_count"
+    t.json "tweet_times"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_friend_insights_on_created_at"

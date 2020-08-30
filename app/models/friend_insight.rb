@@ -6,6 +6,7 @@
 #  uid             :bigint(8)        not null
 #  profiles_count  :json
 #  locations_count :json
+#  tweet_times     :json
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #
@@ -38,6 +39,7 @@ class FriendInsight < ApplicationRecord
       insight = FriendInsight.find_or_initialize_by(uid: @uid)
       insight.profiles_count = calc_profiles_count(users)
       insight.locations_count = calc_locations_count(users)
+      insight.tweet_times = users.map { |u| u.status_created_at&.utc&.to_i }.compact
       insight
     end
 

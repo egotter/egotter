@@ -35,6 +35,17 @@ module PathsHelper
     end.html_safe
   end
 
+  def api_tweet_times_path
+    case controller_name
+    when 'friends'
+      api_v1_friend_insights_tweet_times_path(via: current_via)
+    when 'followers'
+      api_v1_follower_insights_tweet_times_path(via: current_via)
+    else
+      raise "#{__method__} Invalid controller_name value=#{controller_name}"
+    end.html_safe
+  end
+
   def sign_in_and_timeline_path(twitter_user, via:, follow: false)
     via = current_via(via)
     sign_in_path(follow: follow, via: via, redirect_path: timeline_path(twitter_user, via: via))

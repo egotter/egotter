@@ -33,7 +33,7 @@
 
 <% if user_signed_in? && %w(friends followers).include?(controller_name) %>
   <div><%= profiles_word_cloud_description(@twitter_user) %></div>
-  <div id="profiles-word-cloud-container" class="d-flex align-items-center justify-content-center my-3" style="height: 300px;">
+  <div id="profiles-word-cloud-container" class="d-flex align-items-center justify-content-center mt-3 mb-5" style="height: 300px;">
     <div><%= t('.loading_html') %></div>
   </div>
   <script>
@@ -54,7 +54,7 @@
   </script>
 
   <div><%= locations_word_cloud_description(@twitter_user) %></div>
-  <div id="locations-word-cloud-container" class="d-flex align-items-center justify-content-center my-3" style="height: 300px;">
+  <div id="locations-word-cloud-container" class="d-flex align-items-center justify-content-center mt-3 mb-5" style="height: 300px;">
     <div><%= t('.loading_html') %></div>
   </div>
   <script>
@@ -67,6 +67,26 @@
         container.empty();
         var smartphone = <%= request.device_type == :smartphone %>;
         new WordCloud('#' + container.attr('id'), res.words_count, container.width(), container.height(), smartphone);
+      }).fail(function (xhr) {
+        console.warn(url, xhr.responseText);
+        container.empty().text('<%= t('.updating') %>');
+      });
+    });
+  </script>
+
+  <div><%= tweets_per_hour_description(@twitter_user) %></div>
+  <div id="tweets-per-hour-container" class="d-flex align-items-center justify-content-center mt-3 mb-5" style="height: 300px;">
+    <div><%= t('.loading_html') %></div>
+  </div>
+  <script>
+    $(function () {
+      var url = '<%= api_tweet_times_path %>';
+      var uid = '<%= @twitter_user.uid %>';
+      var container = $('#tweets-per-hour-container');
+
+      $.get(url, {uid: uid}).done(function (res) {
+        container.empty();
+        new UsageStat().drawColumnChart(container.attr('id'), res.tweets_per_hour);
       }).fail(function (xhr) {
         console.warn(url, xhr.responseText);
         container.empty().text('<%= t('.updating') %>');

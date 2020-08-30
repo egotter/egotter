@@ -4,6 +4,7 @@ class CreateFollowerInsights < ActiveRecord::Migration[6.0]
       t.bigint :uid, null: false
       t.json :profiles_count
       t.json :locations_count
+      t.json :tweet_times
 
       t.timestamps null: false
 

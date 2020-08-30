@@ -294,8 +294,24 @@ class UsageStat < ApplicationRecord
     #   {:name=>"23", :y=>87, :drilldown=>"23"}
     # ]
     def usage_stats_hour_series_data(times)
+      colors = {
+          morning: 'rgba(220, 50, 47, 1.0)',
+          afternoon: 'rgba(220, 50, 47, 1.0)',
+          night: 'rgba(220, 50, 47, 1.0)',
+          else: 'rgba(108, 113, 196, 1.0)',
+      }
       count_hour(times).map do |hour, count|
-        {name: hour.to_s, y: count, drilldown: hour.to_s}
+        color =
+            if 7 <= hour && hour <= 9
+              colors[:morning]
+            elsif 11 <= hour && hour <= 13
+              colors[:afternoon]
+            elsif 20 <= hour && hour <= 22
+              colors[:night]
+            else
+              colors[:else]
+            end
+        {name: hour.to_s, y: count, color: color, drilldown: hour.to_s}
       end
     end
 

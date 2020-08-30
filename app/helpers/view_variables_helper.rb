@@ -337,6 +337,17 @@ module ViewVariablesHelper
     end
   end
 
+  def tweets_per_hour_description(twitter_user)
+    case controller_name
+    when 'friends'
+      t('tweets_per_hour_description.friends', user: twitter_user.screen_name)
+    when 'followers'
+      t('tweets_per_hour_description.followers', user: twitter_user.screen_name)
+    else
+      raise "Invalid controller value=#{controller_name}"
+    end
+  end
+
   private
 
   def timeline_link(user)

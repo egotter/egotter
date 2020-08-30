@@ -25,6 +25,17 @@ module Api
         end
       end
 
+      def tweet_times
+        if @insight && @insight.respond_to?(:tweet_times) && @insight.tweet_times
+          times = @insight.tweet_times.map { |t| Time.zone.at(t) }
+          tweets_per_hour = UsageStat::Misc.usage_stats_hour_series_data(times)
+          render json: {tweets_per_hour: tweets_per_hour}
+        else
+          CreateFriendInsightWorker.perform_async(@twitter_user.uid)
+          head :not_found
+        end
+      end
+
       private
 
       def set_insight
