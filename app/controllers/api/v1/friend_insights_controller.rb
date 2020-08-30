@@ -10,7 +10,7 @@ module Api
           words_count = @insight.profiles_count.sort_by { |_, v| -v }.map { |word, count| {word: word, count: count} }
           render json: {words_count: words_count}
         else
-          CreateFriendInsightWorker.perform_async(@twitter_user.uid)
+          CreateFriendInsightWorker.perform_async(@twitter_user.uid) unless from_crawler?
           head :not_found
         end
       end
@@ -20,7 +20,7 @@ module Api
           words_count = @insight.locations_count.sort_by { |_, v| -v }.map { |word, count| {word: word, count: count} }
           render json: {words_count: words_count}
         else
-          CreateFriendInsightWorker.perform_async(@twitter_user.uid)
+          CreateFriendInsightWorker.perform_async(@twitter_user.uid) unless from_crawler?
           head :not_found
         end
       end
@@ -31,7 +31,7 @@ module Api
           tweets_per_hour = UsageStat::Misc.usage_stats_hour_series_data(times)
           render json: {tweets_per_hour: tweets_per_hour}
         else
-          CreateFriendInsightWorker.perform_async(@twitter_user.uid)
+          CreateFriendInsightWorker.perform_async(@twitter_user.uid) unless from_crawler?
           head :not_found
         end
       end
