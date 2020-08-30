@@ -411,8 +411,17 @@ class UsageStat < ApplicationRecord
       words_count.sort_by { |_, v| -v }.to_h
     end
 
+    private
+
     def parse(text)
-      @tagger.parse(text).split("\n").map { |l| l.split("\t") }
+      @tagger.parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
+    end
+
+    def truncate_text(text)
+      while text.bytesize > 900.kilobytes do
+        text = text.truncate(text.size * 0.9, omission: '')
+      end
+      text
     end
   end
 
