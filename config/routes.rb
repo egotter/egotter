@@ -13,6 +13,7 @@ Rails.application.routes.draw do
         get "#{menu}/summary", to: "#{menu}#summary"
         get "#{menu}/list", to: "#{menu}#list"
       end
+      get "word_clouds", to: "word_clouds#show"
       get "friend_insights/profiles_count", to: "friend_insights#profiles_count"
       get "friend_insights/locations_count", to: "friend_insights#locations_count"
       get "friend_insights/tweet_times", to: "friend_insights#tweet_times"

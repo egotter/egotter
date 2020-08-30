@@ -5,30 +5,25 @@
 
 - breadcrumb :word_cloud, @twitter_user.screen_name
 
-- page_title = t('.page_title', user: @twitter_user.screen_name)
-- title page_title
-- set_meta_tags description: t('word_clouds.show.description', user: @twitter_user.screen_name)
+- title t('.meta_title', user: @twitter_user.screen_name)
+- set_meta_tags description: t('.meta_description', user: @twitter_user.screen_name)
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
-%h2.h4.text-center.my-5= page_title
-.mb-5= t('word_clouds.show.page_description', user: @twitter_user.screen_name)
+%h2.h4.text-center.my-5= t('.page_title', user: @twitter_user.screen_name)
+.mb-5= t('.page_description', user: @twitter_user.screen_name)
 
-#word-cloud-container.my-3{style: 'height: 300px;'}
+%h3.h5.text-center.my-5= t('.tweets_word_cloud', user: @twitter_user.screen_name)
+= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.tweets', user: @twitter_user.screen_name), api_path: api_v1_word_clouds_path(uid: @twitter_user.uid, via: current_via)}
 
-%table.text-center.table.table-bordered.table-condensed
-  %tr
-    %th.text-secondary Word
-    %th.text-secondary Count
-  - @words_count.take(30).each do |word, count|
-    %tr
-      %td.text-secondary= word
-      %td.text-secondary= count
+%h3.h5.text-center.my-5= t('.friend_profiles_word_cloud', user: @twitter_user.screen_name)
+= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.friend_profiles', user: @twitter_user.screen_name), api_path: api_v1_friend_insights_profiles_count_path(uid: @twitter_user.uid, via: current_via)}
 
-:javascript
-  $(function () {
-      var data = #{raw @words_count.map { |word, count| {word: word, count: count} }.to_json};
-      var container = $('#word-cloud-container');
-      var smartphone = #{request.device_type == :smartphone};
-      new WordCloud('#' + container.attr('id'), data, container.width(), container.height(), smartphone);
-  });
+%h3.h5.text-center.my-5= t('.friend_locations_word_cloud', user: @twitter_user.screen_name)
+= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.friend_locations', user: @twitter_user.screen_name), api_path: api_v1_friend_insights_locations_count_path(uid: @twitter_user.uid, via: current_via)}
+
+%h3.h5.text-center.my-5= t('.follower_profiles_word_cloud', user: @twitter_user.screen_name)
+= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.follower_profiles', user: @twitter_user.screen_name), api_path: api_v1_follower_insights_profiles_count_path(uid: @twitter_user.uid, via: current_via)}
+
+%h3.h5.text-center.my-5= t('.follower_locations_word_cloud', user: @twitter_user.screen_name)
+= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.follower_locations', user: @twitter_user.screen_name), api_path: api_v1_follower_insights_locations_count_path(uid: @twitter_user.uid, via: current_via)}

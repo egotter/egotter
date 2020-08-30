@@ -32,47 +32,8 @@
 <%= render(partial: 'adsense/ad', locals: {vertical: :middle}) %>
 
 <% if user_signed_in? && %w(friends followers).include?(controller_name) %>
-  <div><%= profiles_word_cloud_description(@twitter_user) %></div>
-  <div id="profiles-word-cloud-container" class="d-flex align-items-center justify-content-center mt-3 mb-5" style="height: 300px;">
-    <div><%= t('.loading_html') %></div>
-  </div>
-  <script>
-    $(function () {
-      var url = '<%= api_profiles_count_path %>';
-      var uid = '<%= @twitter_user.uid %>';
-      var container = $('#profiles-word-cloud-container');
-
-      $.get(url, {uid: uid}).done(function (res) {
-        container.empty();
-        var smartphone = <%= request.device_type == :smartphone %>;
-        new WordCloud('#' + container.attr('id'), res.words_count, container.width(), container.height(), smartphone);
-      }).fail(function (xhr) {
-        console.warn(url, xhr.responseText);
-        container.empty().text('<%= t('.updating') %>');
-      });
-    });
-  </script>
-
-  <div><%= locations_word_cloud_description(@twitter_user) %></div>
-  <div id="locations-word-cloud-container" class="d-flex align-items-center justify-content-center mt-3 mb-5" style="height: 300px;">
-    <div><%= t('.loading_html') %></div>
-  </div>
-  <script>
-    $(function () {
-      var url = '<%= api_locations_count_path %>';
-      var uid = '<%= @twitter_user.uid %>';
-      var container = $('#locations-word-cloud-container');
-
-      $.get(url, {uid: uid}).done(function (res) {
-        container.empty();
-        var smartphone = <%= request.device_type == :smartphone %>;
-        new WordCloud('#' + container.attr('id'), res.words_count, container.width(), container.height(), smartphone);
-      }).fail(function (xhr) {
-        console.warn(url, xhr.responseText);
-        container.empty().text('<%= t('.updating') %>');
-      });
-    });
-  </script>
+  <%= render partial: 'shared/word_cloud', locals: {description: profiles_word_cloud_description(@twitter_user), api_path: api_profiles_count_path(@twitter_user)} %>
+  <%= render partial: 'shared/word_cloud', locals: {description: locations_word_cloud_description(@twitter_user), api_path: api_locations_count_path(@twitter_user)} %>
 
   <div><%= tweets_per_hour_description(@twitter_user) %></div>
   <div id="tweets-per-hour-container" class="d-flex align-items-center justify-content-center mt-3 mb-5" style="height: 300px;">

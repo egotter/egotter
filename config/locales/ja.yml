@@ -221,7 +221,7 @@ ja:
         description: '@%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。'
       word_clouds:
         title: 'ワードクラウド'
-        description: '@%{user} のツイートでワードクラウドを作成します。'
+        description: '@%{user} のツイート、フォロー、フォロワーでワードクラウドを作成します。'
       clusters:
         title: 'クラスタ分析'
         description: '@%{user} が入っているクラスタを表示します。'
@@ -1037,12 +1037,12 @@ ja:
       共通フォロワー %{common_followers}人
       共通相互フォロー %{common_mutual_friends}人
       #egotter %{url}
-  profiles_word_cloud_description:
-    friends: '@%{user} がフォローしているユーザーのプロフィールから作ったワードクラウドです。@%{user} がフォローしているユーザーの特徴を表しています。'
-    followers: '@%{user} がフォローされているユーザーのプロフィールから作ったワードクラウドです。@%{user} がフォローされているユーザーの特徴を表しています。'
-  locations_word_cloud_description:
-    friends: '@%{user} がフォローしているユーザーのロケーションから作ったワードクラウドです。@%{user} がフォローしているユーザーの居る場所を表しています。'
-    followers: '@%{user} がフォローされているユーザーのロケーションから作ったワードクラウドです。@%{user} がフォローされているユーザーの居る場所を表しています。'
+  word_cloud_descriptions:
+    tweets: '@%{user} のツイートから作ったワードクラウドです。@%{user} がよくツイートする単語、口ぐせを表しています。'
+    friend_profiles: '@%{user} がフォローしているユーザーのプロフィールから作ったワードクラウドです。@%{user} がフォローしているユーザーの特徴を表しています。'
+    follower_profiles: '@%{user} がフォローされているユーザーのプロフィールから作ったワードクラウドです。@%{user} がフォローされているユーザーの特徴を表しています。'
+    friend_locations: '@%{user} がフォローしているユーザーのロケーションから作ったワードクラウドです。@%{user} がフォローしているユーザーの居る場所を表しています。'
+    follower_locations: '@%{user} がフォローされているユーザーのロケーションから作ったワードクラウドです。@%{user} がフォローされているユーザーの居る場所を表しています。'
   tweets_per_hour_description:
     friends: '@%{user} がフォローしているユーザーのツイートから作った時間帯ごとのツイート数です。@%{user} がフォローしているユーザーが活発な時間帯が分かります。'
     followers: '@%{user} がフォローされているユーザーのツイートから作った時間帯ごとのツイート数です。@%{user} がフォローされているユーザーが活発な時間帯が分かります。'
@@ -1129,11 +1129,24 @@ ja:
     new:
     show:
       navbar_title: 'ワードクラウド'
-      crumb_title: "ワードクラウド"
-      page_description: "@%{user} ツイートからワードクラウドを作成します。"
-      page_title: "@%{user} のワードクラウド"
-      content_title: "%{user} のワードクラウド"
-      description: "@%{user} がよくツイートする単語がワードクラウドには含まれています。ワードクラウドは検索されたユーザーの口癖から作成されます。"
+      crumb_title: 'ワードクラウド'
+      meta_title: "@%{user} のツイート、フォロー、フォロワーから作ったワードクラウド"
+      meta_description: |
+        @%{user} ツイート、フォロー、フォロワーからワードクラウドを作成します。
+        ツイートから作成したワードクラウドは @%{user} の口ぐせを表しています。
+        フォローから作成したワードクラウドは @%{user} のフォローの特徴を表しています。
+        フォロワーから作成したワードクラウドは @%{user} のフォロワーの特徴を表しています。
+      page_title: "@%{user} のツイート、フォロー、フォロワーから作ったワードクラウド"
+      page_description: |
+        @%{user} ツイート、フォロー、フォロワーからワードクラウドを作成します。
+        ツイートから作成したワードクラウドは @%{user} の口ぐせを表しています。
+        フォローから作成したワードクラウドは @%{user} のフォローの特徴を表しています。
+        フォロワーから作成したワードクラウドは @%{user} のフォロワーの特徴を表しています。
+      tweets_word_cloud: "@%{user} のツイート ワードクラウド"
+      friend_profiles_word_cloud: "@%{user} のフォロー ワードクラウド"
+      friend_locations_word_cloud: "@%{user} のフォローのロケーション ワードクラウド"
+      follower_profiles_word_cloud: "@%{user} のフォロワー ワードクラウド"
+      follower_locations_word_cloud: "@%{user} のフォロワーのロケーション ワードクラウド"
   clusters:
     new:
       plain_title: 'クラスタ判定'
@@ -1957,6 +1970,9 @@ ja:
           <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後は、予約したツイートを一覧で管理できます。<br>
           <br>
           <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後に、予約したツイートをキャンセルすることもできます。
+    word_cloud:
+      loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
+      updating: '更新中です。数分後に再度お試しください。'
   breadcrumb:
     root: 'トップ'
   users:

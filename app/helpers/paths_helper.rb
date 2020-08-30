@@ -13,23 +13,23 @@ module PathsHelper
     send("api_v1_#{controller_name}_list_path", via: current_via).html_safe
   end
 
-  def api_profiles_count_path
+  def api_profiles_count_path(twitter_user)
     case controller_name
     when 'friends'
-      api_v1_friend_insights_profiles_count_path(via: current_via)
+      api_v1_friend_insights_profiles_count_path(uid: twitter_user.uid, via: current_via)
     when 'followers'
-      api_v1_follower_insights_profiles_count_path(via: current_via)
+      api_v1_follower_insights_profiles_count_path(uid: twitter_user.uid, via: current_via)
     else
       raise "#{__method__} Invalid controller_name value=#{controller_name}"
     end.html_safe
   end
 
-  def api_locations_count_path
+  def api_locations_count_path(twitter_user)
     case controller_name
     when 'friends'
-      api_v1_friend_insights_locations_count_path(via: current_via)
+      api_v1_friend_insights_locations_count_path(uid: twitter_user.uid, via: current_via)
     when 'followers'
-      api_v1_follower_insights_locations_count_path(via: current_via)
+      api_v1_follower_insights_locations_count_path(uid: twitter_user.uid, via: current_via)
     else
       raise "#{__method__} Invalid controller_name value=#{controller_name}"
     end.html_safe

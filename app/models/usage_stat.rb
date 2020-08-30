@@ -147,10 +147,6 @@ class UsageStat < ApplicationRecord
     tweet_clusters&.sort_by { |_, c| -c }&.to_h
   end
 
-  def sorted_words_count
-    words_count&.sort_by { |_, c| -c }&.to_h
-  end
-
   def self.builder(uid)
     Builder.new(uid)
   end

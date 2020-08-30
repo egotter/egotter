@@ -1,0 +1,20 @@
+<% container_id = "profiles-word-cloud-container-#{SecureRandom.urlsafe_base64(10)}" %>
+<div><%= description %></div>
+<div id="<%= container_id %>" class="d-flex align-items-center justify-content-center mt-3 mb-5" style="height: 300px;">
+  <div><%= t('.loading_html') %></div>
+</div>
+<script>
+  $(function () {
+    var url = '<%= raw api_path %>';
+    var container = $('#<%= container_id %>');
+
+    $.get(url).done(function (res) {
+      container.empty();
+      var smartphone = <%= request.device_type == :smartphone %>;
+      new WordCloud('#' + container.attr('id'), res.words_count, container.width(), container.height(), smartphone);
+    }).fail(function (xhr) {
+      console.warn(url, xhr.responseText);
+      container.empty().text('<%= t('.updating') %>');
+    });
+  });
+</script>
