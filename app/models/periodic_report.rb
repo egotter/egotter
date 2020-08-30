@@ -363,7 +363,7 @@ class PeriodicReport < ApplicationRecord
       encrypted_names = encrypt_indicator_names(screen_names)
 
       screen_names.map.with_index do |screen_name, i|
-        "#{'@' if add_atmark || i < 2}#{screen_name} #{profile_url(screen_name, {names: encrypted_names}.merge(url_options))}"
+        "#{'@' if add_atmark || i < 1}#{screen_name} #{profile_url(screen_name, {names: encrypted_names}.merge(url_options))}"
       end
     end
 
