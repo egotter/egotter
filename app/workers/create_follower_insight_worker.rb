@@ -17,6 +17,7 @@ class CreateFollowerInsightWorker
   # options:
   #   location
   def perform(uid, options = {})
+    return
     unless FollowerInsight.find_or_initialize_by(uid: uid).fresh?
       FollowerInsight.builder(uid).build&.save!
     end
