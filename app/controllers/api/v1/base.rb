@@ -55,7 +55,8 @@ module Api
         {
             uid: user.uid.to_s,
             screen_name: user.screen_name,
-            profile_image_url_https: user.profile_image_url_https.to_s
+            timeline_url: timeline_path(user, via: current_via),
+            profile_image_url: user.profile_image_url_https.to_s
         }
       end
     end
