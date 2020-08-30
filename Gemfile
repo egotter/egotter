@@ -62,6 +62,7 @@ gem 'newrelic_rpm'
 gem 'rack-timeout'
 gem 'meta-tags'
 gem 'mecab', require: false
+gem 'natto', require: false
 gem 'twitter_with_auto_pagination'
 gem 'rack-user_agent'
 gem 'stackprof'

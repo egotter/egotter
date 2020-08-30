@@ -266,6 +266,8 @@ GEM
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     mysql2 (0.5.3)
+    natto (1.2.0)
+      ffi (>= 1.9.0)
     naught (1.1.0)
     newrelic_rpm (6.11.0.365)
     nio4r (2.5.2)
@@ -491,6 +493,7 @@ DEPENDENCIES
   mecab
   meta-tags
   mysql2 (>= 0.4.4)
+  natto
   newrelic_rpm
   oj
   omniauth-twitter
