@@ -166,8 +166,8 @@ class UsageStat < ApplicationRecord
       @statuses = TwitterUser.latest_by(uid: @uid)&.status_tweets if @statuses.blank?
       return if @statuses.blank?
 
-      times = @statuses.map(&:tweeted_at).select { |t| t > 1.year.ago }
-      text = @statuses.map(&:text).join(' ').gsub(/[\n']/, ' ')
+      times = @statuses.take(400).map(&:tweeted_at).select { |t| t > 1.year.ago }
+      text = @statuses.take(400).map(&:text).join(' ').gsub(/[\n']/, ' ')
 
       UsageStat.find_or_initialize_by(uid: uid).tap do |stat|
         stat.assign_attributes(
