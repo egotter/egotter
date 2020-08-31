@@ -13,6 +13,8 @@
 %h2.h2.text-center.my-5= current_page_title(@twitter_user)
 .mb-5= current_page_description(@twitter_user)
 
+= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.tweets', user: @twitter_user.screen_name), api_path: api_v1_word_clouds_path(uid: @twitter_user.uid, via: current_via)}
+
 #statuses.twitter.tweets.mx-auto
   - if @twitter_user.protected_account?
     = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
