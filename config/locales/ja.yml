@@ -1143,10 +1143,13 @@ ja:
         フォローから作成したワードクラウドは @%{user} のフォローの特徴を表しています。
         フォロワーから作成したワードクラウドは @%{user} のフォロワーの特徴を表しています。
       tweets_word_cloud: "@%{user} のツイート ワードクラウド"
+      tweets_link: "@%{user} のツイートを見る"
       friend_profiles_word_cloud: "@%{user} のフォロー ワードクラウド"
       friend_locations_word_cloud: "@%{user} のフォローのロケーション ワードクラウド"
+      friends_link: "@%{user} のフォローを見る"
       follower_profiles_word_cloud: "@%{user} のフォロワー ワードクラウド"
       follower_locations_word_cloud: "@%{user} のフォロワーのロケーション ワードクラウド"
+      followers_link: "@%{user} のフォロワーを見る"
   clusters:
     new:
       plain_title: 'クラスタ判定'
