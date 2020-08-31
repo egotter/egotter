@@ -6,7 +6,7 @@ class WordCloud
     words = parsed.select { |_, desc| desc && !desc.match?(/^(助詞|助動詞|記号)/) }.map(&:first)
     words_count = words.each_with_object(Hash.new(0)) { |word, memo| memo[word] += 1 }
 
-    words_count.to_a.each do |word, count|
+    words_count.each do |word, count|
       if word.include?(' ') ||
           word.match?(/^(\p{hiragana}){2}$/) ||
           word.length < min_word_length ||

@@ -1,170 +1,156 @@
 class ClusterFinder
-  def list_clusters(user: nil, lists: nil, shrink: false, shrink_limit: 100, list_member: 300, total_member: 3000, total_list: 50, rate: 0.3, limit: 10, debug: false)
-    unless lists
-      lists = fetch_lists(user)
-    end
-    lists = lists.sort_by { |li| li.member_count }
-    puts "lists: #{lists.size} (#{lists.map { |li| li.member_count }.join(', ')})" if debug
+
+  MIN_WORD_LENGTH = 2
+  MIN_LIST_MEMBERS = 10
+  MAX_LIST_MEMBERS = 300
+  MAX_MEMBERS = 3000
+  MAX_LISTS = 50
+  CONTENT_RATE = 0.3
+  LIMIT = 100
+
+  def list_clusters(user: nil, lists: nil, min_word_length: MIN_WORD_LENGTH, min_list_members: MIN_LIST_MEMBERS, max_list_members: MAX_LIST_MEMBERS, max_members: MAX_MEMBERS, max_lists: MAX_LISTS, content_rate: CONTENT_RATE, limit: LIMIT)
+    lists = fetch_lists(user) unless lists
+    lists = lists.sort_by(&:member_count)
+    logger.debug { "#{__method__}: lists=#{inspect_lists(lists)}" }
     return {} if lists.empty?
 
-    open('lists.txt', 'w') {|f| f.write lists.map(&:full_name).join("\n") } if debug
+    words_count = count_words(lists, min_word_length: min_word_length)
+    logger.debug { "#{__method__}: words_count=#{words_count}" }
+    return {} if words_count.empty?
 
-    list_special_words = %w()
-    list_exclude_regexp = %r(list[0-9]*|people-ive-faved|twizard-magic-list|my-favstar-fm-list|timeline-list|conversationlist|who-i-met)
-    list_exclude_words = %w(it list people who met)
-
-    # リスト名を - で分割 -> 1文字の単語を除去 -> 出現頻度の降順でソート
-    words = lists.map { |li| li.full_name.split('/')[1] }.
-        select { |n| !n.match(list_exclude_regexp) }.
-        map { |n| n.split('-') }.flatten.
-        delete_if { |w| w.size < 2 || list_exclude_words.include?(w) }.
-        map { |w| SYNONYM_WORDS.has_key?(w) ? SYNONYM_WORDS[w] : w }.
-        each_with_object(Hash.new(0)) { |w, memo| memo[w] += 1 }.
-        sort_by { |k, v| [-v, -k.size] }
-
-    puts "words: #{words.take(10)}" if debug
-    return {} if words.empty?
-
-    # 出現頻度の高い単語を名前に含むリストを抽出
-    _words = []
-    lists =
-        filter(lists, min: 2) do |li, i|
-          _words = words[0..i].map(&:first)
-          name = li.full_name.split('/')[1]
-          _words.any? { |w| name.include?(w) }
-        end
-    puts "lists include #{_words.inspect}: #{lists.size} (#{lists.map { |li| li.member_count }.join(', ')})" if debug
+    lists = filter_lists_by_words(lists, words_count.keys)
+    logger.debug { "#{__method__}: word_filtered_lists=#{inspect_lists(lists)}" }
     return {} if lists.empty?
 
-    # 中間の 25-75% のリストを抽出
-    while lists.size > shrink_limit
-      percentile25 = ((lists.length * 0.25).ceil) - 1
-      percentile75 = ((lists.length * 0.75).ceil) - 1
-      lists = lists[percentile25..percentile75]
-      puts "lists sliced by 25-75 percentile: #{lists.size} (#{lists.map { |li| li.member_count }.join(', ')})" if debug
-    end if shrink || lists.size > shrink_limit
-
-    # メンバー数がしきい値より少ないリストを抽出
-    _list_member = 0
-    _min_list_member = 10 < lists.size ? 10 : 0
-    _lists =
-        filter(lists, min: 2) do |li, i|
-          _list_member = list_member * (1.0 + 0.25 * i)
-          _min_list_member < li.member_count && li.member_count < _list_member
-        end
-    lists = _lists.empty? ? [lists[0]] : _lists
-    puts "lists limited by list member #{_min_list_member}..#{_list_member.round}: #{lists.size} (#{lists.map { |li| li.member_count }.join(', ')})" if debug
+    lists = filter_lists_by_member_count(lists, min: min_list_members, max: max_list_members)
+    logger.debug { "#{__method__}: member_count_filtered_lists=#{inspect_lists(lists)}" }
     return {} if lists.empty?
 
-    # トータルメンバー数がしきい値より少なくなるリストを抽出
-    _lists = []
-    lists.size.times do |i|
-      _lists = lists[0..(-1 - i)]
-      if _lists.map { |li| li.member_count }.sum < total_member
-        break
-      else
-        _lists = []
-      end
-    end
-    lists = _lists.empty? ? [lists[0]] : _lists
-    puts "lists limited by total members #{total_member}: #{lists.size} (#{lists.map { |li| li.member_count }.join(', ')})" if debug
+    lists = filter_lists_by_total_members(lists, max: max_members)
+    logger.debug { "#{__method__}: total_members_filtered_lists=#{inspect_lists(lists)}" }
     return {} if lists.empty?
 
-    # リスト数がしきい値より少なくなるリストを抽出
-    if lists.size > total_list
-      lists = lists[0..(total_list - 1)]
-    end
-    puts "lists limited by total lists #{total_list}: #{lists.size} (#{lists.map { |li| li.member_count }.join(', ')})" if debug
+    lists = filter_lists_by_total_lists(lists, max_total_lists: max_lists)
+    logger.debug "#{__method__}: total_lists_filtered_lists=#{inspect_lists(lists)}"
     return {} if lists.empty?
 
-    members = lists.map do |li|
-      begin
-        fetch_list_members(li.id)
-      rescue Twitter::Error::NotFound => e
-        puts "#{__method__}: #{e.class} #{e.message} #{li.id} #{li.full_name} #{li.mode}" if debug
-        nil
-      end
-    end.compact.flatten
-    puts "candidate members: #{members.size}" if debug
-    return {} if members.empty?
+    members_count = count_members(lists)
+    logger.debug { "#{__method__}: members=#{members_count.size} members_count=#{members_count.map { |k, v| [k.screen_name, v] }}" }
+    return {} if members_count.empty?
 
-    open('members.txt', 'w') {|f| f.write members.map{ |m| m.description.gsub(/\R/, ' ') }.join("\n") } if debug
+    members_count = filter_members_by_content_rate(members_count, lists.size, rate: content_rate)
+    logger.debug { "#{__method__}: content_rate_filtered_members=#{members_count.map { |m, c| [m.screen_name, c] }}" }
+    return {} if members_count.empty?
 
-    3.times do
-      _members = members.each_with_object(Hash.new(0)) { |member, memo| memo[member] += 1 }.
-          select { |_, v| lists.size * rate < v }.keys
-      if _members.size > 100
-        members = _members
-        break
-      else
-        rate -= 0.05
-      end
-    end
-    puts "members included multi lists #{rate.round(3)}: #{members.size}" if debug
-
-    count_freq_words(members.map { |m| m.description }, special_words: PROFILE_SPECIAL_WORDS, exclude_words: PROFILE_EXCLUDE_WORDS, special_regexp: PROFILE_SPECIAL_REGEXP, exclude_regexp: PROFILE_EXCLUDE_REGEXP, debug: debug).take(limit)
+    count_keywords(members_count.map(&:first).map(&:description)).take(limit)
   end
+
+  private
 
   def fetch_lists(user, count: 500)
     Bot.api_client.twitter.memberships(user, count: count).attrs[:lists].map { |l| Hashie::Mash.new(l) }
   end
 
-  def fetch_list_members(list_id)
-    Bot.api_client.twitter.list_members(list_id).attrs[:users].map { |u| Hashie::Mash.new(u) }
+  def fetch_list_members(list)
+    Bot.api_client.twitter.list_members(list.id).attrs[:users].map { |u| Hashie::Mash.new(u) }
+  rescue Twitter::Error::NotFound => e
+    logger.debug "#{__method__}: #{e.inspect} list_id=#{list.id} full_name=#{list.full_name}"
+    nil
   end
 
-  def count_freq_words(texts, special_words: [], exclude_words: [], special_regexp: nil, exclude_regexp: nil, debug: false)
-    candidates, remains = texts.partition { |desc| desc.scan('/').size > 2 }
-    slash_freq = count_by_word(candidates, delim: '/', exclude_regexp: exclude_regexp)
-    puts "words splitted by /: #{slash_freq.take(10)}" if debug
+  LIST_EXCLUDE_REGEXP = %r(list[0-9]*|people-ive-faved|twizard-magic-list|my-favstar-fm-list|timeline-list|conversationlist|who-i-met)
+  LIST_EXCLUDE_WORDS = %w(it list people who met)
 
-    candidates, remains = remains.partition { |desc| desc.scan('|').size > 2 }
-    pipe_freq = count_by_word(candidates, delim: '|', exclude_regexp: exclude_regexp)
-    puts "words splitted by |: #{pipe_freq.take(10)}" if debug
-
-    noun_freq = count_by_word(remains, tagger: build_tagger, special_words: special_words, exclude_words: exclude_words, special_regexp: special_regexp, exclude_regexp: exclude_regexp)
-    puts "words tagged as noun: #{noun_freq.take(10)}" if debug
-
-    slash_freq.merge(pipe_freq) { |_, old, neww| old + neww }.
-        merge(noun_freq) { |_, old, neww| old + neww }.sort_by { |k, v| [-v, -k.size] }
+  # リスト名を - で分割、1文字の単語を除去、出現頻度の降順かつ文字数の降順でソート
+  def count_words(lists, min_word_length: 2)
+    lists.map { |l| list_name(l) }.
+        reject { |n| n.match?(LIST_EXCLUDE_REGEXP) }.
+        map { |n| n.split('-') }.flatten.
+        reject { |w| LIST_EXCLUDE_WORDS.include?(w) }.
+        reject { |w| w.size < min_word_length }.
+        map { |w| SYNONYM_WORDS.has_key?(w) ? SYNONYM_WORDS[w] : w }.
+        each_with_object(Hash.new(0)) { |w, memo| memo[w] += 1 }.
+        sort_by { |word, count| [-count, -word.size] }.to_h
   end
 
-  def count_by_word(texts, delim: nil, tagger: nil, min_length: 2, max_length: 5, special_words: [], exclude_words: [], special_regexp: nil, exclude_regexp: nil)
-    texts = texts.dup
-
-    frequency = Hash.new(0)
-    if special_words.any?
-      texts.each do |text|
-        special_words.map { |sw| [sw, text.scan(sw)] }
-            .delete_if { |_, matched| matched.empty? }
-            .each_with_object(frequency) { |(word, matched), memo| memo[word] += matched.size }
-
+  # 出現頻度の高い単語を名前に含むリストを抽出
+  def filter_lists_by_words(lists, words, min: 2)
+    filtered = words.map { |word| lists.select { |l| list_name(l).include?(word) } }
+    filtered.size.times do |n|
+      candidates = filtered.take(n + 1).flatten.uniq(&:id)
+      if candidates.size >= min
+        return candidates
       end
     end
+  end
 
-    if exclude_regexp
-      texts = texts.map { |t| t.remove(exclude_regexp) }
+  def filter_lists_by_member_count(lists, min: MIN_LIST_MEMBERS, max: MAX_LIST_MEMBERS)
+    return if lists.empty?
+    10.times do
+      result = lists.select { |list| (min..max).include?(list.member_count) }
+      return result if result.any?
+
+      min *= 0.9
+      max *= 0.9
     end
+    lists
+  end
 
-    if delim
-      texts = texts.map { |t| t.split(delim) }.flatten.map(&:strip)
+  def filter_lists_by_total_members(lists, max: MAX_MEMBERS)
+    lists.size.times do |n|
+      candidates = lists[0..(-1 - n)]
+      if candidates.map(&:member_count).sum < max
+        return candidates
+      end
     end
+  end
 
-    if tagger
-      texts = texts.map { |t| tagger.parse(t).split("\n") }.flatten.
-          select { |line| line.include?('名詞') }.
-          map { |line| line.split("\t")[0] }
+  def filter_lists_by_total_lists(lists, max_total_lists: 50)
+    lists[0..(max_total_lists - 1)]
+  end
+
+  def count_members(lists)
+    members = lists.map { |list| fetch_list_members(list) }.compact.flatten
+    members.each_with_object(Hash.new(0)) { |member, memo| memo[member.id] += 1 }.sort_by { |_, v| -v }.
+        map { |id, count| [members.find { |m| m.id == id }, count] }.to_h
+  end
+
+  def filter_members_by_content_rate(members_count, lists_size, min_members: 10, rate: 0.3)
+    while (result = members_count.select { |_, count| count > lists_size * rate }).size < min_members do
+      rate -= 0.05
     end
+    result
+  end
 
-    texts.delete_if { |w| w.empty? || w.size < min_length || max_length < w.size || exclude_words.include?(w) || w.match(/\d{2}/) }.
-        each_with_object(frequency) { |word, memo| memo[word] += 1 }.
+  PROFILE_EXCLUDE_WORDS = %w(in at of my to no er by is RT DM the and for you inc Inc com from info next gmail 好き こと 最近 紹介 連載 発売 依頼 情報 さん ちゃん くん 発言 関係 もの 活動 見解 所属 組織 代表 連絡 大好き サイト ブログ つぶやき 株式会社 最新 こちら 届け お仕事 ツイ 返信 プロ 今年 リプ ヘッダー アイコン アカ アカウント ツイート たま ブロック 無言 時間 お願い お願いします お願いいたします イベント フォロー フォロワー フォロバ スタッフ 自動 手動 迷言 名言 非公式 リリース 問い合わせ ツイッター)
+  PROFILE_EXCLUDE_REGEXP = Regexp.union(/\w+@\w+\.(com|co\.jp)/, %r[\d{2,4}(年|/)\d{1,2}(月|/)\d{1,2}日], %r[\d{1,2}/\d{1,2}], /\d{2}th/, URI.regexp)
+
+  SHORT_HIRAGANA_REGEXP = /^(\p{hiragana}){2}$/
+  SHORT_DIGITS_REGEXP = /^\d{2}$/
+
+  def count_keywords(texts, min_length: 2, max_length: 5, exclude_words: PROFILE_EXCLUDE_WORDS, exclude_regexp: PROFILE_EXCLUDE_REGEXP)
+    text = texts.join(' ').remove(exclude_regexp)
+    words = natto_parse(text).select { |_, desc| desc && desc.match?(/^名詞/) }.map(&:first)
+
+    words.reject { |w| w.size < min_length || max_length < w.size || exclude_words.include?(w) || w.match?(SHORT_DIGITS_REGEXP) || w.match?(SHORT_HIRAGANA_REGEXP) }.
+        each_with_object(Hash.new(0)) { |word, memo| memo[word] += 1 }.
         sort_by { |k, v| [-v, -k.size] }.to_h
   end
 
-  PROFILE_SPECIAL_WORDS = %w(20↑ 成人済 腐女子)
-  PROFILE_SPECIAL_REGEXP = nil
-  PROFILE_EXCLUDE_WORDS = %w(in at of my to no er by is RT DM the and for you inc Inc com from info next gmail 好き こと 最近 紹介 連載 発売 依頼 情報 さん ちゃん くん 発言 関係 もの 活動 見解 所属 組織 代表 連絡 大好き サイト ブログ つぶやき 株式会社 最新 こちら 届け お仕事 ツイ 返信 プロ 今年 リプ ヘッダー アイコン アカ アカウント ツイート たま ブロック 無言 時間 お願い お願いします お願いいたします イベント フォロー フォロワー フォロバ スタッフ 自動 手動 迷言 名言 非公式 リリース 問い合わせ ツイッター)
-  PROFILE_EXCLUDE_REGEXP = Regexp.union(/\w+@\w+\.(com|co\.jp)/, %r[\d{2,4}(年|/)\d{1,2}(月|/)\d{1,2}日], %r[\d{1,2}/\d{1,2}], /\d{2}th/, URI.regexp)
+  def natto_parse(text)
+    require 'natto'
+    dicdir = "#{`mecab-config --dicdir`.chomp}/mecab-ipadic-neologd/"
+    Natto::MeCab.new(dicdir: dicdir).parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
+  end
+
+  MAX_BYTESIZE = 40.kilobytes
+
+  def truncate_text(text)
+    while text.bytesize > MAX_BYTESIZE do
+      text = text.truncate(text.size * 0.9, omission: '')
+    end
+    text
+  end
 
   SYNONYM_WORDS = (
   %w(cosplay cosplayer cosplayers coser cos こすぷれ コスプレ レイヤ レイヤー コスプレイヤー レイヤーさん).map { |w| [w, 'coplay'] } +
@@ -186,25 +172,15 @@ class ClusterFinder
       %w(internet インターネット).map { |w| [w, 'internet'] }
   ).to_h
 
-  def normalize_synonym(words)
-    words.map { |w| SYNONYM_WORDS.has_key?(w) ? SYNONYM_WORDS[w] : w }
+  def list_name(list)
+    list.full_name.split('/')[1]
   end
 
-  def filter(lists, min:)
-    min = [min, lists.size].min
-    _lists = []
-    3.times do |i|
-      _lists = lists.select { |li| yield(li, i) }
-      break if _lists.size >= min
-    end
-    _lists
+  def inspect_lists(lists)
+    lists.map { |list| [list.id, list_name(list), list.member_count] }
   end
 
-  def build_tagger
-    require 'mecab'
-    MeCab::Tagger.new("-d #{`mecab-config --dicdir`.chomp}/mecab-ipadic-neologd/")
-  rescue => e
-    puts "Add gem 'mecab' to your Gemfile."
-    raise e
+  def logger
+    Rails.logger
   end
 end
