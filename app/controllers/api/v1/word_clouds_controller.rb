@@ -6,7 +6,7 @@ module Api
       before_action { set_stat }
 
       def show
-        if @stat
+        if @stat&.words_count
           words_count = @stat.words_count.sort_by { |_, v| -v }.map { |word, count| {word: word, count: count} }
           render json: {words_count: words_count}
         else
