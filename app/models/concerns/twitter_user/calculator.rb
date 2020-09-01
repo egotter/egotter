@@ -60,7 +60,7 @@ module Concerns::TwitterUser::Calculator
 
   def calc_close_friend_uids(login_user:)
     uids = replying_uids(uniq: false) + replied_uids(uniq: false, login_user: login_user) + calc_favorite_friend_uids(uniq: false)
-    sort_by_count_desc(uids).take(50)
+    sort_by_count_desc(uids).take(100)
   end
 
   def calc_inactive_friend_uids
