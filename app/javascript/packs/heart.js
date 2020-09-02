@@ -1,7 +1,7 @@
 class Heart {
   constructor(id, offsetX, offsetY, width, height, imageWidth, users) {
     this.id = id;
-    this.offsetX = offsetX;
+    this._ = offsetX;
     this.offsetY = offsetY;
     this.width = width;
     this.height = height;
@@ -144,12 +144,25 @@ class Heart {
 
   drawPrize(id, index) {
     var rect = $('#' + id);
+    var user = this.users[index];
+
     this.elem.append("svg:image")
         .attr("x", rect.attr('x'))
         .attr("y", rect.attr('y'))
         .attr("width", rect.attr('width'))
         .attr("height", rect.attr('height'))
-        .attr("xlink:href", this.users[index]['profile_image_url']);
+        .attr("onclick", 'window.open("https://twitter.com/' + user.screen_name + '")')
+        .attr("xlink:href", user['profile_image_url']);
+
+    var x = parseInt(rect.attr('x')) + parseInt(rect.attr('width')) / 2;
+    var y = parseInt(rect.attr('y')) + parseInt(rect.attr('height')) + 15;
+    this.elem.append("svg:text")
+        .attr("x", x)
+        .attr("y", y)
+        .attr("dominant-baseline", 'middle')
+        .attr("text-anchor", 'middle')
+        .attr("onclick", 'window.open("https://twitter.com/' + user.screen_name + '")')
+        .text('@' + user.screen_name);
   }
 
   drawFirstPrize() {
