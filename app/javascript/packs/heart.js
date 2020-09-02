@@ -145,6 +145,9 @@ class Heart {
   drawPrize(id, index) {
     var rect = $('#' + id);
     var user = this.users[index];
+    if (!user) {
+      return;
+    }
 
     this.elem.append("svg:image")
         .attr("x", rect.attr('x'))
