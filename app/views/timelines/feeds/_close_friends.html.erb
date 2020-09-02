@@ -1,0 +1,9 @@
+<div id="feed-<%= feed_name %>" class="<%= feed_name %> feed-item card p-3">
+  <h3 class="h4 text-center"><%= feed_title %></h3>
+  <div class="text-center my-3"><%= feed_description %></div>
+
+  <div class="text-center">
+    <%= render partial: 'shared/heart', locals: {twitter_user: twitter_user} %>
+  </div>
+  <%= link_to t('timelines.feeds.view_more'), page_url, class: 'btn btn-primary btn-block btn-view-more mt-auto' %>
+</div>

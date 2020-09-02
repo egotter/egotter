@@ -38,3 +38,4 @@ import "./settings";
 import "./timelines";
 import "./waiting";
 import "./bg_update";
+import "./heart";

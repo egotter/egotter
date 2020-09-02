@@ -20,7 +20,7 @@
 <div class="mb-5"><%= current_page_description(@twitter_user) %></div>
 
 <% if controller_name == 'close_friends' %>
-  <div class="my-3"><%= render(partial: 'close_friends/friend_map', locals: {twitter_user: @twitter_user}) %></div>
+  <div class="text-center my-3"><%= render partial: 'shared/heart', locals: {twitter_user: @twitter_user} %></div>
 <% end %>
 
 <% if remove_related_page? %>
