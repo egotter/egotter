@@ -1,6 +1,6 @@
 class ResetTooManyRequestsWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def perform(user_id)
     TooManyRequestsUsers.new.delete(user_id)
