@@ -258,8 +258,4 @@ module Concerns::TwitterUser::Associations
     tweets = ::S3::MentionTweet.where(uid: uid) if tweets.blank?
     tweets.map { |tweet| ::TwitterDB::Mention.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
-
-  def common_users_by(controller_name:, friend:, limit: 300)
-    send(controller_name, friend).take(limit)
-  end
 end

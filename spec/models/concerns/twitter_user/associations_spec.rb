@@ -400,8 +400,4 @@ RSpec.describe Concerns::TwitterUser::Associations do
       include_examples('result matches return_data')
     end
   end
-
-  describe '#common_users_by' do
-
-  end
 end
