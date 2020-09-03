@@ -11,6 +11,7 @@
 #
 #  index_close_friends_og_images_on_uid  (uid) UNIQUE
 #
+require 'yaml'
 require 'tempfile'
 
 class CloseFriendsOgImage < ApplicationRecord
@@ -22,13 +23,18 @@ class CloseFriendsOgImage < ApplicationRecord
     image.attached? ? "https://#{ENV['OG_IMAGE_ASSET_HOST']}/#{image.blob.key}" : nil
   end
 
+  def update_acl(value = 'public-read')
+    config = YAML.load(ERB.new(File.read('config/storage.yml')).result)['amazon']
+    client = Aws::S3::Client.new(region: config['region'], retry_limit: 4, http_open_timeout: 3, http_read_timeout: 3)
+    client.put_object_acl(acl: value, bucket: config['bucket'], key: image.blob.key)
+  end
+
   class Generator
 
     OG_IMAGE_IMAGEMAGICK = ENV['OG_IMAGE_IMAGEMAGICK']
     OG_IMAGE_OUTLINE = 'public/og_image/egotter_og_outline_840x450.png'
     OG_IMAGE_HEART = 'public/og_image/heart_300x350.svg'
     OG_IMAGE_FONT = 'public/og_image/azukiP.ttf'
-    OG_IMAGE_S3_BUCKET = "egotter.#{Rails.env}.og-images"
 
     class << self
       def generate(twitter_user, friends, &block)
