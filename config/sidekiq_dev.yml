@@ -24,7 +24,6 @@
   - AssembleTwitterUserWorker
   - StartSendingPeriodicReportsWorker
   - WriteToS3Worker
-  - deleting
   - follow
   - unfollow
   - misc_low
