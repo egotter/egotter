@@ -1,10 +1,4 @@
 <%=
-  if controller_name == 'personality_insights'
-    og_image = image_url('/egotter_personality_insight_840x450.jpg?loc=og_image')
-  else
-    og_image = image_url('/egotter_usagi_840x450.jpg?loc=og_image')
-  end
-
   if params[:og_tag] == 'false'
     og_tag = {}
   else
@@ -12,7 +6,7 @@
         title: :title,
         type: (action_name == 'new' ? 'website' : 'article'),
         url: request.original_url,
-        image: og_image,
+        image: og_image_url,
         site_name: t('.title'),
         description: :description,
         locale: 'ja_JP'

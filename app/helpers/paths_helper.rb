@@ -61,6 +61,14 @@ module PathsHelper
     "https://scheduled-tweets.egotter.com?#{params}"
   end
 
+  def og_image_url
+    if controller_name == 'personality_insights'
+      image_url('/egotter_personality_insight_840x450.jpg?loc=og_image')
+    else
+      image_url('/egotter_usagi_840x450.jpg?loc=og_image')
+    end
+  end
+
   def transcription_ai_url
     'https://transcription-ai.com?via=egotter_footer&utm_source=egotter-footer&utm_medium=web&utm_campaign=egotter'
   end
