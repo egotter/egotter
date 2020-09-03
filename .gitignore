@@ -16,6 +16,10 @@
 !/log/.keep
 /tmp
 
+# Ignore uploaded files in development.
+/storage/*
+!/storage/.keep
+
 /public/sitemap*
 /ddagent-install.log
 /.idea
