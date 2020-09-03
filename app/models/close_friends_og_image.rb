@@ -58,14 +58,14 @@ class CloseFriendsOgImage < ApplicationRecord
 
           if i < 3
             if user
-              heart.sub!("screen_name_#{i}", user.screen_name)
+              heart.sub!("screen_name_#{i}", user[:screen_name])
             else
               heart.sub!("screen_name_#{i}", '')
             end
           end
 
           if user
-            heart.sub!("image_url_#{i}", user.profile_image_url_https)
+            heart.sub!("image_url_#{i}", user[:profile_image_url_https])
           else
             heart.sub!(/<image.+image_url_#{i}.+<\/image>/, '')
           end
