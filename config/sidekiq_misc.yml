@@ -14,14 +14,12 @@
   - logging
   - messaging
   - misc
-  - ResetTooManyRequestsWorker
-  - UpdateUsageStatWorker
-  - UpdateAudienceInsightWorker
   - creating_low
   - deleting_low
   - deleting
   - follow
   - unfollow
+  - misc_low
   - CreateUserRequestedPeriodicReportWorker
   - CreateAndroidRequestedPeriodicReportWorker
   - CreateEgotterRequestedPeriodicReportWorker
