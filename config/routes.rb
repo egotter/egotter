@@ -33,6 +33,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'l/:name', to: 'landing_pages#new'
+
   get 'delete_tweets', to: 'delete_tweets#new'
   get 'delete_tweets/mypage', to: 'delete_tweets#show', as: :delete_tweets_mypage
   post "delete_tweets", to: "delete_tweets#delete"
