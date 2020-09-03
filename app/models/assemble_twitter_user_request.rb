@@ -41,7 +41,7 @@ class AssembleTwitterUserRequest < ApplicationRecord
           CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids_array), user_id: twitter_user.user_id, compressed: true, enqueued_by: self.class)
         end
 
-        if klass == S3::CloseFriendship
+        if klass == S3::CloseFriendship && uids.present?
           CreateCloseFriendsOgImageWorker.perform_async(twitter_user.uid, uids: uids)
         end
       end
