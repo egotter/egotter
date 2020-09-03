@@ -28,6 +28,7 @@ class CreateCloseFriendsOgImageWorker
       image.image.purge if image.image.attached?
       image.image.attach(io: File.open(file), filename: File.basename(file))
       image.save!
+      image.update_acl
     end
 
   rescue => e

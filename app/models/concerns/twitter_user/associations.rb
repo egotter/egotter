@@ -12,12 +12,10 @@ module Concerns::TwitterUser::Associations
       obj.belongs_to :twitter_db_user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User'
     end
 
-    default_options = {dependent: :destroy, validate: false, autosave: false}
-    order_by_sequence_asc = -> { order(sequence: :asc) }
-
-    with_options({primary_key: :uid, foreign_key: :uid}.update(default_options)) do |obj|
+    with_options(primary_key: :uid, foreign_key: :uid, dependent: :destroy, validate: false, autosave: false) do |obj|
       obj.has_one :usage_stat
       obj.has_one :audience_insight
+      obj.has_one :close_friends_og_image
     end
   end
 
