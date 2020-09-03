@@ -3,6 +3,7 @@ module Api
     class CloseFriendsController < ::Api::V1::Base
 
       def show
+        CreateCloseFriendsOgImageWorker.perform_async(@twitter_user.uid) unless from_crawler?
         summary
       end
 
