@@ -102,7 +102,7 @@ class Heart {
           .attr("y", y)
           .attr("width", width)
           .attr("height", width)
-          .attr("onclick", 'window.open("https://twitter.com/' + user.screen_name + '")')
+          .attr("onclick", 'window.open("' + this.timelinePath(user.screen_name) + '")')
           .attr("xlink:href", user['profile_image_url']);
     } else {
       this.elem.append("svg:rect")
@@ -154,7 +154,7 @@ class Heart {
         .attr("y", rect.attr('y'))
         .attr("width", rect.attr('width'))
         .attr("height", rect.attr('height'))
-        .attr("onclick", 'window.open("https://twitter.com/' + user.screen_name + '")')
+        .attr("onclick", 'window.open("' + this.timelinePath(user.screen_name) + '")')
         .attr("xlink:href", user['profile_image_url']);
 
     var x = parseInt(rect.attr('x')) + parseInt(rect.attr('width')) / 2;
@@ -164,7 +164,7 @@ class Heart {
         .attr("y", y)
         .attr("dominant-baseline", 'middle')
         .attr("text-anchor", 'middle')
-        .attr("onclick", 'window.open("https://twitter.com/' + user.screen_name + '")')
+        .attr("onclick", 'window.open("' + this.timelinePath(user.screen_name) + '")')
         .text('@' + user.screen_name);
   }
 
@@ -178,6 +178,11 @@ class Heart {
 
   drawThirdPrize() {
     this.drawPrize('close-friends-third-prize', 2);
+  }
+
+  timelinePath(screenName) {
+    // timeline_path
+    return '/timelines/' + screenName + '?via=heart';
   }
 }
 

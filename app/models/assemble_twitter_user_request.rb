@@ -40,6 +40,10 @@ class AssembleTwitterUserRequest < ApplicationRecord
         uids.each_slice(100) do |uids_array|
           CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids_array), user_id: twitter_user.user_id, compressed: true, enqueued_by: self.class)
         end
+
+        if klass == S3::CloseFriendship
+          CreateCloseFriendsOgImageWorker.perform_async(twitter_user.uid, uids: uids)
+        end
       end
     rescue => e
       logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"

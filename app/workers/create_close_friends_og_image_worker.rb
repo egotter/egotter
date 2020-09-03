@@ -19,9 +19,18 @@ class CreateCloseFriendsOgImageWorker
   end
 
   # options:
+  #   uids
   def perform(uid, options = {})
     twitter_user = TwitterUser.latest_by(uid: uid)
-    friends = twitter_user.close_friends
+
+    if options['uids']
+      friends = TwitterDB::User.where_and_order_by_field(uids: options['uids'])
+      if friends.size != options['uids'].size && (users = (Bot.api_client.users(options['uids']) rescue nil))
+        friends = users
+      end
+    else
+      friends = twitter_user.close_friends
+    end
 
     CloseFriendsOgImage::Generator.generate(twitter_user, friends) do |file|
       image = CloseFriendsOgImage.find_or_initialize_by(uid: uid)
