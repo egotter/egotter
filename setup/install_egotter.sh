@@ -80,8 +80,12 @@ fi
 cd ${APP_ROOT}
 ${sudo_cmd} "git checkout master && git pull origin master"
 
+# mecab
 [ ! -f "/usr/bin/mecab" ] && sh ./setup/install_mecab.sh
 # yum remove -y gcc48-c++ && yum install -y gcc72-c++.x86_64
+
+# imagemagick
+[ ! -f "/usr/bin/convert" ] && yum install -y ImageMagick ImageMagick-devel
 
 cd ${APP_ROOT}
 ${sudo_cmd} "/usr/local/bin/bundle install --path .bundle --without test development"

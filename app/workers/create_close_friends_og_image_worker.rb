@@ -1,0 +1,37 @@
+class CreateCloseFriendsOgImageWorker
+  include Sidekiq::Worker
+  sidekiq_options queue: 'misc', retry: 0, backtrace: false
+
+  def unique_key(uid, options = {})
+    uid
+  end
+
+  def unique_in
+    3.minutes
+  end
+
+  def expire_in
+    1.minute
+  end
+
+  def timeout_in
+    1.minute
+  end
+
+  # options:
+  def perform(uid, options = {})
+    twitter_user = TwitterUser.latest_by(uid: uid)
+    friends = twitter_user.close_friends
+
+    CloseFriendsOgImage::Generator.generate(twitter_user, friends) do |file|
+      image = CloseFriendsOgImage.find_or_initialize_by(uid: uid)
+      image.image.purge if image.image.attached?
+      image.image.attach(io: File.open(file), filename: File.basename(file))
+      image.save!
+    end
+
+  rescue => e
+    logger.warn "#{e.inspect} uid=#{uid} options=#{options}"
+    logger.info e.backtrace.join("\n")
+  end
+end

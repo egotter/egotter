@@ -1037,6 +1037,12 @@ ja:
       共通フォロワー %{common_followers}人
       共通相互フォロー %{common_mutual_friends}人
       #egotter %{url}
+  og_image_text:
+    close_friends: |
+      @%{user}の仲良しランキング
+        1. @%{friend1}
+        2. @%{friend2}
+        3. @%{friend3}
   word_cloud_descriptions:
     tweets: '@%{user} のツイートから作ったワードクラウドです。@%{user} がよくツイートする単語、口ぐせを表しています。'
     friend_profiles: '@%{user} がフォローしているユーザーのプロフィールから作ったワードクラウドです。@%{user} がフォローしているユーザーの特徴を表しています。'
