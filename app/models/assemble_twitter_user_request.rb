@@ -46,7 +46,7 @@ class AssembleTwitterUserRequest < ApplicationRecord
         end
       end
     rescue => e
-      logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"
+      logger.warn "#{klass}#import_from! #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"
       logger.info e.backtrace.join("\n")
     end
 
@@ -68,7 +68,7 @@ class AssembleTwitterUserRequest < ApplicationRecord
         klass.import_from!(twitter_user.uid, uids)
       end
     rescue => e
-      logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"
+      logger.warn "#{klass}#import_from! #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"
       logger.info e.backtrace.join("\n")
     end
 

@@ -49,7 +49,7 @@ class UnfriendsBuilder
 
       query = query.where('created_at >= ?', start_date) if start_date
 
-      query.select(:id, :created_at).
+      query.select(:id, :uid, :created_at).
           order(created_at: :desc).
           limit(limit).
           reverse
