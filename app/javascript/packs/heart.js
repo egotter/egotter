@@ -9,9 +9,12 @@ class Heart {
     this.count = 0;
     this.users = users;
     this.elem = d3.select('#' + id);
+    this.name = '仲良しランキング';
+    this.domain = 'egotter.com';
   }
 
   draw() {
+    this.drawWatermark();
     this.drawFirstPrize();
     this.drawSecondPrize();
     this.drawThirdPrize();
@@ -90,26 +93,24 @@ class Heart {
   }
 
   drawRect(x, y, border) {
-    var width = this.imageWidth;
-    x = width * x + (this.width - width * 11) / 2;
-    y = width * y + (this.height - width * 9) / 2 + this.offsetY;
+    var p = this.findPosition(x, y);
     var index = this.count + 3;
 
     if (this.users[index] && this.users[index]['profile_image_url']) {
       var user = this.users[index];
       this.elem.append("svg:image")
-          .attr("x", x)
-          .attr("y", y)
-          .attr("width", width)
-          .attr("height", width)
+          .attr("x", p.x)
+          .attr("y", p.y)
+          .attr("width", p.width)
+          .attr("height", p.width)
           .attr("onclick", 'window.open("' + this.timelinePath(user.screen_name) + '")')
           .attr("xlink:href", user['profile_image_url']);
     } else {
       this.elem.append("svg:rect")
-          .attr("x", x)
-          .attr("y", y)
-          .attr("width", width)
-          .attr("height", width)
+          .attr("x", p.x)
+          .attr("y", p.y)
+          .attr("width", p.width)
+          .attr("height", p.width)
           .attr("rx", 0)
           .attr("ry", 0)
           .attr("fill", '#EA2184');
@@ -117,20 +118,27 @@ class Heart {
 
     if (border) {
       if (border['top']) {
-        this.drawLine(x, y, x + width, y);
+        this.drawLine(p.x, p.y, p.x + p.width, p.y);
       }
       if (border['right']) {
-        this.drawLine(x + width, y, x + width, y + width);
+        this.drawLine(p.x + p.width, p.y, p.x + p.width, p.y + p.width);
       }
       if (border['bottom']) {
-        this.drawLine(x, y + width, x + width, y + width);
+        this.drawLine(p.x, p.y + p.width, p.x + p.width, p.y + p.width);
       }
       if (border['left']) {
-        this.drawLine(x, y, x, y + width);
+        this.drawLine(p.x, p.y, p.x, p.y + p.width);
       }
     }
 
     this.count++;
+  }
+
+  findPosition(x, y) {
+    var width = this.imageWidth;
+    x = width * x + (this.width - width * 11) / 2;
+    y = width * y + (this.height - width * 9) / 2 + this.offsetY;
+    return {x: x, y: y, width: width};
   }
 
   drawLine(x1, y1, x2, y2) {
@@ -178,6 +186,35 @@ class Heart {
 
   drawThirdPrize() {
     this.drawPrize('close-friends-third-prize', 2);
+  }
+
+  drawWatermark() {
+    this.drawName();
+    this.drawDomain();
+  }
+
+  drawName() {
+    var p1 = this.findPosition(10, 3);
+    var p2 = this.findPosition(5, 8);
+    this.elem.append("svg:text")
+        .attr("x", p1.x + p1.width)
+        .attr("y", p2.y + p2.width - 14)
+        .attr("text-anchor", 'end')
+        .attr("font-size", 10)
+        .attr("style", 'fill: #EA2184;')
+        .text(this.name);
+  }
+
+  drawDomain() {
+    var p1 = this.findPosition(10, 3);
+    var p2 = this.findPosition(5, 8);
+    this.elem.append("svg:text")
+        .attr("x", p1.x + p1.width)
+        .attr("y", p2.y + p2.width)
+        .attr("text-anchor", 'end')
+        .attr("font-size", 12)
+        .attr("style", 'fill: #EA2184;')
+        .text(this.domain);
   }
 
   timelinePath(screenName) {
