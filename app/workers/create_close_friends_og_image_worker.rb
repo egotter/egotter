@@ -32,6 +32,8 @@ class CreateCloseFriendsOgImageWorker
       friends = twitter_user.close_friends
     end
 
+    return if friends.size < 3
+
     CloseFriendsOgImage::Generator.generate(twitter_user, friends) do |file|
       image = CloseFriendsOgImage.find_or_initialize_by(uid: uid)
       image.image.purge if image.image.attached?
