@@ -937,13 +937,23 @@ ja:
   tweet_text:
     friends: |
       .@%{user} のフォロー分析
+
       フォロー %{friends}人
+      フォロー返され率 %{reverse_follow_back_rate}
+
       フォロワー %{followers}人
+      フォロー返し率 %{follow_back_rate}
+
       #egotter %{url}
     followers: |
       .@%{user} のフォロワー分析
+
       フォロー %{friends}人
+      フォロー返され率 %{reverse_follow_back_rate}
+
       フォロワー %{followers}人
+      フォロー返し率 %{follow_back_rate}
+
       #egotter %{url}
     unfriends: |
       .%{users}

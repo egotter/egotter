@@ -268,9 +268,11 @@ module ViewVariablesHelper
 
     case controller_name
     when 'friends'
-      t('tweet_text.friends', values)
+      user = TwitterUserDecorator.new(twitter_user)
+      t('tweet_text.friends', values.merge(reverse_follow_back_rate: user.reverse_percent_follow_back_rate, follow_back_rate: user.percent_follow_back_rate))
     when 'followers'
-      t('tweet_text.followers', values)
+      user = TwitterUserDecorator.new(twitter_user)
+      t('tweet_text.followers', values.merge(reverse_follow_back_rate: user.reverse_percent_follow_back_rate, follow_back_rate: user.percent_follow_back_rate))
     when 'unfriends'
       users = twitter_user.unfriends(limit: 3).map { |user| "@#{user.screen_name} #{t('dictionary.honorific')}" }
       t('tweet_text.unfriends', values.merge(users: users.join("\n")))
