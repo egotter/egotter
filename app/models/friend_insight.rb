@@ -46,13 +46,15 @@ class FriendInsight < ApplicationRecord
     private
 
     def calc_profiles_count(users)
-      text = users.take(200).map(&:description).join(' ')
-      WordCloud.new.count_words(text)
+      if (text = users.take(200).map(&:description).join(' ')).present?
+        WordCloud.new.count_words(text)
+      end
     end
 
     def calc_locations_count(users)
-      text = users.take(5000).map(&:location).join(' ').upcase
-      WordCloud.new.count_words(text)
+      if (text = users.take(5000).map(&:location).join(' ').upcase).present?
+        WordCloud.new.count_words(text)
+      end
     end
   end
 end
