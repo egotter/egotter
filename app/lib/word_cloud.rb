@@ -38,7 +38,7 @@ class WordCloud
   end
 
   def natto_parse(text)
-    dicdir = "#{`mecab-config --dicdir`.chomp}/mecab-ipadic-neologd/"
+    dicdir = `#{ENV['MECAB_CONFIG'] || 'mecab-config'} --dicdir`.chomp + '/mecab-ipadic-neologd/'
     Natto::MeCab.new(dicdir: dicdir).parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
   end
 
