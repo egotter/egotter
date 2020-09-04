@@ -1,3 +1,5 @@
+require 'natto'
+
 class WordCloud
   def count_words(text, parser: :natto, min_word_length: 2, min_count: 2)
     text = text.gsub(%r{(https?://)?[\w/.\-]+}, '').gsub(/\n/, ' ')
@@ -36,7 +38,6 @@ class WordCloud
   end
 
   def natto_parse(text)
-    require 'natto' unless defined?(Natto)
     dicdir = "#{`mecab-config --dicdir`.chomp}/mecab-ipadic-neologd/"
     Natto::MeCab.new(dicdir: dicdir).parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
   end
