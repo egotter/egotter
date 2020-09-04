@@ -2,7 +2,7 @@ require 'natto'
 
 class WordCloud
   def count_words(text, parser: :natto, min_word_length: 2, min_count: 2)
-    text = text.gsub(%r{(https?://)?[\w/.\-]+}, '').gsub(/\n/, ' ')
+    text = text.remove(%r{(https?://)?[\w/.\-]+}).remove(/\0/).gsub(/\n/, ' ')
 
     parsed = (parser == :natto) ? natto_parse(text) : parse(text)
     words = parsed.select { |_, desc| desc && !desc.match?(/^(助詞|助動詞|記号)/) }.map(&:first)
