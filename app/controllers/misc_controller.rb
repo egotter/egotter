@@ -1,5 +1,5 @@
 class MiscController < ApplicationController
-  before_action { head :forbidden if twitter_crawler? }
+  before_action { head :forbidden if twitter_dm_crawler? }
 
   def maintenance
     render file: "#{Rails.root}/public/503.html", formats: %i(html), layout: false, status: :service_unavailable

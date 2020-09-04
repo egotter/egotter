@@ -1,5 +1,5 @@
 class ProfilesController < ApplicationController
-  before_action { head :forbidden if twitter_crawler? }
+  before_action { head :forbidden if twitter_dm_crawler? }
   before_action :valid_screen_name?
 
   before_action do

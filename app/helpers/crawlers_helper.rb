@@ -11,6 +11,10 @@ module CrawlersHelper
     request.from_crawler? && request.browser == 'twitter'
   end
 
+  def twitter_dm_crawler?
+    twitter_crawler? && params[:medium] == 'dm'
+  end
+
   private
 
   CRAWLER_WORDS = [
