@@ -6,6 +6,51 @@
   </div>
 </script>
 
+<script id='user-rectangle-template' type='x-tmpl-mustache'>
+  <div class="card mb-3">
+    <div class="row no-gutters">
+      <div class="col-auto p-1">
+        <a href="{{timeline_url}}">
+          <img class="rounded-circle" style="max-width: 50px; width: 100%;" alt="@{{screen_name}}" src="{{profile_image_url}}">
+        </a>
+      </div>
+
+      <div class="col">
+        <div class="card-body">
+          {{{followed_label}}}
+
+          <h6 class="card-title">
+            <a href="{{timeline_url}}">{{screen_name}}</a>
+            {{{name_with_icon}}}
+            {{{status_labels}}}
+          </h6>
+
+          <div class="card-text small mb-3">{{{description}}}</div>
+          <div class="card-text small">
+            <a href="{{friend_url}}">
+              <strong class="text-black">{{friends_count}}</strong>
+              <span class="text-muted"><%= t('.friends') %></span>
+            </a>
+            <a href="{{follower_url}}">
+              <strong class="text-black">{{followers_count}}</strong>
+              <span class="text-muted"><%= t('.followers') %></span>
+            </a>
+          </div>
+        </div>
+
+        <div class="text-right">
+          <a href="{{timeline_url}}">
+            <button class="btn btn-primary btn-sm" type="button">
+              <i class="fas fa-search"></i>
+              <%= t('.search') %>
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+
 <script id='toast-template' type='x-tmpl-mustache'>
   <div id="{{id}}" class="toast" style="min-width: 300px; min-height: 100px;" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
@@ -23,6 +68,7 @@
   $(function () {
     var templates = {
       user: $('#user-template').html(),
+      userRectangle: $('#user-rectangle-template').html(),
       toast: $('#toast-template').html()
     };
 

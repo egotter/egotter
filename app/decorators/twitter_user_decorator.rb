@@ -124,12 +124,12 @@ class TwitterUserDecorator < ApplicationDecorator
 
   def refollowed_label
     if refollowed?
-      h.tag.span(class: 'badge badge-info') { I18n.t('twitter.profile.labels.refollowed')  }
+      h.tag.span(class: 'badge badge-info') { I18n.t('twitter.profile.labels.refollowed') }
     end
   end
 
   def followed_label
-    h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.followed')  }
+    h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.followed') }
   end
 
   def status_labels(with_followed_label = false)
@@ -141,6 +141,12 @@ class TwitterUserDecorator < ApplicationDecorator
         refollowed_label,
         with_followed_label ? followed_label : nil
     ].compact.join('&nbsp;').html_safe
+  end
+
+  def single_followed_label
+    h.tag.div(class: 'text-muted small mb-3') do |tag|
+      tag.i(class: 'fas fa-user') + I18n.t('twitter.profile.labels.followed')
+    end
   end
 
   def protected?

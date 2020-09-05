@@ -18,12 +18,16 @@
   <% end %>
 
   <h2 class="h4 text-center my-5"><%= t('.history') %></h2>
-  <div class="twitter users row"></div>
+  <div id="search-histories-users-container">
+    <%= t('.loading') %>
+    <%= image_tag('/ajax-loader-blue.gif?a=1') %>
+  </div>
 <% end %>
 
 <script>
   $(function () {
-    new SearchModal('search-modal');
+    var message = '<%= t('.failed') %>';
+    new SearchModal('search-modal', message);
   });
 </script>
 <% logger.info "Benchmark RenderSearchModal total=#{Time.zone.now - render_search_modal_start_time}" %>
