@@ -19,6 +19,10 @@ class CloseFriendsOgImage < ApplicationRecord
 
   validates :uid, presence: true, uniqueness: true
 
+  def fresh?
+    updated_at && updated_at > 30.minutes.ago
+  end
+
   def cdn_url
     image.attached? ? "https://#{ENV['OG_IMAGE_ASSET_HOST']}/#{image.blob.key}" : nil
   end

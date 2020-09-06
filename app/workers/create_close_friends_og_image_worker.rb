@@ -21,6 +21,9 @@ class CreateCloseFriendsOgImageWorker
   # options:
   #   uids
   def perform(uid, options = {})
+    og_image = CloseFriendsOgImage.find_by(uid: uid)
+    return if og_image&.fresh?
+
     twitter_user = TwitterUser.latest_by(uid: uid)
 
     if options['uids']
