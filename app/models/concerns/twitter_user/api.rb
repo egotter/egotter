@@ -10,11 +10,17 @@ module Concerns::TwitterUser::Api
   end
 
   def one_sided_friends_rate
-    (one_sided_friendships.size.to_f / friend_uids.size) rescue 0.0
+    # Use #friends_count instead of #friend_uids.size to reduce calls to the external API
+    (one_sided_friendships.size.to_f / friends_count) rescue 0.0
   end
 
   def one_sided_followers_rate
-    (one_sided_followerships.size.to_f / follower_uids.size) rescue 0.0
+    # Use #followers_count instead of #follower_uids.size to reduce calls to the external API
+    (one_sided_followerships.size.to_f / followers_count) rescue 0.0
+  end
+
+  def mutual_friends_rate
+    (mutual_friendships.size.to_f / (friend_uids | follower_uids).size) rescue 0.0
   end
 
   def status_interval_avg
@@ -29,7 +35,8 @@ module Concerns::TwitterUser::Api
 
   def follow_back_rate
     numerator = mutual_friendships.size
-    denominator = follower_uids.size
+    # Use #followers_count instead of #follower_uids.size to reduce calls to the external API
+    denominator = followers_count
     (numerator == 0 || denominator == 0) ? 0.0 : numerator.to_f / denominator
   rescue
     0.0
@@ -37,7 +44,8 @@ module Concerns::TwitterUser::Api
 
   def reverse_follow_back_rate
     numerator = mutual_friendships.size
-    denominator = friend_uids.size
+    # Use #friends_count instead of #friend_uids.size to reduce calls to the external API
+    denominator = friends_count
     (numerator == 0 || denominator == 0) ? 0.0 : numerator.to_f / denominator
   rescue
     0.0

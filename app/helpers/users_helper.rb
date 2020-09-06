@@ -27,10 +27,10 @@ module UsersHelper
     else
       return (@current_user_follower_uids = []) unless user_signed_in?
 
-      twitter_user = TwitterUser.latest_by(uid: current_user.uid)
+      twitter_user = TwitterUser.where('followers_count < 5000').latest_by(uid: current_user.uid)
       return (@current_user_follower_uids = []) unless twitter_user
 
-      @current_user_follower_uids = (twitter_user.followers_count < 5000) ? twitter_user.follower_uids : []
+      @current_user_follower_uids = twitter_user.follower_uids
     end
   end
 end

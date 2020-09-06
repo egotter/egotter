@@ -64,8 +64,8 @@ class UsageStat < ApplicationRecord
       one_sided_friends_rate:    twitter_user.one_sided_friends_rate,
       one_sided_followers_rate:  twitter_user.one_sided_followers_rate,
       follow_back_rate:          twitter_user.follow_back_rate,
-      followed_back_rate:        mutual_friend_uids.size.to_f / friend_uids.size,
-      mutual_friends_rate:       mutual_friend_uids.size.to_f / (friend_uids | follower_uids).size
+      followed_back_rate:        twitter_user.reverse_follow_back_rate,
+      mutual_friends_rate:       twitter_user.mutual_friends_rate
     }
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid}"
