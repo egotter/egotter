@@ -127,7 +127,7 @@ class PersonalityInsight < ApplicationRecord
       }
     end
 
-    def fetch_profile(payload, lang)
+    def fetch_profile(payload, lang, retries: 3)
       uri = URI.parse(ENV['PERSONALITY_INSIGHTS_URL'])
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = true
@@ -141,8 +141,17 @@ class PersonalityInsight < ApplicationRecord
       req.body = payload.to_json
       res = https.start { https.request(req) }
       JSON.parse(res.body)
+    rescue Net::ReadTimeout => e
+      if (retries -= 1) >= 0
+        retry
+      else
+        raise RetryExhausted.new(e.message)
+      end
     ensure
       CallPersonalityInsightCount.new.increment
     end
+  end
+
+  class RetryExhausted < StandardError
   end
 end
