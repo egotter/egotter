@@ -31,22 +31,12 @@ module Api
 
         decorator = Decorator.new(paginator.users).
             user_id(current_user_id).
-            controller_name(controller_name).
-            decorate
+            controller_name(controller_name)
 
-        users = decorator.users.map { |user| Hashie::Mash.new(user) }
+        users, options = decorator.decorate
+        users = to_list_hash(users, options)
 
-        response_json = {name: controller_name, max_sequence: paginator.max_sequence, limit: paginator.limit}
-
-        if params[:html]
-          insert_ad = !(params[:insert_ad] == 'false')
-          html = render_to_string partial: 'twitter/user', collection: users, cached: true, locals: {ad: insert_ad}, formats: %i(html)
-          response_json[:users_html] = html
-        end
-
-        response_json[:users] = users
-
-        render json: response_json
+        render json: {name: controller_name, max_sequence: paginator.max_sequence, limit: paginator.limit, users: users}
       end
 
       private
@@ -58,6 +48,31 @@ module Api
             timeline_url: timeline_path(user, via: current_via),
             profile_image_url: user.profile_image_url_https.to_s
         }
+      end
+
+      def to_list_hash(users, options)
+        via = current_via('api_list')
+        vc = view_context
+
+        users.map do |user|
+          user = TwitterUserDecorator.new(user, context: options)
+          {
+              screen_name: user.screen_name,
+              profile_image_url: vc.bigger_icon_url(user),
+              name_with_icon: user.name_with_icon,
+              status_labels: user.status_labels,
+              followed_label: vc.current_user_follower_uids.include?(user.uid) ? user.single_followed_label : nil,
+              description: vc.linkify(user.description),
+              statuses_count: user.delimited_statuses_count,
+              friends_count: user.delimited_friends_count,
+              followers_count: user.delimited_followers_count,
+              follow_button: render_to_string(partial: 'twitter/follow_button', locals: {user: user}, formats: [:html]),
+              timeline_url: timeline_path(user, via: via),
+              status_url: status_path(user, via: via),
+              friend_url: friend_path(user, via: via),
+              follower_url: follower_path(user, via: via),
+          }
+        end
       end
     end
   end

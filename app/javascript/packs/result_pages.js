@@ -51,10 +51,11 @@ class FetchTask {
     this.filter = options['filter'];
     this.insertAd = options['insertAd'];
     this.loading = false;
+    this.template = window.templates['userRectangle'];
 
     this.$placeholders = $('.placeholders-wrapper');
     this.$emptyPlaceholders = $('.empty-placeholders-wrapper');
-    this.$usersContainer = $('.main-content.twitter.users');
+    this.$usersContainer = $('#result-users-container');
 
     this.cache = new Cache();
   }
@@ -108,8 +109,11 @@ class FetchTask {
       }
 
       self.$placeholders.hide();
-      var $users = $(res.users_html).hide().fadeIn(1000);
-      self.$usersContainer.append($users);
+
+      res.users.forEach(function (user) {
+        var rendered = Mustache.render(self.template, user);
+        self.$usersContainer.append(rendered);
+      });
 
       if (res.users.length > 0) {
         self.$emptyPlaceholders.hide();

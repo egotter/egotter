@@ -141,7 +141,7 @@
     <div class="my-3">
       <%= user.name_with_icon %>
       <span class="text-muted"><%= mention_name(user.screen_name) %></span>
-      <%= user.status_labels(user_signed_in? && current_user_follower_uids.include?(user.uid_i)) %>
+      <%= user.single_followed_label if user_signed_in? && current_user_follower_uids.include?(user.uid) %>
     </div>
 
     <% if user.description? %>

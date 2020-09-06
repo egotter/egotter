@@ -20,9 +20,12 @@ class SearchHistoriesController < ApplicationController
           status_labels: user.status_labels,
           followed_label: vc.current_user_follower_uids.include?(user.uid) ? user.single_followed_label : nil,
           description: vc.linkify(user.description),
+          statuses_count: user.delimited_statuses_count,
           friends_count: user.delimited_friends_count,
           followers_count: user.delimited_followers_count,
+          follow_button: nil,
           timeline_url: timeline_path(user, via: via),
+          status_url: status_path(user, via: via),
           friend_url: friend_path(user, via: via),
           follower_url: follower_path(user, via: via),
       }

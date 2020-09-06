@@ -67,37 +67,6 @@ class TwitterUserDecorator < ApplicationDecorator
     "##{profile_link_color}"
   end
 
-  def suspended?
-    object.suspended
-  end
-
-  def blocked?
-    respond_to?(:blocked) && blocked
-  end
-
-  def inactive?
-    inactive_value =
-        if object.respond_to?(:inactive?)
-          object.inactive?
-        elsif object.respond_to?(:status)
-          status&.created_at && Time.parse(status.created_at) < 2.weeks.ago
-        end
-
-    !suspended? && inactive_value
-  end
-
-  def active?
-    !inactive?
-  end
-
-  def refollow?
-    respond_to?(:refollow) && refollow
-  end
-
-  def refollowed?
-    respond_to?(:refollowed) && refollowed
-  end
-
   def suspended_label
     if suspended?
       h.tag.span(class: 'badge badge-danger') { I18n.t('twitter.profile.labels.suspended') }
@@ -111,7 +80,7 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def inactive_label
-    if inactive?
+    if !suspended? && inactive?
       h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.inactive') }
     end
   end
@@ -132,29 +101,20 @@ class TwitterUserDecorator < ApplicationDecorator
     h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.followed') }
   end
 
-  def status_labels(with_followed_label = false)
+  def status_labels
     [
         suspended_label,
         blocked_label,
         inactive_label,
         refollow_label,
         refollowed_label,
-        with_followed_label ? followed_label : nil
     ].compact.join('&nbsp;').html_safe
   end
 
   def single_followed_label
-    h.tag.div(class: 'text-muted small mb-3') do |tag|
-      tag.i(class: 'fas fa-user') + I18n.t('twitter.profile.labels.followed')
+    h.tag.span(class: 'text-muted small') do |tag|
+      tag.i(class: 'fas fa-user') + '&nbsp;'.html_safe + I18n.t('twitter.profile.labels.followed')
     end
-  end
-
-  def protected?
-    object.protected
-  end
-
-  def verified?
-    verified
   end
 
   def protected_icon
@@ -177,11 +137,51 @@ class TwitterUserDecorator < ApplicationDecorator
     ].compact.join('&nbsp;').html_safe
   end
 
-  def uid_i
-    uid.to_i
-  end
-
   def to_param
     screen_name
+  end
+
+  def suspended?
+    if context.has_key?(:suspended_uids)
+      context[:suspended_uids].include?(uid)
+    else
+      object.suspended
+    end
+  end
+
+  def blocked?
+    if context.has_key?(:blocking_uids)
+      context[:blocking_uids].include?(uid)
+    end
+  end
+
+  private
+
+  def refollow?
+    if context.has_key?(:friend_uids)
+      context[:friend_uids].include?(uid)
+    end
+  end
+
+  def refollowed?
+    if context.has_key?(:follower_uids)
+      context[:follower_uids].include?(uid)
+    end
+  end
+
+  def inactive?
+    if object.respond_to?(:inactive?)
+      object.inactive?
+    elsif object.respond_to?(:status)
+      status&.created_at && Time.parse(status.created_at) < 2.weeks.ago
+    end
+  end
+
+  def protected?
+    object.protected
+  end
+
+  def verified?
+    verified
   end
 end

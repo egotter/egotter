@@ -586,7 +586,7 @@ ja:
       labels:
         suspended: "垢消し"
         blocked: "ブロック中"
-        inactive: "非アクティブ"
+        inactive: "2週間ツイート無し"
         refollow: "再フォロー"
         refollowed: "再フォロワー"
         followed: "フォローされています"
@@ -1824,6 +1824,7 @@ ja:
         title: タイムラインディレクトリ
   shared:
     templates:
+      statuses: 'ツイート'
       friends: 'フォロー'
       followers: 'フォロワー'
       search: '検索する'

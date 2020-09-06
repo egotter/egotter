@@ -1,52 +1,54 @@
 <script id='user-template' type='x-tmpl-mustache'>
   <div class="m-1">
     <a href="{{timeline_url}}">
-      <img alt='{{screen_name}}' class='rounded shadow' src='{{profile_image_url}}' width='48' height='48'>
+      <img alt='@{{screen_name}}' class='rounded shadow' src='{{profile_image_url}}' width='48' height='48'>
     </a>
   </div>
 </script>
 
 <script id='user-rectangle-template' type='x-tmpl-mustache'>
   <div class="card mb-3">
-    <div class="row no-gutters">
-      <div class="col-auto p-1">
+    <div class="d-flex align-items-center">
+      <div class="m-1">
         <a href="{{timeline_url}}">
-          <img class="rounded-circle" style="max-width: 50px; width: 100%;" alt="@{{screen_name}}" src="{{profile_image_url}}">
+          <img class="rounded-circle" style="width: 50px; height: 50px;" alt="@{{screen_name}}" src="{{profile_image_url}}">
         </a>
       </div>
-
-      <div class="col">
-        <div class="card-body">
-          {{{followed_label}}}
-
-          <h6 class="card-title">
-            <a href="{{timeline_url}}">{{screen_name}}</a>
-            {{{name_with_icon}}}
-            {{{status_labels}}}
-          </h6>
-
-          <div class="card-text small mb-3">{{{description}}}</div>
-          <div class="card-text small">
-            <a href="{{friend_url}}">
-              <strong class="text-black">{{friends_count}}</strong>
-              <span class="text-muted"><%= t('.friends') %></span>
-            </a>
-            <a href="{{follower_url}}">
-              <strong class="text-black">{{followers_count}}</strong>
-              <span class="text-muted"><%= t('.followers') %></span>
-            </a>
-          </div>
-        </div>
-
-        <div class="text-right">
-          <a href="{{timeline_url}}">
-            <button class="btn btn-primary btn-sm" type="button">
-              <i class="fas fa-search"></i>
-              <%= t('.search') %>
-            </button>
-          </a>
-        </div>
+      <div>
+        <h6 class="mt-1 mr-1">
+          <a href="{{timeline_url}}">@{{screen_name}}</a>
+          {{{name_with_icon}}} {{{status_labels}}}
+        </h6>
       </div>
+    </div>
+
+    <div class="mx-1 mb-3">{{{followed_label}}}</div>
+    <div class="card-text small mx-1 mb-3">{{{description}}}</div>
+
+    <div class="card-text small mx-1 mb-3">
+      <a href="{{status_url}}">
+        <strong class="text-black">{{statuses_count}}</strong>
+        <span class="text-muted"><%= t('.statuses') %></span>
+      </a>
+      <a href="{{friend_url}}">
+        <strong class="text-black">{{friends_count}}</strong>
+        <span class="text-muted"><%= t('.friends') %></span>
+      </a>
+      <a href="{{follower_url}}">
+        <strong class="text-black">{{followers_count}}</strong>
+        <span class="text-muted"><%= t('.followers') %></span>
+      </a>
+    </div>
+
+    <div class="text-right">
+      {{{follow_button}}}
+
+      <a href="{{timeline_url}}">
+        <button class="btn btn-primary btn-sm" type="button">
+          <i class="fas fa-search"></i>
+          <%= t('.search') %>
+        </button>
+      </a>
     </div>
   </div>
 </script>

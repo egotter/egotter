@@ -57,8 +57,7 @@ module Concerns::TwitterUser::Api
 
   def replying(uniq: true)
     uids = replying_uids(uniq: uniq)
-    users = TwitterDB::User.where(uid: uids).index_by(&:uid)
-    uids.map { |uid| users[uid] }.compact
+    TwitterDB::User.where_and_order_by_field(uids: uids)
   end
 
   def reply_tweets(login_user: nil)
