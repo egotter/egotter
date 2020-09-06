@@ -15,9 +15,9 @@ module Concerns::TwitterUsersConcern
     notify_airbrake(e)
 
     if AccountStatus.not_found?(e)
-      redirect_to not_found_path(screen_name: screen_name)
+      redirect_to profile_path(screen_name: screen_name, via: current_via('not_found'))
     elsif AccountStatus.suspended?(e)
-      redirect_to forbidden_path(screen_name: screen_name)
+      redirect_to profile_path(screen_name: screen_name, via: current_via('suspended'))
     else
       logger.info "#{self.class}##{action_name} in #build_twitter_user_by #{e.inspect} screen_name=#{screen_name} user_id=#{current_user_id}}"
       respond_with_error(:bad_request, twitter_exception_messages(e, screen_name))

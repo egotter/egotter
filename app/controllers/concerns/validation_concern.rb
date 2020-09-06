@@ -112,7 +112,7 @@ module Concerns::ValidationConcern
     screen_name = params[:screen_name]
 
     if ForbiddenUser.exists?(screen_name: screen_name) || forbidden_user?(screen_name)
-      redirect_to forbidden_path(screen_name: screen_name)
+      redirect_to profile_path(screen_name: screen_name, via: current_via('forbidden_screen_name'))
       true
     else
       false
@@ -130,7 +130,7 @@ module Concerns::ValidationConcern
     screen_name = params[:screen_name]
 
     if NotFoundUser.exists?(screen_name: screen_name) || not_found_user?(screen_name)
-      redirect_to not_found_path(screen_name: screen_name)
+      redirect_to profile_path(screen_name: screen_name, via: current_via('not_found_screen_name'))
       true
     else
       false

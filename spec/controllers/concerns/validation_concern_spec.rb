@@ -115,7 +115,7 @@ describe Concerns::ValidationConcern, type: :controller do
     context 'screen_name is not found' do
       include_context 'screen_name is not found'
       before do
-        allow(controller).to receive(:not_found_path).with(anything).and_return('not_found_path')
+        allow(controller).to receive(:profile_path).with(anything).and_return('not_found_path')
       end
       it do
         expect(controller).to receive(:redirect_to).with('not_found_path')
@@ -146,7 +146,7 @@ describe Concerns::ValidationConcern, type: :controller do
     context 'screen_name is forbidden' do
       include_context 'screen_name is forbidden'
       before do
-        allow(controller).to receive(:forbidden_path).with(anything).and_return('forbidden_path')
+        allow(controller).to receive(:profile_path).with(anything).and_return('forbidden_path')
       end
       it do
         expect(controller).to receive(:redirect_to).with('forbidden_path')
