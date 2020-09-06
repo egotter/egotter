@@ -9,7 +9,7 @@ class Heart {
     this.count = 0;
     this.users = users;
     this.elem = d3.select('#' + id);
-    this.name = '仲良しランキング';
+    this.name = '#仲良しランキング';
     this.domain = 'egotter.com';
   }
 

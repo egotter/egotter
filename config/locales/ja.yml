@@ -973,7 +973,7 @@ ja:
     close_friends: |
       .@%{user} の仲良しランキング ↓
       %{users}
-      #egotter %{url}
+      #egotter #仲良しランキング %{url}
     favorite_friends: |
       .@%{user} のいいねランキング ↓
       %{users}
