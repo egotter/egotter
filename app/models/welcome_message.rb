@@ -35,6 +35,10 @@ class WelcomeMessage < ApplicationRecord
     @log ||= CreateWelcomeMessageLog.new(user_id: user_id)
   end
 
+  def set_prefix_message(text)
+    @prefix_message = text
+  end
+
   def deliver!
     log.save
 
@@ -92,6 +96,7 @@ class WelcomeMessage < ApplicationRecord
 
   def send_starting_message!
     message = StartingMessageBuilder.new(user, token).build
+    message = @prefix_message + message if @prefix_message
     create_dm(user, User.egotter, message)
   end
 
