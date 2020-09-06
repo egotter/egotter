@@ -7,23 +7,23 @@ namespace :servers do
 
     logger.info "#{task.name} started"
 
+    params = {
+        'adjust' => true,
+        'role' => 'web',
+        'count' => ENV['WEB_INSTANCES_MAX'] || 6
+    }
     begin
-      params = {
-          'adjust' => true,
-          'role' => 'web',
-          'count' => '6'
-      }
       Tasks::TaskBuilder.build(params).run
     rescue => e
       logger.warn "adjust task failed params=#{params.inspect} exception=#{e.inspect}"
     end
 
+    params = {
+        'launch' => true,
+        'role' => 'sidekiq_prompt_reports',
+        'instance-type' => 'm5.xlarge'
+    }
     begin
-      params = {
-          'launch' => true,
-          'role' => 'sidekiq_prompt_reports',
-          'instance-type' => 'm5.xlarge'
-      }
       Tasks::TaskBuilder.build(params).run
     rescue => e
       logger.warn "launch task failed params=#{params.inspect} exception=#{e.inspect}"
@@ -40,23 +40,23 @@ namespace :servers do
 
     logger.info "#{task.name} started"
 
+    params = {
+        'adjust' => true,
+        'role' => 'web',
+        'count' => ENV['WEB_INSTANCES_MIN'] || 2
+    }
     begin
-      params = {
-          'adjust' => true,
-          'role' => 'web',
-          'count' => '2'
-      }
       Tasks::TaskBuilder.build(params).run
     rescue => e
       logger.warn "adjust task failed params=#{params.inspect} exception=#{e.inspect}"
     end
 
+    params = {
+        'terminate' => true,
+        'role' => 'sidekiq_prompt_reports',
+        'instance-name-regexp' => 'egotter_sidekiq\\d{8}'
+    }
     begin
-      params = {
-          'terminate' => true,
-          'role' => 'sidekiq_prompt_reports',
-          'instance-name-regexp' => 'egotter_sidekiq\\d{8}'
-      }
       Tasks::TaskBuilder.build(params).run
     rescue => e
       logger.warn "launch task failed params=#{params.inspect} exception=#{e.inspect}"
