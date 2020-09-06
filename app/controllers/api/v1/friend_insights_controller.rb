@@ -6,7 +6,7 @@ module Api
       before_action { set_insight }
 
       def profiles_count
-        if @insight
+        if @insight&.profiles_count
           words_count = @insight.profiles_count.sort_by { |_, v| -v }.map { |word, count| {word: word, count: count} }
           render json: {words_count: words_count}
         else
@@ -16,7 +16,7 @@ module Api
       end
 
       def locations_count
-        if @insight
+        if @insight&.locations_count
           words_count = @insight.locations_count.sort_by { |_, v| -v }.map { |word, count| {word: word, count: count} }
           render json: {words_count: words_count}
         else
@@ -26,7 +26,7 @@ module Api
       end
 
       def tweet_times
-        if @insight && @insight.respond_to?(:tweet_times) && @insight.tweet_times
+        if @insight&.tweet_times
           times = @insight.tweet_times.map { |t| Time.zone.at(t) }
           tweets_per_hour = UsageStat::Misc.usage_stats_hour_series_data(times)
           render json: {tweets_per_hour: tweets_per_hour}
