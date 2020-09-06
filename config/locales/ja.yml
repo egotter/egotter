@@ -2150,9 +2150,10 @@ ja:
       asc: "フォロワー 少ない順"
   filter:
     title: "絞り込み"
-    active: "アクティブのみ"
-    inactive: "非アクティブのみ"
-    protected: "鍵付きのみ"
+    active: "アクティブ のみ"
+    inactive: "2週間ツイート無し のみ"
+    protected: "鍵アカ のみ"
+    verified: "承認済み のみ"
   dictionary:
     honorific: "さん"
   before_sign_in:

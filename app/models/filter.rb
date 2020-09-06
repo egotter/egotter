@@ -3,6 +3,7 @@ class Filter
       [I18n.t('filter.active'), 'active'],
       [I18n.t('filter.inactive'), 'inactive'],
       [I18n.t('filter.protected'), 'protected'],
+      [I18n.t('filter.verified'), 'verified'],
   ]
 
   def initialize(value)
@@ -17,6 +18,8 @@ class Filter
         when VALUES[0][1] then users.select!(&:active?)
         when VALUES[1][1] then users.select!(&:inactive?)
         when VALUES[2][1] then users.select!(&:protected?)
+        when VALUES[3][1] then users.select!(&:verified?)
+        else raise "Invalid filter value=#{value}"
         end
       end
     end
