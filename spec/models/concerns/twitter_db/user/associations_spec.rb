@@ -26,7 +26,7 @@ RSpec.describe Concerns::TwitterDB::User::Associations do
 
   describe '.order_by_field' do
     let(:users) { 3.times.map { create(:twitter_db_user) }.shuffle }
-    subject { TwitterDB::User.send(:order_by_field, users.map(&:uid)) }
+    subject { TwitterDB::User.order_by_field(users.map(&:uid)) }
     it { expect(subject).to satisfy { |result| result.map(&:uid) == users.map(&:uid) } }
   end
 

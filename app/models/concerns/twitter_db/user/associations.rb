@@ -32,10 +32,6 @@ module Concerns::TwitterDB::User::Associations
       result
     end
 
-    def order_by_field(uids)
-      order(Arel.sql("field(uid, #{uids.join(',')})"))
-    end
-
     def enqueue_update_job(uids, caller_name = nil)
       uids.each_slice(100) do |uids_array|
         CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids_array), compressed: true, enqueued_by: "##{caller_name} > #where_and_order_by_field")
@@ -44,6 +40,8 @@ module Concerns::TwitterDB::User::Associations
   end
 
   included do
+    scope :order_by_field, -> (uids) { order(Arel.sql("field(uid, #{uids.join(',')})")) }
+
     default_options = {dependent: :destroy, validate: false, autosave: false}
     order_by_sequence_asc = -> { order(sequence: :asc) }
 
