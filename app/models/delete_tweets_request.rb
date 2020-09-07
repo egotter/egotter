@@ -235,42 +235,29 @@ class DeleteTweetsRequest < ApplicationRecord
     end
   end
 
-  class AlreadyFinished < Error
-  end
+  class AlreadyFinished < Error; end
 
-  class Unauthorized < Error
-  end
+  class Unauthorized < Error; end
 
-  class InvalidToken < Error
-  end
+  class InvalidToken < Error; end
 
-  class TweetsNotFound < Error
-  end
+  class TweetsNotFound < Error; end
 
-  class Timeout < RetryableError
-  end
+  class Timeout < RetryableError; end
 
-  class TooManyRequests < RetryableError
-  end
+  class TooManyRequests < RetryableError; end
 
-  class Continue < RetryableError
-  end
+  class Continue < RetryableError; end
 
-  class ConnectionResetByPeer < RetryableError
-  end
+  class ConnectionResetByPeer < RetryableError; end
 
-  class FinishedMessageNotSent < Error
-  end
+  class FinishedMessageNotSent < Error; end
 
-  class ErrorMessageNotSent < Error
-  end
+  class ErrorMessageNotSent < Error; end
 
-  class FinishedTweetNotSent < Error
-  end
+  class FinishedTweetNotSent < Error; end
 
-  class RetryExhausted < Error
-  end
+  class RetryExhausted < Error; end
 
-  class Unknown < Error
-  end
+  class Unknown < Error; end
 end
