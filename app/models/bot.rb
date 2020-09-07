@@ -39,12 +39,14 @@ class Bot < ApplicationRecord
     def invalidate_expired_credentials
       verify_credentials.each do |cred|
         bot = find(cred[:id])
+        bot.screen_name = cred[:screen_name]
         bot.authorized = cred[:authorized]
         bot.locked = cred[:locked]
+
         if bot.changed?
           bot.save!
 
-          message = "Bot#authorized is changed #{bot.saved_changes}"
+          message = "bot is changed #{bot.saved_changes}"
           SlackClient.bot.send_message(message)
           logger.warn message
         end
@@ -53,12 +55,14 @@ class Bot < ApplicationRecord
 
     def verify_credentials
       processed = Queue.new
+
       all.each do |bot|
+        screen_name = bot.screen_name
         authorized = true
         locked = false
 
         begin
-          bot.api_client.verify_credentials
+          screen_name = bot.api_client.verify_credentials[:screen_name]
           bot.api_client.users([bot.id])
         rescue => e
           if AccountStatus.unauthorized?(e)
@@ -71,7 +75,7 @@ class Bot < ApplicationRecord
             raise
           end
         end
-        processed << {id: bot.id, screen_name: bot.screen_name, authorized: authorized, locked: locked}
+        processed << {id: bot.id, screen_name: screen_name, authorized: authorized, locked: locked}
       end
 
       processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }
