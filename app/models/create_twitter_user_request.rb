@@ -38,11 +38,14 @@ class CreateTwitterUserRequest < ApplicationRecord
   #   :reporting
   def perform!(context = nil)
     validate_request!
+    validate_creation_interval!
 
     twitter_user, relations = build_twitter_user(context)
+    validate_creation_interval!
     validate_twitter_user!(twitter_user)
 
     assemble_twitter_user(twitter_user, relations)
+    validate_creation_interval!
     save_twitter_user(twitter_user)
 
     twitter_user
@@ -53,6 +56,9 @@ class CreateTwitterUserRequest < ApplicationRecord
   def validate_request!
     raise AlreadyFinished if finished?
     raise Unauthorized if user && !user.authorized?
+  end
+
+  def validate_creation_interval!
     # TODO Implement #too_short_create_interval? as class method
     raise TooShortCreateInterval if TwitterUser.select(:id, :created_at).latest_by(uid: uid)&.too_short_create_interval?
   end
@@ -116,7 +122,7 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   def fetch_user
-    @fetch_user ||= client.user(uid)
+    client.user(uid)
   rescue => e
     if AccountStatus.suspended?(e)
       raise HardSuspended.new("uid=#{uid}")
@@ -132,7 +138,8 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   def fetch_relations(twitter_user, context)
-    @fetch_relations ||= TwitterUserFetcher.new(twitter_user, login_user: user, context: context).fetch
+    @fetcher ||= TwitterUserFetcher.new(twitter_user, login_user: user, context: context)
+    @fetcher.fetch
   end
 
   def attach_friend_uids(twitter_user, uids)
@@ -189,7 +196,7 @@ class CreateTwitterUserRequest < ApplicationRecord
         TooManyRequestsUsers.new.add(user.id)
         ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user.id)
       end
-      raise TooManyRequests.new('rate_limit_exceeded')
+      raise TooManyRequests.new("user_id=#{user_id} api_name=#{@fetcher&.api_name}")
     end
 
     raise Unknown.new(e.inspect)

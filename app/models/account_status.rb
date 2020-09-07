@@ -41,7 +41,8 @@ class AccountStatus
     end
 
     def too_many_requests?(ex)
-      ex && ex.class == Twitter::Error::TooManyRequests && ex.message == 'Rate limit exceeded'
+      # Sometimes the 'Rate limit exceeded' message is not set
+      ex && ex.class == Twitter::Error::TooManyRequests
     end
 
     def temporarily_locked?(ex)

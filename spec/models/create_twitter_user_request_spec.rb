@@ -26,6 +26,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
     it do
       expect(request).to receive(:validate_request!)
+      expect(request).to receive(:validate_creation_interval!).exactly(3).times
       expect(request).to receive(:build_twitter_user).with('context').and_return(['twitter_user', 'relations'])
       expect(request).to receive(:validate_twitter_user!).with('twitter_user')
       expect(request).to receive(:assemble_twitter_user).with('twitter_user', 'relations')
@@ -49,6 +50,14 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     context 'unauthorized? returns true' do
       before { allow(user).to receive(:authorized?).and_return(false) }
       it { expect { subject }.to raise_error(described_class::Unauthorized) }
+    end
+  end
+
+  describe 'validate_creation_interval!' do
+    subject { request.send(:validate_creation_interval!) }
+
+    before do
+      allow(request).to receive(:user).and_return(user)
     end
 
     context 'too_short_create_interval? returns true' do

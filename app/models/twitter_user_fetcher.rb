@@ -1,5 +1,6 @@
+# TODO Refactoring and adding test cases
 class TwitterUserFetcher
-  attr_reader :uid, :client, :login_user, :twitter_user
+  attr_reader :api_name
 
   def initialize(twitter_user, login_user:, context:)
     @uid = twitter_user.uid
@@ -9,18 +10,8 @@ class TwitterUserFetcher
     @context = context
   end
 
-  def search_query
-    "@#{twitter_user.screen_name}"
-  end
-
-  def fetch
-    fetch_relations # This process takes a few seconds.
-  end
-
-  private
-
   # Not using uniq for mentions, search_results and favorites intentionally
-  def fetch_relations
+  def fetch
     reject_names = reject_relation_names
     signatures = fetch_signatures(reject_names)
 
@@ -36,17 +27,20 @@ class TwitterUserFetcher
 
     signatures.each_with_object({}).with_index do |(item, memo), i|
       # memo[item[:method]] = fetch_results[i]
-      memo[item[:method]] = client.send(item[:method], *item[:args])
+      @api_name = item[:method]
+      memo[item[:method]] = @client.send(item[:method], *item[:args])
     end
   end
 
+  private
+
   def fetch_signatures(reject_names)
     [
-      {method: :friend_ids,        args: [uid]},
-      {method: :follower_ids,      args: [uid]},
-      {method: :user_timeline,     args: [uid, {include_rts: false}]},     # replying
+      {method: :friend_ids,        args: [@uid]},
+      {method: :follower_ids,      args: [@uid]},
+      {method: :user_timeline,     args: [@uid, {include_rts: false}]},     # replying
       sign_in_yourself? ? {method: :mentions_timeline, args: []} : {method: :search, args: [search_query]}, # replied
-      {method: :favorites,         args: [uid]}      # favoriting
+      {method: :favorites,         args: [@uid]}      # favoriting
     ].delete_if { |item| reject_names.include?(item[:method]) }
   end
 
@@ -59,7 +53,11 @@ class TwitterUserFetcher
     end
   end
 
+  def search_query
+    "@#{@twitter_user.screen_name}"
+  end
+
   def sign_in_yourself?
-    login_user&.uid&.to_i == uid
+    @login_user&.uid == @uid
   end
 end

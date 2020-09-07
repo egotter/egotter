@@ -56,9 +56,14 @@ RSpec.describe AccountStatus, type: :model do
   end
 
   describe '.too_many_requests?' do
-    let(:ex) { Twitter::Error::TooManyRequests.new("Rate limit exceeded") }
     subject { described_class.too_many_requests?(ex) }
-    it { is_expected.to be_truthy }
+    [
+        Twitter::Error::TooManyRequests.new("Rate limit exceeded"),
+        Twitter::Error::TooManyRequests.new,
+    ].each do |error_value|
+      let(:ex) { error_value }
+      it { is_expected.to be_truthy }
+    end
   end
 
   describe '.temporarily_locked?' do
