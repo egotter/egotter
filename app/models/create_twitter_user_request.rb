@@ -181,7 +181,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     elsif AccountStatus.blocked?(e)
       raise Blocked
     elsif AccountStatus.temporarily_locked?(e)
-      raise TemporarilyLocked.new(uid)
+      raise TemporarilyLocked.new("uid=#{uid}")
     end
 
     if AccountStatus.too_many_requests?(e)
@@ -241,73 +241,41 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
   prepend Instrumentation
 
-  class Error < StandardError
-  end
+  class Error < StandardError; end
 
-  class Unauthorized < Error
-  end
+  class Unauthorized < Error; end
 
-  class Forbidden < Error
-  end
+  class Forbidden < Error; end
 
-  class SoftSuspended < Error
-  end
+  class SoftSuspended < Error; end
 
-  class HardSuspended < Error
-  end
+  class HardSuspended < Error; end
 
-  class NotFound < Error
-  end
+  class NotFound < Error; end
 
-  class Protected < Error
-  end
+  class Protected < Error; end
 
-  class Blocked < Error
-  end
+  class Blocked < Error; end
 
-  class TemporarilyLocked < Error
-    def initialize(uid = nil)
-      if (user = User.find_by(uid: uid))
-        super("locked screen_name=#{user.screen_name}")
-      else
-        super("locked uid=#{uid}")
-      end
-    end
-  end
+  class TemporarilyLocked < Error; end
 
-  class TooShortCreateInterval < Error
-  end
+  class TooShortCreateInterval < Error; end
 
-  class TooLittleFriends < Error
-  end
+  class TooLittleFriends < Error; end
 
-  class TooManyFriends < Error
-  end
+  class TooManyFriends < Error; end
 
-  class RecordInvalid < Error
-    def initialize(record)
-      super(record.errors.full_messages.join(', '))
-    end
-  end
+  class NotChanged < Error; end
 
-  class NotChanged < Error
-  end
+  class AlreadyFinished < Error; end
 
-  class AlreadyFinished < Error
-  end
+  class TooManyRequests < Error; end
 
-  class TooManyRequests < Error
-  end
+  class ServiceUnavailable < Error; end
 
-  class ServiceUnavailable < Error
-  end
+  class InternalServerError < Error; end
 
-  class InternalServerError < Error
-  end
+  class RetryExhausted < Error; end
 
-  class RetryExhausted < Error
-  end
-
-  class Unknown < StandardError
-  end
+  class Unknown < StandardError; end
 end
