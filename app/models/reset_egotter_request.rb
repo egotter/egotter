@@ -24,10 +24,10 @@ class ResetEgotterRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform!(send_dm: false)
-    raise AlreadyFinished.new("This request has already been finished. #{self.inspect}") if finished?
+    raise AlreadyFinished.new("request_id=#{id} user_id=#{user_id}") if finished?
 
-    twitter_user = user.twitter_user
-    raise RecordNotFound.new("Record of TwitterUser not found #{self.inspect}") unless twitter_user
+    twitter_user = TwitterUser.latest_by(uid: user.uid)
+    raise TwitterUserNotFound.new("request_id=#{id} user_id=#{user_id}") unless twitter_user
 
     result = twitter_user.reset_data
     send_goodbye_message if send_dm
@@ -41,21 +41,18 @@ class ResetEgotterRequest < ApplicationRecord
     template = Rails.root.join('app/views/reset_egotter/goodbye.ja.text.erb')
     message = ERB.new(template.read).result
     user.api_client.create_direct_message_event(User::EGOTTER_UID, message)
-  rescue Twitter::Error::Forbidden => e
-    if e.message == 'You cannot send messages to this user.' ||
-        e.message == 'You cannot send messages to users who are not following you.'
+  rescue => e
+    if AccountStatus.invalid_or_expired_token?(e) ||
+        DirectMessageStatus.cannot_send_messages?(e) ||
+        DirectMessageStatus.not_following_you?(e)
+      # Do nothing
     else
-      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+      logger.warn "#{self.class}##{__method__}: #{e.inspect} request_id=#{id} user_id=#{user_id}"
       logger.info e.backtrace.join("\n")
     end
-  rescue => e
-    logger.warn "#{e.inspect}"
-    logger.info e.backtrace.join("\n")
   end
 
-  class RecordNotFound < StandardError
-  end
+  class TwitterUserNotFound < StandardError; end
 
-  class AlreadyFinished < StandardError
-  end
+  class AlreadyFinished < StandardError; end
 end

@@ -19,7 +19,7 @@ class ResetEgotterTask
     send_message_to_slack('Finished', request)
 
     self
-  rescue ResetEgotterRequest::RecordNotFound => e
+  rescue ResetEgotterRequest::TwitterUserNotFound => e
     request.finished!
     @log.finished!('TwitterUser record not found')
   rescue => e
