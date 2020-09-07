@@ -13,6 +13,8 @@ module Concerns::TwitterDB::User::Associations
       end.flatten
     end
 
+    private
+
     def where_and_order_by_field_each_slice(uids, inactive, caller_name = nil)
       # result = where(uid: uids_array).sort_by {|user| uids_array.index(user.uid)}
 
@@ -20,11 +22,12 @@ module Concerns::TwitterDB::User::Associations
       result = result.inactive_user if !inactive.nil? && inactive
       result = result.order_by_field(uids).to_a
 
-      if !inactive.nil? && inactive
-        enqueue_update_job(result.map(&:uid), caller_name)
-      elsif uids.size != result.size
-        enqueue_update_job(uids - result.map(&:uid), caller_name)
-      end
+      # if !inactive.nil? && inactive
+      #   enqueue_update_job(result.map(&:uid), caller_name)
+      # elsif uids.size != result.size
+      #   enqueue_update_job(uids - result.map(&:uid), caller_name)
+      # end
+      enqueue_update_job(uids, caller_name)
 
       result
     end
@@ -35,7 +38,7 @@ module Concerns::TwitterDB::User::Associations
 
     def enqueue_update_job(uids, caller_name = nil)
       uids.each_slice(100) do |uids_array|
-        CreateTwitterDBUserWorker.perform_async(uids_array, enqueued_by: "##{caller_name} > #where_and_order_by_field")
+        CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids_array), compressed: true, enqueued_by: "##{caller_name} > #where_and_order_by_field")
       end
     end
   end
