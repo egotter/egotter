@@ -156,6 +156,17 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
       expect(client).to receive(:user).with(request.uid).and_return('result')
       is_expected.to eq('result')
     end
+
+    [
+        Twitter::Error::Forbidden.new('User has been suspended.'),
+        Twitter::Error::NotFound.new('User not found.')
+    ].each do |error_value|
+      context "#{error_value} is raised" do
+        let(:error) { error_value }
+        before { allow(client).to receive(:user).with(request.uid).and_raise(error) }
+        it { expect { subject }.to raise_error(described_class::Error) }
+      end
+    end
   end
 
   describe '#build_twitter_user_by' do
