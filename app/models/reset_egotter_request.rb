@@ -44,7 +44,8 @@ class ResetEgotterRequest < ApplicationRecord
   rescue => e
     if AccountStatus.invalid_or_expired_token?(e) ||
         DirectMessageStatus.cannot_send_messages?(e) ||
-        DirectMessageStatus.not_following_you?(e)
+        DirectMessageStatus.not_following_you?(e) ||
+        DirectMessageStatus.you_have_blocked?(e)
       # Do nothing
     else
       logger.warn "#{self.class}##{__method__}: #{e.inspect} request_id=#{id} user_id=#{user_id}"
