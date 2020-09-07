@@ -43,7 +43,7 @@ class CloseFriendsOgImage < ApplicationRecord
     class << self
       def generate(twitter_user, friends, &block)
         text = I18n.t('og_image_text.close_friends', user: twitter_user.screen_name, friend1: friends[0][:screen_name], friend2: friends[1][:screen_name], friend3: friends[2][:screen_name])
-        outfile = "public/og_image/close_friends_og_image_#{twitter_user.uid}.png"
+        outfile = outfile_path(twitter_user.uid)
         heart = generate_heart_image(friends)
 
         begin
@@ -52,6 +52,10 @@ class CloseFriendsOgImage < ApplicationRecord
         ensure
           File.delete(outfile) if File.exist?(outfile)
         end
+      end
+
+      def outfile_path(uid)
+        "public/og_image/close_friends_og_image.#{uid}.#{Process.pid}.#{Thread.current.object_id.to_s(36)}.png"
       end
 
       def generate_heart_image(users)
