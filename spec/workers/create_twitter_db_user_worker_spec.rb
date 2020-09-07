@@ -15,7 +15,7 @@ RSpec.describe CreateTwitterDBUserWorker do
 
   describe '#do_perform' do
     let(:uids) { 'uids' }
-    let(:client) { double('client') }
+    let(:client) { 'client' }
     let(:options) { {'user_id' => 'ui', 'force_update' => 'fu', 'enqueued_by' => 'eb'} }
     subject { worker.send(:do_perform, client, uids, options) }
 
@@ -29,18 +29,16 @@ RSpec.describe CreateTwitterDBUserWorker do
       before { allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: client, force_update: 'fu').and_raise(error) }
 
       context 'the exception is retryable' do
-        before do
-          allow(worker).to receive(:exception_handler).with(error, options)
-        end
+        before { allow(worker).to receive(:exception_handler).with(error) }
         it do
-          expect(worker).to receive(:pick_client).with({}).and_return('client')
-          allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: 'client', force_update: 'fu')
+          expect(worker).to receive(:pick_client).with({}).and_return('client2')
+          allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: 'client2', force_update: 'fu')
           subject
         end
       end
 
       context 'the exception is not retryable' do
-        before { allow(worker).to receive(:exception_handler).with(error, options).and_raise(error) }
+        before { allow(worker).to receive(:exception_handler).with(error).and_raise(error) }
         it do
           expect(worker).not_to receive(:pick_client)
           expect { subject }.to raise_error(error)
@@ -51,10 +49,9 @@ RSpec.describe CreateTwitterDBUserWorker do
 
   describe 'exception_handler' do
     let(:error) { 'error' }
-    subject { worker.send(:exception_handler, error, 'options') }
+    subject { worker.send(:exception_handler, error) }
 
     it do
-      expect(worker).to receive(:log_error?).with(error)
       expect(worker).to receive(:meet_requirements_for_retrying?).with(error)
       expect { subject }.to raise_error(described_class::RetryExhausted)
     end
@@ -64,33 +61,27 @@ RSpec.describe CreateTwitterDBUserWorker do
       it { expect { subject }.not_to raise_error }
 
       context 'retry is repeated' do
+        before { 3.times { worker.send(:exception_handler, error) } }
         it do
-          expect { 4.times { worker.send(:exception_handler, error, 'options') } }.to raise_error(described_class::RetryExhausted)
+          expect { subject }.to raise_error(described_class::RetryExhausted)
         end
       end
     end
   end
 
-  describe 'log_error?' do
-    let(:error) { 'error' }
-    subject { worker.send(:log_error?, error) }
-    it do
-      expect(AccountStatus).to receive(:unauthorized?).with(error)
-      expect(AccountStatus).to receive(:temporarily_locked?).with(error)
-      expect(AccountStatus).to receive(:too_many_requests?).with(error)
-      is_expected.to be_truthy
-    end
-  end
-
   describe 'meet_requirements_for_retrying?' do
-    let(:error) { 'error' }
     subject { worker.send(:meet_requirements_for_retrying?, error) }
-    it do
-      expect(AccountStatus).to receive(:unauthorized?).with(error).and_return(false)
-      expect(AccountStatus).to receive(:forbidden?).with(error).and_return(false)
-      expect(AccountStatus).to receive(:too_many_requests?).with(error).and_return(false)
-      expect(ServiceStatus).to receive(:retryable_error?).with(error).and_return(false)
-      is_expected.to be_falsey
+    [
+        Twitter::Error::Unauthorized.new('Invalid or expired token.'),
+        Twitter::Error::Forbidden.new('To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'),
+        Twitter::Error::Forbidden.new,
+        Twitter::Error::TooManyRequests.new,
+        RuntimeError.new('Connection reset by peer'),
+    ].each do |error_value|
+      context "#{error_value} is raised" do
+        let(:error) { error_value }
+        it { is_expected.to be_truthy }
+      end
     end
   end
 

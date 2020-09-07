@@ -61,8 +61,10 @@ RSpec.describe AccountStatus, type: :model do
         Twitter::Error::TooManyRequests.new("Rate limit exceeded"),
         Twitter::Error::TooManyRequests.new,
     ].each do |error_value|
-      let(:ex) { error_value }
-      it { is_expected.to be_truthy }
+      context "#{error_value} is raised" do
+        let(:ex) { error_value }
+        it { is_expected.to be_truthy }
+      end
     end
   end
 

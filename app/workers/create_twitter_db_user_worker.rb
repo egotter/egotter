@@ -33,8 +33,7 @@ class CreateTwitterDBUserWorker
   rescue => e
     # Errno::EEXIST File exists @ dir_s_mkdir
     # Errno::ENOENT No such file or directory @ rb_sysopen
-    logger.warn DebugMessage.new(e, uids, @client_id, options)
-    notify_airbrake(e)
+    logger.warn "#{e.inspect.truncate(150)} client_id=#{@client_id} options=#{options.inspect.truncate(150)}"
   end
 
   private
@@ -42,42 +41,31 @@ class CreateTwitterDBUserWorker
   def do_perform(client, uids, options)
     TwitterDB::User::Batch.fetch_and_import!(uids, client: client, force_update: options['force_update'])
   rescue => e
-    exception_handler(e, options)
+    exception_handler(e)
     client = pick_client({})
     retry
   end
 
-  def exception_handler(e, options)
-    if log_error?(e)
-      logger.warn "Retry with a bot client #{DebugMessage.new(e, nil, @client_id, options)}"
-    end
-
+  def exception_handler(e)
     @retries ||= 3
 
-    if meet_requirements_for_retrying?(e) && @retries > 0
-      @retries -= 1
-    else
-      raise RetryExhausted.new(DebugMessage.new(e, nil, @client_id, options))
+    unless meet_requirements_for_retrying?(e) && (@retries -= 1) >= 0
+      raise RetryExhausted
     end
-  end
-
-  def log_error?(e)
-    !AccountStatus.unauthorized?(e) &&
-        !AccountStatus.temporarily_locked?(e) &&
-        !AccountStatus.too_many_requests?(e)
   end
 
   def meet_requirements_for_retrying?(e)
     AccountStatus.unauthorized?(e) ||
+        AccountStatus.temporarily_locked?(e) ||
         AccountStatus.forbidden?(e) ||
         AccountStatus.too_many_requests?(e) ||
         ServiceStatus.retryable_error?(e)
   end
 
   def pick_client(options)
-    if options['user_id'] && options['user_id'] != -1 && (user = User.find_by(id: options['user_id'])) && user.authorized?
-      @client_id = "user:#{user.id}"
-      user.api_client
+    if valid_user_specified?(options)
+      @client_id = "user:#{@user.id}"
+      @user.api_client
     elsif @retries && @retries == 0
       Bot.api_client
     else
@@ -86,25 +74,23 @@ class CreateTwitterDBUserWorker
         @client_id = "anonymous:#{user.id}"
         user.api_client
       else
-        raise CredentialsNotFound.new("options=#{options.inspect}")
+        raise CredentialsNotFound
       end
     end
   end
 
-  class DebugMessage < String
-    def initialize(e, uids, client_id, options)
-      e = e.inspect.truncate(150)
-      uids = uids.inspect.truncate(150)
-      options = options.inspect
-      super("#{e} client_id=#{client_id} uids=#{uids} options=#{options}")
+  def valid_user_specified?(options)
+    if options['user_id'] &&
+        options['user_id'] != -1 &&
+        (user = User.find_by(id: options['user_id'])) &&
+        user.authorized?
+      @user = user
     end
   end
 
-  class RetryExhausted < StandardError
-  end
+  class RetryExhausted < StandardError; end
 
-  class CredentialsNotFound < StandardError
-  end
+  class CredentialsNotFound < StandardError; end
 
   class << self
     def compress(uids)
