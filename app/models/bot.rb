@@ -58,11 +58,14 @@ class Bot < ApplicationRecord
 
       all.each do |bot|
         screen_name = bot.screen_name
+        suspended = nil
         authorized = true
         locked = false
 
         begin
-          screen_name = bot.api_client.verify_credentials[:screen_name]
+          cred = bot.api_client.verify_credentials
+          screen_name = cred[:screen_name]
+          suspended = cred[:suspended]
           bot.api_client.users([bot.id])
         rescue => e
           if AccountStatus.unauthorized?(e)
@@ -75,7 +78,7 @@ class Bot < ApplicationRecord
             raise
           end
         end
-        processed << {id: bot.id, screen_name: screen_name, authorized: authorized, locked: locked}
+        processed << {id: bot.id, uid: bot.uid, screen_name: screen_name, suspended: suspended, authorized: authorized, locked: locked}
       end
 
       processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }
