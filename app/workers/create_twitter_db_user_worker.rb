@@ -34,6 +34,7 @@ class CreateTwitterDBUserWorker
     # Errno::EEXIST File exists @ dir_s_mkdir
     # Errno::ENOENT No such file or directory @ rb_sysopen
     logger.warn "#{e.inspect.truncate(150)} client_id=#{@client_id} options=#{options.inspect.truncate(150)}"
+    logger.info e.backtrace.join("\n")
   end
 
   private
