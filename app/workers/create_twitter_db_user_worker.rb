@@ -75,7 +75,8 @@ class CreateTwitterDBUserWorker
         @client_id = "anonymous:#{user.id}"
         user.api_client
       else
-        raise CredentialsNotFound
+        # raise CredentialsNotFound
+        Bot.api_client
       end
     end
   end
