@@ -7,7 +7,9 @@ dir=${cur}/.mecab
 PATH=$PATH:${dir}/bin
 
 if which mecab >/dev/null 2>&1; then
-  echo "mecab found: $(mecab --version)"
+  echo "mecab: $(which mecab)"
+  echo "mecab-config: $(which mecab-config)"
+  echo "mecab libs: $(mecab-config --libs)"
   exit
 fi
 
