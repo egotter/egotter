@@ -13,4 +13,5 @@
   - CreateTwitterUserWorker
   - AssembleTwitterUserWorker
   - WriteToS3Worker
+  - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker

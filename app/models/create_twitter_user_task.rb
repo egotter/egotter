@@ -30,7 +30,7 @@ class CreateTwitterUserTask
 
   def update_target_user(request)
     # Regardless of whether or not the TwitterUser record is created, the TwitterDB::User record is updated.
-    CreateTwitterDBUserWorker.perform_async([request.uid], user_id: request.user_id, force_update: true, enqueued_by: "#{self.class}##{__method__}")
+    CreateHighPriorityTwitterDBUserWorker.perform_async([request.uid], user_id: request.user_id, force_update: true, enqueued_by: "#{self.class}##{__method__}")
   end
 
   def update_friends_and_followers(twitter_user)
@@ -38,7 +38,7 @@ class CreateTwitterUserTask
     options = {user_id: request.user_id, compressed: true, enqueued_by: "#{self.class}##{__method__}"}
 
     uids.each_slice(100) do |uids_array|
-      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids_array), options)
+      CreateHighPriorityTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids_array), options)
     end
   end
 end

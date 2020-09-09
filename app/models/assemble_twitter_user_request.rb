@@ -38,7 +38,7 @@ class AssembleTwitterUserRequest < ApplicationRecord
         uids = twitter_user.calc_uids_for(klass, login_user: login_user)
         klass.import_from!(twitter_user.uid, uids)
         uids.each_slice(100) do |uids_array|
-          CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids_array), user_id: twitter_user.user_id, compressed: true, enqueued_by: self.class)
+          CreateHighPriorityTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids_array), user_id: twitter_user.user_id, compressed: true, enqueued_by: self.class)
         end
 
         if klass == S3::CloseFriendship && uids.present?

@@ -19,6 +19,7 @@
   - CreatePeriodicReportWorker
   - CreateHighPriorityTwitterUserWorker
   - CreateSignedInTwitterUserWorker
+  - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
   - AssembleTwitterUserWorker
