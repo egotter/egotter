@@ -28,13 +28,9 @@ class UpdateEgotterFriendshipWorker
     user = User.find(user_id)
 
     client = user.api_client.twitter
-    client.verify_credentials
+    verify_credentials(client)
+    update_friendship(client, user)
 
-    if client.friendship?(user.uid, User::EGOTTER_UID)
-      CreateEgotterFollowerWorker.perform_async(user.id)
-    else
-      DeleteEgotterFollowerWorker.perform_async(user.id)
-    end
   rescue => e
     if AccountStatus.invalid_or_expired_token?(e)
       user&.update!(authorized: false)
@@ -45,6 +41,22 @@ class UpdateEgotterFriendshipWorker
     else
       logger.warn "#{e.inspect} user_id=#{user_id} api_name=#{client&.api_name} options=#{options.inspect}"
       logger.info e.backtrace.join("\n")
+    end
+  end
+
+  private
+
+  def verify_credentials(client)
+    client.verify_credentials
+  rescue => e
+    raise unless AccountStatus.too_many_requests?(e)
+  end
+
+  def update_friendship(client, user)
+    if client.friendship?(user.uid, User::EGOTTER_UID)
+      CreateEgotterFollowerWorker.perform_async(user.id)
+    else
+      DeleteEgotterFollowerWorker.perform_async(user.id)
     end
   end
 end
