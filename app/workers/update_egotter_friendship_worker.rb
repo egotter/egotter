@@ -24,6 +24,7 @@ class UpdateEgotterFriendshipWorker
 
   # options:
   def perform(user_id, options = {})
+    user = client = nil
     user = User.find(user_id)
 
     client = user.api_client.twitter
@@ -36,13 +37,13 @@ class UpdateEgotterFriendshipWorker
     end
   rescue => e
     if AccountStatus.invalid_or_expired_token?(e)
-      user.update!(authorized: false)
+      user&.update!(authorized: false)
     elsif AccountStatus.temporarily_locked?(e)
       # Do nothing
     elsif ServiceStatus.connection_reset_by_peer?(e)
       retry
     else
-      logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
+      logger.warn "#{e.inspect} user_id=#{user_id} api_name=#{client&.api_name} options=#{options.inspect}"
       logger.info e.backtrace.join("\n")
     end
   end

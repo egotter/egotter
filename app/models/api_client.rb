@@ -87,13 +87,18 @@ class ApiClient
   private
 
   class TwitterWrapper
+    attr_reader :api_name
+
     def initialize(api_client, twitter)
       @api_client = api_client
       @twitter = twitter
+      @api_name = nil
     end
 
     def method_missing(method, *args, &block)
       if @twitter.respond_to?(method)
+        @api_name = method
+
         RequestWithRetryHandler.new(method).perform do
           @twitter.send(method, *args, &block)
         end
