@@ -20,22 +20,7 @@ class WordCloud
     words_count.sort_by { |_, v| -v }.to_h
   end
 
-  class << self
-    def mecab_model
-      if instance_variable_defined?(:@mecab_model)
-        @mecab_model
-      else
-        require 'mecab'
-        @mecab_model = MeCab::Model.create("-d #{`mecab-config --dicdir`.chomp}/mecab-ipadic-neologd/")
-      end
-    end
-  end
-
   private
-
-  def mecab_tagger
-    self.class.mecab_model.createTagger
-  end
 
   def natto_parse(text)
     dicdir = `#{ENV['MECAB_CONFIG'] || 'mecab-config'} --dicdir`.chomp + '/mecab-ipadic-neologd/'
