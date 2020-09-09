@@ -4,6 +4,7 @@ module Concerns::TwitterDB::User::Associations
   extend ActiveSupport::Concern
 
   class_methods do
+    # TODO Set user_id
     # This method makes the result unique.
     def where_and_order_by_field(uids:, inactive: nil)
       caller_name = (caller[0][/`([^']*)'/, 1] rescue '')
@@ -33,9 +34,7 @@ module Concerns::TwitterDB::User::Associations
     end
 
     def enqueue_update_job(uids, caller_name = nil)
-      uids.each_slice(100) do |uids_array|
-        CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids_array), compressed: true, enqueued_by: "##{caller_name} > #where_and_order_by_field")
-      end
+      CreateTwitterDBUserWorker.compress_and_perform_async(uids, enqueued_by: "##{caller_name} > #where_and_order_by_field")
     end
   end
 

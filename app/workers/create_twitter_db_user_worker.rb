@@ -13,6 +13,20 @@ class CreateTwitterDBUserWorker
     10.minutes
   end
 
+  class << self
+    def compress_and_perform_async(uids, options = {})
+      if uids.size > 100
+        uids.each_slice(100) do |uids_array|
+          compress_and_perform_async(uids_array, options)
+        end
+      else
+        uids = compress(uids)
+        options[:compressed] = true
+        perform_async(uids, options)
+      end
+    end
+  end
+
   # options:
   #   compressed
   #   force_update

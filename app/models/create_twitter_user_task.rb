@@ -35,10 +35,7 @@ class CreateTwitterUserTask
 
   def update_friends_and_followers(twitter_user)
     uids = ([twitter_user.uid] + twitter_user.friend_uids + twitter_user.follower_uids).uniq
-    options = {user_id: request.user_id, compressed: true, enqueued_by: "#{self.class}##{__method__}"}
-
-    uids.each_slice(100) do |uids_array|
-      CreateHighPriorityTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids_array), options)
-    end
+    options = {user_id: request.user_id, enqueued_by: "#{self.class}##{__method__}"}
+    CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, options)
   end
 end
