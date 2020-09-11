@@ -37,10 +37,6 @@
 
 module TwitterDB
   class User < ApplicationRecord
-    include Concerns::TwitterUser::Inflections
-    include Concerns::TwitterDB::User::Associations
-    include Concerns::TwitterDB::User::Builder
-
     include Concerns::TwitterDB::User::Batch
 
     validates_with Validations::UidValidator
@@ -91,5 +87,119 @@ module TwitterDB
         import columns, values, on_duplicate_key_update: columns, batch_size: 500, validate: false
       end
     end
+
+    module QueryMethods
+      extend ActiveSupport::Concern
+
+      class_methods do
+        # TODO Set user_id
+        # This method makes the result unique.
+        def where_and_order_by_field(uids:, inactive: nil)
+          caller_name = (caller[0][/`([^']*)'/, 1] rescue '')
+
+          uids.uniq.each_slice(1000).map do |uids_array|
+            where_and_order_by_field_each_slice(uids_array, inactive, caller_name)
+          end.flatten
+        end
+
+        private
+
+        def where_and_order_by_field_each_slice(uids, inactive, caller_name = nil)
+          # result = where(uid: uids_array).sort_by {|user| uids_array.index(user.uid)}
+
+          result = where(uid: uids)
+          result = result.inactive_user if !inactive.nil? && inactive
+          result = result.order_by_field(uids).to_a
+
+          # if !inactive.nil? && inactive
+          #   enqueue_update_job(result.map(&:uid), caller_name)
+          # elsif uids.size != result.size
+          #   enqueue_update_job(uids - result.map(&:uid), caller_name)
+          # end
+          enqueue_update_job(uids, caller_name)
+
+          result
+        end
+
+        def enqueue_update_job(uids, caller_name = nil)
+          CreateTwitterDBUserWorker.compress_and_perform_async(uids, enqueued_by: "##{caller_name} > #where_and_order_by_field")
+        end
+      end
+
+      included do
+        scope :order_by_field, -> (uids) { order(Arel.sql("field(uid, #{uids.join(',')})")) }
+      end
+    end
+    include QueryMethods
+
+    module Builder
+      extend ActiveSupport::Concern
+
+      class_methods do
+        def build_by(user:)
+          if user[:screen_name] == 'suspended'
+            return new(uid: user[:id], screen_name: user[:screen_name])
+          end
+
+          user[:account_created_at] = user[:created_at]
+          user[:status_created_at] = user[:status] ? user[:status][:created_at] : nil
+
+          if user[:description]
+            begin
+              user[:entities][:description][:urls].each do |entity|
+                user[:description].gsub!(entity[:url], entity[:expanded_url])
+              end
+            rescue => e
+            end
+
+            if user[:description].length >= 180
+              user[:description] = user[:description].truncate(180)
+            end
+
+            user[:description] = user[:description]
+          end
+
+          if user[:url]
+            begin
+              user[:url] = user[:entities][:url][:urls][0][:expanded_url]
+            rescue => e
+            end
+          end
+
+          %i(url profile_image_url_https profile_banner_url).each do |key|
+            user[key] = '' if !user.has_key?(key) || user[key].nil?
+
+            if user[key].to_s.length >= 180
+              user[key] = ''
+            end
+          end
+
+          new(
+              uid:                     user[:id],
+              screen_name:             user[:screen_name],
+              friends_count:           user[:friends_count],
+              followers_count:         user[:followers_count],
+              protected:               user[:protected] || false,
+              suspended:               user[:suspended] || false,
+              status_created_at:       user[:status_created_at],
+              account_created_at:      user[:account_created_at],
+              statuses_count:          user[:statuses_count],
+              favourites_count:        user[:favourites_count],
+              listed_count:            user[:listed_count],
+              name:                    user[:name],
+              location:                user[:location] || '',
+              description:             user[:description] || '',
+              url:                     user[:url] || '',
+              geo_enabled:             user[:geo_enabled] || false,
+              verified:                user[:verified] || false,
+              lang:                    user[:lang] || '',
+              profile_image_url_https: user[:profile_image_url_https] || '',
+              profile_banner_url:      user[:profile_banner_url] || '',
+              profile_link_color:      user[:profile_link_color] || '',
+              )
+        end
+      end
+    end
+    include Builder
   end
 end
