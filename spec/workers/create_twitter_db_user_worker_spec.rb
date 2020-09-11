@@ -47,19 +47,19 @@ RSpec.describe CreateTwitterDBUserWorker do
     subject { worker.send(:do_perform, client, uids, options) }
 
     it do
-      expect(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: client, force_update: 'fu')
+      expect(TwitterDBUserBatch).to receive(:fetch_and_import!).with(uids, client: client, force_update: 'fu')
       subject
     end
 
     context '#fetch_and_import! raises exception' do
       let(:error) { RuntimeError.new }
-      before { allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: client, force_update: 'fu').and_raise(error) }
+      before { allow(TwitterDBUserBatch).to receive(:fetch_and_import!).with(uids, client: client, force_update: 'fu').and_raise(error) }
 
       context 'the exception is retryable' do
         before { allow(worker).to receive(:exception_handler).with(error) }
         it do
           expect(worker).to receive(:pick_client).with({}).and_return('client2')
-          allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: 'client2', force_update: 'fu')
+          allow(TwitterDBUserBatch).to receive(:fetch_and_import!).with(uids, client: 'client2', force_update: 'fu')
           subject
         end
       end

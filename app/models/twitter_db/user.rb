@@ -37,7 +37,6 @@
 
 module TwitterDB
   class User < ApplicationRecord
-    include Concerns::TwitterDB::User::Batch
 
     validates_with Validations::UidValidator
     validates_with Validations::ScreenNameValidator

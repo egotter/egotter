@@ -58,7 +58,7 @@ class CreateTwitterDBUserWorker
   private
 
   def do_perform(client, uids, options)
-    TwitterDB::User::Batch.fetch_and_import!(uids, client: client, force_update: options['force_update'])
+    TwitterDBUserBatch.fetch_and_import!(uids, client: client, force_update: options['force_update'])
   rescue => e
     exception_handler(e)
     client = pick_client({})
