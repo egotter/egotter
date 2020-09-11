@@ -15,6 +15,8 @@ namespace :old_users do
   task update_authorized: :environment do
     sigint = Sigint.new.trap
 
+    ApiClient # Avoid circular dependency
+
     OldUser.authorized.find_in_batches(batch_size: 1000) do |users|
       Parallel.each(users, in_threads: 10) do |user|
         begin
@@ -37,7 +39,7 @@ namespace :old_users do
         OldUser.import(users, on_duplicate_key_update: %i(uid authorized), validate: false)
       end
 
-      break if sigint
+      break if sigint.trapped?
     end
   end
 end
