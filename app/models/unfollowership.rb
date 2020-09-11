@@ -14,7 +14,6 @@
 #
 
 class Unfollowership < ApplicationRecord
-  include Concerns::Followership::Importable
 
   with_options(primary_key: :uid, optional: true) do |obj|
     obj.belongs_to :twitter_user, foreign_key: :from_uid
@@ -22,11 +21,8 @@ class Unfollowership < ApplicationRecord
   end
 
   class << self
-    # TODO Want to remove later
-    def import_by!(twitter_user:)
-      uids = twitter_user.calc_unfollower_uids
-      import_from!(twitter_user.uid, uids)
-      uids
+    def delete_by_uid(uid)
+      where(from_uid: uid).delete_all if exists?(from_uid: uid)
     end
   end
 end

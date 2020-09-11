@@ -14,7 +14,6 @@
 #
 
 class FavoriteFriendship < ApplicationRecord
-  include Concerns::Friendship::Importable
 
   with_options(primary_key: :uid, optional: true) do |obj|
     obj.belongs_to :twitter_user, foreign_key: :from_uid
@@ -22,12 +21,6 @@ class FavoriteFriendship < ApplicationRecord
   end
 
   class << self
-    def import_by!(twitter_user:)
-      uids = twitter_user.calc_favorite_friend_uids
-      import_from!(twitter_user.uid, uids)
-      uids
-    end
-
     def delete_by_uid(uid)
       where(from_uid: uid).delete_all if exists?(from_uid: uid)
     end

@@ -77,8 +77,13 @@ class AssembleTwitterUserRequest < ApplicationRecord
     FavoriteFriendship.delete_by_uid(twitter_user.uid)
     OneSidedFriendship.delete_by_uid(twitter_user.uid)
     OneSidedFollowership.delete_by_uid(twitter_user.uid)
+    MutualFriendship.delete_by_uid(twitter_user.uid)
     InactiveFriendship.delete_by_uid(twitter_user.uid)
     InactiveFollowership.delete_by_uid(twitter_user.uid)
+    InactiveMutualFriendship.delete_by_uid(twitter_user.uid)
+    Unfriendship.delete_by_uid(twitter_user.uid)
+    Unfollowership.delete_by_uid(twitter_user.uid)
+    BlockFriendship.delete_by_uid(twitter_user.uid)
   end
 
   private
