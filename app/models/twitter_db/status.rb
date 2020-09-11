@@ -23,6 +23,6 @@ module TwitterDB
     belongs_to :user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User', optional: true
 
     include Concerns::TwitterDB::Status::RawAttrs
-    include Concerns::TwitterDB::Status::Importable
+    include Concerns::StatusBuilder
   end
 end

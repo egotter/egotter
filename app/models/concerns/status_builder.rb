@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterDB::Status::Importable
+module Concerns::StatusBuilder
   extend ActiveSupport::Concern
 
   class_methods do
