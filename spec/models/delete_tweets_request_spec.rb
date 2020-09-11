@@ -26,7 +26,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
   end
 
   describe '#verify_credentials!' do
-    let(:subject) { request.verify_credentials! }
+    let(:subject) { request.send(:verify_credentials!) }
 
     context 'user is authorized' do
       before { user.update(authorized: true) }
@@ -48,7 +48,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
 
   describe '#tweets_exist!' do
     let(:user_response) { double('user_response', statuses_count: count) }
-    let(:subject) { request.tweets_exist! }
+    let(:subject) { request.send(:tweets_exist!) }
 
     before { allow(request).to receive_message_chain(:api_client, :user).and_return(user_response) }
 
@@ -72,7 +72,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     let(:tweets) do
       [double('tweet', created_at: 1.day.ago), double('tweet', created_at: 1.day.ago)]
     end
-    subject { request.fetch_statuses! }
+    subject { request.send(:fetch_statuses!) }
 
     before do
       allow(request).to receive_message_chain(:api_client, :user_timeline).
@@ -94,7 +94,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       [double('tweet', id: 1), double('tweet', id: 2)]
     end
     let(:timeout) { described_class::TIMEOUT_SECONDS }
-    subject { request.destroy_statuses!(tweets, timeout: timeout) }
+    subject { request.send(:destroy_statuses!, tweets, timeout: timeout) }
 
     it do
       tweets.each { |tweet| expect(request).to receive(:destroy_status!).with(tweet.id) }
@@ -109,7 +109,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
 
   describe '#destroy_status!' do
     let(:tweet_id) { 1 }
-    subject { request.destroy_status!(tweet_id) }
+    subject { request.send(:destroy_status!, tweet_id) }
     it do
       expect(request).to receive_message_chain(:api_client, :destroy_status).with(tweet_id)
       subject
@@ -117,7 +117,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
   end
 
   describe '#exception_handler' do
-    subject { request.exception_handler(exception) }
+    subject { request.send(:exception_handler, exception) }
 
     context 'exception is a kind of Error' do
       let(:exception) { described_class::InvalidToken.new }

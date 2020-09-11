@@ -45,6 +45,8 @@ class DeleteTweetsRequest < ApplicationRecord
     raise Continue.new(retry_in: RETRY_INTERVAL, destroy_count: @destroy_count)
   end
 
+  private
+
   def verify_credentials!
     if user.authorized?
       api_client.verify_credentials
@@ -73,15 +75,15 @@ class DeleteTweetsRequest < ApplicationRecord
     tweets
   end
 
-  def destroy_statuses!(tweets, timeout: TIMEOUT_SECONDS)
+  def destroy_statuses!(tweets, timeout: TIMEOUT_SECONDS, threads: THREADS_NUM, retry_in: RETRY_INTERVAL)
     start = Time.zone.now
 
     @destroy_count = 0
     error = nil
 
-    Parallel.each(tweets, in_threads: THREADS_NUM) do |tweet|
+    Parallel.each(tweets, in_threads: threads) do |tweet|
       if Time.zone.now - start > timeout
-        error = Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: @destroy_count)
+        error = Timeout.new(retry_in: retry_in, destroy_count: @destroy_count)
         raise Parallel::Break
       end
 
@@ -220,8 +222,7 @@ class DeleteTweetsRequest < ApplicationRecord
     extend UrlHelpers
   end
 
-  class Error < StandardError
-  end
+  class Error < StandardError; end
 
   class RetryableError < StandardError
     attr_reader :retry_in, :destroy_count
@@ -231,8 +232,6 @@ class DeleteTweetsRequest < ApplicationRecord
       @destroy_count = destroy_count
     end
   end
-
-  class AlreadyFinished < Error; end
 
   class Unauthorized < Error; end
 
@@ -245,8 +244,6 @@ class DeleteTweetsRequest < ApplicationRecord
   class TooManyRequests < RetryableError; end
 
   class Continue < RetryableError; end
-
-  class ConnectionResetByPeer < RetryableError; end
 
   class FinishedMessageNotSent < Error; end
 

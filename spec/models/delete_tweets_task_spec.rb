@@ -19,4 +19,12 @@ RSpec.describe DeleteTweetsTask, type: :model do
       end
     end
   end
+
+  describe '#perform_request!' do
+    subject { task.perform_request! }
+    it do
+      expect(request).to receive(:perform!).and_raise
+      subject
+    end
+  end
 end
