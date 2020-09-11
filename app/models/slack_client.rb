@@ -24,6 +24,7 @@ class SlackClient
       reset_egotter:               ENV['SLACK_RESET_EGOTTER_URL'],
       delete_tweets:               ENV['SLACK_DELETE_TWEETS_URL'],
       orders:                      ENV['SLACK_ORDERS_URL'],
+      deploy:                      ENV['SLACK_DEPLOY_URL'],
   }
 
   def initialize(webhook:)
@@ -43,7 +44,7 @@ class SlackClient
     req['Content-Type'] = 'application/json'
     req['User-Agent'] = 'egotter'
     req.body = {text: text}.to_json
-    https.request(req).body
+    https.start { https.request(req) }.body
   end
 
   def format(hash)
