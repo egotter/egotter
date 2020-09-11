@@ -1,5 +1,5 @@
 <% require 'dotenv/load' %>:concurrency: <%= ENV.fetch("SIDEKIQ_PROMPT_REPORTS_CONCURRENCY") { 3 } %>
-:timeout: 600
+:timeout: 300
 :pidfile: ./tmp/pids/sidekiq_prompt_reports_<%= ENV.fetch("WORKER_INDEX") { "NOINDEX" } %>.pid
 :logfile: ./log/sidekiq_prompt_reports.log
 :tag:
