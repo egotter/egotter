@@ -61,7 +61,6 @@ module Tasks
             'sudo stop sidekiq_workers && tail -n 6 log/sidekiq.log || :',
             'sudo stop sidekiq_import && tail -n 6 log/sidekiq_import.log || :',
             'sudo stop sidekiq_misc && tail -n 6 log/sidekiq_misc.log || :',
-            'sudo stop sidekiq_misc_workers && tail -n 6 log/sidekiq_misc.log || :',
             'sudo stop sidekiq_prompt_reports_workers && tail -n 6 log/sidekiq_prompt_reports.log || :',
         ].each do |cmd|
           exec_command(cmd)
