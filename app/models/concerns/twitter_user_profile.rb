@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUser::Profile
+module Concerns::TwitterUserProfile
   extend ActiveSupport::Concern
 
   SAVE_KEYS = %i(

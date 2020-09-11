@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::TwitterUser::AssociationBuilder do
+RSpec.describe Concerns::TwitterUserAssociationBuilder do
   let(:twitter_user) { TwitterUser.new }
 
   describe '#attach_friend_uids' do

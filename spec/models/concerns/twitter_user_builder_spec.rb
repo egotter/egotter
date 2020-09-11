@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::TwitterUser::Builder do
+RSpec.describe Concerns::TwitterUserBuilder do
   describe '.build_by' do
     let(:user) do
       {
@@ -25,7 +25,7 @@ RSpec.describe Concerns::TwitterUser::Builder do
   end
 
   describe '.filter_save_keys' do
-    subject { Concerns::TwitterUser::Builder.filter_save_keys(user) }
+    subject { TwitterUser.send(:filter_save_keys, user) }
     let(:result) { {id: 1}.to_json }
 
     it do

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::TwitterUser::QueryMethods do
+RSpec.describe Concerns::TwitterUserQueryMethods do
   let(:uid) { 1 }
   let(:screen_name) { 'sn' }
   let(:record1) { build(:twitter_user, with_relations: false, uid: uid, screen_name: screen_name, created_at: 1.minute.ago) }

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::TwitterUser::Profile do
+RSpec.describe Concerns::TwitterUserProfile do
   let(:twitter_user) { create(:twitter_user) }
 
   describe '#account_created_at' do

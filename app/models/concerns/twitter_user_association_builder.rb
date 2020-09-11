@@ -1,8 +1,7 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUser::AssociationBuilder
+module Concerns::TwitterUserAssociationBuilder
   extend ActiveSupport::Concern
-  include Concerns::TwitterUser::Validation
 
   class_methods do
   end

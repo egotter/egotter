@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUser::Persistence
+module Concerns::TwitterUserPersistence
   extend ActiveSupport::Concern
 
   included do

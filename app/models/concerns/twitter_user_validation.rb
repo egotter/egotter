@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUser::Validation
+module Concerns::TwitterUserValidation
   extend ActiveSupport::Concern
 
   included do

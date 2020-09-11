@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::TwitterUser::Validation do
+RSpec.describe Concerns::TwitterUserValidation do
   describe '#uid' do
     let(:twitter_user) { build(:twitter_user, uid: uid_value) }
     subject { twitter_user.errors[:uid] }
