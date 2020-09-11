@@ -22,6 +22,15 @@ class AssembleTwitterUserWorker
     logger.warn "The job of #{self.class} is expired args=#{args.inspect}"
   end
 
+  def timeout_in
+    3.minutes
+  end
+
+  def after_timeout(request_id, options = {})
+    logger.warn "The job of #{self.class} timed out request_id=#{request_id} options=#{options.inspect}"
+    TimedOutAssembleTwitterUserWorker.perform_async(request_id, options)
+  end
+
   # options:
   def perform(request_id, options = {})
     request = AssembleTwitterUserRequest.find(request_id)
