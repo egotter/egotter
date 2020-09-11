@@ -42,7 +42,6 @@ module TwitterDB
     include Concerns::TwitterDB::User::Builder
 
     include Concerns::TwitterDB::User::Batch
-    include Concerns::TwitterDB::User::Debug
 
     validates_with Validations::UidValidator
     validates_with Validations::ScreenNameValidator
