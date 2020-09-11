@@ -15,7 +15,7 @@ module Concerns::StatusBuilder
     end
 
     def collect_raw_attrs(status)
-      status.symbolize_keys.slice(*Concerns::TwitterDB::Status::RawAttrs::SAVE_KEYS).to_json
+      status.symbolize_keys.slice(*Concerns::StatusAccessor::SAVE_KEYS).to_json
     end
   end
 end

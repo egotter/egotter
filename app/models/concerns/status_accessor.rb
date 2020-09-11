@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterDB::Status::RawAttrs
+module Concerns::StatusAccessor
   extend ActiveSupport::Concern
 
   # https://dev.twitter.com/overview/api/tweets
