@@ -44,7 +44,7 @@ module Concerns::TwitterUser::AssociationBuilder
     end
 
     if tweets&.any?
-      @reserved_mentions = tweets.map { |status| TwitterDB::Mention.build_by(twitter_user: self, status: status) }
+      @reserved_mentions = tweets.map { |status| TwitterDB::Status.build_by(twitter_user: self, status: status) }
     else
       @reserved_mentions = []
     end
@@ -56,7 +56,7 @@ module Concerns::TwitterUser::AssociationBuilder
 
   def attach_favorite_tweets(tweets)
     if tweets&.any?
-      @reserved_favorites = tweets.map { |status| TwitterDB::Favorite.build_by(twitter_user: self, status: status) }
+      @reserved_favorites = tweets.map { |status| TwitterDB::Status.build_by(twitter_user: self, status: status) }
     else
       @reserved_favorites = []
     end

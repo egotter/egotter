@@ -82,7 +82,7 @@ RSpec.describe Concerns::TwitterUser::AssociationBuilder do
       let(:result) { ['result0', 'result1'] }
       before do
         tweets.each.with_index do |tweet, i|
-          allow(TwitterDB::Mention).to receive(:build_by).with(twitter_user: twitter_user, status: tweet).and_return(result[i])
+          allow(TwitterDB::Status).to receive(:build_by).with(twitter_user: twitter_user, status: tweet).and_return(result[i])
         end
       end
       it do
@@ -101,7 +101,7 @@ RSpec.describe Concerns::TwitterUser::AssociationBuilder do
           allow(twitter_user).to receive(:reject_self_tweet_and_retweet).with(search_result).and_return(search_result)
 
           search_result.each.with_index do |tweet, i|
-            allow(TwitterDB::Mention).to receive(:build_by).with(twitter_user: twitter_user, status: tweet).and_return(result[i])
+            allow(TwitterDB::Status).to receive(:build_by).with(twitter_user: twitter_user, status: tweet).and_return(result[i])
           end
         end
         it do
@@ -128,7 +128,7 @@ RSpec.describe Concerns::TwitterUser::AssociationBuilder do
       let(:result) { ['result0', 'result1'] }
       before do
         tweets.each.with_index do |tweet, i|
-          allow(TwitterDB::Favorite).to receive(:build_by).with(twitter_user: twitter_user, status: tweet).and_return(result[i])
+          allow(TwitterDB::Status).to receive(:build_by).with(twitter_user: twitter_user, status: tweet).and_return(result[i])
         end
       end
       it do

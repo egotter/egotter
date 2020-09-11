@@ -34,8 +34,8 @@ FactoryBot.define do
 
       if evaluator.with_relations
         user.instance_variable_set(:@reserved_statuses, 2.times.map { build(:twitter_db_status) })
-        user.instance_variable_set(:@reserved_favorites, 2.times.map { build(:twitter_db_favorite) })
-        user.instance_variable_set(:@reserved_mentions, 2.times.map { build(:twitter_db_mention) })
+        user.instance_variable_set(:@reserved_favorites, 2.times.map { build(:twitter_db_status) })
+        user.instance_variable_set(:@reserved_mentions, 2.times.map { build(:twitter_db_status) })
 
         if user.friends_count
           user.instance_variable_set(:@reserved_friend_uids, user.friends_count.times.map { create(:twitter_db_user).uid })

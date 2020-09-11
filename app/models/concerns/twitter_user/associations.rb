@@ -246,7 +246,7 @@ module Concerns::TwitterUser::Associations
     tweets = InMemory::FavoriteTweet.find_by(uid) if InMemory.enabled? && InMemory.cache_alive?(created_at)
     tweets = Efs::FavoriteTweet.where(uid: uid) if tweets.blank? && Efs::Tweet.cache_alive?(created_at)
     tweets = ::S3::FavoriteTweet.where(uid: uid) if tweets.blank?
-    tweets.map { |tweet| ::TwitterDB::Favorite.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
+    tweets.map { |tweet| ::TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
 
   # TODO Return an instance of Efs::MentionTweet or S3::MentionTweet
@@ -256,6 +256,6 @@ module Concerns::TwitterUser::Associations
     tweets = InMemory::MentionTweet.find_by(uid) if InMemory.enabled? && InMemory.cache_alive?(created_at)
     tweets = Efs::MentionTweet.where(uid: uid) if tweets.blank? && Efs::Tweet.cache_alive?(created_at)
     tweets = ::S3::MentionTweet.where(uid: uid) if tweets.blank?
-    tweets.map { |tweet| ::TwitterDB::Mention.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
+    tweets.map { |tweet| ::TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
 end
