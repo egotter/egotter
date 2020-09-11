@@ -13,25 +13,20 @@ namespace :old_users do
 
   desc 'update authorized'
   task update_authorized: :environment do
-    sigint = false
-    Signal.trap 'INT' do
-      puts 'intercept INT and stop ..'
-      sigint = true
-    end
+    sigint = Sigint.new.trap
 
-    ApiClient # Avoid circular dependency
-
-    OldUser.authorized.find_in_batches(batch_size: 100) do |users|
+    OldUser.authorized.find_in_batches(batch_size: 1000) do |users|
       Parallel.each(users, in_threads: 10) do |user|
         begin
-          puts "Authorized #{user.api_client.verify_credentials[:id]}"
+          user.api_client.verify_credentials
+          print 'o'
         rescue => e
-          if e.message == 'Invalid or expired token.'
-            puts "Invalid #{user.uid}"
+          if AccountStatus.invalid_or_expired_token?(e)
             user.authorized = false
+            print 'x'
           else
-            puts "Failed #{user.uid}"
-            raise
+            puts "Failed #{e.inspect} uid=#{user.uid}"
+            raise Parallel::Break
           end
         end
       end
