@@ -107,10 +107,8 @@ class DeleteTweetsRequest < ApplicationRecord
 
   def destroy_status!(tweet_id)
     api_client.destroy_status(tweet_id)
-  rescue Twitter::Error::NotFound => e
-    if e.message != 'No status found with that ID.'
-      raise
-    end
+  rescue => e
+    raise unless TweetStatus.no_status_found?(e)
   end
 
   def exception_handler(e)
