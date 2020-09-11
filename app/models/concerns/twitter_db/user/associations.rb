@@ -40,20 +40,5 @@ module Concerns::TwitterDB::User::Associations
 
   included do
     scope :order_by_field, -> (uids) { order(Arel.sql("field(uid, #{uids.join(',')})")) }
-
-    default_options = {dependent: :destroy, validate: false, autosave: false}
-    order_by_sequence_asc = -> { order(sequence: :asc) }
-
-    with_options default_options.merge(primary_key: :uid, foreign_key: :from_uid) do |obj|
-      obj.has_many :unfriendships,     order_by_sequence_asc
-      obj.has_many :unfollowerships,   order_by_sequence_asc
-      obj.has_many :block_friendships, order_by_sequence_asc
-    end
-
-    with_options default_options.merge(class_name: 'TwitterDB::User') do |obj|
-      obj.has_many :unfriends,     through: :unfriendships
-      obj.has_many :unfollowers,   through: :unfollowerships
-      obj.has_many :block_friends, through: :block_friendships
-    end
   end
 end
