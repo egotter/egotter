@@ -13,6 +13,10 @@ class CreateTwitterDBUserWorker
     10.minutes
   end
 
+  def timeout_in
+    10.seconds
+  end
+
   class << self
     def compress_and_perform_async(uids, options = {})
       if uids.size > 100
