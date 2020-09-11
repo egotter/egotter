@@ -18,7 +18,7 @@ class ProcessWebhookEventWorker
   end
 
   def timeout_in
-    1.minute
+    10.seconds
   end
 
   def after_timeout(*args)
