@@ -25,11 +25,12 @@ class CreateTwitterUserWorker
   end
 
   def timeout_in
-    1.minute
+    3.minutes
   end
 
   def after_timeout(request_id, options = {})
     logger.warn "The job of #{self.class} timed out request_id=#{request_id} options=#{options.inspect}"
+    TimedOutCreateTwitterUserWorker.perform_async(request_id, options)
   end
 
   # options:
