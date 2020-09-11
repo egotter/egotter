@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::CredentialsApi
+module CredentialsApi
   extend ActiveSupport::Concern
 
   class_methods do

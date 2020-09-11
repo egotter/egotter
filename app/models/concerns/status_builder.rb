@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::StatusBuilder
+module StatusBuilder
   extend ActiveSupport::Concern
 
   class_methods do
@@ -15,7 +15,7 @@ module Concerns::StatusBuilder
     end
 
     def collect_raw_attrs(status)
-      status.symbolize_keys.slice(*Concerns::StatusAccessor::SAVE_KEYS).to_json
+      status.symbolize_keys.slice(*StatusAccessor::SAVE_KEYS).to_json
     end
   end
 end

@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::JobQueueingConcern do
+RSpec.describe JobQueueingConcern do
   let(:instance) { double('Instance') }
 
   before do
-    instance.extend Concerns::JobQueueingConcern
+    instance.extend JobQueueingConcern
   end
 
   describe '#enqueue_create_twitter_user_job_if_needed' do

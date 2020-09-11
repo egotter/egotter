@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::TwitterUserAssociations do
+RSpec.describe TwitterUserAssociations do
   let(:twitter_user) { create(:twitter_user) }
   let(:uid) { twitter_user.uid }
 

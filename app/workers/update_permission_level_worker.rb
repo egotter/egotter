@@ -1,6 +1,6 @@
 class UpdatePermissionLevelWorker
   include Sidekiq::Worker
-  include Concerns::AirbrakeErrorHandler
+  include AirbrakeErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})

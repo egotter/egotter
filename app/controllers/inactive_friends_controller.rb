@@ -1,5 +1,5 @@
 class InactiveFriendsController < ApplicationController
-  include Concerns::SearchRequestConcern
+  include SearchRequestConcern
 
   def new
   end

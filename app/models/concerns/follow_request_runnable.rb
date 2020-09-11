@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::FollowRequestRunnable
+module FollowRequestRunnable
   extend ActiveSupport::Concern
 
   class_methods do

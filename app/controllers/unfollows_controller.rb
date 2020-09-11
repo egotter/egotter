@@ -1,5 +1,5 @@
 class UnfollowsController < ApplicationController
-  include Concerns::JobQueueingConcern
+  include JobQueueingConcern
 
   before_action :reject_crawler
   before_action :require_login!

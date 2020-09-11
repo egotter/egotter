@@ -22,7 +22,7 @@ module TwitterDB
   class Status < ApplicationRecord
     belongs_to :user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User', optional: true
 
-    include Concerns::StatusAccessor
-    include Concerns::StatusBuilder
+    include StatusAccessor
+    include StatusBuilder
   end
 end

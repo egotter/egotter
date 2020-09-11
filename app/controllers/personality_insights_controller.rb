@@ -1,5 +1,5 @@
 class PersonalityInsightsController < ApplicationController
-  include Concerns::SearchRequestConcern
+  include SearchRequestConcern
 
   before_action(only: :show) do
     if !from_crawler? && !user_signed_in?

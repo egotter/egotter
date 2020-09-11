@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUserMultiplePeopleApi
+module TwitterUserMultiplePeopleApi
   extend ActiveSupport::Concern
 
   def common_friend_uids(other)

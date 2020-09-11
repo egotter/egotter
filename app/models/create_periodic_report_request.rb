@@ -17,7 +17,7 @@
 #
 
 class CreatePeriodicReportRequest < ApplicationRecord
-  include Concerns::RequestRunnable
+  include RequestRunnable
   belongs_to :user
 
   validates :user_id, presence: true

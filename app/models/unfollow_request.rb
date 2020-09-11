@@ -18,7 +18,7 @@
 #
 
 class UnfollowRequest < ApplicationRecord
-  include Concerns::FollowRequestRunnable
+  include FollowRequestRunnable
 
   has_many :logs, primary_key: :id, foreign_key: :request_id, class_name: 'CreateUnfollowLog'
 

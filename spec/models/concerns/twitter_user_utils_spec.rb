@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::TwitterUserUtils do
+RSpec.describe TwitterUserUtils do
   let(:twitter_user) { build(:twitter_user) }
 
   describe '#friend_uids' do

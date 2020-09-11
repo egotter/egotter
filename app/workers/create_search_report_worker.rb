@@ -1,6 +1,6 @@
 class CreateSearchReportWorker
   include Sidekiq::Worker
-  include Concerns::AirbrakeErrorHandler
+  include AirbrakeErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(searchee_id, options = {})

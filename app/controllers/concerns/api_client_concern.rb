@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::ApiClientConcern
+module ApiClientConcern
   extend ActiveSupport::Concern
 
   def request_context_client

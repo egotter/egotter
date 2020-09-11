@@ -1,9 +1,9 @@
 require 'active_support/concern'
 
-module Concerns::TwitterErrorHandler
+module TwitterErrorHandler
   extend ActiveSupport::Concern
-  include Concerns::AlertMessagesConcern
-  include Concerns::DebugConcern
+  include AlertMessagesConcern
+  include DebugConcern
 
   included do
     rescue_from Twitter::Error::BadRequest, with: :handle_twitter_error_unauthorized

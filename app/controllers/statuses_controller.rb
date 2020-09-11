@@ -1,5 +1,5 @@
 class StatusesController < ApplicationController
-  include Concerns::SearchRequestConcern
+  include SearchRequestConcern
 
   def show
     statuses = @twitter_user.status_tweets.take(20)

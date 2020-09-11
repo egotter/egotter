@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUserApi
+module TwitterUserApi
   extend ActiveSupport::Concern
 
   included do

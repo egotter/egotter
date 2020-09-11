@@ -40,7 +40,7 @@
 #
 
 class SearchLog < ApplicationRecord
-  include Concerns::DeletableLog
+  include DeletableLog
 
   belongs_to :user, optional: true
 

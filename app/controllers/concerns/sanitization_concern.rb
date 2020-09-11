@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::SanitizationConcern
+module SanitizationConcern
   extend ActiveSupport::Concern
 
   SAFE_REDIRECT_PATHS = %w(

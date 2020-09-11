@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUserAssociations
+module TwitterUserAssociations
   extend ActiveSupport::Concern
 
   class_methods do

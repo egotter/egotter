@@ -2,7 +2,7 @@ require 'digest/md5'
 
 class CreateTwitterDBUserWorker
   include Sidekiq::Worker
-  include Concerns::AirbrakeErrorHandler
+  include AirbrakeErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(uids, options = {})

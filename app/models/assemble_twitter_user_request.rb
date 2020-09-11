@@ -16,7 +16,7 @@
 #
 
 class AssembleTwitterUserRequest < ApplicationRecord
-  include Concerns::RequestRunnable
+  include RequestRunnable
   belongs_to :twitter_user
 
   validates :twitter_user_id, presence: true

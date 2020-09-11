@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::TwitterUserMultiplePeopleApi do
+RSpec.describe TwitterUserMultiplePeopleApi do
   let(:twitter_user) { create(:twitter_user, with_relations: true) }
 
   describe '#common_mutual_friend_uids' do

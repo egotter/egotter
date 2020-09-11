@@ -1,7 +1,7 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  include Concerns::SearchHistoriesConcern
-  include Concerns::SanitizationConcern
-  include Concerns::JobQueueingConcern
+  include SearchHistoriesConcern
+  include SanitizationConcern
+  include JobQueueingConcern
 
   after_action only: :twitter do
     if @follow

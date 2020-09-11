@@ -19,7 +19,7 @@
 #
 
 class Bot < ApplicationRecord
-  include Concerns::CredentialsApi
+  include CredentialsApi
 
   class << self
     def current_ids

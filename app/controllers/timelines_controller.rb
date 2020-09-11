@@ -1,7 +1,7 @@
 class TimelinesController < ApplicationController
-  include Concerns::JobQueueingConcern
-  include Concerns::SearchRequestConcern
-  include Concerns::SearchHistoriesConcern
+  include JobQueueingConcern
+  include SearchRequestConcern
+  include SearchHistoriesConcern
 
   before_action do
     create_search_history(@twitter_user)

@@ -1,8 +1,8 @@
 require 'active_support/concern'
 
-module Concerns::RoutingErrorHandler
+module RoutingErrorHandler
   extend ActiveSupport::Concern
-  include Concerns::DebugConcern
+  include DebugConcern
 
   def not_found
     Airbrake.notify("No route matches fullpath=|#{request.fullpath}|", request_details_json)

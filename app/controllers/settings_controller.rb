@@ -1,5 +1,5 @@
 class SettingsController < ApplicationController
-  include Concerns::JobQueueingConcern
+  include JobQueueingConcern
 
   before_action { head :forbidden if twitter_dm_crawler? }
   before_action :require_login!

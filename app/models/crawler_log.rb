@@ -22,5 +22,5 @@
 #
 
 class CrawlerLog < ApplicationRecord
-  include Concerns::DeletableLog
+  include DeletableLog
 end

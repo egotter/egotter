@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::SanitizationConcern do
+RSpec.describe SanitizationConcern do
   let(:instance) { double('Instance') }
 
   before do
-    instance.extend Concerns::SanitizationConcern
+    instance.extend SanitizationConcern
   end
 
   describe '#sanitized_redirect_path' do

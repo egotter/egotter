@@ -1,7 +1,7 @@
 module Api
   module V1
     class FriendInsightsController < ApplicationController
-      include Concerns::ApiRequestConcern
+      include ApiRequestConcern
 
       before_action { set_insight }
 

@@ -1,9 +1,9 @@
 require 'active_support/concern'
 
-module Concerns::InternalServerErrorHandler
+module InternalServerErrorHandler
   extend ActiveSupport::Concern
-  include Concerns::AlertMessagesConcern
-  include Concerns::DebugConcern
+  include AlertMessagesConcern
+  include DebugConcern
 
   included do
     rescue_from Exception, with: :handle_general_error

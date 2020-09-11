@@ -19,7 +19,7 @@
 require 'parallel'
 
 class DeleteTweetsRequest < ApplicationRecord
-  include Concerns::RequestRunnable
+  include RequestRunnable
   belongs_to :user
   has_many :logs, -> { order(created_at: :desc) }, primary_key: :id, foreign_key: :request_id, class_name: 'DeleteTweetsLog'
 

@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-describe Concerns::ValidationConcern, type: :controller do
+describe ValidationConcern, type: :controller do
   controller ApplicationController do
-    include Concerns::ValidationConcern
+    include ValidationConcern
   end
 
   let(:user) { create(:user) }

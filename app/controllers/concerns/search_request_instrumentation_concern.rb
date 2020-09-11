@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::SearchRequestInstrumentationConcern
+module SearchRequestInstrumentationConcern
   extend ActiveSupport::Concern
 
   # Don't use #prepend_before_action to prevent the extra processing from being included

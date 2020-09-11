@@ -34,7 +34,7 @@ class User < ApplicationRecord
 
   has_many :visits, class_name: 'Ahoy::Visit'
 
-  include Concerns::CredentialsApi
+  include CredentialsApi
 
   def remember_created_at=(_)
   end

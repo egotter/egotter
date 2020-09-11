@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::AirbrakeConcern
+module AirbrakeConcern
   extend ActiveSupport::Concern
 
   def notify_airbrake(*args)

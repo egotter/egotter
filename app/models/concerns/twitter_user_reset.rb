@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUserReset
+module TwitterUserReset
   extend ActiveSupport::Concern
 
   class_methods do

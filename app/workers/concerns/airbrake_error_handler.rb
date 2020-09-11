@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::AirbrakeErrorHandler
+module AirbrakeErrorHandler
   extend ActiveSupport::Concern
 
   class_methods do

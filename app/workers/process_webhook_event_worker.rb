@@ -2,7 +2,7 @@ require 'digest/md5'
 
 class ProcessWebhookEventWorker
   include Sidekiq::Worker
-  include Concerns::PeriodicReportConcern
+  include PeriodicReportConcern
   sidekiq_options queue: 'webhook', retry: 0, backtrace: false
 
   def unique_key(event, options = {})

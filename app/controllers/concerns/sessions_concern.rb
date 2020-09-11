@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::SessionsConcern
+module SessionsConcern
   extend ActiveSupport::Concern
 
   included do

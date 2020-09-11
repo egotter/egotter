@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::JobQueueingConcern
+module JobQueueingConcern
   extend ActiveSupport::Concern
 
   def enqueue_create_twitter_user_job_if_needed(uid, user_id:, force: false)

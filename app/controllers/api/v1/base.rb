@@ -1,7 +1,7 @@
 module Api
   module V1
     class Base < ApplicationController
-      include Concerns::ApiRequestConcern
+      include ApiRequestConcern
 
       before_action { self.access_log_disabled = true }
 

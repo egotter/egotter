@@ -1,5 +1,5 @@
 class ClustersController < ApplicationController
-  include Concerns::SearchRequestConcern
+  include SearchRequestConcern
 
   def new
     @title = t('clusters.new.plain_title')

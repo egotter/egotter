@@ -24,19 +24,19 @@
 #
 
 class TwitterUser < ApplicationRecord
-  include Concerns::TwitterUserAssociations
-  include Concerns::TwitterUserAssociationBuilder
-  include Concerns::TwitterUserCalculator
-  include Concerns::TwitterUserProfile
-  include Concerns::TwitterUserValidation
-  include Concerns::TwitterUserBuilder
-  include Concerns::TwitterUserQueryMethods
-  include Concerns::TwitterUserUtils
-  include Concerns::TwitterUserApi
-  include Concerns::TwitterUserMultiplePeopleApi
-  include Concerns::TwitterUserDirty
-  include Concerns::TwitterUserPersistence
-  include Concerns::TwitterUserReset
+  include TwitterUserAssociations
+  include TwitterUserAssociationBuilder
+  include TwitterUserCalculator
+  include TwitterUserProfile
+  include TwitterUserValidation
+  include TwitterUserBuilder
+  include TwitterUserQueryMethods
+  include TwitterUserUtils
+  include TwitterUserApi
+  include TwitterUserMultiplePeopleApi
+  include TwitterUserDirty
+  include TwitterUserPersistence
+  include TwitterUserReset
 
   def to_param
     screen_name

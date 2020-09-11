@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::DebugConcern
+module DebugConcern
   extend ActiveSupport::Concern
 
   def request_details

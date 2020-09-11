@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::Logging do
-  let(:klass) { Class.new.extend(Concerns::Logging) }
+RSpec.describe Logging do
+  let(:klass) { Class.new.extend(Logging) }
   let(:referers) { %w(http://t.co/aaa http://egotter.com) }
 
   describe '#find_referral' do

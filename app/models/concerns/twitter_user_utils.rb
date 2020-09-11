@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUserUtils
+module TwitterUserUtils
   extend ActiveSupport::Concern
 
   # Reason1: too many friends

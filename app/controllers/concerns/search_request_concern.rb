@@ -1,9 +1,9 @@
 require 'active_support/concern'
 
-module Concerns::SearchRequestConcern
+module SearchRequestConcern
   extend ActiveSupport::Concern
-  include Concerns::ValidationConcern
-  include Concerns::SearchRequestInstrumentationConcern
+  include ValidationConcern
+  include SearchRequestInstrumentationConcern
 
   included do
     before_action(only: :show) { head :forbidden if twitter_dm_crawler? }

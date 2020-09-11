@@ -1,8 +1,8 @@
 require 'active_support/concern'
 
-module Concerns::SearchHistoriesConcern
+module SearchHistoriesConcern
   extend ActiveSupport::Concern
-  include Concerns::SessionsConcern
+  include SessionsConcern
 
   included do
   end

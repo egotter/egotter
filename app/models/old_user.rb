@@ -24,5 +24,5 @@ class OldUser < ApplicationRecord
 
   scope :authorized, -> { where(authorized: true) }
 
-  include Concerns::CredentialsApi
+  include CredentialsApi
 end

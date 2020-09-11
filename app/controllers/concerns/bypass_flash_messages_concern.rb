@@ -1,8 +1,8 @@
 require 'active_support/concern'
 
-module Concerns::BypassFlashMessagesConcern
+module BypassFlashMessagesConcern
   extend ActiveSupport::Concern
-  include Concerns::AlertMessagesConcern
+  include AlertMessagesConcern
 
   included do
     before_action do

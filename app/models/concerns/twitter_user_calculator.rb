@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUserCalculator
+module TwitterUserCalculator
   extend ActiveSupport::Concern
 
   included do

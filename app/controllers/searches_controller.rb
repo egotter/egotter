@@ -1,7 +1,7 @@
 class SearchesController < ApplicationController
-  include Concerns::JobQueueingConcern
-  include Concerns::SanitizationConcern
-  include Concerns::SearchHistoriesConcern
+  include JobQueueingConcern
+  include SanitizationConcern
+  include SearchHistoriesConcern
   include PathsHelper
 
   before_action :reject_crawler

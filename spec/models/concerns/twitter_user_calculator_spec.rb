@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::TwitterUserCalculator do
+RSpec.describe TwitterUserCalculator do
   let(:twitter_user) { create(:twitter_user, with_relations: false) }
   let(:friend_uids) { [1, 2, 3] }
   let(:follower_uids) { [2, 3, 4] }

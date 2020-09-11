@@ -1,18 +1,18 @@
 class ApplicationController < ActionController::Base
-  include Concerns::AirbrakeConcern
-  include Concerns::SearchCountLimitationConcern
+  include AirbrakeConcern
+  include SearchCountLimitationConcern
   include ApplicationHelper
-  include Concerns::InternalServerErrorHandler
-  include Concerns::RoutingErrorHandler
-  include Concerns::TwitterErrorHandler
-  include Concerns::ApiClientConcern
-  include Concerns::UsersConcern
-  include Concerns::TwitterUsersConcern
+  include InternalServerErrorHandler
+  include RoutingErrorHandler
+  include TwitterErrorHandler
+  include ApiClientConcern
+  include UsersConcern
+  include TwitterUsersConcern
   include CrawlersHelper
-  include Concerns::SessionsConcern
-  include Concerns::ValidationConcern
-  include Concerns::BypassFlashMessagesConcern
-  include Concerns::Logging
+  include SessionsConcern
+  include ValidationConcern
+  include BypassFlashMessagesConcern
+  include Logging
 
   skip_before_action :track_ahoy_visit, if: -> { apache_bench? }
 

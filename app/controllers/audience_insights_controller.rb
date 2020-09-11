@@ -1,5 +1,5 @@
 class AudienceInsightsController < ApplicationController
-  include Concerns::SearchRequestConcern
+  include SearchRequestConcern
 
   before_action(only: :show) do
     unless set_insight

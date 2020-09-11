@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUserBuilder
+module TwitterUserBuilder
   extend ActiveSupport::Concern
 
   class_methods do
@@ -17,7 +17,7 @@ module Concerns::TwitterUserBuilder
     private
 
     def filter_save_keys(user)
-      user.symbolize_keys.slice(*Concerns::TwitterUserProfile::SAVE_KEYS).to_json
+      user.symbolize_keys.slice(*TwitterUserProfile::SAVE_KEYS).to_json
     end
   end
 end

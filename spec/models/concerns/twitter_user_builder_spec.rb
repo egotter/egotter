@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::TwitterUserBuilder do
+RSpec.describe TwitterUserBuilder do
   describe '.build_by' do
     let(:user) do
       {

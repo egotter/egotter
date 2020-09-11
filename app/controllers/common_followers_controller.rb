@@ -1,5 +1,5 @@
 class CommonFollowersController < ApplicationController
-  include Concerns::SearchRequestConcern
+  include SearchRequestConcern
 
   before_action(only: :show) { require_login! }
   before_action(only: :show) { twitter_user_persisted?(current_user.uid) }

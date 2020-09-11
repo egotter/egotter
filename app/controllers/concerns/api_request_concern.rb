@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::ApiRequestConcern
+module ApiRequestConcern
   extend ActiveSupport::Concern
 
   included do

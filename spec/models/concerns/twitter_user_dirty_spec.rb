@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Concerns::TwitterUserDirty do
+RSpec.describe TwitterUserDirty do
   let(:friend_uids) { [1, 2, 3, 4, 5].shuffle }
   let(:friends_count) { friend_uids.size }
   let(:follower_uids) { [1, 2, 3, 4, 5, 6, 7, 8, 9].shuffle }

@@ -1,5 +1,5 @@
 class FollowersController < ApplicationController
-  include Concerns::SearchRequestConcern
+  include SearchRequestConcern
 
   def show
     @active_tab = 1

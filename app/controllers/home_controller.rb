@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  include Concerns::JobQueueingConcern
+  include JobQueueingConcern
 
   def new
     enqueue_update_authorized

@@ -1,6 +1,6 @@
 class CreatePeriodicReportWorker
   include Sidekiq::Worker
-  include Concerns::AirbrakeErrorHandler
+  include AirbrakeErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})

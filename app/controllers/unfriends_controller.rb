@@ -1,6 +1,6 @@
 class UnfriendsController < ApplicationController
-  include Concerns::SearchRequestConcern
-  include Concerns::JobQueueingConcern
+  include SearchRequestConcern
+  include JobQueueingConcern
 
   def new
   end

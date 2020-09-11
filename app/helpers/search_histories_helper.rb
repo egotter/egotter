@@ -1,5 +1,5 @@
 module SearchHistoriesHelper
-  include Concerns::SessionsConcern
+  include SessionsConcern
 
   def current_search_histories(limit: 10)
     return [] if from_crawler?

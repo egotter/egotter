@@ -1,6 +1,6 @@
 class SendReceivedMessageWorker
   include Sidekiq::Worker
-  include Concerns::AirbrakeErrorHandler
+  include AirbrakeErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   # options:
@@ -31,11 +31,11 @@ class SendReceivedMessageWorker
         text == I18n.t('quick_replies.prompt_reports.label3') ||
         text == I18n.t('quick_replies.prompt_reports.label4') ||
         text == I18n.t('quick_replies.prompt_reports.label5') ||
-        text.match?(Concerns::PeriodicReportConcern::SEND_NOW_REGEXP) ||
-        text.match?(Concerns::PeriodicReportConcern::STOP_NOW_REGEXP) ||
-        text.match?(Concerns::PeriodicReportConcern::RESTART_REGEXP) ||
-        text.match?(Concerns::PeriodicReportConcern::RECEIVED_REGEXP) ||
-        text.match?(Concerns::PeriodicReportConcern::CONTINUE_EXACT_REGEXP) ||
+        text.match?(PeriodicReportConcern::SEND_NOW_REGEXP) ||
+        text.match?(PeriodicReportConcern::STOP_NOW_REGEXP) ||
+        text.match?(PeriodicReportConcern::RESTART_REGEXP) ||
+        text.match?(PeriodicReportConcern::RECEIVED_REGEXP) ||
+        text.match?(PeriodicReportConcern::CONTINUE_EXACT_REGEXP) ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
         text.match?(/\Aリムられ通知(\s|　)*(送信|受信|継続|今すぐ)?\z/) ||
         text == 'リムられ' ||

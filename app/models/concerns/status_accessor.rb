@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::StatusAccessor
+module StatusAccessor
   extend ActiveSupport::Concern
 
   # https://dev.twitter.com/overview/api/tweets

@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::LogRunnable
+module LogRunnable
   extend ActiveSupport::Concern
 
   class_methods do

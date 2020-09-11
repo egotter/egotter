@@ -1,8 +1,8 @@
 require 'active_support/concern'
 
-module Concerns::ValidationConcern
+module ValidationConcern
   extend ActiveSupport::Concern
-  include Concerns::AlertMessagesConcern
+  include AlertMessagesConcern
   include PathsHelper
   include SearchHistoriesHelper
 

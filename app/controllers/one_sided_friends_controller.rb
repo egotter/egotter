@@ -1,5 +1,5 @@
 class OneSidedFriendsController < ApplicationController
-  include Concerns::SearchRequestConcern
+  include SearchRequestConcern
 
   def new
   end

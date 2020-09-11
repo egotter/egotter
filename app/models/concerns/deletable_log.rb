@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::DeletableLog
+module DeletableLog
   extend ActiveSupport::Concern
 
   class_methods do

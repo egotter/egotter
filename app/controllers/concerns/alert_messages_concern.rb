@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::AlertMessagesConcern
+module AlertMessagesConcern
   extend ActiveSupport::Concern
   include PathsHelper
 

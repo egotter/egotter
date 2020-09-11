@@ -19,8 +19,8 @@
 #
 
 class SearchReport < ApplicationRecord
-  include Concerns::HasToken
-  include Concerns::Readable
+  include HasToken
+  include Readable
 
   belongs_to :user
 

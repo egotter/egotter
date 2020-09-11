@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUserQueryMethods
+module TwitterUserQueryMethods
   extend ActiveSupport::Concern
 
   DEFAULT_TIMESTAMP_DELAY = 3.seconds

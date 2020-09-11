@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::PeriodicReportConcern
+module PeriodicReportConcern
   extend ActiveSupport::Concern
 
   SEND_NOW_REGEXP = /【?(リム(られ)?通知)?(\s|　)*(今すぐ|いますぐ)(送信|そうしん|受信|じゅしん|痩身|通知|返信|配信|はいしん|更新|こうしん)】?/

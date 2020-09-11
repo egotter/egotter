@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-describe Concerns::PeriodicReportConcern, type: :controller do
+describe PeriodicReportConcern, type: :controller do
   controller ApplicationController do
-    include Concerns::PeriodicReportConcern
+    include PeriodicReportConcern
   end
 
   let(:user) { create(:user) }

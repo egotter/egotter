@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUserDirty
+module TwitterUserDirty
   extend ActiveSupport::Concern
 
   class_methods do
