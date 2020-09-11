@@ -34,8 +34,7 @@ class User < ApplicationRecord
 
   has_many :visits, class_name: 'Ahoy::Visit'
 
-  include Concerns::ApiClient::Api
-  include Concerns::User::Purchases
+  include Concerns::CredentialsApi
   include Concerns::TwitterUser::Inflections
 
   def remember_created_at=(_)
@@ -249,5 +248,17 @@ class User < ApplicationRecord
   def continuous_sign_in?(ignore_today = true)
     (ignore_today || access_days.where(date: Time.zone.now.in_time_zone('Tokyo').to_date).exists?) &&
         access_days.where(date: 1.day.ago.in_time_zone('Tokyo').to_date).exists?
+  end
+
+  def has_valid_subscription?
+    orders.unexpired.any?
+  end
+
+  def purchased_plan_name
+    orders.unexpired.last.short_name
+  end
+
+  def purchased_search_count
+    orders.unexpired.last.search_count
   end
 end

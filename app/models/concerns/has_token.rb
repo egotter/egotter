@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::Report::HasToken
+module Concerns::HasToken
   extend ActiveSupport::Concern
 
   class_methods do

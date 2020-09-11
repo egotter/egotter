@@ -19,7 +19,7 @@
 #
 
 class FollowRequest < ApplicationRecord
-  include Concerns::FollowRequest::Runnable
+  include Concerns::FollowRequestRunnable
 
   has_many :logs, primary_key: :id, foreign_key: :request_id, class_name: 'CreateFollowLog'
 

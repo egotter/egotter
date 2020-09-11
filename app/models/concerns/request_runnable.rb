@@ -1,9 +1,14 @@
 require 'active_support/concern'
 
-module Concerns::FollowRequest::Runnable
+module Concerns::RequestRunnable
   extend ActiveSupport::Concern
 
   class_methods do
+  end
+
+  included do
+    scope :finished, -> {where.not(finished_at: nil)}
+    scope :not_finished, -> {where(finished_at: nil)}
   end
 
   def finished!

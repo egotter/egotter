@@ -19,9 +19,8 @@
 #
 
 class SearchReport < ApplicationRecord
-  include Concerns::Report::HasToken
-  include Concerns::Report::HasDirectMessage
-  include Concerns::Report::Readable
+  include Concerns::HasToken
+  include Concerns::Readable
 
   belongs_to :user
 

@@ -21,8 +21,8 @@
 #
 
 class PeriodicReport < ApplicationRecord
-  include Concerns::Report::HasToken
-  include Concerns::Report::Readable
+  include Concerns::HasToken
+  include Concerns::Readable
 
   belongs_to :user
 

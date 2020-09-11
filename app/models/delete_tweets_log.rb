@@ -21,7 +21,7 @@
 #
 
 class DeleteTweetsLog < ApplicationRecord
-  include Concerns::Log::Runnable
+  include Concerns::LogRunnable
 
   before_validation do
     if self.error_message

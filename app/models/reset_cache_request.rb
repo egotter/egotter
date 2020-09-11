@@ -16,7 +16,7 @@
 #
 
 class ResetCacheRequest < ApplicationRecord
-  include Concerns::Request::Runnable
+  include Concerns::RequestRunnable
   belongs_to :user
 
   validates :session_id, presence: true

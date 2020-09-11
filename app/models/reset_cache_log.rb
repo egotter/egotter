@@ -20,5 +20,5 @@
 #
 
 class ResetCacheLog < ApplicationRecord
-  include Concerns::Log::Runnable
+  include Concerns::LogRunnable
 end

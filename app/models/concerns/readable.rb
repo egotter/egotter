@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::Report::Readable
+module Concerns::Readable
   extend ActiveSupport::Concern
 
   class_methods do
