@@ -14,10 +14,10 @@ namespace :servers do
     }
     begin
       Tasks::TaskBuilder.build(params).run
-      SlackClient.deploy.send_message("Succeeded params=#{params.inspect}") rescue nil
+      SlackClient.deploy.send_message("Succeeded task=#{task.name} params=#{params.inspect}") rescue nil
     rescue => e
-      logger.warn "adjust task failed params=#{params.inspect} exception=#{e.inspect}"
-      SlackClient.deploy.send_message("Failed params=#{params.inspect}") rescue nil
+      logger.warn "adjust task failed task=#{task.name} params=#{params.inspect} exception=#{e.inspect}"
+      SlackClient.deploy.send_message("Failed task=#{task.name} params=#{params.inspect}") rescue nil
     end
 
     params = {
@@ -27,10 +27,10 @@ namespace :servers do
     }
     begin
       Tasks::TaskBuilder.build(params).run
-      SlackClient.deploy.send_message("Succeeded params=#{params.inspect}") rescue nil
+      SlackClient.deploy.send_message("Succeeded task=#{task.name} params=#{params.inspect}") rescue nil
     rescue => e
-      logger.warn "launch task failed params=#{params.inspect} exception=#{e.inspect}"
-      SlackClient.deploy.send_message("Failed params=#{params.inspect}") rescue nil
+      logger.warn "launch task failed task=#{task.name} params=#{params.inspect} exception=#{e.inspect}"
+      SlackClient.deploy.send_message("Failed task=#{task.name} params=#{params.inspect}") rescue nil
     end
 
     logger.info "#{task.name} finished"
@@ -51,10 +51,10 @@ namespace :servers do
     }
     begin
       Tasks::TaskBuilder.build(params).run
-      SlackClient.deploy.send_message("Succeeded params=#{params.inspect}") rescue nil
+      SlackClient.deploy.send_message("Succeeded task=#{task.name} params=#{params.inspect}") rescue nil
     rescue => e
-      logger.warn "adjust task failed params=#{params.inspect} exception=#{e.inspect}"
-      SlackClient.deploy.send_message("Failed params=#{params.inspect}") rescue nil
+      logger.warn "adjust task failed task=#{task.name} params=#{params.inspect} exception=#{e.inspect}"
+      SlackClient.deploy.send_message("Failed task=#{task.name} params=#{params.inspect}") rescue nil
     end
 
     params = {
@@ -64,10 +64,10 @@ namespace :servers do
     }
     begin
       Tasks::TaskBuilder.build(params).run
-      SlackClient.deploy.send_message("Succeeded params=#{params.inspect}") rescue nil
+      SlackClient.deploy.send_message("Succeeded task=#{task.name} params=#{params.inspect}") rescue nil
     rescue => e
-      logger.warn "launch task failed params=#{params.inspect} exception=#{e.inspect}"
-      SlackClient.deploy.send_message("Failed params=#{params.inspect}") rescue nil
+      logger.warn "launch task failed task=#{task.name} params=#{params.inspect} exception=#{e.inspect}"
+      SlackClient.deploy.send_message("Failed task=#{task.name} params=#{params.inspect}") rescue nil
     end
 
     logger.info "#{task.name} finished"
