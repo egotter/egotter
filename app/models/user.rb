@@ -35,7 +35,6 @@ class User < ApplicationRecord
   has_many :visits, class_name: 'Ahoy::Visit'
 
   include Concerns::CredentialsApi
-  include Concerns::TwitterUser::Inflections
 
   def remember_created_at=(_)
   end

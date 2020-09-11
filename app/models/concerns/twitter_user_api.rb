@@ -51,6 +51,7 @@ module Concerns::TwitterUserApi
     0.0
   end
 
+  # TODO Remove later
   def conversations(other)
     statuses1 = status_tweets.select { |status| status.mention_to?(other.mention_name) }
     statuses2 = other.status_tweets.select { |status| status.mention_to?(mention_name) }

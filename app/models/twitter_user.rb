@@ -29,7 +29,6 @@ class TwitterUser < ApplicationRecord
   include Concerns::TwitterUserCalculator
   include Concerns::TwitterUserProfile
   include Concerns::TwitterUserValidation
-  include Concerns::TwitterUser::Inflections
   include Concerns::TwitterUserBuilder
   include Concerns::TwitterUserQueryMethods
   include Concerns::TwitterUserUtils

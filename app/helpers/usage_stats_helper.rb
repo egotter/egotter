@@ -32,7 +32,7 @@ module UsageStatsHelper
         end
       end
 
-    t('searches.usage_stats.usage_time', user: tu.mention_name, total: total, avg: avg, level: level, url: usage_stat_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_time', user: tu.screen_name, total: total, avg: avg, level: level, url: usage_stat_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{stats.inspect} #{tu.inspect}"
     ''

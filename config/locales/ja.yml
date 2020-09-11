@@ -66,7 +66,7 @@ ja:
       name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
       description: "%{user} の曜日や時間帯ごとのツイート数、リプライやハッシュタグの割合を表示します。"
-      usage_time: ".%{user} は、1日%{avg}、1週間で%{total}をツイッターに使っています。%{level} #egotter %{url}"
+      usage_time: ".@%{user} は、1日%{avg}、1週間で%{total}をツイッターに使っています。%{level} #egotter %{url}"
       usage_level:
         first: "一般人です。ツイッターにまだあまり慣れていないみたいです。"
         second: "一般人です。ほどほどにツイッターを使っているようです。"
@@ -160,7 +160,7 @@ ja:
       navbar_title: '@%{user} の分析'
       page_title: "@%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
       directory_page_title: "@%{user} の分析"
-      crumb_title: "%{user} の分析"
+      crumb_title: "@%{user} の分析"
       heading: "@%{user} の分析結果"
       meta_description: "えごったーなら全部無料！ @%{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'

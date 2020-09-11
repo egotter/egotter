@@ -13,7 +13,7 @@ crumb :pricing do |screen_name|
 end
 
 crumb :timeline do |screen_name|
-  link t('timelines.show.crumb_title', user: mention_name(screen_name)), timeline_path(screen_name: screen_name, via: current_via('breadcrumb_timeline'))
+  link t('timelines.show.crumb_title', user: screen_name), timeline_path(screen_name: screen_name, via: current_via('breadcrumb_timeline'))
   parent :root
 end
 
