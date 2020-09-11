@@ -2,12 +2,19 @@ require 'redis'
 require 'hiredis'
 
 class Redis
+  def info_cache
+    @info_cache ||= info
+  end
   def used_memory
-    info['used_memory_rss_human']
+    info_cache['used_memory_rss_human']
   end
 
   def used_memory_peak
-    info['used_memory_peak_human']
+    info_cache['used_memory_peak_human']
+  end
+
+  def total_memory
+    info_cache['total_system_memory_human']
   end
 
   HOST = ENV['REDIS_HOST']

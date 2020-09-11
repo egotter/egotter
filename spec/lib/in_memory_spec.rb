@@ -7,16 +7,6 @@ RSpec.describe InMemory do
     it { is_expected.to eq('specified hostname') }
   end
 
-  describe '.used_memory' do
-    subject { described_class.used_memory }
-    it { is_expected.to be_truthy }
-  end
-
-  describe '.used_memory_peak' do
-    subject { described_class.used_memory_peak }
-    it { is_expected.to be_truthy }
-  end
-
   describe '.enabled?' do
     it { expect(described_class.enabled?).to be_truthy }
   end

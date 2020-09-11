@@ -26,17 +26,13 @@ class AppStat
   end
 
   class RedisStat
-    def initialize
-      @stats = [
-          ['Base', Redis.client],
-          ['InMemory', InMemory],
-          ['ApiCache', ApiClient::CacheStore.redis_client]
-      ].map { |name, obj| [name, "#{obj.used_memory} / #{obj.used_memory_peak}"] }
-    end
-
     def to_s
-      @stats.map do |name, value|
-        "#{name} #{value}"
+      [
+          ['Base', Redis.client],
+          ['InMemory', InMemory.redis_instance],
+          ['ApiCache', ApiClient::CacheStore.redis_client]
+      ].map do |name, client|
+        "#{name} #{client.used_memory} / #{client.used_memory_peak} / #{client.total_memory}"
       end.join("\n")
     end
   end

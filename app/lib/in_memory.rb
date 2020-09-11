@@ -12,14 +12,6 @@ module InMemory
     Redis.client(redis_hostname)
   end
 
-  def used_memory
-    redis_instance.used_memory
-  end
-
-  def used_memory_peak
-    redis_instance.used_memory_peak
-  end
-
   def enabled?
     ENV['DISABLE_IN_MEMORY_RESOURCES'] != '1'
   end
