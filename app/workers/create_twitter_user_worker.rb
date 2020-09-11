@@ -24,6 +24,14 @@ class CreateTwitterUserWorker
     ExpiredCreateTwitterUserWorker.perform_async(request_id, options)
   end
 
+  def timeout_in
+    1.minute
+  end
+
+  def after_timeout(request_id, options = {})
+    logger.warn "The job of #{self.class} timed out request_id=#{request_id} options=#{options.inspect}"
+  end
+
   # options:
   #   requested_by
   #   session_id
