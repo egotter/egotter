@@ -19,7 +19,7 @@
 #
 
 class Bot < ApplicationRecord
-  include Concerns::User::ApiAccess
+  include Concerns::ApiClient::Api
 
   class << self
     def current_ids

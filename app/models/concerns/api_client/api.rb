@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::User::ApiAccess
+module Concerns::ApiClient::Api
   extend ActiveSupport::Concern
 
   class_methods do
@@ -32,6 +32,10 @@ module Concerns::User::ApiAccess
 
     def resources
       @status[:resources]
+    end
+
+    def context
+      @status[:rate_limit_context]
     end
 
     def verify_credentials

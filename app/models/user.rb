@@ -34,7 +34,7 @@ class User < ApplicationRecord
 
   has_many :visits, class_name: 'Ahoy::Visit'
 
-  include Concerns::User::ApiAccess
+  include Concerns::ApiClient::Api
   include Concerns::User::Purchases
   include Concerns::TwitterUser::Inflections
 
