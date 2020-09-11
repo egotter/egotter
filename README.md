@@ -1,115 +1,34 @@
 # egotter
 
-[![Build Status](https://travis-ci.org/egotter/egotter.svg?branch=master)](https://travis-ci.org/egotter/egotter) [![Test Coverage](https://api.codeclimate.com/v1/badges/acce8cc6a3fe1964c307/test_coverage)](https://codeclimate.com/github/egotter/egotter/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/acce8cc6a3fe1964c307/maintainability)](https://codeclimate.com/github/egotter/egotter/maintainability)
-
-![Screenshot](docs/screenshot_pc.png)
-
-![Screenshot](docs/screenshot_mobile.png)
-
-## Screenshots
-
-### Desktop
+[![Build Status](https://travis-ci.org/egotter/egotter.svg?branch=master)](https://travis-ci.org/egotter/egotter) [![Maintainability](https://api.codeclimate.com/v1/badges/acce8cc6a3fe1964c307/maintainability)](https://codeclimate.com/github/egotter/egotter/maintainability)
 
 <table>
     <tr>
-        <td>Top page</td>
-        <td>Result page</td>
-    </tr>
-    <tr>
-        <td><img src="docs/001_top_page_desktop.png" width="300" height="324"></td>
-        <td><img src="docs/002_result_page_desktop.png" width="300" height="645"></td>
+        <td><img src="docs/screenshot_mobile.png"></td>
+        <td><img src="docs/screenshot_pc.png"></td>
     </tr>
 </table>
-
-### Mobile
-
-<table>
-    <tr>
-        <td>Top page</td>
-        <td>Result page</td>
-    </tr>
-    <tr>
-        <td><img src="docs/003_top_page_mobile.png" width="300" height="1181"></td>
-        <td><img src="docs/004_result_page_mobile.png" width="300" height="1629"></td>
-    </tr>
-</table>
-
-## Architecture
-
-![Server architecture](docs/architecture.png)
 
 ## Design
 
-### HomeController#new
+### Controller
 
-Display a top page.
+- HomeController
+- SearchesController
+- TimelinesController
 
-In routes.rb:
+# Model
 
-```ruby
-root 'home#new'
-```
+- User
+- TwitterUser
 
-### SearchesController#create
+# Worker
 
-Create a new search result.
+- CreateTwitterUserWorker
 
-If search results which someone created before exists,
-the user will be redirected to `TimelinesController#show` to see existing data.
-On this page the browser will periodically check new search result with ajax polling.
+# Request
 
-If any search results don't exist, the user will be redirected to
-`SearchesController#waiting` and the browser will periodically check first search result.
-
-### WaitingController#new
-
-### TimelinesController#show
-
-## Server Components
-
-### Nginx
-
-[/etc/nginx/nginx.conf](setup/etc/nginx/nginx.conf)
-
-### MySQL on RDS
-### Rails
-### Puma
-
-[config/puma.rb](config/puma.rb)
-
-[/etc/init.d/puma](setup/etc/init.d/puma)
-
-### Redis
-
-[/etc/redis.conf](setup/etc/redis.conf)
-
-[config/initializers/redis.rb](config/initializers/redis.rb)
-
-### Sidekiq
-
-[/etc/init.d/sidekiq_base](setup/etc/init.d/sidekiq_base)
-
-[/etc/init.d/sidekiq](setup/etc/init.d/sidekiq)
-
-[config/initializers/sidekiq.rb](config/initializers/sidekiq.rb)
-
-### td-agent
-
-[/etc/td-agent/td-agent.conf.web](setup/etc/td-agent/td-agent.conf.web)
-
-[/etc/td-agent/td-agent.conf.sidekiq](setup/etc/td-agent/td-agent.conf.sidekiq)
-
-### Monit
-
-[/etc/monit.conf](setup/etc/monit.conf)
-
-## Setup
-
-Read `setup/install_egotter.sh`
-
-```bash
-/etc/init.d/egotter start
-```
+- CreateTwitterUserRequest
 
 ## License
 
