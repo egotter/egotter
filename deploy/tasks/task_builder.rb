@@ -10,6 +10,8 @@ module Tasks
     module_function
 
     def build(params)
+      params = params.dup
+
       case
       when params['release']
         build_release_task(params)
