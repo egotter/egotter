@@ -40,22 +40,32 @@ class CloseFriendsOgImage < ApplicationRecord
     OG_IMAGE_HEART = 'public/og_image/heart_300x350.svg'
     OG_IMAGE_FONT = 'public/og_image/azukiP.ttf'
 
-    class << self
-      def generate(twitter_user, friends, &block)
-        text = I18n.t('og_image_text.close_friends', user: twitter_user.screen_name, friend1: friends[0][:screen_name], friend2: friends[1][:screen_name], friend3: friends[2][:screen_name])
-        outfile = outfile_path(twitter_user.uid)
-        heart = generate_heart_image(friends)
+    def initialize(twitter_user)
+      @outfile = self.class.outfile_path(twitter_user.uid)
+      @twitter_user = twitter_user
+    end
 
-        begin
-          generate_image(text, heart, outfile)
-          yield(outfile)
-        ensure
-          File.delete(outfile) if File.exist?(outfile)
-        end
+    def generate(friends, &block)
+      text = I18n.t('og_image_text.close_friends', user: @twitter_user.screen_name, friend1: friends[0][:screen_name], friend2: friends[1][:screen_name], friend3: friends[2][:screen_name])
+      heart = self.class.generate_heart_image(friends)
+
+      begin
+        self.class.generate_image(text, heart, @outfile)
+        yield(@outfile)
+      ensure
+        delete_outfile
       end
+    end
 
+    def delete_outfile
+      File.delete(@outfile) if File.exist?(@outfile)
+    end
+
+    private
+
+    class << self
       def outfile_path(uid)
-        "public/og_image/close_friends_og_image.#{uid}.#{Process.pid}.#{Thread.current.object_id.to_s(36)}.png"
+        "public/og_image/close_friends_og_image.#{uid}.#{Date.today}.#{Process.pid}.#{Thread.current.object_id.to_s(36)}.png"
       end
 
       def generate_heart_image(users)

@@ -18,6 +18,10 @@ class CreateCloseFriendsOgImageWorker
     1.minute
   end
 
+  def after_timeout
+    @image_generator&.delete_outfile
+  end
+
   # options:
   #   uids
   def perform(uid, options = {})
@@ -37,7 +41,8 @@ class CreateCloseFriendsOgImageWorker
 
     return if friends.size < 3
 
-    CloseFriendsOgImage::Generator.generate(twitter_user, friends) do |file|
+    @image_generator = CloseFriendsOgImage::Generator.new(twitter_user)
+    @image_generator.generate(friends) do |file|
       image = CloseFriendsOgImage.find_or_initialize_by(uid: uid)
       image.image.purge if image.image.attached?
       image.image.attach(io: File.open(file), filename: File.basename(file))
