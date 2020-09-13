@@ -10,12 +10,4 @@ class GlobalSendDirectMessageFromEgotterCount < ::Egotter::AsyncSortedSet
   def increment
     add(Time.zone.now.to_f)
   end
-
-  def soft_limited?
-    size > 900
-  end
-
-  def hard_limited?
-    size > 1000
-  end
 end
