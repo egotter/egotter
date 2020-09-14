@@ -27,11 +27,19 @@ class SlackClient
       deploy:                      ENV['SLACK_DEPLOY_URL'],
   }
 
+  class << self
+    URLS.keys.each do |name, url|
+      define_method(name) do |*args, &blk|
+        new(webhook: url)
+      end
+    end
+  end
+
   def initialize(webhook:)
     @webhook = webhook
   end
 
-  def send_message(text, title: nil)
+  def send_message(text, title: nil, retries: 3)
     text = format(text) if text.is_a?(Hash)
     text = "#{title}\n#{text}" if title
 
@@ -45,7 +53,18 @@ class SlackClient
     req['User-Agent'] = 'egotter'
     req.body = {text: text}.to_json
     https.start { https.request(req) }.body
+  rescue Net::ReadTimeout => e
+    if (retries -= 1) >= 0
+      retry
+    else
+      raise RetryExhausted.new(e.message)
+    end
   end
+
+  class RetryExhausted < StandardError
+  end
+
+  private
 
   def format(hash)
     text =
@@ -59,13 +78,5 @@ class SlackClient
         end
 
     "```\n" + text + "\n```"
-  end
-
-  class << self
-    URLS.keys.each do |method|
-      define_method(method) do |*args, &blk|
-        new(webhook: URLS[method])
-      end
-    end
   end
 end

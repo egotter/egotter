@@ -18,16 +18,9 @@ class CreateWelcomeMessageWorker
     begin
       WelcomeMessage.welcome(user.id).deliver!
     rescue => e
-      send_message_to_slack("#{e.inspect}", title: user_id)
-      raise
+      SendMessageToSlackWorker.perform_async(:welcome_messages, e.inspect, user_id)
     end
   rescue => e
-    logger.info "sending welcome message is faield #{e.inspect} user_id=#{user_id}"
-  end
-
-  def send_message_to_slack(text, title: nil)
-    SlackClient.welcome_messages.send_message(text, title: "`#{title}`")
-  rescue => e
-    logger.warn "Sending a message to slack is failed #{e.inspect}"
+    logger.info "#{e.inspect} user_id=#{user_id}"
   end
 end
