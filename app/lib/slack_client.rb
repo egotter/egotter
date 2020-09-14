@@ -28,7 +28,7 @@ class SlackClient
   }
 
   class << self
-    URLS.keys.each do |name, url|
+    URLS.each do |name, url|
       define_method(name) do |*args, &blk|
         new(webhook: url)
       end
