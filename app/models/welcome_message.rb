@@ -28,6 +28,10 @@ class WelcomeMessage < ApplicationRecord
     if self.message
       self.message = self.message.truncate(180)
     end
+
+    def not_classified(user_id)
+      new(user_id: user_id, token: generate_token)
+    end
   end
 
   class << self

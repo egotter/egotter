@@ -160,6 +160,17 @@ describe PeriodicReportConcern, type: :controller do
     end
   end
 
+  describe '#not_classified_message_received?' do
+    let(:dm) { double('dm', sender_id: user.uid) }
+    subject { controller.send(:not_classified_message_received?, dm) }
+
+    it do
+      expect(GlobalNotClassifiedDirectMessageReceivedFlag).to receive_message_chain(:new, :exists?).
+          with(dm.sender_id).and_return(false)
+      is_expected.to be_truthy
+    end
+  end
+
   describe '#enqueue_user_requested_periodic_report' do
     shared_context 'find_by returns user' do
       before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
@@ -266,6 +277,22 @@ describe PeriodicReportConcern, type: :controller do
         expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
         subject
       end
+    end
+  end
+
+  describe '#enqueue_not_classified_message' do
+    let(:user) { create(:user) }
+    let(:dm) { double('dm', sender_id: user.uid) }
+    subject { controller.send(:enqueue_not_classified_message, dm) }
+
+    before do
+      allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user)
+    end
+
+    it do
+      expect(GlobalNotClassifiedDirectMessageReceivedFlag).to receive_message_chain(:new, :add).with(dm.sender_id)
+      expect(CreateWelcomeMessageWorker).to receive(:perform_async).with(user.id, not_classified: true)
+      subject
     end
   end
 

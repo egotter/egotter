@@ -69,6 +69,10 @@ module PeriodicReportConcern
     dm.text.match?(RECEIVED_REGEXP)
   end
 
+  def not_classified_message_received?(dm)
+    !GlobalNotClassifiedDirectMessageReceivedFlag.new.exists?(dm.sender_id)
+  end
+
   def enqueue_user_requested_periodic_report(dm, fuzzy: false)
     unless (user = User.find_by(uid: dm.sender_id))
       CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.sender_id)
@@ -102,6 +106,15 @@ module PeriodicReportConcern
       CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
     end
 
+  rescue => e
+    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
+  end
+
+  def enqueue_not_classified_message(dm)
+    if (user = User.find_by(uid: dm.sender_id)) && user.authorized?
+      GlobalNotClassifiedDirectMessageReceivedFlag.new.add(dm.sender_id)
+      CreateWelcomeMessageWorker.perform_async(user.id, not_classified: true)
+    end
   rescue => e
     logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
   end

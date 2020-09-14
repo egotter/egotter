@@ -74,6 +74,8 @@ class ProcessWebhookEventWorker
       enqueue_user_requested_stopping_periodic_report(dm)
     elsif report_received?(dm)
       enqueue_user_received_periodic_report(dm)
+    elsif not_classified_message_received?(dm)
+      enqueue_not_classified_message(dm)
     else
       logger.info { "#{__method__} dm is ignored #{dm.text}" }
     end

@@ -11,12 +11,17 @@ class CreateWelcomeMessageWorker
   end
 
   # options:
+  #   not_classified
   def perform(user_id, options = {})
     user = User.find(user_id)
     return unless user.authorized?
 
     begin
-      WelcomeMessage.welcome(user.id).deliver!
+      if options['not_classified']
+        WelcomeMessage.not_classified(user.id).deliver!
+      else
+        WelcomeMessage.welcome(user.id).deliver!
+      end
     rescue => e
       send_message_to_slack("#{e.inspect}", title: user_id)
       raise

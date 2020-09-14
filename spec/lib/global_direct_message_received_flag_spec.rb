@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe GlobalDirectMessageReceivedFlag, type: :model do
+RSpec.describe GlobalNotClassifiedDirectMessageReceivedFlag, type: :model do
   let(:instance) { described_class.new }
 
   describe '#key' do
     subject { instance.key }
-    it { is_expected.to eq("#{Rails.env}:GlobalDirectMessageReceivedFlag:86400:any_ids") }
+    it { is_expected.to eq("#{Rails.env}:GlobalNotClassifiedDirectMessageReceivedFlag:86400:any_ids") }
   end
 
   describe '#cleanup' do
