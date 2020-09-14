@@ -1,6 +1,5 @@
 class CreateWelcomeMessageWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -24,7 +23,6 @@ class CreateWelcomeMessageWorker
     end
   rescue => e
     logger.info "sending welcome message is faield #{e.inspect} user_id=#{user_id}"
-    notify_airbrake(e, user_id: user_id, options: options)
   end
 
   def send_message_to_slack(text, title: nil)

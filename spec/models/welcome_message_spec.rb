@@ -1,50 +1,43 @@
 require 'rails_helper'
 
 RSpec.describe WelcomeMessage, type: :model do
-  let(:user) { create(:user, with_settings: true) }
+  let(:user) { create(:user) }
+
+  before do
+    allow(User).to receive(:find).with(user.id).and_return(user)
+    allow(described_class).to receive(:generate_token).and_return('token')
+  end
 
   describe '.welcome' do
+    subject { described_class.welcome(user.id) }
+    before do
+      allow(described_class::WelcomeMessageBuilder).to receive_message_chain(:new, :build).
+          with(user, 'token').with(no_args).and_return('message')
+    end
     it do
-      expect(described_class).to receive(:new).with(user_id: user.id, token: /\w+/)
-      described_class.welcome(user.id)
+      expect(described_class).to receive(:new).with(user_id: user.id, token: 'token', message: 'message')
+      subject
+    end
+  end
+
+  describe '#set_prefix_message' do
+    let(:instance) { described_class.new }
+    subject { instance.set_prefix_message('text') }
+    it do
+      subject
+      expect(instance.instance_variable_get(:@prefix_message)).to eq('text')
     end
   end
 
   describe '#deliver!' do
-    let(:welcome_message) { build(:welcome_message, user: user) }
-    subject { welcome_message.deliver! }
-
-    it do
-      expect(welcome_message).to receive(:send_starting_message!)
-      expect(welcome_message).to receive(:send_success_message!).and_return('dm')
-      expect(welcome_message).not_to receive(:send_failed_message!)
-      expect { subject }.to change { CreateWelcomeMessageLog.all.size }.by(1)
-      expect(subject).to eq('dm')
-    end
-
-    context '#send_starting_message! raises an exception' do
-      let(:exception) { WelcomeMessage::StartingFailed.new("#{RuntimeError} failed") }
-      before { allow(welcome_message).to receive(:send_starting_message!).and_raise('failed') }
-      it do
-        expect { subject }.to raise_error(exception.class, exception.message)
-        expect(welcome_message.log).to satisfy do |log|
-          log.error_class == exception.class.to_s && log.error_message == exception.message
-        end
-      end
-    end
-  end
-
-  describe '#create_dm' do
     let(:instance) { described_class.new(user: user, token: 'token') }
-    let(:sender) { user }
-    let(:recipient) { double('recipient', uid: 1) }
-    let(:dm) { double('dm', id: 11, truncated_message: 'text') }
-    subject { instance.send(:create_dm, sender, recipient, 'text') }
+    subject { instance.deliver! }
+    before { allow(instance).to receive(:send_message!).and_return(double('dm', id: 1)) }
 
     it do
-      expect(sender).to receive_message_chain(:api_client, :create_direct_message_event).with(no_args).with(1, 'text').and_return(dm)
-      expect(instance).to receive(:update!).with(message_id: dm.id, message: 'text')
-      expect(subject).to eq(dm)
+      expect(instance).to receive(:send_starting_message!)
+      expect(instance).to receive(:send_message!)
+      subject
     end
   end
 
@@ -52,36 +45,53 @@ RSpec.describe WelcomeMessage, type: :model do
     let(:instance) { described_class.new(user: user, token: 'token') }
     subject { instance.send(:send_starting_message!) }
 
-    before { allow(User).to receive(:egotter).and_return('egotter_user') }
+    before do
+      allow(described_class::StartingMessageBuilder).to receive_message_chain(:new, :build).
+          with(user, 'token').with(no_args).and_return('message')
+    end
 
     it do
-      expect(described_class::StartingMessageBuilder).to receive_message_chain(:new, :build).with(user, 'token').with(no_args).and_return('text')
-      expect(instance).to receive(:create_dm).with(user, 'egotter_user', 'text')
+      expect(user).to receive_message_chain(:api_client, :create_direct_message_event).with(User::EGOTTER_UID, 'message')
       subject
     end
   end
 
-  describe '#send_success_message!' do
-    let(:instance) { described_class.new(user: user, token: 'token') }
-    subject { instance.send(:send_success_message!) }
+  describe '#send_message!' do
+    let(:instance) { described_class.new(user: user, token: 'token', message: 'message') }
+    subject { instance.send(:send_message!) }
+
+    before do
+      allow(described_class).to receive(:build_direct_message_event).with(user.uid, 'message').and_return('event')
+    end
 
     it do
-      expect(described_class::SuccessMessageBuilder).to receive_message_chain(:new, :build).with(user, 'token').with(no_args).and_return('text')
-      expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(no_args).with(no_args).with(event: anything)
+      expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(event: 'event')
       subject
     end
   end
 
-  describe '#send_failed_message!' do
-    let(:instance) { described_class.new(user: user, token: 'token') }
-    subject { instance.send(:send_failed_message!) }
+  describe '.build_direct_message_event' do
+    subject { described_class.build_direct_message_event(1, 'text') }
+    it { is_expected.to be_truthy }
+  end
+end
 
-    before { allow(User).to receive(:egotter).and_return('egotter_user') }
+RSpec.describe WelcomeMessage::StartingMessageBuilder, type: :model do
+  let(:user) { create(:user) }
+  let(:instance) { described_class.new(user, 'token') }
 
-    it do
-      expect(described_class::FailedMessageBuilder).to receive_message_chain(:new, :build).with(user, 'token').with(no_args).and_return('text')
-      expect(instance).to receive(:create_dm).with(user, 'egotter_user', 'text')
-      subject
-    end
+  describe '#build' do
+    subject { instance.build }
+    it { is_expected.to be_truthy }
+  end
+end
+
+RSpec.describe WelcomeMessage::WelcomeMessageBuilder, type: :model do
+  let(:user) { create(:user, with_settings: true) }
+  let(:instance) { described_class.new(user, 'token') }
+
+  describe '#build' do
+    subject { instance.build }
+    it { is_expected.to be_truthy }
   end
 end
