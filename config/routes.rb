@@ -22,7 +22,6 @@ Rails.application.routes.draw do
       get "follower_insights/locations_count", to: "follower_insights#locations_count"
       get "follower_insights/tweet_times", to: "follower_insights#tweet_times"
 
-      get "summary/summary", to: "summary#summary"
       get "timelines/profile", to: "timelines#profile"
       get "timelines/summary", to: "timelines#summary"
       get 'account_statuses', to: 'account_statuses#show'
