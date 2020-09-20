@@ -17,7 +17,7 @@ module Api
       end
 
       def profile
-        html = render_to_string(partial: 'twitter/profile', locals: {user: @twitter_user, always_expanded: true}, formats: [:html])
+        html = render_to_string(partial: 'twitter/profile', locals: {user: @twitter_user, always_expanded: params['expanded'] == 'true'}, formats: [:html])
         render json: {html: html}
       end
     end

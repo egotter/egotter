@@ -13,7 +13,7 @@
 
 = render partial: 'adsense/ad', locals: {vertical: :top}
 
-%div= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user}
+= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: true}
 
 %h2.h3.text-center.my-5= t('.heading', user: @twitter_user.screen_name)
 .my-3= t('.this_page_is_html', user: @twitter_user.screen_name)
