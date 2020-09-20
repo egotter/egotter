@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       get "follower_insights/tweet_times", to: "follower_insights#tweet_times"
 
       get "summary/summary", to: "summary#summary"
+      get "timelines/summary", to: "timelines#summary"
       get 'account_statuses', to: 'account_statuses#show'
 
       post 'users/update_instance_id', to: 'users#update_instance_id'

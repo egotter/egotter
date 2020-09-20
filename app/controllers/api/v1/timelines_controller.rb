@@ -1,7 +1,6 @@
-# TODO Remove later
 module Api
   module V1
-    class SummaryController < ApplicationController
+    class TimelinesController < ApplicationController
       include ApiRequestConcern
 
       before_action { self.access_log_disabled = true }

@@ -46,7 +46,7 @@
   }
 
   $(function () {
-    var url = '<%= api_v1_summary_summary_path(uid: twitter_user.uid) %>';
+    var url = '<%= api_v1_timelines_summary_path(uid: twitter_user.uid) %>';
     var names = <%= raw items.map(&:first).to_json %>;
     var parent = $('.summary-on-timeline');
 
