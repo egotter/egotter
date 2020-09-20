@@ -33,4 +33,8 @@ module UsersHelper
       @current_user_follower_uids = twitter_user.follower_uids
     end
   end
+
+  def current_user_icon
+    TwitterDB::User.find_by(uid: current_user&.uid)&.profile_image_url_https
+  end
 end

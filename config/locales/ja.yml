@@ -112,9 +112,10 @@ ja:
       redirection_modal:
         title: '@%{user} でログイン中です'
         body_html: |
-          @%{user} の分析結果へ移動しますか？<br>
+          <img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} の分析結果へ移動しますか？<br>
           <br>
-          設定ページは <a href="%{url}">こちら</a>
+          設定ページは <a href="%{url}">こちら</a><br>
+          アカウント切り替えは <a href="%{url2}">こちら</a>
     start:
       crumb_title: "えごったーの使い方"
       page_title: "えごったーの使い方"
