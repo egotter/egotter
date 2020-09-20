@@ -39,3 +39,4 @@ import "./timelines";
 import "./waiting";
 import "./bg_update";
 import "./heart";
+import "./announcement";

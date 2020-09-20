@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       get "timelines/profile", to: "timelines#profile"
       get "timelines/summary", to: "timelines#summary"
       get 'account_statuses', to: 'account_statuses#show'
+      get "announcements/list", to: "announcements#list"
 
       post 'users/update_instance_id', to: 'users#update_instance_id'
       post 'users/update_device_token', to: 'users#update_device_token'

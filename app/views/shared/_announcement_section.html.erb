@@ -1,0 +1,12 @@
+<div class="container">
+  <h2 class="h4 text-center"><%= t('shared.announcement.title') %></h2>
+  <table id="announcements-container" class="table table-bordered table-condensed mb-5">
+  </table>
+</div>
+
+<script>
+  $(function () {
+    var url = '<%= raw api_v1_announcements_list_path(via: current_via) %>';
+    new Announcement(url, 'announcements-container');
+  });
+</script>
