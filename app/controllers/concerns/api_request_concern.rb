@@ -6,8 +6,8 @@ module ApiRequestConcern
   included do
     layout false
 
-    # before_action -> { head :bad_request }, unless: -> { params[:token] }
     # skip_before_action :verify_authenticity_token
+    before_action { head :forbidden unless request.headers['HTTP_X_CSRF_TOKEN'] }
 
     before_action -> { valid_uid?(params[:uid]) }
     before_action -> { twitter_user_persisted?(params[:uid]) }

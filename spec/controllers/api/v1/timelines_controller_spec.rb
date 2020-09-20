@@ -4,6 +4,7 @@ RSpec.describe Api::V1::TimelinesController, type: :controller do
   let(:twitter_user) { create(:twitter_user) }
 
   before do
+    request.headers['HTTP_X_CSRF_TOKEN'] = 'token'
     allow(controller).to receive(:twitter_user_persisted?).with(any_args).and_return(true)
     allow(controller).to receive(:twitter_db_user_persisted?).with(any_args).and_return(true)
     allow(controller).to receive(:protected_search?).with(any_args).and_return(false)
