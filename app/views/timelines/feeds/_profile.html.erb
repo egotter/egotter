@@ -1,0 +1,21 @@
+<% via = current_via('profile_on_timeline') %>
+<div class="profile-on-timeline">
+  <div><%= t('.loading_html', user: twitter_user.screen_name) %></div>
+  <%= render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'} %>
+</div>
+
+<script>
+  $(function () {
+    var url = '<%= raw api_v1_timelines_profile_path(uid: twitter_user.uid, via: via) %>';
+    var message = '<%= t('.loading_error_html', user: twitter_user.screen_name) %>';
+
+    $.getJSON(url).done(function (res) {
+      console.log('profile', 'ok');
+      $('.profile-on-timeline').empty().html(res.html);
+    }).fail(function (xhr, textStatus, errorThrown) {
+      console.warn('profile', xhr.responseText);
+      $('.profile-on-timeline').empty().html(message);
+    });
+
+  });
+</script>

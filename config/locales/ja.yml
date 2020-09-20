@@ -182,6 +182,9 @@ ja:
         title: 'オーディエンス分析'
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
     feeds:
+      profile:
+        loading_html: '@%{user} のプロフィールを読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
+        loading_error_html: '@%{user} のプロフィール読み込みに失敗しました'
       summary:
         one_sided_friends: '片思いフォロー'
         one_sided_followers: '片思われフォロワー'

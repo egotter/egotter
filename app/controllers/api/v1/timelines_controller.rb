@@ -15,6 +15,11 @@ module Api
             blocking_or_blocked: @twitter_user.mutual_unfriendships.size
         }
       end
+
+      def profile
+        html = render_to_string(partial: 'twitter/profile', locals: {user: @twitter_user, always_expanded: true}, formats: [:html])
+        render json: {html: html}
+      end
     end
   end
 end
