@@ -74,7 +74,7 @@
 
   - unless under_maintenance?
     = render partial: 'layouts/footer'
-    = render partial: 'modal/search_modal'
+    = render partial: 'modal/search_modal' unless top_page?
 
     - if user_signed_in?
       = render partial: 'modal/create_follow_modal'
