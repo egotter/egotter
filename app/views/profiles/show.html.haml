@@ -28,7 +28,7 @@
     = t('.analyze', user: @screen_name)
 
 - if @user
-  .mb-3= render partial: 'twitter/profile', locals: {user: @user, always_expanded: true}
+  %div= feed_item :profile, twitter_user: @user
 
 - if @indicator_names
   - @indicator_names.each do |name|
