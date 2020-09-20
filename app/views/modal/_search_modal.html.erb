@@ -1,27 +1,5 @@
-<% via = current_via('search_modal') %>
-
-<% render_search_modal_start_time = Time.zone.now %>
 <%= modal_dialog id: 'search-modal', title: t('.title'), data: {url: search_histories_path}, size: 'modal-lg' do %>
-  <%= render partial: 'shared/search_form', locals: {via: via} %>
-  <div class="mt-1 mb-3 small">
-    <%= t('.remaining_count', count: @search_count_limitation.remaining_count) %>
-    <% btn_type = @search_count_limitation.count_remaining? ? 'btn-outline-primary' : 'btn-outline-warning' %>
-    <a href="#" class="btn <%= btn_type %> btn-sm" onclick="$('#increase-search-count').show('slow'); $(this).hide(); return false;"><%= t('.increase_count') %> <i class="far fa-question-circle"></i></a>
-  </div>
-
-  <div id="increase-search-count" class="mb-3" style="display: none;">
-    <%= render template: 'messages/ways_to_increase_searches', locals: {via: via} %>
-  </div>
-
-  <% unless @search_count_limitation.count_remaining? %>
-    <%= render template: 'messages/too_many_searches', locals: {via: 'too_many_searches_search_modal'}  %>
-  <% end %>
-
-  <h2 class="h4 text-center my-5"><%= t('.history') %></h2>
-  <div id="search-histories-users-container">
-    <%= t('.loading') %>
-    <%= image_tag('/ajax-loader-blue.gif?a=1') %>
-  </div>
+  <%= render partial: 'shared/search_form', locals: {via: current_via('search_modal')} %>
 <% end %>
 
 <script>
@@ -30,4 +8,3 @@
     new SearchModal('search-modal', message);
   });
 </script>
-<% logger.info "Benchmark RenderSearchModal total=#{Time.zone.now - render_search_modal_start_time}" %>

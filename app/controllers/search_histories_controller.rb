@@ -2,7 +2,8 @@
 class SearchHistoriesController < ApplicationController
   def new
     users = current_search_histories.map(&:twitter_db_user).compact
-    render json: {users: to_hash(users)}
+    modal_body = render_to_string(partial: 'modal/search_modal_body', formats: [:html])
+    render json: {users: to_hash(users), modal_body: modal_body}
   end
 
   private
