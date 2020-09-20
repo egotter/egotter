@@ -16,9 +16,17 @@
 
 class Announcement < ApplicationRecord
 
+  LIMIT = 12
+
   class << self
     def list
-      @list ||= Announcement.where(status: true).order(created_at: :desc).limit(12)
+      if instance_variable_defined?(:@list)
+        @list
+      else
+        records = Announcement.where(status: true).order(created_at: :desc).limit(LIMIT)
+        logger.debug { "Load #{records.size} announcements" }
+        @list = records
+      end
     end
   end
 end
