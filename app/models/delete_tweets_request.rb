@@ -182,13 +182,13 @@ class DeleteTweetsRequest < ApplicationRecord
       def finished_tweet(user)
         template = Rails.root.join('app/views/delete_tweets/finished_tweet.ja.text.erb')
         message = ERB.new(template.read).result_with_hash(
-            url: current_url('delete_tweets_finished_tweet'), kaomoji: Kaomoji.unhappy)
+            url: delete_tweets_url('delete_tweets_finished_tweet'), kaomoji: Kaomoji.unhappy)
         new(nil, nil, message)
       end
 
       def finished_message(user)
         template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
-        message = ERB.new(template.read).result_with_hash(url: current_url('delete_tweets_finished_dm'))
+        message = ERB.new(template.read).result_with_hash(url: delete_tweets_url('delete_tweets_finished_dm'))
         new(User.egotter, user, message)
       end
 
@@ -200,22 +200,14 @@ class DeleteTweetsRequest < ApplicationRecord
 
       def error_message(user)
         template = Rails.root.join('app/views/delete_tweets/not_finished.ja.text.erb')
-        message = ERB.new(template.read).result_with_hash(url: current_url('delete_tweets_error_dm'))
+        message = ERB.new(template.read).result_with_hash(url: delete_tweets_url('delete_tweets_error_dm'))
         new(User.egotter, user, message)
-      end
-
-      def current_url(via)
-        delete_tweets_url(via: via, og_tag: 'false')
       end
     end
 
     module UrlHelpers
-      def method_missing(method, *args, &block)
-        if method.to_s.end_with?('_url')
-          Rails.application.routes.url_helpers.send(method, *args, &block)
-        else
-          super
-        end
+      def delete_tweets_url(via)
+        Rails.application.routes.url_helpers.delete_tweets_url(via: via, og_tag: 'false')
       end
     end
     extend UrlHelpers
