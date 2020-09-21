@@ -1,6 +1,6 @@
 class DeleteTweetWorker
   include Sidekiq::Worker
-  sidekiq_options queue: 'deleting_high', retry: 0, backtrace: false
+  sidekiq_options queue: 'deleting_low', retry: 0, backtrace: false
 
   # options:
   #   request_id
