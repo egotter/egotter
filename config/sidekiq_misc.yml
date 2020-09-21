@@ -24,4 +24,6 @@
   - CreateEgotterRequestedPeriodicReportWorker
   - CreatePeriodicReportWorker
   - StartSendingPeriodicReportsWorker
+  - CreateHighPriorityTwitterDBUserWorker
+  - CreateTwitterDBUserWorker
   - rollbar
