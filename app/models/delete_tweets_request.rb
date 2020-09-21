@@ -8,6 +8,8 @@
 #  tweet         :boolean          default(FALSE), not null
 #  destroy_count :integer          default(0), not null
 #  finished_at   :datetime
+#  error_class   :string(191)      default(""), not null
+#  error_message :string(191)      default(""), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
@@ -17,10 +19,7 @@
 #  index_delete_tweets_requests_on_user_id     (user_id)
 #
 
-require 'parallel'
-
 class DeleteTweetsRequest < ApplicationRecord
-  include RequestRunnable
   belongs_to :user
   has_many :logs, -> { order(created_at: :desc) }, primary_key: :id, foreign_key: :request_id, class_name: 'DeleteTweetsLog'
 
@@ -29,11 +28,23 @@ class DeleteTweetsRequest < ApplicationRecord
 
   attr_reader :retry_in
 
-  TIMEOUT_SECONDS = 10
-  RETRY_INTERVAL = 10
+  FETCH_COUNT = 1000
 
-  FETCH_COUNT = 200
-  THREADS_NUM = 3
+  def finished!
+    if finished_at.nil?
+      update!(finished_at: Time.zone.now)
+      tweet_finished_message if tweet
+      send_finished_message
+    end
+  end
+
+  def finished?
+    !finished_at.nil?
+  end
+
+  def processing?
+    !finished? && created_at > 1.hour.ago
+  end
 
   def perform!
     @retries = 5
@@ -42,8 +53,6 @@ class DeleteTweetsRequest < ApplicationRecord
     tweets_exist!
     tweets = fetch_statuses!
     destroy_statuses!(tweets)
-
-    raise Continue.new(retry_in: RETRY_INTERVAL, destroy_count: @destroy_count)
   end
 
   def verify_credentials!
@@ -76,8 +85,8 @@ class DeleteTweetsRequest < ApplicationRecord
 
   def destroy_statuses!(tweets)
     @destroy_count = tweets.size
-    tweets.each.with_index do |tweet, i|
-      DeleteTweetWorker.perform_in(i * 2, user_id, tweet.id, request_id: id)
+    tweets.each do |tweet|
+      DeleteTweetWorker.perform_async(user_id, tweet.id, request_id: id, last_tweet: tweet == tweets.last)
     end
   end
 
@@ -88,8 +97,6 @@ class DeleteTweetsRequest < ApplicationRecord
 
     if e.class == Twitter::Error::TooManyRequests
       raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: @destroy_count)
-    elsif e.class == ::Timeout::Error
-      raise Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: @destroy_count)
     elsif AccountStatus.unauthorized?(e)
       raise InvalidToken.new(e.message)
     elsif ServiceStatus.retryable_error?(e)
@@ -102,7 +109,7 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def tweet_finished_message
-    api_client.update(Report.finished_tweet(user).message)
+    api_client.update(Report.finished_tweet(user, self).message)
   rescue => e
     raise FinishedTweetNotSent.new("#{e.class} #{e.message}")
   end
@@ -111,7 +118,7 @@ class DeleteTweetsRequest < ApplicationRecord
     report = Report.finished_message_from_user(user)
     report.deliver!
 
-    report = Report.finished_message(user)
+    report = Report.finished_message(user, self)
     report.deliver!
   rescue => e
     if !DirectMessageStatus.not_following_you?(e) &&
@@ -149,16 +156,18 @@ class DeleteTweetsRequest < ApplicationRecord
     end
 
     class << self
-      def finished_tweet(user)
+      def finished_tweet(user, request)
         template = Rails.root.join('app/views/delete_tweets/finished_tweet.ja.text.erb')
         message = ERB.new(template.read).result_with_hash(
+            destroy_count: request.destroy_count,
             url: delete_tweets_url('delete_tweets_finished_tweet'), kaomoji: Kaomoji.unhappy)
         new(nil, nil, message)
       end
 
-      def finished_message(user)
+      def finished_message(user, request)
         template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
         message = ERB.new(template.read).result_with_hash(
+            destroy_count: request.destroy_count,
             url: delete_tweets_url('delete_tweets_finished_dm'),
             mypage_url: delete_tweets_mypage_url('delete_tweets_finished_dm')
         )
@@ -210,13 +219,9 @@ class DeleteTweetsRequest < ApplicationRecord
 
   class TweetsNotFound < Error; end
 
-  class Timeout < RetryableError; end
-
   class TooManyRequests < RetryableError; end
 
   class Continue < RetryableError; end
-
-  class ConnectionResetByPeer < RetryableError; end
 
   class FinishedMessageNotSent < Error; end
 

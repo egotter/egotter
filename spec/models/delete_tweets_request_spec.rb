@@ -4,6 +4,18 @@ RSpec.describe DeleteTweetsRequest, type: :model do
   let(:user) { create(:user, authorized: true) }
   let(:request) { DeleteTweetsRequest.create(session_id: -1, user: user) }
 
+  describe '#finished!' do
+    subject { request.finished! }
+    it do
+      freeze_time do
+        expect(request).to receive(:update!).with(finished_at: Time.zone.now)
+        expect(request).not_to receive(:tweet_finished_message)
+        expect(request).to receive(:send_finished_message)
+        subject
+      end
+    end
+  end
+
   describe '#perform!' do
     let(:subject) { request.perform! }
 
@@ -12,7 +24,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       expect(request).to receive(:tweets_exist!)
       expect(request).to receive(:fetch_statuses!).and_return('tweets')
       expect(request).to receive(:destroy_statuses!).with('tweets')
-      expect { subject }.to raise_error(described_class::Continue)
+      subject
     end
   end
 
@@ -96,8 +108,8 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     subject { request.destroy_statuses!(tweets) }
 
     it do
-      tweets.each.with_index do |tweet, i|
-        expect(DeleteTweetWorker).to receive(:perform_in).with(i * 2, user.id, tweet.id, request_id: request.id)
+      tweets.each do |tweet|
+        expect(DeleteTweetWorker).to receive(:perform_async).with(user.id, tweet.id, request_id: request.id, last_tweet: tweet == tweets.last)
       end
       subject
     end
@@ -120,14 +132,15 @@ end
 
 RSpec.describe DeleteTweetsRequest::Report, type: :model do
   let(:user) { create(:user, authorized: true) }
+  let(:request) { DeleteTweetsRequest.create(session_id: -1, user: user) }
 
   describe '.finished_tweet' do
-    subject { described_class.finished_tweet(user) }
+    subject { described_class.finished_tweet(user, request) }
     it { is_expected.to be_truthy }
   end
 
   describe '.finished_message' do
-    subject { described_class.finished_message(user) }
+    subject { described_class.finished_message(user, request) }
     it { is_expected.to be_truthy }
   end
 

@@ -8,12 +8,7 @@ class DeleteTweetsWorker
   #   user_id
   def perform(request_id, options = {})
     request = DeleteTweetsRequest.find(request_id)
-    task = DeleteTweetsTask.new(request)
-    task.start!
-
-    if task.retry_in
-      DeleteTweetsWorker.perform_in(task.retry_in, request_id, options)
-    end
+    DeleteTweetsTask.new(request, options).start!
   rescue => e
     logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")

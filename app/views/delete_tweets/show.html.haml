@@ -15,11 +15,14 @@
   - else
     .btn.btn-danger{"data-target" => "##{modal_id}", "data-toggle" => "modal"}= t('.delete_tweets', user: current_user.screen_name)
 
-- if @logs&.any?
+- if @request
+  - req = DeleteTweetsRequestDecorator.new(@request)
   %h2.h4.text-center.my-5= t('.status.title')
   .text-center.mb-3= t('.status.description', user: @current_user.screen_name)
   %table.text-center.table.table-bordered.table-condensed
-    = render partial: 'log', collection: @logs, cached: true
+    %tr
+      %td= req.time
+      %td= req.message
 
 = render partial: 'delete_tweets/faq'
 

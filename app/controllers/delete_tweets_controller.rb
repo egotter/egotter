@@ -5,9 +5,8 @@ class DeleteTweetsController < ApplicationController
   end
 
   def show
-    requests = current_user.delete_tweets_requests
-    @logs = requests.any? ? requests.first.logs.take(50) : []
-    @processing = requests.where(created_at: 1.hour.ago..Time.zone.now).where(finished_at: nil).exists?
+    @request = current_user.delete_tweets_requests.order(created_at: :desc).first
+    @processing = @request && @request.processing?
 
     unless current_user.authorized?
       flash.now[:alert] = unauthorized_message(current_user.screen_name)

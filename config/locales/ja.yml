@@ -1336,6 +1336,11 @@ ja:
         confirmation_text: 'ツイートを全て削除'
         ok: "削除します"
         cancel: "いいえ"
+    message:
+      destroy_count: '%{count}件のツイートを削除しました。'
+      finished: '削除は完了しました。'
+      processing: '削除は継続中です。'
+      failed: 'エラーが起きました。一定時間後に再度お試しください。'
     log:
       errors:
         default_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'

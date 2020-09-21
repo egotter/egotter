@@ -1,16 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe DeleteTweetsWorker do
+  let(:user) { create(:user) }
+  let(:request) { create(:delete_tweets_request, user_id: user.id) }
   let(:worker) { described_class.new }
 
   describe '#perform' do
-    let(:user) { create(:user) }
-    let(:request) { DeleteTweetsRequest.create!(session_id: 'session_id', user_id: user.id) }
-    let(:task) { DeleteTweetsTask.new(request) }
     subject { worker.perform(request.id) }
-    before { allow(DeleteTweetsTask).to receive(:new).with(request).and_return(task) }
+    before { allow(DeleteTweetsRequest).to receive(:find).with(request.id).and_return(request) }
     it do
-      expect(task).to receive(:start!)
+      expect(DeleteTweetsTask).to receive_message_chain(:new, :start!).with(request, {}).with(no_args)
       subject
     end
   end

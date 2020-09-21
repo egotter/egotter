@@ -20,6 +20,7 @@
 #  index_delete_tweets_logs_on_created_at  (created_at)
 #
 
+# TODO Remove later
 class DeleteTweetsLog < ApplicationRecord
   include LogRunnable
 
