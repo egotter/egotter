@@ -188,7 +188,10 @@ class DeleteTweetsRequest < ApplicationRecord
 
       def finished_message(user)
         template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
-        message = ERB.new(template.read).result_with_hash(url: delete_tweets_url('delete_tweets_finished_dm'))
+        message = ERB.new(template.read).result_with_hash(
+            url: delete_tweets_url('delete_tweets_finished_dm'),
+            mypage_url: delete_tweets_mypage_url('delete_tweets_finished_dm')
+        )
         new(User.egotter, user, message)
       end
 
@@ -208,6 +211,10 @@ class DeleteTweetsRequest < ApplicationRecord
     module UrlHelpers
       def delete_tweets_url(via)
         Rails.application.routes.url_helpers.delete_tweets_url(via: via, og_tag: 'false')
+      end
+
+      def delete_tweets_mypage_url(via)
+        Rails.application.routes.url_helpers.delete_tweets_mypage_url(via: via, og_tag: 'false')
       end
     end
     extend UrlHelpers

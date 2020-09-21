@@ -5,11 +5,15 @@
 .text-center.my-5
   = image_tag '/egotter_trash_with_text_400x448.png', class: 'w-50', style: 'max-width: 200px;'
 
+.text-center.my-1= t('.warnings')[0]
+.text-center.my-1= t('.warnings')[1]
+.text-center.my-1= t('.warnings')[2]
+
 .text-center.my-5
   - if @processing
-    .btn.btn-danger.btn-lg.disabled= t('.requested')
+    .btn.btn-danger.disabled= t('.requested')
   - else
-    .btn.btn-danger.btn-lg{"data-target" => "##{modal_id}", "data-toggle" => "modal"}= t('.delete_tweets', user: current_user.screen_name)
+    .btn.btn-danger{"data-target" => "##{modal_id}", "data-toggle" => "modal"}= t('.delete_tweets', user: current_user.screen_name)
 
 - if @logs&.any?
   %h2.h4.text-center.my-5= t('.status.title')
@@ -20,9 +24,9 @@
 = render partial: 'delete_tweets/faq'
 
 = modal_dialog(id: modal_id, title: t('.modal.title'), button: {positive: t('.modal.ok'), category: 'danger'}) do
-  .mb-3= t('.modal.warning1', user: current_user.screen_name)
-  %strong.d-block.my-1= t('.modal.warning2')
-  %strong.d-block.mt-1.mb-3= t('.modal.warning3')
+  .mb-3= t('.modal.confirmation', user: current_user.screen_name)
+  %strong.d-block.my-1= t('.warnings')[0]
+  %strong.d-block.mt-1.mb-3= t('.warnings')[1]
   %div
     = check_box_tag('', '1', true, disabled: true)
     %label= t('.modal.dm_after_finishing')

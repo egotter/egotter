@@ -1,0 +1,29 @@
+<h2 class="h4 text-center my-5">ツイート削除のよくある質問</h2>
+
+<div id="download-full-archive">
+  <%= render partial: 'misc/q', locals: {text: '3200件よりも多いツイートを削除する方法はありますか？'} %>
+</div>
+<div class="mb-5">
+  あります。「全ツイート履歴」を用意すれば、全てのツイートを完全に削除することができます。<br>
+  <br>
+  1. <a href="https://twitter.com/settings/your_twitter_data" target="_blank">ツイッター設定 > アーカイブをダウンロード</a> から「全ツイート履歴」をダウンロードする<br>
+  <br>
+  2. ダウンロードした「全ツイート履歴」をアップロードする 例：<a href="https://gigafile.nu/" target="_blank">ギガファイル便</a><br>
+  <br>
+  3. アップロードしたURLを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> にDMする<br>
+  <br>
+  上記の手順を完了すれば、全てのツイートを削除できます。希望される方はお試しください。
+</div>
+
+<%= render partial: 'misc/q', locals: {text: 'ツイート削除は取り消しできますか？'} %>
+<div class="mb-5">取り消しできません。一度削除されたツイートを元に戻すことはできませんのでご注意ください。</div>
+
+<%= render partial: 'misc/q', locals: {text: 'ツイートの削除後もツイート総数が変化しないのはなぜですか？'} %>
+<div class="mb-5">ツイート削除後もツイート総数は変化しません。<br><br>例えば、100件のツイートがあるユーザーが全てのツイートを削除しても、ツイート数は100件と表示されたままになります。</div>
+
+<%= render partial: 'misc/q', locals: {text: '削除されたツイートが表示され続けるのはなぜですか？'} %>
+<div class="mb-5">ツイッターの仕様上、削除済みのツイートはしばらく表示され続けます。ページを更新したり、ツイッターにログインし直すとそれらの表示は更新されます。</div>
+
+<%= render partial: 'misc/q', locals: {text: '古いツイートが削除されないのはなぜですか？'} %>
+<div class="mb-5">ツイッターの仕様上、自動で削除できるのは3200件までです。<br><br>全てのツイートの削除を希望される方は、<a href="#download-full-archive">こちら</a> の手順をお試しください。</div>
+
