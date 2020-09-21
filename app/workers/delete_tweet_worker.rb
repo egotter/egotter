@@ -28,7 +28,7 @@ class DeleteTweetWorker
   rescue => e
     if ServiceStatus.retryable_error?(e)
       retry
-    elsif TweetStatus.no_status_found?(e)
+    elsif TweetStatus.no_status_found?(e) || TweetStatus.not_authorized?(e)
       # Do nothing
     else
       raise
