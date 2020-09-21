@@ -7,4 +7,9 @@ RSpec.describe TweetStatus, type: :model do
     it { is_expected.to be_truthy }
   end
 
+  describe '.not_authorized?' do
+    let(:ex) { Twitter::Error::Forbidden.new('Sorry, you are not authorized to see this status.') }
+    subject { described_class.not_authorized?(ex) }
+    it { is_expected.to be_truthy }
+  end
 end
