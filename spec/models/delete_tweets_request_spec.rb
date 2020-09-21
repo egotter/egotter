@@ -93,25 +93,12 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     let(:tweets) do
       [double('tweet', id: 1), double('tweet', id: 2)]
     end
-    let(:timeout) { described_class::TIMEOUT_SECONDS }
-    subject { request.destroy_statuses!(tweets, timeout: timeout) }
+    subject { request.destroy_statuses!(tweets) }
 
     it do
-      tweets.each { |tweet| expect(request).to receive(:destroy_status!).with(tweet.id) }
-      subject
-    end
-
-    context 'it runs out of time' do
-      let(:timeout) { 0 }
-      it { expect { subject }.to raise_error(described_class::Timeout) }
-    end
-  end
-
-  describe '#destroy_status!' do
-    let(:tweet_id) { 1 }
-    subject { request.destroy_status!(tweet_id) }
-    it do
-      expect(request).to receive_message_chain(:api_client, :destroy_status).with(tweet_id)
+      tweets.each.with_index do |tweet, i|
+        expect(DeleteTweetWorker).to receive(:perform_in).with(i * 2, user.id, tweet.id, request_id: request.id)
+      end
       subject
     end
   end

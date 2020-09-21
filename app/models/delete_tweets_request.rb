@@ -32,7 +32,7 @@ class DeleteTweetsRequest < ApplicationRecord
   TIMEOUT_SECONDS = 10
   RETRY_INTERVAL = 10
 
-  FETCH_COUNT = 100
+  FETCH_COUNT = 200
   THREADS_NUM = 3
 
   def perform!
@@ -74,42 +74,11 @@ class DeleteTweetsRequest < ApplicationRecord
     tweets
   end
 
-  def destroy_statuses!(tweets, timeout: TIMEOUT_SECONDS)
-    start = Time.zone.now
-
-    @destroy_count = 0
-    error = nil
-
-    Parallel.each(tweets, in_threads: THREADS_NUM) do |tweet|
-      if Time.zone.now - start > timeout
-        error = Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: @destroy_count)
-        raise Parallel::Break
-      end
-
-      begin
-        destroy_status!(tweet.id)
-      rescue => e
-        error = e
-        raise Parallel::Break
-      end
-
-      @destroy_count += 1
+  def destroy_statuses!(tweets)
+    @destroy_count = tweets.size
+    tweets.each.with_index do |tweet, i|
+      DeleteTweetWorker.perform_in(i * 2, user_id, tweet.id, request_id: id)
     end
-
-    if error
-      raise error
-    end
-
-  rescue => e
-    exception_handler(e)
-    @retries -= 1
-    retry
-  end
-
-  def destroy_status!(tweet_id)
-    api_client.destroy_status(tweet_id)
-  rescue => e
-    raise unless TweetStatus.no_status_found?(e)
   end
 
   def exception_handler(e)
