@@ -2,13 +2,14 @@
 #
 # Table name: delete_tweets_requests
 #
-#  id          :bigint(8)        not null, primary key
-#  session_id  :string(191)      not null
-#  user_id     :integer          not null
-#  tweet       :boolean          default(FALSE), not null
-#  finished_at :datetime
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id            :bigint(8)        not null, primary key
+#  session_id    :string(191)      not null
+#  user_id       :integer          not null
+#  tweet         :boolean          default(FALSE), not null
+#  destroy_count :integer          default(0), not null
+#  finished_at   :datetime
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #
 # Indexes
 #

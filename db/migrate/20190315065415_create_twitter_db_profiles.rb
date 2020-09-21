@@ -1,4 +1,4 @@
-class CreateTwitterDbProfiles < ActiveRecord::Migration[5.2]
+class CreateTwitterDBProfiles < ActiveRecord::Migration[5.2]
   def change
     create_table :twitter_db_profiles do |t|
       t.bigint   :uid,                     null: false

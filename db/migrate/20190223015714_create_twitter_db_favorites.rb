@@ -1,4 +1,4 @@
-class CreateTwitterDbFavorites < ActiveRecord::Migration[5.1]
+class CreateTwitterDBFavorites < ActiveRecord::Migration[5.1]
   def change
     # I decided not to compress this table for performance reasons.
     create_table :twitter_db_favorites do |t|

@@ -505,6 +505,7 @@ ActiveRecord::Schema.define(version: 2020_09_02_234247) do
     t.string "session_id", null: false
     t.integer "user_id", null: false
     t.boolean "tweet", default: false, null: false
+    t.integer "destroy_count", default: 0, null: false
     t.datetime "finished_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
