@@ -7,7 +7,7 @@ class SendDeleteTweetsNotFinishedWorker
   def perform(request_id, options = {})
     request = DeleteTweetsRequest.find(request_id)
     unless request.finished?
-      SlackClient.delete_tweets.send_message("Not finished request_id=#{request_id} user_id=#{request.user_id} log=#{request.logs.last&.inspect}")
+      SlackClient.delete_tweets.send_message("Not finished request=#{request}")
     end
   rescue => e
     logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
