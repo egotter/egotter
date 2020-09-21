@@ -27,7 +27,7 @@
 = render partial: 'delete_tweets/faq'
 
 = modal_dialog(id: modal_id, title: t('.modal.title'), button: {positive: t('.modal.ok'), category: 'danger'}) do
-  .mb-3= t('.modal.confirmation', user: current_user.screen_name)
+  .mb-3= t('.modal.confirmation_html', user: current_user.screen_name, icon: current_user_icon)
   %strong.d-block.my-1= t('.warnings')[0]
   %strong.d-block.mt-1.mb-3= t('.warnings')[1]
   %div

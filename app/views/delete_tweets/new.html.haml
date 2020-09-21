@@ -19,4 +19,6 @@
 = render partial: 'shared/announcement_section'
 
 - if show_redirection_modal?
-  = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: delete_tweets_mypage_path}
+  - url = sign_in_path(force_login: true, via: current_via('redirection_modal'), redirect_path: delete_tweets_path)
+  - modal_body = t('.redirection_modal.body_html', user: current_user.screen_name, icon: current_user_icon, url: url)
+  = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: modal_body, url: delete_tweets_mypage_path}

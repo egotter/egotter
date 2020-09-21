@@ -1314,7 +1314,10 @@ ja:
         <span class="egotter-pink">350万回</span>以上利用されたえごったーに新機能が登場！
       redirection_modal:
         title: '@%{user} でログイン中です'
-        body: '@%{user} のツイート削除マイページへ移動しますか？'
+        body_html: |
+          <img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイート削除マイページへ移動しますか？<br>
+          <br>
+          アカウント切り替えは <a href="%{url}">こちら</a>
     show:
       <<: *delete_tweets_new
       delete_tweets: '@%{user} のツイートを削除する'
@@ -1329,7 +1332,7 @@ ja:
         - '※削除後もツイート総数は変化しません。'
       modal:
         title: 'ツイート一括削除'
-        confirmation: "@%{user} のツイートをすべて削除します。本当に削除しますか？"
+        confirmation_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートをすべて削除します。本当に削除しますか？'
         dm_after_finishing: "削除の完了後に自分へDMする"
         tweet_after_finishing: "削除の完了後にツイートする"
         please_enter_confirmation_text: '「ツイートを全て削除」と入力してください'
