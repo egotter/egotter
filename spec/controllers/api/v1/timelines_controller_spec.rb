@@ -30,13 +30,22 @@ RSpec.describe Api::V1::TimelinesController, type: :controller do
   describe 'GET #profile' do
     render_views
 
-    before do
-      create(:twitter_db_user, uid: twitter_user.uid)
+    context 'user is found' do
+      before { create(:twitter_db_user, uid: twitter_user.uid) }
+
+      it do
+        get :profile, params: {uid: twitter_user.uid}
+        expect(JSON.parse(response.body).has_key?('html')).to be_truthy
+      end
+
     end
 
-    it do
-      get :profile, params: {uid: twitter_user.uid}
-      expect(JSON.parse(response.body).has_key?('html')).to be_truthy
+    context 'user is not found' do
+      it do
+        get :profile, params: {uid: twitter_user.uid}
+        expect(JSON.parse(response.body).has_key?('error')).to be_truthy
+      end
+
     end
   end
 end

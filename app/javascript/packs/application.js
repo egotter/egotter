@@ -40,3 +40,4 @@ import "./waiting";
 import "./bg_update";
 import "./heart";
 import "./announcement";
+import "./profile_loader";

@@ -17,9 +17,12 @@ module Api
       end
 
       def profile
-        user = TwitterDB::User.find_by(uid: params[:uid])
-        html = render_to_string(partial: 'twitter/profile', locals: {user: user, always_expanded: params['expanded'] == 'true'}, formats: [:html])
-        render json: {html: html}
+        if (user = TwitterDB::User.find_by(uid: params[:uid]))
+          html = render_to_string(partial: 'twitter/profile', locals: {user: user, always_expanded: params['expanded'] == 'true'}, formats: [:html])
+          render json: {html: html}
+        else
+          render json: {error: 'not found'}, status: :not_found
+        end
       end
     end
   end

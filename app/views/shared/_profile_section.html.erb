@@ -8,15 +8,7 @@
 <script>
   $(function () {
     var url = '<%= raw api_v1_timelines_profile_path(uid: twitter_user.uid, expanded: expanded, via: current_via('profile_on_timeline')) %>';
-    var message = '<%= t('.loading_error_html', user: twitter_user.screen_name) %>';
-
-    $.getJSON(url).done(function (res) {
-      console.log('profile', 'loaded');
-      $('.profile-on-timeline').empty().html(res.html);
-    }).fail(function (xhr, textStatus, errorThrown) {
-      console.warn('profile', xhr.responseText);
-      $('.profile-on-timeline').empty().html(message);
-    });
-
+    var errorMessage = '<%= t('.loading_error_html', user: twitter_user.screen_name) %>';
+    new ProfileLoader(url, '.profile-on-timeline', errorMessage);
   });
 </script>
