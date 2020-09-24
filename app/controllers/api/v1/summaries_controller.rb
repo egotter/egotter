@@ -4,8 +4,9 @@ module Api
 
       layout false
 
-      before_action { head :forbidden unless request.headers['HTTP_X_CSRF_TOKEN'] }
       before_action { self.access_log_disabled = true }
+      before_action { head :forbidden if twitter_dm_crawler? }
+      before_action { head :forbidden unless request.headers['HTTP_X_CSRF_TOKEN'] }
 
       before_action { valid_uid?(params[:uid]) }
       before_action { twitter_user_persisted?(params[:uid]) }
