@@ -61,7 +61,9 @@ module ValidationConcern
   end
 
   def twitter_db_user_persisted?(uid)
-    CreateHighPriorityTwitterDBUserWorker.perform_async([uid], user_id: current_user_id, enqueued_by: "#{controller_name}/#{action_name}/twitter_db_user_persisted?")
+    if !from_crawler? && user_signed_in?
+      CreateHighPriorityTwitterDBUserWorker.perform_async([uid], user_id: current_user_id, enqueued_by: "#{controller_name}/#{action_name}/twitter_db_user_persisted?")
+    end
     ::TwitterDB::User.exists?(uid: uid)
   end
 
