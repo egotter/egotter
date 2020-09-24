@@ -107,6 +107,38 @@ describe ValidationConcern, type: :controller do
     end
   end
 
+  describe '#twitter_user_persisted?' do
+    subject { controller.twitter_user_persisted?(1) }
+    before { allow(TwitterUser).to receive_message_chain(:with_delay, :exists?).with(uid: 1).and_return(true) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '#twitter_db_user_persisted?' do
+    subject { controller.twitter_db_user_persisted?(1) }
+    before do
+      allow(TwitterDB::User).to receive(:exists?).with(uid: 1).and_return(found)
+      allow(controller).to receive(:from_crawler?).and_return(false)
+      allow(controller).to receive(:user_signed_in?).and_return(true)
+      allow(controller).to receive(:current_user_id).and_return(1)
+    end
+
+    context 'user is found' do
+      let(:found) { true }
+      it do
+        expect(CreateTwitterDBUserWorker).to receive(:perform_async).with(any_args)
+        is_expected.to be_truthy
+      end
+    end
+
+    context 'user is not found' do
+      let(:found) { false }
+      it do
+        expect(CreateHighPriorityTwitterDBUserWorker).to receive(:perform_async).with(any_args)
+        is_expected.to be_falsey
+      end
+    end
+  end
+
   describe '#signed_in_user_authorized?' do
     subject { controller.signed_in_user_authorized? }
 
