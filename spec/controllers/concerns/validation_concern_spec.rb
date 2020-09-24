@@ -29,6 +29,84 @@ describe ValidationConcern, type: :controller do
     before { user.update(authorized: false) }
   end
 
+  describe '#require_login!' do
+    shared_context 'request is xhr' do
+      before { allow(controller.request).to receive(:xhr?).and_return(true) }
+    end
+
+    shared_context 'request is not xhr' do
+      before { allow(controller.request).to receive(:xhr?).and_return(false) }
+    end
+
+    subject { controller.require_login! }
+
+    context 'user is signed in' do
+      include_context 'user is signed in'
+      it { is_expected.to be_nil }
+    end
+
+    context 'user is not signed in and request is xhr' do
+      include_context 'user is not signed in'
+      include_context 'request is xhr'
+      before do
+        allow(controller).to receive(:kick_out_error_path).with(any_args).and_return('kick_out_error_path')
+      end
+      it do
+        expect(controller).to receive(:respond_with_error).with(:unauthorized, instance_of(String))
+        subject
+      end
+    end
+
+    context 'user is not signed in and request is not xhr' do
+      include_context 'user is not signed in'
+      include_context 'request is not xhr'
+      before do
+        allow(request).to receive(:fullpath).and_return('fullpath')
+        allow(controller).to receive(:sign_in_path).with(anything).and_return('sign_in_path')
+      end
+      it do
+        expect(controller).to receive(:create_error_log).with(any_args)
+        expect(controller).to receive(:render).with(hash_including(template: 'home/new', status: :unauthorized))
+        subject
+      end
+    end
+  end
+
+  describe '#require_admin!' do
+    shared_context 'user is admin' do
+      before { user.update(uid: User::ADMIN_UID) }
+    end
+
+    shared_context 'user is not admin' do
+      before { user.update(uid: User::ADMIN_UID + 1) }
+    end
+
+    subject { controller.require_admin! }
+
+    context 'user is not signed in' do
+      include_context 'user is not signed in'
+      it do
+        expect(controller).to receive(:respond_with_error).with(:unauthorized, instance_of(String))
+        subject
+      end
+    end
+
+    context 'user is signed in but is not admin' do
+      include_context 'user is signed in'
+      include_context 'user is not admin'
+      it do
+        expect(controller).to receive(:respond_with_error).with(:unauthorized, instance_of(String))
+        subject
+      end
+    end
+
+    context 'user is signed in and is admin' do
+      include_context 'user is signed in'
+      include_context 'user is admin'
+      it { is_expected.to be_nil }
+    end
+  end
+
   describe '#signed_in_user_authorized?' do
     subject { controller.signed_in_user_authorized? }
 
@@ -89,74 +167,88 @@ describe ValidationConcern, type: :controller do
   end
 
   describe '#not_found_screen_name?' do
-    shared_context 'screen_name is found' do
-      before do
-        allow(NotFoundUser).to receive(:exists?).with(anything).and_return(false)
-        allow(controller).to receive(:not_found_user?).with(screen_name).and_return(false)
-      end
-    end
-
-    shared_context 'screen_name is not found' do
-      before { allow(NotFoundUser).to receive(:exists?).with(anything).and_return(true) }
-    end
-
     let(:screen_name) { 'screen_name' }
-    subject { controller.not_found_screen_name? }
-
-    before do
-      allow(controller.params).to receive(:[]).with(:screen_name).and_return(screen_name)
-    end
+    subject { controller.not_found_screen_name?(screen_name) }
+    before { allow(NotFoundUser).to receive(:exists?).with(screen_name: screen_name).and_return(found) }
 
     context 'screen_name is found' do
-      include_context 'screen_name is found'
+      let(:found) { false }
       it { is_expected.to be_falsey }
     end
 
     context 'screen_name is not found' do
-      include_context 'screen_name is not found'
-      before do
-        allow(controller).to receive(:profile_path).with(anything).and_return('not_found_path')
-      end
+      let(:found) { true }
+      before { allow(controller).to receive(:profile_path).with(anything).and_return('path') }
       it do
-        expect(controller).to receive(:redirect_to).with('not_found_path')
+        expect(controller).to receive(:redirect_to).with('path')
+        is_expected.to be_truthy
+      end
+    end
+  end
+
+  describe '#not_found_user?' do
+    let(:screen_name) { 'screen_name' }
+    subject { controller.not_found_user?(screen_name) }
+    before do
+      allow(SearchRequestValidator).to receive_message_chain(:new, :not_found_user?).
+          with(anything).with(screen_name).and_return(found)
+    end
+
+    context 'screen_name is found' do
+      let(:found) { false }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'screen_name is not found' do
+      let(:found) { true }
+      before { allow(controller).to receive(:profile_path).with(anything).and_return('path') }
+      it do
+        expect(controller).to receive(:redirect_to).with('path')
         is_expected.to be_truthy
       end
     end
   end
 
   describe '#forbidden_screen_name?' do
-    shared_context 'screen_name is forbidden' do
-      before { allow(ForbiddenUser).to receive(:exists?).with(anything).and_return(true) }
-    end
-
-    shared_context 'screen_name is not forbidden' do
-      before do
-        allow(ForbiddenUser).to receive(:exists?).with(anything).and_return(false)
-        allow(controller).to receive(:forbidden_user?).with(screen_name).and_return(false)
-      end
-    end
-
     let(:screen_name) { 'screen_name' }
-    subject { controller.forbidden_screen_name? }
-
-    before do
-      allow(controller.params).to receive(:[]).with(:screen_name).and_return(screen_name)
-    end
+    subject { controller.forbidden_screen_name?(screen_name) }
+    before { allow(ForbiddenUser).to receive(:exists?).with(screen_name: screen_name).and_return(found) }
 
     context 'screen_name is forbidden' do
-      include_context 'screen_name is forbidden'
-      before do
-        allow(controller).to receive(:profile_path).with(anything).and_return('forbidden_path')
-      end
-      it do
-        expect(controller).to receive(:redirect_to).with('forbidden_path')
-        is_expected.to be_truthy
-      end
+      let(:found) { false }
+      it { is_expected.to be_falsey }
     end
 
     context 'screen_name is not forbidden' do
-      include_context 'screen_name is not forbidden'
+      let(:found) { true }
+      before { allow(controller).to receive(:profile_path).with(anything).and_return('path') }
+      it do
+        expect(controller).to receive(:redirect_to).with('path')
+        is_expected.to be_truthy
+      end
+    end
+  end
+
+  describe '#forbidden_user?' do
+    let(:screen_name) { 'screen_name' }
+    subject { controller.forbidden_user?(screen_name) }
+    before do
+      allow(SearchRequestValidator).to receive_message_chain(:new, :forbidden_user?).
+          with(anything).with(screen_name).and_return(found)
+    end
+
+    context 'screen_name is forbidden' do
+      let(:found) { false }
       it { is_expected.to be_falsey }
+    end
+
+    context 'screen_name is not forbidden' do
+      let(:found) { true }
+      before { allow(controller).to receive(:profile_path).with(anything).and_return('path') }
+      it do
+        expect(controller).to receive(:redirect_to).with('path')
+        is_expected.to be_truthy
+      end
     end
   end
 
@@ -286,84 +378,6 @@ describe ValidationConcern, type: :controller do
             with(nil).with(screen_name).and_return('result')
         is_expected.to eq('result')
       end
-    end
-  end
-
-  describe '#require_login!' do
-    shared_context 'request is xhr' do
-      before { allow(controller.request).to receive(:xhr?).and_return(true) }
-    end
-
-    shared_context 'request is not xhr' do
-      before { allow(controller.request).to receive(:xhr?).and_return(false) }
-    end
-
-    subject { controller.require_login! }
-
-    context 'user is signed in' do
-      include_context 'user is signed in'
-      it { is_expected.to be_nil }
-    end
-
-    context 'user is not signed in and request is xhr' do
-      include_context 'user is not signed in'
-      include_context 'request is xhr'
-      before do
-        allow(controller).to receive(:kick_out_error_path).with(any_args).and_return('kick_out_error_path')
-      end
-      it do
-        expect(controller).to receive(:respond_with_error).with(:unauthorized, instance_of(String))
-        subject
-      end
-    end
-
-    context 'user is not signed in and request is not xhr' do
-      include_context 'user is not signed in'
-      include_context 'request is not xhr'
-      before do
-        allow(request).to receive(:fullpath).and_return('fullpath')
-        allow(controller).to receive(:sign_in_path).with(anything).and_return('sign_in_path')
-      end
-      it do
-        expect(controller).to receive(:create_error_log).with(any_args)
-        expect(controller).to receive(:render).with(hash_including(template: 'home/new', status: :unauthorized))
-        subject
-      end
-    end
-  end
-
-  describe '#require_admin!' do
-    shared_context 'user is admin' do
-      before { user.update(uid: User::ADMIN_UID) }
-    end
-
-    shared_context 'user is not admin' do
-      before { user.update(uid: User::ADMIN_UID + 1) }
-    end
-
-    subject { controller.require_admin! }
-
-    context 'user is not signed in' do
-      include_context 'user is not signed in'
-      it do
-        expect(controller).to receive(:respond_with_error).with(:unauthorized, instance_of(String))
-        subject
-      end
-    end
-
-    context 'user is signed in but is not admin' do
-      include_context 'user is signed in'
-      include_context 'user is not admin'
-      it do
-        expect(controller).to receive(:respond_with_error).with(:unauthorized, instance_of(String))
-        subject
-      end
-    end
-
-    context 'user is signed in and is admin' do
-      include_context 'user is signed in'
-      include_context 'user is admin'
-      it { is_expected.to be_nil }
     end
   end
 

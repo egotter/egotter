@@ -110,11 +110,29 @@ module ValidationConcern
     end
   end
 
-  def forbidden_screen_name?
-    screen_name = params[:screen_name]
+  def not_found_screen_name?(screen_name)
+    if NotFoundUser.exists?(screen_name: screen_name)
+      redirect_to profile_path(screen_name: screen_name, via: current_via(__method__))
+      true
+    else
+      false
+    end
+  end
 
-    if ForbiddenUser.exists?(screen_name: screen_name) || forbidden_user?(screen_name)
-      redirect_to profile_path(screen_name: screen_name, via: current_via('forbidden_screen_name'))
+  # It is possible not to call Twitter API in this method only when accessing from crawlers,
+  # but since the same Twitter API is called in other places, it's a bit meaningless.
+  def not_found_user?(screen_name)
+    if SearchRequestValidator.new(current_user).not_found_user?(screen_name)
+      redirect_to profile_path(screen_name: screen_name, via: current_via(__method__))
+      true
+    else
+      false
+    end
+  end
+
+  def forbidden_screen_name?(screen_name)
+    if ForbiddenUser.exists?(screen_name: screen_name)
+      redirect_to profile_path(screen_name: screen_name, via: current_via(__method__))
       true
     else
       false
@@ -125,24 +143,12 @@ module ValidationConcern
   # but since the same Twitter API is called in other places, it's a bit meaningless.
   # NOTE: The temporarily suspended users ( user[:suspended] == true ) are not checked.
   def forbidden_user?(screen_name)
-    SearchRequestValidator.new(current_user).forbidden_user?(screen_name)
-  end
-
-  def not_found_screen_name?
-    screen_name = params[:screen_name]
-
-    if NotFoundUser.exists?(screen_name: screen_name) || not_found_user?(screen_name)
-      redirect_to profile_path(screen_name: screen_name, via: current_via('not_found_screen_name'))
+    if SearchRequestValidator.new(current_user).forbidden_user?(screen_name)
+      redirect_to profile_path(screen_name: screen_name, via: current_via(__method__))
       true
     else
       false
     end
-  end
-
-  # It is possible not to call Twitter API in this method only when accessing from crawlers,
-  # but since the same Twitter API is called in other places, it's a bit meaningless.
-  def not_found_user?(screen_name)
-    SearchRequestValidator.new(current_user).not_found_user?(screen_name)
   end
 
   def blocked_user?(screen_name)

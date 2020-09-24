@@ -15,7 +15,8 @@ module SearchRequestConcern
       @self_search = user_requested_self_search?
       logger.debug { "SearchRequestConcern #{controller_name}##{action_name} user_requested_self_search? returns #{@self_search}" }
     end
-    before_action(only: :show) { !@self_search && !not_found_screen_name? && !forbidden_screen_name? }
+    before_action(only: :show) { !@self_search && !not_found_screen_name?(params[:screen_name]) && !not_found_user?(params[:screen_name]) }
+    before_action(only: :show) { !@self_search && !forbidden_screen_name?(params[:screen_name]) && !forbidden_user?(params[:screen_name]) }
     before_action(only: :show) { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
     before_action(only: :show) { search_limitation_soft_limited?(@twitter_user) }
     before_action(only: :show) { !@self_search && !protected_search?(@twitter_user) }
