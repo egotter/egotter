@@ -6,7 +6,6 @@ RSpec.describe Api::V1::ProfilesController, type: :controller do
   before do
     request.headers['HTTP_X_CSRF_TOKEN'] = 'token'
     allow(controller).to receive(:valid_uid?).with(twitter_user.uid.to_s)
-    allow(controller).to receive(:twitter_db_user_persisted?).with(twitter_user.uid.to_s)
   end
 
   describe 'GET #show' do

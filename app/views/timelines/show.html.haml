@@ -20,7 +20,7 @@
 
 :javascript
   $(function () {
-    var url = '#{raw api_v1_timelines_show_path(uid: @twitter_user.uid)}';
+    var url = '#{raw api_v1_timelines_path(uid: @twitter_user.uid)}';
     var errorMessage = '#{t('.loading_error_html', user: @twitter_user.screen_name)}';
     $.getJSON(url).done(function (res) {
       console.log('timelines', 'loaded');

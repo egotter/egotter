@@ -8,7 +8,6 @@ module Api
       before_action { self.access_log_disabled = true }
 
       before_action { valid_uid?(params[:uid]) }
-      before_action { twitter_db_user_persisted?(params[:uid]) }
 
       def show
         if (user = TwitterDB::User.find_by(uid: params[:uid]))
