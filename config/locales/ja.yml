@@ -165,6 +165,7 @@ ja:
       heading: "@%{user} の分析結果"
       meta_description: "えごったーなら全部無料！ @%{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
+      loading_error_html: '@%{user} のプロフィール読み込みに失敗しました。お手数ですが再度お試しください。'
       reload_this_page: "ページを更新する"
       reinvestigate: "再度チェックする"
       sign_in_and_investigate: "ログインして分析する"

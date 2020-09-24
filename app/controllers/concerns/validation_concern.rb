@@ -64,7 +64,7 @@ module ValidationConcern
     result = ::TwitterDB::User.exists?(uid: uid)
 
     if !from_crawler? && user_signed_in?
-      args = [[uid], user_id: current_user_id, enqueued_by: "#{controller_name}/#{action_name}/twitter_db_user_persisted?"]
+      args = [[uid], user_id: current_user_id, enqueued_by: "#{controller_name}/#{action_name}/#{__method__}"]
       if result
         CreateTwitterDBUserWorker.perform_async(*args)
       else

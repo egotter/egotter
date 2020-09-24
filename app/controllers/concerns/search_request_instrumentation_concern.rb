@@ -25,7 +25,9 @@ module SearchRequestInstrumentationConcern
     enough_permission_level?
     valid_screen_name?
     not_found_screen_name?
+    not_found_user?
     forbidden_screen_name?
+    forbidden_user?
     build_twitter_user_by
     search_limitation_soft_limited?
     protected_search?

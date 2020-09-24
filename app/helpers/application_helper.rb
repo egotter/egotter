@@ -23,10 +23,6 @@ module ApplicationHelper
     controller_name == 'home' && action_name == 'start'
   end
 
-  def profile_api?
-    controller_name == 'timelines' && action_name == 'profile'
-  end
-
   def show_header?
     !top_page?
   end

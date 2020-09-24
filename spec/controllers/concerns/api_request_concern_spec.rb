@@ -24,19 +24,5 @@ describe ApiRequestConcern, type: :controller do
       expect(controller).to receive(:protected_search?)
       get :new, params: {uid: user.uid}
     end
-
-    context 'profile_api? returns true' do
-      before do
-        allow(controller).to receive(:profile_api?).exactly(3).times.and_return(true)
-      end
-
-      it do
-        expect(controller).to receive(:valid_uid?)
-        expect(controller).not_to receive(:twitter_user_persisted?)
-        expect(controller).to receive(:twitter_db_user_persisted?)
-        expect(controller).not_to receive(:protected_search?)
-        get :new, params: {uid: user.uid}
-      end
-    end
   end
 end

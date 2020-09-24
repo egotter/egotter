@@ -26,26 +26,4 @@ RSpec.describe Api::V1::TimelinesController, type: :controller do
       expect(JSON.parse(response.body)).to eq('one_sided_friends' => 1, 'one_sided_followers' => 2, 'mutual_friends' => 3, 'unfriends' => 4, 'unfollowers' => 5, 'blocking_or_blocked' => 6)
     end
   end
-
-  describe 'GET #profile' do
-    render_views
-
-    context 'user is found' do
-      before { create(:twitter_db_user, uid: twitter_user.uid) }
-
-      it do
-        get :profile, params: {uid: twitter_user.uid}
-        expect(JSON.parse(response.body).has_key?('html')).to be_truthy
-      end
-
-    end
-
-    context 'user is not found' do
-      it do
-        get :profile, params: {uid: twitter_user.uid}
-        expect(JSON.parse(response.body).has_key?('error')).to be_truthy
-      end
-
-    end
-  end
 end

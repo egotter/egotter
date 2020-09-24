@@ -7,7 +7,7 @@
 
 <script>
   $(function () {
-    var url = '<%= raw api_v1_timelines_profile_path(uid: twitter_user.uid, expanded: expanded, via: current_via('profile_on_timeline')) %>';
+    var url = '<%= raw api_v1_profiles_path(uid: twitter_user.uid, expanded: expanded, via: current_via('profile_on_timeline')) %>';
     var errorMessage = '<%= t('.loading_error_html', user: twitter_user.screen_name) %>';
     new ProfileLoader(url, '.profile-on-timeline', errorMessage);
   });
