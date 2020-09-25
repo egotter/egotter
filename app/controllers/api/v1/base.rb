@@ -10,10 +10,6 @@ module Api
       def summary
         uids, size = summary_uids
 
-        unless from_crawler?
-          CreateTwitterDBUserWorker.perform_async(uids, user_id: current_user_id, enqueued_by: 'Api::V1::Base summary')
-        end
-
         # This method makes the users unique.
         users = TwitterDB::User.where_and_order_by_field(uids: uids)
         users = users.map { |user| Hashie::Mash.new(to_summary_hash(user)) }

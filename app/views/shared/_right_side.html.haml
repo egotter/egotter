@@ -1,7 +1,8 @@
 - redirect_path ||= ''
 
 %h1.h3
-  = image_tag '/logo_96x96.png', size: '48x48', alt: header
+  = link_to root_path(via: current_via) do
+    = image_tag '/logo_96x96.png', size: '48x48', alt: header
   = header
 
 %h2.h5.my-4= subheader
