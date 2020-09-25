@@ -104,24 +104,9 @@ module TwitterDB
         private
 
         def where_and_order_by_field_each_slice(uids, inactive, caller_name = nil)
-          # result = where(uid: uids_array).sort_by {|user| uids_array.index(user.uid)}
-
           result = where(uid: uids)
           result = result.inactive_user if !inactive.nil? && inactive
-          result = result.order_by_field(uids).to_a
-
-          # if !inactive.nil? && inactive
-          #   enqueue_update_job(result.map(&:uid), caller_name)
-          # elsif uids.size != result.size
-          #   enqueue_update_job(uids - result.map(&:uid), caller_name)
-          # end
-          enqueue_update_job(uids, caller_name)
-
-          result
-        end
-
-        def enqueue_update_job(uids, caller_name = nil)
-          CreateTwitterDBUserWorker.compress_and_perform_async(uids, enqueued_by: "##{caller_name} > #where_and_order_by_field")
+          result.order_by_field(uids).to_a
         end
       end
 
