@@ -1,3 +1,5 @@
+require 'date'
+
 require_relative '../../app/models/cloud_watch_client'
 
 require_relative '../lib/deploy_ruby/logger'
@@ -66,7 +68,7 @@ module Tasks
 
       def append_to_ssh_config(id, host, public_ip)
         text = <<~"TEXT"
-          # #{id}
+          # #{Date.today} #{id}
           Host #{host}
             HostName     #{public_ip}
             IdentityFile ~/.ssh/egotter.pem
