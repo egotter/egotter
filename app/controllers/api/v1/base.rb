@@ -71,6 +71,10 @@ module Api
           }
         end
       end
+
+      def limit_for_api
+        user_signed_in? && current_user.has_valid_subscription? ? Order::BASIC_PLAN_USERS_LIMIT : Order::FREE_PLAN_USERS_LIMIT
+      end
     end
   end
 end

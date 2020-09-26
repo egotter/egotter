@@ -11,8 +11,7 @@ module Api
       end
 
       def list_users
-        limit = user_signed_in? && current_user.has_valid_subscription? ? Order::BASIC_PLAN_USERS_LIMIT : Order::FREE_PLAN_USERS_LIMIT
-        @twitter_user.one_sided_friends(limit: limit)
+        @twitter_user.one_sided_friends(limit: limit_for_api)
       end
     end
   end
