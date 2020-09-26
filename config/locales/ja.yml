@@ -834,8 +834,8 @@ ja:
     followers_html: "%{user} がフォローされているユーザーの一覧です。"
     unfriends_html: |
       「リムった」とは、フォローを解除した関係のことです。このページでは、%{user} がリムった（=フォローを解除した）ユーザーを見ることができます。
-      <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
-      <div id="hidden-page-description" style="display: none;">
+      <a class="text-right" style="display: block;" onclick="$('#%{tag_id}').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+      <div id="%{tag_id}" style="display: none;">
       <br>
       リムったユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
       %{user} のリムったユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
@@ -844,8 +844,8 @@ ja:
       </div>
     unfollowers_html: |
       「リムられ」とは、フォローを解除された関係のことです。このページでは、%{user} がリムられた（=フォローを解除された）ユーザーを見ることができます。
-      <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
-      <div id="hidden-page-description" style="display: none;">
+      <a class="text-right" style="display: block;" onclick="$('#%{tag_id}').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+      <div id="%{tag_id}" style="display: none;">
       <br>
       リムられたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
       %{user} のリムられたユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
@@ -854,8 +854,8 @@ ja:
       </div>
     blocking_or_blocked_html: |
       「ブロられ」とは、ブロックされた関係のことです。このページでは、%{user} がブロられた（=ブロックされた）ユーザーを見ることができます。
-      <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
-      <div id="hidden-page-description" style="display: none;">
+      <a class="text-right" style="display: block;" onclick="$('#%{tag_id}').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+      <div id="%{tag_id}" style="display: none;">
       <br>
       ブロックされたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
       %{user} のブロックされたユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
@@ -867,8 +867,8 @@ ja:
     one_sided_friends_html: |
       「片思い」とは、自分はフォローしているが、相手からはフォローされていない関係のことです。
       このページでは、@%{user} の片思い（=フォローだけしている）ユーザーを見ることができます。
-      <a class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $(this).hide(); return false;" href="#">続きを読む</a>
-      <div id="hidden-page-description" style="display: none;">
+      <a class="text-right" style="display: block;" onclick="$('#%{tag_id}').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+      <div id="%{tag_id}" style="display: none;">
         <br>
         <a href="%{url}">片思いチェック</a>を使うことで、@%{user} の片思いは集計されています。
         <a href="%{url}">片思いチェック</a>を使えば、@%{user} だけでなく他のユーザーの片思いを集計することもできます。

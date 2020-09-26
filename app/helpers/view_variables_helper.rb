@@ -112,8 +112,12 @@ module ViewVariablesHelper
     end
   end
 
-  def current_page_description(twitter_user)
-    values = {user: timeline_link(twitter_user), url: subroot_path}
+  def current_page_description(twitter_user, tag_id:)
+    values = {
+        user: timeline_link(twitter_user),
+        tag_id: tag_id,
+        url: subroot_path
+    }
 
     case controller_name
     when 'statuses'

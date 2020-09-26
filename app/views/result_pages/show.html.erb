@@ -17,7 +17,7 @@
 <%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false} %>
 
 <h2 class="h4 text-center my-5"><%= current_content_title(@twitter_user) %></h2>
-<div class="mb-5"><%= current_page_description(@twitter_user) %></div>
+<div class="mb-5"><%= render partial: 'shared/page_description', locals: {twitter_user: @twitter_user} %></div>
 
 <% if controller_name == 'close_friends' %>
   <div class="text-center my-3"><%= render partial: 'shared/heart', locals: {twitter_user: @twitter_user} %></div>

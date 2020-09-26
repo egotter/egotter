@@ -1,0 +1,9 @@
+<%= current_page_description(twitter_user, tag_id: 'hidden-page-description') %>
+<script>
+  $(function () {
+    var crawler =<%= from_crawler? %>;
+    if (crawler) {
+      $('#hidden-page-description').show();
+    }
+  });
+</script>
