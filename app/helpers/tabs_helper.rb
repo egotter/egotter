@@ -22,8 +22,8 @@ module TabsHelper
 
   def friends_tabs(user)
     [
-        Tab.new(t('tabs.friends'), user.friend_uids.size, friend_path(user)),
-        Tab.new(t('tabs.followers'), user.follower_uids.size, follower_path(user))
+        Tab.new(t('tabs.friends'), user.friend_uids.size, friend_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.followers'), user.follower_uids.size, follower_path(user, via: current_via('tab')))
     ]
   end
 
@@ -37,40 +37,40 @@ module TabsHelper
 
   def close_friends_tabs(user)
     [
-        Tab.new(t('tabs.close_friends'), user.close_friendships.size, close_friend_path(user)),
-        Tab.new(t('tabs.favorite_friends'), user.favorite_friendships.size, favorite_friend_path(user))
+        Tab.new(t('tabs.close_friends'), user.close_friendships.size, close_friend_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.favorite_friends'), user.favorite_friendships.size, favorite_friend_path(user, via: current_via('tab')))
     ]
   end
 
   def one_sided_friends_tabs(user)
     [
-        Tab.new(t('tabs.one_sided_friends'), user.one_sided_friendships.size, one_sided_friend_path(user)),
-        Tab.new(t('tabs.one_sided_followers'), user.one_sided_followerships.size, one_sided_follower_path(user)),
-        Tab.new(t('tabs.mutual_friends'), user.mutual_friendships.size, mutual_friend_path(user))
+        Tab.new(t('tabs.one_sided_friends'), user.one_sided_friendships.size, one_sided_friend_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.one_sided_followers'), user.one_sided_followerships.size, one_sided_follower_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.mutual_friends'), user.mutual_friendships.size, mutual_friend_path(user, via: current_via('tab')))
     ]
   end
 
   def inactive_friends_tabs(user)
     [
-        Tab.new(t('tabs.inactive_friends'), user.inactive_friendships.size, inactive_friend_path(user)),
-        Tab.new(t('tabs.inactive_followers'), user.inactive_followerships.size, inactive_follower_path(user)),
-        Tab.new(t('tabs.inactive_mutual_friends'), user.inactive_mutual_friendships.size, inactive_mutual_friend_path(user))
+        Tab.new(t('tabs.inactive_friends'), user.inactive_friendships.size, inactive_friend_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.inactive_followers'), user.inactive_followerships.size, inactive_follower_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.inactive_mutual_friends'), user.inactive_mutual_friendships.size, inactive_mutual_friend_path(user, via: current_via('tab')))
     ]
   end
 
   def replying_tabs(user)
     [
-        Tab.new(t('tabs.replying'), user.replying_uids.size, replying_path(user)),
-        Tab.new(t('tabs.replied'), user.replied_uids.size, replied_path(user)),
-        Tab.new(t('tabs.replying_and_replied'), user.replying_and_replied_uids.size, replying_and_replied_path(user))
+        Tab.new(t('tabs.replying'), user.replying_uids.size, replying_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.replied'), user.replied_uids.size, replied_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.replying_and_replied'), user.replying_and_replied_uids.size, replying_and_replied_path(user, via: current_via('tab')))
     ]
   end
 
   def common_friends_tabs(user)
     [
-        Tab.new(t('tabs.common_friends'), user.common_friend_uids(current_user.twitter_user).size, common_friend_path(user)),
-        Tab.new(t('tabs.common_followers'), user.common_follower_uids(current_user.twitter_user).size, common_follower_path(user)),
-        Tab.new(t('tabs.common_mutual_friends'), user.common_mutual_friend_uids(current_user.twitter_user).size, common_mutual_friend_path(user))
+        Tab.new(t('tabs.common_friends'), user.common_friend_uids(current_user.twitter_user).size, common_friend_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.common_followers'), user.common_follower_uids(current_user.twitter_user).size, common_follower_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.common_mutual_friends'), user.common_mutual_friend_uids(current_user.twitter_user).size, common_mutual_friend_path(user, via: current_via('tab')))
     ]
   end
 
