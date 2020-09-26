@@ -1,0 +1,13 @@
+- if user_signed_in?
+  .filter-container.btn-group{role: "group"}
+    %button.filter-dropdown.btn.btn-outline-secondary.btn-sm.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
+      = t('filter.title')
+      %span.filter-count
+    .dropdown-menu
+      - Filter::VALUES.each do |label, value|
+        %a.filters.dropdown-item{href: "#", data: {filter: value}}
+          = label
+- else
+  = link_to sign_in_path(redirect_path: request.path, via: current_via('filter_button')), class: 'btn btn-outline-secondary' do
+    = t('filter.title')
+    %i.fas.fa-caret-down
