@@ -2,6 +2,6 @@
   - tabs.each.with_index do |tab, i|
     %li.nav-item
       = link_to tab.url, class: ('nav-link active' if active_tab == i) do
-        = tab.name
+        %span.x-small= tab.name
         %br
           = tab.count? ? tab.count : t('.zero')
