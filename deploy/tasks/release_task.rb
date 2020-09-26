@@ -38,7 +38,7 @@ module Tasks
             'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
             'sudo service nginx restart',
             'sudo service puma restart',
-            'ab -n 500 -c 10 http://localhost:80/'
+            'ab -n 50 -c 2 http://localhost:80/'
         ].each do |cmd|
           exec_command(@instance.public_ip, cmd)
         end
