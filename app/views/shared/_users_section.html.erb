@@ -1,0 +1,71 @@
+<div class="empty-placeholders-wrapper" style="display: none;">
+  <%= t('.not_found') %>
+</div>
+
+<div class="placeholders-wrapper">
+  <% 3.times do %>
+    <%= render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'} %>
+  <% end %>
+</div>
+
+<div id="result-users-container"></div>
+
+<% if user_signed_in? %>
+  <div id="bottom-reached" class="text-center my-3">
+    <%= image_tag '/ajax-loader.gif' %>
+  </div>
+<% else %>
+  <div class="text-center">
+    <%= link_to t('.see_more'), sign_in_path(via: current_via('see_more_btn')), class: 'btn btn-outline-secondary btn-lg' %>
+  </div>
+<% end %>
+
+<script>
+  $(function () {
+    var signedIn = <%= user_signed_in? %>;
+
+    var url = '<%= api_path %>';
+    var uid = '<%= @twitter_user.uid %>';
+    var sortOrder = $('.sort-order-dropdown').data('sort-order');
+    var filter = $('.filter-dropdown').data('filter');
+    var params = {limit: 10, maxLimit: 10, sortOrder: sortOrder, filter: filter, insertAd: true};
+    var task = new FetchTask(url, uid, params);
+
+    var callback = function (state) {
+      console.log('task.fetch', state);
+
+      if (state.completed) {
+        $('#bottom-reached').off('appear').remove();
+      } else if (state.loaded) {
+        $('#bottom-reached').find('img').hide();
+      }
+    }
+
+    task.fetch(callback);
+
+    if (signedIn) {
+      $('#bottom-reached').lazyload()
+          .on('appear', function () {
+            var $elem = $(this);
+            console.log('appear', $elem.attr('id'));
+            $elem.find('img').show();
+            task.fetch(callback);
+          });
+
+      new SortButton(function (options) {
+        task.reset(options, callback)
+      });
+      new FilterButton(function (options) {
+        task.reset(options, callback)
+      });
+
+      new FollowButton('.twitter.users');
+      new UnfollowButton('.twitter.users');
+    }
+
+    var crawler =<%= from_crawler? %>;
+    if (crawler) {
+      $('#hidden-page-description').show();
+    }
+  });
+</script>
