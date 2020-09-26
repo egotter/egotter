@@ -30,7 +30,7 @@ module Api
             controller_name(controller_name)
 
         users, options = decorator.decorate
-        users = to_list_hash(users, options)
+        users = to_list_hash(users, params[:max_sequence].to_i + 1, options)
 
         render json: {name: controller_name, max_sequence: paginator.max_sequence, limit: paginator.limit, users: users}
       end
@@ -46,11 +46,11 @@ module Api
         }
       end
 
-      def to_list_hash(users, options)
+      def to_list_hash(users, max_sequence, options)
         via = current_via('api_list')
         vc = view_context
 
-        users.map do |user|
+        users.map.with_index do |user, i|
           user = TwitterUserDecorator.new(user, context: options)
           {
               screen_name: user.screen_name,
@@ -67,6 +67,7 @@ module Api
               status_url: status_path(user, via: via),
               friend_url: friend_path(user, via: via),
               follower_url: follower_path(user, via: via),
+              index: max_sequence + i,
           }
         end
       end
