@@ -24,21 +24,15 @@
 .my-3= t('.free_plan_text_html')
 .h4.my-4
   %strong= t('.free_plan_price')
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.free_plan_search_count', min: SearchCountLimitation::ANONYMOUS, max: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS)
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.free_plan_notification')
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.free_plan_private')
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.free_plan_follow', count: CreateFollowLimitation::ANONYMOUS)
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.free_plan_unfollow', count: CreateUnfollowLimitation::ANONYMOUS)
+.my-2= pricing_checked_item(t('.list.free_plan_search_count', min: SearchCountLimitation::ANONYMOUS, max: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS))
+.my-2= pricing_checked_item(t('.list.notification'))
+.my-2= pricing_checked_item(t('.list.private_search'))
+.my-2= pricing_checked_item(t('.list.follow', count: CreateFollowLimitation::ANONYMOUS))
+.my-2.mb-4= pricing_checked_item(t('.list.unfollow', count: CreateUnfollowLimitation::ANONYMOUS))
+.my-2= pricing_unchecked_item(t('.list.download'))
+.my-2= pricing_unchecked_item(t('.list.egotter_follow'))
+.my-2= pricing_unchecked_item(t('.list.atmark'))
+.my-2= pricing_unchecked_item(t('.list.nonstop'))
 
 %hr
 
@@ -46,27 +40,16 @@
 .my-3= t('.basic_plan_text_html')
 .h4.my-4
   %strong= t('.basic_plan_price', price: t('.pricing.basic_num'))
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.basic_plan_search_count', count: SearchCountLimitation::BASIC_PLAN)
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.basic_plan_follow', count: CreateFollowLimitation::BASIC_PLAN)
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.basic_plan_unfollow', count: CreateUnfollowLimitation::BASIC_PLAN)
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.basic_egotter_follow')
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.basic_plan_atmark')
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.basic_plan_nonstop')
-.my-2
-  %i.fas.fa-check.text-primary
-  = t('.basic_plan_money_back_guarantee', count: Order::TRIAL_DAYS)
+.my-2= pricing_checked_item(t('.list.basic_plan_search_count', count: SearchCountLimitation::BASIC_PLAN))
+.my-2= pricing_checked_item(t('.list.notification'))
+.my-2= pricing_checked_item(t('.list.private_search'))
+.my-2= pricing_checked_item(t('.list.follow', count: CreateFollowLimitation::BASIC_PLAN))
+.my-2= pricing_checked_item(t('.list.unfollow', count: CreateUnfollowLimitation::BASIC_PLAN))
+.my-2= pricing_checked_item(t('.list.download'))
+.my-2= pricing_checked_item(t('.list.egotter_follow'))
+.my-2= pricing_checked_item(t('.list.atmark'))
+.my-2= pricing_checked_item(t('.list.nonstop'))
+.my-2= pricing_checked_item(t('.list.money_back_guarantee', count: Order::TRIAL_DAYS))
 .my-2
   - if user_signed_in?
     - if current_user.has_valid_subscription?

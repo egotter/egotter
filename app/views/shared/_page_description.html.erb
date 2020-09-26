@@ -1,4 +1,9 @@
-<%= current_page_description(twitter_user, tag_id: 'hidden-page-description') %>
+<div class="card">
+  <div class="card-body small">
+    <%= current_page_description(twitter_user, tag_id: 'hidden-page-description') %>
+  </div>
+</div>
+
 <script>
   $(function () {
     var crawler =<%= from_crawler? %>;
