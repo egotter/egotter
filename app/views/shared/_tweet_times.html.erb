@@ -1,0 +1,18 @@
+<div><%= description %></div>
+<div id="tweets-per-hour-container" class="d-flex align-items-center justify-content-center mt-3 mb-5" style="height: 300px;">
+  <div><%= t('.loading_html') %></div>
+</div>
+<script>
+  $(function () {
+    var url = '<%= raw api_path %>';
+    var container = $('#tweets-per-hour-container');
+
+    $.get(url).done(function (res) {
+      container.empty();
+      new UsageStat().drawColumnChart(container.attr('id'), res.tweets_per_hour);
+    }).fail(function (xhr) {
+      console.warn(url, xhr.responseText);
+      container.empty().text('<%= t('.updating') %>');
+    });
+  });
+</script>

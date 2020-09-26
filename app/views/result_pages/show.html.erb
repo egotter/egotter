@@ -34,26 +34,7 @@
 <% if user_signed_in? && %w(friends followers).include?(controller_name) %>
   <%= render partial: 'shared/word_cloud', locals: {description: profiles_word_cloud_description(@twitter_user), api_path: api_profiles_count_path(@twitter_user)} %>
   <%= render partial: 'shared/word_cloud', locals: {description: locations_word_cloud_description(@twitter_user), api_path: api_locations_count_path(@twitter_user)} %>
-
-  <div><%= tweets_per_hour_description(@twitter_user) %></div>
-  <div id="tweets-per-hour-container" class="d-flex align-items-center justify-content-center mt-3 mb-5" style="height: 300px;">
-    <div><%= t('.loading_html') %></div>
-  </div>
-  <script>
-    $(function () {
-      var url = '<%= api_tweet_times_path %>';
-      var uid = '<%= @twitter_user.uid %>';
-      var container = $('#tweets-per-hour-container');
-
-      $.get(url, {uid: uid}).done(function (res) {
-        container.empty();
-        new UsageStat().drawColumnChart(container.attr('id'), res.tweets_per_hour);
-      }).fail(function (xhr) {
-        console.warn(url, xhr.responseText);
-        container.empty().text('<%= t('.updating') %>');
-      });
-    });
-  </script>
+  <%= render partial: 'shared/tweet_times', locals: {description: tweets_per_hour_description(@twitter_user), api_path: api_tweet_times_path(uid: @twitter_user.uid)} %>
 <% end %>
 
 <div class="mb-3"><%= render partial: 'result_pages/tabs', locals: {tabs: current_tabs(@twitter_user), active_tab: @active_tab} %></div>

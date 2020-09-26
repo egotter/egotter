@@ -35,12 +35,12 @@ module PathsHelper
     end.html_safe
   end
 
-  def api_tweet_times_path
+  def api_tweet_times_path(uid:)
     case controller_name
     when 'friends'
-      api_v1_friend_insights_tweet_times_path(via: current_via)
+      api_v1_friend_insights_tweet_times_path(uid: uid, via: current_via)
     when 'followers'
-      api_v1_follower_insights_tweet_times_path(via: current_via)
+      api_v1_follower_insights_tweet_times_path(uid: uid, via: current_via)
     else
       raise "#{__method__} Invalid controller_name value=#{controller_name}"
     end.html_safe

@@ -737,8 +737,6 @@ ja:
   inactive_mutual_friends:
   result_pages:
     show:
-      loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
-      updating: '更新中です。数分後に再度お試しください。'
       explanation_of_data_inconsistency_html: |
         <strong>注意</strong> リムーブ、リムーブされた、ブロックされたのデータは、ツイッター自体の不整合により、<span class="text-primary">一時的に結果が不正確になる</span>ことがあります。<br>
         <br>
@@ -1999,6 +1997,9 @@ ja:
           <br>
           <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後に、予約したツイートをキャンセルすることもできます。
     word_cloud:
+      loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
+      updating: '更新中です。数分後に再度お試しください。'
+    tweet_times:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
       updating: '更新中です。数分後に再度お試しください。'
   breadcrumb:
