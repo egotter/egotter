@@ -28,6 +28,8 @@ class Order < ApplicationRecord
 
   BASIC_PLAN_ID = ENV['STRIPE_BASIC_PLAN_ID']
   TRIAL_DAYS = 14
+  FREE_PLAN_USERS_LIMIT = 100
+  BASIC_PLAN_USERS_LIMIT = 10000
 
   scope :unexpired, -> do
     where('customer_id is not null AND subscription_id is not null AND canceled_at is null')

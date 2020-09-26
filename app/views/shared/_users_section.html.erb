@@ -14,9 +14,14 @@
   <div id="bottom-reached" class="text-center my-3">
     <%= image_tag '/ajax-loader.gif' %>
   </div>
+  <% unless current_user.has_valid_subscription? %>
+    <div id="need-purchase-description" style="display: none;">
+      <%= t('.need_purchase_html', count: Order::FREE_PLAN_USERS_LIMIT) %>
+    </div>
+  <% end %>
 <% else %>
   <div class="text-center">
-    <%= link_to t('.see_more'), sign_in_path(via: current_via('see_more_btn')), class: 'btn btn-outline-secondary btn-lg' %>
+    <%= link_to t('.see_more'), sign_in_path(redirect_path: request.path, via: current_via('see_more_btn')), class: 'btn btn-outline-secondary btn-lg' %>
   </div>
 <% end %>
 
@@ -28,7 +33,7 @@
     var uid = '<%= @twitter_user.uid %>';
     var sortOrder = $('.sort-order-dropdown').data('sort-order');
     var filter = $('.filter-dropdown').data('filter');
-    var params = {limit: 10, maxLimit: 10, sortOrder: sortOrder, filter: filter, insertAd: true};
+    var params = {limit: 10, maxLimit: 10, sortOrder: sortOrder, filter: filter};
     var task = new FetchTask(url, uid, params);
 
     var callback = function (state) {
@@ -36,6 +41,7 @@
 
       if (state.completed) {
         $('#bottom-reached').off('appear').remove();
+        $('#need-purchase-description').show();
       } else if (state.loaded) {
         $('#bottom-reached').find('img').hide();
       }

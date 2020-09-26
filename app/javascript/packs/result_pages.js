@@ -49,7 +49,6 @@ class FetchTask {
     this.maxLimit = options['maxLimit'];
     this.sortOrder = options['sortOrder'];
     this.filter = options['filter'];
-    this.insertAd = options['insertAd'];
     this.loading = false;
     this.template = window.templates['userRectangle'];
 
@@ -86,12 +85,10 @@ class FetchTask {
 
     var params = {
       uid: this.uid,
-      html: 1,
       limit: this.limit,
       max_sequence: this.maxSequence,
       sort_order: this.sortOrder,
       filter: this.filter,
-      insert_ad: this.insertAd
     };
 
     console.log('fetch params', params);
