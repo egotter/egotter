@@ -1,6 +1,6 @@
 - if user_signed_in?
   .sort-order-container.btn-group{role: "group"}
-    %button.sort-order-dropdown.btn.btn-outline-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
+    %button.sort-order-dropdown.btn.btn-outline-secondary.btn-sm.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
       = SortOrder::VALUES[0][0]
     .dropdown-menu
       - SortOrder::VALUES.each.with_index do |(label, value), i|
@@ -8,7 +8,7 @@
           = label
 
   .filter-container.btn-group{role: "group"}
-    %button.filter-dropdown.btn.btn-outline-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
+    %button.filter-dropdown.btn.btn-outline-secondary.btn-sm.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
       = t('filter.title')
       %span.filter-count
     .dropdown-menu
