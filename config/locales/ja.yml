@@ -2161,6 +2161,9 @@ ja:
     verified: "承認済み のみ"
     friends_>_followers: "フォロー > フォロワー のみ"
     followers_>_friends: "フォロワー > フォロー のみ"
+  download:
+    title: "ダウンロード"
+    alert: "この機能は準備中です。"
   dictionary:
     honorific: "さん"
   before_sign_in:

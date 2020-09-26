@@ -8,6 +8,6 @@
         %a.filters.dropdown-item{href: "#", data: {filter: value}}
           = label
 - else
-  = link_to sign_in_path(redirect_path: request.path, via: current_via('filter_button')), class: 'btn btn-outline-secondary' do
+  = link_to sign_in_path(redirect_path: request.path, via: current_via('filter_button')), class: 'btn btn-outline-secondary btn-sm' do
     = t('filter.title')
     %i.fas.fa-caret-down
