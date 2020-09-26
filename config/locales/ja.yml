@@ -2163,6 +2163,9 @@ ja:
   download:
     title: "ダウンロード"
     alert: "この機能は準備中です。"
+    data:
+      description_note: "有料プランのユーザーのみ description をダウンロードできます"
+      users_size_note: "有料プランのユーザーのみ 100人目以降 をダウンロードできます"
   dictionary:
     honorific: "さん"
   before_sign_in:

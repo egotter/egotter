@@ -9,6 +9,25 @@ module PathsHelper
     end
   end
 
+  def download_path(resource)
+    case controller_name
+    when 'mutual_friends'
+      mutual_friend_download_path(resource, via: current_via)
+    when 'one_sided_friends'
+      one_sided_friend_download_path(resource, via: current_via)
+    when 'one_sided_followers'
+      one_sided_follower_download_path(resource, via: current_via)
+    when 'inactive_mutual_friends'
+      inactive_mutual_friend_download_path(resource, via: current_via)
+    when 'inactive_friends'
+      inactive_friend_download_path(resource, via: current_via)
+    when 'inactive_followers'
+      inactive_follower_download_path(resource, via: current_via)
+    else
+      raise "#{__method__} Invalid controller_name value=#{controller_name}"
+    end.html_safe
+  end
+
   def api_path
     send("api_v1_#{controller_name}_list_path", via: current_via).html_safe
   end

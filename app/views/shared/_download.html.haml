@@ -1,5 +1,5 @@
 - if user_signed_in?
-  = link_to '#', class: 'btn btn-outline-secondary btn-sm', data: {confirm: t('download.alert')} do
+  = link_to page_path, class: 'btn btn-outline-secondary btn-sm' do
     %span.small= t('download.title')
     %i.fas.fa-download
 - else

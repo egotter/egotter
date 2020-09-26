@@ -8,10 +8,7 @@ class SearchesController < ApplicationController
   before_action { signed_in_user_authorized? }
   before_action { enough_permission_level? }
   before_action { valid_screen_name? }
-  before_action do
-    @self_search = user_requested_self_search?
-    logger.debug { "SearchRequestConcern #{controller_name}##{action_name} user_requested_self_search? returns #{@self_search}" }
-  end
+  before_action { @self_search = user_requested_self_search? }
   before_action { !@self_search && !not_found_screen_name?(params[:screen_name]) && !not_found_user?(params[:screen_name]) }
   before_action { !@self_search && !forbidden_screen_name?(params[:screen_name]) && !forbidden_user?(params[:screen_name]) }
   before_action { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
