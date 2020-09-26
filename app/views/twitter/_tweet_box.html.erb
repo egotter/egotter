@@ -1,7 +1,7 @@
 <% container_id = "text-#{text.object_id}" %>
 <div id="<%= container_id %>">
   <div class="tweet-preview-box p-2">
-    <div class="textarea"><%= text.gsub("\n", '<br>').html_safe %></div>
+    <div class="textarea" style="word-break: break-all;"><%= text.gsub("\n", '<br>').html_safe %></div>
   </div>
   <div class="tweet-box text-right">
     <%= link_to t('.copy'), '#', class: 'btn btn-outline-primary btn-copy' %>
