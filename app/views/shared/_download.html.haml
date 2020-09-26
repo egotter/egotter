@@ -1,8 +1,0 @@
-- if user_signed_in?
-  = link_to page_path, class: 'btn btn-outline-secondary btn-sm' do
-    %span.small= t('download.title')
-    %i.fas.fa-download
-- else
-  = link_to sign_in_path(redirect_path: request.path, via: current_via('download_button')), class: 'btn btn-outline-secondary btn-sm' do
-    %span.small= t('download.title')
-    %i.fas.fa-download

@@ -1,0 +1,24 @@
+<% if user_signed_in? %>
+  <%= link_to page_path, class: 'btn btn-outline-secondary btn-download btn-sm' do %>
+    <span class="small"><%= t('download.title') %></span>
+    <i class="fas fa-download"></i>
+  <% end %>
+<% else %>
+  <%= link_to sign_in_path(redirect_path: request.path, via: current_via('download_button')), class: 'btn btn-outline-secondary btn-sm' do %>
+    <span class="small"><%= t('download.title') %></span>
+    <i class="fas fa-download"></i>
+  <% end %>
+<% end %>
+
+<script>
+  $(function () {
+    $('.btn-download').on('click', function () {
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'download',
+        eventAction: 'clicked',
+        eventLabel: '<%= twitter_user.screen_name %>'
+      });
+    })
+  });
+</script>
