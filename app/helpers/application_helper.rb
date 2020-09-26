@@ -52,6 +52,10 @@ module ApplicationHelper
     user_signed_in? && !@has_error && flash[:alert].blank?
   end
 
+  def show_download_button?
+    %w(mutual_friends one_sided_friends one_sided_followers inactive_mutual_friends inactive_friends inactive_followers).include?(controller_name)
+  end
+
   def remove_related_page?
     %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)
   end
