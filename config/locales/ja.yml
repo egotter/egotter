@@ -549,8 +549,10 @@ ja:
       failed_html: '購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。これまでの購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'
     cancel:
       canceled_html: |
-        えごったーは、350万回以上利用されている安心の実績があります。何か気になることがありますか？ 分からないこと、気になることは、@ego_tter にいつでもご質問ください。
-        <a href="https://twitter.com/ego_tter" class="btn btn-outline-primary" target="_blank" rel="nofollow">@ego_tter に質問する</a>
+        えごったーは、350万回以上利用されている安心の実績があります。何か気になることがありますか？<br>
+        <br>
+        分からないこと、気になることは、@ego_tter にいつでもご質問ください。
+        <a href="https://twitter.com/ego_tter" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">@ego_tter に質問する</a>
   login:
     goodbye:
       signed_out: "既にログアウト済みです。"
@@ -1388,13 +1390,16 @@ ja:
         lead_html: '性格診断・心理テストの究極系<br>話題のツイート性格分析を今すぐチェック'
       redirection_modal:
         title: '@%{user} でログイン中です'
-        body: '@%{user} のツイッター性格診断結果へ移動しますか？'
+        body_html: |
+          @%{user} のツイッター性格診断結果へ移動しますか？<br>
+          <br>
+          分析は通常30秒ほどで完了します。なかなか終わらない場合は @ego_tter までご連絡ください。
     show:
       <<: *personality_insights_new
-      personality_is_being_analyzed: '@%{user} の性格を分析中です。30秒後に再度アクセスしてみてください。<a href="%{url}" class="btn btn-primary">@%{user} の分析結果を見る</a>'
+      personality_is_being_analyzed: '@%{user} の性格を分析中です。30秒ほど後に再度アクセスしてみてください。<a href="%{url}" class="btn btn-primary">@%{user} の分析結果を見る</a>'
       tweets_not_enough: 'ツイートが少なすぎるため @%{user} の性格分析に失敗しました。'
       analyzing_failed: 'アクセスが多すぎるため @%{user} の性格分析に失敗しました。%{count}秒ほど時間をおいてから再度アクセスしてみてください。'
-      rate_limited: '1日の分析回数を使い切りました。時間をおいてから再度アクセスしてみてください。'
+      rate_limited_html: '1日の分析回数を使い切りました。時間をおいてから再度アクセスしてみてください。<br><br>有料プランのユーザーはすぐに分析できます。<a href="#" class="btn btn-outline-primary btn-checkout btn-sm">もっと詳しく</a>'
       navbar_title: 'ツイッター性格診断'
       crumb_title: 'ツイッター性格診断'
       page_title:  'ツイッター性格診断'

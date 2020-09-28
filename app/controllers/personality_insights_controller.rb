@@ -9,8 +9,8 @@ class PersonalityInsightsController < ApplicationController
   end
   before_action(only: :show) do
     if !(insight = set_insight)
-      if CallPersonalityInsightCount.new.rate_limited?
-        redirect_to personality_insights_top_path, alert: t('.show.rate_limited')
+      if CallPersonalityInsightCount.new.rate_limited? && !current_user_has_valid_subscription?
+        redirect_to personality_insights_top_path, alert: t('.show.rate_limited_html')
       else
         CreatePersonalityInsightWorker.perform_async(@twitter_user.uid) unless from_crawler?
         redirect_to personality_insights_top_path, notice: t('.show.personality_is_being_analyzed', user: @twitter_user.screen_name, url: personality_insight_path(@twitter_user))
@@ -32,5 +32,9 @@ class PersonalityInsightsController < ApplicationController
 
   def set_insight
     @insight = PersonalityInsight.find_by(uid: @twitter_user.uid)
+  end
+
+  def current_user_has_valid_subscription?
+    user_signed_in? && current_user.has_valid_subscription?
   end
 end
