@@ -9,8 +9,6 @@ class Heart {
     this.count = 0;
     this.users = users;
     this.elem = d3.select('#' + id);
-    this.name = '#仲良しランキング';
-    this.domain = 'egotter.com';
   }
 
   draw() {
@@ -189,32 +187,9 @@ class Heart {
   }
 
   drawWatermark() {
-    this.drawName();
-    this.drawDomain();
-  }
-
-  drawName() {
     var p1 = this.findPosition(10, 3);
     var p2 = this.findPosition(5, 8);
-    this.elem.append("svg:text")
-        .attr("x", p1.x + p1.width)
-        .attr("y", p2.y + p2.width - 14)
-        .attr("text-anchor", 'end')
-        .attr("font-size", 10)
-        .attr("style", 'fill: #EA2184;')
-        .text(this.name);
-  }
-
-  drawDomain() {
-    var p1 = this.findPosition(10, 3);
-    var p2 = this.findPosition(5, 8);
-    this.elem.append("svg:text")
-        .attr("x", p1.x + p1.width)
-        .attr("y", p2.y + p2.width)
-        .attr("text-anchor", 'end')
-        .attr("font-size", 12)
-        .attr("style", 'fill: #EA2184;')
-        .text(this.domain);
+    new Watermark(this.id, p1.x + p1.width, p2.y + p2.width).draw();
   }
 
   timelinePath(screenName) {
@@ -224,3 +199,39 @@ class Heart {
 }
 
 window.Heart = Heart;
+
+class Watermark {
+  constructor(id, x, y) {
+    this.elem = d3.select('#' + id);
+    this.x = x;
+    this.y = y;
+    this.name = '#仲良しランキング';
+    this.domain = 'egotter.com';
+    this.nameOffset = 14;
+  }
+
+  draw() {
+    this.drawName();
+    this.drawDomain();
+  }
+
+  drawName() {
+    this.elem.append("svg:text")
+        .attr("x", this.x)
+        .attr("y", this.y - this.nameOffset)
+        .attr("text-anchor", 'end')
+        .attr("font-size", 10)
+        .attr("style", 'fill: #EA2184;')
+        .text(this.name);
+  }
+
+  drawDomain() {
+    this.elem.append("svg:text")
+        .attr("x", this.x)
+        .attr("y", this.y)
+        .attr("text-anchor", 'end')
+        .attr("font-size", 12)
+        .attr("style", 'fill: #EA2184;')
+        .text(this.domain);
+  }
+}
