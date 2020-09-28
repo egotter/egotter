@@ -58,6 +58,6 @@ module BypassFlashMessagesConcern
         sample_image3_url: view_context.image_path('/egotter_screenshot_prompt_report_1156x422.png'),
         id_hash: SecureRandom.urlsafe_base64(10)
     }
-    ERB.new(Rails.root.join('app/views/messages/current_periodic_report.ja.html.erb').read).result_with_hash(values)
+    render_to_string(template: 'messages/current_periodic_report', layout: false, locals: values)
   end
 end
