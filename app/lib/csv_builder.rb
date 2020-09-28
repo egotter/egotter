@@ -9,18 +9,8 @@ class CsvBuilder
 
   def build
     CSV.generate(headers: @headers, write_headers: true, force_quotes: true) do |csv|
-      @users.map.with_index do |user, i|
-        csv << @headers.map do |attr|
-          if attr == 'description'
-            if @with_description
-              user[attr]
-            elsif i == 0
-              I18n.t('download.data.description_note')
-            end
-          else
-            user[attr]
-          end
-        end
+      @users.map do |user|
+        csv << @headers.map { |attr| user[attr] }
       end
 
       if @users.size == 100 && !@with_description
