@@ -53,7 +53,7 @@ module ApplicationHelper
   end
 
   def show_download_button?
-    %w(mutual_friends one_sided_friends one_sided_followers inactive_mutual_friends inactive_friends inactive_followers).include?(controller_name)
+    %w(friends followers mutual_friends one_sided_friends one_sided_followers inactive_mutual_friends inactive_friends inactive_followers).include?(controller_name)
   end
 
   def remove_related_page?

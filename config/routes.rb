@@ -82,6 +82,8 @@ Rails.application.routes.draw do
     resources controller_name, only: %i(show), param: :screen_name
   end
 
+  get "friends/:screen_name/download", to: "friends#download", as: :friend_download
+  get "followers/:screen_name/download", to: "followers#download", as: :follower_download
   get "mutual_friends/:screen_name/download", to: "mutual_friends#download", as: :mutual_friend_download
   get "one_sided_friends/:screen_name/download", to: "one_sided_friends#download", as: :one_sided_friend_download
   get "one_sided_followers/:screen_name/download", to: "one_sided_followers#download", as: :one_sided_follower_download

@@ -11,6 +11,10 @@ module PathsHelper
 
   def download_path(resource)
     case controller_name
+    when 'friends'
+      friend_download_path(resource, via: current_via)
+    when 'followers'
+      follower_download_path(resource, via: current_via)
     when 'mutual_friends'
       mutual_friend_download_path(resource, via: current_via)
     when 'one_sided_friends'
