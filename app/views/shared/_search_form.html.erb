@@ -5,7 +5,7 @@
   <input type="hidden" name="redirect_path" value="<%= redirect_path %>">
   <input type="hidden" name="render_time" value="<%= Time.zone.now.to_s(:db) %>">
 
-  <label for="screen_name" class="sr-only"><%= t('searches.common.twitter_id') %></label>
+  <label for="screen_name" class="sr-only"><%= t('.twitter_id') %></label>
   <div class="input-group">
     <div class="input-group-prepend">
       <div class="input-group-text">@</div>
@@ -13,12 +13,12 @@
     <input type="search"
            name="screen_name"
            class="form-control"
-           placeholder="<%= t('searches.common.search_by_twitter_id') %>"
+           placeholder="<%= t('.search_by_twitter_id') %>"
            pattern="^[0-9A-Za-z_]{1,20}$"
            inputmode="verbatim"
-           title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>" required>
+           title="<%= t('.invalid_input', min: Validations::ScreenNameValidator::MIN, max: Validations::ScreenNameValidator::MAX) %>" required>
     <span class="input-group-btn">
-      <button class="btn btn-primary" type="submit"><%= t('searches.common.search') %></button>
+      <button class="btn btn-primary" type="submit"><%= t('.search') %></button>
     </span>
   </div>
 <% end %>

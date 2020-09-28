@@ -1,5 +1,7 @@
 module Validations
   class ScreenNameValidator < ActiveModel::Validator
+    MIN = 1
+    MAX = 20
     REGEXP = /\A[a-zA-Z0-9_]{1,20}\z/
 
     def validate(record)
