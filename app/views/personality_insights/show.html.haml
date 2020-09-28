@@ -12,7 +12,7 @@
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
 %h2.h4.text-center.my-5= page_title
-.mb-5= t('.page_description_html', user: @twitter_user.screen_name, words: @insight.word_count, accuracy: analysis_accuracy(@insight.word_count))
+.mb-5= t('.page_description_html', user: @twitter_user.screen_name, words: @insight.word_count, accuracy: personality_insight_analysis_accuracy(@insight.word_count))
 
 = render partial: 'shared/search_form', locals: {via: current_via('top_input'), redirect_path: personality_insight_path(screen_name: ':screen_name')}
 = render(partial: 'adsense/ad', locals: {vertical: :top})

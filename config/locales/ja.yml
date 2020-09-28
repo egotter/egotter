@@ -1390,10 +1390,7 @@ ja:
         lead_html: '性格診断・心理テストの究極系<br>話題のツイート性格分析を今すぐチェック'
       redirection_modal:
         title: '@%{user} でログイン中です'
-        body_html: |
-          @%{user} のツイッター性格診断結果へ移動しますか？<br>
-          <br>
-          分析は通常30秒ほどで完了します。なかなか終わらない場合は @ego_tter までご連絡ください。
+        body_html: '@%{user} のツイッター性格診断結果へ移動しますか？'
     show:
       <<: *personality_insights_new
       personality_is_being_analyzed: '@%{user} の性格を分析中です。30秒ほど後に再度アクセスしてみてください。<a href="%{url}" class="btn btn-primary">@%{user} の分析結果を見る</a>'

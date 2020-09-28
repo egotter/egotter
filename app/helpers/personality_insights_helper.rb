@@ -1,5 +1,10 @@
 module PersonalityInsightsHelper
-  def analysis_accuracy(word_count)
+
+  def personality_insight_is_processing?
+    params[:via].to_s.include?('processing')
+  end
+
+  def personality_insight_analysis_accuracy(word_count)
     if word_count >= 6000
       t('personality_insights.show.accuracy.very_strong');
     elsif word_count > 3500
