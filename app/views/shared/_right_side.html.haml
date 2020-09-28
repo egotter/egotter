@@ -1,3 +1,5 @@
+- ab_test_flag = fifty_percent?
+
 %h1.h4
   = link_to root_path(via: current_via) do
     = image_tag '/logo_96x96.png', size: '48x48', alt: header
@@ -6,7 +8,7 @@
 %h2.h5.my-4= subheader
 .mb-3= lead
 
-= sign_in_with_twitter_link(redirect_path, 'button', class: 'btn btn-primary btn-block')
+= sign_in_with_twitter_link(redirect_path, "button/#{ab_test_flag ? 'show' : 'hide'}_screenshot", class: 'btn btn-primary btn-block')
 .egotter-pink.text-right
   %i.fas.fa-check.small
   %span.small= t('.check_001')
@@ -27,18 +29,19 @@
   %i.fas.fa-check.small
   %span.small= t('.check_004_html')
 
-%h2.h5.mt-5.mb-3= t('.lead_003_html')
+- if ab_test_flag
+  %h2.h5.mt-5.mb-3= t('.lead_003_html')
 
-.text-center
-  = link_to sign_in_path(via: current_via('screenshots')) do
-    %img{alt: '', src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
+  .text-center
+    = link_to sign_in_path(via: current_via('screenshots')) do
+      %img{alt: '', src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
 
-%div.my-4= t('.text003_html')
+  %div.my-4= t('.text003_html')
 
-= sign_in_with_twitter_link(redirect_path, 'screenshots_button', class: 'btn btn-primary btn-block')
-.egotter-pink.text-right
-  %i.fas.fa-check.small
-  %span.small= t('.check_005')
-.egotter-pink.text-right
-  %i.fas.fa-check.small
-  %span.small= t('.check_006')
+  = sign_in_with_twitter_link(redirect_path, 'screenshots_button', class: 'btn btn-primary btn-block')
+  .egotter-pink.text-right
+    %i.fas.fa-check.small
+    %span.small= t('.check_005')
+  .egotter-pink.text-right
+    %i.fas.fa-check.small
+    %span.small= t('.check_006')
