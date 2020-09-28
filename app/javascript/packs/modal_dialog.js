@@ -60,8 +60,8 @@ class SearchModal {
 window.SearchModal = SearchModal;
 
 class SignInModal {
-  constructor(url) {
-    var $el = $('#sign-in-modal');
+  constructor(id, url) {
+    var $el = $('#' + id);
 
     $el.find('.btn.positive').on('click', function () {
       window.location.href = url;

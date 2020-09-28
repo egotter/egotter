@@ -20,6 +20,14 @@
 <div class="mb-5"><%= render partial: 'shared/page_description', locals: {twitter_user: @twitter_user} %></div>
 
 <% if controller_name == 'close_friends' %>
+  <% unless user_signed_in? %>
+    <%= modal_dialog id: 'sign-in-modal', title: t('close_friends.show.sign_in_modal.title'), body: t('close_friends.show.sign_in_modal.body'), button: {positive: t('close_friends.show.sign_in_modal.yes'), negative: t('close_friends.show.sign_in_modal.no')}  %>
+    <script>
+      $(function () {
+        new SignInModal('sign-in-modal', '<%= sign_in_path(via: current_via('sign_in_modal')) %>');
+      });
+    </script>
+  <% end %>
   <div class="text-center my-3"><%= render partial: 'shared/heart', locals: {twitter_user: @twitter_user} %></div>
 <% end %>
 
