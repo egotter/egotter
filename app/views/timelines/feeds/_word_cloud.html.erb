@@ -21,7 +21,7 @@
       var data = <%= raw words_count.map { |word, count| {word: word, count: count} }.to_json %>;
       var container = $('#<%= container_id %>');
       var smartphone = <%= request.device_type == :smartphone %>;
-      new WordCloud('#' + container.attr('id'), data, container.width(), container.height(), smartphone);
+      new WordCloud(container.attr('id'), data, container.width(), container.height(), smartphone).draw();
     }
 
     if (fromCrawler) {
