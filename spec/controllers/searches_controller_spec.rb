@@ -11,16 +11,16 @@ RSpec.describe SearchesController, type: :controller do
       expect(controller).to receive(:enough_permission_level?)
       expect(controller).to receive(:valid_screen_name?)
       expect(controller).to receive(:user_requested_self_search?)
-      expect(controller).to receive(:not_found_screen_name?).with(screen_name).and_return(false)
-      expect(controller).to receive(:not_found_user?).with(screen_name).and_return(false)
-      expect(controller).to receive(:forbidden_screen_name?).with(screen_name).and_return(false)
-      expect(controller).to receive(:forbidden_user?).with(screen_name).and_return(false)
+      expect(controller).to receive(:not_found_screen_name?).with(screen_name)
+      expect(controller).to receive(:not_found_user?).with(screen_name)
+      expect(controller).to receive(:forbidden_screen_name?).with(screen_name)
+      expect(controller).to receive(:forbidden_user?).with(screen_name)
       expect(controller).to receive(:build_twitter_user_by).with(screen_name: screen_name).and_return(twitter_user)
       expect(controller).to receive(:search_limitation_soft_limited?).with(twitter_user)
-      expect(controller).to receive(:protected_search?).with(twitter_user).and_return(false)
-      expect(controller).to receive(:blocked_search?).with(twitter_user).and_return(false)
-      expect(controller).to receive(:too_many_searches?).with(twitter_user).and_return(false)
-      expect(controller).to receive(:too_many_requests?).with(twitter_user).and_return(false)
+      expect(controller).to receive(:protected_search?).with(twitter_user)
+      expect(controller).to receive(:blocked_search?).with(twitter_user)
+      expect(controller).to receive(:too_many_searches?).with(twitter_user)
+      expect(controller).to receive(:too_many_requests?).with(twitter_user)
       subject
     end
 
@@ -42,8 +42,8 @@ RSpec.describe SearchesController, type: :controller do
         expect(controller).to receive(:search_limitation_soft_limited?).with(twitter_user)
         expect(controller).not_to receive(:protected_search?)
         expect(controller).not_to receive(:blocked_search?)
-        expect(controller).to receive(:too_many_searches?).with(twitter_user).and_return(false)
-        expect(controller).to receive(:too_many_requests?).with(twitter_user).and_return(false)
+        expect(controller).to receive(:too_many_searches?).with(twitter_user)
+        expect(controller).to receive(:too_many_requests?).with(twitter_user)
         subject
       end
     end
