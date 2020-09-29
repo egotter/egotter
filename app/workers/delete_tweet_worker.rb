@@ -28,7 +28,10 @@ class DeleteTweetWorker
   rescue => e
     if ServiceStatus.retryable_error?(e)
       retry
-    elsif TweetStatus.no_status_found?(e) || TweetStatus.not_authorized?(e) || TweetStatus.that_page_does_not_exist?(e)
+    elsif AccountStatus.invalid_or_expired_token?(e) ||
+        TweetStatus.no_status_found?(e) ||
+        TweetStatus.not_authorized?(e) ||
+        TweetStatus.that_page_does_not_exist?(e)
       # Do nothing
     else
       raise
