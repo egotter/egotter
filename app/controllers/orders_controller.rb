@@ -35,25 +35,25 @@ class OrdersController < ApplicationController
         unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,
     )
 
-    redirect_to root_path, notice: t('.success_html', url: after_purchase_path('after_purchasing'))
+    redirect_to root_path(via: current_via), notice: t('.success_html', url: after_purchase_path('after_purchasing'))
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{current_user_id}"
-    redirect_to root_path, alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error')) unless performed?
+    redirect_to root_path(via: current_via('error')), alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error')) unless performed?
   end
 
   def destroy
     order = fetch_order
 
     if order.canceled_at
-      redirect_to root_path, notice: t('.already_canceled_html', url: after_purchase_path('after_canceling'))
+      redirect_to root_path(via: current_via('already_canceled')), notice: t('.already_canceled_html', url: after_purchase_path('after_canceling'))
     else
       order.cancel!
-      redirect_to root_path, notice: t('.success_html', url: after_purchase_path('after_canceling'))
+      redirect_to root_path(via: current_via), notice: t('.success_html', url: after_purchase_path('after_canceling'))
     end
 
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{current_user_id}"
-    redirect_to root_path, alert: t('.failed_html', url: after_purchase_path('after_canceling_with_error')) unless performed?
+    redirect_to root_path(via: current_via('error')), alert: t('.failed_html', url: after_purchase_path('after_canceling_with_error')) unless performed?
   end
 
   # Callback URL for a successful payment
@@ -62,7 +62,7 @@ class OrdersController < ApplicationController
     subscription_id = Order::CheckoutSession.new(checkout_session).subscription_id
 
     if Order.exists?(user_id: current_user.id, subscription_id: subscription_id)
-      redirect_to root_path(via: current_via('order_found')), notice: t('.success_html', url: after_purchase_path('after_purchasing'))
+      redirect_to root_path(via: current_via), notice: t('.success_html', url: after_purchase_path('after_purchasing'))
     else
       redirect_to root_path(via: current_via('order_not_found')), alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error'))
     end
@@ -118,7 +118,7 @@ class OrdersController < ApplicationController
   private
 
   def send_message_to_slack
-    SendMessageToSlackWorker.perform_async(:orders, fetch_order.inspect, "`#{Rails.env}:#{action_name}`")
+    SendMessageToSlackWorker.perform_async(:orders, fetch_order.inspect, "#{Rails.env}:#{action_name}")
   end
 
   def fetch_order

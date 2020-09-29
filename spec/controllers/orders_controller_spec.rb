@@ -71,7 +71,7 @@ RSpec.describe OrdersController, type: :controller do
       it do
         expect(order).not_to receive(:cancel!)
         subject
-        is_expected.to redirect_to root_path
+        is_expected.to redirect_to root_path(via: 'orders/destroy/already_canceled')
       end
     end
 
@@ -79,7 +79,7 @@ RSpec.describe OrdersController, type: :controller do
       it do
         expect(order).to receive(:cancel!)
         subject
-        is_expected.to redirect_to root_path
+        is_expected.to redirect_to root_path(via: 'orders/destroy')
       end
     end
   end
