@@ -597,7 +597,7 @@ ja:
       tweet: 'ツイートする'
   welcome:
     new:
-      sign_in_with_twitter_html: '<i class="fab fa-twitter"></i> Twitter でログイン'
+      sign_in_with_twitter_html: '%{icon} Twitter でログイン'
   misc:
     support:
       title: "お問い合わせ"
