@@ -9,12 +9,8 @@
 .mb-3= lead
 
 = sign_in_with_twitter_link(redirect_path, "button/#{ab_test_flag ? 'show' : 'hide'}_screenshot", class: 'btn btn-primary btn-block')
-.egotter-pink.text-right
-  %i.fas.fa-check.small
-  %span.small= t('.check_001')
-.egotter-pink.text-right
-  %i.fas.fa-check.small
-  %span.small= t('.check_002')
+= render partial: 'shared/check_and_note', locals: {text: t('.check_001')}
+= render partial: 'shared/check_and_note', locals: {text: t('.check_002')}
 
 .mt-3.mb-4
   %span.thin-border
@@ -22,12 +18,9 @@
   %span.thin-border
 
 = render partial: 'shared/search_form', locals: {via: current_via('input'), redirect_path: redirect_path}
-.egotter-pink.text-right
-  %i.fas.fa-check.small
-  %span.small= t('.check_003')
-.egotter-pink.text-right.search-count-wrapper{style: 'visibility: hidden;'}
-  %i.fas.fa-check.small
-  %span.small= t('.check_004_html')
+= render partial: 'shared/check_and_note', locals: {text: t('.check_003')}
+.search-count-wrapper{style: 'visibility: hidden;'}
+  = render partial: 'shared/check_and_note', locals: {text: t('.check_004_html')}
 
 - if ab_test_flag
   %h2.h5.mt-5.mb-3= t('.lead_003_html')
@@ -39,9 +32,5 @@
   %div.my-4= t('.text003_html')
 
   = sign_in_with_twitter_link(redirect_path, 'screenshots_button', class: 'btn btn-primary btn-block')
-  .egotter-pink.text-right
-    %i.fas.fa-check.small
-    %span.small= t('.check_005')
-  .egotter-pink.text-right
-    %i.fas.fa-check.small
-    %span.small= t('.check_006')
+  = render partial: 'shared/check_and_note', locals: {text: t('.check_005')}
+  = render partial: 'shared/check_and_note', locals: {text: t('.check_006')}

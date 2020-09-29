@@ -11,6 +11,4 @@
         = link
         - check = [check] unless check.class == Array
         - check.each do |chk|
-          .egotter-pink.text-right
-            %i.fas.fa-check.small
-            %span.small= chk
+          = render partial: 'shared/check_and_note', locals: {text: chk}
