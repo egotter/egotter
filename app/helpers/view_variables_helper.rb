@@ -112,7 +112,7 @@ module ViewVariablesHelper
     end
   end
 
-  def current_page_description(twitter_user, tag_id:)
+  def current_page_description(twitter_user, tag_id: 'hidden-page-description')
     values = {
         user: timeline_link(twitter_user),
         tag_id: tag_id,
