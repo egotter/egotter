@@ -5,23 +5,11 @@ class OrdersController < ApplicationController
   before_action :require_login!, except: :checkout_session_completed
   before_action :has_already_purchased?, only: :create
 
-  after_action only: %i(create destroy checkout_session_completed) do
-    order =
-        if action_name == 'create'
-          current_user.orders.last
-        elsif action_name == 'destroy'
-          current_user.orders.find_by(id: params[:id])
-        elsif action_name == 'checkout_session_completed'
-          Order.where(created_at: 3.seconds.ago..Time.zone.now).last
-        else
-          raise
-        end
-    send_message_to_slack("#{order.inspect}", title: "`#{Rails.env}:#{action_name}`") if order
-  rescue => e
-    logger.warn "#{self.class} Sending a message to slack is failed #{e.inspect}"
-  end
+  after_action :send_message_to_slack, only: %i(create destroy checkout_session_completed)
 
   def create
+    logger.warn "#{controller_name}##{action_name} is deprecated"
+
     order = current_user.orders.create!(email: params[:stripeEmail])
 
     customer = Stripe::Customer.create(
@@ -50,12 +38,11 @@ class OrdersController < ApplicationController
     redirect_to root_path, notice: t('.success_html', url: after_purchase_path('after_purchasing'))
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{current_user_id}"
-    notify_airbrake(e)
     redirect_to root_path, alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error')) unless performed?
   end
 
   def destroy
-    order = current_user.orders.find_by(id: params[:id])
+    order = fetch_order
 
     if order.canceled_at
       redirect_to root_path, notice: t('.already_canceled_html', url: after_purchase_path('after_canceling'))
@@ -66,10 +53,10 @@ class OrdersController < ApplicationController
 
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{current_user_id}"
-    notify_airbrake(e)
     redirect_to root_path, alert: t('.failed_html', url: after_purchase_path('after_canceling_with_error')) unless performed?
   end
 
+  # Callback URL for a successful payment
   def success
     checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
     subscription_id = Order::CheckoutSession.new(checkout_session).subscription_id
@@ -81,6 +68,7 @@ class OrdersController < ApplicationController
     end
   end
 
+  # Callback URL for a canceled payment
   def cancel
     redirect_to root_path(via: current_via), notice: t('.canceled_html')
   end
@@ -129,13 +117,24 @@ class OrdersController < ApplicationController
 
   private
 
-  def after_purchase_path(via)
-    settings_path(anchor: 'orders-table', via: current_via(via))
+  def send_message_to_slack
+    SendMessageToSlackWorker.perform_async(:orders, fetch_order.inspect, "`#{Rails.env}:#{action_name}`")
   end
 
-  def send_message_to_slack(text, title:)
-    SlackClient.orders.send_message(text, title: title)
-  rescue => e
-    logger.warn "#{self.class}##{action_name} Sending a message to slack is failed #{e.inspect}"
+  def fetch_order
+    case action_name
+    when 'create'
+      current_user.orders.last
+    when 'destroy'
+      current_user.orders.find_by(id: params[:id])
+    when 'checkout_session_completed'
+      Order.where(created_at: 3.seconds.ago..Time.zone.now).last
+    else
+      nil
+    end
+  end
+
+  def after_purchase_path(via)
+    settings_path(anchor: 'orders-table', via: current_via(via))
   end
 end
