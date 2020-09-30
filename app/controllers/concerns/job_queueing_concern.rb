@@ -43,7 +43,7 @@ module JobQueueingConcern
 
     if twitter_user.assembled_at.blank?
       request = AssembleTwitterUserRequest.create(twitter_user: twitter_user)
-      debug_info = twitter_user.attributes.slice(:id, :friends_count, :followers_count)
+      debug_info = twitter_user.attributes.slice('id', 'friends_count', 'followers_count')
       AssembleTwitterUserWorker.perform_async(request.id, requested_by: controller_name, debug_info: debug_info)
     end
   end
