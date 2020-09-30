@@ -5,7 +5,7 @@ module PathsHelper
     when 'one_sided_friends', 'unfriends', 'inactive_friends', 'friends', 'clusters', 'personality_insights' then send("#{controller_name}_top_path", via: via)
     when 'delete_tweets' then delete_tweets_path(via: via)
     when 'tokimeki_unfollow' then tokimeki_unfollow_cleanup_path(via: via)
-    else root_path
+    else root_path(via: via)
     end
   end
 

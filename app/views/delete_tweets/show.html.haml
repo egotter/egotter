@@ -2,6 +2,8 @@
 
 - content_for :navbar_title, t('.navbar_title')
 
+- breadcrumb :delete_tweets, current_user.screen_name
+
 .text-center.my-5
   = image_tag '/egotter_trash_with_text_400x448.png', class: 'w-50', style: 'max-width: 200px;'
 

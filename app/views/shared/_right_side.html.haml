@@ -1,3 +1,5 @@
+- redirect_path_for_form = timeline_path(screen_name: ':screen_name') unless redirect_path
+- redirect_path = start_path unless redirect_path
 - ab_test_flag = fifty_percent?
 
 %h1.h4
@@ -12,15 +14,16 @@
 = render partial: 'shared/check_and_note', locals: {text: t('.check_001')}
 = render partial: 'shared/check_and_note', locals: {text: t('.check_002')}
 
-.mt-3.mb-4
-  %span.thin-border
-  %span.or-text= t('.or')
-  %span.thin-border
+- if show_search_form
+  .mt-3.mb-4
+    %span.thin-border
+    %span.or-text= t('.or')
+    %span.thin-border
 
-= render partial: 'shared/search_form', locals: {via: current_via('input'), redirect_path: redirect_path}
-= render partial: 'shared/check_and_note', locals: {text: t('.check_003')}
-.search-count-wrapper{style: 'visibility: hidden;'}
-  = render partial: 'shared/check_and_note', locals: {text: t('.check_004_html')}
+  = render partial: 'shared/search_form', locals: {via: current_via('input'), redirect_path: redirect_path_for_form}
+  = render partial: 'shared/check_and_note', locals: {text: t('.check_003')}
+  .search-count-wrapper{style: 'visibility: hidden;'}
+    = render partial: 'shared/check_and_note', locals: {text: t('.check_004_html')}
 
 - if ab_test_flag
   %h2.h5.mt-5.mb-3= t('.lead_003_html')

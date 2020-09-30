@@ -385,6 +385,7 @@ ja:
           ok: '削除します'
       delete_tweets:
         title: "ツイート削除"
+        name: 'ツイートクリーナー'
         move_to: 'に移動しました'
     general:
       title: "基本情報"
@@ -648,7 +649,6 @@ ja:
   unfriends:
     new:
       page_title: 'リムられチェック - 保存ユーザー数4,800万人突破！スマホから使えて無料！ 一番使われているリムられチェックアプリです'
-      simple_title_html: 'リムられチェック'
       footer_title: 'リムられチェック'
       first_title_sub_text: 'スマホでサクッと'
       meta_description: "保存ユーザー数4,800万人突破！ 無料で使える！ スマホ対応OK！ 一番使われているリムられチェッカーです。ツイッターであなたをリムった人を無料で確認できます。自動リムられ通知もあります。データは登録してからたまるので、今すぐ登録しましょう。"
@@ -1150,7 +1150,7 @@ ja:
         </div>
   friends:
     new:
-      simple_title: 'フォローチェック'
+      footer_title: 'フォローチェック'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホからフォローチェック！"
       short_description: "フォローとフォロワーの一覧をさくっと見ることができます。"
       lead_001: "スマホでさくっとフォローチェック"
@@ -1321,7 +1321,6 @@ ja:
     new: &delete_tweets_new
       navbar_title: 'ツイートクリーナー🧹'
       page_title: 'ツイートクリーナー🧹 - ワンクリックでツイートを一括削除'
-      simple_title: 'ツイートクリーナー🧹'
       footer_title: 'ツイートを一括削除'
       meta_description: '黒歴史よさようなら！ ワンクリックでツイートを一括削除。350万回以上利用されたえごったーに新機能が登場！ 100件/秒の速さでツイートを高速削除します。10年以上利用されているえごったーだからプライバシーも安心です。'
       right_side:
@@ -1339,6 +1338,7 @@ ja:
           アカウント切り替えは <a href="%{url}">こちら</a>
     show:
       <<: *delete_tweets_new
+      crumb_title: 'ツイートクリーナー'
       delete_tweets: '@%{user} のツイートを削除する'
       see_progress: 'ツイート削除ステータスを見る'
       status:
@@ -1376,7 +1376,6 @@ ja:
   personality_insights:
     new: &personality_insights_new
       page_title: 'ツイッター性格診断'
-      simple_title: 'ツイッター性格診断'
       footer_title: 'ツイッター性格診断'
       meta_description: 'ツイートからその人の性格を推定してみましょう。ツイッター性格診断は、言語学的分析とパーソナリティ理論を応用し、これまでのツイートからその人の特徴を推測します。'
       right_side:

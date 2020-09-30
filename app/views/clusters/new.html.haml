@@ -1,7 +1,8 @@
 - title @title
 - set_meta_tags description: t('clusters.new.description')
 
-= render partial: 'shared/side_by_side_section', locals: {right_side: {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html')}}
+- right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html'), redirect_path: cluster_path(screen_name: ':screen_name', via: current_via)}
+= render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options}
 
 - if show_redirection_modal?
   = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: cluster_path(current_user)}
