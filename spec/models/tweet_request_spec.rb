@@ -29,6 +29,11 @@ RSpec.describe TweetRequest, type: :model do
     # end
   end
 
+  describe '.share_suffix' do
+    subject { described_class.share_suffix }
+    it { is_expected.to be_truthy }
+  end
+
   describe '.create_status!' do
     let(:client) { double('client') }
     let(:text) { 'text' }

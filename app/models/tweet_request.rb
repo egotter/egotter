@@ -41,12 +41,11 @@ class TweetRequest < ApplicationRecord
 
   class << self
     def share_suffix
-      time = I18n.l(Time.zone.now, format: :date_hyphen)
       params = {
           utm_source: 'share_tweet',
           utm_medium: 'tweet',
-          utm_campaign: "share_tweet_#{time}",
-          via: "share_tweet_#{time}"
+          utm_campaign: 'share_tweet',
+          via: 'share_tweet'
       }
       '#egotter ' + Rails.application.routes.url_helpers.root_url(params)
     end
