@@ -4,7 +4,7 @@ module CampaignsHelper
         via: name,
         utm_source: name,
         utm_medium: medium,
-        utm_campaign: "#{name}_#{I18n.l(Time.zone.now, format: :date_hyphen)}",
+        utm_campaign: name,
     }
   end
 end
