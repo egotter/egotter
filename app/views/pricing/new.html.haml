@@ -33,6 +33,7 @@
 .my-2= pricing_unchecked_item(t('.list.egotter_follow'))
 .my-2= pricing_unchecked_item(t('.list.atmark'))
 .my-2= pricing_unchecked_item(t('.list.nonstop'))
+.my-2= pricing_unchecked_item(t('.list.delete_all_tweets', count: DeleteTweetsRequest::DESTROY_LIMIT))
 
 %hr
 
@@ -48,7 +49,8 @@
 .my-2= pricing_checked_item(t('.list.download'))
 .my-2= pricing_checked_item(t('.list.egotter_follow'))
 .my-2= pricing_checked_item(t('.list.atmark'))
-.mt-2.mb-4= pricing_checked_item(t('.list.nonstop'))
+.mt-2= pricing_checked_item(t('.list.nonstop'))
+.my-2.mb-4= pricing_checked_item(t('.list.delete_all_tweets', count: DeleteTweetsRequest::DESTROY_LIMIT))
 .my-2= pricing_checked_item(t('.list.money_back_guarantee', count: Order::TRIAL_DAYS))
 .my-2
   - if user_signed_in?

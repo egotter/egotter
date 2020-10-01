@@ -19,6 +19,10 @@ class DeleteTweetWorker
   rescue => e
     logger.warn "#{e.inspect} user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
+
+    if options['request_id']
+      DeleteTweetsRequest.find(options['request_id']).update(error_class: e.class, error_message: e.message)
+    end
   end
 
   private

@@ -4,27 +4,35 @@
 
 - breadcrumb :delete_tweets, current_user.screen_name
 
-.text-center.my-5
-  = image_tag '/egotter_trash_with_text_400x448.png', class: 'w-50', style: 'max-width: 200px;'
+.text-center.my-1
+  - if current_user.has_valid_subscription?
+    = t('.eligible_for_premium', user: current_user.screen_name)
+    %span.small.rounded.p-1{style: 'cursor: pointer; border: 1px solid rgba(0,0,0,.125);'}
+      %i.far.fa-question-circle.text-muted
+      = link_to t('.word_procedure'), '#download-full-archive', class: 'text-muted'
+  - else
+    = t('.warnings')[1]
+    %span.small.rounded.p-1{style: 'cursor: pointer; border: 1px solid rgba(0,0,0,.125);'}
+      %i.far.fa-question-circle.text-muted
+      = link_to t('.word_description'), '#delete-tweets-faq', class: 'text-muted'
 
-.text-center.my-1= t('.warnings')[0]
-.text-center.my-1= t('.warnings')[1]
-.text-center.my-1= t('.warnings')[2]
-
-.text-center.my-5
+.text-center.mt-4.mb-5
   - if @processing
     .btn.btn-danger.disabled= t('.requested')
   - else
-    .btn.btn-danger{"data-target" => "##{modal_id}", "data-toggle" => "modal"}= t('.delete_tweets', user: current_user.screen_name)
+    .btn.btn-danger{"data-target" => "##{modal_id}", "data-toggle" => "modal"}= t('.modal_button_html', user: current_user.screen_name, icon: current_user_icon)
 
-- if @request
-  - req = DeleteTweetsRequestDecorator.new(@request)
-  %h2.h4.text-center.my-5= t('.status.title')
-  .text-center.mb-3= t('.status.description', user: @current_user.screen_name)
-  %table.text-center.table.table-bordered.table-condensed
-    %tr
+%h2.h4.text-center.mt-5.mb-4= t('.status.title')
+.text-center.mb-3= t('.status.description', user: current_user.screen_name)
+%table.table.table-bordered.table-condensed
+  %tr
+    - if @request
+      - req = DeleteTweetsRequestDecorator.new(@request)
       %td= req.time
       %td= req.message
+    - else
+      %td.text-muted= t('.status.empty_date')
+      %td.text-muted= t('.status.no_request_description', user: current_user.screen_name)
 
 = render partial: 'delete_tweets/faq'
 

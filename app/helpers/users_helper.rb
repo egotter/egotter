@@ -35,6 +35,18 @@ module UsersHelper
   end
 
   def current_user_icon
-    TwitterDB::User.find_by(uid: current_user&.uid)&.profile_image_url_https
+    if instance_variable_defined?(:@current_user_icon)
+      @current_user_icon
+    else
+      @current_user_icon = TwitterDB::User.find_by(uid: current_user&.uid)&.profile_image_url_https
+    end
+  end
+
+  def current_user_statuses_count
+    if instance_variable_defined?(:@current_user_statuses_count)
+      @current_user_statuses_count
+    else
+      @current_user_statuses_count = TwitterDB::User.find_by(uid: current_user&.uid)&.current_user_statuses_count
+    end
   end
 end

@@ -509,6 +509,7 @@ ja:
         egotter_follow: '@ego_tter のフォローなしで高速検索'
         atmark: 'リムられ通知の全員にアットマーク付与'
         nonstop: 'リムられ通知の連続送信'
+        delete_all_tweets: '%{count}件を超えるツイートの削除'
         money_back_guarantee: "%{count}日間は100%返金保証"
       basic_plan_purchased: "購入済み"
       sign_in: 'ログインする'
@@ -1339,16 +1340,21 @@ ja:
     show:
       <<: *delete_tweets_new
       crumb_title: 'ツイートクリーナー'
-      delete_tweets: '@%{user} のツイートを削除する'
+      modal_button_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートを削除する'
       see_progress: 'ツイート削除ステータスを見る'
       status:
         title: 'ツイート削除ステータス'
         description: '@%{user} のツイート削除状況です。'
+        no_request_description: '削除中の場合は、ここに進行状況が表示されます。'
+        empty_date: '○月○日'
       requested: '削除リクエスト済み'
       warnings:
-        - '※ツイート削除は取り消しできません。'
-        - '※最初に削除できるのは3200件までです。'
-        - '※削除後もツイート総数は変化しません。'
+        - 'ツイート削除は取り消しできません'
+        - '3200件までは無料で削除できます'
+        - '削除後もツイート総数は変化しません'
+      word_description: '説明'
+      word_procedure: '手順'
+      eligible_for_premium: '@%{user} は有料プランのユーザーです。全てのツイートを削除することができます。'
       modal:
         title: 'ツイート一括削除'
         confirmation_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートをすべて削除します。本当に削除しますか？'
@@ -1359,10 +1365,15 @@ ja:
         ok: "削除します"
         cancel: "いいえ"
     message:
-      destroy_count: '%{count}件のツイートを削除しました。'
-      finished: '削除は完了しました。'
-      processing: '削除は継続中です。'
-      failed: 'エラーが起きました。一定時間後に再度お試しください。'
+      finished: '%{count}件のツイートを削除しました。削除は完了しています。'
+      processing_html: |
+        %{count}件のツイートを削除しました。削除は継続中です。通常、ツイート削除は5分以内に完了します。<br>
+        <br>
+        終わるのが遅い場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。
+      failed_html: |
+        %{count}件のツイートを削除中にエラーが起きました。一定時間後に再度お試しください。<br>
+        <br>
+        何度も失敗する場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     log:
       errors:
         default_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'

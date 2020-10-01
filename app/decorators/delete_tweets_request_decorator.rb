@@ -2,16 +2,14 @@ class DeleteTweetsRequestDecorator < ApplicationDecorator
   delegate_all
 
   def message
-    text = I18n.t('delete_tweets.message.destroy_count', count: object.destroy_count)
-
     if object.error_class.blank?
       if object.finished?
-        text += I18n.t('delete_tweets.message.finished')
+        text = I18n.t('delete_tweets.message.finished', count: object.destroy_count)
       else
-        text += I18n.t('delete_tweets.message.processing')
+        text = I18n.t('delete_tweets.message.processing_html', count: object.destroy_count)
       end
     else
-      text += I18n.t('delete_tweets.message.failed')
+      text = I18n.t('delete_tweets.message.failed_html', count: object.destroy_count)
     end
 
     text.html_safe

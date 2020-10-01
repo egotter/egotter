@@ -28,7 +28,18 @@ class DeleteTweetsRequest < ApplicationRecord
 
   attr_reader :retry_in
 
+  DESTROY_LIMIT = 3200
   FETCH_COUNT = 1000
+
+  before_validation do
+    if self.error_class
+      self.error_class = self.error_class.truncate(150)
+    end
+
+    if self.error_message
+      self.error_message = self.error_message.truncate(150)
+    end
+  end
 
   def finished!
     if finished_at.nil?
@@ -168,6 +179,7 @@ class DeleteTweetsRequest < ApplicationRecord
         template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
         message = ERB.new(template.read).result_with_hash(
             destroy_count: request.destroy_count,
+            destroy_limit: DESTROY_LIMIT,
             url: delete_tweets_url('delete_tweets_finished_dm'),
             mypage_url: delete_tweets_mypage_url('delete_tweets_finished_dm')
         )

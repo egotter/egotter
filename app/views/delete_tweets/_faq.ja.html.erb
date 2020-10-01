@@ -1,29 +1,61 @@
-<h2 class="h4 text-center my-5">ツイート削除のよくある質問</h2>
+<% destroy_limit = DeleteTweetsRequest::DESTROY_LIMIT %>
+
+<h2 id="delete-tweets-faq" class="h4 text-center mt-5 mb-4">ツイート削除のよくある質問</h2>
+
+<%= render partial: 'misc/q', locals: {text: 'ツイートクリーナーとは何ですか？'} %>
+<div class="mb-5">ツイートを一括削除するためのツールです。<%= destroy_limit %>件までのツイートは無料で削除できます。<br>
+  <br>
+  <%= destroy_limit %>件を超えるツイートは、えごったー有料プランのユーザーであれば全て削除できます。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
+
+<%= render partial: 'misc/q', locals: {text: '試しに少し使ってみることはできますか？'} %>
+<div class="mb-5">できます。<%= destroy_limit %>件までのツイートは無料プランで削除できます。<br>
+  <br>
+  試してみたい方はページ上部の「○○のツイートを削除する」と書かれた<span class="text-danger">赤いボタン</span>を押してみてください。</div>
+
+<%= render partial: 'misc/q', locals: {text: 'ツイート削除に失敗した場合の返金はありますか？'} %>
+<div class="mb-5">記載の手順通りに試して失敗した場合は、有料プラン1ヶ月分を返金いたします。<br>
+  <br>
+  お手数をおかけしますが、「ツイート削除に失敗したため返金希望」の旨を <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。</div>
+
+<%= render partial: 'misc/q', locals: {text: '最大で何件までツイートを削除することができますか？'} %>
+<div class="mb-5">過去事例では、約30万件のツイートを約1時間で削除できました。さらにツイート数が多い方の挑戦をお待ちしております！</div>
 
 <div id="download-full-archive">
-  <%= render partial: 'misc/q', locals: {text: '3200件よりも多いツイートを削除する方法はありますか？'} %>
+  <%= render partial: 'misc/q', locals: {text: '有料プランを購入しました。全てのツイートを削除する手順を教えてください'} %>
 </div>
 <div class="mb-5">
-  あります。「全ツイート履歴」を用意すれば、全てのツイートを完全に削除することができます。<br>
+  「全ツイート履歴」を用意し、アップロードしてください。それで手順は完了です。<br>
   <br>
-  1. <a href="https://twitter.com/settings/your_twitter_data" target="_blank">ツイッター設定 > アーカイブをダウンロード</a> から「全ツイート履歴」をダウンロードする<br>
+  1. 「全ツイート履歴」を<strong>ダウンロード</strong>する<br>
+  <a href="https://twitter.com/settings/your_twitter_data" target="_blank">ツイッター設定 > アーカイブをダウンロード</a> から「全ツイート履歴」をダウンロードする<br>
   <br>
-  2. ダウンロードした「全ツイート履歴」をアップロードする 例：<a href="https://gigafile.nu/" target="_blank">ギガファイル便</a><br>
+  2. 「全ツイート履歴」を<strong>アップロード</strong>する<br>
+  一般のファイルアップロードツールをご利用ください。例：<a href="https://gigafile.nu/" target="_blank">ギガファイル便</a><br>
   <br>
-  3. アップロードしたURLを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> にDMする<br>
+  「全ツイート履歴」のアップロード後に、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までDMにてご連絡ください。<br>
   <br>
-  上記の手順を完了すれば、全てのツイートを削除できます。希望される方はお試しください。
+  手順中で分からないことがありましたら、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。
 </div>
 
 <%= render partial: 'misc/q', locals: {text: 'ツイート削除は取り消しできますか？'} %>
 <div class="mb-5">取り消しできません。一度削除されたツイートを元に戻すことはできませんのでご注意ください。</div>
 
 <%= render partial: 'misc/q', locals: {text: 'ツイートの削除後もツイート総数が変化しないのはなぜですか？'} %>
-<div class="mb-5">ツイート削除後もツイート総数は変化しません。<br><br>例えば、100件のツイートがあるユーザーが全てのツイートを削除しても、ツイート数は100件と表示されたままになります。</div>
+<div class="mb-5">ツイッターの仕組み上、ツイート削除後もツイート総数が変化しないことがあるようです。<br>
+  <br>
+  例えば、100件のツイートがあるユーザーが全てのツイートを削除しても、ツイート数は100件と表示されたままになることがあります。</div>
 
 <%= render partial: 'misc/q', locals: {text: '削除されたツイートが表示され続けるのはなぜですか？'} %>
-<div class="mb-5">ツイッターの仕様上、削除済みのツイートはしばらく表示され続けます。ページを更新したり、ツイッターにログインし直すとそれらの表示は更新されます。</div>
+<div class="mb-5">ツイッターの仕組み上、削除済みのツイートがしばらく表示され続けることがあります。<br>
+  <br>
+  ページを更新したり、ツイッターにログインし直すと削除済みのツイートは画面から消えます。</div>
 
 <%= render partial: 'misc/q', locals: {text: '古いツイートが削除されないのはなぜですか？'} %>
-<div class="mb-5">ツイッターの仕様上、自動で削除できるのは3200件までです。<br><br>全てのツイートの削除を希望される方は、<a href="#download-full-archive">こちら</a> の手順をお試しください。</div>
+<div class="mb-5">ツイッターの仕組み上、APIで削除できるのは<%= destroy_limit %>件までです。そのため、大半のツイート削除ツールは<%= destroy_limit %>件までしかツイートを削除できません。<br>
+  <br>
+  えごったーでは、<%= destroy_limit %>件を超えるツイートを安全に削除する方法を確立しています。<br>
+  <br>
+  全てのツイートの削除を希望される方は、<a href="#download-full-archive"><%= destroy_limit %>件よりも多いツイートを削除する方法</a> の手順をお試しください。</div>
 
+<%= render partial: 'misc/q', locals: {text: 'ここに書いていないことを質問することはできますか？'} %>
+<div class="mb-5">サポートアカウント <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。</div>
