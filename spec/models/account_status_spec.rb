@@ -49,6 +49,12 @@ RSpec.describe AccountStatus, type: :model do
     it { is_expected.to be_truthy }
   end
 
+  describe '.could_not_authenticate_you?' do
+    let(:ex) { Twitter::Error::Unauthorized.new("Could not authenticate you.") }
+    subject { described_class.could_not_authenticate_you?(ex) }
+    it { is_expected.to be_truthy }
+  end
+
   describe '.bad_authentication_data?' do
     let(:ex) { Twitter::Error::BadRequest.new("Bad Authentication data.") }
     subject { described_class.bad_authentication_data?(ex) }

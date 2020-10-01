@@ -30,7 +30,7 @@ class TweetRequest < ApplicationRecord
   end
 
   def perform!
-    tweet = client.update(text + ' ' + self.class.share_suffix)
+    tweet = self.class.send(:create_status!, client, text + ' ' + self.class.share_suffix)
     update(tweet_id: tweet.id)
     tweet
   end
@@ -50,7 +50,27 @@ class TweetRequest < ApplicationRecord
       }
       '#egotter ' + Rails.application.routes.url_helpers.root_url(params)
     end
+
+    private
+
+    def create_status!(client, text)
+      retries ||= 1
+      client.update(text)
+    rescue => e
+      if AccountStatus.could_not_authenticate_you?(e)
+        if (retries -= 1) >= 0
+          retry
+        else
+          RetryExhausted.new(e.inspect)
+        end
+      else
+        raise
+      end
+    end
+
   end
+
+  class RetryExhausted < StandardError; end
 
   class TextValidator
     include Twitter::TwitterText::Validation

@@ -4,7 +4,7 @@ RSpec.describe TweetRequest, type: :model do
   let(:user) { create(:user) }
 
   context 'validation' do
-    let(:request) { TweetRequest.new(user_id: user.id, text: text) }
+    let(:request) { described_class.new(user_id: user.id, text: text) }
     subject { request.valid? }
 
     [
@@ -27,5 +27,16 @@ RSpec.describe TweetRequest, type: :model do
     #     it { is_expected.to be_falsey }
     #   end
     # end
+  end
+
+  describe '.create_status!' do
+    let(:client) { double('client') }
+    let(:text) { 'text' }
+    subject { described_class.send(:create_status!, client, text) }
+
+    it do
+      expect(client).to receive(:update).with(text)
+      subject
+    end
   end
 end

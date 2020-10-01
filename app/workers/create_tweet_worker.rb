@@ -1,6 +1,5 @@
 class CreateTweetWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
   sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
@@ -21,11 +20,6 @@ class CreateTweetWorker
     send_message_to_slack(request, tweet, options)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{request.inspect} #{options}"
-    notify_airbrake(e)
-  end
-
-  def tweet_url(screen_name, tweet_id)
-    "https://twitter.com/#{screen_name}/status/#{tweet_id}"
   end
 
   def send_message_to_slack(request, tweet, options)
@@ -40,5 +34,11 @@ class CreateTweetWorker
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
     notify_airbrake(e)
+  end
+
+  private
+
+  def tweet_url(screen_name, tweet_id)
+    "https://twitter.com/#{screen_name}/status/#{tweet_id}"
   end
 end
