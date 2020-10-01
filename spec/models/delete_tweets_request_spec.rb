@@ -28,17 +28,9 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     end
   end
 
-  shared_examples 'it receives exception_handler with an exception' do
-    let(:error) { RuntimeError.new('error') }
-    before { allow(request).to receive(:api_client).and_raise(error) }
-    it do
-      expect(request).to receive(:exception_handler).with(error).and_call_original
-      expect { subject }.to raise_error(described_class::Unknown)
-    end
-  end
-
   describe '#verify_credentials!' do
     let(:subject) { request.verify_credentials! }
+    before { request.instance_variable_set(:@retries, 1) }
 
     context 'user is authorized' do
       before { user.update(authorized: true) }
@@ -54,13 +46,19 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     end
 
     context 'exception is raised' do
-      include_examples 'it receives exception_handler with an exception'
+      let(:error) { RuntimeError.new('error') }
+      before { allow(request).to receive_message_chain(:api_client, :verify_credentials).and_raise(error) }
+      it do
+        expect(request).to receive(:exception_handler).with(error, :verify_credentials!)
+        subject
+      end
     end
   end
 
   describe '#tweets_exist!' do
     let(:user_response) { double('user_response', statuses_count: count) }
     let(:subject) { request.tweets_exist! }
+    before { request.instance_variable_set(:@retries, 1) }
 
     before { allow(request).to receive_message_chain(:api_client, :user).and_return(user_response) }
 
@@ -76,7 +74,12 @@ RSpec.describe DeleteTweetsRequest, type: :model do
 
     context 'exception is raised' do
       let(:count) { -1 }
-      include_examples 'it receives exception_handler with an exception'
+      let(:error) { RuntimeError.new('error') }
+      before { allow(request).to receive_message_chain(:api_client, :user).and_raise(error) }
+      it do
+        expect(request).to receive(:exception_handler).with(error, :tweets_exist!)
+        subject
+      end
     end
   end
 
@@ -116,7 +119,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
   end
 
   describe '#exception_handler' do
-    subject { request.exception_handler(exception) }
+    subject { request.exception_handler(exception, :last_method) }
 
     context 'exception is a kind of Error' do
       let(:exception) { described_class::InvalidToken.new }

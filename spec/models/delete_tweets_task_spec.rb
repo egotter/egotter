@@ -42,7 +42,7 @@ RSpec.describe DeleteTweetsTask, type: :model do
     end
 
     context 'RetryableError is raised' do
-      let(:error) { DeleteTweetsRequest::RetryableError.new(retry_in: 1, destroy_count: 2) }
+      let(:error) { DeleteTweetsRequest::RetryableError.new('message', retry_in: 1) }
       before { allow(request).to receive(:perform!).and_raise(error) }
       it do
         expect(DeleteTweetsWorker).to receive(:perform_in).with(1, request.id, {})

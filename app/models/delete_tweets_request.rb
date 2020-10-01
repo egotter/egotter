@@ -73,9 +73,9 @@ class DeleteTweetsRequest < ApplicationRecord
       raise Unauthorized
     end
   rescue => e
-    exception_handler(e)
+    exception_handler(e, __method__)
     @retries -= 1
-    retry
+    retry if @retries > 0
   end
 
   def tweets_exist!
@@ -83,9 +83,9 @@ class DeleteTweetsRequest < ApplicationRecord
       raise TweetsNotFound
     end
   rescue => e
-    exception_handler(e)
+    exception_handler(e, __method__)
     @retries -= 1
-    retry
+    retry if @retries > 0
   end
 
   def fetch_statuses!
@@ -95,19 +95,18 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def destroy_statuses!(tweets)
-    @destroy_count = tweets.size
     tweets.each do |tweet|
       DeleteTweetWorker.perform_async(user_id, tweet.id, request_id: id, last_tweet: tweet == tweets.last)
     end
   end
 
-  def exception_handler(e)
+  def exception_handler(e, last_method = nil)
     if e.is_a?(Error) || e.is_a?(RetryableError)
       raise e
     end
 
     if e.class == Twitter::Error::TooManyRequests
-      raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: @destroy_count)
+      raise TooManyRequests.new(last_method, retry_in: e.rate_limit.reset_in.to_i + 1)
     elsif AccountStatus.unauthorized?(e)
       raise InvalidToken.new(e.message)
     elsif ServiceStatus.retryable_error?(e)
@@ -215,11 +214,11 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   class RetryableError < StandardError
-    attr_reader :retry_in, :destroy_count
+    attr_reader :retry_in
 
-    def initialize(retry_in:, destroy_count:)
+    def initialize(message, retry_in:)
+      super(message)
       @retry_in = retry_in
-      @destroy_count = destroy_count
     end
   end
 
