@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe SendDeleteTweetsNotFinishedWorker do
+RSpec.describe SendDeleteTweetsStartedWorker do
   let(:worker) { described_class.new }
 
   describe '#perform' do
