@@ -17,6 +17,7 @@ class DeleteTweetsController < ApplicationController
     if current_user.authorized?
       request = DeleteTweetsRequest.create!(session_id: egotter_visit_id, user_id: current_user.id, tweet: params[:tweet] == 'true')
       jid = DeleteTweetsWorker.perform_async(request.id, user_id: current_user.id)
+      SendDeleteTweetsNotFinishedWorker.perform_in(30.minutes, request.id, user_id: current_user.id)
       render json: {jid: jid}
     else
       render json: {message: unauthorized_message(current_user.screen_name)}, status: :unauthorized

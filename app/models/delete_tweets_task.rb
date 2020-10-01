@@ -11,7 +11,6 @@ class DeleteTweetsTask
       return
     end
 
-    SendDeleteTweetsNotFinishedWorker.perform_in(30.minutes, @request.id, @options)
     perform_request!(@request)
   end
 

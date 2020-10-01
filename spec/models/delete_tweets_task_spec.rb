@@ -9,7 +9,6 @@ RSpec.describe DeleteTweetsTask, type: :model do
     subject { task.start! }
 
     it do
-      expect(SendDeleteTweetsNotFinishedWorker).to receive(:perform_in).with(30.minutes, request.id, {})
       expect(task).to receive(:perform_request!).with(request)
       subject
     end
@@ -18,7 +17,6 @@ RSpec.describe DeleteTweetsTask, type: :model do
       before { allow(request).to receive(:finished?).and_return(true) }
       it do
         expect(request).to receive(:update).with(error_class: described_class::AlreadyFinished)
-        expect(SendDeleteTweetsNotFinishedWorker).not_to receive(:perform_in)
         expect(task).not_to receive(:perform_request!)
         subject
       end
