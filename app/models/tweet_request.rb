@@ -60,7 +60,7 @@ class TweetRequest < ApplicationRecord
         if (retries -= 1) >= 0
           retry
         else
-          RetryExhausted.new(e.inspect)
+          raise RetryExhausted.new(e.inspect)
         end
       else
         raise

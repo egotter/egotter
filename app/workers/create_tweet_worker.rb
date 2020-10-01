@@ -19,7 +19,7 @@ class CreateTweetWorker
     ConfirmTweetWorker.perform_async(request_id, confirm_count: 0)
     send_message_to_slack(request, tweet, options)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{request.inspect} #{options}"
+    logger.warn "#{e.inspect} request=#{request.inspect} options=#{options}"
   end
 
   def send_message_to_slack(request, tweet, options)
