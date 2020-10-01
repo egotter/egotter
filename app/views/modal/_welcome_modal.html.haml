@@ -24,6 +24,12 @@
     var textUpdater = tweetTextUpdater();
     $('#see-other-candidates').on('click', function (){
       textUpdater();
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'TweetText',
+        eventAction: 'update',
+        eventLabel: 'TweetText update'
+      });
     });
   });
 
