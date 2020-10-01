@@ -260,4 +260,8 @@ class User < ApplicationRecord
   def purchased_search_count
     orders.unexpired.last.search_count
   end
+
+  def persisted_statuses_count
+    TwitterDB::User.find_by(uid: uid)&.statuses_count
+  end
 end

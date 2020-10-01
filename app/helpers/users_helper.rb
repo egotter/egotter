@@ -46,7 +46,7 @@ module UsersHelper
     if instance_variable_defined?(:@current_user_statuses_count)
       @current_user_statuses_count
     else
-      @current_user_statuses_count = TwitterDB::User.find_by(uid: current_user&.uid)&.current_user_statuses_count
+      @current_user_statuses_count = current_user&.persisted_statuses_count
     end
   end
 end

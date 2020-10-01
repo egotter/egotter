@@ -21,6 +21,7 @@ class DeleteTweetsTask
     request.perform!
   rescue DeleteTweetsRequest::TweetsNotFound => e
     request.finished!
+    SendDeleteTweetsFinishedWorker.perform_async(request.id)
   rescue DeleteTweetsRequest::InvalidToken => e
     Rails.logger.info "#{e.inspect} request=#{request.inspect}"
   rescue DeleteTweetsRequest::RetryableError => e
