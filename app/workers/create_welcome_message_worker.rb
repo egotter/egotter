@@ -18,7 +18,7 @@ class CreateWelcomeMessageWorker
     begin
       WelcomeMessage.welcome(user.id).deliver!
     rescue => e
-      SendMessageToSlackWorker.perform_async(:welcome_messages, e.inspect, user_id)
+      SendMessageToSlackWorker.perform_async(:welcome_messages, "#{e.inspect} screen_name=#{user.screen_name}", user_id)
     end
   rescue => e
     logger.info "#{e.inspect} user_id=#{user_id}"
