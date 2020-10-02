@@ -1,18 +1,33 @@
 require 'rails_helper'
 
 RSpec.describe Logging do
-  let(:klass) { Class.new.extend(Logging) }
-  let(:referers) { %w(http://t.co/aaa http://egotter.com) }
+  controller ApplicationController do
+    include Logging
+  end
 
-  describe '#find_referral' do
-    it 'returns referral' do
-      expect(klass.send(:find_referral, referers)).to eq 't.co'
+  describe '#track_event' do
+    subject { controller.track_event('name', 'properties') }
+    it do
+      expect(controller).to receive_message_chain(:ahoy, :track).with('name', 'properties')
+      subject
     end
   end
 
-  describe '#find_channel' do
-    it 'returns channel' do
-      expect(klass.send(:find_channel, 't.co')).to eq 'twitter'
+  describe '#track_sign_in_event' do
+    subject { controller.track_sign_in_event(context: 'c', via: 'v') }
+    it do
+      expect(controller).to receive_message_chain(:ahoy, :track).with('Sign in', via: 'v')
+      subject
     end
+  end
+
+  describe '#find_referral' do
+    subject { controller.send(:find_referral, %w(http://t.co/aaa http://egotter.com)) }
+    it { is_expected.to eq('t.co') }
+  end
+
+  describe '#find_channel' do
+    subject { controller.send(:find_channel, 't.co') }
+    it { is_expected.to eq('twitter') }
   end
 end

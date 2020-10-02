@@ -66,10 +66,8 @@ module Logging
     end
   rescue Encoding::UndefinedConversionError => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
-    notify_airbrake(e)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
-    notify_airbrake(e)
   end
 
   def create_error_log(location, message, ex = nil)
@@ -108,7 +106,6 @@ module Logging
     CreateSearchErrorLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
-    notify_airbrake(e)
   end
 
   def create_crawler_log
@@ -130,7 +127,6 @@ module Logging
     CreateCrawlerLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
-    notify_airbrake(e)
   end
 
   def create_sign_in_log(user, context:, via:, follow:, tweet:, referer:)
@@ -154,17 +150,20 @@ module Logging
     CreateSignInLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} action_name=#{action_name}"
-    notify_airbrake(e)
+  end
+
+  def track_event(name, properties = nil)
+    ahoy.track(name, properties)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} name=#{name} properties=#{properties.inspect}"
   end
 
   def track_sign_in_event(context:, via:)
-    event_name = context == :create ? 'Sign up' : 'Sign in'
-    event_params = {via: via}.reject { |_, v| v.blank? }
-    event_params = nil if event_params.blank?
-    ahoy.track(event_name, event_params)
+    name = context == :create ? 'Sign up' : 'Sign in'
+    properties = via.blank? ? nil : {via: via}
+    ahoy.track(name, properties)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} action_name=#{action_name}"
-    notify_airbrake(e)
   end
 
   private
@@ -215,7 +214,6 @@ module Logging
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    notify_airbrake(e)
     ''
   end
 
