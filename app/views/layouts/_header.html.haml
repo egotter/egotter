@@ -36,11 +36,10 @@
   %li.d-none.d-md-block
     - if user_signed_in?
       = link_to settings_path(via: via), class: 'text-white' do
-        - if current_user.has_valid_subscription?
-          %i.fas.fa-trophy.pl-3
-        - else
-          %i.fas.fa-cog.pl-3
+        %img.rounded-circle.d-inline-block.ml-3{src: current_user_icon, width: 22, height: 22}
         = current_user.screen_name
+        - if current_user.has_valid_subscription?
+          %i.fas.fa-trophy
     - else
       = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path), class: 'text-white pl-3'
 
@@ -51,7 +50,7 @@
   %li.d-block.d-md-none
     - if user_signed_in?
       = link_to '#', class: 'text-white pl-3' do
-        %img.rounded-circle.btn-sidemenu{style: 'border: 1px solid #fff;', src: current_user_icon, width: 22, height: 22}
+        %img.rounded-circle.btn-sidemenu{src: current_user_icon, width: 22, height: 22}
         = render partial: 'layouts/sidemenu'
     - else
       = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path), class: 'text-white pl-3'
