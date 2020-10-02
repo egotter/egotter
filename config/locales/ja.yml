@@ -2156,6 +2156,11 @@ ja:
         error: 'ツイートに失敗しました。テキストが長すぎたり、特殊な文字が入ったりしていませんか？'
         ok: "ツイートする"
         cancel: "やめておく"
+      sign_in:
+        title: 'えごったーにログインしよう'
+        body_html: 'えごったーにログインすれば、人気の<span class="egotter-pink">仲良しランキング</span>やリムられチェックをすぐに使うことができます。'
+        ok: 'ログインする'
+        cancel: 'やめておく'
     periodic_tweet_modal:
       title_html: '<span class="egotter-pink">定期ツイート</span>で検索回数 大幅アップ'
       text_html: |

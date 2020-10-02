@@ -21,10 +21,10 @@
 
 <% if controller_name == 'close_friends' %>
   <% unless user_signed_in? %>
-    <%= modal_dialog id: 'sign-in-modal', title: t('close_friends.show.sign_in_modal.title'), body: t('close_friends.show.sign_in_modal.body'), button: {positive: t('close_friends.show.sign_in_modal.yes'), negative: t('close_friends.show.sign_in_modal.no')}  %>
+    <%= modal_dialog id: 'close-friends-sign-in-modal', title: t('close_friends.show.sign_in_modal.title'), body: t('close_friends.show.sign_in_modal.body'), button: {positive: t('close_friends.show.sign_in_modal.yes'), negative: t('close_friends.show.sign_in_modal.no')}  %>
     <script>
       $(function () {
-        new SignInModal('sign-in-modal', '<%= sign_in_path(via: current_via('sign_in_modal')) %>');
+        new SignInModal('close-friends-sign-in-modal', '<%= sign_in_path(via: current_via('sign_in_modal')) %>');
       });
     </script>
   <% end %>

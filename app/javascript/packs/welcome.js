@@ -116,6 +116,19 @@ class FollowDialog extends ModalDialog {
   }
 }
 
+class SignInDialog {
+  constructor(id, url) {
+    var $el = $('#' + id);
+
+    $el.find('.btn.positive').on('click', function () {
+      window.location.href = url;
+    });
+
+    $el.modal();
+  }
+}
+
+
 class Util {
   static showShareDialog() {
     return this.getParameterByName('share_dialog') === '1';
@@ -123,6 +136,10 @@ class Util {
 
   static showFollowDialog() {
     return this.getParameterByName('follow_dialog') === '1';
+  }
+
+  static showSignInDialog() {
+    return this.getParameterByName('sign_in_dialog') === '1';
   }
 
   static getParameterByName(name, url) {
@@ -171,6 +188,16 @@ Welcome.showFollowDialogAndShareDialog = function (followingEgotter) {
 
   if (Util.showShareDialog()) {
     queue.add(new ShareDialog());
+  }
+
+  queue.start();
+};
+
+Welcome.showSignInDialog = function (id, url) {
+  var queue = new ModalQueue();
+
+  if (Util.showSignInDialog()) {
+    queue.add(new SignInDialog(id, url));
   }
 
   queue.start();

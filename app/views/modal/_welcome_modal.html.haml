@@ -1,49 +1,58 @@
--# This modal is always embedded because it is used in settings page.
-- tweets = t('.share.tweets').shuffle
-- data = {url: api_v1_share_tweets_path(via: current_via('share_egotter_modal')), success_message: t('.share.success'), error_message: t('.share.error')}
-= modal_dialog id: 'share-modal', title: t('.share.title_html'), button: {positive: t('.share.ok'), negative: t('.share.cancel')}, data: data do
-  .d-flex.align-items-center.mb-3
-    %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
-    .ml-3= t('.share.note_for_count_html', count: @search_count_limitation.current_sharing_bonus)
-  %textarea#share-modal-tweet{rows: '3', class: 'small', style: 'width: 100%; -webkit-appearance: none;'}= raw tweets[0]
-  .text-right
-    #see-other-candidates.btn.btn-outline-primary.btn-sm= t('.share.see_other_candidates')
-:javascript
-  $(function () {
-    function tweetTextUpdater () {
-      var index = 0;
-      var candidates = #{raw tweets.to_json};
-      return function () {
-        ++index;
-        if (index >= candidates.length) {
-          index = 0;
-        }
-        $('#share-modal-tweet').val(candidates[index].replace(/\\n/g, '\n'));
-      }
-    }
-    var textUpdater = tweetTextUpdater();
-    $('#see-other-candidates').on('click', function (){
-      textUpdater();
-      ga('send', {
-        hitType: 'event',
-        eventCategory: 'TweetText',
-        eventAction: 'update',
-        eventLabel: 'TweetText update'
-      });
-    });
-  });
-
-- if params[:follow_dialog] == '1'
-  - data = {url: follows_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')}
-  = modal_dialog id: 'follow-modal', title: t('.follow.title_html'), button: {positive: t('.follow.ok'), negative: t('.follow.cancel')}, data: data do
+- if user_signed_in?
+  -# This modal is always embedded because it is used in settings page.
+  - tweets = t('.share.tweets').shuffle
+  - data = {url: api_v1_share_tweets_path(via: current_via('share_egotter_modal')), success_message: t('.share.success'), error_message: t('.share.error')}
+  = modal_dialog id: 'share-modal', title: t('.share.title_html'), button: {positive: t('.share.ok'), negative: t('.share.cancel')}, data: data do
     .d-flex.align-items-center.mb-3
       %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
-      .ml-3= t('.follow.note_html')
+      .ml-3= t('.share.note_for_count_html', count: @search_count_limitation.current_sharing_bonus)
+    %textarea#share-modal-tweet{rows: '3', class: 'small', style: 'width: 100%; -webkit-appearance: none;'}= raw tweets[0]
+    .text-right
+      #see-other-candidates.btn.btn-outline-primary.btn-sm= t('.share.see_other_candidates')
+  :javascript
+    $(function () {
+      function tweetTextUpdater () {
+        var index = 0;
+        var candidates = #{raw tweets.to_json};
+        return function () {
+          ++index;
+          if (index >= candidates.length) {
+            index = 0;
+          }
+          $('#share-modal-tweet').val(candidates[index].replace(/\\n/g, '\n'));
+        }
+      }
+      var textUpdater = tweetTextUpdater();
+      $('#see-other-candidates').on('click', function (){
+        textUpdater();
+        ga('send', {
+          hitType: 'event',
+          eventCategory: 'TweetText',
+          eventAction: 'update',
+          eventLabel: 'TweetText update'
+        });
+      });
+    });
 
-:javascript
-  $(function () {
-    var followingEgotter = #{user_signed_in? && current_user.following_egotter?};
-    Welcome.showFollowDialogAndShareDialog(followingEgotter);
+  - if params[:follow_dialog] == '1'
+    - data = {url: follows_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')}
+    = modal_dialog id: 'follow-modal', title: t('.follow.title_html'), button: {positive: t('.follow.ok'), negative: t('.follow.cancel')}, data: data do
+      .d-flex.align-items-center.mb-3
+        %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
+        .ml-3= t('.follow.note_html')
 
-    new Welcome.ShareDialog();
-  });
+  :javascript
+    $(function () {
+      var followingEgotter = #{current_user.following_egotter?};
+      Welcome.showFollowDialogAndShareDialog(followingEgotter);
+
+      new Welcome.ShareDialog();
+    });
+- else
+  - if params[:sign_in_dialog] == '1'
+    = modal_dialog id: 'sign-in-modal', title: t('.sign_in.title'), body: t('.sign_in.body_html'), button: {positive: t('.sign_in.ok'), negative: t('.sign_in.cancel')}
+
+    :javascript
+      $(function () {
+        Welcome.showSignInDialog('sign-in-modal', '#{sign_in_path(via: current_via('sign_in_modal'))}');
+      });
