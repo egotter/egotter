@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe DeleteTweetsRequest, type: :model do
   let(:user) { create(:user, authorized: true) }
-  let(:request) { DeleteTweetsRequest.create(session_id: -1, user: user) }
+  let(:request) { DeleteTweetsRequest.create(user: user) }
 
   describe '#finished!' do
     subject { request.finished! }
@@ -143,7 +143,7 @@ end
 
 RSpec.describe DeleteTweetsRequest::Report, type: :model do
   let(:user) { create(:user, authorized: true) }
-  let(:request) { DeleteTweetsRequest.create(session_id: -1, user: user) }
+  let(:request) { DeleteTweetsRequest.create(user: user) }
 
   describe '.finished_tweet' do
     subject { described_class.finished_tweet(user, request) }

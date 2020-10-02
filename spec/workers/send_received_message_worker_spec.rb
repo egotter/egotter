@@ -41,7 +41,7 @@ RSpec.describe SendReceivedMessageWorker do
     context 'request is found' do
       let(:user) { create(:user) }
       subject { worker.recently_tweets_deleted_user?(user.uid) }
-      before { DeleteTweetsRequest.create!(session_id: 'str', user_id: user.id) }
+      before { DeleteTweetsRequest.create!(user_id: user.id) }
       it { is_expected.to be_truthy }
     end
   end

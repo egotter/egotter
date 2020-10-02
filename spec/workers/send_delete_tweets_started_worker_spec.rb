@@ -5,7 +5,7 @@ RSpec.describe SendDeleteTweetsStartedWorker do
 
   describe '#perform' do
     let(:user) { create(:user) }
-    let(:request) { DeleteTweetsRequest.create!(session_id: 'session_id', user_id: user.id) }
+    let(:request) { DeleteTweetsRequest.create!(user_id: user.id) }
     subject { worker.perform(request.id) }
     it { is_expected.to be_truthy }
   end

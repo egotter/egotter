@@ -14,7 +14,7 @@ RSpec.describe DeleteTweetsLog, type: :model do
 
   describe '.create_by' do
     let(:user) { create(:user) }
-    let(:request) { DeleteTweetsRequest.create(session_id: 's', user_id: user.id) }
+    let(:request) { DeleteTweetsRequest.create(user_id: user.id) }
     it do
       expect { DeleteTweetsLog.create_by(request: request) }.to change { DeleteTweetsLog.all.size }.by(1)
     end

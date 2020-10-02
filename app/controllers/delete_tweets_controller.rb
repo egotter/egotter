@@ -15,7 +15,7 @@ class DeleteTweetsController < ApplicationController
 
   def delete
     if current_user.authorized?
-      request = DeleteTweetsRequest.create!(session_id: egotter_visit_id, user_id: current_user.id, tweet: params[:tweet] == 'true')
+      request = DeleteTweetsRequest.create!(user_id: current_user.id, tweet: params[:tweet] == 'true')
       jid = DeleteTweetsWorker.perform_async(request.id, user_id: current_user.id)
 
       track_event('Delete tweets', request_id: request.id)

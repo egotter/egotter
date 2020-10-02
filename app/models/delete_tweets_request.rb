@@ -3,7 +3,7 @@
 # Table name: delete_tweets_requests
 #
 #  id            :bigint(8)        not null, primary key
-#  session_id    :string(191)      not null
+#  session_id    :string(191)
 #  user_id       :integer          not null
 #  tweet         :boolean          default(FALSE), not null
 #  destroy_count :integer          default(0), not null
@@ -23,7 +23,6 @@ class DeleteTweetsRequest < ApplicationRecord
   belongs_to :user
   has_many :logs, -> { order(created_at: :desc) }, primary_key: :id, foreign_key: :request_id, class_name: 'DeleteTweetsLog'
 
-  validates :session_id, presence: true
   validates :user_id, presence: true
 
   attr_reader :retry_in

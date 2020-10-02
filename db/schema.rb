@@ -502,7 +502,7 @@ ActiveRecord::Schema.define(version: 2020_09_02_234247) do
   end
 
   create_table "delete_tweets_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "session_id", null: false
+    t.string "session_id"
     t.integer "user_id", null: false
     t.boolean "tweet", default: false, null: false
     t.integer "destroy_count", default: 0, null: false
