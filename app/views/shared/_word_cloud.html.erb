@@ -9,9 +9,13 @@
     var container = $('#<%= container_id %>');
 
     $.get(url).done(function (res) {
-      container.empty();
-      var smartphone = <%= request.device_type == :smartphone %>;
-      new WordCloud(container.attr('id'), res.words_count, container.width(), container.height(), smartphone).draw();
+      if (res.words_count.length === 0) {
+        container.empty().text('<%= t('.empty') %>');
+      } else {
+        container.empty();
+        var smartphone = <%= request.device_type == :smartphone %>;
+        new WordCloud(container.attr('id'), res.words_count, container.width(), container.height(), smartphone).draw();
+      }
     }).fail(function (xhr) {
       console.warn(url, xhr.responseText);
       container.empty().text('<%= t('.updating') %>');
