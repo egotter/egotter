@@ -7,7 +7,7 @@ class LandingPagesController < ApplicationController
         when 'faq'
           'https://bit.ly/egotter_faq'
         when 'top'
-          'https://bit.ly/egotter_top'
+          'https://bit.ly/egotter_top2'
         else
           'https://egotter.com?via=lp_unknown_name'
         end
