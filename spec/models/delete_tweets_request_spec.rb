@@ -45,6 +45,14 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       it { expect { subject }.to raise_error(described_class::Unauthorized) }
     end
 
+    context 'Twitter::Error::TooManyRequests is raised' do
+      before { allow(request).to receive_message_chain(:api_client, :verify_credentials).and_raise(Twitter::Error::TooManyRequests) }
+      it do
+        expect(request).not_to receive(:exception_handler)
+        subject
+      end
+    end
+
     context 'exception is raised' do
       let(:error) { RuntimeError.new('error') }
       before { allow(request).to receive_message_chain(:api_client, :verify_credentials).and_raise(error) }

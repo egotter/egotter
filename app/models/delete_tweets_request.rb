@@ -73,9 +73,11 @@ class DeleteTweetsRequest < ApplicationRecord
       raise Unauthorized
     end
   rescue => e
-    exception_handler(e, __method__)
-    @retries -= 1
-    retry if @retries > 0
+    unless AccountStatus.too_many_requests?(e)
+      exception_handler(e, __method__)
+      @retries -= 1
+      retry if @retries > 0
+    end
   end
 
   def tweets_exist!
