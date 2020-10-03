@@ -12,6 +12,11 @@
   <br>
   試してみたい方はページ上部の「○○のツイートを削除する」と書かれた<span class="text-danger">赤いボタン</span>を押してみてください。</div>
 
+<%= render partial: 'misc/q', locals: {text: '他の人にRTやブックマークされたツイートも削除されますか？'} %>
+<div class="mb-5">削除されます。公式RTやブックマークされたツイートも削除対象です。<br>
+  <br>
+  ただし、引用RT（コピペしてRT）の場合は、削除することができません。</div>
+
 <%= render partial: 'misc/q', locals: {text: 'ツイート削除に失敗した場合の返金はありますか？'} %>
 <div class="mb-5">記載の手順通りに試して失敗した場合は、有料プラン1ヶ月分を返金いたします。<br>
   <br>
@@ -56,6 +61,16 @@
   えごったーでは、<%= destroy_limit %>件を超えるツイートを安全に削除する方法を確立しています。<br>
   <br>
   全てのツイートの削除を希望される方は、<a href="#download-full-archive"><%= destroy_limit %>件よりも多いツイートを削除する方法</a> の手順をお試しください。</div>
+
+<%= render partial: 'misc/q', locals: {text: '画像付きツイートが削除されないのはなぜですか？'} %>
+<div class="mb-5">ツイッターの仕組み上、ツイート数の多い/少ないに関わらず、画像付きツイートが削除されずに残ることがあるようです。<br>
+  <br>
+  この条件に該当する方は、全てのツイートを削除できるえごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
+
+<%= render partial: 'misc/q', locals: {text: '1回で全てのツイートが削除されないことがあるのはなぜですか？'} %>
+<div class="mb-5">ツイッターの仕組み上、たくさんのツイートを削除すると、一時的にツイートが取得できないことがあるようです。<br>
+  <br>
+  この条件に該当する方は、30分ほど時間をあけてから再度お試しください。ツイートクリーナーは何回でも使うことができます。</div>
 
 <%= render partial: 'misc/q', locals: {text: 'ここに書いていないことを質問することはできますか？'} %>
 <div class="mb-5">サポートアカウント <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。</div>

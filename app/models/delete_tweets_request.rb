@@ -171,16 +171,20 @@ class DeleteTweetsRequest < ApplicationRecord
         template = Rails.root.join('app/views/delete_tweets/finished_tweet.ja.text.erb')
         message = ERB.new(template.read).result_with_hash(
             destroy_count: request.destroy_count,
-            url: delete_tweets_url('delete_tweets_finished_tweet'), kaomoji: Kaomoji.unhappy)
+            url: delete_tweets_url('delete_tweets_finished_tweet', true),
+            kaomoji: 'Σ(-᷅_-᷄๑)')
         new(nil, nil, message)
       end
 
       def finished_message(user, request)
-        template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
+        if request.destroy_count > 0
+          template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
+        else
+          template = Rails.root.join('app/views/delete_tweets/not_deleted.ja.text.erb')
+        end
         message = ERB.new(template.read).result_with_hash(
             destroy_count: request.destroy_count,
             destroy_limit: DESTROY_LIMIT,
-            url: delete_tweets_url('delete_tweets_finished_dm'),
             mypage_url: delete_tweets_mypage_url('delete_tweets_finished_dm')
         )
         new(User.egotter, user, message)
@@ -200,8 +204,8 @@ class DeleteTweetsRequest < ApplicationRecord
     end
 
     module UrlHelpers
-      def delete_tweets_url(via)
-        Rails.application.routes.url_helpers.delete_tweets_url(via: via, og_tag: 'false')
+      def delete_tweets_url(via, og_tag = false)
+        Rails.application.routes.url_helpers.delete_tweets_url(via: via, og_tag: og_tag)
       end
 
       def delete_tweets_mypage_url(via)

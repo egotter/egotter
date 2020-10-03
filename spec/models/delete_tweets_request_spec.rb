@@ -143,7 +143,7 @@ end
 
 RSpec.describe DeleteTweetsRequest::Report, type: :model do
   let(:user) { create(:user, authorized: true) }
-  let(:request) { DeleteTweetsRequest.create(user: user) }
+  let(:request) { DeleteTweetsRequest.create(user: user, destroy_count: 0) }
 
   describe '.finished_tweet' do
     subject { described_class.finished_tweet(user, request) }
@@ -153,6 +153,11 @@ RSpec.describe DeleteTweetsRequest::Report, type: :model do
   describe '.finished_message' do
     subject { described_class.finished_message(user, request) }
     it { is_expected.to be_truthy }
+
+    context 'destroy_count is 10' do
+      before { request.update!(destroy_count: 10) }
+      it { is_expected.to be_truthy }
+    end
   end
 
   describe '.finished_message_from_user' do
