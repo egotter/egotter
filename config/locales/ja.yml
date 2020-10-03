@@ -1393,6 +1393,8 @@ ja:
         header: 'ツイッター性格診断'
         subheader: '「自分の知らない自分」を見つける'
         lead_html: '性格診断・心理テストの究極系<br>話題のツイート性格分析を今すぐチェック'
+      see_sample:
+        ツイッター性格診断のサンプルを見る
       redirection_modal:
         title: '@%{user} でログイン中です'
         body_html: '@%{user} のツイッター性格診断結果へ移動しますか？'

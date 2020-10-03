@@ -1,8 +1,10 @@
 - title t('.page_title')
 - set_meta_tags description: t('.meta_description')
 
-- right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html'), redirect_path: personality_insight_path(screen_name: ':screen_name', via: current_via), show_search_form: false}
+- right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html'), redirect_path: personality_insight_path(screen_name: ':screen_name', via: current_via), show_search_form: false, show_screenshots: false}
 = render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options}
+
+.text-center.my-5= link_to t('.see_sample'), personality_insight_path(screen_name: 'ego_tter', via: current_via('see_sample')), class: 'btn btn-outline-primary'
 
 = render partial: 'shared/review_section'
 
