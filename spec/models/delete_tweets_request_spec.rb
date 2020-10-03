@@ -68,7 +68,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     let(:subject) { request.tweets_exist! }
     before { request.instance_variable_set(:@retries, 1) }
 
-    before { allow(request).to receive_message_chain(:api_client, :user).and_return(user_response) }
+    before { allow(request).to receive_message_chain(:api_client, :user).with(user.uid).and_return(user_response) }
 
     context 'statuses_count is 0' do
       let(:count) { 0 }
@@ -93,13 +93,15 @@ RSpec.describe DeleteTweetsRequest, type: :model do
 
   describe '#fetch_statuses!' do
     let(:tweets) do
-      [double('tweet', created_at: 1.day.ago), double('tweet', created_at: 1.day.ago)]
+      [double('tweet', id: 200, created_at: 1.day.ago), double('tweet', id: 100, created_at: 1.day.ago)]
     end
     subject { request.fetch_statuses! }
 
     before do
       allow(request).to receive_message_chain(:api_client, :user_timeline).
-          with(count: described_class::FETCH_COUNT).and_return(tweets)
+          with(count: 200).and_return(tweets)
+      allow(request).to receive_message_chain(:api_client, :user_timeline).
+          with(count: 200, max_id:  99).and_return([])
     end
 
     it { is_expected.to match_array(tweets) }

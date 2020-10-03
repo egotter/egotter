@@ -28,7 +28,6 @@ class DeleteTweetsRequest < ApplicationRecord
   attr_reader :retry_in
 
   DESTROY_LIMIT = 3200
-  FETCH_COUNT = 1000
 
   before_validation do
     if self.error_class
@@ -80,7 +79,7 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def tweets_exist!
-    if api_client.user.statuses_count == 0
+    if api_client.user(user.uid).statuses_count == 0
       raise TweetsNotFound
     end
   rescue => e
@@ -90,8 +89,22 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def fetch_statuses!
-    tweets = api_client.user_timeline(count: FETCH_COUNT).select { |t| t.created_at < created_at }
+    tweets = []
+    max_id = nil
+    options = {count: 200}
+
+    5.times do
+      options[:max_id] = max_id unless max_id.nil?
+      response = api_client.user_timeline(options)
+      break if response.nil? || response.empty?
+
+      tweets.concat(response)
+      max_id = response.last.id - 1
+    end
+
+    tweets.select! { |t| t.created_at < created_at }
     raise TweetsNotFound if tweets.empty?
+
     tweets
   end
 
