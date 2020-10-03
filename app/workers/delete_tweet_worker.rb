@@ -33,6 +33,7 @@ class DeleteTweetWorker
     if ServiceStatus.retryable_error?(e)
       retry
     elsif AccountStatus.invalid_or_expired_token?(e) ||
+        AccountStatus.suspended?(e) ||
         TweetStatus.no_status_found?(e) ||
         TweetStatus.not_authorized?(e) ||
         TweetStatus.that_page_does_not_exist?(e)
