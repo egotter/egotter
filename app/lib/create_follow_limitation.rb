@@ -10,7 +10,7 @@ class CreateFollowLimitation
       if user&.has_valid_subscription?
         followers_count = TwitterUser.latest_by(uid: user.uid)&.followers_count
         followers_count = TwitterDB::User.find_by(uid: user.uid)&.followers_count unless followers_count
-        followers_count = user.api_client.user[:followers_count] unless followers_count
+        followers_count = user.api_client.user(user.uid)[:followers_count] unless followers_count
 
         case followers_count
           when 0..99      then 20
