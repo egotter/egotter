@@ -11,12 +11,15 @@ class CreateWelcomeMessageWorker
   end
 
   # options:
+  #   prefix
   def perform(user_id, options = {})
     user = User.find(user_id)
     return unless user.authorized?
 
     begin
-      WelcomeMessage.welcome(user.id).deliver!
+      message = WelcomeMessage.welcome(user.id)
+      message.set_prefix_message(options['prefix']) if options['prefix']
+      message.deliver!
     rescue => e
       SendMessageToSlackWorker.perform_async(:welcome_messages, "#{e.inspect} screen_name=#{user.screen_name}", user_id)
     end
