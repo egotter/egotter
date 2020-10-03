@@ -3,6 +3,7 @@
 # Table name: orders
 #
 #  id                      :bigint(8)        not null, primary key
+#  ahoy_visit_id           :bigint(8)
 #  user_id                 :integer          not null
 #  email                   :string(191)
 #  name                    :string(191)
@@ -25,6 +26,7 @@
 
 class Order < ApplicationRecord
   belongs_to :user
+  visitable :ahoy_visit
 
   BASIC_PLAN_ID = ENV['STRIPE_BASIC_PLAN_ID']
   TRIAL_DAYS = 14

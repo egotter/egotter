@@ -831,6 +831,7 @@ ActiveRecord::Schema.define(version: 2020_09_02_234247) do
   end
 
   create_table "orders", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "ahoy_visit_id"
     t.integer "user_id", null: false
     t.string "email"
     t.string "name"

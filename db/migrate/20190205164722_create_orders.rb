@@ -1,6 +1,7 @@
 class CreateOrders < ActiveRecord::Migration[5.1]
   def change
     create_table :orders do |t|
+      t.bigint  :ahoy_visit_id,           null: true,  default: nil
       t.integer :user_id,                 null: false
       t.string  :email,                   null: true,  default: nil
       t.string  :name,                    null: true,  default: nil
