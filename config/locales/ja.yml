@@ -1354,13 +1354,14 @@ ja:
         - '削除後もツイート総数は変化しません'
       word_description: '説明'
       word_procedure: '手順'
-      eligible_for_premium: '@%{user} は有料プランのユーザーです。全てのツイートを削除することができます。'
+      description_for_free: '@%{user} は無料プランのユーザーです。最新の%{count}件まで削除することができます。'
+      description_for_premium: '@%{user} は有料プランのユーザーです。全てのツイートを削除するには全ツイート履歴が必要です。'
       modal:
-        title: 'ツイート一括削除'
+        title: '@%{user} のツイート削除'
         confirmation_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートをすべて削除します。本当に削除しますか？'
         dm_after_finishing: "削除の完了後に自分へDMする"
         tweet_after_finishing: "削除の完了後にツイートする"
-        please_enter_confirmation_text: '「ツイートを全て削除」と入力してください'
+        please_enter_confirmation_text: '確認のために「%{text}」と入力してください'
         confirmation_text: 'ツイートを全て削除'
         ok: "削除します"
         cancel: "いいえ"

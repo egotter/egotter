@@ -4,17 +4,19 @@
 
 - breadcrumb :delete_tweets, current_user.screen_name
 
-.text-center.my-1
-  - if current_user.has_valid_subscription?
-    = t('.eligible_for_premium', user: current_user.screen_name)
-    %span.small.rounded.p-1{style: 'cursor: pointer; border: 1px solid rgba(0,0,0,.125);'}
-      %i.far.fa-question-circle.text-muted
-      = link_to t('.word_procedure'), '#download-full-archive', class: 'text-muted'
-  - else
-    = t('.warnings')[1]
-    %span.small.rounded.p-1{style: 'cursor: pointer; border: 1px solid rgba(0,0,0,.125);'}
-      %i.far.fa-question-circle.text-muted
-      = link_to t('.word_description'), '#delete-tweets-faq', class: 'text-muted'
+.card.my-1
+  .card-body
+    .card-text
+    - if current_user.has_valid_subscription?
+      = t('.description_for_premium', user: current_user.screen_name)
+      = link_to '#download-full-archive', class: 'btn btn-outline-primary btn-sm' do
+        %i.far.fa-question-circle
+        = t('.word_procedure')
+    - else
+      = t('.description_for_free', user: current_user.screen_name, count: DeleteTweetsRequest::DESTROY_LIMIT)
+      = link_to '#delete-tweets-faq', class: 'btn btn-outline-primary btn-sm' do
+        %i.far.fa-question-circle
+        = t('.word_description')
 
 .text-center.mt-4.mb-5
   - if @processing
@@ -36,8 +38,20 @@
 
 = render partial: 'delete_tweets/faq'
 
-= modal_dialog(id: modal_id, title: t('.modal.title'), button: {positive: t('.modal.ok'), category: 'danger'}) do
+- confirmation_text = current_user.screen_name
+
+= modal_dialog(id: modal_id, title: t('.modal.title', user: current_user.screen_name), button: {positive: t('.modal.ok'), category: 'danger'}) do
   .mb-3= t('.modal.confirmation_html', user: current_user.screen_name, icon: current_user_icon)
+
+  - if current_user.has_valid_subscription?
+    .card.mb-3
+      .card-body
+        .card-text
+          = t('.description_for_premium', user: current_user.screen_name)
+          = link_to '#download-full-archive', class: 'btn btn-outline-primary btn-sm', onclick: 'closeConfirmationModal();' do
+            %i.far.fa-question-circle
+            = t('.word_procedure')
+
   %strong.d-block.my-1= t('.warnings')[0]
   %strong.d-block.mt-1.mb-3= t('.warnings')[1]
   %div
@@ -47,16 +61,20 @@
     = check_box_tag('tweet-after-finishing', '1', true)
     %label{for: 'tweet-after-finishing'}= t('.modal.tweet_after_finishing')
   .my-3
-    %small.form-text.text-muted= t('.modal.please_enter_confirmation_text')
+    %small.form-text.text-muted= t('.modal.please_enter_confirmation_text', text: confirmation_text)
     = text_field_tag '', '', class: 'form-control confirm-input', placeholder: ''
 
 :javascript
+  function closeConfirmationModal() {
+    $('##{modal_id}').modal('hide');
+  }
+
   $(function () {
     var id = '#{modal_id}';
     var url = '#{delete_tweets_path}';
     var i18n = {
-      pleaseEnterConfirmationText: '#{t('.modal.please_enter_confirmation_text')}',
-      confirmationText: '#{t('.modal.confirmation_text')}'
+      pleaseEnterConfirmationText: '#{t('.modal.please_enter_confirmation_text', text: confirmation_text)}',
+      confirmationText: '#{confirmation_text}'
     };
     new DeleteTweetsModal(id, url, i18n);
   });
