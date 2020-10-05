@@ -109,12 +109,12 @@ module TwitterDB
           records = records.order_by_field(uids).to_a
 
           # "inactive.nil?" is specified to prevent misjudgement
-          if inactive.nil? && uids.size != records.size
-            missing_uids = uids - records.map(&:uid)
-            CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(missing_uids, enqueued_by: "#{__method__}(#{caller_name})")
-            logger.warn "#{__method__}: Import missing uids caller=#{caller_name} value=#{uids.inspect.truncate(100)}"
-            logger.info caller.join("\n")
-          end
+          # if inactive.nil? && uids.size != records.size
+          #   missing_uids = uids - records.map(&:uid)
+          #   CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(missing_uids, enqueued_by: "#{__method__}(#{caller_name})")
+          #   logger.warn "#{__method__}: Import missing uids caller=#{caller_name} value=#{uids.inspect.truncate(100)}"
+          #   logger.info caller.join("\n")
+          # end
 
           records
         end
