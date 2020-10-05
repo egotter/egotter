@@ -2,34 +2,57 @@
 
 <h2 id="delete-tweets-faq" class="h4 text-center mt-5 mb-4">ツイート削除のよくある質問</h2>
 
-<%= render partial: 'misc/q', locals: {text: 'ツイートクリーナーとは何ですか？'} %>
+<% questions = [
+    {id: 'delete-tweets-q-01', text: 'ツイートクリーナーとは何ですか？'},
+    {id: 'delete-tweets-q-02', text: '試しに少し使ってみることはできますか？'},
+    {id: 'delete-tweets-q-03', text: '他の人にRTやブックマークされたツイートも削除されますか？'},
+    {id: 'delete-tweets-q-04', text: 'ツイート削除に失敗した場合の返金はありますか？'},
+    {id: 'delete-tweets-q-05', text: '最大で何件までツイートを削除することができますか？'},
+    {id: 'download-full-archive', text: '有料プランを購入しました。全てのツイートを削除する手順を教えてください'},
+    {id: 'delete-tweets-q-07', text: 'ツイート削除は取り消しできますか？'},
+    {id: 'delete-tweets-q-08', text: 'ツイートの削除後もツイート総数が変化しないのはなぜですか？'},
+    {id: 'delete-tweets-q-09', text: '削除されたツイートが表示され続けるのはなぜですか？'},
+    {id: 'delete-tweets-q-10', text: '古いツイートが削除されないのはなぜですか？'},
+    {id: 'delete-tweets-q-11', text: '画像付きツイートが削除されないのはなぜですか？'},
+    {id: 'delete-tweets-q-12', text: '1回で全てのツイートが削除されないことがあるのはなぜですか？'},
+    {id: 'delete-tweets-q-13', text: 'ツイートクリーナーを複数回使えば無料で全て削除できますか？'},
+    {id: 'delete-tweets-q-14', text: 'ここに書いていないことを質問することはできますか？'},
+] %>
+
+<ul class="list-group list-group-flush">
+  <% questions.each do |q| %>
+    <%= link_to q[:text], "##{q[:id]}", class: 'list-group-item' %>
+  <% end %>
+</ul>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">ツイートを一括削除するためのツールです。<%= destroy_limit %>件までのツイートは無料で削除できます。<br>
   <br>
   <%= destroy_limit %>件を超えるツイートは、えごったー有料プランのユーザーであれば全て削除できます。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
 
-<%= render partial: 'misc/q', locals: {text: '試しに少し使ってみることはできますか？'} %>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">できます。<%= destroy_limit %>件までのツイートは無料プランで削除できます。<br>
   <br>
   試してみたい方はページ上部の「○○のツイートを削除する」と書かれた<span class="text-danger">赤いボタン</span>を押してみてください。</div>
 
-<%= render partial: 'misc/q', locals: {text: '他の人にRTやブックマークされたツイートも削除されますか？'} %>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">削除されます。公式RTやブックマークされたツイートも削除対象です。<br>
   <br>
   ただし、引用RT（コピペしてRT）の場合は、削除することができません。</div>
 
-<%= render partial: 'misc/q', locals: {text: 'ツイート削除に失敗した場合の返金はありますか？'} %>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">記載の手順通りに試して失敗した場合は、有料プラン1ヶ月分を返金いたします。<br>
   <br>
   その際は「ツイート削除に失敗したため返金希望」の旨を <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。</div>
 
-<%= render partial: 'misc/q', locals: {text: '最大で何件までツイートを削除することができますか？'} %>
-<div class="mb-5">有料プランの場合、過去事例では約30万件のツイートを約1時間で削除できました。<br>
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">有料プランの場合、過去事例では30万件のツイートを約1時間で削除できました。<br>
   <br>
-  さらにツイート数が多い方の挑戦をお待ちしております！</div>
+  記録更新のため、30万件を超えるツイート数の方は無料で全てのツイートを削除します。<br>
+  <br>
+  希望される方は「30万件以上のツイート削除」の旨を <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。</div>
 
-<div id="download-full-archive">
-  <%= render partial: 'misc/q', locals: {text: '有料プランを購入しました。全てのツイートを削除する手順を教えてください'} %>
-</div>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">
   「全ツイート履歴」を用意し、アップロードしてください。それで手順は完了です。<br>
   <br>
@@ -44,20 +67,20 @@
   手順中で分からないことがありましたら、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。
 </div>
 
-<%= render partial: 'misc/q', locals: {text: 'ツイート削除は取り消しできますか？'} %>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">取り消しできません。一度削除されたツイートを元に戻すことはできませんのでご注意ください。</div>
 
-<%= render partial: 'misc/q', locals: {text: 'ツイートの削除後もツイート総数が変化しないのはなぜですか？'} %>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">ツイッターの仕組み上、ツイート削除後もツイート総数が変化しないことがあるようです。<br>
   <br>
   例えば、100件のツイートがあるユーザーが全てのツイートを削除しても、ツイート数は100件と表示されたままになることがあります。</div>
 
-<%= render partial: 'misc/q', locals: {text: '削除されたツイートが表示され続けるのはなぜですか？'} %>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">ツイッターの仕組み上、削除済みのツイートがしばらく表示され続けることがあります。<br>
   <br>
   ページを更新したり、ツイッターにログインし直すと削除済みのツイートは画面から消えます。</div>
 
-<%= render partial: 'misc/q', locals: {text: '古いツイートが削除されないのはなぜですか？'} %>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">ツイッターの仕組み上、自動で削除できるのは<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。<br>
   <br>
   えごったーでは、<%= destroy_limit %>件を超えるツイートを安全に削除する方法を確立しています。<br>
@@ -65,20 +88,20 @@
   全てのツイートの削除を希望される方は、有料プランの購入後、<a href="#download-full-archive"><%= destroy_limit %>件よりも多いツイートを削除する方法</a> の手順をお試しください。
   <a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
 
-<%= render partial: 'misc/q', locals: {text: '画像付きツイートが削除されないのはなぜですか？'} %>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">ツイッターの仕組み上、ツイート数の多い/少ないに関わらず、画像付きツイートが削除されずに残ることがあります。これは世界中の全てのツールで共通の制限です。<br>
   <br>
   この条件に該当する方は、全てのツイートを削除できるえごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
 
-<%= render partial: 'misc/q', locals: {text: '1回で全てのツイートが削除されないことがあるのはなぜですか？'} %>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">ツイッターの仕組み上、自動で削除できるのは最新の<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。<br>
   <br>
   <%= destroy_limit %>件を超える全てのツイートの削除を希望される方は、えごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
 
-<%= render partial: 'misc/q', locals: {text: 'ツイートクリーナーを複数回使えば無料で全て削除できますか？'} %>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">できません。最新の<%= destroy_limit %>件を削除後は、自動で削除できなくなります。これは世界中の全てのツールで共通の制限です。<br>
   <br>
   <%= destroy_limit %>件を超える全てのツイートの削除を希望される方は、えごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
 
-<%= render partial: 'misc/q', locals: {text: 'ここに書いていないことを質問することはできますか？'} %>
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">サポートアカウント <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。</div>
