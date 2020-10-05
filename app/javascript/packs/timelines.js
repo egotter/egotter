@@ -1,5 +1,7 @@
 class FeedItem {
   constructor(url, feedName, boxSelector, placeholderSelector) {
+    var self = this;
+
     $.get(url).done(function (res) {
       console.log(feedName, res);
       $(placeholderSelector).hide();
@@ -12,7 +14,17 @@ class FeedItem {
 
         res.users.forEach(function (user) {
           user.menu_name = feedName;
-          var rendered = Mustache.render(template, user);
+          var rendered = $(Mustache.render(template, user));
+
+          if (user.profile_image_url) {
+            rendered.find('img').on('error', function () {
+              self.drawText($(this));
+              return true;
+            }).attr('src', user.profile_image_url);
+          } else {
+            self.drawText(rendered.find('img'));
+          }
+
           box.find('.users').append(rendered);
         });
 
@@ -23,6 +35,14 @@ class FeedItem {
     }).fail(function (xhr) {
       console.warn(feedName, xhr.responseText);
     });
+  }
+
+  drawText(img) {
+    var parent = img.parent();
+    var style = 'font-size: x-small; width: 48px; height: 48px; overflow: hidden;';
+    var div = $('<div/>', {text: img.attr('alt'), class: 'rounded shadow p-1', style: style});
+    parent.append(div);
+    img.remove();
   }
 }
 
