@@ -20,10 +20,12 @@
 <%= render partial: 'misc/q', locals: {text: 'ツイート削除に失敗した場合の返金はありますか？'} %>
 <div class="mb-5">記載の手順通りに試して失敗した場合は、有料プラン1ヶ月分を返金いたします。<br>
   <br>
-  お手数をおかけしますが、「ツイート削除に失敗したため返金希望」の旨を <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。</div>
+  その際は「ツイート削除に失敗したため返金希望」の旨を <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。</div>
 
 <%= render partial: 'misc/q', locals: {text: '最大で何件までツイートを削除することができますか？'} %>
-<div class="mb-5">過去事例では、約30万件のツイートを約1時間で削除できました。さらにツイート数が多い方の挑戦をお待ちしております！</div>
+<div class="mb-5">有料プランの場合、過去事例では約30万件のツイートを約1時間で削除できました。<br>
+  <br>
+  さらにツイート数が多い方の挑戦をお待ちしております！</div>
 
 <div id="download-full-archive">
   <%= render partial: 'misc/q', locals: {text: '有料プランを購入しました。全てのツイートを削除する手順を教えてください'} %>
@@ -56,21 +58,27 @@
   ページを更新したり、ツイッターにログインし直すと削除済みのツイートは画面から消えます。</div>
 
 <%= render partial: 'misc/q', locals: {text: '古いツイートが削除されないのはなぜですか？'} %>
-<div class="mb-5">ツイッターの仕組み上、APIで削除できるのは<%= destroy_limit %>件までです。そのため、大半のツイート削除ツールは<%= destroy_limit %>件までしかツイートを削除できません。<br>
+<div class="mb-5">ツイッターの仕組み上、自動で削除できるのは<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。<br>
   <br>
   えごったーでは、<%= destroy_limit %>件を超えるツイートを安全に削除する方法を確立しています。<br>
   <br>
-  全てのツイートの削除を希望される方は、<a href="#download-full-archive"><%= destroy_limit %>件よりも多いツイートを削除する方法</a> の手順をお試しください。</div>
+  全てのツイートの削除を希望される方は、有料プランの購入後、<a href="#download-full-archive"><%= destroy_limit %>件よりも多いツイートを削除する方法</a> の手順をお試しください。
+  <a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
 
 <%= render partial: 'misc/q', locals: {text: '画像付きツイートが削除されないのはなぜですか？'} %>
-<div class="mb-5">ツイッターの仕組み上、ツイート数の多い/少ないに関わらず、画像付きツイートが削除されずに残ることがあるようです。<br>
+<div class="mb-5">ツイッターの仕組み上、ツイート数の多い/少ないに関わらず、画像付きツイートが削除されずに残ることがあります。これは世界中の全てのツールで共通の制限です。<br>
   <br>
   この条件に該当する方は、全てのツイートを削除できるえごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
 
 <%= render partial: 'misc/q', locals: {text: '1回で全てのツイートが削除されないことがあるのはなぜですか？'} %>
-<div class="mb-5">ツイッターの仕組み上、たくさんのツイートを削除すると、一時的にツイートが取得できないことがあるようです。<br>
+<div class="mb-5">ツイッターの仕組み上、自動で削除できるのは最新の<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。<br>
   <br>
-  この条件に該当する方は、30分ほど時間をあけてから再度お試しください。ツイートクリーナーは何回でも使うことができます。</div>
+  <%= destroy_limit %>件を超える全てのツイートの削除を希望される方は、えごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
+
+<%= render partial: 'misc/q', locals: {text: 'ツイートクリーナーを複数回使えば無料で全て削除できますか？'} %>
+<div class="mb-5">できません。最新の<%= destroy_limit %>件を削除後は、自動で削除できなくなります。これは世界中の全てのツールで共通の制限です。<br>
+  <br>
+  <%= destroy_limit %>件を超える全てのツイートの削除を希望される方は、えごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
 
 <%= render partial: 'misc/q', locals: {text: 'ここに書いていないことを質問することはできますか？'} %>
 <div class="mb-5">サポートアカウント <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。</div>
