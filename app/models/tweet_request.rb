@@ -79,7 +79,7 @@ class TweetRequest < ApplicationRecord
     end
 
     def valid?
-      parse_tweet(@text)[:valid]
+      @text.present? && !@text.include?('*') && parse_tweet(@text)[:valid]
     end
   end
 end
