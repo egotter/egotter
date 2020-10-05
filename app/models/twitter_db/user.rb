@@ -104,9 +104,17 @@ module TwitterDB
         private
 
         def where_and_order_by_field_each_slice(uids, inactive, caller_name = nil)
-          result = where(uid: uids)
-          result = result.inactive_user if !inactive.nil? && inactive
-          result.order_by_field(uids).to_a
+          records = where(uid: uids)
+          records = records.inactive_user if !inactive.nil? && inactive
+          records = records.order_by_field(uids).to_a
+
+          if uids.size != records.size
+            missing_uids = uids - records.map(&:uid)
+            CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(missing_uids, enqueued_by: "#{__method__}(#{caller_name})")
+            logger.warn "#{__method__}: Import missing uids value=#{uids.inspect}"
+          end
+
+          records
         end
       end
 

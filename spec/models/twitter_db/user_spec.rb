@@ -75,6 +75,19 @@ RSpec.describe TwitterDB::User::QueryMethods do
           with(uid: uids).with(uids).and_return(users)
       is_expected.to eq(users)
     end
+
+    context 'The number of uids does not match the number of users' do
+      before do
+        allow(TwitterDB::User).to receive_message_chain(:where, :order_by_field).
+            with(uid: uids).with(uids).and_return(users.take(2))
+      end
+      it do
+        expect(CreateHighPriorityTwitterDBUserWorker).to receive(:compress_and_perform_async).
+            with([users.last.uid], enqueued_by: instance_of(String))
+        is_expected.to eq(users.take(2))
+      end
+
+    end
   end
 
   describe '.order_by_field' do
