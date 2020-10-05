@@ -21,14 +21,14 @@
             <span class="error text-muted" style="display: none;"><%= t('.error') %></span>
           </div>
         </div>
-        <div class="small text-muted summary-description" style="display: none;"><%= summary_description(name) %></div>
+        <div class="small text-muted collapse summary-descriptions"><%= summary_description(name) %></div>
       <% end %>
     <% end %>
   </div>
 
   <div class="text-center text-muted mt-1">
     <%= t('.notice') %>
-    <span class="small rounded p-1" onclick="toggleSummaryDescription();" style="cursor: pointer; border: 1px solid rgba(0,0,0,.125);">
+    <span class="btn btn-outline-primary btn-sm p-1" data-toggle="collapse" aria-expanded="false" href=".summary-descriptions">
       <i class="far fa-question-circle"></i>
       <%= t('.open_description') %>
     </span>
@@ -36,15 +36,6 @@
 </div>
 
 <script>
-  function toggleSummaryDescription() {
-    var $elem = $('.summary-description');
-    if ($elem.css('display') === 'block') {
-      $elem.hide('normal');
-    } else {
-      $elem.show('normal');
-    }
-  }
-
   $(function () {
     var url = '<%= raw api_v1_summaries_path(uid: twitter_user.uid, via: via) %>';
     var names = <%= raw items.map(&:first).to_json %>;
