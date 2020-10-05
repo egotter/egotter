@@ -3,12 +3,12 @@
 <div class="mt-1 mb-3 small">
   <%= t('.remaining_count', count: @search_count_limitation.remaining_count) %>
   <% btn_type = @search_count_limitation.count_remaining? ? 'btn-outline-primary' : 'btn-outline-warning' %>
-  <a href="#" class="btn <%= btn_type %> btn-sm" onclick="$('#increase-search-count').show('slow'); $(this).hide(); return false;"><%= t('.increase_count') %>
+  <a class="btn <%= btn_type %> btn-sm" data-toggle="collapse" aria-expanded="false" href="#increase-search-count"><%= t('.increase_count') %>
     <i class="far fa-question-circle"></i>
   </a>
 </div>
 
-<div id="increase-search-count" class="mb-3" style="display: none;">
+<div id="increase-search-count" class="collapse mb-3">
   <%= render template: 'messages/ways_to_increase_searches', locals: {via: via} %>
 </div>
 
