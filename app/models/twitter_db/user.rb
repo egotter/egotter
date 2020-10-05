@@ -108,7 +108,8 @@ module TwitterDB
           records = records.inactive_user if !inactive.nil? && inactive
           records = records.order_by_field(uids).to_a
 
-          if uids.size != records.size
+          # "inactive.nil?" is specified to prevent misjudgement
+          if inactive.nil? && uids.size != records.size
             missing_uids = uids - records.map(&:uid)
             CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(missing_uids, enqueued_by: "#{__method__}(#{caller_name})")
             logger.warn "#{__method__}: Import missing uids caller=#{caller_name} value=#{uids.inspect.truncate(100)}"
