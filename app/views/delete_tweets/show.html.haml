@@ -30,11 +30,11 @@
   %tr
     - if @request
       - req = DeleteTweetsRequestDecorator.new(@request)
-      %td= req.time
-      %td= req.message
+      %td.small= req.time
+      %td.small= req.message
     - else
-      %td.text-muted= t('.status.empty_date')
-      %td.text-muted= t('.status.no_request_description', user: current_user.screen_name)
+      %td.small.text-muted= t('.status.empty_date')
+      %td.small.text-muted= t('.status.no_request_description', user: current_user.screen_name)
 
 = render partial: 'delete_tweets/faq'
 
