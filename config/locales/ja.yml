@@ -2047,6 +2047,8 @@ ja:
     tweet_times:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
       updating: '更新中です。数分後に再度お試しください。'
+    stripe:
+      already_purchased: '購入済み'
   breadcrumb:
     root: 'トップ'
   users:

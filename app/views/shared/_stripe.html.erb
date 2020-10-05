@@ -3,9 +3,21 @@
 <% if user_signed_in? && current_user.has_valid_subscription? %>
   <script>
     $(function () {
-      $(document).on('click', '.btn-checkout', function () {
-        $(this).attr('disabled', 'disabled');
+      function disableCheckoutButton(button) {
+        if (!button.data('checkout-initialized')) {
+          button.data('checkout-initialized', true);
+          button.attr('disabled', 'disabled');
+          button.addClass('disabled');
+          button.text('<%= t('.already_purchased') %>');
+        }
         return false;
+      }
+
+      $('.btn-checkout').each(function () {
+        return disableCheckoutButton($(this));
+      })
+      $(document).on('click', '.btn-checkout', function () {
+        return disableCheckoutButton($(this));
       });
     });
   </script>
