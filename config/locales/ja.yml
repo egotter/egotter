@@ -584,6 +584,7 @@ ja:
       reverse_follow_back_rate: 'フォロー返され率'
       follow_back_rate: 'フォロー返し率'
       unknown_value: '集計中'
+      updated_at: '最終更新：%{text}'
       labels:
         suspended: "垢消し"
         blocked: "ブロック中"

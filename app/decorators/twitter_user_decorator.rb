@@ -155,6 +155,15 @@ class TwitterUserDecorator < ApplicationDecorator
     end
   end
 
+  def updated
+    if object.updated_at > 1.hour.ago
+      text = h.time_ago_in_words(object.updated_at)
+    else
+      text = I18n.l(object.updated_at.in_time_zone('Tokyo'), format: :profile_header_long)
+    end
+    I18n.t('twitter.profile.updated_at', text: text)
+  end
+
   private
 
   def refollow?
