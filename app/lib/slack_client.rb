@@ -42,7 +42,12 @@ class SlackClient
   def send_message(text, title: nil, retries: 3)
     text = format(text) if text.is_a?(Hash)
     text = "#{title}\n#{text}" if title
+    perform_request(text)
+  end
 
+  private
+
+  def perform_request(text)
     uri = URI.parse(@webhook)
     https = Net::HTTP.new(uri.host, uri.port)
     https.use_ssl = true
@@ -57,14 +62,12 @@ class SlackClient
     if (retries -= 1) >= 0
       retry
     else
-      raise RetryExhausted.new(e.message)
+      raise RetryExhausted.new("#{e.message} text=#{text}")
     end
   end
 
   class RetryExhausted < StandardError
   end
-
-  private
 
   def format(hash)
     text =
