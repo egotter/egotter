@@ -85,6 +85,24 @@ RSpec.describe TwitterUserAssociations do
     end
   end
 
+  describe '#close_friends' do
+    subject { twitter_user.close_friends }
+    before { allow(twitter_user).to receive(:close_friend_uids).and_return([1]) }
+    it do
+      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
+      subject
+    end
+  end
+
+  describe '#favorite_friends' do
+    subject { twitter_user.favorite_friends }
+    before { allow(twitter_user).to receive(:favorite_friend_uids).and_return([1]) }
+    it do
+      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
+      subject
+    end
+  end
+
   describe '#mutual_friends' do
     subject { twitter_user.mutual_friends }
     before { allow(twitter_user).to receive(:mutual_friend_uids).and_return([1]) }

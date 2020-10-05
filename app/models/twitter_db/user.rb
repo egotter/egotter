@@ -111,7 +111,7 @@ module TwitterDB
           if uids.size != records.size
             missing_uids = uids - records.map(&:uid)
             CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(missing_uids, enqueued_by: "#{__method__}(#{caller_name})")
-            logger.warn "#{__method__}: Import missing uids value=#{uids.inspect.truncate(100)}"
+            logger.warn "#{__method__}: Import missing uids caller=#{caller_name} value=#{uids.inspect.truncate(100)}"
           end
 
           records
