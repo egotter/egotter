@@ -1,3 +1,5 @@
+<% id_hash = SecureRandom.urlsafe_base64(10) %>
+
 <div class="card">
   <div class="card-body">
     <div class="mb-4">
@@ -16,11 +18,11 @@
     </div>
 
     <div class="text-right">
-      <a class="btn btn-outline-primary btn-sm" onclick="$('#current-periodic-report-details-<%= id_hash %>').show(); $(this).hide(); return false;" href="#">詳しく見る
+      <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#current-periodic-report-details-<%= id_hash %>">詳しく見る
         <i class="far fa-question-circle"></i></a>
     </div>
 
-    <div id="current-periodic-report-details-<%= id_hash %>" style="display: none;">
+    <div id="current-periodic-report-details-<%= id_hash %>" class="collapse">
       <hr>
       <div>1. えごったーとは何ですか？</div>
       <div class="mb-4">これまでに<span class="egotter-pink">350万回</span>以上利用されたツイッター分析アプリです。<br>
@@ -31,20 +33,20 @@
 
       <div>3. リムられ通知はどのように届きますか？</div>
       <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> からDMで届きます。
-        <a href="#" onclick="$('#sample_image1').show('slow'); $(this).hide(); return false;" target="_blank" class="small text-primary">サンプル画像を見る</a>
-        <div id="sample_image1" style="display: none;"><img src="<%= sample_image1_url %>" style="max-width: 600px;" alt="サンプル画像1" loading="lazy"></div>
+        <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image1">サンプル画像を見る</a>
+        <div id="sample_image1" class="collapse"><img src="<%= sample_image1_url %>" style="width: 100%; max-width: 600px;" alt="サンプル画像1" loading="lazy"></div>
       </div>
 
       <div>4. リムられ通知をすぐに受け取ることはできますか？</div>
       <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に「<span class="egotter-pink">リムられ通知 今すぐ送信</span>」とDMすればすぐに届きます。
-        <a href="#" onclick="$('#sample_image2').show('slow'); $(this).hide(); return false;" target="_blank" class="small text-primary">サンプル画像を見る</a>
-        <div id="sample_image2" style="display: none;"><img src="<%= sample_image2_url %>" style="max-width: 600px;" alt="サンプル画像2" loading="lazy"></div>
+        <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image2">サンプル画像を見る</a>
+        <div id="sample_image2" class="collapse"><img src="<%= sample_image2_url %>" style="width: 100%; max-width: 600px;" alt="サンプル画像2" loading="lazy"></div>
       </div>
 
       <div>5. リムられ通知を停止することはできますか？</div>
       <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に「<span class="egotter-pink">リムられ通知 停止</span>」とDMすればすぐに止めることができます。
-        <a href="#" onclick="$('#sample_image3').show('slow'); $(this).hide(); return false;" target="_blank" class="small text-primary">サンプル画像を見る</a>
-        <div id="sample_image3" style="display: none;"><img src="<%= sample_image3_url %>" style="max-width: 600px;" alt="サンプル画像3" loading="lazy"></div>
+        <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image3">サンプル画像を見る</a>
+        <div id="sample_image3" class="collapse"><img src="<%= sample_image3_url %>" style="width: 100%; max-width: 600px;" alt="サンプル画像3" loading="lazy"></div>
       </div>
 
       <div>6. @ego_tter にDMを送ることができません</div>
