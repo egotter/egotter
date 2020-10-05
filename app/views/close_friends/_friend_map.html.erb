@@ -1,9 +1,0 @@
-<div id="friend-map"></div>
-<% edges, nodes = friend_map_edges_and_nodes(@twitter_user) %>
-<script>
-  $(function () {
-    var data = <%= raw edges.to_json %>;
-    var nodes = <%= raw nodes.to_json %>;
-    new FriendNetwork('friend-map', data, nodes);
-  });
-</script>

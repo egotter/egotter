@@ -29,7 +29,6 @@ import "./follow_and_unfollow";
 import "./sort_and_filter";
 import "./word_cloud";
 import "./tweet_cluster";
-import "./friend_network";
 import "./audience_insight";
 import "./usage_stat";
 import "./delete_tweets_modal";
