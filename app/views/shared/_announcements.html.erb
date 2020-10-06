@@ -1,0 +1,11 @@
+<div class="container">
+  <h2 class="h4 text-center"><%= t('shared.announcement.title') %></h2>
+  <table class="table table-bordered table-condensed mb-5">
+    <% Announcement.list.each do |record| %>
+      <tr>
+        <td><%= record.date %></td>
+        <td><%= record.message %></td>
+      </tr>
+    <% end %>
+  </table>
+</div>

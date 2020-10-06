@@ -12,7 +12,7 @@
 = render partial: 'shared/feature_section', locals: {title: t('shared.features.title5_html'), image: '/egotter_chat_with_text_400x448.png', description: t('shared.features.text5_html'), note: nil, link: link_to(t('shared.features.button5'), 'https://twitter.com/ego_tter', target: '_blank', class: 'btn btn-primary btn-block'), check: t('shared.features.check5')}
 
 = render partial: 'shared/functions_section'
-= render partial: 'shared/announcement_section'
+= render partial: 'shared/announcements_section'
 
 - if show_redirection_modal? && !personality_insight_is_processing?
   = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body_html', user: current_user.screen_name), url: personality_insight_path(current_user, via: current_via('redirection_modal'))}

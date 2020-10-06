@@ -1,0 +1,8 @@
+<div id="announcements-container" style="min-height: 100px;"></div>
+
+<script>
+  $(function () {
+    var url = '<%= raw api_v1_announcements_list_path(via: current_via) %>';
+    new Announcement(url, 'announcements-container');
+  });
+</script>
