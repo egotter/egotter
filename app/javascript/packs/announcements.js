@@ -1,15 +1,15 @@
-class Announcement {
+class Announcements {
   constructor(url, id) {
     this.url = url;
     this.id = id;
     this.load();
   }
 
-  load() {
+  load(callback) {
     var url = this.url;
     var id = '#' + this.id;
-    new AsyncLoader(url, id).lazyload();
+    new AsyncLoader(url, id, callback).lazyload();
   }
 }
 
-window.Announcement = Announcement;
+window.Announcements = Announcements;

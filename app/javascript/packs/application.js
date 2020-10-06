@@ -38,7 +38,7 @@ import "./timelines";
 import "./waiting";
 import "./bg_update";
 import "./heart";
-import "./announcement";
+import "./announcements";
 import "./features";
 import "./functions";
 import "./profile_loader";

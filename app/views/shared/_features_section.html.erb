@@ -3,6 +3,13 @@
 <script>
   $(function () {
     var url = '<%= raw api_v1_features_list_path(via: current_via) %>';
-    new Features(url, 'features-container');
+    new Features(url, 'features-container', function () {
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'Features',
+        eventAction: 'loaded',
+        eventLabel: 'Features loaded'
+      });
+    });
   });
 </script>

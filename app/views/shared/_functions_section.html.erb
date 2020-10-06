@@ -3,6 +3,13 @@
 <script>
   $(function () {
     var url = '<%= raw api_v1_functions_list_path(via: current_via) %>';
-    new Functions(url, 'functions-container');
+    new Functions(url, 'functions-container', function () {
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'Functions',
+        eventAction: 'loaded',
+        eventLabel: 'Functions loaded'
+      });
+    });
   });
 </script>

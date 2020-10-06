@@ -3,6 +3,13 @@
 <script>
   $(function () {
     var url = '<%= raw api_v1_announcements_list_path(via: current_via) %>';
-    new Announcement(url, 'announcements-container');
+    new Announcements(url, 'announcements-container', function () {
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'Announcements',
+        eventAction: 'loaded',
+        eventLabel: 'Announcements loaded'
+      });
+    });
   });
 </script>

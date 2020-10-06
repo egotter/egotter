@@ -31,10 +31,9 @@ class AsyncLoader {
 
     $.get(url).done(function (res) {
       console.log('fetch', selector);
+      $(selector).html(res.html);
       if (callback) {
         callback(res);
-      } else {
-        $(selector).html(res.html);
       }
     }).fail(function (xhr) {
       console.warn(url, xhr.responseText);
