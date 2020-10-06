@@ -106,6 +106,9 @@ module Tasks
         }
         logger.info "#{__method__} options=#{options}"
 
+        backend('sudo chmod +r /var/log/messages')
+        backend('sudo chmod +rx /var/log/nginx')
+
         conf = ERB.new(File.read(src)).result_with_hash(options)
         upload_text(conf, '/etc/td-agent/td-agent.conf')
 
