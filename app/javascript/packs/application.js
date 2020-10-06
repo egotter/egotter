@@ -39,4 +39,6 @@ import "./waiting";
 import "./bg_update";
 import "./heart";
 import "./announcement";
+import "./features";
+import "./functions";
 import "./profile_loader";

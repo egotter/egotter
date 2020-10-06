@@ -15,21 +15,15 @@
 
   <div class="mb-5"><%= t('.description_top_html') %></div>
 
-  <div id="searched-tweets" class="twitter tweets text-left mx-auto"></div>
+  <div id="searched-tweets" class="text-left mx-auto"></div>
   <div class="my-5"><%= t('.description_bottom_html') %></div>
 </div>
 
 <div class="mx-auto" style="width: 300px;">
   <%= sign_in_with_twitter_link(nil, 'reviews_button', class: 'btn btn-primary w-100') %>
 
-  <div class="egotter-pink text-right">
-    <i class="fas fa-check small"></i>
-    <span class="small"><%= t('.check1') %></span>
-  </div>
-  <div class="egotter-pink text-right">
-    <i class="fas fa-check small"></i>
-    <span class="small"><%= t('.check2') %></span>
-  </div>
+  <%= render partial: 'shared/check_and_note', locals: {text: t('.check1')} %>
+  <%= render partial: 'shared/check_and_note', locals: {text: t('.check2')} %>
 </div>
 
 <script>

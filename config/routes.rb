@@ -27,6 +27,8 @@ Rails.application.routes.draw do
       get "profiles", to: "profiles#show"
       get 'account_statuses', to: 'account_statuses#show'
       get "announcements/list", to: "announcements#list"
+      get "features/list", to: "features#list"
+      get "functions/list", to: "functions#list"
 
       post 'users/update_instance_id', to: 'users#update_instance_id'
       post 'users/update_device_token', to: 'users#update_device_token'
