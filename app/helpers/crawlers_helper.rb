@@ -73,6 +73,7 @@ module CrawlersHelper
       'ceron.jp/1.0',
       'help@dataminr.com',
       'www.logicad.com',
+      'newspaper/0.2.8',
       '',
   ]
   CRAWLER_FULL_NAMES_REGEXP = Regexp.new('\A(' + CRAWLER_FULL_NAMES.map { |name| name.gsub('(', '\(').gsub(')', '\)').gsub('.', '\.') }.join('|') + ')\z')
