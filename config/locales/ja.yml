@@ -516,23 +516,26 @@ ja:
       purchase: '購入する'
       plans: "料金プラン"
       names:
+        pro: 'プロフェッショナル'
         enterprice: "エンタープライズ"
       pricing:
         key: "価格"
         basic_num: "300"
+        pro: "2万円〜"
         enterprice: "15万円〜"
       price:
         basic: "300"
       delivery_date:
         key: "納期"
+        pro: "3日〜"
         enterprice: "1週間〜"
       purchasing_method:
         key: "支払い方法"
         enterprice: "クレジットカード、請求書"
+      pro_description: "特定のユーザーのフォロー、フォロワー、ツイートのダウンロードなど、単純なデータの集計をお引き受けいたします。"
       enterprice_description: "特定の商品に興味のあるユーザーの嗜好性調査、特定のユーザーのフォロー・フォロワー収集など、ツイッターに関する調査全般をお引き受けいたします。"
-      enterprice_inquiry_by_email: "メールで問い合わせ"
-      enterprice_inquiry_by_dm: "DMで問い合わせ"
-      enterprice_inquiry_by_dm_note_html: '※DMですと見逃すことがあります。可能な限り、<span class="egotter-pink">メール</span>をご利用ください'
+      enterprice_inquiry_by_email: "egotter.com にメールで問い合わせ"
+      enterprice_inquiry_by_dm: "@egotter_cs にDMで問い合わせ"
   orders:
     create:
       success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'

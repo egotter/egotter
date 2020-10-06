@@ -235,6 +235,7 @@ class User < ApplicationRecord
 
   ADMIN_UID = 58135830
   EGOTTER_UID = 187385226
+  EGOTTER_CS_UID = 216924023
 
   def admin?
     uid == ADMIN_UID

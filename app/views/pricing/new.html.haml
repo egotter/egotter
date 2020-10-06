@@ -63,6 +63,29 @@
 
 %hr
 
+%h3#enterprise-plan.text-center.my-5= t('.names.pro')
+
+%table.table.table-bordered
+  %tbody
+    %tr
+      %td= t('.pricing.key')
+      %td= t('.pricing.pro')
+    %tr
+      %td= t('.delivery_date.key')
+      %td= t('.delivery_date.pro')
+    %tr
+      %td= t('.purchasing_method.key')
+      %td= t('.purchasing_method.enterprice')
+    %tr
+      %td
+      %td= t('.pro_description')
+    %tr
+      %td
+      %td
+        .my-1= link_to t('.enterprice_inquiry_by_email'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-primary'
+        .my-1= link_to t('.enterprice_inquiry_by_dm'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-outline-primary'
+
+%hr
 
 %h3#enterprise-plan.text-center.my-5= t('.names.enterprice')
 
@@ -83,7 +106,5 @@
     %tr
       %td
       %td
-        .mb-3= link_to t('.enterprice_inquiry_by_email'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-primary'
-        %div
-          = link_to t('.enterprice_inquiry_by_dm'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-outline-primary'
-          %span.small= t('.enterprice_inquiry_by_dm_note_html')
+        .my-1= link_to t('.enterprice_inquiry_by_email'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-primary'
+        .my-1= link_to t('.enterprice_inquiry_by_dm'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-outline-primary'
