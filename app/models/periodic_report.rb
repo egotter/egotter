@@ -429,7 +429,7 @@ class PeriodicReport < ApplicationRecord
 
   module UrlHelpers
     def root_url(options)
-      Rails.application.routes.url_helpers.root_url({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+      Rails.application.routes.url_helpers.root_url({share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, og_tag: false}.merge(options))
     end
 
     def sign_in_url(options)
@@ -437,7 +437,7 @@ class PeriodicReport < ApplicationRecord
     end
 
     def timeline_url(user, options)
-      Rails.application.routes.url_helpers.timeline_url(user, {share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+      Rails.application.routes.url_helpers.timeline_url(user, {share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, og_tag: false}.merge(options))
     end
 
     def profile_url(*args)
@@ -445,11 +445,11 @@ class PeriodicReport < ApplicationRecord
     end
 
     def pricing_url(options)
-      Rails.application.routes.url_helpers.pricing_url({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+      Rails.application.routes.url_helpers.pricing_url({share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, og_tag: false}.merge(options))
     end
 
     def support_url(options)
-      Rails.application.routes.url_helpers.support_url({share_dialog: 1, follow_dialog: 1, og_tag: false}.merge(options))
+      Rails.application.routes.url_helpers.support_url({share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, og_tag: false}.merge(options))
     end
 
     def settings_url(*args)
