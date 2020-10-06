@@ -10,7 +10,13 @@
     ga('create', 'UA-13072051-3', 'auto');
   <% end %>
 
-  ga('send', 'pageview');
+  ga('send', 'pageview', {
+    hitCallback: function () {
+      if (window.pageViewCallback) {
+        window.pageViewCallback();
+      }
+    }
+  });
 </script>
 
 <!-- Global site tag (gtag.js) - Google Ads: 1016415057 -->
