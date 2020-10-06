@@ -49,10 +49,10 @@
       new Welcome.ShareDialog();
     });
 - else
-  - if params[:sign_in_dialog] == '1'
+  - if params[:sign_in_dialog] == '1' || from_search_engine?
     = modal_dialog id: 'sign-in-modal', title: t('.sign_in.title'), body: t('.sign_in.body_html'), button: {positive: t('.sign_in.ok'), negative: t('.sign_in.cancel')}
 
     :javascript
       $(function () {
-        Welcome.showSignInDialog('sign-in-modal', '#{sign_in_path(via: current_via('sign_in_modal'))}');
+        Welcome.showSignInDialog('sign-in-modal', '#{raw sign_in_path(via: current_via("sign_in_modal#{'/search_engine' if from_search_engine?}"))}');
       });

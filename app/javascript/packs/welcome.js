@@ -196,9 +196,10 @@ Welcome.showFollowDialogAndShareDialog = function (followingEgotter) {
 Welcome.showSignInDialog = function (id, url) {
   var queue = new ModalQueue();
 
-  if (Util.showSignInDialog()) {
-    queue.add(new SignInDialog(id, url));
-  }
+  queue.add(new SignInDialog(id, url));
+  // if (Util.showSignInDialog()) {
+  //   queue.add(new SignInDialog(id, url));
+  // }
 
   queue.start();
 };

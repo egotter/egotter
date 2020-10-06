@@ -15,6 +15,16 @@ module CrawlersHelper
     twitter_crawler? && params[:medium] == 'dm'
   end
 
+  SEARCH_ENGINES = [
+      'https://www.google.co.jp/',
+      'https://www.google.com/',
+      'https://search.yahoo.co.jp/',
+  ]
+
+  def from_search_engine?
+    !from_crawler? && SEARCH_ENGINES.include?(request.referer)
+  end
+
   private
 
   CRAWLER_WORDS = [
