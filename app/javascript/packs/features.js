@@ -1,8 +1,8 @@
 class Features {
-  constructor(url, id) {
+  constructor(url, id, callback) {
     this.url = url;
     this.id = id;
-    this.load();
+    this.load(callback);
   }
 
   load(callback) {

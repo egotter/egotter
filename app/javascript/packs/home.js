@@ -1,6 +1,6 @@
 class PublicTweets {
-  constructor(url, selector) {
-    new AsyncLoader(url, selector).lazyload();
+  constructor(url, selector, callback) {
+    new AsyncLoader(url, selector, callback).lazyload();
   }
 }
 

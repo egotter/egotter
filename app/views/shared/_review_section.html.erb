@@ -15,7 +15,7 @@
 
   <div class="mb-5"><%= t('.description_top_html') %></div>
 
-  <div id="searched-tweets" class="text-left mx-auto"></div>
+  <div id="searched-tweets" class="text-left mx-auto" style="min-height: 200px;"></div>
   <div class="my-5"><%= t('.description_bottom_html') %></div>
 </div>
 
@@ -30,6 +30,14 @@
   $(function () {
     var url = '<%= load_public_tweets_path %>';
     var selector = '#searched-tweets';
-    new PublicTweets(url, selector);
+    new PublicTweets(url, selector, function () {
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'PublicTweets',
+        eventAction: 'loaded',
+        eventLabel: 'PublicTweets loaded'
+      });
+      ahoy.track("PublicTweets loaded");
+    });
   });
 </script>

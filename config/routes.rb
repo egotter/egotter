@@ -206,5 +206,7 @@ Rails.application.routes.draw do
     mount Blazer::Engine, at: '/blazer'
   end
 
+  mount Ahoy::Engine => '/ahoy'
+
   match '*unmatched_route', to: 'application#not_found', via: :all
 end

@@ -18,6 +18,9 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
+import ahoy from "ahoy.js";
+window.ahoy = ahoy;
+
 import "./egotter";
 import "./cache";
 import "./modal_dialog";

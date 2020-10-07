@@ -1,4 +1,4 @@
-<div id="announcements-container" style="min-height: 100px;"></div>
+<div id="announcements-container" style="min-height: 200px;"></div>
 
 <script>
   $(function () {
@@ -10,6 +10,7 @@
         eventAction: 'loaded',
         eventLabel: 'Announcements loaded'
       });
+      ahoy.track("Announcements loaded");
     });
   });
 </script>

@@ -46,6 +46,10 @@
     = render partial: 'shared/templates'
     = render partial: 'shared/onesignal' if user_signed_in?
 
+    - if top_page?
+      :javascript
+        ahoy.trackAll();
+
   %body
     = javascript_include_tag '/adsense.js'
     = render partial: 'shared/toast'
