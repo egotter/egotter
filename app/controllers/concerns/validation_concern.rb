@@ -165,7 +165,7 @@ module ValidationConcern
 
   def blocked_search?(twitter_user)
     blocked_user?(twitter_user.screen_name).tap do |value|
-      redirect_to blocked_path(screen_name: twitter_user.screen_name) if value
+      redirect_to profile_path(twitter_user, via: current_via(__method__)) if value
     end
   rescue => e
     respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
@@ -191,7 +191,7 @@ module ValidationConcern
     return false unless protected_user?(twitter_user.screen_name)
     return false if timeline_readable?(twitter_user.screen_name)
 
-    redirect_to protected_path(screen_name: twitter_user.screen_name)
+    redirect_to profile_path(twitter_user, via: current_via(__method__))
     true
   end
 
@@ -202,7 +202,7 @@ module ValidationConcern
     if SearchLimitation.soft_limited?(user)
       # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
       set_bypassed_notice_message('search_limitation_soft_limited')
-      redirect_to profile_path(screen_name: user[:screen_name])
+      redirect_to profile_path(screen_name: user[:screen_name], via: current_via(__method__))
 
       url = sign_in_path(via: current_via(__method__), redirect_path: request.fullpath)
       message = search_limitation_soft_limited_message(user[:screen_name], url)
@@ -230,7 +230,7 @@ module ValidationConcern
     else
       # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
       set_bypassed_notice_message('too_many_searches')
-      redirect_to profile_path(screen_name: twitter_user.screen_name, via: current_via(__method__))
+      redirect_to profile_path(twitter_user, via: current_via(__method__))
       create_error_log(__method__, message)
     end
 
@@ -248,7 +248,7 @@ module ValidationConcern
     if request.xhr?
       respond_with_error(:bad_request, message)
     else
-      redirect_to profile_path(screen_name: twitter_user.screen_name), alert: message
+      redirect_to profile_path(twitter_user, via: current_via(__method__)), alert: message
       create_error_log(__method__, message)
     end
 

@@ -109,6 +109,10 @@ class AccountStatus
       @store.read(screen_name) == 'locked'
     end
 
+    def protected?(screen_name)
+      @store.read(screen_name) == 'protected'
+    end
+
     def ok?(screen_name)
       @store.read(screen_name) == 'ok'
     end

@@ -26,6 +26,7 @@ class CreateAccountStatusWorker
     user = error = nil
     begin
       user = client.user(screen_name)
+      CreateHighPriorityTwitterDBUserWorker.perform_async([user[:id]])
     rescue => e
       logger.info e.inspect
       error = e
@@ -44,6 +45,8 @@ class CreateAccountStatusWorker
       status = "error:#{error.class}"
     when user && user[:suspended]
       status = 'locked'
+    when user && user[:protected]
+      status = 'protected'
     else
       status = 'ok'
     end

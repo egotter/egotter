@@ -141,14 +141,14 @@ Rails.application.routes.draw do
 
   resources :timelines, only: %i(show), param: :screen_name
 
-  get 'not_found/:screen_name', to: redirect("/profiles/%{screen_name}"), as: 'not_found'
-  get 'not_found/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
-  get 'forbidden/:screen_name', to: redirect("/profiles/%{screen_name}"), as: 'forbidden'
-  get 'forbidden/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
-  get 'blocked/:screen_name', to: redirect("/profiles/%{screen_name}"), as: 'blocked'
-  get 'blocked/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
-  get 'protected/:screen_name', to: redirect("/profiles/%{screen_name}"), as: 'protected'
-  get 'protected/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
+  get 'not_found/:screen_name', to: redirect("/profiles/%{screen_name}?via=routing_not_found"), as: 'not_found'
+  get 'not_found/:screen_name/latest', to: redirect("/profiles/%{screen_name}?via=routing_not_found")
+  get 'forbidden/:screen_name', to: redirect("/profiles/%{screen_name}?via=routing_forbidden"), as: 'forbidden'
+  get 'forbidden/:screen_name/latest', to: redirect("/profiles/%{screen_name}?via=routing_forbidden")
+  get 'blocked/:screen_name', to: redirect("/profiles/%{screen_name}?via=routing_blocked"), as: 'blocked'
+  get 'blocked/:screen_name/latest', to: redirect("/profiles/%{screen_name}?via=routing_blocked")
+  get 'protected/:screen_name', to: redirect("/profiles/%{screen_name}?via=routing_protected"), as: 'protected'
+  get 'protected/:screen_name/latest', to: redirect("/profiles/%{screen_name}?via=routing_protected")
 
   get 'follow', to: 'follows#show'
   resources :follows, only: %i(create)

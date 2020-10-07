@@ -23,6 +23,8 @@ module Api
             render json: {message: t('.error', user: screen_name)}
           elsif cache.locked?(screen_name)
             render json: {message: t('.locked', user: screen_name)}
+          elsif cache.protected?(screen_name)
+            render json: {message: t('.protected', user: screen_name)}
           elsif cache.ok?(screen_name)
             render json: {status: 'ok'}
           else
