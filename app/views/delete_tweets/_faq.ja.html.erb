@@ -5,11 +5,13 @@
 <% questions = [
     {id: 'delete-tweets-q-01', text: 'ツイートクリーナーとは何ですか？'},
     {id: 'delete-tweets-q-02', text: '試しに少し使ってみることはできますか？'},
-    {id: 'delete-tweets-q-03', text: '他の人にRTやブックマークされたツイートも削除されますか？'},
+    {id: 'delete-tweets-q-03_1', text: '他の人にRTやブックマークされたツイートも削除されますか？'},
+    {id: 'delete-tweets-q-03_2', text: '日付、画像の有無、リプライ等の条件指定で削除できますか？'},
     {id: 'delete-tweets-q-04', text: 'ツイート削除に失敗した場合の返金はありますか？'},
     {id: 'delete-tweets-q-05', text: '最大で何件までツイートを削除することができますか？'},
     {id: 'download-full-archive', text: '有料プランを購入しました。全てのツイートを削除する手順を教えてください'},
-    {id: 'delete-tweets-q-07', text: 'ツイート削除は取り消しできますか？'},
+    {id: 'delete-tweets-q-07_1', text: 'トライアル期間中でも全てのツイートの削除は可能ですか？'},
+    {id: 'delete-tweets-q-07_2', text: 'ツイート削除は取り消しできますか？'},
     {id: 'delete-tweets-q-08', text: 'ツイートの削除後もツイート総数が変化しないのはなぜですか？'},
     {id: 'delete-tweets-q-09', text: '削除されたツイートが表示され続けるのはなぜですか？'},
     {id: 'delete-tweets-q-10', text: '古いツイートが削除されないのはなぜですか？'},
@@ -41,6 +43,11 @@
   ただし、引用RT（コピペしてRT）の場合は、削除することができません。</div>
 
 <%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">有料プランを購入済みであれば、単純な日付指定はお引き受けいたします。可能かどうか事前にご確認ください。この場合、失敗した場合の補償はありませんのでご注意ください。<br>
+  <br>
+  複雑な条件指定には追加の料金をいただいております。こちらも事前にご相談ください。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">記載の手順通りに試して失敗した場合は、有料プラン1ヶ月分を返金いたします。<br>
   <br>
   その際は「ツイート削除に失敗したため返金希望」の旨を <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。</div>
@@ -66,6 +73,9 @@
   <br>
   手順中で分からないことがありましたら、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。
 </div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">可能です。この場合、トライアル期間は終了しすぐに支払いが始まります。</div>
 
 <%= render partial: 'misc/q', locals: questions.shift %>
 <div class="mb-5">取り消しできません。一度削除されたツイートを元に戻すことはできませんのでご注意ください。</div>
