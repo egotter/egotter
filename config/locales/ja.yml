@@ -162,7 +162,7 @@ ja:
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
       loading_error_html: '@%{user} のプロフィール読み込みに失敗しました。お手数ですが再度お試しください。'
       reload: "ページを更新する"
-      sign_in_and_reload: "ログインする"
+      sign_in_and_reload: "ログインして自動更新を有効にする"
       reinvestigate: "再度チェックする"
       sign_in_and_investigate: "ログインして分析する"
       empty_result_with_details_html: |
@@ -171,9 +171,11 @@ ja:
         <span class="small">
         ※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br>
         <br>
-        ・利用回数が多いユーザーほど早く分析されます<br>
-        ・<span class="text-primary">ログイン</span>していると検索が早くなります<br>
-        ・<span class="text-primary">ログイン</span>していると表示される項目が増えます
+        <span class="text-primary">ログイン</span>すると、えごったーがさらに便利になります。<br>
+        <br>
+        ・<span class="text-primary">ログイン</span> → 自動更新 ON<br>
+        ・<span class="text-primary">ログイン</span> → 検索 高速化<br>
+        ・<span class="text-primary">ログイン</span> → 表示項目 追加
         </span>
       sign_in_to_protect_html: '<a href="%{url}">ログイン</a> してえごったーを利用すると、乗っ取りツイートのチェックを行います。'
       this_page_is_html: |
