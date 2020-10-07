@@ -18,14 +18,25 @@
     <div class="users d-flex justify-content-center flex-wrap my-5"></div>
 
     <% if user_signed_in? %>
-      <%= link_to(page_url, class: 'btn btn-primary btn-block btn-view-more mt-auto') do %>
+      <%= link_to(page_url, id: "button-view-more-#{feed_name}", class: 'btn btn-primary btn-block btn-view-more mt-auto') do %>
         <%= t('timelines.feeds.view_more') %>
         <span class="count"></span>
       <% end %>
     <% else %>
       <% url = sign_in_path(redirect_path: page_url, via: current_via(feed_name)) %>
-      <%= link_to(url, class: 'btn btn-primary btn-block btn-view-more mt-auto') do %>
+      <%= link_to(url, id: "button-sign-in-and-view-more-#{feed_name}", class: 'btn btn-primary btn-block btn-view-more mt-auto') do %>
         <%= t('timelines.feeds.sign_in_and_view_more') %>
+        <span class="count"></span>
+      <% end %>
+
+      <div class="text-center mt-3 mb-4">
+        <span class="thin-border"></span>
+        <span class="text-center or-text"><%= t('timelines.feeds.or') %></span>
+        <span class="thin-border"></span>
+      </div>
+
+      <%= link_to(url, id: "button-view-more-without-signing-in-#{feed_name}", class: 'btn btn-outline-secondary btn-sm btn-block btn-view-more mt-auto text-muted') do %>
+        <%= t('timelines.feeds.view_more_without_signing_in') %>
         <span class="count"></span>
       <% end %>
     <% end %>
