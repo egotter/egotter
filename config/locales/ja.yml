@@ -186,7 +186,7 @@ ja:
         unfriends: 'リムーブした'
         unfollowers: 'リムーブされた'
         blocking_or_blocked: 'ブロックされた'
-        notice: 'えごったーのデータは最初に使った時から保存されていきます'
+        notice: 'データはこれから保存されていきます'
         open_description: '説明'
         unit: '人'
         analyzing: '分析中'
@@ -209,7 +209,7 @@ ja:
         description: '@%{user} がフォローされているユーザーです。'
       audience_insights:
         title: 'オーディエンス分析'
-        description: '@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。'
+        description_html: '@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。<br><br>@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。'
       close_friends:
         title: '仲良しランキング'
         description: '@%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。'
@@ -274,6 +274,7 @@ ja:
         description_html: 'ツイート予約投稿で @%{user} のツイートを<br>時間指定で作成することができます。'
         open: 'ツイート予約投稿を開く'
       view_more: '続きを見る'
+      sample_data_html: '表示しているのはサンプルデータです<br>データはこれから保存されていきます'
   usage_stats:
     show:
       not_found_html: '@%{user} のデータ取得に失敗しました。お手数ですが再度検索してみてください。<a href="%{url}" class="btn btn-primary">@%{user} を検索する</a>'

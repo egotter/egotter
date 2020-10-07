@@ -85,6 +85,10 @@ class AudienceInsight < ApplicationRecord
     times.zip(data)
   end
 
+  def insufficient_chart_data?
+    chart_data(:friends).size <= 1
+  end
+
   def fresh?
     if new_record?
       false
