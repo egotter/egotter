@@ -14,7 +14,7 @@
 %h2.h4.text-center.my-5= page_title
 .mb-5= t('clusters.show.page_description', user: @twitter_user.screen_name)
 
-= render partial: 'shared/search_form', locals: {via: current_via('top_input'), redirect_path: cluster_path(screen_name: ':screen_name')}
+= render partial: 'shared/search_form', locals: {id: 'form-on-cluster', via: current_via('top_input'), redirect_path: cluster_path(screen_name: ':screen_name')}
 = render(partial: 'adsense/ad', locals: {vertical: :top})
 
 %h2.h3.text-center.mt-5= t('clusters.show.clusters_level')

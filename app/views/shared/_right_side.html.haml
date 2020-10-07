@@ -20,7 +20,7 @@
     %span.or-text= t('.or')
     %span.thin-border
 
-  = render partial: 'shared/search_form', locals: {via: current_via('input'), redirect_path: redirect_path_for_form}
+  = render partial: 'shared/search_form', locals: {id: 'form-on-right-side', via: current_via('input'), redirect_path: redirect_path_for_form}
   = render partial: 'shared/check_and_note', locals: {text: t('.check_003')}
   .search-count-wrapper{style: 'visibility: hidden;'}
     = render partial: 'shared/check_and_note', locals: {text: t('.check_004_html')}

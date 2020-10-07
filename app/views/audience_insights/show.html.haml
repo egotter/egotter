@@ -11,7 +11,7 @@
 %h2.h4.text-center.my-5= t('.page_title', user: @twitter_user.screen_name)
 .mb-5= t('.page_description_html', user: @twitter_user.screen_name, friends: @twitter_user.friends_count, followers: @twitter_user.followers_count)
 
-= render partial: 'shared/search_form', locals: {via: current_via('top_input'), redirect_path: audience_insight_path(screen_name: ':screen_name')}
+= render partial: 'shared/search_form', locals: {id: 'form-on-audience_insight', via: current_via('top_input'), redirect_path: audience_insight_path(screen_name: ':screen_name')}
 = render partial: 'adsense/ad', locals: {vertical: :top}
 
 %h3.h5.text-center.my-5= t('.friends.title')
