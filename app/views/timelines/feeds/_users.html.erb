@@ -7,7 +7,11 @@
   <div class="result-not-found" style="display: none;">
     <div class="my-5"><%= t('timelines.show.empty_result_with_details_html') %></div>
     <% url = timeline_path(twitter_user, via: current_via("reload_#{feed_name}")) %>
-    <%= link_to(t('timelines.show.reload_this_page'), url, class: 'btn btn-outline-primary btn-block') %>
+    <% if user_signed_in? %>
+      <%= link_to(t('timelines.show.reload'), url, class: 'btn btn-outline-primary btn-block') %>
+    <% else %>
+      <%= link_to(t('timelines.show.sign_in_and_reload'), sign_in_path(via: current_via("reload_#{feed_name}"), redirect_path: url), class: 'btn btn-primary btn-block') %>
+    <% end %>
   </div>
 
   <div class="show-result" style="display: none;">

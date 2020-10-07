@@ -161,15 +161,20 @@ ja:
       meta_description: "えごったーなら全部無料！ @%{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
       loading_error_html: '@%{user} のプロフィール読み込みに失敗しました。お手数ですが再度お試しください。'
-      reload_this_page: "ページを更新する"
+      reload: "ページを更新する"
+      sign_in_and_reload: "ログインする"
       reinvestigate: "再度チェックする"
       sign_in_and_investigate: "ログインして分析する"
       empty_result_with_details_html: |
-        結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br>
+        データはこれから保存されていきます。<br>
         <br>
-        ・検索される回数が多いユーザーほど、優先的に分析されます<br>
-        ・ログインしていると検索が早くなります<br>
-        ・ログインしていると表示される項目が増えます
+        <span class="small">
+        ※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br>
+        <br>
+        ・利用回数が多いユーザーほど早く分析されます<br>
+        ・<span class="text-primary">ログイン</span>していると検索が早くなります<br>
+        ・<span class="text-primary">ログイン</span>していると表示される項目が増えます
+        </span>
       sign_in_to_protect_html: '<a href="%{url}">ログイン</a> してえごったーを利用すると、乗っ取りツイートのチェックを行います。'
       this_page_is_html: |
         このページは @%{user} のツイッター分析結果です。
