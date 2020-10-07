@@ -33,7 +33,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       end
     rescue => e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
-      return redirect_to root_path, alert: t('.login_failed_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
+      return redirect_to root_path(via: current_via('save_error')), alert: t('.login_failed_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
     end
 
     sign_in user, event: :authentication
@@ -57,10 +57,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     ).each { |key| session.delete(key) }
 
     if user_signed_in?
-      redirect_to root_path
+      redirect_to root_path(via: current_via('signed_in'))
     else
       flash[:notice] = after_failure_message(request.env['omniauth.error.type'].to_s)
-      redirect_to after_omniauth_failure_path_for(resource_name)
+      redirect_to root_path(via: current_via)
     end
   end
 
