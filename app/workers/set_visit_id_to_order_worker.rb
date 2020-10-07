@@ -10,7 +10,7 @@ class SetVisitIdToOrderWorker
 
     if (visit = Ahoy::Visit.find_by(user_id: user.id))
       order.update!(ahoy_visit_id: visit.id)
-      events = visit.events.where(time: 5.minutes.ago..Time.zone.now).order(time: :asc)
+      events = visit.events.where(time: 30.minutes.ago..Time.zone.now).order(time: :desc).limit(10).reverse
       message = "`Visit found` order=#{order.inspect}"
       message << "\n" + events.map(&:inspect).join("\n")
     else
