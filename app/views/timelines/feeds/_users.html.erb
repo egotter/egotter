@@ -17,9 +17,17 @@
   <div class="show-result" style="display: none;">
     <div class="users d-flex justify-content-center flex-wrap my-5"></div>
 
-    <%= link_to(page_url, class: 'btn btn-primary btn-block btn-view-more mt-auto') do %>
-      <%= t('timelines.feeds.view_more') %>
-      <span class="count"></span>
+    <% if user_signed_in? %>
+      <%= link_to(page_url, class: 'btn btn-primary btn-block btn-view-more mt-auto') do %>
+        <%= t('timelines.feeds.view_more') %>
+        <span class="count"></span>
+      <% end %>
+    <% else %>
+      <% url = sign_in_path(redirect_path: page_url, via: current_via(feed_name)) %>
+      <%= link_to(url, class: 'btn btn-primary btn-block btn-view-more mt-auto') do %>
+        <%= t('timelines.feeds.sign_in_and_view_more') %>
+        <span class="count"></span>
+      <% end %>
     <% end %>
   </div>
 </div>
