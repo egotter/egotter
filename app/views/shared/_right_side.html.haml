@@ -1,5 +1,5 @@
-- redirect_path_for_form = timeline_path(screen_name: ':screen_name') unless redirect_path
-- redirect_path = start_path unless redirect_path
+- redirect_path_for_form = timeline_path(screen_name: ':screen_name', via: current_via('default_redirect')) unless redirect_path
+- redirect_path = start_path(via: current_via('default_redirect')) unless redirect_path
 - ab_test_flag = fifty_percent?
 
 %h1.h4
