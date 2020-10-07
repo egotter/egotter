@@ -1148,6 +1148,7 @@ ja:
       see_on_twitter: '@%{user} をツイッターで見る'
       update: '@%{user} のプロフィールを更新する'
       analyze: '@%{user} を分析する'
+      sign_in_and_analyze: 'ログインして @%{user} を分析する'
       prev: '< @%{user}'
       next: '@%{user} >'
       see: '@%{user} を見る'
@@ -2097,7 +2098,7 @@ ja:
           not_found: '検索された @%{user} が見付かりません。アカウントが削除されています。'
           suspended: '検索された @%{user} が見付かりません。アカウントが凍結されています。'
           locked: '検索された @%{user} は一時的に凍結されています。'
-          protected: '検索された @%{user} は鍵アカウントです。'
+          protected: '検索された @%{user} は鍵アカウントです。ログインしてから検索してください。'
           error: '検索された @%{user} のデータ取得に失敗しました。ページを更新してみてください。'
   modal:
     welcome_modal:
