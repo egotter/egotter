@@ -545,8 +545,25 @@ ja:
       purchasing_method:
         key: "支払い方法"
         enterprice: "クレジットカード、請求書"
-      pro_description: "特定のユーザーのフォロー、フォロワー、ツイートのダウンロードなど、単純なデータの集計をお引き受けいたします。"
-      enterprice_description: "特定の商品に興味のあるユーザーの嗜好性調査、特定のユーザーのフォロー・フォロワー収集など、ツイッターに関する調査全般をお引き受けいたします。"
+      pro_description_html: |
+        単純な作業やデータの集計をお引き受けいたします。<br>
+        <br>
+        <span class="small">
+        例：<br>
+        ・特定のユーザーのフォロー収集<br>
+        ・特定のユーザーのフォロワー収集<br>
+        ・特定のユーザーのツイート収集<br>
+        ・条件指定のツイート一括削除
+        </span>
+      enterprice_description_html: |
+        ツイッターに関する調査全般をお引き受けいたします。<br>
+        <br>
+        <span class="small">
+        ・えごったーAPIの提供<br>
+        ・特定のクラスタに属したユーザー収集<br>
+        ・特定の商品に関心のあるユーザー収集<br>
+        ・数百万人以上のフォロワー収集
+        </span>
       enterprice_inquiry_by_email: "egotter.com にメールで問い合わせ"
       enterprice_inquiry_by_dm: "@egotter_cs にDMで問い合わせ"
   orders:
