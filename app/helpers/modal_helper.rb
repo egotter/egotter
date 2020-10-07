@@ -23,8 +23,8 @@ module ModalHelper
               #{block_given? ? capture(&block) : body}
             </div>
             <div class="modal-footer">
-              #{modal_negative_button(button[:negative]) if button[:negative]}
-              <button type="button" class="btn btn-#{button[:category]} positive" data-dismiss="modal">#{button[:positive]}</button>
+              #{modal_negative_button(id, button[:negative]) if button[:negative]}
+              <button type="button" id="button-#{id}" class="btn btn-#{button[:category]} positive" data-dismiss="modal">#{button[:positive]}</button>
             </div>
           </div>
         </div>
@@ -32,9 +32,11 @@ module ModalHelper
     HTML
   end
 
-  def modal_negative_button(label)
+  private
+
+  def modal_negative_button(id, label)
     <<~HTML.html_safe
-      <button type="button" class="btn btn-outline-secondary negative" data-dismiss="modal">#{label}</button>
+      <button type="button" id="button-#{id}" class="btn btn-outline-secondary negative" data-dismiss="modal">#{label}</button>
     HTML
   end
 end
