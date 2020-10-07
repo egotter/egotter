@@ -33,6 +33,7 @@ class TwitterUser < ApplicationRecord
   include TwitterUserQueryMethods
   include TwitterUserUtils
   include TwitterUserApi
+  include TwitterUserReplyingApi
   include TwitterUserMultiplePeopleApi
   include TwitterUserDirty
   include TwitterUserPersistence
