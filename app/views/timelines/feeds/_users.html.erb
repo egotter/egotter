@@ -23,8 +23,7 @@
         <span class="count"></span>
       <% end %>
     <% else %>
-      <% url = sign_in_path(redirect_path: page_url, via: current_via(feed_name)) %>
-      <%= link_to(url, id: "button-sign-in-and-view-more-#{feed_name}", class: 'btn btn-primary btn-block btn-view-more mt-auto') do %>
+      <%= link_to(sign_in_path(redirect_path: page_url, via: current_via(feed_name)), id: "button-sign-in-and-view-more-#{feed_name}", class: 'btn btn-primary btn-block btn-view-more mt-auto') do %>
         <%= t('timelines.feeds.sign_in_and_view_more') %>
         <span class="count"></span>
       <% end %>
@@ -35,7 +34,7 @@
         <span class="thin-border"></span>
       </div>
 
-      <%= link_to(url, id: "button-view-more-without-signing-in-#{feed_name}", class: 'btn btn-outline-secondary btn-sm btn-block btn-view-more mt-auto text-muted') do %>
+      <%= link_to(page_url, id: "button-view-more-without-signing-in-#{feed_name}", class: 'btn btn-outline-secondary btn-sm btn-block btn-view-more mt-auto text-muted') do %>
         <%= t('timelines.feeds.view_more_without_signing_in') %>
         <span class="count"></span>
       <% end %>
