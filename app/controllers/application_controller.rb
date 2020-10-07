@@ -36,7 +36,7 @@ class ApplicationController < ActionController::Base
 
   # https://github.com/plataformatec/devise/issues/1390
   def new_session_path(scope)
-    root_path
+    root_path(via: current_via('new_session'))
   end
 
   def basic_auth
@@ -51,7 +51,7 @@ class ApplicationController < ActionController::Base
 
   def after_sign_out_path_for(resource)
     session[:sign_out_from] = request.protocol + request.host_with_port + sign_out_path
-    root_path
+    root_path(via: current_via('after_sign_out'))
   end
 
   def respond_with_error(code, message, ex = nil)

@@ -1,14 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe SanitizationConcern do
-  let(:instance) { double('Instance') }
-
-  before do
-    instance.extend SanitizationConcern
+  controller ApplicationController do
+    include SanitizationConcern
   end
 
   describe '#sanitized_redirect_path' do
-    subject { instance.sanitized_redirect_path(path) }
+    subject { controller.sanitized_redirect_path(path) }
 
     described_class::SAFE_REDIRECT_PATHS.each do |path_str|
       context "path is #{path_str}" do
@@ -23,10 +21,7 @@ RSpec.describe SanitizationConcern do
     ].each do |path_str|
       context "path is #{path_str}" do
         let(:path) { path_str }
-        it do
-          expect(instance).to receive(:root_path)
-          subject
-        end
+        it { is_expected.to match(/sanitization_failed/) }
       end
     end
   end

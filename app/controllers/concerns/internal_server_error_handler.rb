@@ -51,12 +51,12 @@ module InternalServerErrorHandler
         sign_in = sign_in_path(via: current_via('invalid_token_and_recover'), redirect_path: search)
 
         if recoverable_request?
-          redirect_to root_path, alert: t('application.invalid_token.ready_to_search_html', user: screen_name, url1: search, url2: sign_in)
+          redirect_to root_path(via: current_via('ready_to_search')), alert: t('application.invalid_token.ready_to_search_html', user: screen_name, url1: search, url2: sign_in)
         else
-          redirect_to root_path, alert: t('application.invalid_token.session_expired_and_recover_html', user: screen_name, url1: search, url2: sign_in)
+          redirect_to root_path(via: current_via('session_expired_and_recover')), alert: t('application.invalid_token.session_expired_and_recover_html', user: screen_name, url1: search, url2: sign_in)
         end
       else
-        redirect_to root_path, alert: t('application.invalid_token.session_expired_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token"))
+        redirect_to root_path(via: current_via('session_expired')), alert: t('application.invalid_token.session_expired_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token"))
       end
     end
   end

@@ -3,7 +3,7 @@ class UsageStatsController < ApplicationController
 
   before_action(only: :show) do
     unless set_stat
-      redirect_to root_path, alert: t('.show.not_found_html', user: @twitter_user.screen_name, url: timeline_path(@twitter_user))
+      redirect_to root_path(via: current_via('not_found')), alert: t('.show.not_found_html', user: @twitter_user.screen_name, url: timeline_path(@twitter_user))
     end
   end
 

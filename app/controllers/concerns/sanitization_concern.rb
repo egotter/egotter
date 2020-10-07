@@ -18,6 +18,6 @@ module SanitizationConcern
   SAFE_REDIRECT_PATH_REGEXP = Regexp.union(((Search::API_V1_NAMES.map { |n| "/#{n}" } + SAFE_REDIRECT_PATHS)).uniq)
 
   def sanitized_redirect_path(path)
-    !path.match?(/http/) && path.length < 600 && path.match?(SAFE_REDIRECT_PATH_REGEXP) ? path : root_path
+    !path.match?(/http/) && path.length < 600 && path.match?(SAFE_REDIRECT_PATH_REGEXP) ? path : root_path(via: current_via('sanitization_failed'))
   end
 end

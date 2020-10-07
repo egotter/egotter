@@ -2,7 +2,7 @@
   .container.text-center
     %ul.list-inline.mb-4
       = footer_item do
-        %a{href: root_path}= t('.root')
+        %a{href: root_path(via: current_via('footer'))}= t('.root')
       = footer_item do
         %a{href: friends_top_path(via: current_via('footer'))}= t('friends.new.footer_title')
       = footer_item do

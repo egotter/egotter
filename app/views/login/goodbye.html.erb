@@ -9,9 +9,9 @@
 
 <div class="row text-center my-5">
   <div class="col">
-    <%= link_to t('.button.sign_out'), sign_out_path, class: 'btn btn-outline-secondary btn-block', method: :delete %>
+    <%= link_to t('.button.sign_out'), sign_out_path(via: current_via('sign_out')), class: 'btn btn-outline-secondary btn-block', method: :delete %>
   </div>
   <div class="col">
-    <%= link_to t('.button.top_page'), root_path, class: 'btn btn-primary btn-block' %>
+    <%= link_to t('.button.top_page'), root_path(via: current_via('cancel_signing_out')), class: 'btn btn-primary btn-block' %>
   </div>
 </div>
