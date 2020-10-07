@@ -1,4 +1,4 @@
-<div id="feed-<%= feed_name %>" class="<%= feed_name %> feed-item card p-3 <%= feed_name == 'unfollowers' ? 'pb-lg-1 border-bottom-0' : '' %>">
+<div id="feed-<%= feed_name %>" class="<%= feed_name %> feed-item card p-3">
   <h3 class="h4 text-center"><%= feed_title %></h3>
   <div class="text-center my-3"><%= feed_description %></div>
 
@@ -7,7 +7,7 @@
   <div class="result-not-found" style="display: none;">
     <div class="my-5"><%= t('timelines.show.empty_result_with_details_html') %></div>
     <% url = timeline_path(twitter_user, via: current_via("reload_#{feed_name}")) %>
-    <%= link_to(t('timelines.show.reload_this_page'), url, class: 'btn btn-outline-primary btn-block reload-btn') %>
+    <%= link_to(t('timelines.show.reload_this_page'), url, class: 'btn btn-outline-primary btn-block') %>
   </div>
 
   <div class="show-result" style="display: none;">
@@ -19,6 +19,22 @@
     <% end %>
   </div>
 </div>
+<% if %w(unfriends unfollowers blocking_or_blocked).include?(feed_name) %>
+  <div class="text-center text-muted small mt-1">
+    <%= t('.notice') %>
+    <button class="btn btn-outline-primary btn-sm p-1" data-toggle="collapse" aria-expanded="false" data-target="#additional-description-<%= feed_name %>">
+      <i class="far fa-question-circle"></i>
+      <%= t('.word_description') %>
+    </button>
+  </div>
+  <div id="additional-description-<%= feed_name %>" class="text-muted small collapse mt-3">
+    <div class="card">
+      <div class="card-body">
+        <%= t('.detailed_description_html') %>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <script>
   $(function () {

@@ -28,10 +28,17 @@
 
   <div class="text-center text-muted small mt-1">
     <%= t('.notice') %>
-    <button class="btn btn-outline-primary btn-sm p-1" data-toggle="collapse" aria-expanded="false" href=".summary-descriptions">
+    <button class="btn btn-outline-primary btn-sm p-1" data-toggle="collapse" aria-expanded="false" data-target=".summary-descriptions">
       <i class="far fa-question-circle"></i>
-      <%= t('.open_description') %>
+      <%= t('.word_description') %>
     </button>
+  </div>
+  <div class="summary-descriptions text-muted small collapse mt-3">
+    <div class="card">
+      <div class="card-body">
+        <%= t('.detailed_description_html') %>
+      </div>
+    </div>
   </div>
 </div>
 

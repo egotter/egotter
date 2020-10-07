@@ -179,6 +179,10 @@ ja:
         title: 'オーディエンス分析'
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
     feeds:
+      users:
+        notice: 'データはこれから保存されていきます'
+        word_description: '説明'
+        detailed_description_html: 'えごったーのデータは、最初に使った時から保存されていきます。そのため、最初は少ないデータが表示されます。<br><br>また、たくさん使うユーザーほどたくさんデータが更新されます。'
       summary:
         one_sided_friends: '片思いフォロー'
         one_sided_followers: '片思われフォロワー'
@@ -187,7 +191,8 @@ ja:
         unfollowers: 'リムーブされた'
         blocking_or_blocked: 'ブロックされた'
         notice: 'データはこれから保存されていきます'
-        open_description: '説明'
+        word_description: '説明'
+        detailed_description_html: 'えごったーのデータは、最初に使った時から保存されていきます。そのため、最初は少ないデータが表示されます。<br><br>また、たくさん使うユーザーほどたくさんデータが更新されます。'
         unit: '人'
         analyzing: '分析中'
         zero: 'これから貯まります'
