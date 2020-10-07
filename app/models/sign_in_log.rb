@@ -28,6 +28,7 @@
 #  index_sign_in_logs_on_user_id     (user_id)
 #
 
+# TODO Remove later
 class SignInLog < ApplicationRecord
   validates :via, length: {maximum: 100}
 end

@@ -129,29 +129,6 @@ module Logging
     logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
   end
 
-  def create_sign_in_log(user, context:, via:, follow:, tweet:, referer:)
-    attrs = {
-      session_id:  egotter_visit_id,
-      user_id:     user.id,
-      uid:         user.uid,
-      screen_name: user.screen_name,
-      context:     context,
-      follow:      follow,
-      tweet:       tweet,
-      via:         via,
-      device_type: request.device_type,
-      os:          request.os,
-      browser:     request.browser,
-      ip:          request.ip,
-      user_agent:  request.user_agent.to_s.truncate(180),
-      referer:     referer.to_s.truncate(180),
-      created_at:  Time.zone.now
-    }
-    CreateSignInLogWorker.perform_async(attrs)
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} action_name=#{action_name}"
-  end
-
   def track_event(name, properties = nil)
     ahoy.track(name, properties)
   rescue => e
