@@ -37,59 +37,57 @@
     - else
       = link_to(t('.see', user: name), profile_path(name, {names: params[:names]}.merge(campaign_params('indicator_names'))), class: 'btn btn-outline-primary btn-sm btn-block mb-3')
 
-:javascript
-  $(function() {
-    var fromCrawler = #{from_crawler?};
-    if (fromCrawler) {
-      return;
-    }
+- if user_signed_in?
+  :javascript
+    $(function() {
+      var url = '#{raw api_v1_account_statuses_path(screen_name: @screen_name)}';
+      var retryCount = 0;
 
-    var userSignedIn = #{user_signed_in?};
-    if (!userSignedIn) {
-      ToastMessage.info('#{t('.sign_in_html', user: @screen_name, url: sign_in_path(redirect_path: profile_path(@screen_name, names: params[:names], via: current_via('require_sign_in'))))}');
-      return;
-    }
-
-    var url = '#{raw api_v1_account_statuses_path(screen_name: @screen_name)}';
-    var retryCount = 0;
-
-    function fetch() {
-      $.get(url, {retry_count: retryCount}).done(function (res) {
-        if (res['status'] === 'retry') {
-          retryCount++;
-          if (retryCount >= 3) {
-            console.log('Retry exhausted', retryCount)
-            ToastMessage.info('#{t('.retry_exhausted')}');
+      function fetch() {
+        $.get(url, {retry_count: retryCount}).done(function (res) {
+          if (res['status'] === 'retry') {
+            retryCount++;
+            if (retryCount >= 3) {
+              console.log('Retry exhausted', retryCount)
+              ToastMessage.info('#{t('.retry_exhausted')}');
+            } else {
+              console.log('Retry', retryCount)
+              setTimeout(fetch, 2000);
+            }
           } else {
-            console.log('Retry', retryCount)
-            setTimeout(fetch, 2000);
+            if (res['status'] === 'ok') {
+              console.log('ok', retryCount);
+              ToastMessage.clear();
+            } else {
+              var message = res['message'];
+              ToastMessage.warn(message);
+              $('.message-box').text(message).show();
+              $('.forbidden-reason').show();
+              $('.not-found-reason').show();
+            }
           }
-        } else {
-          if (res['status'] === 'ok') {
-            console.log('ok', retryCount);
-            ToastMessage.clear();
-          } else {
-            var message = res['message'];
-            ToastMessage.warn(message);
-            $('.message-box').text(message).show();
-            $('.forbidden-reason').show();
-            $('.not-found-reason').show();
+        }).fail(function (xhr, textStatus, errorThrown) {
+          var message;
+          try {
+            message = JSON.parse(xhr.responseText)['message'];
+          } catch (e) {
+            console.error(e);
           }
-        }
-      }).fail(function (xhr, textStatus, errorThrown) {
-        var message;
-        try {
-          message = JSON.parse(xhr.responseText)['message'];
-        } catch (e) {
-          console.error(e);
-        }
-        if (!message) {
-          message = xhr.status + ' (' + errorThrown + ')';
-        }
-        ToastMessage.warn(message);
-      });
-    }
+          if (!message) {
+            message = xhr.status + ' (' + errorThrown + ')';
+          }
+          ToastMessage.warn(message);
+        });
+      }
 
-    ToastMessage.info('#{t('.updating_html', user: @screen_name)}');
-    fetch();
-  });
+      ToastMessage.info('#{t('.updating_html', user: @screen_name)}');
+      fetch();
+    });
+- else
+  - url = profile_path(@screen_name, names: params[:names], via: current_via('require_sign_in'))
+  - url = sign_in_path(redirect_path: url, via: current_via('require_sign_in'))
+
+  :javascript
+    $(function() {
+      ToastMessage.info('#{t('.sign_in_html', user: @screen_name, url: url)}');
+    });
