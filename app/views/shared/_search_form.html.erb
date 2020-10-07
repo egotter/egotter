@@ -1,3 +1,4 @@
+<% id ||= '' %>
 <% redirect_path ||= '' %>
 
 <%= form_tag searches_path(via: current_via('search_form')), class: 'text-left', method: :post do %>
@@ -10,7 +11,8 @@
     <div class="input-group-prepend">
       <div class="input-group-text">@</div>
     </div>
-    <input type="search"
+    <input id="<%= id %>"
+           type="search"
            name="screen_name"
            class="form-control"
            placeholder="<%= t('.search_by_twitter_id') %>"

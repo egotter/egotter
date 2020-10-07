@@ -1,5 +1,5 @@
 <%= modal_dialog id: 'search-modal', title: t('.title'), data: {url: search_histories_path}, size: 'modal-lg' do %>
-  <%= render partial: 'shared/search_form', locals: {via: current_via('search_modal')} %>
+  <%= render partial: 'shared/search_form', locals: {id: 'form-on-search-modal', via: current_via('search_modal')} %>
 <% end %>
 
 <script>
