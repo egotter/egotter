@@ -1,7 +1,7 @@
-<% id ||= '' %>
+<% track_id ||= '' %>
 <% redirect_path ||= '' %>
 
-<%= form_tag searches_path(via: current_via('search_form')), class: 'text-left', method: :post do %>
+<%= form_tag searches_path(via: current_via('search_form')), id: "form-#{track_id}", class: 'text-left', method: :post do %>
   <input type="hidden" name="via" value="<%= via %>">
   <input type="hidden" name="redirect_path" value="<%= redirect_path %>">
   <input type="hidden" name="render_time" value="<%= Time.zone.now.to_s(:db) %>">
@@ -11,7 +11,7 @@
     <div class="input-group-prepend">
       <div class="input-group-text">@</div>
     </div>
-    <input id="<%= id %>"
+    <input id="input-<%= track_id %>"
            type="search"
            name="screen_name"
            class="form-control"
@@ -20,7 +20,7 @@
            inputmode="verbatim"
            title="<%= t('.invalid_input', min: Validations::ScreenNameValidator::MIN, max: Validations::ScreenNameValidator::MAX) %>" required>
     <span class="input-group-btn">
-      <button class="btn btn-primary" type="submit"><%= t('.search') %></button>
+      <button id="button-<%= track_id %>" class="btn btn-primary" type="submit"><%= t('.search') %></button>
     </span>
   </div>
 <% end %>
