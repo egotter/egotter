@@ -16,7 +16,7 @@ module RoutingErrorHandler
 
     elsif params['screen_name'].to_s.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches'
       @screen_name = params['screen_name']
-      @redirect_path = timeline_path(screen_name: @screen_name)
+      @redirect_path = timeline_path(screen_name: @screen_name, via: 'routing_error')
       @via = params['via'].presence || current_via('render_template')
       self.sidebar_disabled = true
       render template: 'searches/create'

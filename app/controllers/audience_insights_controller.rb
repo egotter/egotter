@@ -3,7 +3,8 @@ class AudienceInsightsController < ApplicationController
 
   before_action(only: :show) do
     unless set_insight
-      redirect_to root_path(via: current_via('not_found')), alert: t('.show.not_found_html', user: @twitter_user.screen_name, url: timeline_path(@twitter_user))
+      url = timeline_path(@twitter_user, via: current_via('not_found'))
+      redirect_to root_path(via: current_via('not_found')), alert: t('.show.not_found_html', user: @twitter_user.screen_name, url: url)
     end
   end
 
