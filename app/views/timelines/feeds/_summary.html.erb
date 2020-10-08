@@ -11,7 +11,7 @@
 <div class="summary-on-timeline">
   <div class="list-group">
     <% items.each do |name, url, title| %>
-      <%= link_to "#feed-#{name}", class: 'list-group-item' do %>
+      <%= link_to "#feed-#{name}", class: 'list-group-item', onclick: "itemOnSummaryClicked('#{name}')" do %>
         <div class="d-flex justify-content-between align-items-center">
           <div><%= title %></div>
           <div>
@@ -43,6 +43,10 @@
 </div>
 
 <script>
+  function itemOnSummaryClicked(name) {
+    ahoy.track('Summary clicked', {name: name});
+  }
+
   $(function () {
     var url = '<%= raw api_v1_summaries_path(uid: twitter_user.uid, via: via) %>';
     var names = <%= raw items.map(&:first).to_json %>;
