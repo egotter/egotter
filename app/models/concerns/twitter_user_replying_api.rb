@@ -17,8 +17,11 @@ module TwitterUserReplyingApi
   end
 
   def replying_uids(uniq: true)
-    return [] unless usage_stat
-    uids = usage_stat.mentions.keys.map(&:to_s).map(&:to_i)
+    if usage_stat
+      uids = usage_stat.mention_uids
+    else
+      uids = UsageStat::Builder.new(uid).send(:extract_mentions, status_tweets).keys.map(&:to_s).map(&:to_i)
+    end
     uniq ? uids.uniq : uids
   end
 

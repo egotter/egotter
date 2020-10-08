@@ -218,10 +218,15 @@ class UsageStat < ApplicationRecord
         sort_by { |h, c| [-c, -h.size] }.to_h
     end
 
+    # {
+    #   'uid value': count,
+    #   'uid value': count,
+    #   ...
+    # }
     def extract_mentions(statuses)
       statuses.reject(&:retweet?).select(&:mentions?).map(&:mention_uids).flatten.
-        each_with_object(Hash.new(0)) { |uid, memo| memo[uid.to_s.to_sym] += 1 }.
-        sort_by { |u, c| -c }.to_h
+          each_with_object(Hash.new(0)) { |uid, memo| memo[uid.to_s.to_sym] += 1 }.
+          sort_by { |_, c| -c }.to_h
     end
   end
 
