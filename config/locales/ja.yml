@@ -154,7 +154,7 @@ ja:
   timelines:
     show:
       navbar_title: '@%{user} の分析'
-      page_title: "@%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
+      meta_title: "@%{user} の分析 - フォロー %{friends}人 フォロワー %{followers}人 リムーブ %{unfriends}人 リムられ %{unfollowers}人"
       directory_page_title: "@%{user} の分析"
       crumb_title: "@%{user} の分析"
       heading: "@%{user} の分析結果"
