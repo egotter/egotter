@@ -41,6 +41,7 @@ class PeriodicReport < ApplicationRecord
 
   class << self
     # options:
+    #   version
     #   request_id
     #   start_date (required)
     #   end_date (required)
@@ -55,11 +56,13 @@ class PeriodicReport < ApplicationRecord
     #   unfollowers (required)
     #   unfollowers_count
     #   total_unfollowers
+    #   account_statuses
     #   worker_context
     def periodic_message(user_id, options = {})
       user = User.find(user_id)
       start_date = extract_date(:start_date, options)
       end_date = extract_date(:end_date, options)
+      account_statuses = options[:account_statuses] || []
 
       unfollowers = options[:unfollowers]
       total_unfollowers = options[:total_unfollowers]
@@ -68,14 +71,12 @@ class PeriodicReport < ApplicationRecord
       token = generate_token
       url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report'}
 
-      I18n.backend.store_translations :ja, persons: {one: '%{count}人', other: '%{count}人'}
-
       message = ERB.new(template).result_with_hash(
           user: user,
           start_date: start_date,
           end_date: end_date,
           date_range: DateHelper.time_ago_in_words(start_date),
-          removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: options[:unfollowers_count]),
+          removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t('periodic_report.persons', count: options[:unfollowers_count]),
           aggregation_period: calc_aggregation_period(start_date, end_date),
           period_name: pick_period_name,
           followers_count_change: calc_followers_count_change(options[:first_followers_count], options[:last_followers_count], options[:latest_followers_count]),
@@ -88,9 +89,9 @@ class PeriodicReport < ApplicationRecord
           unfollowers_count: options[:unfollowers_count],
           unfriends: options[:unfriends],
           unfollowers: unfollowers,
-          unfollower_urls: generate_profile_urls(unfollowers, url_options, add_atmark: user.add_atmark_to_periodic_report?),
+          unfollower_urls: generate_profile_urls(unfollowers, url_options, user.add_atmark_to_periodic_report?, account_statuses),
           total_unfollowers: total_unfollowers,
-          total_unfollower_urls: generate_profile_urls(total_unfollowers, url_options, add_atmark: user.add_atmark_to_periodic_report?),
+          total_unfollower_urls: generate_profile_urls(total_unfollowers, url_options, user.add_atmark_to_periodic_report?, account_statuses),
           regular_subscription: !StopPeriodicReportRequest.exists?(user_id: user.id),
           request_id_text: request_id_text(user, options[:request_id], options[:worker_context]),
           timeline_url: timeline_url(user, url_options),
@@ -358,12 +359,22 @@ class PeriodicReport < ApplicationRecord
       first_count && last_count && first_count > last_count
     end
 
-    def generate_profile_urls(screen_names, options, add_atmark: false)
+    def generate_profile_urls(screen_names, options, add_atmark = false, account_statuses = [])
       url_options = campaign_params('report_profile').merge(options)
       encrypted_names = encrypt_indicator_names(screen_names)
 
       screen_names.map.with_index do |screen_name, i|
-        "#{'@' if add_atmark || i < 1}#{screen_name} #{profile_url(screen_name, {names: encrypted_names}.merge(url_options))}"
+        status = account_statuses.find { |s| s['screen_name'] == screen_name }&.fetch('account_status', nil)
+        status = " #{translate_account_status(status)}" if status
+        "#{'@' if add_atmark || i < 1}#{screen_name}#{status} #{profile_url(screen_name, {names: encrypted_names}.merge(url_options))}"
+      end
+    end
+
+    def translate_account_status(status)
+      if status == 'not_found'
+        I18n.t('periodic_report.account_status.not_found')
+      elsif status == 'suspended'
+        I18n.t('periodic_report.account_status.suspended')
       end
     end
 

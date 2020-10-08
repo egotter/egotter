@@ -2494,6 +2494,13 @@ ja:
       blocked:
         title: 'リム通知再登録'
         message: "通知を再登録するために、画像の手順にしたがって操作してください："
+  periodic_report:
+    persons:
+      one: '%{count}人'
+      other: '%{count}人'
+    account_status:
+      not_found: '垢消し？'
+      suspended: '凍結？'
 
   activerecord:
     models:

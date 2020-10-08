@@ -365,7 +365,13 @@ class CreatePeriodicReportRequest < ApplicationRecord
       last_user = TwitterUser.find_by(id: @builder.last_user&.id)
       latest_user = TwitterUser.latest_by(uid: @request.user.uid)
 
+      unfriends = fetch_users(unfriend_uids)
+      unfollowers = fetch_users(unfollower_uids)
+      total_unfollowers = fetch_users(total_unfollower_uids, limit: 5)
+      account_statuses = attach_status(unfriends + unfollowers + total_unfollowers).map { |s| s.slice(:uid, :screen_name, :account_status) }
+
       {
+          version: 1,
           request_id: @request.id,
           start_date: @start_date,
           end_date: @end_date,
@@ -375,11 +381,12 @@ class CreatePeriodicReportRequest < ApplicationRecord
           last_followers_count: last_user&.followers_count,
           latest_friends_count: latest_user&.friends_count,
           latest_followers_count: latest_user&.followers_count,
-          unfriends: fetch_screen_names(unfriend_uids),
+          unfriends: unfriends.map(&:screen_name),
           unfriends_count: unfriend_uids.size,
-          unfollowers: fetch_screen_names(unfollower_uids),
+          unfollowers: unfollowers.map(&:screen_name),
           unfollowers_count: unfollower_uids.size,
-          total_unfollowers: fetch_screen_names(total_unfollower_uids, limit: 5),
+          total_unfollowers: total_unfollowers.map(&:screen_name),
+          account_statuses: account_statuses,
           worker_context: @request.worker_context
       }
     end
@@ -410,18 +417,52 @@ class CreatePeriodicReportRequest < ApplicationRecord
       end
     end
 
-    def fetch_screen_names(uids, limit: 10)
+    def fetch_users(uids, limit: 10)
       target_uids = uids.take(limit)
       return [] if target_uids.empty?
 
       users = TwitterDB::User.where_and_order_by_field(uids: target_uids)
 
       if target_uids.size != users.size
-        not_found = target_uids - users.map(&:uid)
-        Rails.logger.warn "#{self.class}##{__method__}: Import missing uids request=#{@request.inspect} uids_size=#{target_uids.size} users_size=#{users.size} uids=#{target_uids} not_found=#{not_found}"
+        missing_uids = target_uids - users.map(&:uid)
+        Rails.logger.warn "#{self.class}##{__method__}: Import missing uids request=#{@request.inspect} uids_size=#{target_uids.size} users_size=#{users.size} uids=#{target_uids} missing_uids=#{missing_uids}"
+        CreateHighPriorityTwitterDBUserWorker.perform_async(missing_uids, user_id: @request.user_id, enqueued_by: "#{self.class}##{__method__}")
       end
 
-      users.map(&:screen_name)
+      users
+    end
+
+    def attach_status(users)
+      return [] if users.empty?
+
+      client = User.find(@request.user_id).api_client
+
+      begin
+        raw_users = client.users(users.map(&:uid))
+
+        users.each do |user|
+          if (raw_user = raw_users.find { |u| user.uid == u[:id] })
+            user.account_status = raw_user[:suspended] ? 'suspended' : nil
+          else
+            user.account_status = 'not_found'
+          end
+        end
+
+      rescue => e
+        if AccountStatus.not_found?(e)
+          users.each { |u| u.account_status = 'not_found' }
+        elsif AccountStatus.suspended?(e)
+          users.each { |u| u.account_status = 'suspended' }
+        elsif AccountStatus.no_user_matches?(ex)
+          users.each { |u| u.account_status = 'suspended' }
+        else
+          users.each { |u| u.account_status = 'error' }
+        end
+      end
+
+      users
+    rescue => e
+      Rails.logger.warn "#{self.class}##{__method__}: #{e.inspect} request=#{@request.inspect}"
     end
   end
 

@@ -41,6 +41,8 @@ module TwitterDB
     validates_with Validations::UidValidator
     validates_with Validations::ScreenNameValidator
 
+    attr_accessor :account_status
+
     def inactive?
       status_created_at && status_created_at < INACTIVE_INTERVAL.ago
     end

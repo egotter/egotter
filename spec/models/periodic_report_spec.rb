@@ -11,12 +11,14 @@ RSpec.describe PeriodicReport do
     let(:total_unfollowers) { %w(x1 y1 z1) }
     let(:options) do
       {
+          version: 1,
           request_id: request.id,
           start_date: start_date,
           end_date: end_date,
           unfriends: unfriends,
           unfollowers: unfollowers,
-          total_unfollowers: total_unfollowers
+          total_unfollowers: total_unfollowers,
+          account_statuses: [],
       }
     end
 

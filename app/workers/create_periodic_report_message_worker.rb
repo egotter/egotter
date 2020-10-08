@@ -29,6 +29,7 @@ class CreatePeriodicReportMessageWorker
   end
 
   # options:
+  #   version
   #   request_id
   #   start_date
   #   end_date
@@ -36,6 +37,7 @@ class CreatePeriodicReportMessageWorker
   #   followers_count
   #   unfriends
   #   unfollowers
+  #   account_statuses
   #   worker_context
   #
   #   interval_too_short
