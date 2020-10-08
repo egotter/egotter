@@ -3,7 +3,7 @@ module TabsHelper
     case controller_name
     when 'friends', 'followers'
       friends_tabs(twitter_user)
-    when 'unfriends', 'unfollowers', 'blocking_or_blocked'
+    when 'unfriends', 'unfollowers', 'mutual_unfriends'
       unfriends_tabs(twitter_user)
     when 'close_friends', 'favorite_friends'
       close_friends_tabs(twitter_user)
@@ -31,7 +31,7 @@ module TabsHelper
     [
         Tab.new(t('tabs.unfriends'), user.unfriendships.size, unfriend_path(user, via: current_via('tab'))),
         Tab.new(t('tabs.unfollowers'), user.unfollowerships.size, unfollower_path(user, via: current_via('tab'))),
-        Tab.new(t('tabs.blocking_or_blocked'), user.mutual_unfriendships.size, blocking_or_blocked_path(user, via: current_via('tab')))
+        Tab.new(t('tabs.mutual_unfriends'), user.mutual_unfriendships.size, mutual_unfriend_path(user, via: current_via('tab')))
     ]
   end
 
@@ -80,8 +80,8 @@ module TabsHelper
     case controller_name
     when 'friends', 'followers'
       %i(friends followers).zip(counts).to_h
-    when 'unfriends', 'unfollowers', 'blocking_or_blocked'
-      %i(unfriends unfollowers blocking_or_blocked).zip(counts).to_h
+    when 'unfriends', 'unfollowers', 'mutual_unfriends'
+      %i(unfriends unfollowers mutual_unfriends).zip(counts).to_h
     when 'close_friends', 'favorite_friends'
       %i(close_friends favorite_friends).zip(counts).to_h
     when 'one_sided_friends', 'one_sided_followers', 'mutual_friends'

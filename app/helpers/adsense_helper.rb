@@ -100,10 +100,10 @@ module AdsenseHelper
         when [true,  'not_found',             'show', :top]    then USER_NOT_FOUND
         when [true,  'forbidden',             'show', :top]    then USER_FORBIDDEN
         when [true,  'waiting',               'new',  :top]    then USER_WAITING
-        when [true,  'blocking_or_blocked',   'list', :slit]   then USER_BLOCKING_OR_BLOCKED
-        when [true,  'blocking_or_blocked',   'show', :bottom] then USER_BLOCKING_OR_BLOCKED
-        when [true,  'blocking_or_blocked',   'show', :middle] then 7010796875 # 0315
-        when [true,  'blocking_or_blocked',   'show', :top]    then 8474199583 # 0309
+        when [true,  'mutual_unfriends',      'list', :slit]   then USER_BLOCKING_OR_BLOCKED
+        when [true,  'mutual_unfriends',      'show', :bottom] then USER_BLOCKING_OR_BLOCKED
+        when [true,  'mutual_unfriends',      'show', :middle] then 7010796875 # 0315
+        when [true,  'mutual_unfriends',      'show', :top]    then 8474199583 # 0309
         when [true,  'close_friends',         'list', :slit]   then USER_CLOSE_FRIENDS
         when [true,  'close_friends',         'show', :bottom] then 4116152176 # 0316
         when [true,  'close_friends',         'show', :middle] then 5585787146 # 0317
@@ -180,9 +180,9 @@ module AdsenseHelper
         when [false, 'unfriends',             'show', :bottom] then 5697715203 # 0322
         when [false, 'unfriends',             'show', :middle] then 6335762031 # 0323
         when [false, 'unfriends',             'show', :top]    then 3034170646 # 0308
-        when [false, 'blocking_or_blocked',   'show', :bottom] then 7764393778 # 0324
-        when [false, 'blocking_or_blocked',   'show', :middle] then 8020378796 # 0325
-        when [false, 'blocking_or_blocked',   'show', :top]    then 9688931108 # 0310
+        when [false, 'mutual_unfriends',      'show', :bottom] then 7764393778 # 0324
+        when [false, 'mutual_unfriends',      'show', :middle] then 8020378796 # 0325
+        when [false, 'mutual_unfriends',      'show', :top]    then 9688931108 # 0310
         when [false, 'close_friends',         'show', :bottom] then 6707297127 # 0326
         when [false, 'close_friends',         'show', :middle] then 4436604425 # 0327
         when [false, 'close_friends',         'show', :top]    then 8094925634 # 0314
@@ -296,10 +296,10 @@ module AdsenseHelper
         when [true,  'forbidden',             'show', :top]    then USER_FORBIDDEN_RESP
         when [true,  'waiting',               'new',  :top]    then USER_WAITING_RESP
         when [true,  'audience_insights',     'show', :bottom] then USER_AUDIENCE_INSIGHTS_RESP
-        when [true,  'blocking_or_blocked',   'list', :slit]   then USER_BLOCKING_OR_BLOCKED_RESP
-        when [true,  'blocking_or_blocked',   'show', :bottom] then USER_BLOCKING_OR_BLOCKED_RESP
-        when [true,  'blocking_or_blocked',   'show', :middle] then USER_BLOCKING_OR_BLOCKED_RESP
-        when [true,  'blocking_or_blocked',   'show', :top]    then USER_BLOCKING_OR_BLOCKED_RESP
+        when [true,  'mutual_unfriends',      'list', :slit]   then USER_BLOCKING_OR_BLOCKED_RESP
+        when [true,  'mutual_unfriends',      'show', :bottom] then USER_BLOCKING_OR_BLOCKED_RESP
+        when [true,  'mutual_unfriends',      'show', :middle] then USER_BLOCKING_OR_BLOCKED_RESP
+        when [true,  'mutual_unfriends',      'show', :top]    then USER_BLOCKING_OR_BLOCKED_RESP
         when [true,  'close_friends',         'list', :slit]   then USER_CLOSE_FRIENDS_RESP
         when [true,  'close_friends',         'show', :bottom] then USER_CLOSE_FRIENDS_RESP
         when [true,  'close_friends',         'show', :middle] then USER_CLOSE_FRIENDS_RESP
@@ -393,9 +393,9 @@ module AdsenseHelper
         when [false, 'forbidden',             'show', :top]    then GUEST_FORBIDDEN_RESP
         when [false, 'waiting',               'new',  :top]    then GUEST_WAITING_RESP
         when [false, 'audience_insights',     'show', :bottom] then GUEST_AUDIENCE_INSIGHTS_RESP
-        when [false, 'blocking_or_blocked',   'list', :slit]   then GUEST_BLOCKING_OR_BLOCKED_RESP
-        when [false, 'blocking_or_blocked',   'show', :bottom] then GUEST_BLOCKING_OR_BLOCKED_RESP
-        when [false, 'blocking_or_blocked',   'show', :top]    then GUEST_BLOCKING_OR_BLOCKED_RESP
+        when [false, 'mutual_unfriends',      'list', :slit]   then GUEST_BLOCKING_OR_BLOCKED_RESP
+        when [false, 'mutual_unfriends',      'show', :bottom] then GUEST_BLOCKING_OR_BLOCKED_RESP
+        when [false, 'mutual_unfriends',      'show', :top]    then GUEST_BLOCKING_OR_BLOCKED_RESP
         when [false, 'close_friends',         'list', :slit]   then GUEST_CLOSE_FRIENDS_RESP
         when [false, 'close_friends',         'show', :bottom] then GUEST_CLOSE_FRIENDS_RESP
         when [false, 'close_friends',         'show', :middle] then GUEST_CLOSE_FRIENDS_RESP

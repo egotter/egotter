@@ -13,8 +13,8 @@ module ViewVariablesHelper
       t('page_titles.unfriends', user: name)
     when 'unfollowers'
       t('page_titles.unfollowers', user: name)
-    when 'blocking_or_blocked'
-      t('page_titles.blocking_or_blocked', user: name)
+    when 'mutual_unfriends'
+      t('page_titles.mutual_unfriends', user: name)
     when 'close_friends'
       t('page_titles.close_friends', user: name)
     when 'favorite_friends'
@@ -81,8 +81,8 @@ module ViewVariablesHelper
       t('meta_descriptions.unfriends', values)
     when 'unfollowers'
       t('meta_descriptions.unfollowers', values)
-    when 'blocking_or_blocked'
-      t('meta_descriptions.blocking_or_blocked', values)
+    when 'mutual_unfriends'
+      t('meta_descriptions.mutual_unfriends', values)
     when 'one_sided_friends'
       t('meta_descriptions.one_sided_friends', values)
     when 'one_sided_followers'
@@ -130,8 +130,8 @@ module ViewVariablesHelper
       t('page_descriptions.unfriends_html', values)
     when 'unfollowers'
       t('page_descriptions.unfollowers_html', values)
-    when 'blocking_or_blocked'
-      t('page_descriptions.blocking_or_blocked_html', values)
+    when 'mutual_unfriends'
+      t('page_descriptions.mutual_unfriends_html', values)
     when 'close_friends'
       t('page_descriptions.close_friends_html', values)
     when 'favorite_friends'
@@ -177,8 +177,8 @@ module ViewVariablesHelper
       t('navbar_titles.unfriends')
     when 'unfollowers'
       t('navbar_titles.unfollowers')
-    when 'blocking_or_blocked'
-      t('navbar_titles.blocking_or_blocked')
+    when 'mutual_unfriends'
+      t('navbar_titles.mutual_unfriends')
     when 'close_friends'
       t('navbar_titles.close_friends')
     when 'favorite_friends'
@@ -224,8 +224,8 @@ module ViewVariablesHelper
       t('crumb_titles.unfriends')
     when 'unfollowers'
       t('crumb_titles.unfollowers')
-    when 'blocking_or_blocked'
-      t('crumb_titles.blocking_or_blocked')
+    when 'mutual_unfriends'
+      t('crumb_titles.mutual_unfriends')
     when 'close_friends'
       t('crumb_titles.close_friends')
     when 'favorite_friends'
@@ -283,9 +283,9 @@ module ViewVariablesHelper
     when 'unfollowers'
       users = twitter_user.unfollowers(limit: 3).map { |user| "@#{user.screen_name} #{t('dictionary.honorific')}" }
       t('tweet_text.unfollowers', values.merge(users: users.join("\n")))
-    when 'blocking_or_blocked'
+    when 'mutual_unfriends'
       users = twitter_user.mutual_unfriends(limit: 3).map { |user| "@#{user.screen_name} #{t('dictionary.honorific')}" }
-      t('tweet_text.blocking_or_blocked', values.merge(users: users.join("\n")))
+      t('tweet_text.mutual_unfriends', values.merge(users: users.join("\n")))
     when 'close_friends'
       users = twitter_user.close_friends(limit: 5).map.with_index { |u, i| "#{i + 1}. @#{u.screen_name}" }
       t('tweet_text.close_friends', values.merge(users: users.join("\n")))

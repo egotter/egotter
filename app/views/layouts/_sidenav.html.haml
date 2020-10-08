@@ -14,7 +14,7 @@
     %li.list-group-item= link_to t('timelines.feeds.clusters.title'), obj.cluster_path(twitter_user)
     %li.list-group-item= link_to t('timelines.feeds.unfriends.title'), obj.unfriend_path(twitter_user)
     %li.list-group-item= link_to t('timelines.feeds.unfollowers.title'), obj.unfollower_path(twitter_user)
-    %li.list-group-item= link_to t('timelines.feeds.blocking_or_blocked.title'), obj.blocking_or_blocked_path(twitter_user)
+    %li.list-group-item= link_to t('timelines.feeds.mutual_unfriends.title'), obj.mutual_unfriend_path(twitter_user)
     %li.list-group-item= link_to t('timelines.feeds.mutual_friends.title'), obj.mutual_friend_path(twitter_user)
     %li.list-group-item= link_to t('timelines.feeds.one_sided_friends.title'), obj.one_sided_friend_path(twitter_user)
     %li.list-group-item= link_to t('timelines.feeds.one_sided_followers.title'), obj.one_sided_follower_path(twitter_user)

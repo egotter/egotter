@@ -13,6 +13,11 @@ Rails.application.routes.draw do
         get "#{menu}/summary", to: "#{menu}#summary"
         get "#{menu}/list", to: "#{menu}#list"
       end
+
+      # TODO Remove later
+      get "blocking_or_blocked/summary", to: "mutual_unfriends#summary"
+      get "blocking_or_blocked/list", to: "mutual_unfriends#list"
+
       get "close_friends", to: "close_friends#show"
       get "word_clouds", to: "word_clouds#show"
       get "friend_insights/profiles_count", to: "friend_insights#profiles_count"
@@ -67,7 +72,7 @@ Rails.application.routes.draw do
     usage_stats
     unfriends
     unfollowers
-    blocking_or_blocked
+    mutual_unfriends
     inactive_friends
     inactive_followers
     inactive_mutual_friends
@@ -83,6 +88,8 @@ Rails.application.routes.draw do
   ).each do |controller_name|
     resources controller_name, only: %i(show), param: :screen_name
   end
+
+  get 'blocking_or_blocked/:screen_name', to: redirect("/mutual_unfriends/%{screen_name}?via=routing")
 
   get "friends/:screen_name/download", to: "friends#download", as: :friend_download
   get "followers/:screen_name/download", to: "followers#download", as: :follower_download
@@ -102,7 +109,7 @@ Rails.application.routes.draw do
     favorite_friends
     unfriends
     unfollowers
-    blocking_or_blocked
+    mutual_unfriends
     inactive_friends
     inactive_followers
     inactive_mutual_friends

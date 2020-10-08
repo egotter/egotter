@@ -7,7 +7,7 @@ class Search
     favorite_friends
     unfriends
     unfollowers
-    blocking_or_blocked
+    mutual_unfriends
     mutual_friends
     one_sided_friends
     one_sided_followers

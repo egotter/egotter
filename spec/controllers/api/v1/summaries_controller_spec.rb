@@ -23,7 +23,7 @@ RSpec.describe Api::V1::SummariesController, type: :controller do
 
     it do
       get :show, params: {uid: twitter_user.uid}
-      expect(JSON.parse(response.body)).to eq('one_sided_friends' => 1, 'one_sided_followers' => 2, 'mutual_friends' => 3, 'unfriends' => 4, 'unfollowers' => 5, 'blocking_or_blocked' => 6)
+      expect(JSON.parse(response.body)).to eq('one_sided_friends' => 1, 'one_sided_followers' => 2, 'mutual_friends' => 3, 'unfriends' => 4, 'unfollowers' => 5, 'mutual_unfriends' => 6)
     end
   end
 end

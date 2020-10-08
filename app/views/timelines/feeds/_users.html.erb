@@ -41,7 +41,7 @@
     <% end %>
   </div>
 </div>
-<% if %w(unfriends unfollowers blocking_or_blocked).include?(feed_name) %>
+<% if %w(unfriends unfollowers mutual_unfriends).include?(feed_name) %>
   <div class="text-center text-muted small mt-1">
     <%= t('.notice') %>
     <button class="btn btn-outline-primary btn-sm p-1" data-toggle="collapse" aria-expanded="false" data-target="#additional-description-<%= feed_name %>">

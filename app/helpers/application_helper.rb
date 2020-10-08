@@ -57,7 +57,7 @@ module ApplicationHelper
   end
 
   def remove_related_page?
-    %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)
+    %w(unfriends unfollowers mutual_unfriends).include?(controller_name)
   end
 
   def kick_out_error_path(reason, redirect_path: nil)

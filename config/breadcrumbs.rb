@@ -25,7 +25,7 @@ end
   favorite_friends
   unfriends
   unfollowers
-  blocking_or_blocked
+  mutual_unfriends
   inactive_friends
   inactive_followers
   inactive_mutual_friends

@@ -1,6 +1,6 @@
 module Api
   module V1
-    class BlockingOrBlockedController < ::Api::V1::Base
+    class MutualUnfriendsController < ::Api::V1::Base
 
       private
 

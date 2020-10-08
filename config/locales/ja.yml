@@ -196,7 +196,7 @@ ja:
         mutual_friends: '両思いフォロー'
         unfriends: 'リムーブした'
         unfollowers: 'リムーブされた'
-        blocking_or_blocked: 'ブロックされた'
+        mutual_unfriends: 'ブロックされた'
         notice: 'データはこれから保存されていきます'
         word_description: '説明'
         detailed_description_html: 'えごったーのデータは、最初に使った時から保存されていきます。そのため、最初は少ないデータが表示されます。<br><br>また、たくさん使うユーザーほどたくさんデータが更新されます。'
@@ -210,7 +210,7 @@ ja:
           mutual_friends: '「お互いにフォローしている」関係のことです。'
           unfriends: '「あなたは相手のフォローを外した」関係のことです。'
           unfollowers: '「あなたは相手からフォローを外された」関係のことです。'
-          blocking_or_blocked: '「あなたは相手からブロックされた」関係のことです。'
+          mutual_unfriends: '「あなたは相手からブロックされた」関係のことです。'
       statuses:
         title: 'ツイート'
       friends:
@@ -246,7 +246,7 @@ ja:
       unfollowers:
         title: 'リムーブされた'
         description: '@%{user} がフォローを解除されたユーザーです。'
-      blocking_or_blocked:
+      mutual_unfriends:
         title: 'ブロックされたかも'
         description: '@%{user} がブロックされたかもしれないユーザーです。'
       mutual_friends:
@@ -754,7 +754,7 @@ ja:
     show:
       tweet: '%{text} #egotter %{url}'
   unfollowers:
-  blocking_or_blocked:
+  mutual_unfriends:
   common_friends:
   common_followers:
   common_mutual_friends:
@@ -810,7 +810,7 @@ ja:
     followers: "@%{user} のフォロワー"
     unfriends: "@%{user} のリムーブ"
     unfollowers: "@%{user} のリムられチェック - @%{user} のリムられを見るなら、保存ユーザー数 1億2000万人突破のリムられチェック！"
-    blocking_or_blocked: "@%{user} がブロックされたかも"
+    mutual_unfriends: "@%{user} がブロックされたかも"
     close_friends: "@%{user} の仲良しランキング"
     favorite_friends: "@%{user} のいいねランキング"
     one_sided_friends: "@%{user} の片思いフォロー"
@@ -829,9 +829,9 @@ ja:
     statuses: "@%{user} のツイート分析"
     friends: "@%{user} のフォロー分析 - フォロー %{friends}人 フォロワー %{followers}人"
     followers: "@%{user} のフォロワー分析 - フォロワー %{followers}人 フォロワー %{followers}人"
-    unfriends: "@%{user} のリムり分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
-    unfollowers: "@%{user} のリムられチェック - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
-    blocking_or_blocked: "@%{user} のブロられ分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
+    unfriends: "@%{user} のリムり分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{mutual_unfriends}人"
+    unfollowers: "@%{user} のリムられチェック - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{mutual_unfriends}人"
+    mutual_unfriends: "@%{user} のブロられ分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{mutual_unfriends}人"
     close_friends: "@%{user} の仲良し分析"
     favorite_friends: "@%{user} のいいね分析"
     one_sided_friends: "@%{user} の片思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
@@ -850,9 +850,9 @@ ja:
     statuses: "@%{user} のツイート"
     friends: "@%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 フォロワー %{followers}人"
     followers: "@%{user} がフォローされているユーザーの一覧 -  フォロー %{followers}人 フォロワー %{followers}人"
-    unfriends: "@%{user} がリムーブしたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
+    unfriends: "@%{user} がリムーブしたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{mutual_unfriends}人"
     unfollowers: "@%{user} のリムられを見るならここ！ 保存ユーザー数 1億2000万人突破のリムられチェック！ 無料で使えてスマホ対応OK！ 「リムられチェック」は一番使われているリムられ確認アプリです。"
-    blocking_or_blocked: "@%{user} がブロックされたかもしれないユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
+    mutual_unfriends: "@%{user} がブロックされたかもしれないユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{mutual_unfriends}人"
     close_friends: "@%{user} の仲良しランキング"
     favorite_friends: "@%{user} のいいねランキング"
     one_sided_friends: "@%{user} がフォローしているユーザーのうち、フォロー返しされていないユーザーの一覧 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
@@ -893,7 +893,7 @@ ja:
       <br>
       <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムられたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
       </div>
-    blocking_or_blocked_html: |
+    mutual_unfriends_html: |
       「ブロられ」とは、ブロックされた関係のことです。このページでは、%{user} がブロられた（=ブロックされた）ユーザーを見ることができます。
       <a class="text-right" style="display: block;" onclick="$('#%{tag_id}').show(); $(this).hide(); return false;" href="#">続きを読む</a>
       <div id="%{tag_id}" style="display: none;">
@@ -956,7 +956,7 @@ ja:
     followers: 'フォロワー分析'
     unfriends: 'リムられチェック'
     unfollowers: 'リムられチェック'
-    blocking_or_blocked: 'リムられチェック'
+    mutual_unfriends: 'リムられチェック'
     close_friends: '仲良しランキング'
     favorite_friends: 'いいねランキング'
     one_sided_friends: '片思いチェック'
@@ -977,7 +977,7 @@ ja:
     followers: "フォロワーチェック"
     unfriends: "リムーブした"
     unfollowers: "リムられチェック"
-    blocking_or_blocked: "ブロックされた"
+    mutual_unfriends: "ブロックされた"
     close_friends: "仲良しランキング"
     favorite_friends: "いいねランキング"
     one_sided_friends: "片思い分析"
@@ -1023,7 +1023,7 @@ ja:
 
       お元気そうでなによりです。私をリムった後に、私より面白い人は見付かりましたか？(^ ^)
       #egotter #リムられチェック %{url}
-    blocking_or_blocked: |
+    mutual_unfriends: |
       .%{users}
 
       私のことブロックしたんですか？(^ ^)
@@ -1128,7 +1128,7 @@ ja:
     followers: 'フォロワー'
     unfriends: 'リムーブ'
     unfollowers: 'リムられた'
-    blocking_or_blocked: 'ブロられた'
+    mutual_unfriends: 'ブロられた'
     close_friends: '仲良しランキング'
     favorite_friends: 'いいねランキング'
     one_sided_friends: '片思いフォロー'

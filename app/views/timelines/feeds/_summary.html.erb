@@ -5,7 +5,7 @@
     ['mutual_friends', mutual_friend_path(twitter_user, via: via), t('.mutual_friends')],
     ['unfriends', unfriend_path(twitter_user, via: via), t('.unfriends')],
     ['unfollowers', unfollower_path(twitter_user, via: via), t('.unfollowers')],
-    ['blocking_or_blocked', blocking_or_blocked_path(twitter_user, via: via), t('.blocking_or_blocked')]
+    ['mutual_unfriends', mutual_unfriend_path(twitter_user, via: via), t('.mutual_unfriends')]
 ] %>
 
 <div class="summary-on-timeline">

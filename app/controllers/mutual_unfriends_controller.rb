@@ -1,4 +1,4 @@
-class BlockingOrBlockedController < ApplicationController
+class MutualUnfriendsController < ApplicationController
   include SearchRequestConcern
   include JobQueueingConcern
 

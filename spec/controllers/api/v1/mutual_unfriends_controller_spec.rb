@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::BlockingOrBlockedController, type: :controller do
+RSpec.describe Api::V1::MutualUnfriendsController, type: :controller do
   let(:twitter_user) { create(:twitter_user) }
 
   before do

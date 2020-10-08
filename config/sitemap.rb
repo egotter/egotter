@@ -31,7 +31,7 @@ do_create = Proc.new do
       obj.add mutual_friend_path(twitter_user)
       obj.add unfriend_path(twitter_user)
       obj.add unfollower_path(twitter_user)
-      obj.add blocking_or_blocked_path(twitter_user)
+      obj.add mutual_unfriend_path(twitter_user)
       obj.add inactive_friend_path(twitter_user)
       obj.add inactive_follower_path(twitter_user)
       obj.add inactive_mutual_friend_path(twitter_user)
