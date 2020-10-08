@@ -79,6 +79,12 @@ module Logging
 
     save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
 
+    if from_crawler? && request.device_type != 'crawler'
+      device_type = 'crawler'
+    else
+      device_type = request.device_type
+    end
+
     attrs = {
         session_id:  egotter_visit_id,
         user_id:     current_user_id,
@@ -94,7 +100,7 @@ module Logging
         params:      save_params.empty? ? '' : save_params.to_json.truncate(180),
         status:      performed? ? response.status : 500,
         via:         params[:via] ? params[:via] : '',
-        device_type: request.device_type,
+        device_type: device_type,
         os:          request.os,
         browser:     request.browser,
         ip:          request.ip,
