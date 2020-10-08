@@ -37,6 +37,14 @@ module TwitterUserCalculator
     end
   end
 
+  def update_counter_cache_for(klass, count)
+    if klass == S3::Unfriendship
+      update(unfriends_size: count)
+    elsif klass == S3::Unfollowership
+      update(unfollowers_size: count)
+    end
+  end
+
   def calc_one_sided_friend_uids
     friend_uids - follower_uids
   end

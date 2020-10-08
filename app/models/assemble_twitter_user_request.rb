@@ -64,6 +64,7 @@ class AssembleTwitterUserRequest < ApplicationRecord
       bm("#{klass}(s3)") do
         uids = twitter_user.calc_uids_for(klass)
         klass.import_from!(twitter_user.uid, uids)
+        twitter_user.update_counter_cache_for(klass, uids.size)
       end
     rescue => e
       logger.warn "#{klass}#import_from! #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"

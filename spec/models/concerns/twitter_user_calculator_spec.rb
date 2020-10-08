@@ -13,67 +13,41 @@ RSpec.describe TwitterUserCalculator do
   describe '#calc_uids_for' do
     subject { twitter_user.calc_uids_for(klass) }
 
-    context 'S3::OneSidedFriendship is passed' do
-      let(:klass) { S3::OneSidedFriendship }
-      it do
-        expect(twitter_user).to receive(:calc_one_sided_friend_uids)
-        subject
+    [
+        [S3::OneSidedFriendship, :calc_one_sided_friend_uids],
+        [S3::OneSidedFollowership, :calc_one_sided_follower_uids],
+        [S3::MutualFriendship, :calc_mutual_friend_uids],
+        [S3::InactiveFriendship, :calc_inactive_friend_uids],
+        [S3::InactiveFollowership, :calc_inactive_follower_uids],
+        [S3::InactiveMutualFriendship, :calc_inactive_mutual_friend_uids],
+        [S3::Unfriendship, :calc_unfriend_uids],
+        [S3::Unfollowership, :calc_unfollower_uids],
+    ].each do |klass_value, method_value|
+      context "#{klass_value} is passed" do
+        let(:klass) { klass_value }
+        let(:method_name) { method_value }
+        it do
+          expect(twitter_user).to receive(method_name)
+          subject
+        end
       end
     end
+  end
 
-    context 'S3::OneSidedFollowership is passed' do
-      let(:klass) { S3::OneSidedFollowership }
-      it do
-        expect(twitter_user).to receive(:calc_one_sided_follower_uids)
-        subject
-      end
-    end
+  describe '#update_counter_cache_for' do
+    subject { twitter_user.update_counter_cache_for(klass, 'value') }
 
-    context 'S3::MutualFriendship is passed' do
-      let(:klass) { S3::MutualFriendship }
-      it do
-        expect(twitter_user).to receive(:calc_mutual_friend_uids)
-        subject
-      end
-    end
-
-    context 'S3::InactiveFriendship is passed' do
-      let(:klass) { S3::InactiveFriendship }
-      it do
-        expect(twitter_user).to receive(:calc_inactive_friend_uids)
-        subject
-      end
-    end
-
-    context 'S3::InactiveFollowership is passed' do
-      let(:klass) { S3::InactiveFollowership }
-      it do
-        expect(twitter_user).to receive(:calc_inactive_follower_uids)
-        subject
-      end
-    end
-
-    context 'S3::InactiveMutualFriendship is passed' do
-      let(:klass) { S3::InactiveMutualFriendship }
-      it do
-        expect(twitter_user).to receive(:calc_inactive_mutual_friend_uids)
-        subject
-      end
-    end
-
-    context 'S3::Unfriendship is passed' do
-      let(:klass) { S3::Unfriendship }
-      it do
-        expect(twitter_user).to receive(:calc_unfriend_uids)
-        subject
-      end
-    end
-
-    context 'S3::Unfollowership is passed' do
-      let(:klass) { S3::Unfollowership }
-      it do
-        expect(twitter_user).to receive(:calc_unfollower_uids)
-        subject
+    [
+        [S3::Unfriendship, :unfriends_size],
+        [S3::Unfollowership, :unfollowers_size],
+    ].each do |klass_value, key_value|
+      context "#{klass_value} is passed" do
+        let(:klass) { klass_value }
+        let(:key) { key_value }
+        it do
+          expect(twitter_user).to receive(:update).with(key => 'value')
+          subject
+        end
       end
     end
   end

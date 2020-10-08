@@ -40,9 +40,11 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
           S3::Unfriendship,
           S3::Unfollowership,
           S3::MutualUnfriendship,
-      ].each do |klass|
-        expect(twitter_user).to receive(:calc_uids_for).with(klass).and_return("result of #{klass}")
-        expect(klass).to receive(:import_from!).with(twitter_user.uid, "result of #{klass}")
+      ].each.with_index do |klass, i|
+        uids = Array.new(3).map { i }
+        expect(twitter_user).to receive(:calc_uids_for).with(klass).and_return(uids)
+        expect(klass).to receive(:import_from!).with(twitter_user.uid, uids)
+        expect(twitter_user).to receive(:update_counter_cache_for).with(klass, uids.size)
       end
 
       subject
