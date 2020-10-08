@@ -7,8 +7,7 @@ RSpec.describe TwitterUserUtils do
     subject { twitter_user.friend_uids }
 
     context 'twitter_user is new record' do
-      before { twitter_user.instance_variable_set(:@reserved_friend_uids, 'result') }
-      it { is_expected.to eq('result') }
+      it { expect { subject }.to raise_error(RuntimeError) }
     end
 
     context 'twitter_user is persisted' do
@@ -24,8 +23,7 @@ RSpec.describe TwitterUserUtils do
     subject { twitter_user.follower_uids }
 
     context 'twitter_user is new record' do
-      before { twitter_user.instance_variable_set(:@reserved_follower_uids, 'result') }
-      it { is_expected.to eq('result') }
+      it { expect { subject }.to raise_error(RuntimeError) }
     end
 
     context 'twitter_user is persisted' do

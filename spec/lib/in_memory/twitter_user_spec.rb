@@ -45,7 +45,7 @@ RSpec.describe InMemory::TwitterUser do
   end
 
   describe '.import_from_twitter_user' do
-    let(:twitter_user) { build(:twitter_user, with_relations: false) }
+    let(:twitter_user) { create(:twitter_user, with_relations: false) }
     subject { described_class.import_from_twitter_user(twitter_user) }
     it do
       expect(described_class).to receive(:import_from).

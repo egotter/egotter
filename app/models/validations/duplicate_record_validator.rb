@@ -1,3 +1,4 @@
+# TODO Remove later
 module Validations
   class DuplicateRecordValidator < ActiveModel::Validator
     def validate(new_record)

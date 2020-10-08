@@ -2,9 +2,10 @@ require 'rails_helper'
 
 RSpec.describe TwitterUserPersistence do
   let(:twitter_user) { build(:twitter_user, with_relations: true) }
-  let(:status_tweets) { twitter_user.instance_variable_get(:@reserved_statuses).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) } }
-  let(:favorite_tweets) { twitter_user.instance_variable_get(:@reserved_favorites).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) } }
-  let(:mention_tweets) { twitter_user.instance_variable_get(:@reserved_mentions).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) } }
+
+  let(:status_tweets) { 2.times.map { build(:twitter_db_status).slice(:uid, :screen_name, :raw_attrs_text) } }
+  let(:favorite_tweets) { 2.times.map { build(:twitter_db_status).slice(:uid, :screen_name, :raw_attrs_text) } }
+  let(:mention_tweets) { 2.times.map { build(:twitter_db_status).slice(:uid, :screen_name, :raw_attrs_text) } }
 
   context 'Callbacks' do
     context 'After create' do
@@ -36,8 +37,12 @@ RSpec.describe TwitterUserPersistence do
       Redis.client.flushdb
       allow(twitter_user).to receive(:profile_text).and_return(profile.to_json)
       twitter_user.id = 1
-      twitter_user.instance_variable_set(:@reserved_friend_uids, [1, 2])
-      twitter_user.instance_variable_set(:@reserved_follower_uids, [3, 4])
+      twitter_user.copied_friend_uids = [1, 2]
+      twitter_user.copied_follower_uids = [3, 4]
+
+      twitter_user.copied_user_timeline = status_tweets
+      twitter_user.copied_favorite_tweets = favorite_tweets
+      twitter_user.copied_mention_tweets = mention_tweets
     end
 
     context 'InMemory::TwitterUser' do
@@ -125,8 +130,12 @@ RSpec.describe TwitterUserPersistence do
     before do
       allow(twitter_user).to receive(:profile_text).and_return(profile.to_json)
       twitter_user.id = 1
-      twitter_user.instance_variable_set(:@reserved_friend_uids, [1, 2])
-      twitter_user.instance_variable_set(:@reserved_follower_uids, [3, 4])
+      twitter_user.copied_friend_uids = [1, 2]
+      twitter_user.copied_follower_uids = [3, 4]
+
+      twitter_user.copied_user_timeline = status_tweets
+      twitter_user.copied_favorite_tweets = favorite_tweets
+      twitter_user.copied_mention_tweets = mention_tweets
     end
 
     context 'Efs' do

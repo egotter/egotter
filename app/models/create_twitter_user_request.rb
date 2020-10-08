@@ -40,15 +40,13 @@ class CreateTwitterUserRequest < ApplicationRecord
     validate_request!
     validate_creation_interval!
 
-    twitter_user, relations = build_twitter_user(context)
+    snapshot, relations = build_snapshot(context)
     validate_creation_interval!
-    validate_twitter_user!(twitter_user)
+    validate_twitter_user!(snapshot)
 
-    assemble_twitter_user(twitter_user, relations)
+    assemble_twitter_user(snapshot, relations)
     validate_creation_interval!
-    save_twitter_user(twitter_user)
-
-    twitter_user
+    save_twitter_user(snapshot)
   end
 
   private
@@ -63,17 +61,17 @@ class CreateTwitterUserRequest < ApplicationRecord
     raise TooShortCreateInterval if TwitterUser.select(:id, :created_at).latest_by(uid: uid)&.too_short_create_interval?
   end
 
-  def build_twitter_user(context)
+  def build_snapshot(context)
     fetched_user = fetch_user
     raise SoftSuspended.new("screen_name=#{fetched_user[:screen_name]}") if fetched_user[:suspended]
 
-    twitter_user = build_twitter_user_by(fetched_user)
-    relations = fetch_relations(twitter_user, context)
+    snapshot = TwitterSnapshot.new(fetched_user)
+    relations = fetch_relations(snapshot, context)
 
-    attach_friend_uids(twitter_user, relations[:friend_ids])
-    attach_follower_uids(twitter_user, relations[:follower_ids])
+    snapshot.friend_uids = relations[:friend_ids]
+    snapshot.follower_uids = relations[:follower_ids]
 
-    [twitter_user, relations]
+    [snapshot, relations]
   rescue => e
     exception_handler(e)
     retry
@@ -109,16 +107,27 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   def assemble_twitter_user(twitter_user, relations)
-    attach_user_timeline(twitter_user, relations[:user_timeline])
-    attach_mentions_timeline(twitter_user, relations[:mentions_timeline], relations[:search])
-    attach_favorite_tweets(twitter_user, relations[:favorites])
-
+    twitter_user.user_timeline = relations[:user_timeline]
+    twitter_user.mention_tweets = collect_mention_tweets(relations[:mentions_timeline], relations[:search], twitter_user.screen_name)
+    twitter_user.favorite_tweets = relations[:favorites]
     twitter_user.user_id = user_id
   end
 
-  def save_twitter_user(twitter_user)
+  def collect_mention_tweets(mentions, searched_tweets, screen_name)
+    if mentions&.any?
+      mentions
+    elsif searched_tweets&.any?
+      searched_tweets.reject { |status| uid == status[:user][:id] || status[:text].start_with?("RT @#{screen_name}") }
+    else
+      []
+    end
+  end
+
+  def save_twitter_user(snapshot)
+    twitter_user = snapshot.copy
     twitter_user.save!
     update(twitter_user_id: twitter_user.id)
+    twitter_user
   end
 
   def fetch_user
@@ -133,33 +142,9 @@ class CreateTwitterUserRequest < ApplicationRecord
     end
   end
 
-  def build_twitter_user_by(user)
-    TwitterUser.build_by(user: user)
-  end
-
   def fetch_relations(twitter_user, context)
     @fetcher ||= TwitterUserFetcher.new(twitter_user, login_user: user, context: context)
     @fetcher.fetch
-  end
-
-  def attach_friend_uids(twitter_user, uids)
-    twitter_user.attach_friend_uids(uids)
-  end
-
-  def attach_follower_uids(twitter_user, uids)
-    twitter_user.attach_follower_uids(uids)
-  end
-
-  def attach_user_timeline(twitter_user, tweets)
-    twitter_user.attach_user_timeline(tweets)
-  end
-
-  def attach_mentions_timeline(twitter_user, tweets, search_result)
-    twitter_user.attach_mentions_timeline(tweets, search_result)
-  end
-
-  def attach_favorite_tweets(twitter_user, tweets)
-    twitter_user.attach_favorite_tweets(tweets)
   end
 
   def diff_values_empty?(twitter_user)
@@ -209,13 +194,8 @@ class CreateTwitterUserRequest < ApplicationRecord
   module Instrumentation
     %i(
       fetch_user
-      build_twitter_user_by
+      build_snapshot
       fetch_relations
-      attach_friend_uids
-      attach_follower_uids
-      attach_user_timeline
-      attach_mentions_timeline
-      attach_favorite_tweets
       diff_values_empty?
       save_twitter_user
     ).each do |method_name|

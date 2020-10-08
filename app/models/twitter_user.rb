@@ -25,7 +25,6 @@
 
 class TwitterUser < ApplicationRecord
   include TwitterUserAssociations
-  include TwitterUserAssociationBuilder
   include TwitterUserCalculator
   include TwitterUserProfile
   include TwitterUserValidation

@@ -131,6 +131,16 @@ module TwitterUserAssociations
     end
   end
 
+  def blocking_friendships
+    raise NotImplementedError
+    S3::BlockingFriendship.where(uid: uid)
+  end
+
+  def blocked_friendships
+    raise NotImplementedError
+    S3::BlockedFriendship.where(uid: uid)
+  end
+
   FETCH_USERS_LIMIT = 10000
 
   def close_friends(limit: FETCH_USERS_LIMIT)
@@ -235,8 +245,8 @@ module TwitterUserAssociations
     tweets = []
     tweets = InMemory::StatusTweet.find_by(uid) if InMemory.enabled? && InMemory.cache_alive?(created_at)
     tweets = Efs::StatusTweet.where(uid: uid) if tweets.blank? && Efs::Tweet.cache_alive?(created_at)
-    tweets = ::S3::StatusTweet.where(uid: uid) if tweets.blank?
-    tweets.map { |tweet| ::TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
+    tweets = S3::StatusTweet.where(uid: uid) if tweets.blank?
+    tweets.map { |tweet| TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
 
   # TODO Return an instance of Efs::FavoriteTweet or S3::FavoriteTweet
@@ -245,8 +255,8 @@ module TwitterUserAssociations
     tweets = []
     tweets = InMemory::FavoriteTweet.find_by(uid) if InMemory.enabled? && InMemory.cache_alive?(created_at)
     tweets = Efs::FavoriteTweet.where(uid: uid) if tweets.blank? && Efs::Tweet.cache_alive?(created_at)
-    tweets = ::S3::FavoriteTweet.where(uid: uid) if tweets.blank?
-    tweets.map { |tweet| ::TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
+    tweets = S3::FavoriteTweet.where(uid: uid) if tweets.blank?
+    tweets.map { |tweet| TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
 
   # TODO Return an instance of Efs::MentionTweet or S3::MentionTweet
@@ -255,7 +265,7 @@ module TwitterUserAssociations
     tweets = []
     tweets = InMemory::MentionTweet.find_by(uid) if InMemory.enabled? && InMemory.cache_alive?(created_at)
     tweets = Efs::MentionTweet.where(uid: uid) if tweets.blank? && Efs::Tweet.cache_alive?(created_at)
-    tweets = ::S3::MentionTweet.where(uid: uid) if tweets.blank?
-    tweets.map { |tweet| ::TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
+    tweets = S3::MentionTweet.where(uid: uid) if tweets.blank?
+    tweets.map { |tweet| TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
 end

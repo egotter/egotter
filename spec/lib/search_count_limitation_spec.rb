@@ -198,6 +198,14 @@ RSpec.describe SearchCountLimitation, type: :model do
 
   describe '#to_h' do
     subject { instance.to_h }
-    it { is_expected.to be_truthy }
+    before do
+      allow(instance).to receive(:max_count).and_return('max')
+      allow(instance).to receive(:remaining_count).and_return('remaining')
+      allow(instance).to receive(:current_count).and_return('current')
+      allow(instance).to receive(:current_sharing_bonus).and_return('sharing_bonus')
+    end
+    it do
+      is_expected.to eq(user_id: user.id, max: 'max', remaining: 'remaining', current: 'current', sharing_bonus: 'sharing_bonus', sharing_count: 0)
+    end
   end
 end

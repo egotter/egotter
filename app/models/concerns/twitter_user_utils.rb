@@ -13,29 +13,27 @@ module TwitterUserUtils
     friends_count == 0 && followers_count == 0 && friends_size == 0 && followers_size == 0
   end
 
-  # #diff calls this method in context of new record
   def friend_uids
     if new_record?
-      @reserved_friend_uids
+      raise 'This method should not be called if the records is not persisted'
+    end
+
+    if instance_variable_defined?(:@persisted_friend_uids)
+      @persisted_friend_uids
     else
-      if instance_variable_defined?(:@persisted_friend_uids)
-        @persisted_friend_uids
-      else
-        @persisted_friend_uids = fetch_friend_uids
-      end
+      @persisted_friend_uids = fetch_friend_uids
     end
   end
 
-  # #diff calls this method in context of new record
   def follower_uids
     if new_record?
-      @reserved_follower_uids
+      raise 'This method should not be called if the records is not persisted'
+    end
+
+    if instance_variable_defined?(:@persisted_follower_uids)
+      @persisted_follower_uids
     else
-      if instance_variable_defined?(:@persisted_follower_uids)
-        @persisted_follower_uids
-      else
-        @persisted_follower_uids = fetch_follower_uids
-      end
+      @persisted_follower_uids = fetch_follower_uids
     end
   end
 

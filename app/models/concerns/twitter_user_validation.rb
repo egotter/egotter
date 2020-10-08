@@ -8,7 +8,6 @@ module TwitterUserValidation
     validates_with Validations::ScreenNameValidator
     validates_with Validations::ProfileTextValidator, on: :create
     validates_with Validations::FreshRecordValidator, on: :create
-    validates_with Validations::DuplicateRecordValidator, on: :create
   end
 
   def protected_account?
