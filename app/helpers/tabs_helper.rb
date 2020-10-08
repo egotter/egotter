@@ -29,8 +29,8 @@ module TabsHelper
 
   def unfriends_tabs(user)
     [
-        Tab.new(t('tabs.unfriends'), user.unfriendships.size, unfriend_path(user, via: current_via('tab'))),
-        Tab.new(t('tabs.unfollowers'), user.unfollowerships.size, unfollower_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.unfriends'), user.unfriends_size, unfriend_path(user, via: current_via('tab'))),
+        Tab.new(t('tabs.unfollowers'), user.unfollowers_size, unfollower_path(user, via: current_via('tab'))),
         Tab.new(t('tabs.mutual_unfriends'), user.mutual_unfriendships.size, mutual_unfriend_path(user, via: current_via('tab')))
     ]
   end
