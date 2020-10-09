@@ -856,36 +856,6 @@ ja:
     statuses_html: "%{user} のツイート一覧です。"
     friends_html: "%{user} がフォローしているユーザーの一覧です。"
     followers_html: "%{user} がフォローされているユーザーの一覧です。"
-    unfriends_html: |
-      「リムった」とは、フォローを解除した関係のことです。このページでは、%{user} がリムった（=フォローを解除した）ユーザーを見ることができます。
-      <a class="text-right" style="display: block;" onclick="$('#%{tag_id}').show(); $(this).hide(); return false;" href="#">続きを読む</a>
-      <div id="%{tag_id}" style="display: none;">
-      <br>
-      リムったユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
-      %{user} のリムったユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
-      <br>
-      <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムったユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
-      </div>
-    unfollowers_html: |
-      「リムられ」とは、フォローを解除された関係のことです。このページでは、%{user} がリムられた（=フォローを解除された）ユーザーを見ることができます。
-      <a class="text-right" style="display: block;" onclick="$('#%{tag_id}').show(); $(this).hide(); return false;" href="#">続きを読む</a>
-      <div id="%{tag_id}" style="display: none;">
-      <br>
-      リムられたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
-      %{user} のリムられたユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
-      <br>
-      <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムられたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
-      </div>
-    mutual_unfriends_html: |
-      「ブロられ」とは、ブロックされた関係のことです。このページでは、%{user} がブロられた（=ブロックされた）ユーザーを見ることができます。
-      <a class="text-right" style="display: block;" onclick="$('#%{tag_id}').show(); $(this).hide(); return false;" href="#">続きを読む</a>
-      <div id="%{tag_id}" style="display: none;">
-      <br>
-      ブロックされたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
-      %{user} のブロックされたユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
-      <br>
-      <a href="%{url}">リムられチェック</a>を使うことで、%{user} のブロックされたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
-      </div>
     close_friends_html: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
     favorite_friends_html: "%{user} がよくいいねするユーザーの一覧です。いいねの分析には、お気に入り登録を使っています。"
     one_sided_friends_html: |

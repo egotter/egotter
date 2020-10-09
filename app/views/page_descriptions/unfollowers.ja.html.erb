@@ -1,0 +1,20 @@
+<% via = current_via(via) %>
+<% user_link = link_to '@' + twitter_user.screen_name, timeline_path(twitter_user, via: via) %>
+
+<div class="mb-3">
+  「「リムられ」とは、フォローを解除された関係のことです。このページでは、<%= user_link %> がリムられた（=フォローを解除された）ユーザーを見ることができます。
+</div>
+
+<div class="text-right">
+  <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#hidden-page-description">続きを読む
+    <i class="far fa-question-circle"></i></a>
+</div>
+
+<div id="hidden-page-description" class="collapse">
+  <hr>
+  リムられたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。<br>
+  <br>
+  よく見られているページほど頻繁にデータが更新されるため、<%= user_link %> のリムられたユーザーを見たい場合は、定期的にこのページにアクセスしてください。<br>
+  <br>
+  <a href="<%= subroot_path %>">リムられチェック</a>を使うことで、<%= user_link %> のリムられたユーザーは集計されています。<a href="<%= subroot_path %>">リムられチェック</a>は自分以外のアカウントも検索できます。
+</div>

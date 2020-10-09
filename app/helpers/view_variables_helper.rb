@@ -127,11 +127,11 @@ module ViewVariablesHelper
     when 'followers'
       t('page_descriptions.followers_html', values)
     when 'unfriends'
-      t('page_descriptions.unfriends_html', values)
+      render template: 'page_descriptions/unfriends', locals: {twitter_user: twitter_user}
     when 'unfollowers'
-      t('page_descriptions.unfollowers_html', values)
+      render template: 'page_descriptions/unfollowers', locals: {twitter_user: twitter_user}
     when 'mutual_unfriends'
-      t('page_descriptions.mutual_unfriends_html', values)
+      render template: 'page_descriptions/mutual_unfriends', locals: {twitter_user: twitter_user}
     when 'close_friends'
       t('page_descriptions.close_friends_html', values)
     when 'favorite_friends'

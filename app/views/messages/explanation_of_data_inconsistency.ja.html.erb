@@ -6,7 +6,7 @@
     <div class="mb-3">
       <strong>注意</strong> リムーブ、リムーブされた、ブロックされたのデータは、ツイッター自体の不整合により、<span class="text-primary">一時的に結果が不正確になる</span>ことがあります。<br>
       <br>
-      <% if !user_signed_in? %>
+      <% if user_signed_in? %>
         より正確に結果を知りたい場合は、各ユーザーの分析ページから、<span class="text-primary">ツイッターにアクセス</span>して結果を確認してください。
       <% else %>
         より正確に結果を知りたい場合は、各ユーザーの分析ページから、<a href="<%= sign_in_path(via: via) %>" class="btn btn-primary btn-sm">ログイン</a>して結果を確認してください。
