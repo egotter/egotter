@@ -11,7 +11,7 @@
 <div class="summary-on-timeline">
   <div class="list-group">
     <% items.each do |name, url, title| %>
-      <%= link_to "#feed-#{name}", class: 'list-group-item', onclick: "itemOnSummaryClicked('#{name}')" do %>
+      <%= link_to "#feed-#{name}", class: 'list-group-item', onclick: "itemOnSummaryClicked(this, '#{name}')" do %>
         <div class="d-flex justify-content-between align-items-center">
           <div><%= title %></div>
           <div>
@@ -43,8 +43,9 @@
 </div>
 
 <script>
-  function itemOnSummaryClicked(name) {
-    ahoy.track('Summary clicked', {name: name});
+  function itemOnSummaryClicked(elem, name) {
+    var count = $(elem).find('.count').text();
+    ahoy.track('Summary clicked', {name: name, count: count});
   }
 
   $(function () {
