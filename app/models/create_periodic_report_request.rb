@@ -453,7 +453,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
           users.each { |u| u.account_status = 'not_found' }
         elsif AccountStatus.suspended?(e)
           users.each { |u| u.account_status = 'suspended' }
-        elsif AccountStatus.no_user_matches?(ex)
+        elsif AccountStatus.no_user_matches?(e)
           users.each { |u| u.account_status = 'suspended' }
         else
           users.each { |u| u.account_status = 'error' }
@@ -463,6 +463,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       users
     rescue => e
       Rails.logger.warn "#{self.class}##{__method__}: #{e.inspect} request=#{@request.inspect}"
+      []
     end
   end
 
