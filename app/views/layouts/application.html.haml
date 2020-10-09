@@ -50,7 +50,7 @@
       ahoy.trackAll();
 
   %body
-    = javascript_include_tag '/adsense.js'
+    = javascript_include_tag "/adsense.js?t=#{Time.zone.now.to_i}"
     = render partial: 'shared/toast'
 
     = render partial: 'layouts/header' if show_header? && !under_maintenance?

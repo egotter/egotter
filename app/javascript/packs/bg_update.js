@@ -44,35 +44,17 @@ class SecretModeDetector {
 window.SecretModeDetector = SecretModeDetector;
 
 class AdBlockDetector {
-  constructor(options) {
-    Object.assign(this, options);
+  constructor(token) {
+    this.token = token;
   }
 
-  detect() {
-    if (document.getElementById('poinpgwawoiwoignsdoa')) {
+  detect(callback) {
+    if (document.getElementById(this.token)) {
       console.log('Blocking Ads: No');
     } else {
       console.log('Blocking Ads: Yes');
-      this.detected();
+      callback();
     }
-  }
-
-  detected() {
-    ToastMessage.warn(this.message);
-
-    if (this.force) {
-      var redirectPath = this.redirectPath;
-      setTimeout(function () {
-        window.location.href = redirectPath;
-      }, 2000);
-    }
-
-    ga('send', {
-      hitType: 'event',
-      eventCategory: this.eventCategory,
-      eventAction: 'AdBlocker detected',
-      eventLabel: this.eventLabel
-    });
   }
 }
 
