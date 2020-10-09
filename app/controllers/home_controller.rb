@@ -34,9 +34,8 @@ class HomeController < ApplicationController
       flash.now[:notice] = t('before_sign_in.back_from_twitter_html', url: sign_in_path(via: current_via('back_from_twitter')))
 
     elsif via.end_with?('secret_mode_detected')
-      url = sign_in_path(via: current_via('secret_mode_detected'))
-      options = {device_type: request.device_type, os: request.os, os_version: request.os_version, browser: request.browser, browser_version: request.browser_version}
-      flash.now[:alert] = t('before_sign_in.secret_mode_detected', options.merge!(url: url))
+      @without_alert_container = true
+      flash.now[:notice] = render_to_string(template: 'messages/secret_mode_detected', layout: false, locals: {via: 'secret_mode_detected'})
 
     elsif via.end_with?('ad_blocker_detected')
       flash.now[:alert] = t('before_sign_in.ad_blocker_detected')

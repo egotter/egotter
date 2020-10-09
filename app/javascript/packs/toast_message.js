@@ -2,6 +2,10 @@ class ToastMessage {
   static ids = [];
 
   static show(message, options) {
+    if (this.freezed) {
+      return;
+    }
+
     var opt = Object.assign({
       title: 'Notification',
       body: message,
@@ -69,6 +73,10 @@ class ToastMessage {
       cache.write(key, true);
       return false;
     }
+  }
+
+  static freeze() {
+    this.freezed = true;
   }
 
   static clear() {

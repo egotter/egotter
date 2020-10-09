@@ -11,6 +11,7 @@
   var isEgotterFollower = <%= user_signed_in? && EgotterFollower.exists?(uid: current_user.uid) %>;
   var periodicReportStopped = <%= user_signed_in? && !PeriodicReport.messages_allotted?(current_user) && !StopPeriodicReportRequest.exists?(user_id: current_user.id) %>;
   var isPremium = <%= user_signed_in? && current_user.has_valid_subscription? %>;
+  var isOldAndroid = <%= request.os == 'Android' && request.os_version.match?(/^[654]/) %>;
   var eventCategory = '<%= "#{controller_name}/#{action_name}" %>';
 
   var urls = {
@@ -25,6 +26,45 @@
     createdAt: <%= twitter_user.created_at.to_i %>,
     createdAt_s: '<%= twitter_user.created_at %>'
   };
+
+  if (!crawler) {
+    (function () {
+      var allowCognite = <%= ENV['ALLOW_COGNITE'] == '1' %>;
+      var message = '<%= t('before_sign_in.secret_mode_detected_with_count', count: 3) %>';
+      var redirectPath = "<%= root_path(via: current_via('secret_mode_detected')).html_safe %>";
+
+      new SecretModeDetector().detect(function () {
+        if (allowCognite || signedIn || isOldAndroid) {
+          return;
+        }
+
+        ToastMessage.warn(message);
+        ToastMessage.freeze();
+
+        setTimeout(function () {
+          window.location.href = redirectPath;
+        }, 3000);
+
+        ga('send', {
+          hitType: 'event',
+          eventCategory: 'Detect SecretMode',
+          eventAction: 'detected',
+          eventLabel: JSON.stringify(twitterUser)
+        });
+      });
+    })();
+
+    (function () {
+      var options = {
+        force: true,
+        message: '<%= t('before_sign_in.ad_blocker_detected_with_count', seconds: 3) %>',
+        redirectPath: "<%= root_path(via: current_via('ad_blocker_detected')).html_safe %>",
+        eventCategory: eventCategory,
+        eventLabel: JSON.stringify(twitterUser)
+      };
+      new AdBlockDetector(options).detect();
+    })();
+  }
 
   $(function () {
     if (profileNotFound) {
@@ -99,30 +139,6 @@
       console.warn("Job is not started.");
       var message = '<%= t('twitter_users.in_background.displayed_data_is_html', url: timeline_path(twitter_user, via: current_via('job_not_started')), time: time_ago_in_words_ja(twitter_user.created_at)) %>';
       ToastMessage.info(message, {id: 'job_not_started-<%= twitter_user.created_at.to_i %>', ttl: 60});
-    }
-
-    if (!crawler) {
-      var options = {
-        force: true,
-        message: '<%= t('before_sign_in.secret_mode_detected_with_count', seconds: 3) %>',
-        redirectPath: "<%= root_path(via: current_via('secret_mode_detected')).html_safe %>",
-        allowCognite: <%= ENV['ALLOW_COGNITE'] == '1' %>,
-        signedIn: signedIn,
-        os: '<%= request.os %>',
-        osVersion: '<%= request.os_version %>',
-        eventCategory: eventCategory,
-        eventLabel: JSON.stringify(twitterUser)
-      };
-      new SecretModeDetector(options).detect();
-
-      var options = {
-        force: true,
-        message: '<%= t('before_sign_in.ad_blocker_detected_with_count', seconds: 3) %>',
-        redirectPath: "<%= root_path(via: current_via('ad_blocker_detected')).html_safe %>",
-        eventCategory: eventCategory,
-        eventLabel: JSON.stringify(twitterUser)
-      };
-      new AdBlockDetector(options).detect();
     }
   });
 </script>

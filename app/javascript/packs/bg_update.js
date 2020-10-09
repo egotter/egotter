@@ -1,10 +1,10 @@
 class SecretModeDetector {
-  constructor(options) {
-    Object.assign(this, options);
+  detect(callback) {
+    this.detectByStorageQuota(callback);
+    this.detectByFileSystem(callback);
   }
 
-  detect() {
-    var self = this;
+  detectByStorageQuota(callback) {
     if ('storage' in navigator && 'estimate' in navigator.storage) {
       navigator.storage.estimate().then(function (estimate) {
         // var usage = estimate.usage;
@@ -12,9 +12,9 @@ class SecretModeDetector {
 
         if (quota < 120000000) {
           console.log('Incognito');
-          self.detected(quota);
+          callback(quota);
         } else {
-          console.log('Not Incognito');
+          console.log('Not Incognito', quota);
         }
       });
     } else {
@@ -23,51 +23,25 @@ class SecretModeDetector {
     }
   }
 
-  detected() {
-    if (this.allowCognite || this.signedIn) {
-      return;
+  detectByFileSystem(callback) {
+    var fs = window.RequestFileSystem || window.webkitRequestFileSystem;
+    if (fs) {
+      fs(window.TEMPORARY,
+          100,
+          function () {
+            console.log('Not Incognito');
+          },
+          function () {
+            console.log('Incognito');
+            callback();
+          });
+    } else {
+      console.log('Can not detect');
     }
-    if (this.os === 'Android' && this.osVersion.match(/^(6|5|4)/)) {
-      return;
-    }
-
-    ToastMessage.warn(this.message);
-
-    if (this.force) {
-      var redirectPath = this.redirectPath;
-      setTimeout(function () {
-        window.location.href = redirectPath;
-      }, 2000);
-    }
-
-    ga('send', {
-      hitType: 'event',
-      eventCategory: this.eventCategory,
-      eventAction: 'SecretMode detected',
-      eventLabel: this.eventLabel
-    });
   }
 }
 
 window.SecretModeDetector = SecretModeDetector;
-
-// class SecretModeDetector_old {
-//   constructor() {
-//     var fs = window.RequestFileSystem || window.webkitRequestFileSystem;
-//     if (fs) {
-//       fs(window.TEMPORARY,
-//           100,
-//           function () {
-//             console.log('Not Incognito');
-//           },
-//           function () {
-//             console.log('Incognito');
-//           });
-//     } else {
-//       console.log('Can not detect');
-//     }
-//   }
-// }
 
 class AdBlockDetector {
   constructor(options) {
