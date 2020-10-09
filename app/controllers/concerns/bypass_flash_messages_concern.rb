@@ -13,13 +13,15 @@ module BypassFlashMessagesConcern
           logger.warn "Cannot create bypassed message for #{session[:bypassed_notice_message]} #{e.inspect} user_id=#{current_user&.id} controller=#{controller_name} action=#{action_name}"
         ensure
           session.delete(:bypassed_notice_message)
+          session.delete(:bypassed_notice_message_params)
         end
       end
     end
   end
 
-  def set_bypassed_notice_message(key)
+  def set_bypassed_notice_message(key, params = nil)
     session[:bypassed_notice_message] = key
+    session[:bypassed_notice_message_params] = params if params
   end
 
   def bypassed_notice_message_found?
@@ -34,8 +36,9 @@ module BypassFlashMessagesConcern
       @without_alert_container = true
       after_sign_in_message('sign_up')
     elsif session[:bypassed_notice_message] == 'search_limitation_soft_limited'
-      url = sign_in_path(via: current_via('search_limitation_soft_limited'))
-      search_limitation_soft_limited_message('user', url) # The user name can be anything
+      @without_alert_container = true
+      screen_name = session[:bypassed_notice_message_params]&.fetch('screen_name', nil)
+      search_limitation_soft_limited_message(screen_name || 'user')
     elsif session[:bypassed_notice_message] == 'too_many_searches'
       @without_alert_container = true
       too_many_searches_message

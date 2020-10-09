@@ -150,11 +150,11 @@ module AlertMessagesConcern
     end
   end
 
-  def search_limitation_soft_limited_message(screen_name, url)
+  def search_limitation_soft_limited_message(screen_name)
     if user_signed_in?
       raise "#{__method__} is called and the user is signed in"
     else
-      t('before_sign_in.search_limitation_soft_limited_html', user: screen_name, url: url)
+      render_to_string template: 'messages/search_limitation_soft_limited', locals: {user: screen_name, via: __method__}, layout: false
     end
   end
 

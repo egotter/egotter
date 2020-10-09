@@ -200,11 +200,10 @@ module ValidationConcern
 
     if SearchLimitation.soft_limited?(user)
       # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
-      set_bypassed_notice_message('search_limitation_soft_limited')
+      set_bypassed_notice_message('search_limitation_soft_limited', screen_name: user[:screen_name])
       redirect_to profile_path(screen_name: user[:screen_name], via: current_via(__method__))
 
-      url = sign_in_path(via: current_via(__method__), redirect_path: request.fullpath)
-      message = search_limitation_soft_limited_message(user[:screen_name], url)
+      message = search_limitation_soft_limited_message(user[:screen_name])
       create_error_log(__method__, message)
       true
     else
