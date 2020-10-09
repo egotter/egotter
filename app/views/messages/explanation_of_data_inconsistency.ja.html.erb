@@ -1,0 +1,36 @@
+<% id_hash = SecureRandom.urlsafe_base64(10) %>
+<% via = current_via(via) %>
+
+<div class="card">
+  <div class="card-body">
+    <div class="mb-3">
+      <strong>注意</strong> リムーブ、リムーブされた、ブロックされたのデータは、ツイッター自体の不整合により、<span class="text-primary">一時的に結果が不正確になる</span>ことがあります。<br>
+      <br>
+      <% if !user_signed_in? %>
+        より正確に結果を知りたい場合は、各ユーザーの分析ページから、<span class="text-primary">ツイッターにアクセス</span>して結果を確認してください。
+      <% else %>
+        より正確に結果を知りたい場合は、各ユーザーの分析ページから、<a href="<%= sign_in_path(via: via) %>" class="btn btn-primary btn-sm">ログイン</a>して結果を確認してください。
+      <% end %>
+    </div>
+
+    <div class="text-right">
+      <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#forbidden-reason-details-<%= id_hash %>">データの正確性について
+        <i class="far fa-question-circle"></i></a>
+    </div>
+
+    <div id="forbidden-reason-details-<%= id_hash %>" class="collapse">
+      <hr>
+      1. リムられはどういう時に起きる？<br>
+      ほとんどの場合はフォローを外された時に起きます。一部の特殊なケースでは、<span class="text-primary">フォローを外されていないのにリムられに表示される</span>ことがあります。<br>
+      <br>
+      2. 特殊なケースとは何ですか？<br>
+      <span class="text-primary">一時的な凍結</span>です。この状態になるとフォローが外れていなくてもリムられに表示されることがあります。この場合は、凍結が解除されるとフォロー状態は元に戻ります。<br>
+      <br>
+      3. 一時的な凍結はなぜ起きるのですか？<br>
+      大半は些細な理由です。いつも使っているのとは違うスマホでログインしたり、短時間にたくさんツイートしたり等です。<br>
+      <br>
+      4. 確実にフォローを確認する方法はありますか？<br>
+      ツイッターでそのユーザーのプロフィールを見てください。そうすればフォローされているかどうか正確に分かります。
+    </div>
+  </div>
+</div>
