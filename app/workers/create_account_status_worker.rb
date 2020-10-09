@@ -28,7 +28,7 @@ class CreateAccountStatusWorker
       user = client.user(screen_name)
       CreateHighPriorityTwitterDBUserWorker.perform_async([user[:id]])
     rescue => e
-      logger.info e.inspect
+      logger.info "#{self.class}##{__method__}: #{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
       error = e
     end
 
@@ -55,5 +55,6 @@ class CreateAccountStatusWorker
 
   rescue => e
     logger.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
+    logger.info e.backtrace.join("\n")
   end
 end
