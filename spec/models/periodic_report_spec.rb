@@ -207,7 +207,7 @@ RSpec.describe PeriodicReport do
   end
 
   describe '#send_direct_message' do
-    let(:report) { described_class.new(message: 'message') }
+    let(:report) { described_class.new(message: 'message', quick_reply_buttons: 'buttons') }
     let(:recipient) { double('recipient', uid: 2) }
     subject { report.send_direct_message }
 
@@ -215,7 +215,7 @@ RSpec.describe PeriodicReport do
 
     it do
       expect(report).to receive(:append_remind_message_if_needed).and_return(report.message)
-      expect(described_class).to receive(:build_direct_message_event).with(recipient.uid, 'message').and_return('event')
+      expect(described_class).to receive(:build_direct_message_event).with(recipient.uid, 'message', quick_reply_buttons: 'buttons').and_return('event')
       expect(report).to receive_message_chain(:report_sender, :api_client, :create_direct_message_event).with(event: 'event').and_return('dm')
       is_expected.to eq('dm')
     end

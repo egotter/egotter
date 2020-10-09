@@ -26,7 +26,7 @@ class PeriodicReport < ApplicationRecord
 
   belongs_to :user
 
-  attr_accessor :dont_send_remind_message
+  attr_accessor :dont_send_remind_message, :quick_reply_buttons
 
   def deliver!
     dm = send_direct_message
@@ -136,11 +136,11 @@ class PeriodicReport < ApplicationRecord
 
       message = ERB.new(template.read).result_with_hash(
           interval: DateHelper.distance_of_time_in_words(ttl),
-          support_url: support_url(campaign_params('will_expire_support')),
+          support_url: support_url(campaign_params('will_expire_support').merge(anchor: 'direct-message-expiration')),
           pricing_url: pricing_url(campaign_params('will_expire_pricing')),
       )
 
-      new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
+      new(user: user, message: message, token: generate_token, dont_send_remind_message: true, quick_reply_buttons: will_expire_quick_reply_options)
     end
 
     def sending_soft_limited_message(user_id)
@@ -480,7 +480,7 @@ class PeriodicReport < ApplicationRecord
       self.message = '[dev] ' + self.message
     end
 
-    event = self.class.build_direct_message_event(report_recipient.uid, self.message)
+    event = self.class.build_direct_message_event(report_recipient.uid, self.message, quick_reply_buttons: quick_reply_buttons)
     report_sender.api_client.create_direct_message_event(event: event)
   end
 
@@ -586,10 +586,24 @@ class PeriodicReport < ApplicationRecord
       ]
     end
 
+    def will_expire_quick_reply_options
+      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
+      [
+          {
+              label: I18n.t('quick_replies.continue.label'),
+              description: I18n.t('quick_replies.continue.description')
+          }
+      ]
+    end
+
     # options:
     #   unsubscribe
     def build_direct_message_event(uid, message, options = {})
-      quick_replies = options[:unsubscribe] ? unsubscribe_quick_reply_options : default_quick_reply_options
+      if options[:quick_reply_buttons]
+        quick_replies = options[:quick_reply_buttons]
+      else
+        quick_replies = options[:unsubscribe] ? unsubscribe_quick_reply_options : default_quick_reply_options
+      end
 
       {
           type: 'message_create',

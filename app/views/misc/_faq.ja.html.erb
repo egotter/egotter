@@ -59,9 +59,6 @@
   <% end %>
 </div>
 
-<%= render partial: 'q', locals: {text: 'リムられ通知の有効期限とは何ですか？'} %>
-<div class="mb-5">ツイッターの仕様上、DMを一方的に送り続けることはできません。そのため、リムられ通知を受け取るには、定期的に @ego_tter にDMを送る必要があります。これがリムられ通知の有効期限です。これは<span class="egotter-pink">ツイッターの仕様</span>です。</div>
-
 <%= render partial: 'q', locals: {text: 'リムられ通知が止まりました。再開することはできますか？'} %>
 <div class="mb-5">
   リムられ通知はいつでも再開できます。「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてみてください。
@@ -69,9 +66,6 @@
   <br>
   止まっている理由がある場合は、返信のDMに解決方法が書かれています。
 </div>
-
-<%= render partial: 'q', locals: {text: 'リムられ通知の有効期限がすぐに切れるのはどうしてですか？'} %>
-<div class="mb-5"><span class="egotter-pink">ツイッターの仕様</span>です。相手からDMの送信がないと、通知DMを送り続けることができないのです。</div>
 
 <%= render partial: 'q', locals: {text: "「#{t('quick_replies.prompt_reports.label3')}」は何回までできますか？"} %>
 <div class="mb-5">
@@ -105,6 +99,34 @@
 <div class="mb-5">リムられ通知でユーザー名の前に @ が付くのは、有料プランのユーザーか、「えごったーの登録後1週間以内」のユーザーのみになります。</div>
 
 
+<h3 id="direct-message-expiration" class="h5 my-5">リムられ通知 有効期限</h3>
+
+
+<%= render partial: 'q', locals: {text: 'リムられ通知の有効期限とは何ですか？'} %>
+<div class="mb-5">ツイッターの仕様上、DMを一方的に送り続けることはできません。そのため、リムられ通知を受け取るには、定期的に @ego_tter に返信のDMを送る必要があります。<br>
+  <br>
+  これがリムられ通知の有効期限です。これは<span class="egotter-pink">ツイッターの仕様</span>です。</div>
+
+<%= render partial: 'q', locals: {text: 'リムられ通知の有効期限が切れかけています。何をすればよいですか？'} %>
+<div class="mb-5">
+  リムられ通知を継続する：<br>
+  リムられ通知を受け取り続けるには【リムられ通知 継続】をDMにコピペして送ってください<br>
+  <br>
+  リムられ通知を止める：<br>
+  リムられ通知を止めるには【リムられ通知 停止】をDMにコピペして送ってください
+</div>
+
+<%= render partial: 'q', locals: {text: 'リムられ通知の有効期限が切れました。何をすればよいですか？'} %>
+<div class="mb-5">
+  リムられ通知の有効期限が切れていると、データの自動更新とリムられ通知の定期配信が止まります。<br>
+  <br>
+  自動更新やリムられ通知の定期配信の再開を希望する場合は、【リムられ通知 再開】をDMにコピペして送ってください
+</div>
+
+<%= render partial: 'q', locals: {text: 'リムられ通知の有効期限がすぐに切れるのはどうしてですか？'} %>
+<div class="mb-5"><span class="egotter-pink">ツイッターの仕様</span>です。相手からDMの送信がないと、通知DMを送り続けることができないのです。</div>
+
+
 <h3 class="h5 my-5">リムられ通知 DMでの操作</h3>
 
 
@@ -119,7 +141,7 @@
   リムられ通知の定期的な送信を停止します。<br>
   <br>
   <%= link_to t('quick_replies.prompt_reports.label4'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label4')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする<br>
-  リムられ通知の定期的な送信を再開します。<br>
+  リムられ通知の定期的な送信を再開します。
 </div>
 
 

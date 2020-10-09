@@ -640,7 +640,10 @@ ja:
   misc:
     support:
       title: "お問い合わせ"
-      lead_html: '気になることや分からないことについて、お気軽にお問い合わせください。公式アカウントは <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> です。'
+      lead_html: |
+        気になることや分からないことについて、お気軽にお問い合わせください。公式アカウントは <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> です。<br>
+        <br>
+        お返事が必要なお問い合わせについては <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。<br>
       faq: "よくあるご質問"
     faq:
       search: '@%{user} を分析する'
@@ -1846,10 +1849,10 @@ ja:
 
   quick_replies:
     continue:
-      label: 'リムられ通知継続'
+      label: 'リムられ通知 継続'
       description: '通知を継続する場合は押してください'
     revive:
-      label: 'リムられ通知再開'
+      label: 'リムられ通知 再開'
       description: '通知を再開する場合は押してください'
     followed:
       label: 'フォローしました'
