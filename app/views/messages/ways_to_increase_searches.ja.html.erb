@@ -4,20 +4,20 @@
     <div class="small mt-1 mb-3"><span class="text-muted">購入済み </span><a href="<%= settings_path(via: via) %>">設定ページ</a></div>
   <% else %>
     <div>1. <a href="#" class="btn btn-outline-primary btn-checkout btn-sm"><%= t('pricing.new.pricing.basic_num') %>円で購入して増やす</a></div>
-    <div class="mt-1 mb-3">こっそり使いたい方向け <span class="small"><a href="#" class="btn-checkout">もっと詳しく</a></span></div>
+    <div class="small mt-1 mb-3">こっそり使いたい方向け <span class="small"><a href="#" class="btn-checkout">もっと詳しく</a></span></div>
   <% end %>
 
   <div>2. <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">1回だけツイートして増やす</a></div>
-  <div class="mt-1 mb-3">少しだけ使いたい方向け <span class="small"><a href="#" data-target="#share-modal" data-toggle="modal">もっと詳しく</a></span></div>
+  <div class="small mt-1 mb-3">少しだけ使いたい方向け <span class="small"><a href="#" data-target="#share-modal" data-toggle="modal">もっと詳しく</a></span></div>
 
   <% if CreatePeriodicTweetRequest.exists?(user_id: current_user.id) %>
     <div>3. <a href="#" class="btn btn-outline-primary disabled btn-sm">定期ツイートして増やす</a></div>
     <div class="small mt-1 mb-3"><span class="text-muted">オンに設定済み </span><a href="<%= settings_path(via: via) %>">設定ページ</a></div>
   <% else %>
     <div>3. <a href="#" data-target="#periodic-tweet-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">定期ツイートして増やす</a></div>
-    <div class="mt-1 mb-3">たくさん使いたい方向け <span class="small"><a href="#" data-target="#periodic-tweet-modal" data-toggle="modal">もっと詳しく</a></span></div>
+    <div class="small mt-1 mb-3">たくさん使いたい方向け <span class="small"><a href="#" data-target="#periodic-tweet-modal" data-toggle="modal">もっと詳しく</a></span></div>
   <% end %>
 <% else %>
-  <div>1. <a class="btn btn-primary btn-sm" href="<%= sign_in_path(via: via) %>">ログインして増やす</a></div>
-  <div class="mt-1 mb-3">検索回数が増えて表示が早くなります</div>
+  <%= link_to 'ログインする', sign_in_path(via: via), class: 'btn btn-primary btn-sm d-inline-block' %>
+  <div class="small mt-1 mb-3">ログインすると検索できる数が増えます</div>
 <% end %>
