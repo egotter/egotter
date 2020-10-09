@@ -85,8 +85,9 @@ class AccountStatus
       @store.read(screen_name)
     end
 
-    def write(screen_name, value)
-      @store.write(screen_name, value)
+    def write(screen_name, status, uid)
+      @store.write(screen_name, status)
+      @store.write("#{screen_name}:uid", uid)
     end
 
     def invalid?(screen_name)
@@ -115,6 +116,10 @@ class AccountStatus
 
     def ok?(screen_name)
       @store.read(screen_name) == 'ok'
+    end
+
+    def uid(screen_name)
+      @store.read("#{screen_name}:uid")&.to_i
     end
   end
 end

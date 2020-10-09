@@ -49,6 +49,13 @@
       var url = '#{raw api_v1_account_statuses_path(screen_name: @screen_name)}';
       var retryCount = 0;
 
+      function showMessage(message) {
+        ToastMessage.warn(message);
+        $('.message-box').text(message).show();
+        $('.forbidden-reason').show();
+        $('.not-found-reason').show();
+      }
+
       function fetch() {
         $.get(url, {retry_count: retryCount}).done(function (res) {
           if (res['status'] === 'retry') {
@@ -63,13 +70,13 @@
           } else {
             if (res['status'] === 'ok') {
               console.log('ok', retryCount);
-              ToastMessage.clear();
+              if (res['is_follower']) {
+                ToastMessage.info('#{t('.is_follower', user1: current_user.screen_name, user2: @screen_name)}');
+              } else {
+                ToastMessage.clear();
+              }
             } else {
-              var message = res['message'];
-              ToastMessage.warn(message);
-              $('.message-box').text(message).show();
-              $('.forbidden-reason').show();
-              $('.not-found-reason').show();
+              showMessage(res['message']);
             }
           }
         }).fail(function (xhr, textStatus, errorThrown) {
