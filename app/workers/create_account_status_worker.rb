@@ -51,7 +51,7 @@ class CreateAccountStatusWorker
       status = 'ok'
     end
 
-    cache.write(screen_name, status, user[:id])
+    cache.write(screen_name, status, user&.fetch(:id, nil))
 
   rescue => e
     logger.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
