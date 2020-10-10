@@ -1,4 +1,3 @@
 %blockquote.twitter-tweet.mb-3{align: 'center'}
-  %p{dir: 'ltr', lang: 'ja'}= tweet.text
-  = "— #{tweet.user&.name} (@#{tweet.user&.screen_name})"
-  = tweet_link(tweet)
+  %span.text-left= render partial: 'twitter/tweet', locals: {tweet: tweet}
+  .text-left.small= tweet_link(tweet)

@@ -6,7 +6,7 @@ class PublicTweetsController < ApplicationController
     if params[:kind] == 'close_friends'
       keyword = '#仲良しランキング #egotter'
       if (tweets = fetch_tweets(keyword)).any?
-        html = render_to_string partial: 'twitter/tweet', collection: tweets, cached: true
+        html = render_to_string partial: 'twitter/oembed_tweet', as: :tweet, collection: tweets, cached: true
         render json: {html: html}
       else
         render json: {retry: true}
@@ -14,7 +14,7 @@ class PublicTweetsController < ApplicationController
     else
       keyword = 'えごったー 便利' # 'egotter OR えごったー OR #egotter'
       if (tweets = fetch_tweets(keyword)).any?
-        html = render_to_string partial: 'twitter/tweet', collection: tweets, cached: true
+        html = render_to_string partial: 'twitter/oembed_tweet', as: :tweet, collection: tweets, cached: true
 
         # Avoid FrozenError can't modify frozen String
         html = html.gsub(/(便利)/) { %Q(<span class="egotter-pink">便利</span>) }
