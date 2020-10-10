@@ -11,25 +11,16 @@
       #see-other-candidates.btn.btn-outline-primary.btn-sm= t('.share.see_other_candidates')
   :javascript
     $(function () {
-      function tweetTextUpdater () {
-        var index = 0;
-        var candidates = #{raw tweets.to_json};
-        return function () {
-          ++index;
-          if (index >= candidates.length) {
-            index = 0;
-          }
-          $('#share-modal-tweet').val(candidates[index].replace(/\\n/g, '\n'));
-        }
-      }
-      var textUpdater = tweetTextUpdater();
+      var tweets = #{raw tweets.to_json};
+      var textUpdater = new ShareDialog.TweetTextUpdater(tweets, '#share-modal-tweet');
       $('#see-other-candidates').on('click', function (){
-        textUpdater();
-        ga('send', {
-          hitType: 'event',
-          eventCategory: 'TweetText',
-          eventAction: 'update',
-          eventLabel: 'TweetText update'
+        textUpdater.update(function () {
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'TweetText',
+            eventAction: 'update',
+            eventLabel: 'TweetText update'
+          });
         });
       });
     });
@@ -41,12 +32,32 @@
         %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
         .ml-3= t('.follow.note_html')
 
+  - if params[:purchase_dialog] == '1'
+    = modal_dialog id: 'purchase-modal', title: t('.purchase.title_html'), button: {positive: t('.purchase.ok'), negative: t('.purchase.cancel')} do
+      .d-flex.align-items-center.mb-3
+        %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
+        .ml-3= t('.purchase.note_html')
+
   :javascript
     $(function () {
-      var followingEgotter = #{current_user.following_egotter?};
-      Welcome.showFollowDialogAndShareDialog(followingEgotter);
+      var showFollowDialog = #{params[:follow_dialog] == '1' && !current_user.following_egotter?};
+      var showShareDialog = #{params[:share_dialog] == '1'};
+      var showPurchaseDialog = #{params[:purchase_dialog] == '1' && current_user.following_egotter? && !current_user.has_valid_subscription?};
+      var followDialog = new FollowDialog();
+      var purchaseDialog = new PurchaseDialog('#{raw pricing_path(via: current_via('purchase_modal'))}');
+      var shareDialog = new ShareDialog();
 
-      new Welcome.ShareDialog();
+      var queue = new ModalQueue();
+      if (showFollowDialog) {
+        queue.add(followDialog);
+      }
+      if (showPurchaseDialog) {
+        queue.add(purchaseDialog);
+      }
+      if (showShareDialog) {
+        queue.add(shareDialog);
+      }
+      queue.start();
     });
 - else
   - if params[:sign_in_dialog] == '1' || from_search_engine?

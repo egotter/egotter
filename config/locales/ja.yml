@@ -2064,6 +2064,11 @@ ja:
         note_html: 'フォローすると<span class="egotter-pink">検索が早く</span>なります。<br><span class="egotter-pink">リムられ通知</span>も届きます。'
         ok: "フォローする"
         cancel: "やめておく"
+      purchase:
+        title_html: '有料プランのご案内'
+        note_html: '有料プランを購入すると検索回数が大幅に増えます。<br><br>今なら<span class="egotter-pink">無料のお試し期間</span>あり。'
+        ok: "もっと詳しく"
+        cancel: "やめておく"
       share:
         title_html: '<span class="egotter-pink">ツイート</span>で検索回数アップ'
         note_for_count_html: |

@@ -58,7 +58,27 @@ class ShareDialog extends ModalDialog {
   }
 }
 
-Welcome.ShareDialog = ShareDialog;
+window.ShareDialog = ShareDialog;
+
+class TweetTextUpdater {
+  constructor(tweets, textAreaSelector) {
+    var index = 0;
+    this.updateText = function () {
+      ++index;
+      if (index >= tweets.length) {
+        index = 0;
+      }
+      $(textAreaSelector).val(tweets[index].replace(/\\n/g, '\n'));
+    };
+  }
+
+  update(callback) {
+    this.updateText();
+    callback();
+  }
+}
+
+ShareDialog.TweetTextUpdater = TweetTextUpdater;
 
 class PeriodicTweetDialog extends ModalDialog {
   constructor() {
@@ -116,6 +136,21 @@ class FollowDialog extends ModalDialog {
   }
 }
 
+window.FollowDialog = FollowDialog;
+
+class PurchaseDialog extends ModalDialog {
+  constructor(url) {
+    super($('#purchase-modal'));
+    var $el = this.$el;
+
+    $el.find('.btn.positive').on('click', function () {
+      window.open(url, '_blank');
+    });
+  }
+}
+
+window.PurchaseDialog = PurchaseDialog;
+
 class SignInDialog {
   constructor(id, url) {
     var $el = $('#' + id);
@@ -128,30 +163,29 @@ class SignInDialog {
   }
 }
 
-
-class Util {
-  static showShareDialog() {
-    return this.getParameterByName('share_dialog') === '1';
-  }
-
-  static showFollowDialog() {
-    return this.getParameterByName('follow_dialog') === '1';
-  }
-
-  static showSignInDialog() {
-    return this.getParameterByName('sign_in_dialog') === '1';
-  }
-
-  static getParameterByName(name, url) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[[\]]/g, '\\$&');
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
-  }
-}
+// class Util {
+//   static showShareDialog() {
+//     return this.getParameterByName('share_dialog') === '1';
+//   }
+//
+//   static showFollowDialog() {
+//     return this.getParameterByName('follow_dialog') === '1';
+//   }
+//
+//   static showSignInDialog() {
+//     return this.getParameterByName('sign_in_dialog') === '1';
+//   }
+//
+//   static getParameterByName(name, url) {
+//     if (!url) url = window.location.href;
+//     name = name.replace(/[[\]]/g, '\\$&');
+//     var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+//         results = regex.exec(url);
+//     if (!results) return null;
+//     if (!results[2]) return '';
+//     return decodeURIComponent(results[2].replace(/\+/g, ' '));
+//   }
+// }
 
 class ModalQueue {
   constructor() {
@@ -179,19 +213,7 @@ class ModalQueue {
   }
 }
 
-Welcome.showFollowDialogAndShareDialog = function (followingEgotter) {
-  var queue = new ModalQueue();
-
-  if (Util.showFollowDialog() && !followingEgotter) {
-    queue.add(new FollowDialog());
-  }
-
-  if (Util.showShareDialog()) {
-    queue.add(new ShareDialog());
-  }
-
-  queue.start();
-};
+window.ModalQueue = ModalQueue;
 
 Welcome.showSignInDialog = function (id, url) {
   var queue = new ModalQueue();
