@@ -7,9 +7,9 @@ class DeleteTweetWorker
   #   last_tweet
   def perform(user_id, tweet_id, options = {})
     client = User.find(user_id).api_client.twitter
-    destroy_status!(client, tweet_id)
+    result = destroy_status!(client, tweet_id)
 
-    if options['request_id']
+    if result && options['request_id']
       DeleteTweetsRequest.find(options['request_id']).increment!(:destroy_count)
     end
 
@@ -37,7 +37,7 @@ class DeleteTweetWorker
         TweetStatus.no_status_found?(e) ||
         TweetStatus.not_authorized?(e) ||
         TweetStatus.that_page_does_not_exist?(e)
-      # Do nothing
+      nil
     else
       raise
     end

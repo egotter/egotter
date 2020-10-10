@@ -5,8 +5,7 @@ namespace :delete_tweets do
     tweets = JSON.load(File.read(ENV['FILE']).remove(/^window.YTD.tweet.part0 =/))
     tweet_ids = tweets.map { |tweet| tweet['tweet']['id'] }
 
-    request = user.delete_tweets_requests.order(created_at: :desc).first
-    request = DeleteTweetsRequest.create!(user_id: user.id) unless request
+    request = DeleteTweetsRequest.create!(user_id: user.id, finished_at: Time.zone.now)
 
     processed = 0
     start_id = ENV['START_ID']
