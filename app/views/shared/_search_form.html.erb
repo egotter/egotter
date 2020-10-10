@@ -1,8 +1,8 @@
 <% track_id ||= '' %>
 <% redirect_path ||= '' %>
 
-<%= form_tag searches_path(via: current_via('search_form')), id: "form-#{track_id}", class: 'text-left', method: :post do %>
-  <input type="hidden" name="via" value="<%= via %>">
+<%= form_tag searches_path, id: "form-#{track_id}", class: 'text-left', method: :post do %>
+  <input type="hidden" name="via" value="<%= current_via('search_form') %>">
   <input type="hidden" name="redirect_path" value="<%= redirect_path %>">
   <input type="hidden" name="render_time" value="<%= Time.zone.now.to_s(:db) %>">
 
@@ -23,4 +23,41 @@
       <button id="button-<%= track_id %>" class="btn btn-primary" type="submit"><%= t('.search') %></button>
     </span>
   </div>
+<% end %>
+
+<% if top_page? && !user_signed_in? %>
+  <%= modal_dialog id: 'visitor-search-modal', title: t('.visitor_search_modal.title_html'), button: {positive: t('.visitor_search_modal.button.ok'), negative: t('.visitor_search_modal.button.cancel')} do %>
+    <div class="d-flex align-items-center mb-3">
+      <div class="ml-3"><%= t('.visitor_search_modal.body') %></div>
+    </div>
+  <% end %>
+
+  <script>
+    $(function () {
+      var formId = '<%= "#form-#{track_id}" %>';
+      var inputId = '<%= "#input-#{track_id}" %>';
+      var modalId = '#visitor-search-modal';
+      var $form = $(formId);
+      var $input = $(inputId);
+      var $modal = $(modalId);
+      var $positiveButton = $modal.find('button.positive');
+      var $negativeButton = $modal.find('button.negative');
+      var timelinePath = '<%= raw timeline_path(screen_name: ':screen_name', via:  current_via('search_form/without_sign_in')) %>';
+      var signInPath = '<%= raw sign_in_path(redirect_path: timeline_path(screen_name: ':screen_name', via: current_via('search_form/with_sign_in')), via: current_via('search_form/with_sign_in')) %>';
+
+      $positiveButton.on('click', function () {
+        window.location.href = signInPath.replace(':screen_name', $input.val());
+      });
+
+      $negativeButton.on('click', function () {
+        window.location.href = timelinePath.replace(':screen_name', $input.val());
+      });
+
+      $form.on('submit', function () {
+        $modal.find('.modal-title .user').text($input.val());
+        $modal.modal();
+        return false;
+      });
+    });
+  </script>
 <% end %>

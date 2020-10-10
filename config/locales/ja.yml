@@ -1857,6 +1857,12 @@ ja:
       search_by_twitter_id: "@TwitterID で検索"
       search: "検索"
       invalid_input: "%{min} 文字以上 %{max} 文字以内の半角英数字を入力してください。"
+      visitor_search_modal:
+        title_html: '@<span class="user">user</span> を分析する'
+        body: 'ログインしてから分析することで、結果がより正確になります。'
+        button:
+          ok: 'ログインして検索'
+          cancel: '検索のみ'
     side_by_side_section:
       text021_html: '<span style="font-size: 28px;">350万回</span> 以上の利用実績'
       text022_html: '<span style="font-size: 28px;">フォロワーが減ったら</span> 通知でお知らせ'
