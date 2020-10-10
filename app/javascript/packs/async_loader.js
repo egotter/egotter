@@ -3,6 +3,7 @@ class AsyncLoader {
     this.url = url;
     this.selector = selector;
     this.callback = callback;
+    this.retry = 0;
   }
 
   load() {
@@ -25,19 +26,40 @@ class AsyncLoader {
   }
 
   fetch() {
+    var self = this;
     var url = this.url;
-    var selector = this.selector;
-    var callback = this.callback;
+
+    if (this.retry > 3) {
+      console.warn('Retry exhausted', url);
+      return;
+    }
+
+    console.log('fetch', url);
 
     $.get(url).done(function (res) {
-      console.log('fetch', selector);
-      $(selector).html(res.html);
-      if (callback) {
-        callback(res);
+      if (res.retry) {
+        self.retry++;
+        console.log('Retry', url);
+        setTimeout(function () {
+          self.fetch();
+        }, 2000);
+      } else {
+        self.update(res);
       }
+
     }).fail(function (xhr) {
       console.warn(url, xhr.responseText);
     });
+  }
+
+  update(res) {
+    if (res.html) {
+      $(this.selector).html(res.html);
+    }
+
+    if (this.callback) {
+      this.callback(res);
+    }
   }
 }
 

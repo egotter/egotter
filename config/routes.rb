@@ -127,6 +127,7 @@ Rails.application.routes.draw do
   end
   match 'statuses/:screen_name/oembed' => proc { [404, {'Content-Type' => 'text/plain'}, ''] }, via: :get
 
+  get 'close_friends', to: 'close_friends#new', as: :close_friends_top
   get 'one_sided_friends', to: 'one_sided_friends#new', as: :one_sided_friends_top
   get 'unfriends', to: 'unfriends#new', as: :unfriends_top
   get 'inactive_friends', to: 'inactive_friends#new', as: :inactive_friends_top

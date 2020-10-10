@@ -5,6 +5,7 @@ module ApplicationHelper
 
   def top_page?
     (controller_name == 'home' && action_name == 'new') ||
+        (controller_name == 'close_friends' && action_name == 'new') ||
         (controller_name == 'friends' && action_name == 'new') ||
         (controller_name == 'unfriends' && action_name == 'new') ||
         (controller_name == 'one_sided_friends' && action_name == 'new') ||

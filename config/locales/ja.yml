@@ -664,6 +664,17 @@ ja:
     new:
       loading: '読み込み中'
   close_friends:
+    new:
+      footer_title: '仲良しランキング'
+      meta_title: '仲良しランキング'
+      meta_description: "保存ユーザー数 1億2000万人突破！ えごったーにログインすれば、あなただけの仲良しランキングを作ることができます。"
+      right_side:
+        header: '仲良しランキング'
+        subheader: '仲良しの人をすぐに分析'
+        lead_html: 'スマホからも簡単！<br>仲良しの人を今すぐチェック'
+      redirection_modal:
+        title: '@%{user} でログイン中です'
+        body: '@%{user} の仲良しランキングへ移動しますか？'
     show:
       sign_in_modal:
         title: '仲良しランキングを作成しよう'
@@ -674,14 +685,12 @@ ja:
   one_sided_friends:
     new:
       footer_title: '片思いチェック'
-      description: "保存ユーザー数 1億2000万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
-      short_description: "自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
+      meta_title: '片思いチェック'
+      meta_description: "保存ユーザー数 1億2000万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       right_side:
         header: '片思いチェック'
         subheader: 'フォロー整理が簡単にできる'
         lead_html: '片思い・片思われチェックの決定版。<br>スマホから使える無料の片思いチェックアプリです。'
-      lead_002_html: "保存ユーザー数 1億2000万人突破！"
-      lead_004: '検索されたユーザーの片思い、片思われ、両思いは、えごったーが分析したデータを元に集計しています。<br>もし、片思い、片思われ、両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
       redirection_modal:
         title: '@%{user} でログイン中です'
         body: '@%{user} の片思いフォロー分析結果へ移動しますか？'
@@ -753,7 +762,6 @@ ja:
         <br>
         スマホから使える<span class="egotter-pink">無料</span>の<br>
         リムられチェックアプリです。
-      lead_004: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
     show:
       tweet: '%{text} #egotter %{url}'
   unfollowers:
@@ -764,12 +772,8 @@ ja:
   inactive_friends:
     new:
       footer_title: '最近いない人検索'
-      description: "保存ユーザー数 1億2000万人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
-      short_description: "スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
-      lead_001: "最近いない人、何してるんだろう。"
-      lead_002: "保存ユーザー数 1億2000万人突破！"
-      lead_003: "最近いない人をらくらく検索。<br>スマホから使える無料の分析アプリです。"
-      lead_004: '検索されたユーザーの最近いないフォロー、最近いないフォロワー、最近いない両思いは、えごったーが分析したデータを元に集計しています。<br>もし、最近いないフォロー、最近いないフォロワー、最近いない相互フォローのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
+      meta_title: '最近いない人検索'
+      meta_description: "保存ユーザー数 1億2000万人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
       right_side:
         header: '最近いない人チェック'
         subheader: 'スマホでサクッとフォロー整理'
@@ -1144,12 +1148,8 @@ ja:
   friends:
     new:
       footer_title: 'フォローチェック'
-      description: "保存ユーザー数 1億2000万人突破！ 無料でスマホからフォローチェック！"
-      short_description: "フォローとフォロワーの一覧をさくっと見ることができます。"
-      lead_001: "スマホでさくっとフォローチェック"
-      lead_002: "保存ユーザー数 1億2000万人突破！"
-      lead_003: "ツイッター分析の決定版。<br>スマホから使える無料のフォローチェックアプリです。"
-      lead_004: '検索されたユーザーのフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
+      meta_title: 'フォローチェック'
+      meta_description: "保存ユーザー数 1億2000万人突破！ 無料でスマホからフォローチェック！"
       right_side:
         header: 'フォローチェック'
         subheader: 'スマホでサクッとフォロー整理'
@@ -1188,11 +1188,7 @@ ja:
       crumb_title: 'クラスタ判定'
       footer_title: 'クラスタ判定'
       description: "保存ユーザー数 1億2000万人突破！ 無料でスマホからクラスタ判定！ 検索されたユーザーが入っているクラスタをさくっと判定します。"
-      short_description: "検索されたユーザーが入っているクラスタをさくっと判定します。"
-      lead_001: "スマホでさくっとクラスタ判定"
-      lead_002: "保存ユーザー数 1億2000万人突破！"
       lead_003_html: "クラスタ判定ならえごったー。<br>スマホから使える無料のクラスタ判定アプリです。"
-      lead_004_html: '検索されたユーザーのクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
       right_side:
         header: 'クラスタ分析'
         subheader: 'クラスタ分析が簡単できる'
@@ -1885,6 +1881,9 @@ ja:
       description_bottom_html: |
         えごったーはたくさんの人に利用されている安心のツールです。
         使い始めてからデータが貯まるので、<span class="egotter-pink">早く使うほどお得</span>です。
+      check1: '安心の実績'
+      check2: '満足率95%'
+    close_friends_tweets_section:
       check1: '安心の実績'
       check2: '満足率95%'
     profile_section:

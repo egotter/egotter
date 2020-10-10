@@ -61,7 +61,7 @@
           if (res['status'] === 'retry') {
             retryCount++;
             if (retryCount >= 3) {
-              console.log('Retry exhausted', retryCount)
+              console.warn('Retry exhausted', retryCount)
               ToastMessage.info('#{t('.retry_exhausted')}');
             } else {
               console.log('Retry', retryCount)

@@ -4,6 +4,8 @@
       = footer_item do
         %a{href: root_path(via: current_via('footer'))}= t('.root')
       = footer_item do
+        %a{href: close_friends_top_path(via: current_via('footer'))}= t('close_friends.new.footer_title')
+      = footer_item do
         %a{href: friends_top_path(via: current_via('footer'))}= t('friends.new.footer_title')
       = footer_item do
         %a{href: one_sided_friends_top_path(via: current_via('footer'))}= t('one_sided_friends.new.footer_title')
