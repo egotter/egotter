@@ -8,6 +8,8 @@ class LandingPagesController < ApplicationController
           'https://bit.ly/egotter_faq'
         when 'top'
           'https://bit.ly/egotter_top2'
+        when 'tweet'
+          'https://bit.ly/egotter_tweet'
         else
           'https://egotter.com?via=lp_unknown_name'
         end
