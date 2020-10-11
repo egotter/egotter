@@ -6,6 +6,7 @@ module SearchRequestConcern
   include SearchRequestInstrumentationConcern
 
   included do
+    around_action :disable_newrelic_tracer_for_crawlers, only: :show
     before_action(only: :show) { head :forbidden if twitter_dm_crawler? }
     before_action(only: :show) { search_request_concern_bm_start }
     before_action(only: :show) { signed_in_user_authorized? }
