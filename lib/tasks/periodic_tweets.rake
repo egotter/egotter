@@ -4,6 +4,7 @@ namespace :periodic_tweets do
     tweet_id = ENV['TWEET_ID']
     raise 'Specify tweet_id' if tweet_id.blank?
     limit = ENV['LIMIT']&.to_i || 10
+    puts "limit=#{limit} tweet_id=#{tweet_id}"
 
     user_ids = CreatePeriodicTweetRequest.pluck(:user_id)
     users = User.where(id: user_ids, authorized: true, locked: false).find_in_batches(batch_size: 1).to_a.flatten
@@ -17,26 +18,30 @@ namespace :periodic_tweets do
     users.select! { |user| access_day_user_ids.include?(user.id) }
     puts "users=#{users.size} access_days=#{access_day_user_ids.size}"
 
+    egotter_follower_uids = EgotterFollower.where(uid: users.map(&:uid)).pluck(:uid)
+    users.select! { |user| egotter_follower_uids.include?(user.uid) }
+    puts "users=#{users.size} egotter_followers=#{egotter_follower_uids.size}"
+
     twitter_users = TwitterUser.where(created_at: 3.days.ago..Time.zone.now, uid: users.map(&:uid)).order(followers_count: :desc).to_a.uniq(&:uid)
     users.select! do |user|
       twitter_user = twitter_users.find { |twitter_user| twitter_user.uid == user.uid }
       twitter_user && twitter_user.followers_count > 1000
     end
     puts "users=#{users.size} twitter_users=#{twitter_users.size} followers=#{twitter_users.map(&:followers_count).sum}"
-    puts "user_ids=#{users.map(&:id)}"
 
-    processed = 0
+    puts "user_ids=#{users.map(&:id)}"
+    retweeted = 0
 
     users.shuffle.take(limit).each do |user|
       begin
         user.api_client.twitter.retweet(tweet_id)
         puts "retweeted user_id=#{user.id}"
-        processed += 1
+        retweeted += 1
       rescue => e
         puts "#{e.inspect} user_id=#{user.id}"
       end
     end
 
-    puts "user=#{users.size} retweeted=#{processed}"
+    puts "user=#{users.size} retweeted=#{retweeted}"
   end
 end
