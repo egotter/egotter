@@ -7,7 +7,7 @@ class FollowsController < ApplicationController
 
   before_action only: :create do
     if params[:uid].to_i == current_user.uid
-      head :bad_request
+      render json: {message: 'You cannot follow yourself'}, status: :bad_request
     end
   end
 
@@ -33,7 +33,11 @@ class FollowsController < ApplicationController
       CreateFollowWorker.perform_in(1.hour + rand(30.minutes), *job_args)
       message = t('.retry_later', user: screen_name)
     else
-      CreateFollowWorker.perform_async(*job_args)
+      if request.uid == User::EGOTTER_UID
+        CreateFollowWorker.perform_in(30.seconds, *job_args)
+      else
+        CreateFollowWorker.perform_async(*job_args)
+      end
       message = t('.success', user: screen_name, count: rate_limit.remaining)
     end
 

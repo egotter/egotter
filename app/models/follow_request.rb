@@ -28,6 +28,10 @@ class FollowRequest < ApplicationRecord
   validates :uid, numericality: :only_integer
 
   before_validation do
+    if self.requested_by
+      self.requested_by = self.requested_by.truncate(100)
+    end
+
     if self.error_message
       self.error_message = self.error_message.truncate(100)
     end
