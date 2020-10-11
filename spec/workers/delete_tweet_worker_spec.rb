@@ -16,7 +16,7 @@ RSpec.describe DeleteTweetWorker do
   describe '#perform' do
     subject { worker.perform(user.id, tweet_id, 'request_id' => request.id) }
     it do
-      expect(worker).to receive(:destroy_status!).with(client, tweet_id)
+      expect(worker).to receive(:destroy_status!).with(client, tweet_id).and_return('result')
       expect(request).to receive(:increment!).with(:destroy_count)
       subject
     end
