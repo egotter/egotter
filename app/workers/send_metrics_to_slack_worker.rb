@@ -41,7 +41,7 @@ class SendMetricsToSlackWorker
 
   def send_twitter_user_metrics
     records = TwitterUser.where(created_at: 1.hours.ago..Time.zone.now)
-    message = "count=#{records.size} count(distinct uid)=#{records.select('distinct uid').count}"
+    message = "count=#{records.size} count(distinct uid)=#{records.select('distinct uid').count} count(distinct user_id)=#{records.select('distinct user_id').count}"
     SendMessageToSlackWorker.perform_async(:twitter_users_monitoring, message)
   end
 
@@ -60,14 +60,9 @@ class SendMetricsToSlackWorker
   end
 
   def send_search_histories_metrics
-    [
-        'search_histories',
-        'search_histories via',
-        'search_histories source',
-        'search_histories device_type',
-    ].each do |name|
-      SlackClient.search_histories_monitoring.send_message(fetch_gauges(name, :sum), title: name)
-    end
+    records = SearchHistory.where(created_at: 1.hours.ago..Time.zone.now)
+    message = "count=#{records.size} count(distinct uid)=#{records.select('distinct uid').count} count(distinct user_id)=#{records.select('distinct user_id').count}"
+    SendMessageToSlackWorker.perform_async(:search_histories_monitoring, message)
   end
 
   def send_visitors_metrics

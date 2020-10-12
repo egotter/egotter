@@ -5,7 +5,7 @@ class SendMessageToSlackWorker
   # options:
   def perform(channel, text, title = nil, options = {})
     title = "`#{title}`" if title
-    SlackClient.send(channel).send_message(text, title: title)
+    SlackClient.channel(channel).send_message(text, title: title)
   rescue => e
     logger.warn "#{e.inspect} channel=#{channel} text=#{text} title=#{title} options=#{options.inspect}"
   end

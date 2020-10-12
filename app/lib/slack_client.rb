@@ -34,6 +34,10 @@ class SlackClient
         new(webhook: url)
       end
     end
+
+    def channel(name)
+      send(name)
+    end
   end
 
   def initialize(webhook:)
