@@ -99,7 +99,9 @@ module AdsenseHelper
         case [user_signed_in?, controller.to_s, action.to_s, position.to_sym]
         when [true,  'home',                  'new',  :top]    then USER_HOME
         when [true,  'timelines',             'show', :bottom] then USER_TIMELINES_BOTTOM
-        when [true,  'timelines',             'show', :feed]   then 3123522758 # 0328
+        when [true,  'timelines',             'show', :feed_unfriends]        then 3123522758 # 0328
+        when [true,  'timelines',             'show', :feed_unfollowers]      then 3123522758 # 0328
+        when [true,  'timelines',             'show', :feed_mutual_unfriends] then 3123522758 # 0328
         when [true,  'timelines',             'show', :middle] then 5848036246 # 0311
         when [true,  'timelines',             'show', :top]    then 5788967123 # 0301
         when [true,  'not_found',             'show', :top]    then USER_NOT_FOUND
@@ -174,7 +176,9 @@ module AdsenseHelper
 
         when [false, 'home',                  'new',  :top]    then GUEST_HOME
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM
-        when [false, 'timelines',             'show', :feed]   then 2489097937 # 0329
+        when [false, 'timelines',             'show', :feed_unfriends]        then 2489097937 # 0329
+        when [false, 'timelines',             'show', :feed_unfollowers]      then 2489097937 # 0329
+        when [false, 'timelines',             'show', :feed_mutual_unfriends] then 2489097937 # 0329
         when [false, 'timelines',             'show', :middle] then 8375849431 # 0312
         when [false, 'timelines',             'show', :top]    then 6742315516 # 0302
         when [false, 'waiting',               'new',  :top]    then GUEST_WAITING
@@ -288,7 +292,7 @@ module AdsenseHelper
   USER_SCORES_RESP                = 1216103231
   USER_STATUSES_RESP              = 8403585859
   USER_UNFOLLOWERS_RESP           = 2768115790 # 0217
-  USER_UNFRIENDS_RESP             = 5925951541
+  USER_UNFRIENDS_RESP             = 5925951541 # 0218
   USER_UPDATE_HISTORIES_RESP      = 3332234330
   USER_USAGE_STATS_RESP           = 7385183503
 
@@ -297,7 +301,9 @@ module AdsenseHelper
         case [user_signed_in?, controller.to_s, action.to_s, position.to_sym]
         when [true,  'home',                  'new',  :top]    then USER_HOME_RESP
         when [true,  'timelines',             'show', :bottom] then USER_TIMELINES_BOTTOM_RESP
-        when [true,  'timelines',             'show', :feed]   then USER_TIMELINES_FEED_RESP
+        when [true,  'timelines',             'show', :feed_unfriends]        then USER_TIMELINES_FEED_RESP
+        when [true,  'timelines',             'show', :feed_unfollowers]      then USER_TIMELINES_FEED_RESP
+        when [true,  'timelines',             'show', :feed_mutual_unfriends] then USER_TIMELINES_FEED_RESP
         when [true,  'timelines',             'show', :middle] then USER_TIMELINES_MIDDLE_RESP
         when [true,  'timelines',             'show', :top]    then USER_TIMELINES_TOP_RESP
         when [true,  'not_found',             'show', :top]    then USER_NOT_FOUND_RESP
@@ -395,7 +401,9 @@ module AdsenseHelper
 
         when [false, 'home',                  'new',  :top]    then GUEST_HOME_RESP
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM_RESP
-        when [false, 'timelines',             'show', :feed]   then GUEST_TIMELINES_FEED_RESP
+        when [false, 'timelines',             'show', :feed_unfriends]        then GUEST_TIMELINES_FEED_RESP
+        when [false, 'timelines',             'show', :feed_unfollowers]      then GUEST_TIMELINES_FEED_RESP
+        when [false, 'timelines',             'show', :feed_mutual_unfriends] then GUEST_TIMELINES_FEED_RESP
         when [false, 'timelines',             'show', :middle] then GUEST_TIMELINES_MIDDLE_RESP
         when [false, 'timelines',             'show', :top]    then GUEST_TIMELINES_TOP_RESP
         when [false, 'not_found',             'show', :top]    then GUEST_NOT_FOUND_RESP
