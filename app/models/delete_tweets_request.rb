@@ -166,6 +166,17 @@ class DeleteTweetsRequest < ApplicationRecord
     user.api_client.twitter
   end
 
+  def to_message
+    {
+        request_id: id,
+        destroy_count: destroy_count,
+        user_id: user.id,
+        screen_name: user.screen_name,
+        statuses_count: user.persisted_statuses_count,
+        valid_subscription: user.has_valid_subscription? ? '`true`' : 'false',
+    }.map { |k, v| "#{k}=#{v}" }.join(' ')
+  end
+
   class Report
     attr_reader :message, :sender
 
