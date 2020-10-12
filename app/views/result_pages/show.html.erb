@@ -49,12 +49,7 @@
 
 <% if (tab = current_tabs(@twitter_user)[@active_tab]) && tab.count && tab.count >= 1 %>
   <% if remove_related_page? %>
-    <div class="card mb-3">
-      <div class="card-body small">
-        <%= render template: 'messages/explanation_of_data_inconsistency' %>
-      </div>
-    </div>
-
+    <div class="mb-3"><%= render template: 'messages/explanation_of_data_inconsistency' %></div>
   <% end %>
 
   <div class="text-right mb-4">
