@@ -13,6 +13,7 @@ class ResetEgotterController < ApplicationController
         user_id: current_user.id
     )
     jid = ResetEgotterWorker.perform_async(request.id)
+    SendResetEgotterStartedWorker.perform_async(request.id)
     render json: {request_id: request.id, jid: jid}
   end
 end
