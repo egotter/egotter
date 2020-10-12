@@ -79,7 +79,7 @@ module PeriodicReportConcern
 
     if user.authorized?
       if !fuzzy || CreatePeriodicReportRequest.sufficient_interval?(user.id)
-        request = CreatePeriodicReportRequest.create(user_id: user.id)
+        request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'user')
         CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
       end
     elsif !user.notification_setting.enough_permission_level?
@@ -98,7 +98,7 @@ module PeriodicReportConcern
         EgotterFollower.exists?(uid: user.uid)
       DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
 
-      request = CreatePeriodicReportRequest.create(user_id: user.id)
+      request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'user')
       CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
     end
 
@@ -121,7 +121,7 @@ module PeriodicReportConcern
     end
 
     if user.authorized?
-      request = CreatePeriodicReportRequest.create(user_id: user.id)
+      request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'egotter')
       CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
     elsif !user.notification_setting.enough_permission_level?
       CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)

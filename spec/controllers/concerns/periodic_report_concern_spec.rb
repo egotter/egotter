@@ -188,7 +188,7 @@ describe PeriodicReportConcern, type: :controller do
 
       shared_examples 'enqueue one job' do
         it do
-          expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request)
+          expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'user').and_return(request)
           expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
           subject
         end
@@ -262,7 +262,7 @@ describe PeriodicReportConcern, type: :controller do
       end
 
       it do
-        expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request)
+        expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'user').and_return(request)
         expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
         subject
       end
@@ -314,7 +314,7 @@ describe PeriodicReportConcern, type: :controller do
       let(:request) { create(:create_periodic_report_request, user: user) }
 
       it do
-        expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request)
+        expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'egotter').and_return(request)
         expect(CreateEgotterRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
         subject
       end
