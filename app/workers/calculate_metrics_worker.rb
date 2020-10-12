@@ -15,7 +15,6 @@ class CalculateMetricsWorker
       steps = [
           :send_table_metrics,
           :send_user_metrics,
-          :send_twitter_user_metrics,
           :send_search_histories_metrics,
           :send_sign_in_metrics,
           :send_rate_limit_metrics,

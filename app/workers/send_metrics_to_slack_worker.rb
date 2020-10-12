@@ -40,15 +40,9 @@ class SendMetricsToSlackWorker
   end
 
   def send_twitter_user_metrics
-    [
-        'twitter_user',
-        'twitter_user friends_count',
-        'twitter_user followers_count',
-        'twitter_user friends_size',
-        'twitter_user followers_size',
-    ].each do |name|
-      SlackClient.twitter_users_monitoring.send_message(fetch_gauges(name, :average), title: name)
-    end
+    records = TwitterUser.where(created_at: 1.hours.ago..Time.zone.now)
+    message = "count=#{records.size} count(distinct uid)=#{records.select('distinct uid').count}"
+    SendMessageToSlackWorker.perform_async(:twitter_users_monitoring, message)
   end
 
   def send_sidekiq_queue_metrics
