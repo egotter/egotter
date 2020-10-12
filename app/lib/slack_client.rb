@@ -22,6 +22,7 @@ class SlackClient
       bot:                         ENV['SLACK_BOT_URL'],
       tweet:                       ENV['SLACK_TWEET_URL'],
       reset_egotter:               ENV['SLACK_RESET_EGOTTER_URL'],
+      reset_cache:                 ENV['SLACK_RESET_CACHE_URL'],
       delete_tweets:               ENV['SLACK_DELETE_TWEETS_URL'],
       orders:                      ENV['SLACK_ORDERS_URL'],
       deploy:                      ENV['SLACK_DEPLOY_URL'],

@@ -13,6 +13,7 @@ class ResetCacheController < ApplicationController
         user_id: current_user.id
     )
     # jid = ResetCacheWorker.perform_async(request.id)
+    SendResetCacheStartedWorker.perform_async(request.id)
     render json: {request_id: request.id, jid: nil}
   end
 end

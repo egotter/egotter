@@ -27,6 +27,15 @@ class ResetCacheRequest < ApplicationRecord
     raise NotImplementedError
   end
 
+  def to_message
+    {
+        request_id: id,
+        user_id: user.id,
+        screen_name: user.screen_name,
+        valid_subscription: user.has_valid_subscription? ? '`true`' : 'false',
+    }.map { |k, v| "#{k}=#{v}" }.join(' ')
+  end
+
   class AlreadyFinished < StandardError
   end
 end
