@@ -69,7 +69,7 @@ class PeriodicReport < ApplicationRecord
       template = unfollowers.empty? ? TEMPLATES[:not_removed] : TEMPLATES[:removed]
 
       token = generate_token
-      url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report'}
+      url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}
 
       message = ERB.new(template).result_with_hash(
           user: user,
@@ -114,11 +114,12 @@ class PeriodicReport < ApplicationRecord
     end
 
     def remind_access_message
+      dialog_params = {follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}
       template = Rails.root.join('app/views/periodic_reports/remind_access.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          root_url: root_url(campaign_params('remind_access_root')),
-          support_url: support_url(campaign_params('remind_access_support')),
-          pricing_url: pricing_url(campaign_params('remind_access_pricing')),
+          root_url: root_url(dialog_params.merge(campaign_params('remind_access_root'))),
+          support_url: support_url(dialog_params.merge(campaign_params('remind_access_support'))),
+          pricing_url: pricing_url(dialog_params.merge(campaign_params('remind_access_pricing'))),
       )
 
       new(user: nil, message: message, token: nil)
@@ -156,12 +157,13 @@ class PeriodicReport < ApplicationRecord
 
     def web_access_hard_limited_message(user_id)
       user = User.find(user_id)
+      dialog_params = {follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}
       template = Rails.root.join('app/views/periodic_reports/web_access_hard_limited.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           access_day: user.access_days.last,
-          url: root_url(campaign_params('web_access_hard_limited')),
-          support_url: support_url(campaign_params('web_access_hard_limited_support')),
-          pricing_url: pricing_url(campaign_params('web_access_hard_limited_pricing')),
+          url: root_url(dialog_params.merge(campaign_params('web_access_hard_limited'))),
+          support_url: support_url(dialog_params.merge(campaign_params('web_access_hard_limited_support'))),
+          pricing_url: pricing_url(dialog_params.merge(campaign_params('web_access_hard_limited_pricing'))),
       )
 
       new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
