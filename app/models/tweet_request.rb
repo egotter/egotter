@@ -39,7 +39,7 @@ class TweetRequest < ApplicationRecord
     @client ||= user.api_client.twitter
   end
 
-  def to_message
+  def to_message(via: nil)
     {
         request_id: id,
         user_id: user.id,
@@ -47,6 +47,7 @@ class TweetRequest < ApplicationRecord
         valid_subscription: user.has_valid_subscription? ? '`true`' : 'false',
         text: text,
         url: "https://twitter.com/#{user.screen_name}/status/#{tweet_id}",
+        via: via,
     }.merge(SearchCountLimitation.new(user: user, session_id: nil).to_h).map { |k, v| "#{k}=#{v}" }.join(' ')
   end
 

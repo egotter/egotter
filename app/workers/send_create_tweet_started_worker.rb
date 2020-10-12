@@ -3,9 +3,10 @@ class SendCreateTweetStartedWorker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   # options:
+  #   via
   def perform(request_id, options = {})
     request = TweetRequest.find(request_id)
-    SendMessageToSlackWorker.perform_async(:tweet, "`Started` #{request.to_message}")
+    SendMessageToSlackWorker.perform_async(:tweet, "`Started` #{request.to_message(via: options['via'])}")
   rescue => e
     logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
