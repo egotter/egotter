@@ -39,6 +39,17 @@ class TweetRequest < ApplicationRecord
     @client ||= user.api_client.twitter
   end
 
+  def to_message
+    {
+        request_id: id,
+        user_id: user.id,
+        screen_name: user.screen_name,
+        valid_subscription: user.has_valid_subscription? ? '`true`' : 'false',
+        text: text,
+        url: "https://twitter.com/#{user.screen_name}/status/#{tweet_id}",
+    }.merge(SearchCountLimitation.new(user: user, session_id: nil).to_h).map { |k, v| "#{k}=#{v}" }.join(' ')
+  end
+
   class << self
     def share_suffix
       params = {

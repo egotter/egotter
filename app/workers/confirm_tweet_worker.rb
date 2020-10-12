@@ -20,21 +20,11 @@ class ConfirmTweetWorker
     rescue => e
       logger.info e.inspect
       request.update(deleted_at: Time.zone.now)
-      send_message_to_slack(request)
+      SendCreateTweetDeletedWorker.perform_async(request.id)
     end
   end
 
   def confirm_in(count)
     count < 20 ? 1.seconds : 10.seconds
-  end
-
-  def send_message_to_slack(request)
-    user = request.user
-    params = SearchCountLimitation.new(user: user, session_id: nil).to_h
-    params[:request_id] = request.id
-    SlackClient.tweet.send_message('`delete`' + "\n" + params.inspect)
-  rescue => e
-    logger.warn "Sending a message to slack is failed #{e.inspect}"
-    notify_airbrake(e)
   end
 end
