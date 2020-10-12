@@ -85,11 +85,16 @@ module AdsenseHelper
       7404660497, # 0331
       6837043653, # 0332
       7844957271, # 0333
-      1607933550, # 0334 <- Next
+      1607933550, # 0334
       4210880319, # 0335
+      5452501065, # 0336 <- Next
+      9235122967, # 0337
+      4139419396, # 0338
+      7922041298, # 0339
+      3982796283, # 0340
   ]
 
-  def left_slot_fixed_ad_id(controller, action, position)
+  def left_slot_pc_ad_id(controller, action, position)
     slot =
         case [user_signed_in?, controller.to_s, action.to_s, position.to_sym]
         when [true,  'home',                  'new',  :top]    then USER_HOME
@@ -215,6 +220,7 @@ module AdsenseHelper
   GUEST_TIMELINES_TOP_RESP        = 6629315666
   GUEST_TIMELINES_MIDDLE_RESP     = 6046113305
   GUEST_TIMELINES_BOTTOM_RESP     = 1185417297
+  GUEST_TIMELINES_FEED_RESP       = 1607933550
   GUEST_NOT_FOUND_RESP            = 5567503094
   GUEST_FORBIDDEN_RESP            = 2749768065
 
@@ -254,8 +260,9 @@ module AdsenseHelper
 
   USER_HOME_RESP                  = 2721860243 # 0224
   USER_TIMELINES_TOP_RESP         = 3564168622 # 0225
-  USER_TIMELINES_MIDDLE_RESP      = 4253330115
+  USER_TIMELINES_MIDDLE_RESP      = 4253330115 # 0276
   USER_TIMELINES_BOTTOM_RESP      = 9147011257
+  USER_TIMELINES_FEED_RESP        = 4210880319
   USER_NOT_FOUND_RESP             = 2206842589
   USER_FORBIDDEN_RESP             = 4641434232
   USER_AUDIENCE_INSIGHTS_RESP     = 8987971417
@@ -290,6 +297,7 @@ module AdsenseHelper
         case [user_signed_in?, controller.to_s, action.to_s, position.to_sym]
         when [true,  'home',                  'new',  :top]    then USER_HOME_RESP
         when [true,  'timelines',             'show', :bottom] then USER_TIMELINES_BOTTOM_RESP
+        when [true,  'timelines',             'show', :feed]   then USER_TIMELINES_FEED_RESP
         when [true,  'timelines',             'show', :middle] then USER_TIMELINES_MIDDLE_RESP
         when [true,  'timelines',             'show', :top]    then USER_TIMELINES_TOP_RESP
         when [true,  'not_found',             'show', :top]    then USER_NOT_FOUND_RESP
@@ -387,6 +395,7 @@ module AdsenseHelper
 
         when [false, 'home',                  'new',  :top]    then GUEST_HOME_RESP
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM_RESP
+        when [false, 'timelines',             'show', :feed]   then GUEST_TIMELINES_FEED_RESP
         when [false, 'timelines',             'show', :middle] then GUEST_TIMELINES_MIDDLE_RESP
         when [false, 'timelines',             'show', :top]    then GUEST_TIMELINES_TOP_RESP
         when [false, 'not_found',             'show', :top]    then GUEST_NOT_FOUND_RESP
@@ -486,7 +495,7 @@ module AdsenseHelper
 
   def left_slot_ad_id(controller, action, vertical)
     if request.from_pc?
-      left_slot_fixed_ad_id(controller, action, vertical)
+      left_slot_pc_ad_id(controller, action, vertical)
     else
       left_slot_responsive_ad_id(controller, action, vertical)
     end
