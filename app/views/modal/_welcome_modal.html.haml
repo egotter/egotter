@@ -25,6 +25,12 @@
       });
     });
 
+  - if current_user.continuous_sign_in?
+    = modal_dialog id: 'continuous-sign-in-modal', title: t('.continuous_sign_in.title_html'), button: {positive: t('.continuous_sign_in.ok')} do
+      .d-flex.align-items-center.mb-3
+        = image_tag image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'
+        .ml-3= t('.continuous_sign_in.text_html', count: SearchCountLimitation::CONTINUOUS_SIGN_IN_BONUS)
+
   - if params[:follow_dialog] == '1'
     - data = {url: follows_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')}
     = modal_dialog id: 'follow-modal', title: t('.follow.title_html'), button: {positive: t('.follow.ok'), negative: t('.follow.cancel')}, data: data do
@@ -43,9 +49,11 @@
       var showFollowDialog = #{params[:follow_dialog] == '1' && !current_user.following_egotter?};
       var showShareDialog = #{params[:share_dialog] == '1'};
       var showPurchaseDialog = #{params[:purchase_dialog] == '1' && current_user.following_egotter? && !current_user.has_valid_subscription?};
+      var showContinuousSignInDiallog = #{current_user.continuous_sign_in?};
       var followDialog = new FollowDialog();
       var purchaseDialog = new PurchaseDialog('#{raw pricing_path(via: current_via('purchase_modal'))}');
       var shareDialog = new ShareDialog();
+      var continuousSignInDialog = new ContinuousSignInDialog();
 
       var queue = new ModalQueue();
       if (showFollowDialog) {
@@ -56,6 +64,9 @@
       }
       if (showShareDialog) {
         queue.add(shareDialog);
+      }
+      if (showContinuousSignInDiallog) {
+        queue.add(continuousSignInDialog);
       }
       queue.start();
     });

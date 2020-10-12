@@ -116,7 +116,7 @@ class ContinuousSignInDialog extends ModalDialog {
   }
 }
 
-Welcome.ContinuousSignInDialog = ContinuousSignInDialog;
+window.ContinuousSignInDialog = ContinuousSignInDialog;
 
 class FollowDialog extends ModalDialog {
   constructor() {

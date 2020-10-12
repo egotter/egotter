@@ -2067,6 +2067,12 @@ ja:
           error: '検索された @%{user} のデータ取得に失敗しました。ページを更新してみてください。'
   modal:
     welcome_modal:
+      continuous_sign_in:
+        title_html: '<span class="egotter-pink">ログインボーナス</span> ゲット'
+        text_html: |
+          2日連続 のログインで<br>
+          検索回数 <span class="egotter-pink">%{count}回</span> アップ
+        ok: '受け取る'
       follow:
         title_html: 'えごったーを<span class="egotter-pink">フォロー</span>しよう！'
         note_html: 'フォローすると<span class="egotter-pink">検索が早く</span>なります。<br><span class="egotter-pink">リムられ通知</span>も届きます。'
@@ -2182,12 +2188,6 @@ ja:
       error: '定期ツイートの設定に失敗しました。'
       ok: "定期ツイートオン"
       cancel: "やめておく"
-    continuous_sign_in_modal:
-      title_html: '<span class="egotter-pink">ログインボーナス</span> ゲット'
-      text_html: |
-        2日連続 のログインで<br>
-        検索回数 <span class="egotter-pink">%{count}回</span> アップ
-      ok: '受け取る'
     search_modal:
       title: 'えごったーで検索'
       failed: '履歴の読み込みに失敗しました'
