@@ -151,7 +151,7 @@ class PeriodicReport < ApplicationRecord
           pricing_url: pricing_url(campaign_params('soft_limited_pricing')),
       )
 
-      new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
+      new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true, quick_reply_buttons: sending_soft_limited_quick_reply_options)
     end
 
     def web_access_hard_limited_message(user_id)
@@ -594,6 +594,10 @@ class PeriodicReport < ApplicationRecord
               description: I18n.t('quick_replies.continue.description')
           }
       ]
+    end
+
+    def sending_soft_limited_quick_reply_options
+      will_expire_quick_reply_options
     end
 
     # options:
