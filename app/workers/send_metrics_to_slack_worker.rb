@@ -77,14 +77,9 @@ class SendMetricsToSlackWorker
   end
 
   def send_user_metrics
-    [
-        'users',
-        'users via',
-        'users source',
-        'users device_type',
-    ].each do |name|
-      SlackClient.users_monitoring.send_message(fetch_gauges(name, :sum), title: name)
-    end
+    records = User.where(created_at: 1.hours.ago..Time.zone.now)
+    message = "count=#{records.size}"
+    SendMessageToSlackWorker.perform_async(:users_monitoring, message)
   end
 
   def send_sign_in_metrics
