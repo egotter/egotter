@@ -6,6 +6,8 @@ class SortOrder
       [I18n.t('sort.friends.asc'), 'friends_asc'],
       [I18n.t('sort.followers.desc'), 'followers_desc'],
       [I18n.t('sort.followers.asc'), 'followers_asc'],
+      [I18n.t('sort.statuses.desc'), 'statuses_desc'],
+      [I18n.t('sort.statuses.asc'), 'statuses_asc'],
   ]
 
   def initialize(value)
@@ -15,10 +17,12 @@ class SortOrder
   def apply!(users)
     case @value
     when VALUES[1][1] then users.reverse!
-    when VALUES[2][1] then users.sort_by!{|u| -u.friends_count}
-    when VALUES[3][1] then users.sort_by!{|u| u.friends_count}
-    when VALUES[4][1] then users.sort_by!{|u| -u.followers_count}
-    when VALUES[5][1] then users.sort_by!{|u| u.followers_count}
+    when VALUES[2][1] then users.sort_by! { |u| -u.friends_count }
+    when VALUES[3][1] then users.sort_by! { |u| u.friends_count }
+    when VALUES[4][1] then users.sort_by! { |u| -u.followers_count }
+    when VALUES[5][1] then users.sort_by! { |u| u.followers_count }
+    when VALUES[6][1] then users.sort_by! { |u| -u.statuses_count }
+    when VALUES[7][1] then users.sort_by! { |u| u.statuses_count }
     end
   end
 

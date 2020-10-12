@@ -2274,6 +2274,9 @@ ja:
     followers:
       desc: "フォロワー 多い順"
       asc: "フォロワー 少ない順"
+    statuses:
+      desc: "ツイート 多い順"
+      asc: "ツイート 少ない順"
   filter:
     title: "絞り込み"
     active: "アクティブ のみ"
