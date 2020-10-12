@@ -51,6 +51,6 @@
     - if user_signed_in?
       = link_to '#', class: 'text-white pl-3' do
         %img.rounded-circle.btn-sidemenu{src: current_user_icon, width: 22, height: 22}
-        = render partial: 'layouts/sidemenu'
+        = render partial: 'layouts/sidemenu', locals: {button_class: 'btn-sidemenu'}
     - else
       = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path), class: 'text-white pl-3'
