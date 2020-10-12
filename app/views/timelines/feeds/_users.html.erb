@@ -61,16 +61,69 @@
 <script>
   $(function () {
     var fromCrawler = <%= from_crawler? %>;
-    var url = '<%= api_url %>';
+    var url = '<%= raw api_url %>';
     var feedName = '<%= feed_name %>';
-    var boxSelector = '.' + feedName + '.feed-item';
-    var placeholderSelector = '.' + feedName + '.placeholder-wrapper';
+    var boxSelector = '.<%= feed_name %>.feed-item';
+    var placeholderSelector = '.<%= feed_name %>.placeholder-wrapper';
+
+    function updateView(res) {
+      $(placeholderSelector).hide();
+      var box = $(boxSelector);
+
+      if (!res || !res.users || res.users.length <= 0) {
+        box.find('.result-not-found').show();
+        if (!fromCrawler) {
+          ahoy.track(feedName + ' loaded', {empty: true});
+        }
+      } else {
+        var template = window.templates['user'];
+
+        res.users.forEach(function (user) {
+          var rendered = renderUser(template, user);
+          box.find('.users').append(rendered);
+        });
+
+        box.find('.btn-view-more .count').text(res.count);
+        box.find('.btn-view-more').show();
+        box.find('.show-result').show();
+
+        if (!fromCrawler) {
+          ahoy.track(feedName + ' loaded', {users: res.users.length});
+        }
+      }
+    }
+
+    function renderUser(template, user) {
+      var rendered = $(Mustache.render(template, user));
+
+      if (user.profile_image_url) {
+        rendered.find('img').on('error', function () {
+          drawTextToImage(rendered.find('img'));
+          return true;
+        }).attr('src', user.profile_image_url);
+      } else {
+        drawTextToImage(rendered.find('img'));
+      }
+
+      return rendered;
+    }
+
+    function drawTextToImage(img) {
+      drawText(img.parent(), img.attr('alt'));
+      img.remove();
+    }
+
+    function drawText(container, text) {
+      var style = 'font-size: x-small; width: 48px; height: 48px; overflow: hidden;';
+      var div = $('<div/>', {text: text, class: 'rounded shadow p-1', style: style});
+      container.append(div);
+    }
 
     if (fromCrawler) {
-      new FeedItem(url, feedName, boxSelector, placeholderSelector);
+      new FeedItem(url, updateView);
     } else {
       $(boxSelector).lazyload().one('appear', function () {
-        new FeedItem(url, feedName, boxSelector, placeholderSelector);
+        new FeedItem(url, updateView);
       });
     }
   });
