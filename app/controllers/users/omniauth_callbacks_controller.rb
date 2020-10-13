@@ -26,7 +26,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     save_context = nil
     begin
       user = User.update_or_create_with_token!(user_params) do |user, context|
-        CreateWelcomeMessageWorker.perform_async(user.id) if context == :create
+        if context == :create
+          CreateWelcomeMessageWorker.perform_async(user.id)
+          ImportBlockingRelationshipsWorker.perform_async(user.id)
+        end
         UpdatePermissionLevelWorker.perform_async(user.id)
         save_context = context
       end
