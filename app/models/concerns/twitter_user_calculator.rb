@@ -84,7 +84,7 @@ module TwitterUserCalculator
   end
 
   def calc_mutual_unfriend_uids
-    calc_unfriend_uids & calc_unfollower_uids
+    (calc_unfriend_uids & calc_unfollower_uids | fetch_blocked_uids).uniq
   end
 
   def unfriends_builder
@@ -100,6 +100,10 @@ module TwitterUserCalculator
   end
 
   private
+
+  def fetch_blocked_uids
+    BlockingRelationship.where(to_uid: uid).select('distinct form_uid').limit(1000).pluck(:from_uid)
+  end
 
   def sort_by_count_desc(ids)
     ids.each_with_object(Hash.new(0)) { |id, memo| memo[id] += 1 }.sort_by { |_, v| -v }.map(&:first)

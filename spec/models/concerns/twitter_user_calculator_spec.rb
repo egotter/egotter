@@ -125,6 +125,16 @@ RSpec.describe TwitterUserCalculator do
     end
   end
 
+  describe '#calc_mutual_unfriend_uids' do
+    subject { twitter_user.calc_mutual_unfriend_uids }
+    before do
+      allow(twitter_user).to receive(:calc_unfriend_uids).and_return([1, 2, 3])
+      allow(twitter_user).to receive(:calc_unfollower_uids).and_return([2, 3, 4])
+      allow(twitter_user).to receive(:fetch_blocked_uids).and_return([3, 4, 5])
+    end
+    it { is_expected.to eq([2, 3, 4, 5]) }
+  end
+
   describe '#unfriends_builder' do
     subject { twitter_user.unfriends_builder }
     it do
