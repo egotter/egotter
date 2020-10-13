@@ -5,6 +5,8 @@
 
 <%= render partial: 'shared/close_friends_tweets_section' %>
 
+<div class="container"><%= render partial: 'faq' %></div>
+
 <% if show_redirection_modal? %>
   <%= render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: close_friend_path(current_user)} %>
 <% end %>

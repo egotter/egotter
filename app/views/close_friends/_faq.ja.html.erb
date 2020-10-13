@@ -1,0 +1,44 @@
+<h2 id="close-friends-faq" class="h4 text-center mt-5 mb-4">仲良しランキングの<br>よくある質問</h2>
+
+<% questions = [
+    {text: '仲良しランキングとは何ですか？'},
+    {text: '仲良しランキングはどうすれば作れますか？'},
+    {text: '仲良しランキングの作成は無料ですか？'},
+    {text: '仲良しランキングが全部埋まりません。どうしてですか？'},
+    {text: '仲良しランキングはどれくらいで更新されますか？'},
+    {text: 'ここに書いていないことを質問することはできますか？'},
+] %>
+
+<ul class="list-group list-group-flush">
+  <% questions.each do |q| %>
+    <%= link_to q[:text], "##{q[:id]}", class: 'list-group-item' %>
+  <% end %>
+</ul>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">ツイッターで仲良しのユーザーを見付けて、ハート形の画像を作るサービスです。<br>
+  <br>
+  仲良しの分析には、いいねやリプライを使っています。<br>
+  <br>
+  <%= link_to sign_in_path(redirect_path: close_friend_path(screen_name: ':screen_name'), via: current_via('sample_image')) do %>
+    <div class="text-center"><%= image_tag('/close_friends_sample_555x709.png', style: 'width: 200px; max-width: 100%;') %></div>
+    <div class="text-center small text-muted mt-3">仲良しランキングの作成例</div>
+  <% end %>
+</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">仲良しランキングを使ってみたい方は、ページ上部の「ツイッターでログイン」と書かれた<span class="text-primary">青いボタン</span>を押してみてください。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">無料です。仲良しランキングの作成にお金はかかりませんのでご安心ください。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">見付かった仲良しユーザーの数が少ないと、ハートの中が全て埋まらないことがあります。<br>
+  <br>
+  リプライやいいねをたくさんすると、ハートの中が全部埋まっていきます。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">仲良しランキングの更新頻度は、1〜3日に1回くらいです。定期的に更新されますので、たまに見に来てください。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">サポートアカウント <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。</div>
