@@ -67,6 +67,9 @@
           parent.find('.result.' + name).find('.count').text(count).end().show();
         }
       }
+
+      ahoy.track('Feed loaded', {name: 'summary', res: res});
+
     }).fail(function (xhr, textStatus, errorThrown) {
       console.warn('summary', xhr.responseText);
       parent.find('.analyzing').hide();

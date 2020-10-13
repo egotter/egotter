@@ -20,6 +20,9 @@
     ];
     if (series[0].data.length <= 1) {
       series = AudienceInsight.Sample;
+      ahoy.track('Feed loaded', {name: 'audience_insights', data: 0});
+    } else {
+      ahoy.track('Feed loaded', {name: 'audience_insights', data: series[0].data.length});
     }
     new AudienceInsight().drawChart($('.audience-insight-on-timeline .chart-container')[0], series);
   });

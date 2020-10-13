@@ -73,7 +73,7 @@
       if (!res || !res.users || res.users.length <= 0) {
         box.find('.result-not-found').show();
         if (!fromCrawler) {
-          ahoy.track(feedName + ' loaded', {empty: true});
+          ahoy.track('Feed loaded', {name: feedName, empty: true});
         }
       } else {
         var template = window.templates['user'];
@@ -88,7 +88,7 @@
         box.find('.show-result').show();
 
         if (!fromCrawler) {
-          ahoy.track(feedName + ' loaded', {users: res.users.length});
+          ahoy.track('Feed loaded', {name: feedName, users: res.users.length});
         }
       }
     }
