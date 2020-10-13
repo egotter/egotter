@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_02_234247) do
+ActiveRecord::Schema.define(version: 2020_10_12_233339) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -226,6 +226,14 @@ ActiveRecord::Schema.define(version: 2020_09_02_234247) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_blocked_users_on_created_at"
     t.index ["uid"], name: "index_blocked_users_on_uid", unique: true
+  end
+
+  create_table "blocking_relationships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "from_uid", null: false
+    t.bigint "to_uid", null: false
+    t.timestamp "created_at", null: false
+    t.index ["from_uid", "to_uid"], name: "index_blocking_relationships_on_from_uid_and_to_uid", unique: true
+    t.index ["to_uid", "from_uid"], name: "index_blocking_relationships_on_to_uid_and_from_uid", unique: true
   end
 
   create_table "bots", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

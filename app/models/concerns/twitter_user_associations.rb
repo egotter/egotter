@@ -131,16 +131,6 @@ module TwitterUserAssociations
     end
   end
 
-  def blocking_friendships
-    raise NotImplementedError
-    S3::BlockingFriendship.where(uid: uid)
-  end
-
-  def blocked_friendships
-    raise NotImplementedError
-    S3::BlockedFriendship.where(uid: uid)
-  end
-
   FETCH_USERS_LIMIT = 10000
 
   def close_friends(limit: FETCH_USERS_LIMIT)
@@ -237,6 +227,14 @@ module TwitterUserAssociations
 
   def unfollower_uids
     unfollowerships.pluck(:follower_uid)
+  end
+
+  def blocking_uids
+    BlockingRelationship.where(from_uid: uid).limit(1000).pluck(:to_uid)
+  end
+
+  def blocked_uids
+    BlockingRelationship.where(to_uid: uid).limit(1000).pluck(:from_uid)
   end
 
   # TODO Return an instance of Efs::StatusTweet or S3::StatusTweet

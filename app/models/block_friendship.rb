@@ -13,6 +13,7 @@
 #  index_block_friendships_on_from_uid    (from_uid)
 #
 
+# TODO Rename to MutualUnfriendship
 class BlockFriendship < ApplicationRecord
 
   with_options(primary_key: :uid, optional: true) do |obj|
