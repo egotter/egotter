@@ -98,7 +98,8 @@ class SearchReport < ApplicationRecord
     ERB.new(template.read).result_with_hash(
         screen_name: user.screen_name,
         relationship: relationship,
-        settings_url: Rails.application.routes.url_helpers.settings_url(via: 'search_report', og_tag: 'false')
+        settings_url: Rails.application.routes.url_helpers.settings_url(via: 'search_report', og_tag: 'false'),
+        support_url: Rails.application.routes.url_helpers.support_url(via: 'search_report', og_tag: 'false'),
     )
   end
 

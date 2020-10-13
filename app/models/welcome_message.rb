@@ -110,28 +110,36 @@ class WelcomeMessage < ApplicationRecord
     def settings_url(*args)
       Rails.application.routes.url_helpers.settings_url(*args)
     end
+
+    def support_url(*args)
+      Rails.application.routes.url_helpers.support_url(*args)
+    end
   end
 
   class StartingMessageBuilder < MessageBuilder
     def build
+      via = 'welcome_starting'
       template = Rails.root.join('app/views/welcome_messages/starting.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           screen_name: user.screen_name,
-          timeline_url: timeline_url(user, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_starting', og_tag: 'false'),
-          settings_url: settings_url(via: 'welcome_message_starting', og_tag: 'false')
+          timeline_url: timeline_url(user, token: token, medium: 'dm', type: 'welcome', via: via, og_tag: 'false'),
+          settings_url: settings_url(via: via, og_tag: 'false'),
+          support_url: support_url(via: via, og_tag: 'false'),
       )
     end
   end
 
   class WelcomeMessageBuilder < MessageBuilder
     def build
+      via = 'welcome_success'
       template = Rails.root.join('app/views/welcome_messages/initialization_success.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           screen_name: user.screen_name,
           report_interval: user.notification_setting.report_interval,
           twitter_user: TwitterUser.latest_by(uid: user.uid),
-          timeline_url: timeline_url(user, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_success', og_tag: 'false'),
-          settings_url: settings_url(via: 'welcome_message_success', og_tag: 'false')
+          timeline_url: timeline_url(user, token: token, medium: 'dm', type: 'welcome', via: via, og_tag: 'false'),
+          settings_url: settings_url(via: via, og_tag: 'false'),
+          support_url: support_url(via: via, og_tag: 'false'),
       )
     end
   end
