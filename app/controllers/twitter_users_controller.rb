@@ -60,7 +60,6 @@ class TwitterUsersController < ApplicationController
         end
       rescue Timeout::Error => e
         Rails.logger.info "#{self.class}##{__method__} The request has timed out. (#{seconds.inspect}) #{e.class} #{e.message} #{previous_twitter_user.id} #{current_twitter_user.id}"
-        notify_airbrake(e)
         return I18n.t('twitter_users.show.update_is_coming_with_timeout', user: screen_name)
       end
 

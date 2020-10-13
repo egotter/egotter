@@ -55,9 +55,7 @@
   <div class="text-right mb-4">
     <%= render partial: 'shared/sort' %>
     <%= render partial: 'shared/filter' %>
-    <% if show_download_button? %>
-      <%= render partial: 'shared/download', locals: {twitter_user: @twitter_user} %>
-    <% end %>
+    <%= render partial: 'shared/download', locals: {twitter_user: @twitter_user} %>
   </div>
 
   <%= render partial: 'shared/users_section', locals: {twitter_user: @twitter_user} %>

@@ -6,6 +6,8 @@
 - right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html'), redirect_path: delete_tweets_mypage_path(via: current_via), show_search_form: false, show_screenshots: false}
 = render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options}
 
+= render partial: 'shared/delete_tweets_tweets_section'
+
 .container= render partial: 'delete_tweets/faq'
 
 = render partial: 'shared/review_section'

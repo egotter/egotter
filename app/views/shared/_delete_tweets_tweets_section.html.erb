@@ -1,0 +1,18 @@
+<div id="delete-tweets-tweets" class="container mt-3" style="width: 100%; max-width: 600px; min-height: 200px;"></div>
+
+<div class="my-3 mx-auto" style="width: 300px;">
+  <%= sign_in_with_twitter_link(nil, 'delete_tweets_tweets_button', class: 'btn btn-primary w-100') %>
+
+  <%= render partial: 'shared/check_and_note', locals: {text: t('.check1')} %>
+  <%= render partial: 'shared/check_and_note', locals: {text: t('.check2')} %>
+</div>
+
+<script>
+  $(function () {
+    var url = '<%= raw load_public_tweets_path(kind: 'delete_tweets') %>';
+    var selector = '#delete-tweets-tweets';
+    new PublicTweets(url, selector, function () {
+      ahoy.track("DeleteTweetsTweets loaded");
+    });
+  });
+</script>

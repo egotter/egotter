@@ -7,6 +7,8 @@ class PublicTweetsController < ApplicationController
       keyword = '#仲良しランキング #egotter'
     elsif params[:kind] == 'personality_insights'
       keyword = '#egotter #ツイッター性格診断'
+    elsif params[:kind] == 'delete_tweets'
+      keyword = '#egotter #ツイートクリーナー'
     else
       keyword = 'えごったー 便利' # 'egotter OR えごったー OR #egotter'
     end
