@@ -4,6 +4,7 @@ class SendMessageToSlackWorker
 
   # options:
   def perform(channel, text, title = nil, options = {})
+    raise "Set text!" if text.blank?
     title = "`#{title}`" if title
     SlackClient.channel(channel).send_message(text, title: title)
   rescue => e

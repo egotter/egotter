@@ -15,7 +15,6 @@ class CalculateMetricsWorker
       steps = [
           :send_table_metrics,
           :send_rate_limit_metrics,
-          :send_search_error_metrics,
       ]
     end
 

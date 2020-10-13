@@ -106,16 +106,9 @@ class SendMetricsToSlackWorker
   end
 
   def send_search_error_metrics
-    [
-        'search_error location',
-        'search_error location (user)',
-        'search_error location (visitor)',
-        'search_error via',
-        'search_error source',
-        'search_error device_type',
-    ].each do |name|
-      SlackClient.search_error_monitoring.send_message(fetch_gauges(name, :sum), title: name)
-    end
+    records = SearchErrorLog.where(created_at: 1.hours.ago..Time.zone.now).group(:location).count
+    message = records.any? ? records.map { |k, v| "#{k}=#{v}" }.join(' ') : 'empty'
+    SendMessageToSlackWorker.perform_async(:search_error_monitoring, message)
   end
 
   private
