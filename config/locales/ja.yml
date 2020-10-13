@@ -2305,7 +2305,8 @@ ja:
     unfriends: "リムり"
     unfollowers: "リムられ"
     data:
-      users_size_note: "有料プランのユーザーのみ 100人目以降 をダウンロードできます\n%{url}"
+      note1: "有料プランのユーザーのみ %{count}人目以降 をダウンロードできます\n%{url}"
+      note2: "%{count}人 を超えるユーザーのダウンロードについては個別にお問い合わせください\n%{url}"
   dictionary:
     honorific: "さん"
   before_sign_in:

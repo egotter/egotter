@@ -9,13 +9,18 @@ class CsvBuilder
 
   def build
     CSV.generate(headers: @headers, write_headers: true, force_quotes: true) do |csv|
-      @users.map do |user|
+      @users.each do |user|
         csv << @headers.map { |attr| user[attr] }
       end
 
-      if @users.size == 100 && !@with_description
-        url = Rails.application.routes.url_helpers.pricing_url(via: 'download')
-        csv << ['-1', I18n.t('download.data.users_size_note', url: url)]
+      if !@with_description && @users.size == 100
+        url = Rails.application.routes.url_helpers.pricing_url(via: 'download_100')
+        csv << ['-1', I18n.t('download.data.note1', count: 100, url: url)]
+      end
+
+      if @with_description && @users.size == 10000
+        url = Rails.application.routes.url_helpers.pricing_url(via: 'download_10000')
+        csv << ['-1', I18n.t('download.data.note2', count: 10000, url: url)]
       end
     end
   end
