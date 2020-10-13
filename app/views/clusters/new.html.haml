@@ -5,7 +5,7 @@
 = render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options}
 
 - if show_redirection_modal?
-  = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: cluster_path(current_user)}
+  = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: cluster_path(current_user, via: current_via('redirection_modal'))}
 
 = render partial: 'shared/review_section'
 = render partial: 'shared/features_section'
