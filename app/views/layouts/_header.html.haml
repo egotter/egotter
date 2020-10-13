@@ -21,7 +21,7 @@
     = link_to text, subroot_path, class: 'text-white pl-2'
 
   %li.d-none.d-md-block.right-item
-    = link_to '#', class: "btn #{@search_count_limitation.count_remaining? ? 'btn-outline-primary' : 'btn-outline-warning'}", 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
+    = link_to '#', class: "btn #{search_modal_icon_style(false)}", onclick: 'ahoy.track("SearchModal opened");', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
       %i.fas.fa-search.pr-1
       = t('.search_by_twitter_id')
   %li.d-none.d-md-block.text-white
@@ -45,7 +45,7 @@
 
   -# Display on extra small and small
   %li.d-block.d-md-none.right-item
-    = link_to '#', class: (@search_count_limitation.count_remaining? ? 'text-white' : 'text-warning'), 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
+    = link_to '#', class: search_modal_icon_style, onclick: 'ahoy.track("SearchModal opened");', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
       %i.fas.fa-search
   %li.d-block.d-md-none
     - if user_signed_in?
