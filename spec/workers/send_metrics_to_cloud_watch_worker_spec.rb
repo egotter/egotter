@@ -12,7 +12,6 @@ RSpec.describe SendMetricsToCloudWatchWorker do
         send_create_periodic_report_requests_metrics
         send_search_error_logs_metrics
         send_search_histories_metrics
-        send_sign_in_logs_metrics
         send_requests_metrics
         send_bots_metrics
     ).each do |method_name|

@@ -37,7 +37,6 @@ class CalculateMetricsWorker
             [User, Visitor],
             [Ahoy::Visit, Ahoy::Event],
             [SearchLog, SearchErrorLog],
-            SignInLog,
             TwitterUser,
             [TwitterDB::User],
             SearchHistory,
@@ -177,29 +176,6 @@ class CalculateMetricsWorker
         last_access: User.where(last_access_at: condition_value).size
     }
     Gauge.create_by_hash('users', stats)
-  end
-
-  def send_sign_in_metrics
-    logs = SignInLog.where(created_at: 10.minutes.ago..Time.zone.now)
-
-    stats = {
-        size: logs.size,
-        create: logs.where(context: 'create').size,
-        update: logs.where(context: 'update').size,
-    }
-    Gauge.create_by_hash('sign_in', stats)
-
-    stats = logs.each_with_object(Hash.new(0)).each { |log, memo| memo[log.via] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('sign_in via', stats)
-
-    stats = logs.each_with_object(Hash.new(0)).each { |log, memo| memo[log.via] += 1 if log.context == 'create' }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('sign_in via (create)', stats)
-
-    stats = logs.each_with_object(Hash.new(0)).each { |log, memo| memo[log.via] += 1 if log.context == 'update' }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('sign_in via (update)', stats)
-
-    stats = logs.each_with_object(Hash.new(0)).each { |log, memo| memo[log.device_type] += 1 }.sort_by { |_, v| -v }.to_h
-    Gauge.create_by_hash('sign_in device_type', stats)
   end
 
   def send_rate_limit_metrics
