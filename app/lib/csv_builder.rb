@@ -14,7 +14,8 @@ class CsvBuilder
       end
 
       if @users.size == 100 && !@with_description
-        csv << ['-1', I18n.t('download.data.users_size_note')]
+        url = Rails.application.routes.url_helpers.pricing_url(via: 'download')
+        csv << ['-1', I18n.t('download.data.users_size_note', url: url)]
       end
     end
   end
