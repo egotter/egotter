@@ -1,8 +1,23 @@
 <% if user_signed_in? %>
-  <%= link_to page_path, class: 'btn btn-outline-secondary btn-download btn-sm' do %>
-    <span class="small"><%= t('download.title') %></span>
-    <i class="fas fa-download"></i>
-  <% end %>
+  <div class="dropdown d-inline-block download-buttons">
+    <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="small"><%= t('download.title') %></span>
+      <i class="fas fa-download"></i>
+    </button>
+
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a id="download-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'friends') %>"><%= t('download.friends') %></a>
+      <a id="download-followers" class="dropdown-item" href="<%= download_path(twitter_user, 'followers') %>"><%= t('download.followers') %></a>
+      <div class="dropdown-divider"></div>
+      <a id="download-mutual-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'mutual_friends') %>"><%= t('download.mutual_friends') %></a>
+      <a id="download-one-sided-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'one_sided_friends') %>"><%= t('download.one_sided_friends') %></a>
+      <a id="download-one-sided-followers" class="dropdown-item" href="<%= download_path(twitter_user, 'one_sided_followers') %>"><%= t('download.one_sided_followers') %></a>
+      <div class="dropdown-divider"></div>
+      <a id="download-inactive-mutual-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'inactive_mutual_friends') %>"><%= t('download.inactive_mutual_friends') %></a>
+      <a id="download-inactive-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'inactive_friends') %>"><%= t('download.inactive_friends') %></a>
+      <a id="download-inactive-followers" class="dropdown-item" href="<%= download_path(twitter_user, 'inactive_followers') %>"><%= t('download.inactive_followers') %></a>
+    </div>
+  </div>
 <% else %>
   <%= link_to sign_in_path(redirect_path: request.path, via: current_via('download_button')), class: 'btn btn-outline-secondary btn-sm' do %>
     <span class="small"><%= t('download.title') %></span>
@@ -12,7 +27,7 @@
 
 <script>
   $(function () {
-    $('.btn-download').on('click', function () {
+    $('.download-buttons .dropdown-item').on('click', function () {
       ga('send', {
         hitType: 'event',
         eventCategory: 'download',

@@ -9,8 +9,9 @@ module PathsHelper
     end
   end
 
-  def download_path(resource)
-    case controller_name
+  def download_path(resource, controller = nil)
+    controller = controller_name unless controller
+    case controller
     when 'friends'
       friend_download_path(resource, via: current_via)
     when 'followers'

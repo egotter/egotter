@@ -2290,6 +2290,14 @@ ja:
   download:
     title: "ダウンロード"
     alert: "この機能は準備中です。"
+    friends: "フォロー"
+    followers: "フォロワー"
+    mutual_friends: "相互フォロー"
+    one_sided_friends: "片思いフォロー"
+    one_sided_followers: "片思いフォロワー"
+    inactive_mutual_friends: "最近いない相互フォロー"
+    inactive_friends: "最近いないフォロー"
+    inactive_followers: "最近いないフォロワー"
     data:
       users_size_note: "有料プランのユーザーのみ 100人目以降 をダウンロードできます\n%{url}"
   dictionary:
