@@ -46,7 +46,7 @@ module ValidationConcern
 
     if from_crawler? || request.xhr? || !user_signed_in?
       url = sign_in_path(via: current_via('twitter_user_not_found'))
-      respond_with_error(:bad_request, t('application.twitter_user_not_found_html', url: url))
+      respond_with_error(:not_found, t('application.twitter_user_not_found_html', url: url))
       return
     end
 

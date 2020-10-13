@@ -2247,7 +2247,9 @@ ja:
         login: 'ログインする'
   application:
     twitter_user_not_found_html: |
-      レコードが見つかりませんでした。大変お手数ですが、トップページから再度検索してみてください。ログインしてから検索するとこのエラーは起きづらくなります。
+      データの取得に失敗しました。大変お手数ですが、トップページから再度検索してみてください。<br>
+      <br>
+      ログインしてから検索するとこのエラーは起きづらくなります。
       <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> エラー：TUNF404
     internal_server_error: "一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。エラー：ISE500"
     internal_server_error_with_recovery_html: |

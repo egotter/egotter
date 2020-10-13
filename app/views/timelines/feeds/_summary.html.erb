@@ -53,9 +53,7 @@
     var names = <%= raw items.map(&:first).to_json %>;
     var parent = $('.summary-on-timeline');
 
-    $.getJSON(url).done(function (res) {
-      console.log('summary', 'loaded');
-
+    function updateView(res) {
       for (var i = 0; i < names.length; i++) {
         var name = names[i];
         var count = res[name];
@@ -67,20 +65,55 @@
           parent.find('.result.' + name).find('.count').text(count).end().show();
         }
       }
+    }
 
-      ahoy.track('Feed loaded', {name: 'summary', res: res});
-
-    }).fail(function (xhr, textStatus, errorThrown) {
-      console.warn('summary', xhr.responseText);
+    function updateErrorView(xhr, textStatus, errorThrown) {
       parent.find('.analyzing').hide();
       parent.find('.error').show();
 
-      var message = xhr.responseText;
+      var message;
+
+      try {
+        message = JSON.parse(xhr.responseText)['message'];
+      } catch (e) {
+        console.error(e);
+        res['error'] = true;
+      }
+
       if (!message) {
         message = xhr.status + ' (' + errorThrown + ')';
       }
-      ToastMessage.warn(message);
-    });
 
+      ToastMessage.info(message);
+    }
+
+    function createFetcher() {
+      var retry = 0;
+
+      function fetch() {
+        $.getJSON(url).done(function (res) {
+          console.log('summary', 'loaded');
+          updateView(res);
+          ahoy.track('Feed loaded', {name: 'summary', res: res});
+        }).fail(function (xhr, textStatus, errorThrown) {
+          console.warn('summary', 'fetch failed', xhr.status);
+          if (xhr.status === 404) {
+            if ((retry++) < 3) {
+              console.log('summary', 'retry', retry);
+              setTimeout(fetch, 3000);
+            } else {
+              console.warn('summary', 'Retry exhausted');
+              updateErrorView(xhr, textStatus, errorThrown);
+            }
+          } else {
+            updateErrorView(xhr, textStatus, errorThrown);
+          }
+        });
+      }
+
+      return {fetch: fetch};
+    }
+
+    createFetcher().fetch();
   });
 </script>
