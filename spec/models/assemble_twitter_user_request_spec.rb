@@ -47,6 +47,8 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
         expect(twitter_user).to receive(:update_counter_cache_for).with(klass, uids.size)
       end
 
+      expect(DeleteDisusedRecordsWorker).to receive(:perform_async).with(twitter_user.uid)
+
       subject
     end
   end

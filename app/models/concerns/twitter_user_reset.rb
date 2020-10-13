@@ -19,16 +19,9 @@ module TwitterUserReset
 
     logger.info {"checkpoint start #{result.inspect}"}
 
-    [OneSidedFriendship, OneSidedFollowership, MutualFriendship,
-     InactiveFriendship, InactiveFollowership, InactiveMutualFriendship,
-     FavoriteFriendship, CloseFriendship,
-     Unfriendship, Unfollowership, BlockFriendship].each do |klass|
-      result[klass.to_s] = klass.where(from_uid: uid).delete_all
-    end
+    DeleteDisusedRecordsWorker.perform_async(uid)
 
     logger.info {"checkpoint 1 #{result.inspect}"}
-
-    logger.info {"checkpoint 2 #{result.inspect}"}
 
     ::S3::StatusTweet.delete(uid: uid)
     ::S3::FavoriteTweet.delete(uid: uid)
