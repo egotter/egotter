@@ -15,7 +15,7 @@ module TwitterUserUtils
 
   def friend_uids
     if new_record?
-      raise 'This method should not be called if the records is not persisted'
+      raise "The ##{__method__} should not be called if the records is not persisted"
     end
 
     if instance_variable_defined?(:@persisted_friend_uids)
@@ -27,7 +27,7 @@ module TwitterUserUtils
 
   def follower_uids
     if new_record?
-      raise 'This method should not be called if the records is not persisted'
+      raise "The ##{__method__} should not be called if the records is not persisted"
     end
 
     if instance_variable_defined?(:@persisted_follower_uids)

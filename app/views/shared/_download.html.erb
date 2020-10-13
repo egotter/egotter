@@ -16,6 +16,10 @@
       <a id="download-inactive-mutual-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'inactive_mutual_friends') %>"><%= t('download.inactive_mutual_friends') %></a>
       <a id="download-inactive-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'inactive_friends') %>"><%= t('download.inactive_friends') %></a>
       <a id="download-inactive-followers" class="dropdown-item" href="<%= download_path(twitter_user, 'inactive_followers') %>"><%= t('download.inactive_followers') %></a>
+      <div class="dropdown-divider"></div>
+      <a id="download-unfriends" class="dropdown-item" href="<%= download_path(twitter_user, 'unfriends') %>"><%= t('download.unfriends') %></a>
+      <a id="download-unfollowers" class="dropdown-item" href="<%= download_path(twitter_user, 'unfollowers') %>"><%= t('download.unfollowers') %></a>
+      <a id="download-mutual-unfriends" class="dropdown-item" href="<%= download_path(twitter_user, 'mutual_unfriends') %>"><%= t('download.mutual_unfriends') %></a>
     </div>
   </div>
 <% else %>

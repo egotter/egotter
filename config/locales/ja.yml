@@ -2298,6 +2298,9 @@ ja:
     inactive_mutual_friends: "最近いない相互フォロー"
     inactive_friends: "最近いないフォロー"
     inactive_followers: "最近いないフォロワー"
+    mutual_unfriends: "ブロックされたかも"
+    unfriends: "リムり"
+    unfollowers: "リムられ"
     data:
       users_size_note: "有料プランのユーザーのみ 100人目以降 をダウンロードできます\n%{url}"
   dictionary:

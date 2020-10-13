@@ -28,6 +28,12 @@ module PathsHelper
       inactive_friend_download_path(resource, via: current_via)
     when 'inactive_followers'
       inactive_follower_download_path(resource, via: current_via)
+    when 'mutual_unfriends'
+      mutual_unfriend_download_path(resource, via: current_via)
+    when 'unfriends'
+      unfriend_download_path(resource, via: current_via)
+    when 'unfollowers'
+      unfollower_download_path(resource, via: current_via)
     else
       raise "#{__method__} Invalid controller_name value=#{controller_name}"
     end.html_safe

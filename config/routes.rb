@@ -99,6 +99,9 @@ Rails.application.routes.draw do
   get "inactive_mutual_friends/:screen_name/download", to: "inactive_mutual_friends#download", as: :inactive_mutual_friend_download
   get "inactive_friends/:screen_name/download", to: "inactive_friends#download", as: :inactive_friend_download
   get "inactive_followers/:screen_name/download", to: "inactive_followers#download", as: :inactive_follower_download
+  get "mutual_unfriends/:screen_name/download", to: "mutual_unfriends#download", as: :mutual_unfriend_download
+  get "unfriends/:screen_name/download", to: "unfriends#download", as: :unfriend_download
+  get "unfollowers/:screen_name/download", to: "unfollowers#download", as: :unfollower_download
 
   get 'profiles/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
 
