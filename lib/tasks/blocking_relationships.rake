@@ -15,7 +15,7 @@ namespace :blocking_relationships do
 
     User.authorized.where(locked: false).find_in_batches(start: start, batch_size: 1000) do |users|
       Parallel.each(users, in_threads: 10) do |user|
-        nextt if BlockingRelationship.exists?(from_uid: user.uid)
+        next if BlockingRelationship.exists?(from_uid: user.uid)
 
         begin
           blocked_ids = user.api_client.twitter.blocked_ids(count: 5000).attrs[:ids]
