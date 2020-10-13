@@ -1,7 +1,8 @@
 - if user_signed_in?
   .sort-order-container.btn-group{role: "group"}
-    %button.sort-order-dropdown.btn.btn-outline-secondary.btn-sm.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
+    %button.sort-order-dropdown.btn.btn-outline-secondary.btn-sm{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
       = SortOrder::VALUES[0][0]
+      %i.fas.fa-sort
     .dropdown-menu
       - SortOrder::VALUES.each.with_index do |(label, value), i|
         %a.sort-orders.dropdown-item{href: "#", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
@@ -9,4 +10,4 @@
 - else
   = link_to sign_in_path(redirect_path: request.path, via: current_via('sort_button')), class: 'btn btn-outline-secondary btn-sm' do
     = SortOrder::VALUES[0][0]
-    %i.fas.fa-caret-down
+    %i.fas.fa-sort

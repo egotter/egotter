@@ -4,7 +4,7 @@ class SortButton {
 
     $container.find('.dropdown-item').on('click', function () {
       var $selected = $(this);
-      var $button = $container.find('.dropdown-toggle');
+      var $button = $container.find('button');
       var $oldSelected = $container.find('.dropdown-item.active');
       $button.trigger('click');
 
@@ -34,7 +34,7 @@ class FilterButton {
 
     $container.find('.dropdown-item').on('click', function () {
       var $selected = $(this);
-      var $button = $container.find('.dropdown-toggle');
+      var $button = $container.find('button');
       $button.trigger('click');
 
       $selected.toggleClass('active');

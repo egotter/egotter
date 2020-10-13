@@ -2284,12 +2284,12 @@ ja:
       asc: "ツイート 少ない順"
   filter:
     title: "絞り込み"
-    active: "アクティブ のみ"
-    inactive: "2週間ツイート無し のみ"
-    protected: "鍵アカ のみ"
-    verified: "承認済み のみ"
-    friends_>_followers: "フォロー > フォロワー のみ"
-    followers_>_friends: "フォロワー > フォロー のみ"
+    active: "アクティブ"
+    inactive: "2週間ツイート無し"
+    protected: "鍵アカウント"
+    verified: "承認済みアカウント"
+    friends_>_followers: "フォロー数 > フォロワー数"
+    followers_>_friends: "フォロワー数 > フォロー数"
   download:
     title: "ダウンロード"
     alert: "この機能は準備中です。"
