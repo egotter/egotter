@@ -3,7 +3,7 @@
   <div class="col-8">
     <% if current_user.search_mode.fast? %>
       <div><%= t(".search_mode.fast") %></div>
-      <div class="text-muted small"><%= t('.search_mode.advantage') %></div>
+      <div class="text-muted small"><%= t('.search_mode.advantage_html') %></div>
     <% else %>
       <div><%= t(".search_mode.#{current_user.search_mode}") %></div>
       <div class="text-muted small"><%= t('.search_mode.advise_html') %></div>
@@ -21,8 +21,8 @@
 
   <div class="col-8">
     <h6><%= t('.periodic_tweet.title') %></h6>
-    <div class="text-muted small"><%= t('.periodic_tweet.on_note') %></div>
     <div class="text-muted small"><%= t('.periodic_tweet.off_note_html', count: SearchCountLimitation::PERIODIC_TWEET_BONUS) %></div>
+    <div class="text-muted small"><%= t('.periodic_tweet.on_note') %></div>
   </div>
 </div>
 <script>

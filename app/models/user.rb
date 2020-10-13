@@ -226,7 +226,7 @@ class User < ApplicationRecord
   end
 
   def search_mode
-    if following_egotter?
+    if following_egotter? || has_valid_subscription?
       ActiveSupport::StringInquirer.new('fast')
     else
       ActiveSupport::StringInquirer.new('slow')

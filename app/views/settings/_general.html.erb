@@ -2,7 +2,8 @@
   <div class="col-4"><%= t('.screen_name.title') %></div>
   <div class="col-8">
     <%= t('.screen_name.display', name: current_user.screen_name) %>
-    <%= link_to sign_in_path(via: current_via('update_profile'), redirect_path: settings_path), class: 'small' do %>
+    <%= link_to sign_in_path(via: current_via('update_profile'), redirect_path: settings_path), class: 'btn btn-outline-primary btn-sm' do %>
+      <%= t('.screen_name.update') %>
       <i class="fas fa-sync"></i>
     <% end %>
   </div>
@@ -15,10 +16,10 @@
   <div class="col-8">
     <% if current_user.authorized? %>
       <%= t('.authorized.true') %>
-      <span class="text-muted small"><%= t('.authorized.bonus_html', count: SearchCountLimitation::SIGN_IN_BONUS) %></span>
+      <div class="text-muted small"><%= t('.authorized.bonus_html', count: SearchCountLimitation::SIGN_IN_BONUS) %></div>
     <% else %>
       <%= t('.authorized.false') %>
-      <%= link_to t('.authorized.update_now_html'), sign_in_path(via: current_via('update_authorized'), redirect_path: settings_path), class: 'btn btn-danger btn-sm' %>
+      <div><%= link_to t('.authorized.update'), sign_in_path(via: current_via('update_authorized'), redirect_path: settings_path), class: 'btn btn-danger btn-sm' %></div>
     <% end %>
   </div>
 </div>
@@ -29,12 +30,14 @@
   <div class="col-4"><%= t('.following_egotter.title') %></div>
   <div class="col-8">
     <% if current_user.following_egotter? %>
-      <%= t('.following_egotter.true') %>
-      <span class="text-muted small"><%= t('.following_egotter.fast_mode') %></span>
+      <div><%= link_to t('.following_egotter.following'), '#', class: 'update-following btn btn-primary btn-sm disabled', disabled: true %></div>
+      <div class="text-muted small mt-1"><%= t('.following_egotter.fast_mode') %></div>
+    <% elsif current_user.has_valid_subscription? %>
+      <div><%= link_to t('.following_egotter.follow'), '#', data: {url: follows_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %></div>
+      <div class="text-muted small mt-1"><%= t('.following_egotter.paid_mode') %></div>
     <% else %>
-      <span><%= t('.following_egotter.false') %></span>
-      <%= link_to t('.following_egotter.follow_now'), '#', data: {url: follows_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %>
-      <span class="text-muted small"><%= t('.following_egotter.note_html') %></span>
+      <div><%= link_to t('.following_egotter.follow'), '#', data: {url: follows_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %></div>
+      <div class="text-muted small mt-1"><%= t('.following_egotter.note_html') %></div>
     <% end %>
   </div>
 </div>
@@ -48,7 +51,7 @@
       <%= t('.sharing_egotter.count', count: current_user.sharing_count) %>
     <% end %>
     <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary btn-sm"><%= t('.sharing_egotter.see_more') %></a>
-    <span class="text-muted small"><%= t('.sharing_egotter.promotion_html', hours: User::SHARE_EGOTTER_DURATION, count: @search_count_limitation.current_sharing_bonus) %></span>
+    <div class="text-muted small mt-1"><%= t('.sharing_egotter.promotion_html', count: @search_count_limitation.current_sharing_bonus) %></div>
   </div>
 </div>
 
@@ -58,7 +61,7 @@
   <div class="col-4"><%= t('.swich_account.title') %></div>
   <div class="col-8">
     <%= link_to t('.swich_account.switch'), sign_in_path(force_login: true, via: current_via('switch_account'), redirect_path: settings_path), class: 'btn btn-outline-primary btn-sm' %>
-    <span class="text-muted small"><%= t('.swich_account.note_html') %></span>
+    <div class="text-muted small mt-1"><%= t('.swich_account.note_html') %></div>
   </div>
 </div>
 
