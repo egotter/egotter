@@ -1855,6 +1855,7 @@ ja:
       statuses: 'ツイート'
       friends: 'フォロー'
       followers: 'フォロワー'
+      twitter: 'ツイッター'
       search: '検索する'
     search_form:
       twitter_id: "Twitter ID"

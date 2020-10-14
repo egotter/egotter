@@ -8,17 +8,19 @@
 
 <script id='user-rectangle-template' type='x-tmpl-mustache'>
   <div class="card mb-3">
-    <div class="d-flex align-items-center">
-      <div class="m-1">
+    <div class="d-flex">
+      <div class="mt-1 ml-1">
         <a href="{{timeline_url}}">
           <img class="rounded-circle" style="width: 50px; height: 50px;" alt="@{{screen_name}}" src="{{profile_image_url}}">
         </a>
       </div>
-      <div>
-        <h6 class="mt-1 mr-1">
-          <a href="{{timeline_url}}">@{{screen_name}}</a>
-          {{{name_with_icon}}} {{{status_labels}}}
-        </h6>
+      <div class="mt-1 ml-1">
+        <div class="small">{{{name_with_icon}}}</div>
+        <div class="small"><a href="{{timeline_url}}">@{{screen_name}}</a></div>
+        <div class="small">{{{status_labels}}}</div>
+      </div>
+      <div class="ml-auto" style="white-space: nowrap;">
+        {{{follow_button}}}
       </div>
     </div>
 
@@ -40,17 +42,18 @@
       </a>
     </div>
 
-    <div class="d-flex justify-content-between align-items-end">
-      <div class="small text-muted ml-1 mb-1">{{index}}</div>
+    <div class="d-flex align-items-end">
+      <div class="small text-muted ml-1 mr-auto">{{index}}</div>
 
-      <div class="text-right">
-        {{{follow_button}}}
+      <div>
+        <a href="https://twitter.com/{{screen_name}}" target="_blank" class="btn btn-outline-primary btn-sm">
+          <i class="fab fa-twitter"></i>
+          <%= t('.twitter') %>
+        </a>
 
-        <a href="{{timeline_url}}">
-          <button class="btn btn-primary btn-sm" type="button">
-            <i class="fas fa-search"></i>
-            <%= t('.search') %>
-          </button>
+        <a href="{{timeline_url}}" class="btn btn-primary btn-sm">
+          <i class="fas fa-search"></i>
+          <%= t('.search') %>
         </a>
       </div>
     </div>
