@@ -5,6 +5,7 @@
 #  id            :integer          not null, primary key
 #  user_id       :integer          not null
 #  uid           :bigint(8)        not null
+#  requested_by  :string(191)      default(""), not null
 #  finished_at   :datetime
 #  error_class   :string(191)      default(""), not null
 #  error_message :string(191)      default(""), not null
@@ -27,6 +28,10 @@ class UnfollowRequest < ApplicationRecord
   validates :uid, numericality: :only_integer
 
   before_validation do
+    if self.requested_by
+      self.requested_by = self.requested_by.truncate(100)
+    end
+
     if self.error_message
       self.error_message = self.error_message.truncate(100)
     end

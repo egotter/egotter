@@ -1391,6 +1391,7 @@ ActiveRecord::Schema.define(version: 2020_10_12_233339) do
   create_table "unfollow_requests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.bigint "uid", null: false
+    t.string "requested_by", default: "", null: false
     t.datetime "finished_at"
     t.string "error_class", default: "", null: false
     t.string "error_message", default: "", null: false
