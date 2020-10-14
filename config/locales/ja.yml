@@ -2219,6 +2219,10 @@ ja:
     redirection_modal:
       'yes': 'はい'
       'no': 'いいえ'
+    open_twitter_modal:
+      title_html: '@<span class="screen-name"></span> をツイッターで開く'
+      'yes': 'ツイッターで開く'
+      'no': 'やめておく'
     create_follow_modal:
       title: 'フォローする'
       message_html: '@<span class="screen-name"></span> さんをフォローしますか？<br><br>数が多い場合は凍結されないようゆっくりフォローしていきます。'

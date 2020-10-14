@@ -46,7 +46,7 @@
       <div class="small text-muted ml-1 mr-auto">{{index}}</div>
 
       <div>
-        <a href="https://twitter.com/{{screen_name}}" target="_blank" class="btn btn-outline-primary btn-sm">
+        <a href="#" class="btn btn-outline-primary btn-sm" onclick="ahoy.track('OpenTwitterModal opened');" data-screen-name="{{screen_name}}" data-target="#open-twitter-modal" data-toggle="modal">
           <i class="fab fa-twitter"></i>
           <%= t('.twitter') %>
         </a>
