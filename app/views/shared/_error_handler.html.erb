@@ -1,0 +1,33 @@
+<script>
+  window.onerror = function (message) {
+    try {
+      if (ga) {
+        ga('send', {
+          hitType: 'event',
+          eventCategory: 'JS Exception',
+          eventAction: 'onerror',
+          eventLabel: message
+        });
+        console.warn('Sent JS Exception to GA', 'onerror', message);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  window.addEventListener('unhandledrejection', function (e) {
+    try {
+      if (ga) {
+        ga('send', {
+          hitType: 'event',
+          eventCategory: 'JS Exception',
+          eventAction: 'unhandledrejection',
+          eventLabel: e
+        });
+        console.warn('Sent JS Exception to GA', 'unhandledrejection', e);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  });
+</script>
