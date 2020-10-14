@@ -1,13 +1,18 @@
+<% modal_id = 'open-twitter-modal' %>
 <% ad_wrapper_id = "async-ad-#{SecureRandom.urlsafe_base64(10)}" %>
 
-<%= modal_dialog(id: 'open-twitter-modal', title: t('.title_html'), button: {positive: t('.yes'), negative: t('.no')}) do %>
+<%= modal_dialog(id: modal_id, title: t('.title_html'), footer: false) do %>
   <div style="max-width: 100%;"><%= render(partial: 'adsense/ad', locals: {vertical: :modal, wrapper_id: ad_wrapper_id}) %></div>
+  <div class="d-flex justify-content-end">
+    <div class="m-1"><button type="button" id="button-<%= modal_id %>" class="btn btn-outline-secondary negative" data-dismiss="modal"><%= t('.no') %></button></div>
+    <div class="m-1"><button type="button" id="button-<%= modal_id %>" class="btn btn-primary positive" data-dismiss="modal"><%= t('.yes') %></button></div>
+  </div>
 <% end %>
 
 <script>
   $(function () {
     var adWrapperId = '<%= ad_wrapper_id %>';
-    var $modal = $('#open-twitter-modal');
+    var $modal = $('#<%= modal_id %>');
 
     function openTwitter(screenName) {
       window.open('https://twitter.com/' + screenName, '_blank');
