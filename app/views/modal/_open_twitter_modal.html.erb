@@ -1,9 +1,12 @@
+<% ad_wrapper_id = "async-ad-#{SecureRandom.urlsafe_base64(10)}" %>
+
 <%= modal_dialog(id: 'open-twitter-modal', title: t('.title_html'), button: {positive: t('.yes'), negative: t('.no')}) do %>
-  <%= render(partial: 'adsense/ad', locals: {vertical: :modal}) %>
+  <%= render(partial: 'adsense/ad', locals: {vertical: :modal, wrapper_id: ad_wrapper_id}) %>
 <% end %>
 
 <script>
   $(function () {
+    var adWrapperId = '<%= ad_wrapper_id %>';
     var $modal = $('#open-twitter-modal');
 
     function openTwitter(screenName) {
@@ -11,6 +14,8 @@
     }
 
     $modal.on('show.bs.modal', function (e) {
+      $('#' + adWrapperId).trigger('appear');
+
       var $button = $(e.relatedTarget);
       var screenName = $button.data('screen-name');
       $modal.find('.modal-title .screen-name').text(screenName);
