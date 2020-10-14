@@ -14,14 +14,16 @@
     }
 
     $modal.on('show.bs.modal', function (e) {
-      $('#' + adWrapperId).trigger('appear');
-
       var $button = $(e.relatedTarget);
       var screenName = $button.data('screen-name');
       $modal.find('.modal-title .screen-name').text(screenName);
       $modal.find('button.positive').off('click').on('click', function () {
         openTwitter(screenName);
       });
+    });
+
+    $modal.on('shown.bs.modal', function (e) {
+      $('#' + adWrapperId).trigger('appear');
     });
   });
 </script>
