@@ -133,7 +133,9 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def tweet_finished_message
-    api_client.update(Report.finished_tweet(user, self).message)
+    message = Report.finished_tweet(user, self).message
+    api_client.update(message)
+    SendMessageToSlackWorker.perform_async(:delete_tweets, "request_id=#{id} tweet=#{message}")
   rescue => e
     raise FinishedTweetNotSent.new("#{e.class} #{e.message}")
   end
