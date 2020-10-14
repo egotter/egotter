@@ -196,7 +196,9 @@ class DeleteTweetsRequest < ApplicationRecord
         message = ERB.new(template.read).result_with_hash(
             destroy_count: request.destroy_count,
             url: delete_tweets_url('delete_tweets_finished_tweet', true),
-            kaomoji: 'Σ(-᷅_-᷄๑)')
+            seconds: (request.updated_at - request.created_at).to_i.to_s(:delimited),
+            kaomoji: 'Σ(-᷅_-᷄๑)'
+        )
         new(nil, nil, message)
       end
 
