@@ -2,10 +2,23 @@
   (function () {
     var userId = <%= current_user&.id %>;
     var deviceType = '<%= request.device_type %>';
+    var os = '<%= request.os %>';
+    var osVersion = '<%= request.os_version %>';
+    var browser = '<%= request.browser %>';
+    var browserVersion = '<%= request.browser_version %>';
 
     var sendError = function (kind, message) {
       try {
-        message = JSON.stringify({userId: userId, deviceType: deviceType, message: message});
+        message = JSON.stringify({
+          userId: userId,
+          deviceType: deviceType,
+          os: os,
+          osVersion: osVersion,
+          browser: browser,
+          browserVersion: browserVersion,
+          message: message
+        });
+
         if (ga) {
           ga('send', {
             hitType: 'event',
