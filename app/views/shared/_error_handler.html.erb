@@ -1,33 +1,33 @@
 <script>
-  window.onerror = function (message) {
-    try {
-      if (ga) {
-        ga('send', {
-          hitType: 'event',
-          eventCategory: 'JS Exception',
-          eventAction: 'onerror',
-          eventLabel: message
-        });
-        console.warn('Sent JS Exception to GA', 'onerror', message);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  (function () {
+    var userId = <%= current_user&.id %>;
+    var deviceType = '<%= request.device_type %>';
 
-  window.addEventListener('unhandledrejection', function (e) {
-    try {
-      if (ga) {
-        ga('send', {
-          hitType: 'event',
-          eventCategory: 'JS Exception',
-          eventAction: 'unhandledrejection',
-          eventLabel: e
-        });
-        console.warn('Sent JS Exception to GA', 'unhandledrejection', e);
+    var sendError = function (kind, message) {
+      try {
+        message = JSON.stringify({userId: userId, deviceType: deviceType, message: message});
+        if (ga) {
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'JS Exception',
+            eventAction: kind,
+            eventLabel: message
+          });
+          console.warn('Sent JS Exception to GA', kind, message);
+        } else {
+          console.warn('ga is not defined', kind, message);
+        }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
-  });
+    };
+
+    window.onerror = function (message) {
+      sendError('onerror', message);
+    };
+
+    window.addEventListener('unhandledrejection', function (e) {
+      sendError('unhandledrejection', e);
+    });
+  })();
 </script>
