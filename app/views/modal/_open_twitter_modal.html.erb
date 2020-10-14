@@ -1,7 +1,7 @@
 <% ad_wrapper_id = "async-ad-#{SecureRandom.urlsafe_base64(10)}" %>
 
 <%= modal_dialog(id: 'open-twitter-modal', title: t('.title_html'), button: {positive: t('.yes'), negative: t('.no')}) do %>
-  <%= render(partial: 'adsense/ad', locals: {vertical: :modal, wrapper_id: ad_wrapper_id}) %>
+  <div style="max-width: 100%;"><%= render(partial: 'adsense/ad', locals: {vertical: :modal, wrapper_id: ad_wrapper_id}) %></div>
 <% end %>
 
 <script>

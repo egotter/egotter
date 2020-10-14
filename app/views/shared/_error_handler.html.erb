@@ -2,10 +2,8 @@
   (function () {
     var userId = <%= current_user&.id %>;
     var deviceType = '<%= request.device_type %>';
-    var os = '<%= request.os %>';
-    var osVersion = '<%= request.os_version %>';
-    var browser = '<%= request.browser %>';
-    var browserVersion = '<%= request.browser_version %>';
+    var os = '<%= request.os + ' ' + request.os_version %>';
+    var browser = '<%= request.browser + ' ' + request.browser_version %>';
 
     var sendError = function (kind, message) {
       try {
@@ -13,9 +11,7 @@
           userId: userId,
           deviceType: deviceType,
           os: os,
-          osVersion: osVersion,
           browser: browser,
-          browserVersion: browserVersion,
           message: message
         });
 
