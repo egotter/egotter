@@ -378,7 +378,7 @@ ja:
       reset_cache:
         title: 'キャッシュのリセット'
         do: 'リセットする'
-        note: '表示データ（リムられなど）がおかしい方はお試しください'
+        note_html: '表示データのリセット<br>データ自体は消えません'
         modal:
           warning_html: >
             キャッシュ（表示の高速化のためのデータ）をリセットします。<br>
@@ -388,21 +388,25 @@ ja:
           ok: 'リセットします'
       delete_data:
         title: 'データの削除'
-        do: 'データを削除する'
-        note: '非常に危険です。この操作は取り消しできません'
+        button: 'データを削除する'
+        note: 'この操作は取り消しできません'
         history: '履歴'
         modal:
-          warning_html: >
-            データがおかしくなっている場合のみ、@%{screen_name} のえごったーのデータを削除します。<br>
-            本当に削除しますか？<br>
+          title: 'データを削除する'
+          body_html: |
+            @%{screen_name} のえごったーデータを削除します。本当に削除しますか？<br>
             <br>
-            <b>※ツイート削除は取り消しできません</b><br>
-            <b>※リセット完了まで少し時間がかかります</b>
+            <b>※削除完了まで少し時間がかかります</b>
           ok: '削除します'
+        purchase_confirmation_modal:
+          title: 'データを削除する'
+          body_html: |
+            データの削除は有料プランのユーザーのみ行うことができます。
+          ok: 'もっと詳しく'
       delete_tweets:
         title: "ツイート削除"
         name: 'ツイートクリーナー'
-        move_to: 'に移動しました'
+        note: '全ツイートの削除はこちら'
     general:
       title: "基本情報"
       screen_name:
@@ -527,6 +531,7 @@ ja:
         atmark: 'リムられ通知の全員にアットマーク付与'
         nonstop: 'リムられ通知の連続送信'
         delete_all_tweets: '%{count}件を超えるツイートの削除'
+        reset_egotter: 'えごったーデータの削除'
         money_back_guarantee: "%{count}日間は100%返金保証"
       basic_plan_purchased: "購入済み"
       sign_in: 'ログインする'

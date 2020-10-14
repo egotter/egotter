@@ -24,7 +24,7 @@ module ModalHelper
             </div>
             <div class="modal-footer">
               #{modal_negative_button(id, button[:negative]) if button[:negative]}
-              <button type="button" id="button-#{id}" class="btn btn-#{button[:category]} positive" data-dismiss="modal">#{button[:positive]}</button>
+              <button type="button" id="button-#{id}" class="btn btn-#{button[:category]} #{button[:positive_class]} positive" data-dismiss="modal">#{button[:positive]}</button>
             </div>
           </div>
         </div>

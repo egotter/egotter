@@ -2,11 +2,11 @@
   <div class="col-4"><%= t('.reset_cache.title') %></div>
   <div class="col-8">
     <% if @reset_cache_request %>
-      <span class="btn btn-warning reset-cache-btn disabled" disabled="disabled"><%= t('.reset_cache.do') %></span>
-      <span class="text-muted small"><%= t('.requested') %></span>
+      <span class="btn btn-warning btn-reset-cache disabled" disabled="disabled"><%= t('.reset_cache.do') %></span>
+      <div class="text-muted small mt-1"><%= t('.requested') %></div>
     <% else %>
-      <span class="btn btn-warning reset-cache-btn" data-toggle="modal" data-target="#reset-cache-modal"><%= t('.reset_cache.do') %></span>
-      <span class="text-muted small"><%= t('.reset_cache.note') %></span>
+      <span class="btn btn-warning btn-reset-cache" data-toggle="modal" data-target="#reset-cache-modal"><%= t('.reset_cache.do') %></span>
+      <div class="text-muted small mt-1"><%= t('.reset_cache.note_html') %></div>
     <% end %>
   </div>
 </div>
@@ -17,11 +17,22 @@
   <div class="col-4"><%= t('.delete_data.title') %></div>
   <div class="col-8">
     <% if @reset_egotter_request %>
-      <span class="btn btn-danger reset-egotter-btn disabled" disabled="disabled"><%= t('.delete_data.do') %></span>
-      <span class="text-muted small"><%= t('.requested') %></span>
+      <span class="btn btn-danger btn-reset-egotter disabled" disabled="disabled"><%= t('.delete_data.button') %></span>
+      <div class="text-muted small mt-1"><%= t('.requested') %></div>
     <% else %>
-      <span class="btn btn-danger reset-egotter-btn" data-toggle="modal" data-target="#reset-egotter-modal"><%= t('.delete_data.do') %></span>
-      <span class="text-danger small"><%= t('.delete_data.note') %></span>
+      <span class="btn btn-danger btn-reset-egotter" onclick="ahoy.track('ResetEgotterModal opened');" data-toggle="modal" data-target="#reset-egotter-modal"><%= t('.delete_data.button') %></span>
+      <div class="text-danger small mt-1"><%= t('.delete_data.note') %></div>
+
+      <% if current_user.has_valid_subscription? %>
+        <%= modal_dialog(id: 'reset-egotter-modal', title: t('.delete_data.modal.title'), body: t('.delete_data.modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.modal.ok'), category: 'danger'}) %>
+        <script>
+          $(function () {
+            new ResetEgotterButton('reset-egotter-modal', 'btn-reset-egotter', '<%= reset_egotter_path %>');
+          });
+        </script>
+      <% else %>
+        <%= modal_dialog(id: 'reset-egotter-modal', title: t('.delete_data.purchase_confirmation_modal.title'), body: t('.delete_data.purchase_confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.purchase_confirmation_modal.ok'), positive_class: 'btn-checkout'}) %>
+      <% end %>
     <% end %>
   </div>
 </div>
@@ -31,16 +42,15 @@
 <div class="row">
   <div class="col-4"><%= t('.delete_tweets.title') %></div>
   <div class="col-8">
-    <div><a href="<%= delete_tweets_path %>"><%= t('.delete_tweets.name') %></a><%= t('.delete_tweets.move_to') %></div>
+    <%= link_to t('.delete_tweets.name'), delete_tweets_path(via: current_via), class: 'btn btn-outline-primary', target: '_blank' %>
+    <div class="text-muted small mt-1"><%= t('.delete_tweets.note') %></div>
   </div>
 </div>
 
-<%= modal_dialog(id: 'reset-egotter-modal', title: t('.delete_data.title'), body: t('.delete_data.modal.warning_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.modal.ok'), category: 'danger'}) %>
 <%= modal_dialog(id: 'reset-cache-modal', title: t('.reset_cache.title'), body: t('.reset_cache.modal.warning_html', screen_name: current_user.screen_name), button: {positive: t('.reset_cache.modal.ok'), category: 'warning'}) %>
 
 <script>
   $(function () {
-    new ResetEgotterButton('reset-egotter-modal', '<%= reset_egotter_path %>');
-    new ResetCacheButton('reset-cache-modal', '<%= reset_cache_path %>');
+    new ResetCacheButton('reset-cache-modal', 'btn-reset-cache', '<%= reset_cache_path %>');
   });
 </script>
