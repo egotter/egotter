@@ -7,13 +7,14 @@ class CreateTweetWorker
   end
 
   def unique_in
-    10.minutes
+    3.minutes
   end
 
   # options:
   #   requested_by
   def perform(request_id, options = {})
     request = TweetRequest.find(request_id)
+    request.perform!
     request.finished!
     ConfirmTweetWorker.perform_async(request_id, confirm_count: 0)
   rescue => e
