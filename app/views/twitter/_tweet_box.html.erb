@@ -1,4 +1,4 @@
-<% container_id = "text-#{text.object_id}" %>
+<% container_id = "tweet-box-#{SecureRandom.urlsafe_base64(10)}" %>
 
 <div id="<%= container_id %>" class="mb-3">
   <div class="p-2" style="border: 1px solid #e6e6e6;">
@@ -19,8 +19,8 @@
 
 <script>
   $(function () {
-    function openWindow(html) {
-      var text = html.replace(/<br>/gm, "\n").replace(/<[^>]*>?/gm, '');
+    function openWindow(html, via) {
+      var text = html.replace(/<br>/gm, "\n").replace(/<[^>]*>?/gm, '') + '&via=' + via;
       var url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text);
       window.open(url, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');
     }
@@ -31,6 +31,7 @@
       uid: '<%= twitter_user.uid %>',
       screenName: "<%= twitter_user.screen_name %>"
     };
+    var via = '<%= current_via %>';
     var container = $('#<%= container_id %>');
     var textarea = container.find('.textarea');
 
@@ -45,17 +46,18 @@
     }
 
     textarea.on('click', function () {
+      openWindow(textarea.val() || textarea.html(), via + '/textarea');
       clickElement('Textarea');
     });
 
     container.find('.btn-copy').on('click', function () {
-      openWindow(textarea.val() || textarea.html());
+      openWindow(textarea.val() || textarea.html(), via + '/copy_button');
       clickElement('CopyButton');
       return false;
     });
 
     container.find('.btn-tweet').on('click', function () {
-      openWindow(textarea.val() || textarea.html());
+      openWindow(textarea.val() || textarea.html(), via + '/tweet_button');
       clickElement('TweetButton');
       return false;
     });
