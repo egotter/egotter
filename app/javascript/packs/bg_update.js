@@ -11,15 +11,15 @@ class SecretModeDetector {
         var quota = estimate.quota;
 
         if (quota < 120000000) {
-          console.log('Incognito');
+          logger.log('Incognito');
           callback(quota);
         } else {
-          console.log('Not Incognito', quota);
+          logger.log('Not Incognito', quota);
         }
       });
     } else {
       // This feature is available only in secure contexts (HTTPS)
-      console.log('Can not detect');
+      logger.log('Can not detect');
     }
   }
 
@@ -29,14 +29,14 @@ class SecretModeDetector {
       fs(window.TEMPORARY,
           100,
           function () {
-            console.log('Not Incognito');
+            logger.log('Not Incognito');
           },
           function () {
-            console.log('Incognito');
+            logger.log('Incognito');
             callback();
           });
     } else {
-      console.log('Can not detect');
+      logger.log('Can not detect');
     }
   }
 }
@@ -50,9 +50,9 @@ class AdBlockDetector {
 
   detect(callback) {
     if (document.getElementById(this.token)) {
-      console.log('Blocking Ads: No');
+      logger.log('Blocking Ads: No');
     } else {
-      console.log('Blocking Ads: Yes');
+      logger.log('Blocking Ads: Yes');
       callback();
     }
   }
@@ -69,17 +69,17 @@ class Polling {
     var self = this;
 
     var done = function (res) {
-      console.log(self.constructor.name, 'done', res);
+      logger.log(self.constructor.name, 'done', res);
       doneCallback();
     };
 
     var stopped = function (res, reason) {
-      console.warn(self.constructor.name, 'stopped', reason, res);
+      logger.warn(self.constructor.name, 'stopped', reason, res);
       failCallback('stopped');
     };
 
     var failed = function (xhr) {
-      console.log(self.constructor.name, 'failed', xhr.responseText);
+      logger.log(self.constructor.name, 'failed', xhr.responseText);
       failCallback('failed');
     };
 
@@ -89,7 +89,7 @@ class Polling {
   poll(path, options, done, stopped, failed) {
     var maxRetryCount = 5;
     var interval = 3000;
-    console.log(this.constructor.name, 'poll', options);
+    logger.log(this.constructor.name, 'poll', options);
 
     var self = this;
 
@@ -125,7 +125,7 @@ class FetchChangesText {
     $.get(this.url).done(function (res) {
       callback(res.text);
     }).fail(function (xhr) {
-      console.warn(self.constructor.name, 'failed', xhr.responseText);
+      logger.warn(self.constructor.name, 'failed', xhr.responseText);
       callback();
     });
   }

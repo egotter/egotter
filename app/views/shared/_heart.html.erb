@@ -24,7 +24,7 @@
       new Heart('<%= container_id %>', 0, <%= heart_offset_y %>, <%= width %>, <%= height - heart_offset_y %>, <%= image_width %>, res.users).draw();
       ahoy.track('Feed loaded', {name: 'close_friends', users: res.users.length});
     }).fail(function (xhr) {
-      console.warn(url, xhr.responseText);
+      logger.warn(url, xhr.responseText);
     });
   });
 </script>

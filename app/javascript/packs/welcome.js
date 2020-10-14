@@ -12,9 +12,9 @@ class ModalDialog {
       this.$el.modal();
     } else {
       if (this.cache.read(this.cache_key)) {
-        console.log('already shown', this.$el, this.cache_key, this.cache.remaining(this.cache_key));
+        logger.log('already shown', this.$el, this.cache_key, this.cache.remaining(this.cache_key));
       } else {
-        console.log('show', this.$el, this.cache_key, this.cache.remaining(this.cache_key));
+        logger.log('show', this.$el, this.cache_key, this.cache.remaining(this.cache_key));
         this.cache.write(this.cache_key, true);
         this.$el.modal('show');
       }
@@ -42,7 +42,7 @@ class ShareDialog extends ModalDialog {
       var url = $el.data('url');
 
       $.post(url, {text: tweet}).done(function (res) {
-        console.log(url, res);
+        logger.log(url, res);
         ToastMessage.info($el.data('success-message'));
 
       }).fail(function (xhr) {
@@ -95,11 +95,11 @@ class PeriodicTweetDialog extends ModalDialog {
       var url = $el.data('url');
 
       $.post(url, {value: true}).done(function (res) {
-        console.log(url, res);
+        logger.log(url, res);
         ToastMessage.info($el.data('success-message'));
 
       }).fail(function (xhr) {
-        console.warn(url, xhr.responseText);
+        logger.warn(url, xhr.responseText);
         ToastMessage.warn($el.data('error-message'));
       });
 
@@ -128,7 +128,7 @@ class FollowDialog extends ModalDialog {
       window.open($el.data('follow-url'), '_blank');
 
       $.post($el.data('url'), {uid: $el.data('uid')}, function (res) {
-        console.log('FollowDialog', res);
+        logger.log('FollowDialog', res);
       });
 
       $el.modal('hide');

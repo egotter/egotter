@@ -120,7 +120,7 @@
     }
 
     if (jid) {
-      console.log('jid', jid);
+      logger.log('jid', jid);
 
       var options = {
         url: urls.twitter_user,
@@ -146,7 +146,7 @@
       });
       ToastMessage.info('<%= t('twitter_users.in_background.updating_html', user: twitter_user.screen_name) %>');
     } else {
-      console.warn("Job is not started.");
+      logger.warn("Job is not started.");
       var message = '<%= t('twitter_users.in_background.displayed_data_is_html', url: timeline_path(twitter_user, via: current_via('job_not_started')), time: time_ago_in_words_ja(twitter_user.created_at)) %>';
       ToastMessage.info(message, {id: 'job_not_started-<%= twitter_user.created_at.to_i %>', ttl: 60});
     }

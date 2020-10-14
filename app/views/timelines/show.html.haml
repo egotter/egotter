@@ -24,10 +24,10 @@
     var url = '#{raw api_v1_timelines_path(uid: @twitter_user.uid)}';
     var errorMessage = '#{t('.loading_error_html', user: @twitter_user.screen_name)}';
     $.getJSON(url).done(function (res) {
-      console.log('timelines', 'loaded');
+      logger.log('timelines', 'loaded');
       $('#timelines-show-container').html(res.html);
     }).fail(function (xhr) {
-      console.warn('timelines', xhr.responseText);
+      logger.warn('timelines', xhr.responseText);
       $('#timelines-show-container').html(errorMessage);
     });
   });

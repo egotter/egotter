@@ -25,7 +25,7 @@
       drawChart();
     } else {
       $(placeholderSelector).lazyload().one('appear', function () {
-        console.log('appear', feedName);
+        logger.log('appear', feedName);
         drawChart();
       });
     }

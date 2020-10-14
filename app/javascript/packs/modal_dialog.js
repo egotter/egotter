@@ -32,7 +32,7 @@ class SearchModal {
     var errorMessage = this.errorMessage;
 
     $.get(url).done(function (res) {
-      console.log(url, 'loaded');
+      logger.log(url, 'loaded');
 
       if (res.modal_body) {
         $modal.find('.modal-body').append(res.modal_body);
@@ -49,7 +49,7 @@ class SearchModal {
         });
       }
     }).fail(function (xhr) {
-      console.warn(url, xhr.responseText);
+      logger.warn(url, xhr.responseText);
       var container = $modal.find('#search-histories-users-container');
       container.empty();
       container.append(errorMessage);

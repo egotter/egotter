@@ -14,10 +14,10 @@ class ProfileLoader {
     var self = this;
 
     $.getJSON(url).done(function (res) {
-      console.log('profile', 'loaded');
+      logger.log('profile', 'loaded');
       container.empty().html(res.html);
     }).fail(function (xhr) {
-      console.warn('profile', self.retryCount, xhr.responseText);
+      logger.warn('profile', self.retryCount, xhr.responseText);
       if (xhr.status === 404 && (self.retryCount--) > 0) {
         setTimeout(function () {
           self.load();

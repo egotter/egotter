@@ -7,9 +7,9 @@ class ResetEgotterButton {
       $('.' + buttonClass).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
 
       $.ajax({url: url, type: 'DELETE'}).done(function (res) {
-        console.log(res);
+        logger.log(res);
       }).fail(function (xhr) {
-        console.warn(xhr.responseText);
+        logger.warn(xhr.responseText);
       });
     });
   }
@@ -26,9 +26,9 @@ class ResetCacheButton {
       $('.' + buttonClass).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
 
       $.post(url).done(function (res) {
-        console.log(res);
+        logger.log(res);
       }).fail(function (xhr) {
-        console.warn(xhr.responseText);
+        logger.warn(xhr.responseText);
       });
     });
   }
@@ -47,7 +47,7 @@ class PeriodicReportSetting {
         var $checkbox = $(this);
 
         var val = $checkbox.prop('checked');
-        console.log('changed', name, val);
+        logger.log('changed', name, val);
 
         if (name === 'send_only_if_changed' && !val) {
           if (confirm(self.confirmMessage)) {
@@ -67,9 +67,9 @@ class PeriodicReportSetting {
     params[name] = val;
 
     $.post(this.url, params).done(function (res) {
-      console.log('res', res);
+      logger.log('res', res);
     }).fail(function (xhr) {
-      console.warn(xhr.responseText);
+      logger.warn(xhr.responseText);
     });
   }
 }
@@ -85,16 +85,16 @@ class PeriodicTweetSetting {
       var $checkbox = $(this);
 
       var val = $checkbox.prop('checked');
-      console.log('changed', selector, val);
+      logger.log('changed', selector, val);
       self.update(val);
     });
   }
 
   update(val) {
     $.post(this.url, {value: val}).done(function (res) {
-      console.log('res', res);
+      logger.log('res', res);
     }).fail(function (xhr) {
-      console.warn(xhr.responseText);
+      logger.warn(xhr.responseText);
     });
   }
 }

@@ -17,7 +17,7 @@
         new WordCloud(container.attr('id'), res.words_count, container.width(), container.height(), smartphone).draw();
       }
     }).fail(function (xhr) {
-      console.warn(url, xhr.responseText);
+      logger.warn(url, xhr.responseText);
       container.empty().text('<%= t('.updating') %>');
     });
   });

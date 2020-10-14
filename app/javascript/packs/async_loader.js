@@ -21,7 +21,7 @@ class AsyncLoader {
   }
 
   appear() {
-    console.log('appear', this.selector);
+    logger.log('appear', this.selector);
     this.fetch();
   }
 
@@ -30,16 +30,16 @@ class AsyncLoader {
     var url = this.url;
 
     if (this.retry > 3) {
-      console.warn('Retry exhausted', url);
+      logger.warn('Retry exhausted', url);
       return;
     }
 
-    console.log('fetch', url);
+    logger.log('fetch', url);
 
     $.get(url).done(function (res) {
       if (res.retry) {
         self.retry++;
-        console.log('Retry', url);
+        logger.log('Retry', url);
         setTimeout(function () {
           self.fetch();
         }, 2000);
@@ -48,7 +48,7 @@ class AsyncLoader {
       }
 
     }).fail(function (xhr) {
-      console.warn(url, xhr.responseText);
+      logger.warn(url, xhr.responseText);
     });
   }
 

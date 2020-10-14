@@ -19,7 +19,7 @@ class SearchCount {
       $elem.find('.search-count').text(str);
       $elem.css({'visibility': 'visible', 'opacity': 0}).animate({opacity: 1}, 1000);
     }).fail(function (xhr) {
-      console.warn('failed', url, xhr.responseText);
+      logger.warn('failed', url, xhr.responseText);
     });
   }
 }

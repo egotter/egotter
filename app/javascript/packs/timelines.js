@@ -10,10 +10,10 @@ class FeedItem {
     var callback = this.callback;
 
     $.get(url).done(function (res) {
-      console.log(url, res);
+      logger.log(url, res);
       callback(res);
     }).fail(function (xhr) {
-      console.warn(url, xhr.responseText);
+      logger.warn(url, xhr.responseText);
     });
   }
 }

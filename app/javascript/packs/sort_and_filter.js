@@ -9,12 +9,12 @@ class SortButton {
       $button.trigger('click');
 
       if ($selected.is($oldSelected)) {
-        console.log('sort_order not changed');
+        logger.log('sort_order not changed');
         return false;
       }
 
       var value = $selected.data('sort-order');
-      console.log('sort_order', value);
+      logger.log('sort_order', value);
 
       $button.html($selected.text()).data('sort-order', value);
       $oldSelected.removeClass('active');
@@ -52,7 +52,7 @@ class FilterButton {
 
       var value = selectedValues.join(',');
 
-      console.log('filter', value);
+      logger.log('filter', value);
       callback({filter: value});
 
       return false;

@@ -61,15 +61,15 @@
           if (res['status'] === 'retry') {
             retryCount++;
             if (retryCount >= 3) {
-              console.warn('Retry exhausted', retryCount)
+              logger.warn('Retry exhausted', retryCount)
               ToastMessage.info('#{t('.retry_exhausted')}');
             } else {
-              console.log('Retry', retryCount)
+              logger.log('Retry', retryCount)
               setTimeout(fetch, 2000);
             }
           } else {
             if (res['status'] === 'ok') {
-              console.log('ok', retryCount);
+              logger.log('ok', retryCount);
               if (res['is_follower']) {
                 ToastMessage.info('#{t('.is_follower', user1: current_user.screen_name, user2: @screen_name)}');
               } else {
@@ -84,7 +84,7 @@
           try {
             message = JSON.parse(xhr.responseText)['message'];
           } catch (e) {
-            console.error(e);
+            logger.error(e);
           }
           if (!message) {
             message = xhr.status + ' (' + errorThrown + ')';

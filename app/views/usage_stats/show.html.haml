@@ -39,17 +39,17 @@
     var stat = new UsageStat();
 
     if (usageTime) {
-      console.log('usageTime', usageTime);
+      logger.log('usageTime', usageTime);
       stat.drawColumnChart($('.usage-time-chart')[0], usageTime, null);
     }
 
     if (hashtags && hashtags.length >= 1) {
-      console.log('hashtags', hashtags);
+      logger.log('hashtags', hashtags);
       stat.drawColumnChart($('.hashtags-chart')[0], hashtags, null);
     }
 
     if (cloud) {
-      console.log('cloud', cloud);
+      logger.log('cloud', cloud);
       // TODO Decrease load
       // new WordCloud('.cloud-chart', cloud, $('cloud-chart').width(), 220).draw();
     }

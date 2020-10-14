@@ -6,7 +6,7 @@ class Twitter {
 
   follow(uid) {
     if (!uid) {
-      console.warn('There is no uid');
+      logger.warn('There is no uid');
       ToastMessage.warn('There is no uid');
       return;
     }
@@ -15,7 +15,7 @@ class Twitter {
     var url = this.follow_url;
 
     $.post(url, {uid: uid}).done(function (res) {
-      console.log('follow done', res);
+      logger.log('follow done', res);
       ToastMessage.info(res.message);
     }).fail(function (xhr, textStatus, errorThrown) {
       if (xhr.status === 429) { // Too many requests
@@ -29,7 +29,7 @@ class Twitter {
 
   unfollow(uid) {
     if (!uid) {
-      console.warn('There is no uid');
+      logger.warn('There is no uid');
       ToastMessage.warn('There is no uid');
       return;
     }
@@ -38,7 +38,7 @@ class Twitter {
     var url = this.unfollow_url;
 
     $.post(url, {uid: uid}).done(function (res) {
-      console.log('unfollow done', res);
+      logger.log('unfollow done', res);
       ToastMessage.info(res.message);
     }).fail(function (xhr, textStatus, errorThrown) {
       if (xhr.status === 429) { // Too many requests
@@ -56,7 +56,7 @@ class Twitter {
     try {
       message = JSON.parse(xhr.responseText)['message'];
     } catch (e) {
-      console.error(e);
+      logger.error(e);
     }
 
     if (!message) {

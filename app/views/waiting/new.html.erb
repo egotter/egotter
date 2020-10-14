@@ -42,7 +42,7 @@
   var signedIn = <%= user_signed_in? %>;
   var state = null;
 
-  console.log('jid', '<%= @jid %>' || 'not started'); // debug
+  logger.log('jid', '<%= @jid %>' || 'not started'); // debug
 
   // var twitterUser = {
   //   userId: '<%= current_user&.id %>',
@@ -55,18 +55,18 @@
   }
 
   function done(res) {
-    console.log('done', res);
+    logger.log('done', res);
     state.finished();
     redirectTo();
   }
 
   function keepOn(res, options) {
-    console.log('keepOn', res, options);
+    logger.log('keepOn', res, options);
     state.keepOn();
   }
 
   function stopped(res) {
-    console.log('stopped', res);
+    logger.log('stopped', res);
     state.failed();
 
     // ga('send', {
@@ -78,7 +78,7 @@
   }
 
   function failed(xhr) {
-    console.log('failed', xhr.responseText);
+    logger.log('failed', xhr.responseText);
     var res = $.parseJSON(xhr.responseText || null);
     if (res && res.message) {
       state.setErrorMessage(res.message);

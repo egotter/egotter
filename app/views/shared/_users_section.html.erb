@@ -38,7 +38,7 @@
     var via = '<%= current_via('users_section') %>';
 
     var callback = function (state) {
-      console.log('task.fetch', state);
+      logger.log('task.fetch', state);
 
       if (state.completed) {
         $('#bottom-reached').off('appear').remove();
@@ -54,7 +54,7 @@
       $('#bottom-reached').lazyload()
           .on('appear', function () {
             var $elem = $(this);
-            console.log('appear', $elem.attr('id'));
+            logger.log('appear', $elem.attr('id'));
             $elem.find('img').show();
             task.fetch(callback);
           });

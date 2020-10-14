@@ -32,7 +32,7 @@ class ToastMessage {
 
     var template = window.templates['toast'];
     var rendered = Mustache.render(template, opt);
-    console.log('Toast message', opt);
+    logger.log('Toast message', opt);
 
     this.clear();
 
@@ -45,7 +45,7 @@ class ToastMessage {
     // }, 500);
 
     $('#' + opt['id']).on('hidden.bs.toast', function () {
-      console.log('Toast hidden', opt['id']);
+      logger.log('Toast hidden', opt['id']);
     });
 
     this.ids.push(opt['id']);
@@ -67,7 +67,7 @@ class ToastMessage {
     var key = id + '-' + ttl;
 
     if (cache.read(key)) {
-      console.log('Toast already shown', key);
+      logger.log('Toast already shown', key);
       return true;
     } else {
       cache.write(key, true);

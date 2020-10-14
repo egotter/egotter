@@ -23,7 +23,7 @@ class DeleteTweetsModal {
       var tweet = $modal.find('#tweet-after-finishing').prop('checked');
 
       $.post(url, {tweet: tweet}).done(function (res) {
-        console.log(res);
+        logger.log(res);
 
         setTimeout(function () {
           window.location.reload();
@@ -33,7 +33,7 @@ class DeleteTweetsModal {
         try {
           message = JSON.parse(xhr.responseText)['message'];
         } catch (e) {
-          console.error(e);
+          logger.error(e);
         }
         if (!message) {
           message = xhr.status + ' (' + errorThrown + ')';

@@ -46,7 +46,7 @@
           successUrl: '<%= ENV['STRIPE_SUCCESS_URL'] %>',
           cancelUrl: '<%= ENV['STRIPE_CANCEL_URL'] %>'
         }).then(function (result) {
-          console.log(result.error.message);
+          logger.log(result.error.message);
         });
 
         return false;

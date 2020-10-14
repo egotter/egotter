@@ -19,19 +19,19 @@ class Fetcher {
     var self = this;
     return new Promise(function (resolve, reject) {
       $.getJSON(url, params).done(function (res) {
-        console.log(self.constructor.name, 'done', res);
+        logger.log(self.constructor.name, 'done', res);
         resolve(res);
       }).fail(function (xhr, textStatus, errorThrown) {
         var message;
         try {
           message = JSON.parse(xhr.responseText)['error'];
         } catch (e) {
-          console.error(e);
+          logger.error(e);
         }
         if (!message) {
           message = xhr.status + ' (' + errorThrown + ')';
         }
-        console.warn(self.constructor.name, message);
+        logger.warn(self.constructor.name, message);
         ToastMessage.warn(message);
         reject(xhr);
       });
@@ -91,7 +91,7 @@ class FetchTask {
       filter: this.filter,
     };
 
-    console.log('fetch params', params);
+    logger.log('fetch params', params);
 
     var self = this;
 
@@ -130,11 +130,11 @@ class FetchTask {
 
     var res = this.cache.read(params);
     if (res) {
-      console.log('response[CACHE]', res);
+      logger.log('response[CACHE]', res);
       update(res);
     } else {
       new Fetcher().fetch(this.url, params).then(function (res) {
-        console.log('response', res);
+        logger.log('response', res);
         self.cache.write(params, res);
         update(res);
       });

@@ -48,6 +48,7 @@
 
     :javascript
       ahoy.trackAll();
+      window.logger = new Logger('#{Rails.env}');
 
   %body
     = javascript_include_tag "/adsense.js?t=#{Time.zone.now.to_i}"
