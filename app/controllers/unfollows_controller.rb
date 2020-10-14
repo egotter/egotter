@@ -18,7 +18,7 @@ class UnfollowsController < ApplicationController
   end
 
   def create
-    request = UnfollowRequest.create!(user_id: current_user.id, uid: params[:uid])
+    request = UnfollowRequest.create!(user_id: current_user.id, uid: params[:uid], requested_by: "unfollows#create via=#{params[:via]}")
     screen_name = fetch_target_screen_name(params[:uid])
     rate_limit = RateLimit.new(current_user)
     job_args = [request.id, enqueue_location: controller_name]

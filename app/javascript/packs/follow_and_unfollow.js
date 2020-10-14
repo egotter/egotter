@@ -1,5 +1,7 @@
 class Twitter {
-  constructor() {
+  constructor(via) {
+    this.follow_url = '/follows?via=' + via; // follows_path
+    this.unfollow_url = '/unfollows?via=' + via; // unfollows_path
   }
 
   follow(uid) {
@@ -10,7 +12,7 @@ class Twitter {
     }
 
     var self = this;
-    var url = '/follows'; // follows_path
+    var url = this.follow_url;
 
     $.post(url, {uid: uid}).done(function (res) {
       console.log('follow done', res);
@@ -33,7 +35,7 @@ class Twitter {
     }
 
     var self = this;
-    var url = '/unfollows'; // unfollows_path
+    var url = this.unfollow_url;
 
     $.post(url, {uid: uid}).done(function (res) {
       console.log('unfollow done', res);
@@ -146,13 +148,14 @@ class Button {
 }
 
 class FollowButton extends Button {
-  constructor(selector) {
+  constructor(selector, via) {
     super(selector, '.btn.no-follow');
     this.modal = new FollowModal();
+    this.via = via;
   }
 
   perform($clicked) {
-    new Twitter().follow($clicked.data('uid'));
+    new Twitter(this.via).follow($clicked.data('uid'));
     $clicked.hide().siblings('.btn.follow').show();
   }
 }
@@ -161,13 +164,14 @@ window.FollowButton = FollowButton;
 
 // Idempotent
 class UnfollowButton extends Button {
-  constructor(selector) {
+  constructor(selector, via) {
     super(selector, '.btn.follow');
     this.modal = new UnfollowModal();
+    this.via = via;
   }
 
   perform($clicked) {
-    new Twitter().unfollow($clicked.data('uid'));
+    new Twitter(this.via).unfollow($clicked.data('uid'));
     $clicked.hide().siblings('.btn.no-follow').show();
   }
 }

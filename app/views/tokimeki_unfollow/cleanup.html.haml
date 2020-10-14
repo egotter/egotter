@@ -39,7 +39,7 @@
         window.location.href = $(this).find('.btn').attr('href');
       });
 
-      new Twitter().unfollow($clicked.data('uid'));
+      new Twitter('tokimeki').unfollow($clicked.data('uid'));
       $.post('#{tokimeki_unfollow_unfollow_path}', {uid: $clicked.data('uid')});
       $modal.modal();
     });

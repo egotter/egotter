@@ -24,7 +24,7 @@ class FollowsController < ApplicationController
   end
 
   def create
-    request = FollowRequest.create!(user_id: current_user.id, uid: params[:uid], requested_by: 'follows#create')
+    request = FollowRequest.create!(user_id: current_user.id, uid: params[:uid], requested_by: "follows#create via=#{params[:via]}")
     screen_name = fetch_target_screen_name(params[:uid])
     rate_limit = RateLimit.new(current_user)
     job_args = [request.id, enqueue_location: controller_name]

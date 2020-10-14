@@ -217,8 +217,9 @@
 <script>
   $(function () {
     <% if user_signed_in? %>
-      new FollowButton('.profile-buttons');
-      new UnfollowButton('.profile-buttons');
+      var via = '<%= current_via('profile') %>';
+      new FollowButton('.profile-buttons', via);
+      new UnfollowButton('.profile-buttons', via);
     <% end %>
 
     $('.profile-header').find('.btn-tracked').on('click', function () {

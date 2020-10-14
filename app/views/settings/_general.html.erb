@@ -71,7 +71,7 @@
   $(function () {
     $('.update-following').on('click', function () {
       var $clicked = $(this);
-      new Twitter().follow($clicked.data('uid'));
+      new Twitter('settings').follow($clicked.data('uid'));
       return false;
     });
   });
