@@ -5,6 +5,12 @@ class UnfollowsController < ApplicationController
   before_action :require_login!
   before_action { valid_uid?(params[:uid]) }
 
+  before_action only: :create do
+    if params[:uid].to_i == current_user.uid
+      render json: {message: t('.create.cannot_unfollow_yourself')}, status: :bad_request
+    end
+  end
+
   before_action do
     if !referer_is_tokimeki_unfollow? && CreateUnfollowLimitation.remaining_count(current_user) <= 0
       render json: RateLimit.new(current_user).to_h, status: :too_many_requests

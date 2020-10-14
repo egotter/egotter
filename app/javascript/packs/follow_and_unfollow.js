@@ -4,42 +4,64 @@ class Twitter {
 
   follow(uid) {
     if (!uid) {
-      console.warn('uid not found');
-      ToastMessage.info('Follow is failed');
+      console.warn('There is no uid');
+      ToastMessage.warn('There is no uid');
       return;
     }
 
+    var self = this;
     var url = '/follows'; // follows_path
+
     $.post(url, {uid: uid}).done(function (res) {
       console.log('follow done', res);
       ToastMessage.info(res.message);
-    }).fail(function (xhr) {
+    }).fail(function (xhr, textStatus, errorThrown) {
       if (xhr.status === 429) { // Too many requests
         $('#follow-limitation-warning-modal').modal();
       } else {
-        ToastMessage.warn('Follow is failed');
+        var message = self.parseMessage(xhr, textStatus, errorThrown);
+        ToastMessage.warn(message);
       }
     });
   }
 
   unfollow(uid) {
     if (!uid) {
-      console.warn('uid not found');
-      ToastMessage.info('Unfollow is failed');
+      console.warn('There is no uid');
+      ToastMessage.warn('There is no uid');
       return;
     }
 
+    var self = this;
     var url = '/unfollows'; // unfollows_path
+
     $.post(url, {uid: uid}).done(function (res) {
       console.log('unfollow done', res);
       ToastMessage.info(res.message);
-    }).fail(function (xhr) {
+    }).fail(function (xhr, textStatus, errorThrown) {
       if (xhr.status === 429) { // Too many requests
         $('#unfollow-limitation-warning-modal').modal();
       } else {
-        ToastMessage.warn('Unfollow is failed');
+        var message = self.parseMessage(xhr, textStatus, errorThrown);
+        ToastMessage.warn(message);
       }
     });
+  }
+
+  parseMessage(xhr, textStatus, errorThrown) {
+    var message;
+
+    try {
+      message = JSON.parse(xhr.responseText)['message'];
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (!message) {
+      message = xhr.status + ' (' + errorThrown + ')';
+    }
+
+    return message;
   }
 }
 

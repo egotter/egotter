@@ -7,7 +7,7 @@ class FollowsController < ApplicationController
 
   before_action only: :create do
     if params[:uid].to_i == current_user.uid
-      render json: {message: 'You cannot follow yourself'}, status: :bad_request
+      render json: {message: t('.create.cannot_follow_yourself')}, status: :bad_request
     end
   end
 

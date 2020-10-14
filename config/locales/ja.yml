@@ -1270,11 +1270,13 @@ ja:
         <a href="%{url}" class="btn btn-outline-primary">ログインする</a>
   follows:
     create:
-      success: '@%{user} のフォローに成功しました。残りは %{count}回 です。'
+      cannot_follow_yourself: '自分をフォローすることはできません。'
+      success: '@%{user} のフォローに成功しました。残りのフォロー回数は %{count}回 です。'
       retry_later: '@%{user} のフォローをリクエストしました。凍結を防ぐために一定時間後にフォローします。'
   unfollows:
     create:
-      success: '@%{user} のフォロー解除に成功しました。残りは %{count}回 です。'
+      cannot_unfollow_yourself: '自分をフォロー解除することはできません。'
+      success: '@%{user} のフォロー解除に成功しました。残りのフォロー解除回数は %{count}回 です。'
       retry_later: '@%{user} のフォロー解除をリクエストしました。凍結を防ぐために一定時間後にフォロー解除します。'
   tokimeki_unfollow:
     new:
@@ -2218,7 +2220,7 @@ ja:
       'no': 'いいえ'
     create_follow_modal:
       title: 'フォローする'
-      message_html: '@<span class="screen-name"></span> さんをフォローしますか？ 数が多い場合は凍結されないようゆっくりフォローしていきます。'
+      message_html: '@<span class="screen-name"></span> さんをフォローしますか？<br><br>数が多い場合は凍結されないようゆっくりフォローしていきます。'
       history_link_html: 'フォローの履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">フォロー履歴</a> から見ることができます。'
       dont_confirm: '次からは確認しない'
       'yes': 'フォローします'
@@ -2236,7 +2238,7 @@ ja:
         login: 'ログインする'
     create_unfollow_modal:
       title: 'フォローを解除する'
-      message_html: '@<span class="screen-name"></span> さんをフォロー解除しますか？ 数が多い場合は凍結されないようゆっくりフォロー解除していきます。'
+      message_html: '@<span class="screen-name"></span> さんをフォロー解除しますか？<br><br>数が多い場合は凍結されないようゆっくりフォロー解除していきます。'
       history_link_html: 'フォロー解除の履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">アンフォロー履歴</a> から見ることができます。'
       dont_confirm: '次からは確認しない'
       ok: "はい"
