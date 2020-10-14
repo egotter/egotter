@@ -98,17 +98,17 @@
 
       if (user.profile_image_url) {
         rendered.find('img').on('error', function () {
-          drawTextToImage(rendered.find('img'));
+          drawFallbackTextToImage(rendered.find('img'));
           return true;
         }).attr('src', user.profile_image_url);
       } else {
-        drawTextToImage(rendered.find('img'));
+        drawFallbackTextToImage(rendered.find('img'));
       }
 
       return rendered;
     }
 
-    function drawTextToImage(img) {
+    function drawFallbackTextToImage(img) {
       drawText(img.parent(), img.attr('alt'));
       img.remove();
     }
