@@ -22,7 +22,6 @@ import ahoy from "ahoy.js";
 window.ahoy = ahoy;
 
 import "./egotter";
-import "./logger";
 import "./cache";
 import "./modal_dialog";
 import "./toast_message";
