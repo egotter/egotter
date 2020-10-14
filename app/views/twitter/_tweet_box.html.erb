@@ -1,11 +1,19 @@
 <% container_id = "text-#{text.object_id}" %>
-<div id="<%= container_id %>">
-  <div class="tweet-preview-box p-2">
+
+<div id="<%= container_id %>" class="mb-3">
+  <div class="p-2" style="border: 1px solid #e6e6e6;">
     <div class="textarea" style="word-break: break-all;"><%= text.gsub("\n", '<br>').html_safe %></div>
   </div>
-  <div class="tweet-box text-right">
-    <%= link_to t('.copy'), '#', class: 'btn btn-outline-primary btn-copy' %>
-    <%= link_to t('.tweet'), '#', class: 'btn btn-primary btn-tweet' %>
+
+  <div class="text-right mt-1">
+    <%= link_to '#', class: 'btn btn-outline-primary btn-copy' do %>
+      <i class="far fa-copy"></i>
+      <%= t('.copy') %>
+    <% end %>
+    <%= link_to '#', class: 'btn btn-primary btn-tweet' do %>
+      <i class="fab fa-twitter"></i>
+      <%= t('.tweet') %>
+    <% end %>
   </div>
 </div>
 
@@ -17,7 +25,7 @@
       window.open(url, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');
     }
 
-    var eventCategory = '<%= "#{controller_name}##{action_name}" %>';
+    var controller = '<%= controller_name %>';
     var twitterUser = {
       userId: '<%= current_user&.id %>',
       uid: '<%= twitter_user.uid %>',
@@ -26,44 +34,29 @@
     var container = $('#<%= container_id %>');
     var textarea = container.find('.textarea');
 
-    // Click textarea
-    textarea.on('click', function () {
-      $(this).select();
+    function clickElement(name) {
       var event = {
         hitType: 'event',
-        eventCategory: eventCategory,
-        eventAction: 'Textarea clicked',
+        eventCategory: name + ' clicked',
+        eventAction: controller,
         eventLabel: JSON.stringify(twitterUser)
       };
-      logger.log('event', event);
       ga('send', event);
+    }
+
+    textarea.on('click', function () {
+      clickElement('Textarea');
     });
 
-    // Click copy button
     container.find('.btn-copy').on('click', function () {
       openWindow(textarea.val() || textarea.html());
-      var event = {
-        hitType: 'event',
-        eventCategory: eventCategory,
-        eventAction: 'Copy button clicked',
-        eventLabel: JSON.stringify(twitterUser)
-      };
-      ga('send', event);
-      logger.log('event', event);
+      clickElement('CopyButton');
       return false;
     });
 
-    // Click tweet button
     container.find('.btn-tweet').on('click', function () {
       openWindow(textarea.val() || textarea.html());
-      var event = {
-        hitType: 'event',
-        eventCategory: eventCategory,
-        eventAction: 'Tweet button clicked',
-        eventLabel: JSON.stringify(twitterUser)
-      };
-      ga('send', event);
-      logger.log('event', event);
+      clickElement('TweetButton');
       return false;
     });
   });
