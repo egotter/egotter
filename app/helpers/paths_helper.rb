@@ -2,10 +2,14 @@ module PathsHelper
   def subroot_path
     via = current_via("root_path_for_#{controller_name}")
     case controller_name
-    when 'close_friends', 'one_sided_friends', 'unfriends', 'inactive_friends', 'friends', 'clusters', 'personality_insights' then send("#{controller_name}_top_path", via: via)
-    when 'delete_tweets' then delete_tweets_path(via: via)
-    when 'tokimeki_unfollow' then tokimeki_unfollow_cleanup_path(via: via)
-    else root_path(via: via)
+    when 'close_friends', 'one_sided_friends', 'unfriends', 'inactive_friends', 'friends', 'clusters', 'personality_insights' then
+      send("#{controller_name}_top_path", via: via)
+    when 'delete_tweets' then
+      delete_tweets_path(via: via)
+    when 'tokimeki_unfollow' then
+      tokimeki_unfollow_cleanup_path(via: via)
+    else
+      root_path(via: via)
     end
   end
 
@@ -41,6 +45,43 @@ module PathsHelper
 
   def api_path
     send("api_v1_#{controller_name}_list_path", via: current_via).html_safe
+  end
+
+  def api_summary_path(name, twitter_user)
+    via = current_via("feed_#{name}")
+
+    case name
+    when 'close_friends'
+      api_v1_close_friends_summary_path(uid: twitter_user.uid, via: via)
+    when 'common_friends'
+      api_v1_common_friends_summary_path(uid: twitter_user.uid, via: via)
+    when 'common_followers'
+      api_v1_common_followers_summary_path(uid: twitter_user.uid, via: via)
+    when 'unfriends'
+      api_v1_unfriends_summary_path(uid: twitter_user.uid, via: via)
+    when 'unfollowers'
+      api_v1_unfollowers_summary_path(uid: twitter_user.uid, via: via)
+    when 'mutual_unfriends'
+      api_v1_mutual_unfriends_summary_path(uid: twitter_user.uid, via: via)
+    when 'mutual_friends'
+      api_v1_mutual_friends_summary_path(uid: twitter_user.uid, via: via)
+    when 'one_sided_friends'
+      api_v1_one_sided_friends_summary_path(uid: twitter_user.uid, via: via)
+    when 'one_sided_followers'
+      api_v1_one_sided_followers_summary_path(uid: twitter_user.uid, via: via)
+    when 'replying'
+      api_v1_replying_summary_path(uid: twitter_user.uid, via: via)
+    when 'replied'
+      api_v1_replied_summary_path(uid: twitter_user.uid, via: via)
+    when 'favorite_friends'
+      api_v1_favorite_friends_summary_path(uid: twitter_user.uid, via: via)
+    when 'inactive_friends'
+      api_v1_inactive_friends_summary_path(uid: twitter_user.uid, via: via)
+    when 'inactive_followers'
+      api_v1_inactive_followers_summary_path(uid: twitter_user.uid, via: via)
+    else
+      raise "#{__method__} Invalid name value=#{name}"
+    end
   end
 
   def api_profiles_count_path(twitter_user)
