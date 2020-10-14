@@ -15,7 +15,7 @@
     <%= image_tag '/ajax-loader.gif' %>
   </div>
   <% unless current_user.has_valid_subscription? %>
-    <div id="need-purchase-description" style="display: none;">
+    <div id="need-purchase-description" class="mb-3" style="display: none;">
       <%= t('.need_purchase_html', count: Order::FREE_PLAN_USERS_LIMIT) %>
     </div>
   <% end %>

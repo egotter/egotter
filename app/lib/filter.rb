@@ -6,6 +6,7 @@ class Filter
       [I18n.t('filter.verified'), 'verified'],
       [I18n.t('filter.friends_>_followers'), 'friends_>_followers'],
       [I18n.t('filter.followers_>_friends'), 'followers_>_friends'],
+      [I18n.t('filter.has_instagram'), 'has_instagram'],
   ]
 
   def initialize(value)
@@ -23,6 +24,7 @@ class Filter
         when VALUES[3][1] then users.select!(&:verified?)
         when VALUES[4][1] then users.select! { |user| user.friends_count > user.followers_count }
         when VALUES[5][1] then users.select! { |user| user.followers_count > user.friends_count }
+        when VALUES[6][1] then users.select! { |user| user.description&.include?('instagram.com') }
         else raise "Invalid filter value=#{value}"
         end
       end
