@@ -30,6 +30,7 @@ ja:
       sign_out: 'ログアウト'
     profilemenu:
       close: 'メニューを閉じる'
+      egotter: 'えごったーで分析する'
       twitter: 'ツイッターで見る'
       block: 'ブロックする'
       mute: 'ミュートする'

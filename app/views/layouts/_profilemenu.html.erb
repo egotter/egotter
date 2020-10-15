@@ -13,6 +13,14 @@
     <hr class="p-0 m-0">
 
     <div class="text-center py-3">
+      <%= link_to timeline_path(user, via: current_via('profilemenu')), class: 'dropdown-item' do %>
+        <img class="rounded" height="20px" src="<%= image_path('/logo_transparent_96x96.png') %>">
+        <%= t('.egotter') %>
+      <% end %>
+    </div>
+    <hr class="p-0 m-0">
+
+    <div class="text-center py-3">
       <%= link_to user_url(user.screen_name), class: 'dropdown-item', target: '_blank' do %>
         <i class="fab fa-twitter no-follow text-muted"></i>
         <%= t('.twitter') %>
