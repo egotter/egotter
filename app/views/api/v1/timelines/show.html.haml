@@ -12,7 +12,7 @@
 
 - if show_common_friends?(@twitter_user)
   .mb-5= feed_item :users, twitter_user: @twitter_user, feed_name: 'common_friends', feed_title: t('timelines.feeds.common_friends.title'), feed_description: t('timelines.feeds.common_friends.description', user1: @twitter_user.screen_name, user2: current_user.screen_name), page_url: common_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_summary_path('common_friends', @twitter_user)
-  .mb-5= feed_item :users, twitter_user: @twitter_user, feed_name: 'common_followers', feed_title: t('timelines.feeds.common_followers.title'), feed_description: t('timelines.feeds.common_followers.description', user1: @twitter_user.screen_name, user2: current_user.screen_name), page_url: common_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_summary_path('common_followers', @twitter_user)
+  .mb-5= feed_item :users, twitter_user: @twitter_user, feed_name: 'common_followers', feed_title: t('timelines.feeds.common_followers.title'), feed_description: t('timelines.feeds.common_followers.description', user1: @twitter_user.screen_name, user2: current_user.screen_name), page_url: common_follower_path(@twitter_user, via: current_via('feed_text')), api_url: api_summary_path('common_followers', @twitter_user)
 
 - if (words_count = @twitter_user.usage_stat&.words_count)
   .mb-5= feed_item :word_cloud, feed_name: :word_clouds, feed_title: t('timelines.feeds.word_clouds.title'), feed_description: t('timelines.feeds.word_clouds.description', user: @twitter_user.screen_name), words_count: words_count, twitter_user: @twitter_user
