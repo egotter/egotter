@@ -240,6 +240,10 @@ ja:
       common_followers:
         title: "共通フォロワー"
         description: '@%{user1} と @%{user2} の両方がフォローされているユーザーです。'
+      top_follower:
+        title: "トップフォロワー"
+        description: '@%{user} のフォロワーの中でもっともフォロワー数が多いユーザーです。'
+        loading_error: '@%{user} のトップフォロワーの読み込みに失敗しました'
       unfriends:
         title: 'リムーブした'
         description: '@%{user} がフォローを解除したユーザーです。'

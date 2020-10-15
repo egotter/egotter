@@ -1,0 +1,15 @@
+<div id="feed-<%= feed_name %>" class="<%= feed_name %> feed-item card p-3">
+  <h3 class="h4 text-center"><%= feed_title %></h3>
+  <div class="text-center my-3"><%= feed_description %></div>
+
+  <div id="top-follower-container">
+  </div>
+</div>
+
+<script>
+  $(function () {
+    var url = '<%= raw api_v1_profiles_path(uid: twitter_user.top_follower.uid, expanded: false, via: current_via('top_follower')) %>';
+    var errorMessage = '<%= t('.loading_error', user: twitter_user.screen_name) %>';
+    new ProfileLoader(url, '#top-follower-container', errorMessage);
+  });
+</script>
