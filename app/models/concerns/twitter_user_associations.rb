@@ -185,6 +185,10 @@ module TwitterUserAssociations
     TwitterDB::User.where_and_order_by_field(uids: unfollower_uids.take(limit))
   end
 
+  def top_follower
+    TwitterDB::User.find_by(uid: top_follower_uid)
+  end
+
   def close_friend_uids
     close_friendships.pluck(:friend_uid)
   end

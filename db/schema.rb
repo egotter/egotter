@@ -1378,6 +1378,7 @@ ActiveRecord::Schema.define(version: 2020_10_12_233339) do
     t.integer "followers_count", default: -1, null: false
     t.integer "unfriends_size"
     t.integer "unfollowers_size"
+    t.bigint "top_follower_uid"
     t.string "created_by", default: "", null: false
     t.datetime "assembled_at"
     t.datetime "created_at", null: false

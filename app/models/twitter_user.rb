@@ -12,6 +12,7 @@
 #  followers_count  :integer          default(-1), not null
 #  unfriends_size   :integer
 #  unfollowers_size :integer
+#  top_follower_uid :bigint(8)
 #  created_by       :string(191)      default(""), not null
 #  assembled_at     :datetime
 #  created_at       :datetime         not null
