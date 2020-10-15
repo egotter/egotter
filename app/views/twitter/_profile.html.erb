@@ -1,3 +1,5 @@
+<% container_id = "profile-section-#{SecureRandom.urlsafe_base64(10)}" %>
+
 <% if switch_to_twitter_db_user?(user) %>
   <% user = user.twitter_db_user %>
 <% end %>
@@ -5,69 +7,7 @@
 <% user = TwitterUserDecorator.new(user) %>
 <% always_expanded ||= false %>
 
-<style type=text/css>
-    /* Extra small */
-    @media (max-width: 575.98px) {
-        .profile-header {
-            border: none !important;
-            border-bottom: 1px solid #dee2e6 !important;
-        }
-
-        .profile-banner {
-            height: 120px;
-            text-align: center;
-        }
-
-        .profile-icon-wrapper {
-            width: 100%;
-            position: relative;
-        }
-
-        .profile-icon-image {
-            position: absolute;
-            transform: translateY(-40px);
-            width: 80px;
-            height: 80px;
-            border: 2px solid #eee;
-        }
-    }
-
-    /* Except extra small */
-    @media (min-width: 576px) {
-        .profile-header {
-            border: 1px solid #dee2e6 !important;
-        }
-
-        .profile-banner {
-            height: 200px;
-            text-align: center;
-        }
-
-        .profile-icon-wrapper {
-            width: 100%;
-            position: relative;
-        }
-
-        .profile-icon-image {
-            position: absolute;
-            transform: translateY(-60px);
-            width: 120px;
-            height: 120px;
-            border: 2px solid #eee;
-        }
-    }
-
-    .profile-banner img {
-        max-width: 100%;
-        max-height: 100%;
-    }
-
-    .profile-buttons {
-        text-align: right;
-    }
-</style>
-
-<div class="profile-header mt-3 <%= 'd-none d-md-block' unless always_expanded %>">
+<div id="<%= container_id %>" class="profile-header mt-3 <%= 'd-none d-md-block' unless always_expanded %>">
   <%#= Profile banner %>
   <div class="profile-banner">
     <% if user.profile_banner_url? %>
@@ -216,13 +156,15 @@
 
 <script>
   $(function () {
+    var containerId = '<%= container_id %>';
+
     <% if user_signed_in? %>
       var via = '<%= current_via('profile') %>';
-      new FollowButton('.profile-buttons', via);
-      new UnfollowButton('.profile-buttons', via);
+      new FollowButton('#' + containerId + ' .profile-buttons', via);
+      new UnfollowButton('#' + containerId + ' .profile-buttons', via);
     <% end %>
 
-    $('.profile-header').find('.btn-tracked').on('click', function () {
+    $('#' + containerId).find('.btn-tracked').on('click', function () {
       var event = {
         hitType: 'event',
         eventCategory: $(this).data('category'),
