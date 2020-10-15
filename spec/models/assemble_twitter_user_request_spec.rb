@@ -21,6 +21,7 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
           with(twitter_user.uid, location: described_class)
       expect(CreateFollowerInsightWorker).to receive(:perform_async).
           with(twitter_user.uid, location: described_class)
+      expect(CreateTopFollowerWorker).to receive(:perform_async).with(twitter_user.id)
 
       [
           S3::CloseFriendship,

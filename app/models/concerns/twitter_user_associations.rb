@@ -186,7 +186,11 @@ module TwitterUserAssociations
   end
 
   def top_follower
-    TwitterDB::User.find_by(uid: top_follower_uid)
+    if instance_variable_defined?(:@top_follower)
+      @top_follower
+    else
+      @top_follower = TwitterDB::User.find_by(uid: top_follower_uid)
+    end
   end
 
   def close_friend_uids

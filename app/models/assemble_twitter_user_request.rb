@@ -28,6 +28,7 @@ class AssembleTwitterUserRequest < ApplicationRecord
     UpdateAudienceInsightWorker.perform_async(twitter_user.uid, location: self.class)
     CreateFriendInsightWorker.perform_async(twitter_user.uid, location: self.class)
     CreateFollowerInsightWorker.perform_async(twitter_user.uid, location: self.class)
+    CreateTopFollowerWorker.perform_async(twitter_user.id)
 
     login_user = User.find_by(id: twitter_user.user_id)
     [
