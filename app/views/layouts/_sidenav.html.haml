@@ -1,6 +1,8 @@
-.text-center.bg-white.py-3= link_to t('.title', user: twitter_user.screen_name), timeline_path(twitter_user)
+- via = current_via('sidenav')
+
+.text-center.bg-white.py-3= link_to t('.title', user: twitter_user.screen_name), timeline_path(twitter_user, via: via)
 %ul.list-group
-  - with_options(via: current_via('sidenav')) do |obj|
+  - with_options(via: via) do |obj|
     %li.list-group-item= link_to t('timelines.feeds.statuses.title'), obj.status_path(twitter_user)
     %li.list-group-item= link_to t('timelines.feeds.friends.title'), obj.friend_path(twitter_user)
     %li.list-group-item= link_to t('timelines.feeds.followers.title'), obj.follower_path(twitter_user)

@@ -1,6 +1,7 @@
 <% random_id = SecureRandom.urlsafe_base64(10) %>
 <% container_id = "profile-section-#{random_id}" %>
 <% body_id = "profile-section-body-#{random_id}" %>
+<% profilemenu_id = "profilemenu-#{random_id}" %>
 
 <% if switch_to_twitter_db_user?(user) %>
   <% user = user.twitter_db_user %>
@@ -72,11 +73,11 @@
         <i class="fab fa-twitter no-follow"></i>
       <% end %>
 
-      <button type="button" class="btn btn-outline-primary btn-sm btn-profilemenu btn-tracked" data-category="Dropdown menu" data-action="<%= request.device_type %>">
+      <button type="button" class="btn btn-outline-primary btn-sm <%= profilemenu_id %> btn-tracked" data-category="Dropdown menu" data-action="<%= request.device_type %>">
         <i class="fas fa-ellipsis-h"></i>
       </button>
     </div>
-    <%= render partial: 'layouts/profilemenu', locals: {user: user, button_class: 'btn-profilemenu'} %>
+    <%= render partial: 'layouts/profilemenu', locals: {user: user, button_class: profilemenu_id} %>
   </div>
 
   <div class="profile-contents p-0 px-sm-3">
