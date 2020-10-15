@@ -618,15 +618,8 @@ ja:
       block: "ブロックする"
       mute: "ミュートする"
       report_spam: "スパム報告する"
-      birthday: '%{date} からツイッターを使っています'
-      statuses: 'ツイート'
-      friends: 'フォロー'
-      followers: 'フォロワー'
-      status_interval_avg: 'ツイート間隔'
-      reverse_follow_back_rate: 'フォロー返され率'
-      follow_back_rate: 'フォロー返し率'
-      unknown_value: '集計中'
       updated_at: '最終更新：%{text}'
+      profile_details: 'プロフィール詳細'
       labels:
         suspended: "垢消し"
         blocked: "ブロック中"
@@ -634,6 +627,15 @@ ja:
         refollow: "再フォロー"
         refollowed: "再フォロワー"
         followed: "フォローされています"
+    profile_body:
+      birthday: '%{date} からツイッターを使っています'
+      statuses: 'ツイート'
+      unknown_value: '集計中'
+      status_interval_avg: 'ツイート間隔'
+      friends: 'フォロー'
+      followers: 'フォロワー'
+      reverse_follow_back_rate: 'フォロー返され率'
+      follow_back_rate: 'フォロー返し率'
     follow_button:
       do_follow: "フォロー"
       following: "フォロー中"

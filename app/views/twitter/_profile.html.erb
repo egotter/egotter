@@ -1,13 +1,15 @@
-<% container_id = "profile-section-#{SecureRandom.urlsafe_base64(10)}" %>
+<% random_id = SecureRandom.urlsafe_base64(10) %>
+<% container_id = "profile-section-#{random_id}" %>
+<% body_id = "profile-section-body-#{random_id}" %>
 
 <% if switch_to_twitter_db_user?(user) %>
   <% user = user.twitter_db_user %>
 <% end %>
 <% logger.info { "Profile is rendered by #{user.class} in #{controller_name}##{action_name}" } %>
 <% user = TwitterUserDecorator.new(user) %>
-<% always_expanded ||= false %>
+<% body_expanded ||= false %>
 
-<div id="<%= container_id %>" class="profile-header mt-3 <%= 'd-none d-md-block' unless always_expanded %>">
+<div id="<%= container_id %>" class="profile-header mt-3">
   <%#= Profile banner %>
   <div class="profile-banner">
     <% if user.profile_banner_url? %>
@@ -88,70 +90,23 @@
       <div class="small my-3"><%= linkify(user.description).gsub("\n", '<br>').html_safe %></div>
     <% end %>
 
-    <% if user.location? %>
-      <div class="small my-1"><i class="fas fa-map-marker text-muted"></i>&nbsp;<%= user.location %></div>
-    <% end %>
+    <% if body_expanded %>
+      <%= render partial: 'twitter/profile_body', locals: {user: user} %>
+    <% else %>
+      <div class="text-right">
+        <a class="btn btn-outline-primary btn-sm mb-3 text-right" data-toggle="collapse" aria-expanded="false" href="#<%= body_id %>">
+          <%= t('.profile_details') %>
+        </a>
+      </div>
 
-    <% if user.url? %>
-      <div class="small my-1">
-        <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url.remove(/^https?:\/\//).truncate(30), user.url, style: 'word-break: break-all;', target: '_blank', rel: 'nofollow') %>
+      <div id="<%= body_id %>" class="collapse">
+        <%= render partial: 'twitter/profile_body', locals: {user: user} %>
       </div>
     <% end %>
-
-    <% if user.account_created_at? %>
-      <% birthday = user.account_created_at.in_time_zone('Tokyo') %>
-      <div class="small my-1"><i class="fas fa-birthday-cake text-muted"></i>&nbsp;<%= t('.birthday', date: l(birthday, format: :birthday)) %></div>
-    <% end %>
-
-    <div class="row m-3">
-      <% via = current_via('profile_header') %>
-      <div class="col-6 mb-3 small">
-        <%= link_to status_path(user, via: via) do %>
-          <strong class="text-body"><%= user.delimited_statuses_count %></strong>
-          <br class="d-block d-md-none">
-          <span class="text-muted small"><%= t('.statuses') %></span>
-        <% end %>
-      </div>
-      <div class="col-6 mb-3 small">
-        <%= link_to usage_stat_path(user, via: via) do %>
-          <strong class="text-body"><%= (value = user.status_interval_avg_in_words) == 0 ? '0' : (value || t('.unknown_value')) %></strong>
-          <br class="d-block d-md-none">
-          <span class="text-muted small"><%= t('.status_interval_avg') %></span>
-        <% end %>
-      </div>
-      <div class="col-6 mb-3 small">
-        <%= link_to friend_path(user, via: via) do %>
-          <strong class="text-body"><%= user.delimited_friends_count %></strong>
-          <br class="d-block d-md-none">
-          <span class="text-muted small"><%= t('.friends') %></span>
-        <% end %>
-      </div>
-      <div class="col-6 mb-3 small">
-        <%= link_to usage_stat_path(user, via: via) do %>
-          <strong class="text-body"><%= user.reverse_percent_follow_back_rate || t('.unknown_value') %></strong>
-          <br class="d-block d-md-none">
-          <span class="text-muted small"><%= t('.reverse_follow_back_rate') %></span>
-        <% end %>
-      </div>
-      <div class="col-6 small">
-        <%= link_to follower_path(user, via: via) do %>
-          <strong class="text-body"><%= user.delimited_followers_count %></strong>
-          <br class="d-block d-md-none">
-          <span class="text-muted small"><%= t('.followers') %></span>
-        <% end %>
-      </div>
-      <div class="col-6 small">
-        <%= link_to usage_stat_path(user, via: via) do %>
-          <strong class="text-body"><%= user.percent_follow_back_rate || t('.unknown_value') %></strong>
-          <br class="d-block d-md-none">
-          <span class="text-muted small"><%= t('.follow_back_rate') %></span>
-        <% end %>
-      </div>
-    </div>
   </div>
 </div>
 <% if user.updated_at %>
-  <div class="text-right small text-muted <%= 'd-none d-md-block' unless always_expanded %>"><%= user.updated %></div>
+  <div class="text-right small text-muted"><%= user.updated %></div>
 <% end %>
 
 <script>
@@ -159,9 +114,9 @@
     var containerId = '<%= container_id %>';
 
     <% if user_signed_in? %>
-      var via = '<%= current_via('profile') %>';
-      new FollowButton('#' + containerId + ' .profile-buttons', via);
-      new UnfollowButton('#' + containerId + ' .profile-buttons', via);
+    var via = '<%= current_via('profile') %>';
+    new FollowButton('#' + containerId + ' .profile-buttons', via);
+    new UnfollowButton('#' + containerId + ' .profile-buttons', via);
     <% end %>
 
     $('#' + containerId).find('.btn-tracked').on('click', function () {
