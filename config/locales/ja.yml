@@ -524,6 +524,16 @@ ja:
       basic_plan_title: 'こっそり使いたい'
       basic_plan_text_html: 'えごったーを<span class="egotter-pink">こっそり使いたい</span>方に適したプランです。無料プランの内容に加えて、検索回数、フォロー回数、アンフォロー回数が増えています。'
       basic_plan_price: '%{price}円/月'
+      pro_plan_title: 'プロフェッショナル'
+      pro_plan_text_html: '特別なデータ収集依頼については、個別に引き受けています。<br><br>ツイッターで公開されているデータはおよそ全て収集可能です。お気軽にご相談ください。'
+      pro_plan_price: '2万円〜'
+      pro_delivery_date: '納期：3日〜'
+      pro_purchasing_method: '支払い方法：クレジットカード、請求書'
+      enterprise_plan_title: 'エンタープライズ'
+      enterprise_plan_text_html: 'データ収集依頼のうち、非常に大規模なものについてはこちらのプランでお引き受けしています。'
+      enterprise_plan_price: '15万円〜'
+      enterprise_delivery_date: '納期：1週間〜'
+      enterprise_purchasing_method: '支払い方法：クレジットカード、請求書'
       list:
         free_plan_search_count: '検索回数 %{min}〜%{max} 回'
         basic_plan_search_count: '検索回数 %{count} 回'
@@ -542,44 +552,24 @@ ja:
       sign_in: 'ログインする'
       purchase: '購入する'
       plans: "料金プラン"
-      names:
-        pro: 'プロフェッショナル'
-        enterprice: "エンタープライズ"
       pricing:
-        key: "価格"
         basic_num: "300"
-        pro: "2万円〜"
-        enterprice: "15万円〜"
-      price:
-        basic: "300"
-      delivery_date:
-        key: "納期"
-        pro: "3日〜"
-        enterprice: "1週間〜"
       purchasing_method:
-        key: "支払い方法"
-        enterprice: "クレジットカード、請求書"
-      pro_description_html: |
-        単純な作業やデータの集計をお引き受けいたします。<br>
-        <br>
-        <span class="small">
-        例：<br>
+      pro_content_html: |
+        データ収集例：<br>
         ・特定のユーザーのフォロー収集<br>
         ・特定のユーザーのフォロワー収集<br>
         ・特定のユーザーのツイート収集<br>
         ・条件指定のツイート一括削除
-        </span>
-      enterprice_description_html: |
-        ツイッターに関する調査全般をお引き受けいたします。<br>
-        <br>
-        <span class="small">
-        ・えごったーAPIの提供<br>
+      enterprise_content_html: |
+        データ収集例：<br>
+        ・数百万から数千万人以上のフォロワー収集<br>
         ・特定のクラスタに属したユーザー収集<br>
         ・特定の商品に関心のあるユーザー収集<br>
-        ・数百万人以上のフォロワー収集
-        </span>
-      enterprice_inquiry_by_email: "egotter.com にメールで問い合わせ"
-      enterprice_inquiry_by_dm: "@egotter_cs にDMで問い合わせ"
+        ・えごったーAPIの提供
+      inquiry_methods: "メールまたはDMにてお問い合わせください。"
+      inquiry_by_email: "メール"
+      inquiry_by_dm: "@egotter_cs にDM"
   orders:
     create:
       success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'

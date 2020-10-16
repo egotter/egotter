@@ -65,48 +65,34 @@
 
 %hr
 
-%h3#enterprise-plan.text-center.my-5= t('.names.pro')
+%h3#enterprise-plan.text-center.my-5= t('.pro_plan_title')
+.my-3= t('.pro_plan_text_html')
+.h4.my-4
+  %strong= t('.pro_plan_price')
 
-%table.table.table-bordered
-  %tbody
-    %tr
-      %td= t('.pricing.key')
-      %td= t('.pricing.pro')
-    %tr
-      %td= t('.delivery_date.key')
-      %td= t('.delivery_date.pro')
-    %tr
-      %td= t('.purchasing_method.key')
-      %td= t('.purchasing_method.enterprice')
-    %tr
-      %td
-      %td= t('.pro_description_html')
-    %tr
-      %td
-      %td
-        .my-1= link_to t('.enterprice_inquiry_by_email'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-primary'
-        .my-1= link_to t('.enterprice_inquiry_by_dm'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-outline-primary'
+.my-1= t('.pro_delivery_date')
+.my-1= t('.pro_purchasing_method')
+
+.my-3= t('.pro_content_html')
+
+.my-3= t('.inquiry_methods')
+= link_to t('.inquiry_by_email'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-primary'
+= link_to t('.inquiry_by_dm'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-outline-primary'
 
 %hr
 
-%h3#enterprise-plan.text-center.my-5= t('.names.enterprice')
+%h3#enterprise-plan.text-center.my-5= t('.enterprise_plan_title')
+.my-3= t('.enterprise_plan_text_html')
+.h4.my-4
+  %strong= t('.enterprise_plan_price')
 
-%table.table.table-bordered
-  %tbody
-    %tr
-      %td= t('.pricing.key')
-      %td= t('.pricing.enterprice')
-    %tr
-      %td= t('.delivery_date.key')
-      %td= t('.delivery_date.enterprice')
-    %tr
-      %td= t('.purchasing_method.key')
-      %td= t('.purchasing_method.enterprice')
-    %tr
-      %td
-      %td= t('.enterprice_description_html')
-    %tr
-      %td
-      %td
-        .my-1= link_to t('.enterprice_inquiry_by_email'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-primary'
-        .my-1= link_to t('.enterprice_inquiry_by_dm'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-outline-primary'
+.my-1= t('.enterprise_delivery_date')
+.my-1= t('.enterprise_purchasing_method')
+
+.my-3= t('.enterprise_content_html')
+
+.my-3= t('.inquiry_methods')
+= link_to t('.inquiry_by_email'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-primary'
+= link_to t('.inquiry_by_dm'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-outline-primary'
+
+%div.mb-3
