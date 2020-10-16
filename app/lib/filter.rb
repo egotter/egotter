@@ -24,7 +24,7 @@ class Filter
         when VALUES[3][1] then users.select!(&:verified?)
         when VALUES[4][1] then users.select! { |user| user.friends_count > user.followers_count }
         when VALUES[5][1] then users.select! { |user| user.followers_count > user.friends_count }
-        when VALUES[6][1] then users.select! { |user| user.description&.include?('instagram.com') }
+        when VALUES[6][1] then users.select! { |user| user.description&.include?('instagram.com') || user.url&.include?('instagram.com') }
         else raise "Invalid filter value=#{value}"
         end
       end

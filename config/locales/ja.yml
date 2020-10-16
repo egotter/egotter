@@ -2298,7 +2298,7 @@ ja:
     verified: "承認済みアカウント"
     friends_>_followers: "フォロー数 > フォロワー数"
     followers_>_friends: "フォロワー数 > フォロー数"
-    has_instagram: "インスタがある"
+    has_instagram: "インスタを持っている"
   download:
     title: "ダウンロード"
     alert: "この機能は準備中です。"
