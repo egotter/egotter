@@ -1,8 +1,9 @@
 <% container_id = "profiles-word-cloud-container-#{SecureRandom.urlsafe_base64(10)}" %>
 <div><%= description %></div>
-<div id="<%= container_id %>" class="d-flex align-items-center justify-content-center mt-1 mb-3" style="height: 300px;">
+<div id="<%= container_id %>" class="d-flex align-items-center justify-content-center mt-3" style="height: 300px;">
   <div><%= t('.loading_html') %></div>
 </div>
+
 <script>
   $(function () {
     var url = '<%= raw api_path %>';

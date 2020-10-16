@@ -12,7 +12,7 @@
   <div class="mb-3"><%= render partial: 'twitter_users/bg_polling_js', locals: {twitter_user: @twitter_user} %></div>
 <% end %>
 
-<%= render(partial: 'adsense/ad', locals: {vertical: :top}) %>
+<%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
 
 <%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false} %>
 
@@ -21,7 +21,7 @@
 
 <% if controller_name == 'close_friends' %>
   <% unless user_signed_in? %>
-    <%= modal_dialog id: 'close-friends-sign-in-modal', title: t('close_friends.show.sign_in_modal.title'), body: t('close_friends.show.sign_in_modal.body'), button: {positive: t('close_friends.show.sign_in_modal.yes'), negative: t('close_friends.show.sign_in_modal.no')}  %>
+    <%= modal_dialog id: 'close-friends-sign-in-modal', title: t('close_friends.show.sign_in_modal.title'), body: t('close_friends.show.sign_in_modal.body'), button: {positive: t('close_friends.show.sign_in_modal.yes'), negative: t('close_friends.show.sign_in_modal.no')} %>
     <script>
       $(function () {
         new SignInModal('close-friends-sign-in-modal', '<%= sign_in_path(via: current_via('sign_in_modal')) %>');
@@ -37,12 +37,14 @@
   <%= render(partial: 'twitter/tweet_box', locals: {text: current_tweet_text(@twitter_user), twitter_user: @twitter_user}) %>
 <% end %>
 
-<%= render(partial: 'adsense/ad', locals: {vertical: :middle}) %>
+<%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :middle}) %>
 
 <% if user_signed_in? && %w(friends followers).include?(controller_name) %>
-  <%= render partial: 'shared/word_cloud', locals: {description: profiles_word_cloud_description(@twitter_user), api_path: api_profiles_count_path(@twitter_user)} %>
-  <%= render partial: 'shared/word_cloud', locals: {description: locations_word_cloud_description(@twitter_user), api_path: api_locations_count_path(@twitter_user)} %>
-  <%= render partial: 'shared/tweet_times', locals: {description: tweets_per_hour_description(@twitter_user), api_path: api_tweet_times_path(uid: @twitter_user.uid)} %>
+  <div class="card card-body my-3"><%= render partial: 'shared/word_cloud', locals: {description: profiles_word_cloud_description(@twitter_user), api_path: api_profiles_count_path(@twitter_user)} %></div>
+  <div class="card card-body mb-3"><%= render partial: 'shared/word_cloud', locals: {description: locations_word_cloud_description(@twitter_user), api_path: api_locations_count_path(@twitter_user)} %></div>
+  <div class="card card-body mb-3"><%= render partial: 'shared/tweet_times', locals: {description: tweets_per_hour_description(@twitter_user), api_path: api_tweet_times_path(uid: @twitter_user.uid)} %></div>
+
+  <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :middle}) %>
 <% end %>
 
 <div class="mb-3"><%= render partial: 'result_pages/tabs', locals: {tabs: current_tabs(@twitter_user), active_tab: @active_tab} %></div>
