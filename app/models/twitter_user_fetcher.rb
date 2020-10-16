@@ -30,8 +30,8 @@ class TwitterUserFetcher
       @api_name = item[:method]
       memo[item[:method]] = @client.send(item[:method], *item[:args])
     rescue => e
-      if item[:method] == :mentions_timeline && (AccountStatus.too_many_requests?(e) || ServiceStatus.internal_server_error?(e))
-        Rails.logger.info "#{self.class}##{__method__}: Ignore TooManyRequests for #{item[:method]} user_id=#{@login_user&.id} uid=#{@uid}"
+      if negligible_error?(item[:method], e)
+        Rails.logger.info "#{self.class}##{__method__}: Ignore specific errors for #{item[:method]} user_id=#{@login_user&.id} uid=#{@uid}"
         memo[item[:method]] = []
       else
         raise
@@ -40,6 +40,11 @@ class TwitterUserFetcher
   end
 
   private
+
+  def negligible_error?(method_name, error)
+    %i(user_timeline mentions_timeline favorites).include?(method_name) &&
+        (AccountStatus.too_many_requests?(error) || ServiceStatus.internal_server_error?(error))
+  end
 
   def fetch_signatures(reject_names)
     [
