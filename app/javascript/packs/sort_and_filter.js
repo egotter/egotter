@@ -1,28 +1,37 @@
 class SortButton {
   constructor(callback) {
-    var $container = $('.sort-order-container');
+    this.callback = callback;
+    this.$container = $('.sort-order-container');
+    var self = this;
 
-    $container.find('.dropdown-item').on('click', function () {
-      var $selected = $(this);
-      var $button = $container.find('button');
-      var $oldSelected = $container.find('.dropdown-item.active');
-      $button.trigger('click');
-
-      if ($selected.is($oldSelected)) {
-        logger.log('sort_order not changed');
-        return false;
-      }
-
-      var value = $selected.data('sort-order');
-      logger.log('sort_order', value);
-
-      $button.html($selected.text()).data('sort-order', value);
-      $oldSelected.removeClass('active');
-      $selected.addClass('active');
-
-      callback({sortOrder: value});
-      return false;
+    this.$container.find('.dropdown-item').on('click', function () {
+      return self.clickItem($(this));
     });
+  }
+
+  clickItem($selected) {
+    var $button = this.$container.find('button');
+    var $oldSelected = this.$container.find('.dropdown-item.active');
+    $button.trigger('click'); // Close dropdown menu
+
+    if ($selected.is($oldSelected)) {
+      logger.log('sort_order not changed');
+      return false;
+    }
+
+    var value = $selected.data('sort-order');
+    logger.log('sort_order', value);
+
+    this.updateView($button, $oldSelected, $selected, $selected.text());
+    this.callback({sortOrder: value});
+
+    return false;
+  }
+
+  updateView(button, oldSelected, selected, label) {
+    button.find('.label').html(label);
+    oldSelected.removeClass('active');
+    selected.addClass('active');
   }
 }
 

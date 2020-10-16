@@ -1,7 +1,7 @@
 - if user_signed_in?
   .sort-order-container.btn-group{role: "group"}
     %button.sort-order-dropdown.btn.btn-outline-secondary.btn-sm{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
-      = SortOrder::VALUES[0][0]
+      %span.label= SortOrder::VALUES[0][0]
       %i.fas.fa-sort
     .dropdown-menu
       - SortOrder::VALUES.each.with_index do |(label, value), i|
