@@ -41,7 +41,7 @@
 %h3.h4.text-center.my-5= t('.basic_plan_title')
 .my-3= t('.basic_plan_text_html')
 .h4.my-4
-  %strong= t('.basic_plan_price', price: t('.pricing.basic_num'))
+  %strong= t('.basic_plan_price', price: Order::PRICE)
 .my-2= pricing_checked_item(t('.list.basic_plan_search_count', count: SearchCountLimitation::BASIC_PLAN))
 .my-2= pricing_checked_item(t('.list.notification'))
 .my-2= pricing_checked_item(t('.list.private_search'))

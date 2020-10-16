@@ -551,15 +551,13 @@ ja:
       basic_plan_purchased: "購入済み"
       sign_in: 'ログインする'
       purchase: '購入する'
-      plans: "料金プラン"
-      pricing:
-        basic_num: "300"
+      plans: '料金プラン'
       purchasing_method:
       pro_content_html: |
         データ収集例：<br>
-        ・特定のユーザーのフォロー収集<br>
-        ・特定のユーザーのフォロワー収集<br>
-        ・特定のユーザーのツイート収集<br>
+        ・ユーザーの100万人以内のフォロー収集<br>
+        ・ユーザーの1000万人以内のフォロワー収集<br>
+        ・ユーザーの3200件前後までのツイート収集<br>
         ・条件指定のツイート一括削除
       enterprise_content_html: |
         データ収集例：<br>

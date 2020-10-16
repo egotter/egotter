@@ -29,6 +29,7 @@ class Order < ApplicationRecord
   visitable :ahoy_visit
 
   BASIC_PLAN_ID = ENV['STRIPE_BASIC_PLAN_ID']
+  PRICE = 300
   TRIAL_DAYS = 14
   FREE_PLAN_USERS_LIMIT = 100
   BASIC_PLAN_USERS_LIMIT = 10000
