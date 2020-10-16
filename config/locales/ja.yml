@@ -2099,7 +2099,7 @@ ja:
         cancel: "やめておく"
       purchase:
         title_html: '有料プランのご案内'
-        note_html: '有料プランを購入すると検索回数が大幅に増えます。<br><br>今なら<span class="egotter-pink">無料のお試し期間</span>あり。'
+        note_html: '有料プランを購入すると検索回数が大幅に増えます。<br><br>今なら <span class="egotter-pink">最初の%{days}日間は無料</span> です。'
         ok: "もっと詳しく"
         cancel: "やめておく"
       share:
@@ -2238,10 +2238,10 @@ ja:
       'yes': 'フォローします'
       'no': 'キャンセル'
       warning:
-        message_html:
+        message_html: |
           1日にフォローできる上限を超えました。ベーシックプランを購入して制限を解除しますか？<br>
           <br>
-          今なら <span class="egotter-pink">最初の14日間は無料</span> です。
+          今なら <span class="egotter-pink">最初の%{days}日間は無料</span> です。
         ok: "はい"
         cancel: "いいえ"
         see_pricing: "料金プランを見る"
@@ -2258,10 +2258,10 @@ ja:
       'yes': 'フォローを解除します'
       'no': 'キャンセル'
       warning:
-        message_html:
+        message_html: |
           1日にフォロー解除できる上限を超えました。ベーシックプランを購入して制限を解除しますか？<br>
           <br>
-          今なら <span class="egotter-pink">最初の14日間は無料</span> です。
+          今なら <span class="egotter-pink">最初の%{days}日間は無料</span> です。
         ok: "はい"
         cancel: "いいえ"
         see_pricing: "料金プランを見る"

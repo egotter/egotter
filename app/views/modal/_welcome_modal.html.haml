@@ -42,7 +42,7 @@
     = modal_dialog id: 'purchase-modal', title: t('.purchase.title_html'), button: {positive: t('.purchase.ok'), negative: t('.purchase.cancel')} do
       .d-flex.align-items-center.mb-3
         %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
-        .ml-3= t('.purchase.note_html')
+        .ml-3= t('.purchase.note_html', days: Order::TRIAL_DAYS)
 
   :javascript
     $(function () {
