@@ -56,7 +56,7 @@ class OrdersController < ApplicationController
     redirect_to root_path(via: current_via('error')), alert: t('.failed_html', url: after_purchase_path('after_canceling_with_error')) unless performed?
   end
 
-  # Callback URL for a successful payment
+  # Not used: Callback URL for a successful payment
   def success
     checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
     subscription_id = Order::CheckoutSession.new(checkout_session).subscription_id

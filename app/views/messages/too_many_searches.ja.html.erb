@@ -36,7 +36,7 @@
       <div><a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">ツイートして増やす</a></div>
       <div class="small mt-1 mb-3">ツイート回数x<%= @search_count_limitation.current_sharing_bonus %>回</div>
       <div><a href="#" class="btn btn-outline-primary btn-checkout btn-sm">購入して増やす</a></div>
-      <div class="small mt-1 mb-3">最大<%= SearchCountLimitation::BASIC_PLAN %>回/日 <a href="<%= pricing_path(via: via) %>" class="small">料金プランはこちら</a></div>
+      <div class="small mt-1 mb-3">最大<%= SearchCountLimitation::BASIC_PLAN %>回/日 <a href="#" class="btn-pricing small">料金プランはこちら</a></div>
       <div>4. マーケティングでご利用の方へ</div>
       <div class="mb-3">ツイッターでの各種データ調査依頼については、こちらからお問い合わせください。<a href="<%= pricing_path(via: via, anchor: 'enterprise-plan') %>" class="btn btn-outline-primary btn-sm">問い合わせページ</a></div>
       <div>5. 公式アカウントはありますか？</div>
