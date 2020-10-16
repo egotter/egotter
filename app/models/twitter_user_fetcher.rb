@@ -31,7 +31,7 @@ class TwitterUserFetcher
       memo[item[:method]] = @client.send(item[:method], *item[:args])
     rescue => e
       if item[:method] == :mentions_timeline && AccountStatus.too_many_requests?(e)
-        Rails.logger.warn "#{self.class}##{__method__}: Ignore TooManyRequests for #{item[:method]}"
+        Rails.logger.warn "#{self.class}##{__method__}: Ignore TooManyRequests for #{item[:method]} user_id=#{@login_user&.id} uid=#{@uid}"
         memo[item[:method]] = []
       else
         raise
