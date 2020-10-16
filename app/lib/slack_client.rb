@@ -44,7 +44,7 @@ class SlackClient
     @webhook = webhook
   end
 
-  def send_message(text, title: nil, retries: 3)
+  def send_message(text, title: nil)
     text = format(text) if text.is_a?(Hash)
     text = "#{title}\n#{text}" if title
     perform_request(text)
@@ -52,7 +52,7 @@ class SlackClient
 
   private
 
-  def perform_request(text)
+  def perform_request(text, retries: 3)
     uri = URI.parse(@webhook)
     https = Net::HTTP.new(uri.host, uri.port)
     https.use_ssl = true
@@ -65,6 +65,7 @@ class SlackClient
     https.start { https.request(req) }.body
   rescue Net::ReadTimeout => e
     if (retries -= 1) >= 0
+      sleep(rand(3) + 1)
       retry
     else
       raise RetryExhausted.new("#{e.message} text=#{text}")
