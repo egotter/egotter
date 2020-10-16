@@ -7,8 +7,7 @@ class AdsenseController < ApplicationController
   before_action { self.access_log_disabled = true }
 
   def new
-    @ad_id = left_slot_ad_id(params[:_controller], params[:_action], params[:vertical])
-    html = render_to_string('responsive')
+    html = render_to_string(partial: 'responsive', locals: {controller: params[:_controller], action: params[:_action], vertical: params[:vertical]})
     render json: {html: html}
   end
 end

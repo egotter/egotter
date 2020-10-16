@@ -8,14 +8,14 @@
 - title t('.meta_title', user: @twitter_user.screen_name, friends: @twitter_user.friends_count, followers: @twitter_user.followers_count, unfriends: @twitter_user.unfriends_size, unfollowers: @twitter_user.unfollowers_size)
 - set_meta_tags site: '', description: t('.meta_description', user: @twitter_user.screen_name)
 
-= render partial: 'adsense/ad', locals: {vertical: :top}
+= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top})
 
 = render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: true}
 
 %h2.h3.text-center.my-5= t('.heading', user: @twitter_user.screen_name)
 .my-3= t('.this_page_is_html', user: @twitter_user.screen_name)
 
-= render(partial: 'adsense/ad', locals: {vertical: :middle})
+= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :middle})
 
 #timelines-show-container
 
