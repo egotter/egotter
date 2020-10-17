@@ -3,6 +3,9 @@
 
 - breadcrumb :profile, @screen_name
 
+- title t('.page_title', user: @screen_name)
+- set_meta_tags description: t('.meta_description', user: @screen_name)
+
 - if @prev_name || @next_name
   .d-flex.justify-content-between.mb-3
     %div= (@prev_name ? link_to(t('.prev', user: @prev_name), profile_path(@prev_name, {names: params[:names]}.merge(campaign_params('prev_name'))), class: 'btn btn-outline-primary btn-sm') : '')
@@ -12,15 +15,12 @@
 .forbidden-reason.my-1{style: 'display: none;'}= t('.forbidden_reason_html', user: @screen_name)
 .not-found-reason.my-1{style: 'display: none;'}= t('.not_found_reason_html', user: @screen_name)
 
-- title t('.page_title', user: @screen_name)
-- set_meta_tags description: t('.meta_description', user: @screen_name)
-
 .mt-3.mb-1
   = link_to user_url(@screen_name), class: 'btn btn-primary btn-block', target: '_blank' do
     %img.rounded{alt: "", height: "20", src: image_path('/logo_transparent_96x96.png')}
     = t('.see_on_twitter', user: @screen_name)
 
-= render(partial: 'adsense/ad', locals: {vertical: :top})
+= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top})
 
 .mb-3.mt-1
   - if user_signed_in?
