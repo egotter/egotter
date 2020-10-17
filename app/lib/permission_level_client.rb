@@ -4,12 +4,17 @@ class PermissionLevelClient
   end
 
   def permission_level
+    retries ||= 3
     request = Request.new(@client, :get, '/1.1/account/verify_credentials.json')
     request.perform!
     request.instance_variable_get(:@response_headers)['X-Access-Level']
   rescue => e
     if ServiceStatus.retryable_error?(e)
-      retry
+      if (retries -= 1) > 0
+        retry
+      else
+        raise RetryExhausted.new(e.inspect)
+      end
     else
       raise
     end
@@ -21,4 +26,6 @@ class PermissionLevelClient
       @response_headers = response.headers
     end
   end
+
+  class RetryExhausted < StandardError; end
 end

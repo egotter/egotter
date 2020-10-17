@@ -28,10 +28,15 @@ class DeleteTweetWorker
   private
 
   def destroy_status!(client, tweet_id)
+    retries ||= 3
     client.destroy_status(tweet_id)
   rescue => e
     if ServiceStatus.retryable_error?(e)
-      retry
+      if (retries -= 1) > 0
+        retry
+      else
+        raise RetryExhausted.new(e.inspect)
+      end
     elsif AccountStatus.invalid_or_expired_token?(e) ||
         AccountStatus.suspended?(e) ||
         TweetStatus.no_status_found?(e) ||
@@ -42,4 +47,6 @@ class DeleteTweetWorker
       raise
     end
   end
+
+  class RetryExhausted < StandardError; end
 end

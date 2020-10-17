@@ -14,15 +14,32 @@ module CredentialsApi
   end
 
   def rate_limit
-    path = '/1.1/application/rate_limit_status.json'
-    request = Twitter::REST::Request.new(api_client.twitter, :get, path, {})
-    RateLimit.new(request.perform)
-  rescue => e
-    if ServiceStatus.retryable_error?(e)
-      retry
-    else
-      raise
+    RateLimitClient.new(api_client.twitter).rate_limit
+  end
+
+  class RateLimitClient
+    def initialize(client)
+      @client = client
     end
+
+    def rate_limit
+      retries ||= 3
+      path = '/1.1/application/rate_limit_status.json'
+      request = Twitter::REST::Request.new(@client, :get, path, {})
+      RateLimit.new(request.perform)
+    rescue => e
+      if ServiceStatus.retryable_error?(e)
+        if (retries -= 1) > 0
+          retry
+        else
+          raise RetryExhausted.new(e.inspect)
+        end
+      else
+        raise
+      end
+    end
+
+    class RetryExhausted < StandardError; end
   end
 
   class RateLimit
