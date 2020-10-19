@@ -9,6 +9,7 @@
 #  message_id   :string(191)      not null
 #  message      :string(191)      default(""), not null
 #  screen_names :json
+#  properties   :json
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #
