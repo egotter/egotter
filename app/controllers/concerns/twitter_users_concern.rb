@@ -13,7 +13,6 @@ module TwitterUsersConcern
     ::TwitterUser.build_by(user: user)
   rescue => e
     handle_twitter_api_error(e, screen_name)
-    logger.info "#{self.class}##{action_name} in #build_twitter_user_by #{e.inspect} screen_name=#{screen_name} user_id=#{current_user_id}}"
     nil
   end
 
@@ -28,6 +27,7 @@ module TwitterUsersConcern
       respond_with_error(:bad_request, temporarily_locked_message)
     else
       respond_with_error(:bad_request, twitter_exception_messages(e, screen_name))
+      logger.info "#{__method__}: #{e.inspect} controller=#{controller_name} action=#{action_name} screen_name=#{screen_name} user_id=#{current_user&.id}}"
     end
   end
 

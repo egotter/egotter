@@ -98,6 +98,7 @@ module ValidationConcern
     end
   end
 
+  # TODO Rename to current_user_search_for_yourself?
   def user_requested_self_search?
     screen_name = params[:screen_name]
     user_signed_in? && SearchRequestValidator.new(current_user).user_requested_self_search?(screen_name)
