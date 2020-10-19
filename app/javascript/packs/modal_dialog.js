@@ -1,8 +1,8 @@
 class SearchModal {
-  constructor(id, errorMessage) {
+  constructor(url, modalId, errorMessage) {
+    this.url = url;
     this.errorMessage = errorMessage;
-    var $modal = this.$modal = $('#' + id);
-    this.url = $modal.data('url');
+    var $modal = this.$modal = $('#' + modalId);
     var self = this;
 
     $modal.on('show.bs.modal', function () {
@@ -40,7 +40,7 @@ class SearchModal {
 
       if (res.users) {
         var container = $modal.find('#search-histories-users-container');
-        var template = window.templates['userRectangle'];
+        var template = window.templates['searchHistoryRectangle'];
         container.empty();
 
         res.users.forEach(function (user) {
