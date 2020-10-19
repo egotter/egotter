@@ -18,16 +18,21 @@
 = render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :middle})
 
 #timelines-show-container
+  .text-center.my-3
+    = image_tag '/ajax-loader.gif', size: '16x16'
+    = t('.now_loading_html', user: @twitter_user.screen_name)
 
 :javascript
   $(function () {
     var url = '#{raw api_v1_timelines_path(uid: @twitter_user.uid)}';
+    var container = $('#timelines-show-container');
     var errorMessage = '#{t('.loading_error_html', user: @twitter_user.screen_name)}';
+
     $.getJSON(url).done(function (res) {
       logger.log('timelines', 'loaded');
-      $('#timelines-show-container').html(res.html);
+      container.empty().html(res.html);
     }).fail(function (xhr) {
       logger.warn('timelines', xhr.responseText);
-      $('#timelines-show-container').html(errorMessage);
+      container.empty().addClass('my-3').html(errorMessage);
     });
   });
