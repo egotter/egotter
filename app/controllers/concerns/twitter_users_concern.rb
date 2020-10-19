@@ -12,25 +12,29 @@ module TwitterUsersConcern
     user = request_context_client.user(screen_name)
     ::TwitterUser.build_by(user: user)
   rescue => e
-    notify_airbrake(e)
+    handle_twitter_api_error(e, screen_name)
+    logger.info "#{self.class}##{action_name} in #build_twitter_user_by #{e.inspect} screen_name=#{screen_name} user_id=#{current_user_id}}"
+    nil
+  end
 
+  def handle_twitter_api_error(e, screen_name)
     if AccountStatus.not_found?(e)
       redirect_to profile_path(screen_name: screen_name, via: current_via('not_found'))
     elsif AccountStatus.suspended?(e)
       redirect_to profile_path(screen_name: screen_name, via: current_via('suspended'))
+    elsif AccountStatus.invalid_or_expired_token?(e)
+      respond_with_error(:bad_request, unauthorized_message)
+    elsif AccountStatus.temporarily_locked?(e)
+      respond_with_error(:bad_request, temporarily_locked_message)
     else
-      logger.info "#{self.class}##{action_name} in #build_twitter_user_by #{e.inspect} screen_name=#{screen_name} user_id=#{current_user_id}}"
       respond_with_error(:bad_request, twitter_exception_messages(e, screen_name))
     end
-
-    nil
   end
 
   def build_twitter_user_by_uid(uid)
     screen_name = request_context_client.user(uid.to_i)[:screen_name]
     build_twitter_user_by(screen_name: screen_name)
   rescue => e
-    notify_airbrake(e)
     if !AccountStatus.suspended?(e) && !AccountStatus.not_found?(e) && !AccountStatus.unauthorized?(e)
       logger.warn "#{self.class}##{action_name} in #build_twitter_user_by_uid #{e.inspect} uid=#{uid} user_id=#{current_user_id}}"
     end

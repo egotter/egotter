@@ -2324,9 +2324,14 @@ ja:
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。<a href="%{url}">ログイン</a>して検索すると、結果がより正確になります。'
+    temporarily_locked_html: |
+      一時的なエラーが起きました。ログインしてから検索してみてください。
+      <a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
-    unauthorized_html: 'ツイッター連携に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
+    unauthorized_html: |
+      一時的なエラーが起きました。ログインしてから検索してみてください。
+      <a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>
     suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     something_wrong_with_error_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。（%{error}）'
@@ -2357,6 +2362,9 @@ ja:
     screen_name_changed_html: |
       検索された %{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。
       <a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>
+    temporarily_locked_html: |
+      %{user} のアカウントが一時的にロックされています。ツイッター公式にログインし、ロックを解除してからえごったーをご利用ください。
+      <a href="https://twitter.com" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターを見る</a>
     not_found_html: |
       検索された %{user} が見付かりません。アカウントが削除されています。
       <a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>
@@ -2368,7 +2376,7 @@ ja:
       <a href="%{url}" class="btn btn-outline-primary btn-sm">更新をリクエストする</a>
     unauthorized_html: |
       ツイッター連携の有効期限が切れています。
-      一度 <a class="btn btn-outline-primary" href="%{sign_out}">ログアウト</a> し、再度 <a class="btn btn-primary" href="%{sign_in}">ログイン</a> してから検索してみてください。
+      <a class="btn btn-primary" href="%{url}">ログイン</a> してから検索してみてください。
     suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されています。'
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     protected_with_request_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーでないと検索できません。<a href="%{url}" class="btn btn-outline-primary btn-sm">更新をリクエストする</a>'

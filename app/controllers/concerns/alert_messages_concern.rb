@@ -61,6 +61,14 @@ module AlertMessagesConcern
     end
   end
 
+  def temporarily_locked_message
+    if user_signed_in?
+      t('after_sign_in.temporarily_locked_html', user: current_user.screen_name)
+    else
+      t('before_sign_in.temporarily_locked_html', url: sign_in_path(via: current_via(__method__)))
+    end
+  end
+
   def not_found_message(screen_name)
     if user_signed_in?
       t('after_sign_in.not_found_html', user: user_link(screen_name), screen_name: screen_name)
@@ -77,8 +85,12 @@ module AlertMessagesConcern
     end
   end
 
-  def unauthorized_message(screen_name)
-    t('after_sign_in.unauthorized_html', sign_in: kick_out_error_path('unauthorized'), sign_out: sign_out_path)
+  def unauthorized_message(screen_name = nil)
+    if user_signed_in?
+      t('after_sign_in.unauthorized_html', url: sign_in_path(force_login: true, via: current_via(__method__)))
+    else
+      t('before_sign_in.unauthorized_html', url: sign_in_path(via: current_via(__method__)))
+    end
   end
 
   def suspended_message(screen_name)

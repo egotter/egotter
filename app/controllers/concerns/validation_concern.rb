@@ -74,6 +74,7 @@ module ValidationConcern
     result
   end
 
+  # TODO Rename to current_user_authorized?
   def signed_in_user_authorized?
     return true unless user_signed_in?
 
@@ -85,6 +86,7 @@ module ValidationConcern
     end
   end
 
+  # TODO Rename to current_user_has_dm_permission?
   def enough_permission_level?
     return true unless user_signed_in?
 
@@ -194,6 +196,7 @@ module ValidationConcern
     true
   end
 
+  # TODO Rename to current_visitor_cannot_search_for_user_has_many_friends_and_followers
   def search_limitation_soft_limited?(user)
     return false if from_crawler?
     return false if user_signed_in?
