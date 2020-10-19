@@ -8,7 +8,7 @@ RSpec.describe SearchesController, type: :controller do
 
     it do
       expect(controller).to receive(:signed_in_user_authorized?)
-      expect(controller).to receive(:enough_permission_level?)
+      expect(controller).to receive(:current_user_has_dm_permission?)
       expect(controller).to receive(:valid_screen_name?)
       expect(controller).to receive(:user_requested_self_search?)
       expect(controller).to receive(:not_found_screen_name?).with(screen_name)
@@ -31,7 +31,7 @@ RSpec.describe SearchesController, type: :controller do
 
       it do
         expect(controller).to receive(:signed_in_user_authorized?)
-        expect(controller).to receive(:enough_permission_level?)
+        expect(controller).to receive(:current_user_has_dm_permission?)
         expect(controller).to receive(:valid_screen_name?)
         # user_requested_self_search? is called
         expect(controller).not_to receive(:not_found_screen_name?).with(screen_name)

@@ -9,7 +9,7 @@ RSpec.describe TwitterUsersController, type: :controller do
     it do
       expect(controller).to receive(:reject_crawler)
       expect(controller).to receive(:signed_in_user_authorized?)
-      expect(controller).to receive(:enough_permission_level?)
+      expect(controller).to receive(:current_user_has_dm_permission?)
       expect(controller).to receive(:valid_uid?).with(params_uid)
       expect(controller).to receive(:user_requested_self_search_by_uid?).with(params_uid)
       expect(controller).to receive(:build_twitter_user_by_uid).with(params_uid).and_return(twitter_user)
@@ -29,7 +29,7 @@ RSpec.describe TwitterUsersController, type: :controller do
       it do
         expect(controller).to receive(:reject_crawler)
         expect(controller).to receive(:signed_in_user_authorized?)
-        expect(controller).to receive(:enough_permission_level?)
+        expect(controller).to receive(:current_user_has_dm_permission?)
         expect(controller).to receive(:valid_uid?).with(params_uid)
         # user_requested_self_search_by_uid? is called
         expect(controller).to receive(:build_twitter_user_by_uid).with(params_uid).and_return(twitter_user)

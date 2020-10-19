@@ -22,7 +22,7 @@ module SearchRequestInstrumentationConcern
 
   %i(
     signed_in_user_authorized?
-    enough_permission_level?
+    current_user_has_dm_permission?
     valid_screen_name?
     not_found_screen_name?
     not_found_user?

@@ -86,8 +86,7 @@ module ValidationConcern
     end
   end
 
-  # TODO Rename to current_user_has_dm_permission?
-  def enough_permission_level?
+  def current_user_has_dm_permission?
     return true unless user_signed_in?
 
     if current_user.notification_setting.enough_permission_level?
