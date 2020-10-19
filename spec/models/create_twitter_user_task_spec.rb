@@ -41,7 +41,7 @@ RSpec.describe CreateTwitterUserTask, type: :model do
     it do
       expect(CreateTwitterDBUserWorker).to receive(:compress).with([1, 2, 3, 4, 5]).and_return('compressed')
       expect(CreateTwitterDBUserWorker).to receive(:perform_async).
-          with('compressed', user_id: request.user_id, compressed: true, enqueued_by: instance_of(String))
+          with('compressed', user_id: request.user_id, request_id: request.id, compressed: true, enqueued_by: instance_of(String))
       subject
     end
   end
