@@ -2,6 +2,12 @@ require 'rails_helper'
 
 RSpec.describe SearchRequestValidator, type: :model do
   let(:instance) { described_class.new(user) }
+  let(:user) { nil }
+  let(:client) { double('client') }
+
+  before do
+    allow(instance).to receive(:client).and_return(client)
+  end
 
   shared_context 'user is signed in' do
     let(:user) { build(:user) }
@@ -65,11 +71,79 @@ RSpec.describe SearchRequestValidator, type: :model do
     end
   end
 
+  describe 'not_found_user?' do
+    let(:screen_name) { 'name' }
+    subject { instance.not_found_user?(screen_name) }
+    it do
+      expect(client).to receive(:user).with(screen_name)
+      is_expected.to be_falsey
+    end
+
+    context 'exception is raised' do
+      let(:error) { RuntimeError.new }
+      before { allow(client).to receive(:user).with(anything).and_raise(error) }
+      it do
+        expect(AccountStatus).to receive(:not_found?).with(error)
+        is_expected.to be_falsey
+      end
+    end
+  end
+
+  describe 'forbidden_user?' do
+    let(:screen_name) { 'name' }
+    let(:response_user) { {suspended: false} }
+    subject { instance.forbidden_user?(screen_name) }
+    it do
+      expect(client).to receive(:user).with(screen_name).and_return(response_user)
+      is_expected.to be_falsey
+    end
+
+    context 'exception is raised' do
+      let(:error) { RuntimeError.new }
+      before { allow(client).to receive(:user).with(anything).and_raise(error) }
+      it do
+        expect(AccountStatus).to receive(:suspended?).with(error)
+        is_expected.to be_falsey
+      end
+    end
+  end
+
+  describe 'blocked_user?' do
+    let(:screen_name) { 'name' }
+    subject { instance.blocked_user?(screen_name) }
+    before { allow(instance).to receive(:user_signed_in?).and_return(true) }
+    it do
+      expect(client).to receive(:user_timeline).with(screen_name, count: 1)
+      is_expected.to be_falsey
+    end
+
+    context 'exception is raised' do
+      let(:error) { RuntimeError.new }
+      before { allow(client).to receive(:user_timeline).with(any_args).and_raise(error) }
+      it do
+        expect(AccountStatus).to receive(:blocked?).with(error)
+        is_expected.to be_falsey
+      end
+    end
+  end
+
   describe '#protected_user?' do
-    include_context 'user is not signed in'
-    subject { instance.protected_user?('name') }
-    before { allow(instance).to receive_message_chain(:client, :user).with(no_args).with('name').and_return(protected: true) }
-    it { is_expected.to be_truthy }
+    let(:screen_name) { 'name' }
+    let(:response_user) { {protected: false} }
+    subject { instance.protected_user?(screen_name) }
+    it do
+      expect(client).to receive(:user).with(screen_name).and_return(response_user)
+      is_expected.to be_falsey
+    end
+
+    context 'exception is raised' do
+      let(:error) { RuntimeError.new }
+      before { allow(client).to receive(:user).with(anything).and_raise(error) }
+      it do
+        expect(AccountStatus).to receive(:protected?).with(error)
+        is_expected.to be_falsey
+      end
+    end
   end
 
   describe '#timeline_readable?' do

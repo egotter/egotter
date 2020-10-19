@@ -27,8 +27,8 @@ class SearchRequestValidator
   end
 
   def forbidden_user?(screen_name)
-    client.user(screen_name)
-    false
+    user = client.user(screen_name)
+    user[:suspended]
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     if AccountStatus.suspended?(e)
