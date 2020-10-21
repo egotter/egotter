@@ -1107,14 +1107,12 @@ ja:
       crumb_title: "@%{user} のプロフィール"
       page_title: "@%{user} のプロフィール"
       meta_description: "@%{user} の のプロフィール"
-      see_on_twitter: '@%{user} をツイッターで見る'
       update: '@%{user} のプロフィールを更新する'
-      analyze: '@%{user} を分析する'
-      sign_in_and_analyze: 'ログインして @%{user} を分析する'
       prev: '< @%{user}'
       next: '@%{user} >'
       see: '@%{user} を見る'
       seeing: '@%{user} を見ています'
+      tweets_by: '@%{user} のツイート'
       is_follower: '@%{user1} は @%{user2} にフォローされています'
       retry_exhausted: 'プロフィールの取得に失敗しました。数分後に再度お試しください'
       sign_in_html: 'ログインすれば @%{user} の正確なステータスを取得できます。<a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>'
@@ -1147,6 +1145,11 @@ ja:
           3. えごったーでの表示とずれている？<br>
           削除した直後だったり、削除と復活を繰り返していると、えごったー上での表示と一時的にずれることがあります。その時は、<span class="egotter-pink">ツイッターで見る</span>と確実です。
         </div>
+    see_on_twitter_button:
+      label: '@%{user} をツイッターで見る'
+    analyze_on_egotter_button:
+      label: '@%{user} を分析する'
+      sign_in_and_analyze: 'ログインして @%{user} を分析する'
   friends:
     new:
       footer_title: 'フォローチェック'

@@ -152,6 +152,7 @@ module AdsenseHelper
         when [true,  'one_sided_friends',     'show', :middle] then USER_ONE_SIDED_FRIENDS
         when [true,  'one_sided_friends',     'show', :top]    then USER_ONE_SIDED_FRIENDS
         when [true,  'profiles',              'show', :top]    then 2002012770 # 0303
+        when [true,  'profiles',              'show', :bottom] then 2002012770 # 0303
         when [true,  'replied',               'show', :bottom] then USER_REPLIED
         when [true,  'replied',               'show', :middle] then USER_REPLIED
         when [true,  'replied',               'show', :top]    then USER_REPLIED
@@ -183,6 +184,7 @@ module AdsenseHelper
         when [false, 'timelines',             'show', :top]    then 6742315516 # 0302
         when [false, 'waiting',               'new',  :top]    then GUEST_WAITING
         when [false, 'profiles',              'show', :top]    then 9787281250 # 0304
+        when [false, 'profiles',              'show', :bottom] then 9787281250 # 0304
         when [false, 'unfollowers',           'show', :bottom] then 1646542132 # 0320
         when [false, 'unfollowers',           'show', :middle] then 9077475443 # 0321
         when [false, 'unfollowers',           'show', :top]    then 5306832964 # 0306
@@ -369,6 +371,7 @@ module AdsenseHelper
         when [true,  'one_sided_friends',     'show', :middle] then USER_ONE_SIDED_FRIENDS_RESP
         when [true,  'one_sided_friends',     'show', :top]    then USER_ONE_SIDED_FRIENDS_RESP
         when [true,  'profiles',              'show', :top]    then USER_PROFILES_RESP
+        when [true,  'profiles',              'show', :bottom] then USER_PROFILES_RESP
         when [true,  'replied',               'list', :slit]   then USER_REPLIED_RESP
         when [true,  'replied',               'show', :bottom] then USER_REPLIED_RESP
         when [true,  'replied',               'show', :middle] then USER_REPLIED_RESP
@@ -458,6 +461,7 @@ module AdsenseHelper
         when [false, 'one_sided_friends',     'show', :middle] then GUEST_ONE_SIDED_FRIENDS_RESP
         when [false, 'one_sided_friends',     'show', :top]    then GUEST_ONE_SIDED_FRIENDS_RESP
         when [false, 'profiles',              'show', :top]    then GUEST_PROFILES_RESP
+        when [false, 'profiles',              'show', :bottom] then GUEST_PROFILES_RESP
         when [false, 'replied',               'list', :slit]   then GUEST_REPLIED_RESP
         when [false, 'replied',               'show', :bottom] then GUEST_REPLIED_RESP
         when [false, 'replied',               'show', :middle] then GUEST_REPLIED_RESP

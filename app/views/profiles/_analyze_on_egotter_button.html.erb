@@ -1,0 +1,12 @@
+<% if user_signed_in? %>
+  <%= link_to timeline_path(screen_name: screen_name, via: current_via('analyze_button')), class: 'btn btn-primary btn-block' do %>
+    <img class="rounded" height="20" src="<%= image_path('/logo_transparent_96x96.png') %>">
+    <%= t('.label', user: screen_name) %>
+  <% end %>
+<% else %>
+  <% url = timeline_path(screen_name: screen_name, via: current_via('sign_in_and_analyze_button')) %>
+  <%= link_to sign_in_path(redirect_path: url, via: current_via('sign_in_and_analyze_button')), class: 'btn btn-primary btn-block' do %>
+    <img class="rounded" height="20" src="<%= image_path('/logo_transparent_96x96.png') %>">
+    <%= t('.sign_in_and_analyze', user: screen_name) %>
+  <% end %>
+<% end %>
