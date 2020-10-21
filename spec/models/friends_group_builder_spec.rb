@@ -3,39 +3,41 @@ require 'rails_helper'
 RSpec.describe FriendsGroupBuilder do
   let(:uid) { 1 }
   let(:limit) { 10 }
-  let(:uids1) { [1, 2, 3] }
-  let(:uids2) { [3, 4, 5] }
-  let(:uids3) { [3, 4, 5] }
-  let(:uids4) { [3, 4, 5] }
+  let(:friend_uids1) { [1, 2, 3] }
+  let(:follower_uids1) { [3, 4, 5] }
+  let(:friend_uids2) { [3, 4, 5] }
+  let(:follower_uids2) { [3, 4, 5] }
   let(:time) { Time.zone.now - 10.seconds }
   let(:users) { [TwitterUser.new(created_at: time + 1.second), TwitterUser.new(created_at: time + 2.second)] }
   let(:instance) { described_class.new(uid, limit: limit) }
 
   before do
-    allow(users[0]).to receive(:friend_uids).with(no_args).and_return(uids1)
-    allow(users[0]).to receive(:follower_uids).with(no_args).and_return(uids2)
-    allow(users[1]).to receive(:friend_uids).with(no_args).and_return(uids3)
-    allow(users[1]).to receive(:follower_uids).with(no_args).and_return(uids4)
+    allow(users[0]).to receive(:friend_uids).and_return(friend_uids1)
+    allow(users[0]).to receive(:follower_uids).and_return(follower_uids1)
+    allow(users[1]).to receive(:friend_uids).and_return(friend_uids2)
+    allow(users[1]).to receive(:follower_uids).and_return(follower_uids2)
 
     allow(described_class::Util).to receive(:users).with(uid, limit: limit).and_return(users)
   end
 
   describe '#friends' do
     subject { instance.friends }
-    it { is_expected.to match_array([uids1, uids2]) }
+    it { is_expected.to eq([friend_uids1, friend_uids2]) }
   end
 
   describe '#followers' do
     subject { instance.followers }
-    it { is_expected.to match_array([uids2, uids4]) }
+    it { is_expected.to eq([follower_uids1, follower_uids2]) }
   end
 
   describe '#new_friends' do
-
+    subject { instance.new_friends }
+    it { is_expected.to eq([friend_uids2 - friend_uids1]) }
   end
 
   describe '#new_followers' do
-
+    subject { instance.new_followers }
+    it { is_expected.to eq([follower_uids2 - follower_uids1]) }
   end
 
   describe '#unfriends' do

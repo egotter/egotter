@@ -23,12 +23,12 @@ class FriendsGroupBuilder
 
   # New friends between old record and new record
   def new_friends
-    @users.each_cons(2).map { |older, newer| Util.new_friends(older, newer) }.compact.tap { |ary| ary.prepend([]) }
+    @users.each_cons(2).map { |older, newer| Util.new_friends(older, newer) }.compact.tap { |ary| ary.prepend([]) if ary.empty? }
   end
 
   # New followers between old record and new record
   def new_followers
-    @users.each_cons(2).map { |older, newer| Util.new_followers(older, newer) }.compact.tap { |ary| ary.prepend([]) }
+    @users.each_cons(2).map { |older, newer| Util.new_followers(older, newer) }.compact.tap { |ary| ary.prepend([]) if ary.empty? }
   end
 
   # Used by AudienceInsightChartBuilder
