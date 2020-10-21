@@ -37,6 +37,10 @@ class UnfriendsBuilder
     @users
   end
 
+  def users
+    @users
+  end
+
   module Util
     module_function
 

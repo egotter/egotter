@@ -9,6 +9,9 @@
 最新のリムられ：
 <%= total_unfollower_urls.join("\n") %>
 
+新しいフォロワー：
+<%= new_follower_urls.empty? ? 'この期間では 0人 です' : new_follower_urls.join("\n") %>
+
 あなたの分析結果：
 <%= timeline_url %>
 

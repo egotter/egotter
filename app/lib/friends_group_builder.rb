@@ -1,6 +1,10 @@
 class FriendsGroupBuilder
-  def initialize(uid, limit:)
-    @users = Util.users(uid, limit: limit)
+  def initialize(uid, limit: nil, users: nil)
+    if users.nil?
+      @users = Util.users(uid, limit: limit)
+    else
+      @users = users
+    end
 
     # @users is preloaded in the caller(UpdateAudienceInsightWorker)
   end

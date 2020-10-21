@@ -58,6 +58,8 @@ class PeriodicReport < ApplicationRecord
     #   unfollowers_count
     #   total_unfollowers
     #   account_statuses
+    #   new_friends
+    #   new_followers
     #   worker_context
     def periodic_message(user_id, options = {})
       user = User.find(user_id)
@@ -71,6 +73,8 @@ class PeriodicReport < ApplicationRecord
 
       token = generate_token
       url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}
+
+      new_followers = (options[:new_followers] || []).map { |user| user['screen_name'] }
 
       message = ERB.new(template).result_with_hash(
           user: user,
@@ -93,6 +97,7 @@ class PeriodicReport < ApplicationRecord
           unfollower_urls: generate_profile_urls(unfollowers, url_options, user.add_atmark_to_periodic_report?, account_statuses),
           total_unfollowers: total_unfollowers,
           total_unfollower_urls: generate_profile_urls(total_unfollowers, url_options, user.add_atmark_to_periodic_report?, account_statuses),
+          new_follower_urls: generate_profile_urls(new_followers, url_options, user.add_atmark_to_periodic_report?, []),
           regular_subscription: !StopPeriodicReportRequest.exists?(user_id: user.id),
           request_id_text: request_id_text(user, options[:request_id], options[:worker_context]),
           timeline_url: timeline_url(user, url_options),
@@ -101,6 +106,8 @@ class PeriodicReport < ApplicationRecord
       )
 
       selected_unfollowers = unfollowers.empty? ? total_unfollowers : unfollowers
+
+      # TODO Set properties
       new(user: user, message: message, token: token, screen_names: selected_unfollowers)
     end
 

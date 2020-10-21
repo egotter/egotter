@@ -38,6 +38,8 @@ class CreatePeriodicReportMessageWorker
   #   unfriends
   #   unfollowers
   #   account_statuses
+  #   new_friends
+  #   new_followers
   #   worker_context
   #
   #   interval_too_short

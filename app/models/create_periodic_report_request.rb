@@ -357,18 +357,24 @@ class CreatePeriodicReportRequest < ApplicationRecord
       @end_date = Time.zone.now
 
       # To specify start_date, UnfriendsBuilder is used
-      @builder = UnfriendsBuilder.new(request.user.uid, start_date: @start_date, end_date: @end_date)
+      @unfriends_builder = UnfriendsBuilder.new(request.user.uid, start_date: @start_date, end_date: @end_date)
+      @new_friends_builder = FriendsGroupBuilder.new(request.user.uid, users: @unfriends_builder.users)
     end
 
     def build
-      first_user = TwitterUser.find_by(id: @builder.first_user&.id)
-      last_user = TwitterUser.find_by(id: @builder.last_user&.id)
+      first_user = TwitterUser.find_by(id: @unfriends_builder.first_user&.id)
+      last_user = TwitterUser.find_by(id: @unfriends_builder.last_user&.id)
       latest_user = TwitterUser.latest_by(uid: @request.user.uid)
 
       unfriends = fetch_users(unfriend_uids)
       unfollowers = fetch_users(unfollower_uids)
       total_unfollowers = fetch_users(total_unfollower_uids, limit: 5)
       account_statuses = attach_status(unfriends + unfollowers + total_unfollowers).map { |s| s.slice(:uid, :screen_name, :account_status) }
+
+      new_friend_uids = @new_friends_builder.new_friends.flatten.take(10)
+      new_friends = TwitterDB::User.where_and_order_by_field(uids: new_friend_uids).map { |user| user.slice(:uid, :screen_name) }
+      new_follower_uids = @new_friends_builder.new_followers.flatten.take(10)
+      new_followers = TwitterDB::User.where_and_order_by_field(uids: new_follower_uids).map { |user| user.slice(:uid, :screen_name) }
 
       {
           version: 1,
@@ -387,12 +393,14 @@ class CreatePeriodicReportRequest < ApplicationRecord
           unfollowers_count: unfollower_uids.size,
           total_unfollowers: total_unfollowers.map(&:screen_name),
           account_statuses: account_statuses,
-          worker_context: @request.worker_context
+          new_friends: new_friends,
+          new_followers: new_followers,
+          worker_context: @request.worker_context,
       }
     end
 
     def unfollowers_increased?
-      users = @builder.twitter_users
+      users = @unfriends_builder.twitter_users
       users.size >= 2 && users.last.created_at > TwitterUser::CREATE_RECORD_INTERVAL.ago && UnfriendsBuilder::Util.unfollowers_increased?(users[-2], users[-1])
     rescue => e
       Rails.logger.warn "#{self.class}##{__method__} #{e.inspect} request=#{@request.inspect}"
@@ -402,11 +410,11 @@ class CreatePeriodicReportRequest < ApplicationRecord
     private
 
     def unfriend_uids
-      @unfriend_uids ||= @builder.unfriends.flatten.uniq
+      @unfriend_uids ||= @unfriends_builder.unfriends.flatten.uniq
     end
 
     def unfollower_uids
-      @unfollower_uids ||= @builder.unfollowers.flatten.uniq
+      @unfollower_uids ||= @unfriends_builder.unfollowers.flatten.uniq
     end
 
     def total_unfollower_uids
