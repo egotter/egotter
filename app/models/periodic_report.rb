@@ -66,15 +66,16 @@ class PeriodicReport < ApplicationRecord
       start_date = extract_date(:start_date, options)
       end_date = extract_date(:end_date, options)
       account_statuses = options[:account_statuses] || []
+      token = generate_token
 
       unfollowers = options[:unfollowers]
       total_unfollowers = options[:total_unfollowers]
-      template = unfollowers.empty? ? TEMPLATES[:not_removed] : TEMPLATES[:removed]
-
-      token = generate_token
-      url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}
+      url_options = campaign_params('report_profile').merge(token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1)
 
       new_followers = (options[:new_followers] || []).map { |user| user['screen_name'] }
+      new_followers_url_options = campaign_params('report_profile_new_followers').merge(token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1)
+
+      template = unfollowers.empty? ? TEMPLATES[:not_removed] : TEMPLATES[:removed]
 
       message = ERB.new(template).result_with_hash(
           user: user,
@@ -97,7 +98,7 @@ class PeriodicReport < ApplicationRecord
           unfollower_urls: generate_profile_urls(unfollowers, url_options, user.add_atmark_to_periodic_report?, account_statuses),
           total_unfollowers: total_unfollowers,
           total_unfollower_urls: generate_profile_urls(total_unfollowers, url_options, user.add_atmark_to_periodic_report?, account_statuses),
-          new_follower_urls: generate_profile_urls(new_followers, url_options, user.add_atmark_to_periodic_report?, []),
+          new_follower_urls: generate_profile_urls(new_followers, new_followers_url_options, user.add_atmark_to_periodic_report?, []),
           regular_subscription: !StopPeriodicReportRequest.exists?(user_id: user.id),
           request_id_text: request_id_text(user, options[:request_id], options[:worker_context]),
           timeline_url: timeline_url(user, url_options),
@@ -369,8 +370,7 @@ class PeriodicReport < ApplicationRecord
       first_count && last_count && first_count > last_count
     end
 
-    def generate_profile_urls(screen_names, options, add_atmark = false, account_statuses = [])
-      url_options = campaign_params('report_profile').merge(options)
+    def generate_profile_urls(screen_names, url_options, add_atmark = false, account_statuses = [])
       encrypted_names = encrypt_indicator_names(screen_names)
 
       screen_names.map.with_index do |screen_name, i|
