@@ -49,7 +49,7 @@ class TwitterUsersController < ApplicationController
           new_unfollower_uids = UnfriendsBuilder::Util.unfollowers(previous_twitter_user, current_twitter_user)
         end
       rescue Timeout::Error => e
-        Rails.logger.info "#{self.class}##{__method__} The request has timed out. (#{seconds.inspect}) #{e.class} #{e.message} #{previous_twitter_user.id} #{current_twitter_user.id}"
+        Rails.logger.warn "#{self.class}##{__method__} The request has timed out. (#{seconds.inspect}) #{e.class} #{e.message} #{previous_twitter_user.id} #{current_twitter_user.id}"
         return I18n.t('twitter_users.show.update_is_coming_with_timeout', user: screen_name)
       end
 
