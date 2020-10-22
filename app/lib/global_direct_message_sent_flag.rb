@@ -1,7 +1,7 @@
 class GlobalDirectMessageSentFlag < ::Egotter::AsyncSortedSet
 
   def initialize
-    super(Redis.client)
+    super(nil)
 
     @ttl = 1.days
     @key = "#{Rails.env}:#{self.class}:#{@ttl}:any_ids"

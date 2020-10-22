@@ -1,7 +1,7 @@
 class GlobalSendDirectMessageCount < ::Egotter::AsyncSortedSet
 
   def initialize
-    super(Redis.client)
+    super(nil)
 
     @ttl = 1.day
     @key = "#{Rails.env}:#{self.class}:#{@ttl}:any_ids"

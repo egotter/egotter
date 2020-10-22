@@ -2,8 +2,8 @@ module Egotter
   class SortedSet
     attr_reader :key
 
-    def initialize(redis)
-      @redis = redis
+    def initialize(redis = nil)
+      @redis = redis || self.class.redis_instance
       @key = nil
       @ttl = nil
     end
@@ -52,6 +52,12 @@ module Egotter
 
     def size
       to_a.size
+    end
+
+    class << self
+      def redis_instance
+        @redis_instance ||= Redis.client
+      end
     end
 
     private
