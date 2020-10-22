@@ -71,7 +71,7 @@ class DeleteTweetsRequest < ApplicationRecord
       raise Unauthorized
     end
   rescue => e
-    unless AccountStatus.too_many_requests?(e)
+    unless TwitterApiStatus.too_many_requests?(e)
       exception_handler(e, __method__)
       @retries -= 1
       retry if @retries > 0
@@ -121,7 +121,7 @@ class DeleteTweetsRequest < ApplicationRecord
 
     if e.class == Twitter::Error::TooManyRequests
       raise TooManyRequests.new(last_method, retry_in: e.rate_limit.reset_in.to_i + 1)
-    elsif AccountStatus.unauthorized?(e)
+    elsif TwitterApiStatus.unauthorized?(e)
       raise InvalidToken.new(e.message)
     elsif ServiceStatus.retryable_error?(e)
       if !@retries.nil? && @retries <= 0

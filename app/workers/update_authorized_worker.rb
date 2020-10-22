@@ -34,9 +34,9 @@ class UpdateAuthorizedWorker
     user.screen_name = t_user[:screen_name]
     user.save! if user.changed?
   rescue => e
-    if AccountStatus.unauthorized?(e)
+    if TwitterApiStatus.unauthorized?(e)
       user.update!(authorized: false)
-    elsif TwitterApiStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.too_many_requests?(e)
+    elsif TwitterApiStatus.not_found?(e) || TwitterApiStatus.suspended?(e) || TwitterApiStatus.too_many_requests?(e)
       # Do nothing
     else
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"

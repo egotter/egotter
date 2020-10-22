@@ -102,7 +102,7 @@ RSpec.describe SearchRequestValidator, type: :model do
       let(:error) { RuntimeError.new }
       before { allow(client).to receive(:user).with(anything).and_raise(error) }
       it do
-        expect(AccountStatus).to receive(:suspended?).with(error)
+        expect(TwitterApiStatus).to receive(:suspended?).with(error)
         is_expected.to be_falsey
       end
     end
@@ -121,7 +121,7 @@ RSpec.describe SearchRequestValidator, type: :model do
       let(:error) { RuntimeError.new }
       before { allow(client).to receive(:user_timeline).with(any_args).and_raise(error) }
       it do
-        expect(AccountStatus).to receive(:blocked?).with(error)
+        expect(TwitterApiStatus).to receive(:blocked?).with(error)
         is_expected.to be_falsey
       end
     end
@@ -140,7 +140,7 @@ RSpec.describe SearchRequestValidator, type: :model do
       let(:error) { RuntimeError.new }
       before { allow(client).to receive(:user).with(anything).and_raise(error) }
       it do
-        expect(AccountStatus).to receive(:protected?).with(error)
+        expect(TwitterApiStatus).to receive(:protected?).with(error)
         is_expected.to be_falsey
       end
     end

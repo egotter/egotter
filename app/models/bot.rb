@@ -68,11 +68,11 @@ class Bot < ApplicationRecord
           suspended = cred[:suspended]
           bot.api_client.users([bot.id])
         rescue => e
-          if AccountStatus.unauthorized?(e)
+          if TwitterApiStatus.unauthorized?(e)
             authorized = false
-          elsif AccountStatus.temporarily_locked?(e)
+          elsif TwitterApiStatus.temporarily_locked?(e)
             locked = true
-          elsif AccountStatus.no_user_matches?(e)
+          elsif TwitterApiStatus.no_user_matches?(e)
             # Do nothing
           else
             raise

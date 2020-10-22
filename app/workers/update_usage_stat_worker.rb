@@ -30,10 +30,10 @@ class UpdateUsageStatWorker
     end
 
   rescue => e
-    if AccountStatus.invalid_or_expired_token?(e) ||
-        AccountStatus.not_authorized?(e) ||
-        AccountStatus.temporarily_locked?(e) ||
-        AccountStatus.blocked?(e)
+    if TwitterApiStatus.invalid_or_expired_token?(e) ||
+        TwitterApiStatus.protected?(e) ||
+        TwitterApiStatus.temporarily_locked?(e) ||
+        TwitterApiStatus.blocked?(e)
       # Do nothing
     else
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"

@@ -23,7 +23,7 @@ namespace :old_users do
           user.api_client.verify_credentials
           print 'o'
         rescue => e
-          if AccountStatus.invalid_or_expired_token?(e)
+          if TwitterApiStatus.invalid_or_expired_token?(e)
             user.authorized = false
             print 'x'
           else

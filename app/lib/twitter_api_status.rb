@@ -23,10 +23,10 @@ class TwitterApiStatus
     end
 
     # This exception is raised when calling #user_timeline
+    # TODO Rename to not_authorized?
     def protected?(ex)
       ex && ex.class == Twitter::Error::Unauthorized && ex.message == "Not authorized."
     end
-    alias_method :not_authorized?, :protected?
 
     def unauthorized?(ex)
       invalid_or_expired_token?(ex) || bad_authentication_data?(ex)

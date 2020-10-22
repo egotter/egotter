@@ -57,7 +57,7 @@ class FollowsController < ApplicationController
       render json: {follow: false, record_found: false}
     end
   rescue => e
-    unless AccountStatus.unauthorized?(e)
+    unless TwitterApiStatus.unauthorized?(e)
       logger.warn "#{controller_name}##{action_name} #{e.inspect} #{request.referer}"
     end
     render json: {follow: current_user.following_egotter?, record_found: nil}

@@ -459,9 +459,9 @@ class CreatePeriodicReportRequest < ApplicationRecord
       rescue => e
         if TwitterApiStatus.not_found?(e)
           users.each { |u| u.account_status = 'not_found' }
-        elsif AccountStatus.suspended?(e)
+        elsif TwitterApiStatus.suspended?(e)
           users.each { |u| u.account_status = 'suspended' }
-        elsif AccountStatus.no_user_matches?(e)
+        elsif TwitterApiStatus.no_user_matches?(e)
           users.each { |u| u.account_status = 'suspended' }
         else
           users.each { |u| u.account_status = 'error' }

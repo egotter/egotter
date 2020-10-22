@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe AccountStatus, type: :model do
+RSpec.describe TwitterApiStatus, type: :model do
   describe '.not_found?' do
     let(:ex) { Twitter::Error::NotFound.new('User not found.') }
     subject { described_class.not_found?(ex) }

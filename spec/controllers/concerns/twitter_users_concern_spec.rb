@@ -36,9 +36,9 @@ describe TwitterUsersConcern, type: :controller do
     subject { controller.handle_twitter_api_error(error, screen_name) }
     it do
       expect(TwitterApiStatus).to receive(:not_found?).with(error)
-      expect(AccountStatus).to receive(:suspended?).with(error)
-      expect(AccountStatus).to receive(:invalid_or_expired_token?).with(error)
-      expect(AccountStatus).to receive(:temporarily_locked?).with(error)
+      expect(TwitterApiStatus).to receive(:suspended?).with(error)
+      expect(TwitterApiStatus).to receive(:invalid_or_expired_token?).with(error)
+      expect(TwitterApiStatus).to receive(:temporarily_locked?).with(error)
       expect(controller).to receive(:twitter_exception_messages).with(error, screen_name).and_return('message')
       expect(controller).to receive(:respond_with_error).with(:bad_request, 'message')
       subject

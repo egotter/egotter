@@ -133,7 +133,7 @@ class CreateTwitterUserRequest < ApplicationRecord
   def fetch_user
     client.user(uid)
   rescue => e
-    if AccountStatus.suspended?(e)
+    if TwitterApiStatus.suspended?(e)
       raise HardSuspended.new("uid=#{uid}")
     elsif TwitterApiStatus.not_found?(e)
       raise NotFound.new("uid=#{uid}")
@@ -166,17 +166,17 @@ class CreateTwitterUserRequest < ApplicationRecord
       raise e
     end
 
-    if AccountStatus.unauthorized?(e)
+    if TwitterApiStatus.unauthorized?(e)
       raise Unauthorized
-    elsif AccountStatus.protected?(e)
+    elsif TwitterApiStatus.protected?(e)
       raise Protected
-    elsif AccountStatus.blocked?(e)
+    elsif TwitterApiStatus.blocked?(e)
       raise Blocked
-    elsif AccountStatus.temporarily_locked?(e)
+    elsif TwitterApiStatus.temporarily_locked?(e)
       raise TemporarilyLocked.new("uid=#{uid}")
     end
 
-    if AccountStatus.too_many_requests?(e)
+    if TwitterApiStatus.too_many_requests?(e)
       if user
         TooManyRequestsUsers.new.add(user.id)
         ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user.id)

@@ -21,7 +21,7 @@ RSpec.describe Decorator do
       let(:error) { RuntimeError.new('error') }
       before do
         allow(client).to receive(:users).with(anything).and_raise(error)
-        allow(AccountStatus).to receive(:unauthorized?).with(error).and_return(true)
+        allow(TwitterApiStatus).to receive(:unauthorized?).with(error).and_return(true)
       end
       it { is_expected.to be_empty }
     end
@@ -33,7 +33,7 @@ RSpec.describe Decorator do
       let(:error) { RuntimeError.new('error') }
       before do
         allow(client).to receive(:users).with(anything).and_raise(error)
-        allow(AccountStatus).to receive(:unauthorized?).with(error).and_return(true)
+        allow(TwitterApiStatus).to receive(:unauthorized?).with(error).and_return(true)
       end
       it { is_expected.to be_empty }
     end

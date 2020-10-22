@@ -74,10 +74,10 @@ class CreateTwitterDBUserWorker
   end
 
   def meet_requirements_for_retrying?(e)
-    AccountStatus.unauthorized?(e) ||
-        AccountStatus.temporarily_locked?(e) ||
-        AccountStatus.forbidden?(e) ||
-        AccountStatus.too_many_requests?(e) ||
+    TwitterApiStatus.unauthorized?(e) ||
+        TwitterApiStatus.temporarily_locked?(e) ||
+        TwitterApiStatus.forbidden?(e) ||
+        TwitterApiStatus.too_many_requests?(e) ||
         ServiceStatus.retryable_error?(e)
   end
 

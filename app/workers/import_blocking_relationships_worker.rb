@@ -9,8 +9,8 @@ class ImportBlockingRelationshipsWorker
       blocked_ids = user.api_client.twitter.blocked_ids(count: 5000).attrs[:ids]
       BlockingRelationship.import_from(user.uid, blocked_ids)
     rescue => e
-      if AccountStatus.invalid_or_expired_token?(e) ||
-          AccountStatus.temporarily_locked?(e)
+      if TwitterApiStatus.invalid_or_expired_token?(e) ||
+          TwitterApiStatus.temporarily_locked?(e)
         # Do nothing
       else
         raise

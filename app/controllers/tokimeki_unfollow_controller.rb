@@ -4,7 +4,7 @@ class TokimekiUnfollowController < ApplicationController
   before_action :require_login!, only: %i(cleanup unfollow keep)
 
   rescue_from Exception do |ex|
-    if AccountStatus.unauthorized?(ex)
+    if TwitterApiStatus.unauthorized?(ex)
       redirect_to tokimeki_unfollow_top_path(via: current_via('unauthorized')), alert: signed_in_user_not_authorized_message
     else
       logger.warn "#{controller_name}##{action_name} #{current_user_id} #{ex.inspect}"
@@ -32,7 +32,7 @@ class TokimekiUnfollowController < ApplicationController
       @friend = Friend.new(current_friend(@user))
       @statuses = current_tweets(@friend.uid)
     rescue => e
-      if TwitterApiStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.blocked?(e) || AccountStatus.protected?(e)
+      if TwitterApiStatus.not_found?(e) || TwitterApiStatus.suspended?(e) || TwitterApiStatus.blocked?(e) || TwitterApiStatus.protected?(e)
         @user.increment(:processed_count).save!
         retry
       else
@@ -90,7 +90,7 @@ class TokimekiUnfollowController < ApplicationController
     request_context_client.user(uid)
 
   rescue => e
-    if TwitterApiStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.blocked?(e) || AccountStatus.protected?(e)
+    if TwitterApiStatus.not_found?(e) || TwitterApiStatus.suspended?(e) || TwitterApiStatus.blocked?(e) || TwitterApiStatus.protected?(e)
       user.increment(:processed_count).save!
       retry
     else

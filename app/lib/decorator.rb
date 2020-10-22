@@ -43,7 +43,7 @@ class Decorator
       []
     end
   rescue => e
-    AccountStatus.no_user_matches?(e) ? @users.map(&:uid) : []
+    TwitterApiStatus.no_user_matches?(e) ? @users.map(&:uid) : []
   end
 
   def blocking_uids

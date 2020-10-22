@@ -35,11 +35,11 @@ class CreateAccountStatusWorker
     cache = AccountStatus::Cache.new
 
     case
-    when AccountStatus.invalid_or_expired_token?(error)
+    when TwitterApiStatus.invalid_or_expired_token?(error)
       status = 'invalid'
     when TwitterApiStatus.not_found?(error)
       status = 'not_found'
-    when AccountStatus.suspended?(error)
+    when TwitterApiStatus.suspended?(error)
       status = 'suspended'
     when error
       status = "error:#{error.class}"

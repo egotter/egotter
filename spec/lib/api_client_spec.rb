@@ -56,7 +56,7 @@ RSpec.describe ApiClient, type: :model do
       let(:client) { double('client', access_token: 'at', access_token_secret: 'ats') }
       let(:user) { create(:user) }
       before do
-        allow(AccountStatus).to receive(:unauthorized?).with(error).and_return(true)
+        allow(TwitterApiStatus).to receive(:unauthorized?).with(error).and_return(true)
         allow(User).to receive_message_chain(:select, :find_by_token).
             with(:id).with(client.access_token, client.access_token_secret).and_return(user)
       end
@@ -75,7 +75,7 @@ RSpec.describe ApiClient, type: :model do
       let(:client) { double('client', access_token: 'at', access_token_secret: 'ats') }
       let(:user) { create(:user) }
       before do
-        allow(AccountStatus).to receive(:temporarily_locked?).with(error).and_return(true)
+        allow(TwitterApiStatus).to receive(:temporarily_locked?).with(error).and_return(true)
         allow(User).to receive_message_chain(:select, :find_by_token).
             with(:id).with(client.access_token, client.access_token_secret).and_return(user)
       end

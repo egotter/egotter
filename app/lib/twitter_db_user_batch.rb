@@ -17,7 +17,7 @@ class TwitterDBUserBatch
     def fetch(uids, client:)
       client.twitter.users(uids).map(&:to_h)
     rescue => e
-      if AccountStatus.no_user_matches?(e)
+      if TwitterApiStatus.no_user_matches?(e)
         []
       else
         raise

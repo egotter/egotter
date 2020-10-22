@@ -213,6 +213,6 @@ class CreatePeriodicReportMessageWorker
         DirectMessageStatus.your_account_suspended?(e) ||
         DirectMessageStatus.cannot_send_messages?(e) ||
         DirectMessageStatus.might_be_automated?(e) ||
-        AccountStatus.invalid_or_expired_token?(e)
+        TwitterApiStatus.invalid_or_expired_token?(e)
   end
 end

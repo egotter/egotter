@@ -68,7 +68,7 @@ class TweetRequest < ApplicationRecord
       retries ||= 1
       client.update(text)
     rescue => e
-      if AccountStatus.could_not_authenticate_you?(e)
+      if TwitterApiStatus.could_not_authenticate_you?(e)
         if (retries -= 1) >= 0
           retry
         else

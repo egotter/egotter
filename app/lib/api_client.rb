@@ -31,7 +31,7 @@ class ApiClient
   end
 
   def update_authorization_status(e)
-    if AccountStatus.unauthorized?(e)
+    if TwitterApiStatus.unauthorized?(e)
       if (user = User.select(:id).find_by_token(@client.access_token, @client.access_token_secret))
         UpdateAuthorizedWorker.perform_async(user.id)
       end
@@ -39,7 +39,7 @@ class ApiClient
   end
 
   def update_lock_status(e)
-    if AccountStatus.temporarily_locked?(e)
+    if TwitterApiStatus.temporarily_locked?(e)
       if (user = User.select(:id).find_by_token(@client.access_token, @client.access_token_secret))
         UpdateLockedWorker.perform_async(user.id)
       end
@@ -53,7 +53,7 @@ class ApiClient
   end
 
   def create_forbidden_user(e, method, *args)
-    if AccountStatus.suspended?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
+    if TwitterApiStatus.suspended?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
       CreateForbiddenUserWorker.perform_async(args[0], location: (caller[2][/`([^']*)'/, 1] rescue ''))
     end
   end

@@ -20,7 +20,7 @@ class CreateSearchReportWorker
     SearchReport.you_are_searched(searchee.id, options['searcher_uid']).deliver!
 
   rescue => e
-    if AccountStatus.unauthorized?(e) ||
+    if TwitterApiStatus.unauthorized?(e) ||
         DirectMessageStatus.protect_out_users_from_spam?(e) ||
         DirectMessageStatus.you_have_blocked?(e) ||
         DirectMessageStatus.not_allowed_to_access_or_delete?(e)

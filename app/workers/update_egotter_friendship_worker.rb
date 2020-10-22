@@ -32,9 +32,9 @@ class UpdateEgotterFriendshipWorker
     update_friendship(client, user)
 
   rescue => e
-    if AccountStatus.invalid_or_expired_token?(e)
+    if TwitterApiStatus.invalid_or_expired_token?(e)
       user&.update!(authorized: false)
-    elsif AccountStatus.temporarily_locked?(e)
+    elsif TwitterApiStatus.temporarily_locked?(e)
       # Do nothing
     elsif ServiceStatus.connection_reset_by_peer?(e)
       retry
@@ -49,7 +49,7 @@ class UpdateEgotterFriendshipWorker
   def verify_credentials(client)
     client.verify_credentials
   rescue => e
-    raise unless AccountStatus.too_many_requests?(e)
+    raise unless TwitterApiStatus.too_many_requests?(e)
   end
 
   def update_friendship(client, user)

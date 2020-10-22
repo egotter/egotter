@@ -31,7 +31,7 @@ class SearchRequestValidator
     user[:suspended]
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
-    if AccountStatus.suspended?(e)
+    if TwitterApiStatus.suspended?(e)
       true
     else
       false
@@ -47,7 +47,7 @@ class SearchRequestValidator
     end
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
-    AccountStatus.blocked?(e)
+    TwitterApiStatus.blocked?(e)
   end
 
   def protected_user?(screen_name)
@@ -55,14 +55,14 @@ class SearchRequestValidator
     user[:protected]
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
-    AccountStatus.protected?(e)
+    TwitterApiStatus.protected?(e)
   end
 
   def timeline_readable?(screen_name)
     client.user_timeline(screen_name, count: 1)
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
-    !AccountStatus.protected?(e)
+    !TwitterApiStatus.protected?(e)
   end
 
   private

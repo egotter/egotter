@@ -229,28 +229,28 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     end
 
     context 'token is invalid' do
-      before { allow(AccountStatus).to receive(:unauthorized?).with(error).and_return(true) }
+      before { allow(TwitterApiStatus).to receive(:unauthorized?).with(error).and_return(true) }
       it { expect { subject }.to raise_error(described_class::Unauthorized) }
     end
 
     context 'user is protected' do
-      before { allow(AccountStatus).to receive(:protected?).with(error).and_return(true) }
+      before { allow(TwitterApiStatus).to receive(:protected?).with(error).and_return(true) }
       it { expect { subject }.to raise_error(described_class::Protected) }
     end
 
     context 'admin is blocked' do
-      before { allow(AccountStatus).to receive(:blocked?).with(error).and_return(true) }
+      before { allow(TwitterApiStatus).to receive(:blocked?).with(error).and_return(true) }
       it { expect { subject }.to raise_error(described_class::Blocked) }
     end
 
     context 'user is locked' do
-      before { allow(AccountStatus).to receive(:temporarily_locked?).with(error).and_return(true) }
+      before { allow(TwitterApiStatus).to receive(:temporarily_locked?).with(error).and_return(true) }
       it { expect { subject }.to raise_error(described_class::TemporarilyLocked) }
     end
 
     context 'rate limit exceeded' do
       let(:error) { Twitter::Error::TooManyRequests.new }
-      before { allow(AccountStatus).to receive(:too_many_requests?).with(error).and_return(true) }
+      before { allow(TwitterApiStatus).to receive(:too_many_requests?).with(error).and_return(true) }
       it { expect { subject }.to raise_error(described_class::TooManyRequests) }
     end
 

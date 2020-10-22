@@ -51,7 +51,7 @@ class ResetEgotterRequest < ApplicationRecord
     message = ERB.new(template.read).result
     user.api_client.create_direct_message_event(User::EGOTTER_UID, message)
   rescue => e
-    if AccountStatus.invalid_or_expired_token?(e) ||
+    if TwitterApiStatus.invalid_or_expired_token?(e) ||
         DirectMessageStatus.cannot_send_messages?(e) ||
         DirectMessageStatus.not_following_you?(e) ||
         DirectMessageStatus.you_have_blocked?(e)

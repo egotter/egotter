@@ -37,8 +37,8 @@ class DeleteTweetWorker
       else
         raise RetryExhausted.new(e.inspect)
       end
-    elsif AccountStatus.invalid_or_expired_token?(e) ||
-        AccountStatus.suspended?(e) ||
+    elsif TwitterApiStatus.invalid_or_expired_token?(e) ||
+        TwitterApiStatus.suspended?(e) ||
         TweetStatus.no_status_found?(e) ||
         TweetStatus.not_authorized?(e) ||
         TweetStatus.that_page_does_not_exist?(e)

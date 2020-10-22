@@ -43,7 +43,7 @@ class TwitterUserFetcher
 
   def negligible_error?(method_name, error)
     %i(user_timeline mentions_timeline favorites).include?(method_name) &&
-        (AccountStatus.too_many_requests?(error) || ServiceStatus.internal_server_error?(error))
+        (TwitterApiStatus.too_many_requests?(error) || ServiceStatus.internal_server_error?(error))
   end
 
   def fetch_signatures(reject_names)

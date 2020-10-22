@@ -31,12 +31,12 @@ class UpdateLockedWorker
     user = User.find(user_id)
     user.api_client.users([user.id])
   rescue => e
-    if AccountStatus.temporarily_locked?(e)
+    if TwitterApiStatus.temporarily_locked?(e)
       user.update!(locked: true)
     elsif TwitterApiStatus.not_found?(e) ||
-        AccountStatus.suspended?(e) ||
-        AccountStatus.too_many_requests?(e) ||
-        AccountStatus.no_user_matches?(e)
+        TwitterApiStatus.suspended?(e) ||
+        TwitterApiStatus.too_many_requests?(e) ||
+        TwitterApiStatus.no_user_matches?(e)
       # Do nothing
     else
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"

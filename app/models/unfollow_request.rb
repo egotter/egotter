@@ -70,7 +70,7 @@ class UnfollowRequest < ApplicationRecord
   rescue Twitter::Error::Unauthorized => e
     raise Unauthorized.new(e.message)
   rescue Twitter::Error::Forbidden => e
-    if AccountStatus.temporarily_locked?(e)
+    if TwitterApiStatus.temporarily_locked?(e)
       raise TemporarilyLocked
     else
       raise Forbidden.new(e.message)
@@ -91,7 +91,7 @@ class UnfollowRequest < ApplicationRecord
   def unauthorized?
     !user.authorized? || !client.verify_credentials
   rescue => e
-    if AccountStatus.invalid_or_expired_token?(e)
+    if TwitterApiStatus.invalid_or_expired_token?(e)
       true
     else
       raise
@@ -101,9 +101,9 @@ class UnfollowRequest < ApplicationRecord
   def not_found?
     !client.user?(uid)
   rescue => e
-    if AccountStatus.temporarily_locked?(e)
+    if TwitterApiStatus.temporarily_locked?(e)
       raise TemporarilyLocked
-    elsif AccountStatus.suspended?(e)
+    elsif TwitterApiStatus.suspended?(e)
       raise Suspended
     else
       raise

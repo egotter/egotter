@@ -19,7 +19,7 @@ class UsersController < ApplicationController
   def fetch_user
     current_user.api_client.user(current_user.uid)
   rescue Twitter::Error::Unauthorized => e
-    unless AccountStatus.unauthorized?(e)
+    unless TwitterApiStatus.unauthorized?(e)
       logger.warn "#{controller_name}##{action_name} #{e.inspect} user_id=#{current_user.id}"
     end
     nil

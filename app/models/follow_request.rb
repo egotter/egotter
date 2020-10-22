@@ -77,13 +77,13 @@ class FollowRequest < ApplicationRecord
     raise Unauthorized.new(e.message)
   rescue Twitter::Error::Forbidden => e
     case
-    when AccountStatus.temporarily_locked?(e)
+    when TwitterApiStatus.temporarily_locked?(e)
       raise TemporarilyLocked
-    when AccountStatus.your_account_suspended?(e)
+    when TwitterApiStatus.your_account_suspended?(e)
       raise Suspended
-    when AccountStatus.blocked_from_following?(e)
+    when TwitterApiStatus.blocked_from_following?(e)
       raise Blocked
-    when AccountStatus.unable_to_follow?(e)
+    when TwitterApiStatus.unable_to_follow?(e)
       GlobalFollowLimitation.new.limit_start
       raise TooManyFollows
     else
@@ -108,7 +108,7 @@ class FollowRequest < ApplicationRecord
   def unauthorized?
     !user.authorized? || !client.verify_credentials
   rescue => e
-    if AccountStatus.invalid_or_expired_token?(e)
+    if TwitterApiStatus.invalid_or_expired_token?(e)
       true
     else
       raise
@@ -118,9 +118,9 @@ class FollowRequest < ApplicationRecord
   def not_found?
     !client.user?(uid)
   rescue => e
-    if AccountStatus.temporarily_locked?(e)
+    if TwitterApiStatus.temporarily_locked?(e)
       raise TemporarilyLocked
-    elsif AccountStatus.suspended?(e)
+    elsif TwitterApiStatus.suspended?(e)
       raise Suspended
     else
       raise
