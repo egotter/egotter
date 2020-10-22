@@ -1,0 +1,45 @@
+<div class="my-5">
+  <%= image_tag '/ajax-loader.gif' %>&nbsp;<%= t('.preparing', user: @screen_name) %>
+</div>
+
+<% if @user %>
+  <%= render partial: 'shared/profile_section', locals: {twitter_user: @user, expanded: true} %>
+<% end %>
+
+<script>
+  $(function () {
+    function redirectTo(force) {
+      var url = '<%= raw timeline_path(screen_name: @screen_name, via: current_via) %>';
+      window.location.replace(url + '&skip_search_request_check=' + force);
+    }
+
+    function createChecker() {
+      var url = '<%= raw api_v1_search_requests_path(screen_name: @screen_name, via: current_via) %>';
+      var retryCount = 0;
+      var retryMax = 5;
+      var retryInterval = 3000;
+
+      function check() {
+        $.get(url).done(function (res) {
+          if (res['found']) {
+            redirectTo(false);
+          } else {
+            retryCount++;
+            if (retryCount < retryMax) {
+              setTimeout(check, retryInterval);
+            } else {
+              redirectTo(true);
+            }
+          }
+        }).fail(function (xhr) {
+          logger.warn(xhr.responseText);
+          redirectTo(true);
+        });
+      }
+
+      return {check: check};
+    }
+
+    createChecker().check();
+  });
+</script>

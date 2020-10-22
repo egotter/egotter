@@ -187,6 +187,8 @@ ja:
       audience_insight:
         title: 'オーディエンス分析'
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
+    waiting:
+      preparing: "@%{user} の分析結果を準備中です"
     feeds:
       users:
         notice: 'データはこれから保存されていきます'

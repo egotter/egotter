@@ -31,7 +31,7 @@ class TwitterUserFetcher
       memo[item[:method]] = @client.send(item[:method], *item[:args])
     rescue => e
       if negligible_error?(item[:method], e)
-        Rails.logger.info "#{self.class}##{__method__}: Ignore specific errors for #{item[:method]} user_id=#{@login_user&.id} uid=#{@uid}"
+        Rails.logger.warn "#{self.class}##{__method__}: Ignore specific errors for #{item[:method]} user_id=#{@login_user&.id} uid=#{@uid}"
         memo[item[:method]] = []
       else
         raise

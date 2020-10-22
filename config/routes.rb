@@ -31,6 +31,7 @@ Rails.application.routes.draw do
       get "summaries", to: "summaries#show"
       get "profiles", to: "profiles#show"
       get 'account_statuses', to: 'account_statuses#show'
+      get 'search_requests', to: 'search_requests#show'
       get "announcements/list", to: "announcements#list"
       get "features/list", to: "features#list"
       get "functions/list", to: "functions#list"
@@ -151,6 +152,7 @@ Rails.application.routes.draw do
   get 'twitter_users/:uid/changes', to: 'twitter_users#changes', as: :twitter_users_changes
 
   resources :timelines, only: %i(show), param: :screen_name
+  get 'timelines/:screen_name/waiting', to: 'timelines#waiting', as: :timeline_waiting
 
   get 'not_found/:screen_name', to: redirect("/profiles/%{screen_name}?via=routing_not_found"), as: 'not_found'
   get 'not_found/:screen_name/latest', to: redirect("/profiles/%{screen_name}?via=routing_not_found")

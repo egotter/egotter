@@ -12,6 +12,11 @@ module SearchRequestConcern
     before_action(only: :show) { signed_in_user_authorized? }
     before_action(only: :show) { current_user_has_dm_permission? }
     before_action(only: :show) { valid_screen_name? }
+    before_action(only: :show) do
+      if params[:skip_search_request_check] != 'true' &&  controller_path == 'timelines'
+        search_request_cache_exists?(params[:screen_name])
+      end
+    end
     before_action(only: :show) { @self_search = current_user_search_for_yourself?(params[:screen_name]) }
     before_action(only: :show) { !@self_search && !not_found_screen_name?(params[:screen_name]) && !not_found_user?(params[:screen_name]) }
     before_action(only: :show) { !@self_search && !forbidden_screen_name?(params[:screen_name]) && !forbidden_user?(params[:screen_name]) }
