@@ -2473,16 +2473,6 @@ ja:
       2. [1]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送ってください。<br>
       <br>
       エラー：NA403
-    permission_level_not_enough_html: >
-      @%{user} のツイッター連携（DM）が無効になっています。<br>
-      <br>
-      1. <a class="btn btn-primary btn-sm" href="%{url}">強制ログイン</a> してください。ほとんどの場合これで解決します。<br>
-      <br>
-      2. <a href="https://twitter.com/settings/applications/185425" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">連携アプリ</a> からえごったーを削除した後、ログインしてください。<br>
-      <br>
-      3. [1]と[2]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送ってください。<br>
-      <br>
-      エラー：PLNE403
     egotter_is_blocked_html: '@%{user} は @ego_tter をブロックしています。えごったーを利用するには、ブロックを解除してください。'
     unauthorized_detected_with_count: 'ツイッター連携が無効になっています。%{seconds}秒後にトップページへ移動します。'
     blocked_detected_with_count: '@ego_tter がブロックされています。%{seconds}秒後にトップページへ移動します。'

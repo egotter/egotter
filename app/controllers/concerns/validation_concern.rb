@@ -92,8 +92,9 @@ module ValidationConcern
     if current_user.notification_setting.enough_permission_level?
       true
     else
-      url = sign_in_path(force_login: true, via: "#{controller_name}/#{action_name}/permission_level_not_enough")
-      respond_with_error(:unauthorized, t('after_sign_in.permission_level_not_enough_html', user: current_user.screen_name, url: url))
+      set_bypassed_notice_message('permission_level_not_enough')
+      redirect_to root_path(via: current_via(__method__))
+      create_error_log(__method__, 'permission_level_not_enough')
       false
     end
   end

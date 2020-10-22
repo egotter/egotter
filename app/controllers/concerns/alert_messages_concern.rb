@@ -170,6 +170,11 @@ module AlertMessagesConcern
     end
   end
 
+  def permission_level_not_enough_message
+    url = sign_in_path(force_login: true, via: current_via(__method__))
+    render_to_string template: 'messages/permission_level_not_enough', locals: {user: current_user.screen_name, url: url}, layout: false
+  end
+
   def too_many_searches_message
     render_to_string template: 'messages/too_many_searches', locals: {via: 'too_many_searches_message'}, layout: false
   end

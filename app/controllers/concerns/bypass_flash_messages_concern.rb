@@ -42,6 +42,9 @@ module BypassFlashMessagesConcern
     elsif session[:bypassed_notice_message] == 'too_many_searches'
       @without_alert_container = true
       too_many_searches_message
+    elsif session[:bypassed_notice_message] == 'permission_level_not_enough'
+      @without_alert_container = true
+      permission_level_not_enough_message
     elsif start_page? && user_signed_in?
       @without_alert_container = true
       after_sign_in_message(nil)
