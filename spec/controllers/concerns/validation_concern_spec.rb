@@ -191,8 +191,10 @@ describe ValidationConcern, type: :controller do
     context "user is signed in and doesn't have proper permission" do
       include_context 'user is signed in'
       include_context "user doesn't have proper permission"
+      before { allow(controller).to receive(:redirect_to).with(instance_of(String)) }
       it do
-        expect(controller).to receive(:respond_with_error).with(:unauthorized, instance_of(String))
+        expect(controller).to receive(:set_bypassed_notice_message).with('permission_level_not_enough')
+        expect(controller).to receive(:create_error_log).with(:current_user_has_dm_permission?, 'permission_level_not_enough')
         is_expected.to be_falsey
       end
     end
