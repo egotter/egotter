@@ -9,6 +9,7 @@
 #
 # Indexes
 #
+#  index_blocking_relationships_on_created_at           (created_at)
 #  index_blocking_relationships_on_from_uid_and_to_uid  (from_uid,to_uid) UNIQUE
 #  index_blocking_relationships_on_to_uid_and_from_uid  (to_uid,from_uid) UNIQUE
 #

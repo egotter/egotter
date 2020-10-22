@@ -6,6 +6,7 @@ class CreateBlockingRelationships < ActiveRecord::Migration[6.0]
 
       t.timestamp :created_at, null: false
 
+      t.index :created_at
       t.index [:from_uid, :to_uid], unique: true
       t.index [:to_uid, :from_uid], unique: true
     end

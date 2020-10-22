@@ -232,6 +232,7 @@ ActiveRecord::Schema.define(version: 2020_10_12_233339) do
     t.bigint "from_uid", null: false
     t.bigint "to_uid", null: false
     t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_blocking_relationships_on_created_at"
     t.index ["from_uid", "to_uid"], name: "index_blocking_relationships_on_from_uid_and_to_uid", unique: true
     t.index ["to_uid", "from_uid"], name: "index_blocking_relationships_on_to_uid_and_from_uid", unique: true
   end
