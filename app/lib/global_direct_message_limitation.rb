@@ -1,7 +1,7 @@
 class GlobalDirectMessageLimitation
 
   def initialize
-    @redis = Redis.client
+    @redis = self.class.redis_instance
 
     @ttl = 1.hour
     @key = "#{Rails.env}:#{self.class}:#{@ttl}"
@@ -21,5 +21,11 @@ class GlobalDirectMessageLimitation
 
   def remaining
     @redis.ttl(@key)
+  end
+
+  class << self
+    def redis_instance
+      @redis_instance ||= Redis.client
+    end
   end
 end

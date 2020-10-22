@@ -1,7 +1,7 @@
 class GlobalSendDirectMessageCountByUser
 
   def initialize
-    @redis = Redis.client
+    @redis = self.class.redis_instance
     @key = "#{Rails.env}:#{self.class}"
   end
 
@@ -40,6 +40,12 @@ class GlobalSendDirectMessageCountByUser
 
   def hard_limited?(uid)
     count(uid) >= 5
+  end
+
+  class << self
+    def redis_instance
+      @redis_instance ||= Redis.client
+    end
   end
 
   module RescueAllRedisErrors

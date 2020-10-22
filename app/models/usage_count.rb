@@ -29,7 +29,8 @@ class UsageCount
     end
 
     def instance
-      new(Redis.client)
+      @redis_instance ||= Redis.client
+      new(@redis_instance)
     end
   end
 

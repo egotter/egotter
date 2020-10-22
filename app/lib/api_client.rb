@@ -157,7 +157,6 @@ class ApiClient
     end
 
     class << self
-      # Intentionally not cached
       def redis_client
         @redis_client ||= Redis.client(ENV['TWITTER_API_REDIS_HOST'])
       end

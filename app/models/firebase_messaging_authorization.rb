@@ -1,7 +1,7 @@
 class FirebaseMessagingAuthorization
 
   def initialize
-    @redis = Redis.client
+    @redis = self.class.redis_instance
     @ttl = 59.minutes
     @key = "#{Rails.env}:#{self.class}"
   end
@@ -21,6 +21,12 @@ class FirebaseMessagingAuthorization
       end
     else
       @redis.get(@key)
+    end
+  end
+
+  class << self
+    def redis_instance
+      @redis_instance ||= Redis.client
     end
   end
 end
