@@ -62,6 +62,8 @@ class CreateAccountStatusWorker
       status = 'suspended'
     when TwitterApiStatus.blocked?(error)
       status = 'blocked'
+    when TwitterApiStatus.protected?(error)
+      status = 'protected'
     when error
       status = "error:#{error.class}"
     when api_user && api_user[:suspended]
