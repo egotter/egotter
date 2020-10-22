@@ -51,6 +51,7 @@ module ValidationConcern
     end
 
     @screen_name = @twitter_user.screen_name
+    @user = @twitter_user
     @redirect_path = timeline_path(@twitter_user, via: current_via(__method__))
     @via = params['via'].presence || current_via('render_template')
     self.sidebar_disabled = true

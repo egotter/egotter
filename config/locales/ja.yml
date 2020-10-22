@@ -57,7 +57,7 @@ ja:
         check_011: "安心で安全"
         check_012: "質問はいつでも歓迎"
     create:
-      redirect_to: "@%{user} の結果を表示します"
+      redirect_to: "@%{user} の結果へ転送します"
     usage_stats:
       name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
