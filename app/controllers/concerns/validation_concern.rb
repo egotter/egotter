@@ -164,8 +164,11 @@ module ValidationConcern
   end
 
   def blocked_search?(twitter_user)
-    blocked_user?(twitter_user.screen_name).tap do |value|
-      redirect_to profile_path(twitter_user, via: current_via(__method__)) if value
+    if blocked_user?(twitter_user.screen_name)
+      redirect_to profile_path(twitter_user, via: current_via(__method__))
+      true
+    else
+      false
     end
   rescue => e
     respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
@@ -201,12 +204,10 @@ module ValidationConcern
     return false if user_signed_in?
 
     if SearchLimitation.soft_limited?(user)
-      # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
       set_bypassed_notice_message('search_limitation_soft_limited', screen_name: user[:screen_name])
       redirect_to profile_path(screen_name: user[:screen_name], via: current_via(__method__))
 
-      message = search_limitation_soft_limited_message(user[:screen_name])
-      create_error_log(__method__, message)
+      create_error_log(__method__, 'search_limitation_soft_limited')
       true
     else
       false
