@@ -3,7 +3,7 @@ class SearchRequestValidator
     @user = user
   end
 
-  def user_requested_self_search?(screen_name)
+  def search_for_yourself?(screen_name)
     user_signed_in? && @user.uid == client.user(screen_name)[:id]
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }

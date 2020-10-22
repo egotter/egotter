@@ -9,7 +9,7 @@ module DownloadRequestConcern
     before_action(only: :download) { signed_in_user_authorized? }
     before_action(only: :download) { current_user_has_dm_permission? }
     before_action(only: :download) { valid_screen_name? }
-    before_action(only: :download) { @self_search = user_requested_self_search? }
+    before_action(only: :download) { @self_search = current_user_search_for_yourself?(params[:screen_name]) }
     before_action(only: :download) { !@self_search && !not_found_screen_name?(params[:screen_name]) && !not_found_user?(params[:screen_name]) }
     before_action(only: :download) { !@self_search && !forbidden_screen_name?(params[:screen_name]) && !forbidden_user?(params[:screen_name]) }
     before_action(only: :download) { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }

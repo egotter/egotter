@@ -457,9 +457,9 @@ describe ValidationConcern, type: :controller do
     end
   end
 
-  describe '#user_requested_self_search?' do
+  describe '#current_user_search_for_yourself?' do
     let(:screen_name) { 'screen_name' }
-    subject { controller.user_requested_self_search? }
+    subject { controller.current_user_search_for_yourself?(screen_name) }
 
     before do
       allow(controller.params).to receive(:[]).with(:screen_name).and_return(screen_name)
@@ -468,7 +468,7 @@ describe ValidationConcern, type: :controller do
     context 'user is signed in' do
       include_context 'user is signed in'
       it do
-        expect(SearchRequestValidator).to receive_message_chain(:new, :user_requested_self_search?).
+        expect(SearchRequestValidator).to receive_message_chain(:new, :search_for_yourself?).
             with(user).with(screen_name).and_return('result')
         is_expected.to eq('result')
       end

@@ -10,7 +10,7 @@ RSpec.describe SearchesController, type: :controller do
       expect(controller).to receive(:signed_in_user_authorized?)
       expect(controller).to receive(:current_user_has_dm_permission?)
       expect(controller).to receive(:valid_screen_name?)
-      expect(controller).to receive(:user_requested_self_search?)
+      expect(controller).to receive(:current_user_search_for_yourself?).with(screen_name)
       expect(controller).to receive(:not_found_screen_name?).with(screen_name)
       expect(controller).to receive(:not_found_user?).with(screen_name)
       expect(controller).to receive(:forbidden_screen_name?).with(screen_name)
@@ -24,16 +24,16 @@ RSpec.describe SearchesController, type: :controller do
       subject
     end
 
-    context 'user_requested_self_search? returns true' do
+    context 'current_user_search_for_yourself? returns true' do
       before do
-        allow(controller).to receive(:user_requested_self_search?).and_return(true)
+        allow(controller).to receive(:current_user_search_for_yourself?).with(screen_name).and_return(true)
       end
 
       it do
         expect(controller).to receive(:signed_in_user_authorized?)
         expect(controller).to receive(:current_user_has_dm_permission?)
         expect(controller).to receive(:valid_screen_name?)
-        # user_requested_self_search? is called
+        # current_user_search_for_yourself? is called
         expect(controller).not_to receive(:not_found_screen_name?).with(screen_name)
         expect(controller).not_to receive(:not_found_user?).with(screen_name)
         expect(controller).not_to receive(:forbidden_screen_name?).with(screen_name)
