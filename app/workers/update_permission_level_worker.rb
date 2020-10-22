@@ -34,7 +34,7 @@ class UpdatePermissionLevelWorker
   rescue => e
     if AccountStatus.unauthorized?(e)
       user.update!(authorized: false)
-    elsif AccountStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.too_many_requests?(e)
+    elsif TwitterApiStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.too_many_requests?(e)
     else
       logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
       notify_airbrake(e, user_id: user_id, options: options)

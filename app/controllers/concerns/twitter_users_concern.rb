@@ -17,7 +17,7 @@ module TwitterUsersConcern
   end
 
   def handle_twitter_api_error(e, screen_name)
-    if AccountStatus.not_found?(e)
+    if TwitterApiStatus.not_found?(e)
       redirect_to profile_path(screen_name: screen_name, via: current_via('not_found'))
     elsif AccountStatus.suspended?(e)
       redirect_to profile_path(screen_name: screen_name, via: current_via('suspended'))
@@ -35,7 +35,7 @@ module TwitterUsersConcern
     screen_name = request_context_client.user(uid.to_i)[:screen_name]
     build_twitter_user_by(screen_name: screen_name)
   rescue => e
-    if !AccountStatus.suspended?(e) && !AccountStatus.not_found?(e) && !AccountStatus.unauthorized?(e)
+    if !AccountStatus.suspended?(e) && !TwitterApiStatus.not_found?(e) && !AccountStatus.unauthorized?(e)
       logger.warn "#{self.class}##{action_name} in #build_twitter_user_by_uid #{e.inspect} uid=#{uid} user_id=#{current_user_id}}"
     end
 

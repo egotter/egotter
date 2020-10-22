@@ -135,7 +135,7 @@ class CreateTwitterUserRequest < ApplicationRecord
   rescue => e
     if AccountStatus.suspended?(e)
       raise HardSuspended.new("uid=#{uid}")
-    elsif AccountStatus.not_found?(e)
+    elsif TwitterApiStatus.not_found?(e)
       raise NotFound.new("uid=#{uid}")
     else
       raise

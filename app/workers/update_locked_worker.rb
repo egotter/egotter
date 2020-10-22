@@ -33,7 +33,7 @@ class UpdateLockedWorker
   rescue => e
     if AccountStatus.temporarily_locked?(e)
       user.update!(locked: true)
-    elsif AccountStatus.not_found?(e) ||
+    elsif TwitterApiStatus.not_found?(e) ||
         AccountStatus.suspended?(e) ||
         AccountStatus.too_many_requests?(e) ||
         AccountStatus.no_user_matches?(e)

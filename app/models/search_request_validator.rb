@@ -19,7 +19,7 @@ class SearchRequestValidator
     false
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
-    if AccountStatus.not_found?(e)
+    if TwitterApiStatus.not_found?(e)
       true
     else
       false

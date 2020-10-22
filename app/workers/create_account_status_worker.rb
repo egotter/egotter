@@ -37,7 +37,7 @@ class CreateAccountStatusWorker
     case
     when AccountStatus.invalid_or_expired_token?(error)
       status = 'invalid'
-    when AccountStatus.not_found?(error)
+    when TwitterApiStatus.not_found?(error)
       status = 'not_found'
     when AccountStatus.suspended?(error)
       status = 'suspended'

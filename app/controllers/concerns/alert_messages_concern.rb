@@ -50,7 +50,7 @@ module AlertMessagesConcern
     request_context_client.user(screen_name)
     false
   rescue => e
-    AccountStatus.not_found?(e)
+    TwitterApiStatus.not_found?(e)
   end
 
   def screen_name_changed_message(screen_name)

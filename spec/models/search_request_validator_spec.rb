@@ -83,7 +83,7 @@ RSpec.describe SearchRequestValidator, type: :model do
       let(:error) { RuntimeError.new }
       before { allow(client).to receive(:user).with(anything).and_raise(error) }
       it do
-        expect(AccountStatus).to receive(:not_found?).with(error)
+        expect(TwitterApiStatus).to receive(:not_found?).with(error)
         is_expected.to be_falsey
       end
     end

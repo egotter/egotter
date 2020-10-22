@@ -47,7 +47,7 @@ class ApiClient
   end
 
   def create_not_found_user(e, method, *args)
-    if AccountStatus.not_found?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
+    if TwitterApiStatus.not_found?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
       CreateNotFoundUserWorker.perform_async(args[0], location: (caller[2][/`([^']*)'/, 1] rescue ''))
     end
   end

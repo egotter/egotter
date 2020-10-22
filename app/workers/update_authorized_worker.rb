@@ -36,7 +36,7 @@ class UpdateAuthorizedWorker
   rescue => e
     if AccountStatus.unauthorized?(e)
       user.update!(authorized: false)
-    elsif AccountStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.too_many_requests?(e)
+    elsif TwitterApiStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.too_many_requests?(e)
       # Do nothing
     else
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
