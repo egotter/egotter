@@ -5,10 +5,7 @@ class TwitterUsersController < ApplicationController
   before_action { signed_in_user_authorized? }
   before_action { current_user_has_dm_permission? }
   before_action { valid_uid?(params[:uid]) }
-  before_action do
-    @self_search = user_requested_self_search_by_uid?(params[:uid])
-    logger.debug { "SearchRequestConcern #{controller_name}##{action_name} user_requested_self_search_by_uid? returns #{@self_search}" }
-  end
+  before_action { @self_search = user_requested_self_search_by_uid?(params[:uid]) }
   before_action { @twitter_user = build_twitter_user_by_uid(params[:uid]) }
   before_action { search_limitation_soft_limited?(@twitter_user) }
   before_action { !@self_search && !protected_search?(@twitter_user) }
@@ -16,13 +13,6 @@ class TwitterUsersController < ApplicationController
   before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
 
   before_action { self.access_log_disabled = true }
-
-  # TODO Remove later
-  # First access of background-update
-  def create
-    jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id)
-    render json: {uid: @twitter_user.uid, screen_name: @twitter_user.screen_name, jid: jid}
-  end
 
   # Polling access of waiting
   # Polling access of background-update

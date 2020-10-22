@@ -148,7 +148,7 @@ Rails.application.routes.draw do
   resources :searches, only: %i(create), param: :screen_name
   get 'waiting/:uid', to: 'waiting#new', as: :waiting
 
-  resources :twitter_users, only: %i(create show), param: :uid
+  resources :twitter_users, only: %i(show), param: :uid
   get 'twitter_users/:uid/changes', to: 'twitter_users#changes', as: :twitter_users_changes
 
   resources :timelines, only: %i(show), param: :screen_name
