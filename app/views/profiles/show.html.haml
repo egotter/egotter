@@ -41,7 +41,10 @@
   :javascript
     $(function() {
       var url = '#{raw api_v1_account_statuses_path(screen_name: @screen_name)}';
+      var isYourself = #{current_user.screen_name == @screen_name};
       var retryCount = 0;
+      var retryMax = 5;
+      var retryInterval = 3000;
 
       function showMessage(message) {
         ToastMessage.warn(message);
@@ -54,18 +57,18 @@
         $.get(url, {retry_count: retryCount}).done(function (res) {
           if (res['status'] === 'retry') {
             retryCount++;
-            if (retryCount >= 3) {
+            if (retryCount >= retryMax) {
               logger.warn('Retry exhausted', retryCount)
               ToastMessage.info('#{t('.retry_exhausted')}');
             } else {
               logger.log('Retry', retryCount)
-              setTimeout(fetch, 2000);
+              setTimeout(fetch, retryInterval);
             }
           } else {
             if (res['status'] === 'ok') {
               logger.log('ok', retryCount);
-              if (res['is_follower']) {
-                ToastMessage.info('#{t('.is_follower', user1: current_user.screen_name, user2: @screen_name)}');
+              if (res['message']) {
+                ToastMessage.info(res['message']);
               } else {
                 ToastMessage.clear();
               }
@@ -87,8 +90,12 @@
         });
       }
 
-      ToastMessage.info('#{t('.updating_html', user: @screen_name)}');
-      fetch();
+      if (isYourself) {
+        logger.log('The current user is target user');
+      } else {
+        ToastMessage.info('#{t('.updating_html', user: @screen_name)}');
+        fetch();
+      }
     });
 - else
   - url = profile_path(@screen_name, names: params[:names], via: current_via('require_sign_in'))

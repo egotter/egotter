@@ -1113,7 +1113,6 @@ ja:
       see: '@%{user} を見る'
       seeing: '@%{user} を見ています'
       tweets_by: '@%{user} のツイート'
-      is_follower: '@%{user1} は @%{user2} にフォローされています'
       retry_exhausted: 'プロフィールの取得に失敗しました。数分後に再度お試しください'
       sign_in_html: 'ログインすれば @%{user} の正確なステータスを取得できます。<a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>'
       updating_html: '@%{user} のステータスを更新中 <img src="/ajax-loader-blue.gif?a=1">'
@@ -2076,6 +2075,8 @@ ja:
           blocked: '@%{user} にブロックされています。'
           locked: '検索された @%{user} は一時的に凍結されています。'
           protected: '検索された @%{user} は鍵アカウントです。ログインしてから検索してください。'
+          is_follower: '@%{user1} は @%{user2} にフォローされています'
+          is_not_follower: '@%{user1} は @%{user2} にフォローされていません'
           error: '検索された @%{user} のデータ取得に失敗しました。ページを更新してみてください。'
   modal:
     welcome_modal:

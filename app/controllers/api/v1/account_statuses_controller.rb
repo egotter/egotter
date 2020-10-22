@@ -28,8 +28,15 @@ module Api
           elsif cache.protected?(screen_name)
             render json: {message: t('.protected', user: screen_name)}
           elsif cache.ok?(screen_name)
-            is_follower = view_context.current_user_follower_uids.include?(cache.uid(screen_name))
-            render json: {status: 'ok', is_follower: is_follower}
+            case cache.is_follower?(screen_name)
+            when true
+              message = t('.is_follower', user1: current_user.screen_name, user2: screen_name)
+            when false
+              message = t('.is_not_follower', user1: current_user.screen_name, user2: screen_name)
+            else
+              message = nil
+            end
+            render json: {status: 'ok', message: message}
           else
             render json: {message: t('.error', user: screen_name)}
           end

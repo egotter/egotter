@@ -3,7 +3,7 @@ class CreateAccountStatusWorker
   sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
 
   def unique_key(screen_name, options = {})
-    screen_name
+    "#{options['user_id'] || options[:user_id]}-#{screen_name}"
   end
 
   def unique_in
@@ -21,16 +21,35 @@ class CreateAccountStatusWorker
   # options:
   #   user_id
   def perform(screen_name, options = {})
-    client = User.find(options['user_id']).api_client
+    user = User.find(options['user_id'])
+    cache = AccountStatus::Cache.new
 
-    user = error = nil
+    if user.screen_name == screen_name
+      cache.write(screen_name, 'ok', user.uid, nil)
+      return
+    end
+
+    status, uid, is_follower = detect_status(user.api_client, user, screen_name)
+    cache.write(screen_name, status, uid, is_follower)
+
+  rescue => e
+    logger.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
+    logger.info e.backtrace.join("\n")
+  end
+
+  private
+
+  def detect_status(client, user, screen_name)
+    api_user = is_follower = error = nil
     begin
-      user = client.user(screen_name)
-      CreateHighPriorityTwitterDBUserWorker.perform_async([user[:id]])
+      api_user = client.user(screen_name)
+      CreateHighPriorityTwitterDBUserWorker.perform_async([api_user[:id]])
 
       client.user_timeline(screen_name, count: 1)
+
+      is_follower = client.friendship?(api_user[:id], user.uid)
     rescue => e
-      logger.info "#{self.class}##{__method__}: #{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
+      logger.info "#{self.class}##{__method__}: #{e.inspect} screen_name=#{screen_name}"
       error = e
     end
 
@@ -45,18 +64,14 @@ class CreateAccountStatusWorker
       status = 'blocked'
     when error
       status = "error:#{error.class}"
-    when user && user[:suspended]
+    when api_user && api_user[:suspended]
       status = 'locked'
-    when user && user[:protected]
+    when api_user && api_user[:protected]
       status = 'protected'
     else
       status = 'ok'
     end
 
-    AccountStatus::Cache.new.write(screen_name, status, user&.fetch(:id, nil))
-
-  rescue => e
-    logger.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    [status, api_user&.fetch(:id, nil), is_follower]
   end
 end

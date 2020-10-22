@@ -100,9 +100,10 @@ class AccountStatus
       @store.read(screen_name)
     end
 
-    def write(screen_name, status, uid)
+    def write(screen_name, status, uid, is_follower)
       @store.write(screen_name, status)
       @store.write("#{screen_name}:uid", uid)
+      @store.write("#{screen_name}:is_follower", is_follower)
     end
 
     def invalid?(screen_name)
@@ -139,6 +140,10 @@ class AccountStatus
 
     def uid(screen_name)
       @store.read("#{screen_name}:uid")&.to_i
+    end
+
+    def is_follower?(screen_name)
+      @store.read("#{screen_name}:is_follower")
     end
   end
 end
