@@ -117,6 +117,17 @@ module PathsHelper
     end.html_safe
   end
 
+  def redirect_path_for_after_waiting(screen_name)
+    case controller_path
+    when 'timelines'
+      timeline_path(screen_name: screen_name, via: current_via)
+    when 'replying'
+      replying_path(screen_name: screen_name, via: current_via)
+    else
+      raise "#{__method__} Invalid controller_path value=#{controller_path}"
+    end
+  end
+
   def sign_in_and_timeline_path(twitter_user, via:, follow: false)
     via = current_via(via)
     sign_in_path(follow: follow, via: via, redirect_path: timeline_path(twitter_user, via: via))

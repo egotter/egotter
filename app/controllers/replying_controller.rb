@@ -1,3 +1,4 @@
+# TODO Rename to ReplyingFriendsController
 class ReplyingController < ApplicationController
   include SearchRequestConcern
 

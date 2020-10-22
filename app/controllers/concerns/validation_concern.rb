@@ -105,7 +105,7 @@ module ValidationConcern
       true
     else
       CreateSearchRequestWorker.perform_async(screen_name, user_id: current_user&.id)
-      redirect_to timeline_waiting_path(screen_name: screen_name, via: current_via(__method__))
+      redirect_to timeline_waiting_path(screen_name: screen_name, redirect_path: redirect_path_for_after_waiting(screen_name), via: current_via(__method__))
       false
     end
   end

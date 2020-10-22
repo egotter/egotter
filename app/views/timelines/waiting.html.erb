@@ -9,7 +9,7 @@
 <script>
   $(function () {
     function redirectTo(force) {
-      var url = '<%= raw timeline_path(screen_name: @screen_name, via: current_via) %>';
+      var url = '<%= raw @redirect_path %>';
       window.location.replace(url + '&skip_search_request_check=' + force);
     }
 

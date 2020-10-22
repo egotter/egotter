@@ -13,7 +13,7 @@ module SearchRequestConcern
     before_action(only: :show) { current_user_has_dm_permission? }
     before_action(only: :show) { valid_screen_name? }
     before_action(only: :show) do
-      if params[:skip_search_request_check] != 'true' &&  controller_path == 'timelines'
+      if params[:skip_search_request_check] != 'true' &&  %w(timelines replying).include?(controller_path)
         search_request_cache_exists?(params[:screen_name])
       end
     end
