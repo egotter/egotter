@@ -21,18 +21,18 @@ class CreateAccountStatusWorker
   # options:
   #   user_id
   def perform(screen_name, options = {})
-    client = options['user_id'] ? User.find(options['user_id']).api_client : Bot.api_client
+    client = User.find(options['user_id']).api_client
 
     user = error = nil
     begin
       user = client.user(screen_name)
       CreateHighPriorityTwitterDBUserWorker.perform_async([user[:id]])
+
+      client.user_timeline(screen_name, count: 1)
     rescue => e
       logger.info "#{self.class}##{__method__}: #{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
       error = e
     end
-
-    cache = AccountStatus::Cache.new
 
     case
     when TwitterApiStatus.invalid_or_expired_token?(error)
@@ -41,6 +41,8 @@ class CreateAccountStatusWorker
       status = 'not_found'
     when TwitterApiStatus.suspended?(error)
       status = 'suspended'
+    when TwitterApiStatus.blocked?(error)
+      status = 'blocked'
     when error
       status = "error:#{error.class}"
     when user && user[:suspended]
@@ -51,7 +53,7 @@ class CreateAccountStatusWorker
       status = 'ok'
     end
 
-    cache.write(screen_name, status, user&.fetch(:id, nil))
+    AccountStatus::Cache.new.write(screen_name, status, user&.fetch(:id, nil))
 
   rescue => e
     logger.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"

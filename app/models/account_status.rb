@@ -117,6 +117,10 @@ class AccountStatus
       @store.read(screen_name) == 'suspended'
     end
 
+    def blocked?(screen_name)
+      @store.read(screen_name) == 'blocked'
+    end
+
     def error?(screen_name)
       @store.read(screen_name).start_with?('error:')
     end

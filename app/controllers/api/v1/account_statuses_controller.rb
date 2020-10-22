@@ -19,6 +19,8 @@ module Api
             render json: {message: t('.not_found', user: screen_name)}
           elsif cache.suspended?(screen_name)
             render json: {message: t('.suspended', user: screen_name)}
+          elsif cache.blocked?(screen_name)
+            render json: {message: t('.blocked', user: screen_name)}
           elsif cache.error?(screen_name)
             render json: {message: t('.error', user: screen_name)}
           elsif cache.locked?(screen_name)
@@ -32,7 +34,7 @@ module Api
             render json: {message: t('.error', user: screen_name)}
           end
         else
-          CreateAccountStatusWorker.perform_async(screen_name, user_id: current_user&.id)
+          CreateAccountStatusWorker.perform_async(screen_name, user_id: current_user.id)
           render json: {status: 'retry'}
         end
       end
