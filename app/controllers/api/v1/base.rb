@@ -2,6 +2,8 @@ module Api
   module V1
     class Base < ApplicationController
       include ApiRequestConcern
+      include AccountStatusesHelper
+      include UsersHelper
 
       before_action { self.access_log_disabled = true }
 
@@ -9,6 +11,7 @@ module Api
 
       def summary
         uids, size = summary_uids
+        CreateTwitterDBUserWorker.perform_async(uids, enqueued_by: current_via)
 
         # This method makes the users unique.
         users = TwitterDB::User.where_and_order_by_field(uids: uids)
@@ -25,11 +28,16 @@ module Api
             filter(params[:filter]).
             paginate
 
-        decorator = Decorator.new(paginator.users).
-            user_id(current_user_id).
-            controller_name(controller_name)
+        candidate_uids = paginator.users.map(&:uid)
+        users = TwitterDB::User.where_and_order_by_field(uids: candidate_uids)
+        CreateTwitterDBUserWorker.perform_async(candidate_uids, enqueued_by: current_via)
 
-        users, options = decorator.decorate
+        options = {}
+        options[:suspended_uids] = collect_suspended_uids(request_context_client, paginator.users.map(&:uid)) if remove_related_page?
+        options[:blocking_uids] = current_user_blocking_uids if remove_related_page?
+        options[:friend_uids] = current_user_friend_uids if unfriend_related_page?
+        options[:follower_uids] = current_user_follower_uids if unfollower_related_page?
+
         users = to_list_hash(users, params[:max_sequence].to_i + 1, options)
 
         render json: {name: controller_name, max_sequence: paginator.max_sequence, limit: paginator.limit, users: users}
@@ -50,6 +58,8 @@ module Api
         via = current_via('api_list')
         vc = view_context
 
+        follower_uids = vc.current_user_follower_uids
+
         users.map.with_index do |user, i|
           user = TwitterUserDecorator.new(user, context: options)
           {
@@ -57,7 +67,7 @@ module Api
               profile_image_url: vc.bigger_icon_url(user),
               name_with_icon: user.name_with_icon,
               status_labels: user.status_labels,
-              followed_label: vc.current_user_follower_uids.include?(user.uid) ? user.single_followed_label : nil,
+              followed_label: follower_uids.include?(user.uid) ? user.single_followed_label : nil,
               description: vc.linkify(user.description),
               statuses_count: user.delimited_statuses_count,
               friends_count: user.delimited_friends_count,
@@ -74,6 +84,18 @@ module Api
 
       def limit_for_api
         user_signed_in? && current_user.has_valid_subscription? ? Order::BASIC_PLAN_USERS_LIMIT : Order::FREE_PLAN_USERS_LIMIT
+      end
+
+      def unfriend_related_page?
+        %w(unfriends mutual_unfriends).include?(controller_name)
+      end
+
+      def unfollower_related_page?
+        %w(unfollowers mutual_unfriends).include?(controller_name)
+      end
+
+      def remove_related_page?
+        %w(unfriends unfollowers mutual_unfriends).include?(controller_name)
       end
     end
   end

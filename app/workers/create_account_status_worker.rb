@@ -45,6 +45,7 @@ class CreateAccountStatusWorker
       api_user = client.user(screen_name)
       CreateHighPriorityTwitterDBUserWorker.perform_async([api_user[:id]])
 
+      # TODO Don't fetch user_timeline if the user is protected
       client.user_timeline(screen_name, count: 1)
 
       is_follower = client.friendship?(api_user[:id], user.uid)
