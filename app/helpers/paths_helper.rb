@@ -121,8 +121,18 @@ module PathsHelper
     case controller_path
     when 'timelines'
       timeline_path(screen_name: screen_name, via: current_via)
+    when 'close_friends'
+      close_friend_path(screen_name: screen_name, via: current_via)
+    when 'unfriends'
+      unfriend_path(screen_name: screen_name, via: current_via)
+    when 'unfollowers'
+      unfollower_path(screen_name: screen_name, via: current_via)
+    when 'mutual_unfriends'
+      mutual_unfriend_path(screen_name: screen_name, via: current_via)
     when 'replying'
       replying_path(screen_name: screen_name, via: current_via)
+    when 'replied'
+      replied_path(screen_name: screen_name, via: current_via)
     else
       raise "#{__method__} Invalid controller_path value=#{controller_path}"
     end
