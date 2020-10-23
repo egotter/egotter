@@ -20,8 +20,8 @@ describe ApiRequestConcern, type: :controller do
     it do
       expect(controller).to receive(:valid_uid?)
       expect(controller).to receive(:twitter_user_persisted?)
-      expect(controller).to receive(:twitter_db_user_persisted?)
       expect(controller).to receive(:protected_search?)
+      expect(controller).to receive(:blocked_search?)
       get :new, params: {uid: user.uid}
     end
   end

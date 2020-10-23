@@ -17,7 +17,6 @@ module DownloadRequestConcern
     before_action(only: :download) { !@self_search && !protected_search?(@twitter_user) }
     before_action(only: :download) { !@self_search && !blocked_search?(@twitter_user) }
     before_action(only: :download) { twitter_user_persisted?(@twitter_user.uid) }
-    before_action(only: :download) { twitter_db_user_persisted?(@twitter_user.uid) } # Not redirected
     before_action(only: :download) { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) } # Call after #twitter_user_persisted?
   end
 

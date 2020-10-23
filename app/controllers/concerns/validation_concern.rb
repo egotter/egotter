@@ -60,6 +60,7 @@ module ValidationConcern
     false
   end
 
+  # Memo: This method should be called only with a request to the page, not a request to the API
   def twitter_db_user_persisted?(uid)
     result = ::TwitterDB::User.exists?(uid: uid)
 
