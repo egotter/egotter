@@ -23,11 +23,20 @@ class CreateSearchRequestWorker
   def perform(screen_name, options = {})
     client = options['user_id'] ? User.find(options['user_id']).api_client : Bot.api_client
 
+    user = nil
     begin
-      client.user(screen_name)
+      user = client.user(screen_name)
     rescue => e
     ensure
       SearchRequest.new.write(screen_name)
+    end
+
+    if user
+      begin
+        # Speculative execution for API requests
+        client.user(user[:id])
+      rescue => e
+      end
     end
 
   rescue => e

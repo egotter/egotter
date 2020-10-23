@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe AssembleTwitterUserWorker do
-  let(:twitter_user) {create(:twitter_user, with_relations: false)}
+  let(:twitter_user) { create(:twitter_user, with_relations: false) }
   let(:request) { create(:assemble_twitter_user_request, twitter_user: twitter_user) }
   let(:worker) { described_class.new }
 
