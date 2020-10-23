@@ -1,0 +1,19 @@
+<% id_hash = SecureRandom.urlsafe_base64(10) %>
+
+<div class="text-right">
+  <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#forbidden-reason-details-<%= id_hash %>">「アカウント凍結」の意味
+    <i class="far fa-question-circle"></i></a>
+</div>
+
+<div id="forbidden-reason-details-<%= id_hash %>" class="card collapse my-3">
+  <div class="card-body">
+    1. <strong>アカウント凍結</strong>はどういう時に起きる？<br>
+    様々な理由があります。一例として、ツイッターの利用規約に違反したり、ツイートが多すぎたり、短い時間でフォロー・フォロー解除を繰り返したり、等です。<br>
+    <br>
+    2. <strong>アカウント凍結</strong>は二度と復活しない？<br>
+    一時的な凍結であれば、そのうち復活します。完全な凍結だと、よほどのことが無い限り復活することはありません。<br>
+    <br>
+    3. えごったーでの表示とずれている？<br>
+    凍結された直後だったり、凍結と復活を繰り返していると、えごったー上での表示と一時的にずれることがあります。その時は、<span class="egotter-pink">ツイッターで見る</span>と確実です。
+  </div>
+</div>

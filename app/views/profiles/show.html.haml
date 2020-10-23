@@ -12,8 +12,8 @@
     %div= (@next_name ? link_to(t('.next', user: @next_name), profile_path(@next_name, {names: params[:names]}.merge(campaign_params('next_name'))), class: 'btn btn-outline-primary btn-sm') : '')
 
 .message-box.alert.alert-warning{style: 'display: none;'}
-.forbidden-reason.my-1{style: 'display: none;'}= t('.forbidden_reason_html', user: @screen_name)
-.not-found-reason.my-1{style: 'display: none;'}= t('.not_found_reason_html', user: @screen_name)
+.forbidden-reason.my-1{style: 'display: none;'}= render(template: 'messages/forbidden_reason')
+.not-found-reason.my-1{style: 'display: none;'}= render(template: 'messages/not_found_reason')
 
 .mt-3.mb-1= render(partial: 'see_on_twitter_button', locals: {screen_name: @screen_name})
 = render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top})
