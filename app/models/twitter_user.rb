@@ -2,21 +2,25 @@
 #
 # Table name: twitter_users
 #
-#  id               :integer          not null, primary key
-#  user_id          :integer          default(-1), not null
-#  uid              :bigint(8)        not null
-#  screen_name      :string(191)      not null
-#  friends_size     :integer          default(-1), not null
-#  followers_size   :integer          default(-1), not null
-#  friends_count    :integer          default(-1), not null
-#  followers_count  :integer          default(-1), not null
-#  unfriends_size   :integer
-#  unfollowers_size :integer
-#  top_follower_uid :bigint(8)
-#  created_by       :string(191)      default(""), not null
-#  assembled_at     :datetime
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
+#  id                       :integer          not null, primary key
+#  user_id                  :integer          default(-1), not null
+#  uid                      :bigint(8)        not null
+#  screen_name              :string(191)      not null
+#  friends_size             :integer          default(-1), not null
+#  followers_size           :integer          default(-1), not null
+#  friends_count            :integer          default(-1), not null
+#  followers_count          :integer          default(-1), not null
+#  unfriends_size           :integer
+#  unfollowers_size         :integer
+#  mutual_unfriends_size    :integer
+#  one_sided_friends_size   :integer
+#  one_sided_followers_size :integer
+#  mutual_friends           :integer
+#  top_follower_uid         :bigint(8)
+#  created_by               :string(191)      default(""), not null
+#  assembled_at             :datetime
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
 #
 # Indexes
 #
