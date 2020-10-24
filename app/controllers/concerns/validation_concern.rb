@@ -176,12 +176,11 @@ module ValidationConcern
   end
 
   def blocked_search?(twitter_user)
-    if blocked_user?(twitter_user.screen_name)
-      redirect_to profile_path(twitter_user, via: current_via(__method__))
-      true
-    else
-      false
-    end
+    return false if search_yourself?(twitter_user)
+    return false unless blocked_user?(twitter_user.screen_name)
+
+    redirect_to profile_path(twitter_user, via: current_via(__method__))
+    true
   rescue => e
     respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
     false
