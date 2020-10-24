@@ -22,7 +22,7 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def status_interval_text
-    (value = status_interval_avg_in_words) == 0 ? '0' : (value || t('twitter.profile.counting'))
+    (value = status_interval_avg_in_words) == 0 ? '0' : (value || I18n.t('twitter.profile.counting'))
   end
 
   def percent_follow_back_rate
@@ -30,7 +30,7 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def percent_follow_back_rate_text
-    percent_follow_back_rate || t('twitter.profile.counting')
+    percent_follow_back_rate || I18n.t('twitter.profile.counting')
   end
 
   def reverse_percent_follow_back_rate
@@ -38,7 +38,7 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def reverse_percent_follow_back_rate_text
-    reverse_percent_follow_back_rate || t('twitter.profile.counting')
+    reverse_percent_follow_back_rate || I18n.t('twitter.profile.counting')
   end
 
   def account_created_at?
