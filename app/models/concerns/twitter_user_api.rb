@@ -23,14 +23,9 @@ module TwitterUserApi
     (mutual_friendships.size.to_f / (friend_uids | follower_uids).size) rescue 0.0
   end
 
+  # TODO Remove later
   def status_interval_avg
-    tweets = status_tweets.map { |t| t.tweeted_at.to_i }.sort_by { |t| -t }.take(100)
-    tweets = tweets.slice(0, tweets.size - 1) if tweets.size.odd?
-    return 0.0 if tweets.empty?
-    times = tweets.each_slice(2).map { |t1, t2| t1 - t2 }
-    times.sum / times.size
-  rescue
-    0.0
+    statuses_interval || calc_statuses_interval
   end
 
   def follow_back_rate

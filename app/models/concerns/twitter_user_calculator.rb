@@ -55,6 +55,16 @@ module TwitterUserCalculator
     end
   end
 
+  def calc_statuses_interval
+    tweets = status_tweets.map { |t| t.tweeted_at.to_i }.sort_by { |t| -t }.take(100)
+    tweets = tweets.slice(0, tweets.size - 1) if tweets.size.odd?
+    return 0.0 if tweets.empty?
+    times = tweets.each_slice(2).map { |t1, t2| t1 - t2 }
+    times.sum / times.size
+  rescue
+    0.0
+  end
+
   def calc_one_sided_friend_uids
     friend_uids - follower_uids
   end

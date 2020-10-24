@@ -10,6 +10,7 @@
 #  followers_size           :integer          default(-1), not null
 #  friends_count            :integer          default(-1), not null
 #  followers_count          :integer          default(-1), not null
+#  statuses_interval        :integer
 #  unfriends_size           :integer
 #  unfollowers_size         :integer
 #  mutual_unfriends_size    :integer

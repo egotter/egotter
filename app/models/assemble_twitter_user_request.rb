@@ -72,6 +72,8 @@ class AssembleTwitterUserRequest < ApplicationRecord
       logger.info e.backtrace.join("\n")
     end
 
+    twitter_user.update(statuses_interval: twitter_user.calc_statuses_interval)
+
     twitter_user.update(assembled_at: Time.zone.now)
 
     DeleteDisusedRecordsWorker.perform_async(twitter_user.uid)
