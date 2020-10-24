@@ -15,7 +15,7 @@
 #  mutual_unfriends_size    :integer
 #  one_sided_friends_size   :integer
 #  one_sided_followers_size :integer
-#  mutual_friends           :integer
+#  mutual_friends_size      :integer
 #  top_follower_uid         :bigint(8)
 #  created_by               :string(191)      default(""), not null
 #  assembled_at             :datetime

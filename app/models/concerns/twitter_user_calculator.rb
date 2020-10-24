@@ -38,10 +38,20 @@ module TwitterUserCalculator
   end
 
   def update_counter_cache_for(klass, count)
-    if klass == S3::Unfriendship
+    if klass == S3::OneSidedFriendship
+      update(one_sided_friends_size: count)
+    elsif klass == S3::OneSidedFollowership
+      update(one_sided_followers_size: count)
+    elsif klass == S3::MutualFriendship
+      update(mutual_friends_size: count)
+    elsif klass == S3::Unfriendship
       update(unfriends_size: count)
     elsif klass == S3::Unfollowership
       update(unfollowers_size: count)
+    elsif klass == S3::MutualUnfriendship
+      update(mutual_unfriends_size: count)
+    else
+      # Do nothing
     end
   end
 

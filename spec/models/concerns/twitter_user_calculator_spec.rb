@@ -38,8 +38,12 @@ RSpec.describe TwitterUserCalculator do
     subject { twitter_user.update_counter_cache_for(klass, 'value') }
 
     [
+        [S3::OneSidedFriendship, :one_sided_friends_size],
+        [S3::OneSidedFollowership, :one_sided_followers_size],
+        [S3::MutualFriendship, :mutual_friends_size],
         [S3::Unfriendship, :unfriends_size],
         [S3::Unfollowership, :unfollowers_size],
+        [S3::MutualUnfriendship, :mutual_unfriends_size],
     ].each do |klass_value, key_value|
       context "#{klass_value} is passed" do
         let(:klass) { klass_value }

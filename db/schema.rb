@@ -1383,7 +1383,7 @@ ActiveRecord::Schema.define(version: 2020_10_12_233339) do
     t.integer "mutual_unfriends_size"
     t.integer "one_sided_friends_size"
     t.integer "one_sided_followers_size"
-    t.integer "mutual_friends"
+    t.integer "mutual_friends_size"
     t.bigint "top_follower_uid"
     t.string "created_by", default: "", null: false
     t.datetime "assembled_at"

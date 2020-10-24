@@ -13,7 +13,7 @@ class CreateTwitterUsers < ActiveRecord::Migration[4.2]
       t.integer  :mutual_unfriends_size,    null: true
       t.integer  :one_sided_friends_size,   null: true
       t.integer  :one_sided_followers_size, null: true
-      t.integer  :mutual_friends,           null: true
+      t.integer  :mutual_friends_size,      null: true
       t.bigint   :top_follower_uid,         null: true
       t.string   :created_by,               null: false, default: ''
       t.datetime :assembled_at,             null: true
