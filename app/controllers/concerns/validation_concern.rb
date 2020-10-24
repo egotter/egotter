@@ -112,11 +112,11 @@ module ValidationConcern
   end
 
   def current_user_search_for_yourself?(screen_name)
-    user_signed_in? && SearchRequestValidator.new(current_user).search_for_yourself?(screen_name)
+    user_signed_in? && search_request_validator.search_for_yourself?(screen_name)
   end
 
   def user_requested_self_search_by_uid?(uid)
-    user_signed_in? && SearchRequestValidator.new(current_user).user_requested_self_search_by_uid?(uid)
+    user_signed_in? && search_request_validator.user_requested_self_search_by_uid?(uid)
   end
 
   def valid_screen_name?(screen_name = nil)
@@ -142,7 +142,7 @@ module ValidationConcern
   # It is possible not to call Twitter API in this method only when accessing from crawlers,
   # but since the same Twitter API is called in other places, it's a bit meaningless.
   def not_found_user?(screen_name)
-    if SearchRequestValidator.new(current_user).not_found_user?(screen_name)
+    if search_request_validator.not_found_user?(screen_name)
       redirect_to profile_path(screen_name: screen_name, via: current_via(__method__))
       true
     else
@@ -163,7 +163,7 @@ module ValidationConcern
   # but since the same Twitter API is called in other places, it's a bit meaningless.
   # NOTE: The temporarily suspended users ( user[:suspended] == true ) are not checked.
   def forbidden_user?(screen_name)
-    if SearchRequestValidator.new(current_user).forbidden_user?(screen_name)
+    if search_request_validator.forbidden_user?(screen_name)
       redirect_to profile_path(screen_name: screen_name, via: current_via(__method__))
       true
     else
@@ -172,7 +172,7 @@ module ValidationConcern
   end
 
   def blocked_user?(screen_name)
-    SearchRequestValidator.new(current_user).blocked_user?(screen_name)
+    search_request_validator.blocked_user?(screen_name)
   end
 
   def blocked_search?(twitter_user)
@@ -188,11 +188,11 @@ module ValidationConcern
   end
 
   def protected_user?(screen_name)
-    SearchRequestValidator.new(current_user).protected_user?(screen_name)
+    search_request_validator.protected_user?(screen_name)
   end
 
   def timeline_readable?(screen_name)
-    SearchRequestValidator.new(current_user).timeline_readable?(screen_name)
+    search_request_validator.timeline_readable?(screen_name)
   end
   private :timeline_readable?
 
@@ -278,4 +278,9 @@ module ValidationConcern
     respond_with_error(:bad_request, t('after_sign_in.has_already_purchased_html', url: settings_path))
     true
   end
+
+  def search_request_validator
+    @search_request_validator ||= SearchRequestValidator.new(request_context_client, current_user)
+  end
+  private :search_request_validator
 end

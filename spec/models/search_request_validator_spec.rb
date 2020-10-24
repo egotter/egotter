@@ -1,13 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe SearchRequestValidator, type: :model do
-  let(:instance) { described_class.new(user) }
+  let(:instance) { described_class.new(client, user) }
   let(:user) { nil }
   let(:client) { double('client') }
-
-  before do
-    allow(instance).to receive(:client).and_return(client)
-  end
 
   shared_context 'user is signed in' do
     let(:user) { build(:user) }
@@ -23,20 +19,15 @@ RSpec.describe SearchRequestValidator, type: :model do
 
     context 'user is signed in' do
       include_context 'user is signed in'
+      before { allow(client).to receive(:user).with(screen_name).and_return(api_user) }
 
-      context 'signed-in user is searching himself' do
-        before do
-          allow(instance).to receive_message_chain(:client, :user).
-              with(no_args).with(screen_name).and_return(id: user.uid)
-        end
+      context 'signed-in user is searching for himself' do
+        let(:api_user) { {id: user.uid} }
         it { is_expected.to be_truthy }
       end
 
-      context 'signed-in user is not searching himself' do
-        before do
-          allow(instance).to receive_message_chain(:client, :user).
-              with(no_args).with(screen_name).and_return(id: nil)
-        end
+      context 'signed-in user is not searching for himself' do
+        let(:api_user) { {id: user.uid + 1} }
         it { is_expected.to be_falsey }
       end
     end
@@ -48,25 +39,26 @@ RSpec.describe SearchRequestValidator, type: :model do
   end
 
   describe '#user_requested_self_search_by_uid?' do
-    # This value is passed from params, so it's String
-    let(:uid) { user&.uid.to_s }
     subject { instance.user_requested_self_search_by_uid?(uid) }
 
     context 'user is signed in' do
       include_context 'user is signed in'
 
-      context 'signed-in user is searching himself' do
+      context 'signed-in user is searching for himself' do
+        # This value is passed from params, so it's String
+        let(:uid) { user.uid.to_s }
         it { is_expected.to be_truthy }
       end
 
-      context 'signed-in user is not searching himself' do
-        let(:uid) { '1' }
+      context 'signed-in user is not searching for himself' do
+        let(:uid) { (user.uid + 1).to_s }
         it { is_expected.to be_falsey }
       end
     end
 
     context 'user is not signed in' do
       include_context 'user is not signed in'
+      let(:uid) { 1 }
       it { is_expected.to be_falsey }
     end
   end
@@ -74,14 +66,12 @@ RSpec.describe SearchRequestValidator, type: :model do
   describe 'not_found_user?' do
     let(:screen_name) { 'name' }
     subject { instance.not_found_user?(screen_name) }
-    it do
-      expect(client).to receive(:user).with(screen_name)
-      is_expected.to be_falsey
-    end
+    before { allow(client).to receive(:user).with(screen_name) }
+    it { is_expected.to be_falsey }
 
     context 'exception is raised' do
       let(:error) { RuntimeError.new }
-      before { allow(client).to receive(:user).with(anything).and_raise(error) }
+      before { allow(client).to receive(:user).with(screen_name).and_raise(error) }
       it do
         expect(TwitterApiStatus).to receive(:not_found?).with(error)
         is_expected.to be_falsey
@@ -93,14 +83,12 @@ RSpec.describe SearchRequestValidator, type: :model do
     let(:screen_name) { 'name' }
     let(:response_user) { {suspended: false} }
     subject { instance.forbidden_user?(screen_name) }
-    it do
-      expect(client).to receive(:user).with(screen_name).and_return(response_user)
-      is_expected.to be_falsey
-    end
+    before {allow(client).to receive(:user).with(screen_name).and_return(response_user)  }
+    it { is_expected.to be_falsey }
 
     context 'exception is raised' do
       let(:error) { RuntimeError.new }
-      before { allow(client).to receive(:user).with(anything).and_raise(error) }
+      before { allow(client).to receive(:user).with(screen_name).and_raise(error) }
       it do
         expect(TwitterApiStatus).to receive(:suspended?).with(error)
         is_expected.to be_falsey
@@ -149,7 +137,7 @@ RSpec.describe SearchRequestValidator, type: :model do
   describe '#timeline_readable?' do
     include_context 'user is not signed in'
     subject { instance.timeline_readable?('name') }
-    before { allow(instance).to receive_message_chain(:client, :user_timeline).with(no_args).with('name', count: 1).and_return('result') }
+    before { allow(client).to receive(:user_timeline).with('name', count: 1).and_return('result') }
     it { is_expected.to be_truthy }
   end
 end

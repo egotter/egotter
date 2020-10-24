@@ -1,10 +1,11 @@
 class SearchRequestValidator
-  def initialize(user)
+  def initialize(client, user)
+    @client = client
     @user = user
   end
 
   def search_for_yourself?(screen_name)
-    user_signed_in? && @user.uid == client.user(screen_name)[:id]
+    user_signed_in? && @user.uid == @client.user(screen_name)[:id]
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     false
@@ -15,32 +16,23 @@ class SearchRequestValidator
   end
 
   def not_found_user?(screen_name)
-    client.user(screen_name)
+    @client.user(screen_name)
     false
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
-    if TwitterApiStatus.not_found?(e)
-      true
-    else
-      false
-    end
+    TwitterApiStatus.not_found?(e)
   end
 
   def forbidden_user?(screen_name)
-    user = client.user(screen_name)
-    user[:suspended]
+    @client.user(screen_name)[:suspended]
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
-    if TwitterApiStatus.suspended?(e)
-      true
-    else
-      false
-    end
+    TwitterApiStatus.suspended?(e)
   end
 
   def blocked_user?(screen_name)
     if user_signed_in?
-      client.user_timeline(screen_name, count: 1)
+      @client.user_timeline(screen_name, count: 1)
       false
     else
       false
@@ -51,15 +43,14 @@ class SearchRequestValidator
   end
 
   def protected_user?(screen_name)
-    user = client.user(screen_name)
-    user[:protected]
+    @client.user(screen_name)[:protected]
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     TwitterApiStatus.protected?(e)
   end
 
   def timeline_readable?(screen_name)
-    client.user_timeline(screen_name, count: 1)
+    @client.user_timeline(screen_name, count: 1)
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     !TwitterApiStatus.protected?(e)
@@ -69,10 +60,6 @@ class SearchRequestValidator
 
   def user_signed_in?
     @user
-  end
-
-  def client
-    @client ||= (@user ? @user.api_client : Bot.api_client)
   end
 
   def logger

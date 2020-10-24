@@ -44,6 +44,17 @@ module TwitterUserUtils
     interval.seconds.ago < created_at
   end
 
+  def to_summary
+    {
+        one_sided_friends: one_sided_friendships.size,
+        one_sided_followers: one_sided_followerships.size,
+        mutual_friends: mutual_friendships.size,
+        unfriends: unfriends_size,
+        unfollowers: unfollowers_size,
+        mutual_unfriends: mutual_unfriendships.size,
+    }
+  end
+
   private
 
   def fetch_friend_uids

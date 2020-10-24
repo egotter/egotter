@@ -6,6 +6,12 @@ describe ValidationConcern, type: :controller do
   end
 
   let(:user) { create(:user) }
+  let(:client) { double('client') }
+  let(:search_request_validator) { SearchRequestValidator.new(client, user) }
+
+  before do
+    allow(controller).to receive(:search_request_validator).and_return(search_request_validator)
+  end
 
   shared_context 'user is signed in' do
     before do
@@ -15,6 +21,7 @@ describe ValidationConcern, type: :controller do
   end
 
   shared_context 'user is not signed in' do
+    let(:user) { nil }
     before do
       allow(controller).to receive(:user_signed_in?).and_return(false)
       allow(controller).to receive(:current_user).and_return(nil)
@@ -224,8 +231,7 @@ describe ValidationConcern, type: :controller do
     let(:screen_name) { 'screen_name' }
     subject { controller.not_found_user?(screen_name) }
     before do
-      allow(SearchRequestValidator).to receive_message_chain(:new, :not_found_user?).
-          with(anything).with(screen_name).and_return(found)
+      allow(search_request_validator).to receive(:not_found_user?).with(screen_name).and_return(found)
     end
 
     context 'screen_name is found' do
@@ -267,8 +273,7 @@ describe ValidationConcern, type: :controller do
     let(:screen_name) { 'screen_name' }
     subject { controller.forbidden_user?(screen_name) }
     before do
-      allow(SearchRequestValidator).to receive_message_chain(:new, :forbidden_user?).
-          with(anything).with(screen_name).and_return(found)
+      allow(search_request_validator).to receive(:forbidden_user?).with(screen_name).and_return(found)
     end
 
     context 'screen_name is forbidden' do
@@ -332,8 +337,7 @@ describe ValidationConcern, type: :controller do
     context 'user is signed in' do
       include_context 'user is signed in'
       it do
-        expect(SearchRequestValidator).to receive_message_chain(:new, :protected_user?).
-            with(user).with(screen_name).and_return('result')
+        expect(search_request_validator).to receive(:protected_user?).with(screen_name).and_return('result')
         is_expected.to eq('result')
       end
     end
@@ -341,8 +345,7 @@ describe ValidationConcern, type: :controller do
     context 'user is not signed in' do
       include_context 'user is not signed in'
       it do
-        expect(SearchRequestValidator).to receive_message_chain(:new, :protected_user?).
-            with(nil).with(screen_name).and_return('result')
+        expect(search_request_validator).to receive(:protected_user?).with(screen_name).and_return('result')
         is_expected.to eq('result')
       end
     end
@@ -399,8 +402,7 @@ describe ValidationConcern, type: :controller do
     context 'user is signed in' do
       include_context 'user is signed in'
       it do
-        expect(SearchRequestValidator).to receive_message_chain(:new, :blocked_user?).
-            with(user).with(screen_name).and_return('result')
+        expect(search_request_validator).to receive(:blocked_user?).with(screen_name).and_return('result')
         is_expected.to eq('result')
       end
     end
@@ -408,8 +410,7 @@ describe ValidationConcern, type: :controller do
     context 'user is not signed in' do
       include_context 'user is not signed in'
       it do
-        expect(SearchRequestValidator).to receive_message_chain(:new, :blocked_user?).
-            with(nil).with(screen_name).and_return('result')
+        expect(search_request_validator).to receive(:blocked_user?).with(screen_name).and_return('result')
         is_expected.to eq('result')
       end
     end
@@ -468,8 +469,7 @@ describe ValidationConcern, type: :controller do
     context 'user is signed in' do
       include_context 'user is signed in'
       it do
-        expect(SearchRequestValidator).to receive_message_chain(:new, :search_for_yourself?).
-            with(user).with(screen_name).and_return('result')
+        expect(search_request_validator).to receive(:search_for_yourself?).with(screen_name).and_return('result')
         is_expected.to eq('result')
       end
     end
@@ -492,8 +492,7 @@ describe ValidationConcern, type: :controller do
     context 'user is signed in' do
       include_context 'user is signed in'
       it do
-        expect(SearchRequestValidator).to receive_message_chain(:new, :user_requested_self_search_by_uid?).
-            with(user).with(uid).and_return('result')
+        expect(search_request_validator).to receive(:user_requested_self_search_by_uid?).with(uid).and_return('result')
         is_expected.to eq('result')
       end
     end
