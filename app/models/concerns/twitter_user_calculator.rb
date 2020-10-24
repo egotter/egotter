@@ -55,6 +55,24 @@ module TwitterUserCalculator
     end
   end
 
+  def calc_follow_back_rate
+    numerator = mutual_friendships.size
+    # Use #followers_count instead of #follower_uids.size to reduce calls to the external API
+    denominator = followers_count
+    (numerator == 0 || denominator == 0) ? 0.0 : numerator.to_f / denominator
+  rescue
+    0.0
+  end
+
+  def calc_reverse_follow_back_rate
+    numerator = mutual_friendships.size
+    # Use #friends_count instead of #friend_uids.size to reduce calls to the external API
+    denominator = friends_count
+    (numerator == 0 || denominator == 0) ? 0.0 : numerator.to_f / denominator
+  rescue
+    0.0
+  end
+
   def calc_statuses_interval
     tweets = status_tweets.map { |t| t.tweeted_at.to_i }.sort_by { |t| -t }.take(100)
     tweets = tweets.slice(0, tweets.size - 1) if tweets.size.odd?

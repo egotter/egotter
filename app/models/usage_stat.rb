@@ -49,6 +49,7 @@ class UsageStat < ApplicationRecord
     end
   end
 
+  # TODO Cache data
   def friends_stat
     twitter_user = TwitterUser.latest_by(uid: uid)
     friend_uids = twitter_user.friend_uids
@@ -72,6 +73,7 @@ class UsageStat < ApplicationRecord
     Hash.new(0)
   end
 
+  # TODO Cache data
   def tweets_stat
     twitter_user = TwitterUser.latest_by(uid: uid)
     tweets = twitter_user.status_tweets

@@ -28,21 +28,13 @@ module TwitterUserApi
     statuses_interval || calc_statuses_interval
   end
 
+  # TODO Remove later
   def follow_back_rate
-    numerator = mutual_friendships.size
-    # Use #followers_count instead of #follower_uids.size to reduce calls to the external API
-    denominator = followers_count
-    (numerator == 0 || denominator == 0) ? 0.0 : numerator.to_f / denominator
-  rescue
-    0.0
+    send(:[], :follow_back_rate) || calc_follow_back_rate
   end
 
+  # TODO Remove later
   def reverse_follow_back_rate
-    numerator = mutual_friendships.size
-    # Use #friends_count instead of #friend_uids.size to reduce calls to the external API
-    denominator = friends_count
-    (numerator == 0 || denominator == 0) ? 0.0 : numerator.to_f / denominator
-  rescue
-    0.0
+    send(:[], :reverse_follow_back_rate) || calc_reverse_follow_back_rate
   end
 end

@@ -11,6 +11,8 @@
 #  friends_count            :integer          default(-1), not null
 #  followers_count          :integer          default(-1), not null
 #  statuses_interval        :integer
+#  follow_back_rate         :float(24)
+#  reverse_follow_back_rate :float(24)
 #  unfriends_size           :integer
 #  unfollowers_size         :integer
 #  mutual_unfriends_size    :integer
