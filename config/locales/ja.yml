@@ -616,6 +616,7 @@ ja:
       report_spam: "スパム報告する"
       updated_at: '最終更新：%{text}'
       profile_details: 'プロフィール詳細'
+      counting: '集計中'
       labels:
         suspended: "垢消し"
         blocked: "ブロック中"
@@ -626,7 +627,6 @@ ja:
     profile_body:
       birthday: '%{date} からツイッターを使っています'
       statuses: 'ツイート'
-      unknown_value: '集計中'
       status_interval_avg: 'ツイート間隔'
       friends: 'フォロー'
       followers: 'フォロワー'

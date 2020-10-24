@@ -4,7 +4,7 @@
 
 <% if user.url? %>
   <div class="small my-1">
-    <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url.remove(/^https?:\/\//).truncate(30), user.url, style: 'word-break: break-all;', target: '_blank', rel: 'nofollow') %>
+    <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url_label, user.url, style: 'word-break: break-all;', target: '_blank', rel: 'nofollow') %>
   </div>
 <% end %>
 
@@ -24,7 +24,7 @@
   </div>
   <div class="col-6 mb-3 small">
     <%= link_to usage_stat_path(user, via: via) do %>
-      <strong class="text-body"><%= (value = user.status_interval_avg_in_words) == 0 ? '0' : (value || t('.unknown_value')) %></strong>
+      <strong class="text-body"><%= user.status_interval_text %></strong>
       <br class="d-block d-md-none">
       <span class="text-muted small"><%= t('.status_interval_avg') %></span>
     <% end %>
@@ -38,7 +38,7 @@
   </div>
   <div class="col-6 mb-3 small">
     <%= link_to usage_stat_path(user, via: via) do %>
-      <strong class="text-body"><%= user.reverse_percent_follow_back_rate || t('.unknown_value') %></strong>
+      <strong class="text-body"><%= user.reverse_percent_follow_back_rate_text %></strong>
       <br class="d-block d-md-none">
       <span class="text-muted small"><%= t('.reverse_follow_back_rate') %></span>
     <% end %>
@@ -52,7 +52,7 @@
   </div>
   <div class="col-6 small">
     <%= link_to usage_stat_path(user, via: via) do %>
-      <strong class="text-body"><%= user.percent_follow_back_rate || t('.unknown_value') %></strong>
+      <strong class="text-body"><%= user.percent_follow_back_rate_text %></strong>
       <br class="d-block d-md-none">
       <span class="text-muted small"><%= t('.follow_back_rate') %></span>
     <% end %>

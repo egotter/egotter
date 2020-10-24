@@ -21,12 +21,24 @@ class TwitterUserDecorator < ApplicationDecorator
     end
   end
 
+  def status_interval_text
+    (value = status_interval_avg_in_words) == 0 ? '0' : (value || t('twitter.profile.counting'))
+  end
+
   def percent_follow_back_rate
     h.number_to_percentage(follow_back_rate * 100, precision: 1) rescue nil
   end
 
+  def percent_follow_back_rate_text
+    percent_follow_back_rate || t('twitter.profile.counting')
+  end
+
   def reverse_percent_follow_back_rate
     h.number_to_percentage(reverse_follow_back_rate * 100, precision: 1) rescue nil
+  end
+
+  def reverse_percent_follow_back_rate_text
+    reverse_percent_follow_back_rate || t('twitter.profile.counting')
   end
 
   def account_created_at?
@@ -51,6 +63,10 @@ class TwitterUserDecorator < ApplicationDecorator
 
   def profile_icon_url_for(request)
     profile_image_url_https.remove('_normal')
+  end
+
+  def url_label
+    url.remove(/^https?:\/\//).truncate(30)
   end
 
   def profile_banner_url?
