@@ -20,14 +20,14 @@ namespace :periodic_tweets do
 
     egotter_follower_uids = EgotterFollower.where(uid: users.map(&:uid)).pluck(:uid)
     users.select! { |user| egotter_follower_uids.include?(user.uid) }
-    puts "users=#{users.size} egotter_followers=#{egotter_follower_uids.size}"
+    puts "users=#{users.size} is_follower=#{egotter_follower_uids.size}"
 
     twitter_users = TwitterUser.where(created_at: 3.days.ago..Time.zone.now, uid: users.map(&:uid)).order(followers_count: :desc).to_a.uniq(&:uid)
     users.select! do |user|
       twitter_user = twitter_users.find { |twitter_user| twitter_user.uid == user.uid }
       twitter_user && twitter_user.followers_count > 1000
     end
-    puts "users=#{users.size} twitter_users=#{twitter_users.size} followers=#{twitter_users.map(&:followers_count).sum}"
+    puts "users=#{users.size} twitter_users.size=#{twitter_users.size} followers_count.sum=#{twitter_users.map(&:followers_count).sum}"
 
     puts "user_ids=#{users.map(&:id)}"
     retweeted = 0
