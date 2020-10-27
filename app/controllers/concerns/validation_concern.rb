@@ -66,9 +66,9 @@ module ValidationConcern
 
     if !from_crawler? && user_signed_in?
       if result
-        CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
+        CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, force_update: current_user.uid == uid, enqueued_by: current_via(__method__))
       else
-        CreateHighPriorityTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
+        CreateHighPriorityTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, force_update: current_user.uid == uid, enqueued_by: current_via(__method__))
       end
     end
 

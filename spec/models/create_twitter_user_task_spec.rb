@@ -11,19 +11,9 @@ RSpec.describe CreateTwitterUserTask, type: :model do
     subject { task.start!(context) }
 
     it do
-      expect(task).to receive(:update_target_user).with(request)
       expect(request).to receive(:perform!).with(context).and_return(twitter_user)
       expect(request).to receive(:finished!)
       expect(task).to receive(:update_friends_and_followers).with(twitter_user)
-      subject
-    end
-  end
-
-  describe '#update_target_user' do
-    subject { task.send(:update_target_user, request) }
-    it do
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).
-          with([request.uid], user_id: request.user_id, force_update: true, enqueued_by: instance_of(String))
       subject
     end
   end
