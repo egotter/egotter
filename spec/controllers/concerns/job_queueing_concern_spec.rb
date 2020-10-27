@@ -24,4 +24,20 @@ RSpec.describe JobQueueingConcern do
       is_expected.to eq('jid')
     end
   end
+
+  describe '#enqueue_assemble_twitter_user' do
+    let(:user) { create(:user) }
+    let(:twitter_user) { create(:twitter_user) }
+    subject { instance.enqueue_assemble_twitter_user(twitter_user) }
+    before do
+      allow(instance).to receive(:from_crawler?)
+      allow(instance).to receive(:user_signed_in?).and_return(true)
+      allow(instance).to receive(:current_user).and_return(user)
+      allow(instance).to receive(:controller_name).and_return('name')
+    end
+    it do
+      expect(AssembleTwitterUserWorker).to receive(:perform_async).with(any_args)
+      subject
+    end
+  end
 end

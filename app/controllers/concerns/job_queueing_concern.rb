@@ -34,18 +34,29 @@ module JobQueueingConcern
     end
 
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} uid=#{uid} user_id=#{user_id} requested_by=#{controller_name}"
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} uid=#{uid} user_id=#{user_id} controller_name=#{controller_name}"
   end
 
+  # TODO Update the data as priority if the user searches for yourself
   def enqueue_assemble_twitter_user(twitter_user)
+    return if twitter_user.assembled_at.present?
     return if from_crawler?
     return unless user_signed_in?
 
-    if twitter_user.assembled_at.blank?
-      request = AssembleTwitterUserRequest.create(twitter_user: twitter_user)
-      debug_info = twitter_user.attributes.slice('id', 'friends_count', 'followers_count')
-      AssembleTwitterUserWorker.perform_async(request.id, requested_by: controller_name, debug_info: debug_info)
-    end
+    request = AssembleTwitterUserRequest.create(twitter_user: twitter_user)
+
+    debug_info = {
+        user_id: current_user.id,
+        twitter_user_id: twitter_user.id,
+        uid: twitter_user.uid,
+        friends_count: twitter_user.friends_count,
+        followers_count: twitter_user.followers_count,
+        created_at: twitter_user.created_at,
+    }
+
+    AssembleTwitterUserWorker.perform_async(request.id, requested_by: controller_name, debug_info: debug_info)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} twitter_user=#{twitter_user.inspect} controller_name=#{controller_name}"
   end
 
   def enqueue_update_authorized
