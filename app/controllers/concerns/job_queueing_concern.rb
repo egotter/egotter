@@ -18,7 +18,7 @@ module JobQueueingConcern
         ahoy_visit_id: current_visit&.id)
 
     debug_info = {
-        requested_by: controller_name,
+        search_for_yourself: current_user&.uid == uid,
         controller: controller_name,
         action: action_name,
         user_id: user_id,
@@ -47,6 +47,7 @@ module JobQueueingConcern
 
     debug_info = {
         user_id: current_user.id,
+        search_for_yourself: current_user.uid == twitter_user.uid,
         twitter_user_id: twitter_user.id,
         uid: twitter_user.uid,
         friends_count: twitter_user.friends_count,
