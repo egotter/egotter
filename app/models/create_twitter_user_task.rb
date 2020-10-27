@@ -35,7 +35,6 @@ class CreateTwitterUserTask
 
   def update_friends_and_followers(twitter_user)
     uids = ([twitter_user.uid] + twitter_user.friend_uids + twitter_user.follower_uids).uniq
-    options = {user_id: request.user_id, request_id: request.id, enqueued_by: "#{self.class}##{__method__}"}
-    CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, options)
+    CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: request.user_id, request_id: request.id, enqueued_by: "#{self.class}##{__method__}")
   end
 end

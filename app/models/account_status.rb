@@ -102,7 +102,7 @@ class AccountStatus
 
     def write(screen_name, status, uid, is_follower)
       @store.write(screen_name, status)
-      @store.write("#{screen_name}:uid", uid)
+      @store.write("#{screen_name}:uid", uid) if uid
       @store.write("#{screen_name}:is_follower", is_follower)
     end
 

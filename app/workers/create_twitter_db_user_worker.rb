@@ -31,8 +31,9 @@ class CreateTwitterDBUserWorker
       logger.warn "the size of uids is greater than 100 options=#{options.inspect}"
     end
 
-    client = pick_client(options)
-    do_perform(client, uids, options)
+    user = User.find_by(id: options['user_id']) if options['user_id'] && options['user_id'] != -1
+    user = Bot unless user
+    do_perform(user.api_client, uids, options)
 
   rescue => e
     # Errno::EEXIST File exists @ dir_s_mkdir
@@ -47,7 +48,7 @@ class CreateTwitterDBUserWorker
     TwitterDBUserBatch.fetch_and_import!(uids, client: client, force_update: options['force_update'])
   rescue => e
     exception_handler(e)
-    client = pick_client({})
+    client = Bot.api_client
     retry
   end
 
@@ -67,6 +68,7 @@ class CreateTwitterDBUserWorker
         ServiceStatus.retryable_error?(e)
   end
 
+  # TODO Remove later
   def pick_client(options)
     if valid_user_specified?(options)
       @client_id = "user:#{@user.id}"

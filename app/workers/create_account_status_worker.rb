@@ -32,6 +32,7 @@ class CreateAccountStatusWorker
     status, uid, is_follower = detect_status(user.api_client, user, screen_name)
     cache.write(screen_name, status, uid, is_follower)
 
+    CreateHighPriorityTwitterDBUserWorker.perform_async([uid], user_id: user.id) if uid
   rescue => e
     logger.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
@@ -43,7 +44,6 @@ class CreateAccountStatusWorker
     api_user = is_follower = error = nil
     begin
       api_user = client.user(screen_name)
-      CreateHighPriorityTwitterDBUserWorker.perform_async([api_user[:id]])
 
       # TODO Don't fetch user_timeline if the user is protected
       client.user_timeline(screen_name, count: 1)

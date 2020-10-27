@@ -31,11 +31,17 @@ RSpec.describe CreateTwitterDBUserWorker do
   end
 
   describe '#perform' do
-    subject { worker.perform('uids', 'options') }
-    before { allow(worker).to receive(:pick_client).with('options').and_return('client') }
+    let(:user) { create(:user) }
+    let(:options) { {'user_id' => user.id} }
+    let(:client) { double('client') }
+    subject { worker.perform('uids', options) }
+    before do
+      allow(User).to receive(:find_by).with(id: user.id).and_return(user)
+      allow(user).to receive(:api_client).and_return(client)
+    end
 
     it do
-      expect(worker).to receive(:do_perform).with('client', 'uids', 'options')
+      expect(worker).to receive(:do_perform).with(client, 'uids', options)
       subject
     end
   end
@@ -58,7 +64,7 @@ RSpec.describe CreateTwitterDBUserWorker do
       context 'the exception is retryable' do
         before { allow(worker).to receive(:exception_handler).with(error) }
         it do
-          expect(worker).to receive(:pick_client).with({}).and_return('client2')
+          expect(Bot).to receive(:api_client).and_return('client2')
           allow(TwitterDBUserBatch).to receive(:fetch_and_import!).with(uids, client: 'client2', force_update: 'fu')
           subject
         end
