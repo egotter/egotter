@@ -65,11 +65,10 @@ module ValidationConcern
     result = ::TwitterDB::User.exists?(uid: uid)
 
     if !from_crawler? && user_signed_in?
-      args = [[uid], user_id: current_user_id, enqueued_by: "#{controller_name}/#{action_name}/#{__method__}"]
       if result
-        CreateTwitterDBUserWorker.perform_async(*args)
+        CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
       else
-        CreateHighPriorityTwitterDBUserWorker.perform_async(*args)
+        CreateHighPriorityTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
       end
     end
 

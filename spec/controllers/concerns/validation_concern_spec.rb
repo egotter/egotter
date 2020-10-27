@@ -121,12 +121,13 @@ describe ValidationConcern, type: :controller do
   end
 
   describe '#twitter_db_user_persisted?' do
-    subject { controller.twitter_db_user_persisted?(1) }
+    let(:user) { create(:user) }
+    subject { controller.twitter_db_user_persisted?(user.uid) }
     before do
-      allow(TwitterDB::User).to receive(:exists?).with(uid: 1).and_return(found)
+      allow(TwitterDB::User).to receive(:exists?).with(uid: user.uid).and_return(found)
       allow(controller).to receive(:from_crawler?).and_return(false)
       allow(controller).to receive(:user_signed_in?).and_return(true)
-      allow(controller).to receive(:current_user_id).and_return(1)
+      allow(controller).to receive(:current_user).and_return(user)
     end
 
     context 'user is found' do
