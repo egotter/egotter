@@ -186,7 +186,6 @@ class ApiClient
       %i(
         read
         write
-        fetch
       ).each do |method_name|
         define_method(method_name) do |*args, &blk|
           super(*args, &blk)
