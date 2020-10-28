@@ -19,9 +19,6 @@ class UpdateEgotterFollowersWorker
     Time.zone.now - @start > _timeout_in
   end
 
-  class Timeout < StandardError
-  end
-
   def after_timeout(*args)
     logger.warn "Timeout seconds=#{_timeout_in} args=#{args.inspect}"
   end
@@ -74,18 +71,21 @@ class UpdateEgotterFollowersWorker
 
   def import_followers(users)
     ActiveRecord::Base.connection.execute('TRUNCATE TABLE egotter_followers')
-    Rails.logger.silence do
-      begin
-        retry_count ||= 0
+    retry_count = 0
+    begin
+      Rails.logger.silence do
         EgotterFollower.import users, on_duplicate_key_update: %i(uid), validate: false
-      rescue => e
-        if retry_count < 3
-          retry_count += 1
-          retry
-        else
-          raise
-        end
+      end
+    rescue => e
+      if (retry_count += 1) <= 3
+        retry
+      else
+        raise RetryExhausted.new(e.inspect.truncate(150))
       end
     end
   end
+
+  class Timeout < StandardError; end
+
+  class RetryExhausted < StandardError; end
 end

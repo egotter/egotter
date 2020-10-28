@@ -44,5 +44,10 @@ RSpec.describe UpdateEgotterFollowersWorker do
       expect(EgotterFollower).to receive(:import).with('users', on_duplicate_key_update: %i(uid), validate: false)
       subject
     end
+
+    context '#import raises an exception' do
+      before { allow(EgotterFollower).to receive(:import).with(any_args).and_raise('Error') }
+      it { expect { subject }.to raise_error(described_class::RetryExhausted) }
+    end
   end
 end
