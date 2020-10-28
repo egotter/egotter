@@ -4,7 +4,8 @@ class TwitterUserFetcher
 
   def initialize(twitter_user, login_user:, context:)
     @uid = twitter_user.uid
-    @client = login_user ? login_user.api_client : Bot.api_client
+    # TODO Try disabling the cache for speed
+    @client = (login_user || Bot).api_client
     @login_user = login_user
     @twitter_user = twitter_user
     @context = context

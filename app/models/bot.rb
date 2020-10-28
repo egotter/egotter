@@ -26,8 +26,8 @@ class Bot < ApplicationRecord
       where(authorized: true, locked: false).pluck(:id)
     end
 
-    def api_client
-      find(current_ids.sample).api_client
+    def api_client(options = {})
+      find(current_ids.sample).api_client(options)
     end
 
     def load(path)

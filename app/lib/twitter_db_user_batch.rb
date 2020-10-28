@@ -15,6 +15,7 @@ class TwitterDBUserBatch
     end
 
     def fetch(uids, client:)
+      # Disable the cache
       client.twitter.users(uids).map(&:to_h)
     rescue => e
       if TwitterApiStatus.no_user_matches?(e)

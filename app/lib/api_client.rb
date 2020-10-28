@@ -77,7 +77,12 @@ class ApiClient
           if options.blank?
             TwitterWithAutoPagination::Client.new
           else
-            options[:cache_store] = CacheStore.new
+            if options[:cache_store] == :null_store
+              options[:cache_store] = ActiveSupport::Cache::NullStore.new
+            else
+              options[:cache_store] = CacheStore.new
+            end
+            Rails.logger.debug { "#{self}##{__method__} options=#{options.inspect}" }
             TwitterWithAutoPagination::Client.new(config(options))
           end
       new(client)
@@ -162,10 +167,26 @@ class ApiClient
       end
     end
 
+    module Benchmark
+      %i(
+        read
+        write
+        fetch
+      ).each do |method_name|
+        define_method(method_name) do |*args, &blk|
+          ApplicationRecord.benchmark("#{self.class}##{__method__}", level: :debug) do
+            super(*args, &blk)
+          end
+        end
+      end
+    end
+    prepend Benchmark
+
     module RescueAllRedisErrors
       %i(
         read
         write
+        fetch
       ).each do |method_name|
         define_method(method_name) do |*args, &blk|
           super(*args, &blk)

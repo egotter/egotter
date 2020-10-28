@@ -9,8 +9,8 @@ module CredentialsApi
   included do
   end
 
-  def api_client
-    ::ApiClient.instance(access_token: token, access_token_secret: secret)
+  def api_client(options = {})
+    ::ApiClient.instance(options.merge(access_token: token, access_token_secret: secret))
   end
 
   def rate_limit
