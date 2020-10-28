@@ -42,6 +42,7 @@ class PeriodicReport < ApplicationRecord
 
   class << self
     # options:
+    #   periodic_report_id
     #   version
     #   request_id
     #   start_date (required)
@@ -62,11 +63,21 @@ class PeriodicReport < ApplicationRecord
     #   new_followers
     #   worker_context
     def periodic_message(user_id, options = {})
-      user = User.find(user_id)
+      if options[:periodic_report_id]
+        report = find(options[:periodic_report_id])
+        options = report.properties.symbolize_keys!
+      else
+        report = new(user: User.find(user_id), token: generate_token)
+      end
+
+      report.message = build_report_message(report.user, report.token, options)
+      report
+    end
+
+    def build_report_message(user, token, options)
       start_date = extract_date(:start_date, options)
       end_date = extract_date(:end_date, options)
       account_statuses = options[:account_statuses] || []
-      token = generate_token
 
       unfollowers = options[:unfollowers]
       total_unfollowers = options[:total_unfollowers]
@@ -106,10 +117,50 @@ class PeriodicReport < ApplicationRecord
           faq_url: support_url(url_options),
       )
 
-      selected_unfollowers = unfollowers.empty? ? total_unfollowers : unfollowers
+      # selected_unfollowers = unfollowers.empty? ? total_unfollowers : unfollowers
 
-      # TODO Set properties
-      new(user: user, message: message, token: token, screen_names: selected_unfollowers)
+      message
+    end
+
+    def periodic_push_message(user_id, options = {})
+      if options[:periodic_report_id]
+        report = find(options[:periodic_report_id])
+        user = report.user
+        options = report.properties.symbolize_keys!
+      else
+        user = User.find(user_id)
+      end
+
+      build_push_report_message(user, options)
+    end
+
+    def build_push_report_message(user, options)
+      start_date = extract_date(:start_date, options)
+      end_date = extract_date(:end_date, options)
+
+      unfollowers = options[:unfollowers]
+      if unfollowers.any?
+        template = Rails.root.join('app/views/periodic_reports/removed_push.ja.text.erb')
+      else
+        template = Rails.root.join('app/views/periodic_reports/not_removed_push.ja.text.erb')
+      end
+
+      token = generate_token
+      url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report'}
+
+      I18n.backend.store_translations :ja, persons: {one: '%{count}人', other: '%{count}人'}
+
+      ERB.new(template.read).result_with_hash(
+          user: user,
+          start_date: start_date,
+          end_date: end_date,
+          date_range: DateHelper.time_ago_in_words(start_date),
+          removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: options[:unfollowers_count]),
+          period_name: pick_period_name,
+          unfriends: options[:unfriends],
+          unfollowers: unfollowers,
+          timeline_url: timeline_url(user, url_options),
+      )
     end
 
     def remind_reply_message
@@ -304,36 +355,6 @@ class PeriodicReport < ApplicationRecord
       )
 
       new(user: nil, message: message, token: nil)
-    end
-
-    def periodic_push_message(user_id, options = {})
-      user = User.find(user_id)
-      start_date = extract_date(:start_date, options)
-      end_date = extract_date(:end_date, options)
-
-      unfollowers = options[:unfollowers]
-      if unfollowers.any?
-        template = Rails.root.join('app/views/periodic_reports/removed_push.ja.text.erb')
-      else
-        template = Rails.root.join('app/views/periodic_reports/not_removed_push.ja.text.erb')
-      end
-
-      token = generate_token
-      url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report'}
-
-      I18n.backend.store_translations :ja, persons: {one: '%{count}人', other: '%{count}人'}
-
-      ERB.new(template.read).result_with_hash(
-          user: user,
-          start_date: start_date,
-          end_date: end_date,
-          date_range: DateHelper.time_ago_in_words(start_date),
-          removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: options[:unfollowers_count]),
-          period_name: pick_period_name,
-          unfriends: options[:unfriends],
-          unfollowers: unfollowers,
-          timeline_url: timeline_url(user, url_options),
-      )
     end
 
     def pick_period_name

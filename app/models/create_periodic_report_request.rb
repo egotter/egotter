@@ -348,11 +348,17 @@ class CreatePeriodicReportRequest < ApplicationRecord
     TwitterUser.where(uid: user.uid).size != records_count
   end
 
+  def report_options_builder
+    @report_options_builder ||= ReportOptionsBuilder.new(self, true)
+  end
+
   class ReportOptionsBuilder
     PERIOD_START = 1.day
 
-    def initialize(request)
+    def initialize(request, create_record)
       @request = request
+      @create_record = create_record
+
       @start_date = PERIOD_START.ago
       @end_date = Time.zone.now
 
@@ -376,7 +382,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       new_follower_uids = @new_friends_builder.new_followers.flatten.take(10)
       new_followers = TwitterDB::User.where_and_order_by_field(uids: new_follower_uids).map { |user| user.slice(:uid, :screen_name) }
 
-      {
+      properties = {
           version: 1,
           request_id: @request.id,
           start_date: @start_date,
@@ -397,6 +403,13 @@ class CreatePeriodicReportRequest < ApplicationRecord
           new_followers: new_followers,
           worker_context: @request.worker_context,
       }
+
+      if @create_record
+        record = PeriodicReport.create!(user_id: @request.user.id, token: PeriodicReport.generate_token, message_id: '', properties: properties)
+        {periodic_report_id: record.id, request_id: @request.id}
+      else
+        properties
+      end
     end
 
     def unfollowers_increased?
@@ -473,10 +486,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
       Rails.logger.warn "#{self.class}##{__method__}: #{e.inspect} request=#{@request.inspect}"
       []
     end
-  end
-
-  def report_options_builder
-    @report_options_builder ||= ReportOptionsBuilder.new(self)
   end
 
   SHORT_INTERVAL = TwitterUser::CREATE_RECORD_INTERVAL

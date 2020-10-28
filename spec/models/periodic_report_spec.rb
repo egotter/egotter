@@ -3,7 +3,35 @@ require 'rails_helper'
 RSpec.describe PeriodicReport do
   let(:user) { create(:user, with_credential_token: true) }
 
+  before do
+    allow(User).to receive(:find).with(user.id).and_return(user)
+  end
+
   describe '.periodic_message' do
+    let(:options) { {} }
+    subject { described_class.periodic_message(user.id, options) }
+
+    context 'periodic_report_id is passed' do
+      let(:report) { create(:periodic_report, user: user, properties: {empty: true}) }
+      let(:options) { {periodic_report_id: report.id} }
+      before do
+        allow(described_class).to receive(:find).with(report.id).and_return(report)
+        allow(described_class).to receive(:build_report_message).with(user, 'token', {empty: true}).and_return('message')
+      end
+      it { is_expected.to be_truthy }
+    end
+
+    context 'periodic_report_id is not passed' do
+      before do
+        allow(described_class).to receive(:generate_token).and_return('token')
+        allow(described_class).to receive(:new).with(user: user, token: 'token').and_call_original
+        allow(described_class).to receive(:build_report_message).with(user, 'token', options).and_return('message')
+      end
+      it { is_expected.to be_truthy }
+    end
+  end
+
+  describe '.build_report_message' do
     let(:request) { double('request', id: 1) }
     let(:start_date) { 1.day.ago }
     let(:end_date) { Time.zone.now }
@@ -22,7 +50,7 @@ RSpec.describe PeriodicReport do
       }
     end
 
-    subject { described_class.periodic_message(user.id, options) }
+    subject { described_class.build_report_message(user, 'token', options) }
 
     context 'unfollowers.size is greater than 1' do
       let(:unfollowers) { %w(x y z) }
@@ -43,6 +71,56 @@ RSpec.describe PeriodicReport do
           is_expected.to be_truthy
         end
       end
+    end
+  end
+
+  describe '.periodic_push_message' do
+    let(:options) { {} }
+    subject { described_class.periodic_push_message(user.id, options) }
+
+    context 'periodic_report_id is passed' do
+      let(:report) { create(:periodic_report, user: user, properties: {empty: true}) }
+      let(:options) { {periodic_report_id: report.id} }
+      before do
+        allow(described_class).to receive(:find).with(report.id).and_return(report)
+        allow(described_class).to receive(:build_push_report_message).with(user, {empty: true}).and_return('message')
+      end
+      it { is_expected.to be_truthy }
+    end
+
+    context 'periodic_report_id is not passed' do
+      before do
+        allow(described_class).to receive(:build_push_report_message).with(user, options).and_return('message')
+      end
+      it { is_expected.to be_truthy }
+    end
+  end
+
+  describe '.build_push_report_message' do
+    let(:request) { double('request', id: 1) }
+    let(:start_date) { 1.day.ago }
+    let(:end_date) { Time.zone.now }
+    let(:unfriends) { %w(a b c) }
+    let(:options) do
+      {
+          request_id: request.id,
+          start_date: start_date,
+          end_date: end_date,
+          unfriends: unfriends,
+          unfollowers: unfollowers,
+      }
+    end
+
+    subject { described_class.build_push_report_message(user, options) }
+
+    context 'unfollowers.size is greater than 1' do
+      let(:unfollowers) { %w(x y z) }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'unfollowers.size is 1' do
+      let(:unfollowers) { [] }
+      it { is_expected.to be_truthy }
     end
   end
 
@@ -124,34 +202,6 @@ RSpec.describe PeriodicReport do
   describe '.stop_requested_message' do
     subject { described_class.stop_requested_message }
     it { is_expected.to be_truthy }
-  end
-
-  describe '.periodic_push_message' do
-    let(:request) { double('request', id: 1) }
-    let(:start_date) { 1.day.ago }
-    let(:end_date) { Time.zone.now }
-    let(:unfriends) { %w(a b c) }
-
-    subject do
-      described_class.periodic_push_message(
-          user.id,
-          request_id: request.id,
-          start_date: start_date,
-          end_date: end_date,
-          unfriends: unfriends,
-          unfollowers: unfollowers
-      )
-    end
-
-    context 'unfollowers.size is greater than 1' do
-      let(:unfollowers) { %w(x y z) }
-      it { is_expected.to be_truthy }
-    end
-
-    context 'unfollowers.size is 1' do
-      let(:unfollowers) { [] }
-      it { is_expected.to be_truthy }
-    end
   end
 
   describe '.pick_period_name' do
