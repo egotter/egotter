@@ -79,7 +79,7 @@ module Egotter
       ).each do |method_name|
         define_method(method_name) do |*args, &blk|
           super(*args, &blk)
-        rescue => e
+        rescue Redis::BaseError => e
           Rails.logger.warn "Rescue all errors in #{self.class}##{method_name} #{e.inspect}"
           nil
         end

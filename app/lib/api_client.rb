@@ -186,12 +186,13 @@ class ApiClient
       %i(
         read
         write
+        fetch
       ).each do |method_name|
         define_method(method_name) do |*args, &blk|
           super(*args, &blk)
-        rescue => e
+        rescue Redis::BaseError => e
           Rails.logger.warn "Rescue all errors in #{self.class}##{method_name} #{e.inspect}"
-          Rails.logger.debug { e.backtrace.join("\n") }
+          Rails.logger.info { e.backtrace.join("\n") }
           nil
         end
       end
