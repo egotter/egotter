@@ -234,7 +234,7 @@ RSpec.describe ApiClient::CacheStore, type: :model do
 
   describe '#read' do
     subject { instance.read('key') }
-    before { allow(redis).to receive(:get).with(anything).and_raise('read error') }
+    before { allow(redis).to receive(:get).with(anything).and_raise(Redis::BaseError.new('read error')) }
 
     it do
       expect(Rails.logger).to receive(:warn).with(instance_of(String))
@@ -244,11 +244,11 @@ RSpec.describe ApiClient::CacheStore, type: :model do
 
   describe '#write' do
     subject { instance.write('key', 'value') }
-    before { allow(redis).to receive(:set).with(any_args).and_raise('write error') }
+    before { allow(redis).to receive(:set).with(any_args).and_raise(Redis::BaseError.new('write error')) }
 
     it do
       expect(Rails.logger).to receive(:warn).with(instance_of(String))
-      is_expected.to be_nil
+      is_expected.to be_falsey
     end
   end
 end

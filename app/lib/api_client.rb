@@ -157,7 +157,10 @@ class ApiClient
           namespace: "#{Rails.env}:twitter",
           expires_in: 20.minutes,
           race_condition_ttl: 3.minutes,
-          redis: self.class.redis_client
+          redis: self.class.redis_client,
+          error_handler: Proc.new { |method:, returning:, exception:|
+            Rails.logger.warn "ApiClient::CacheStore: #{method} failed, returned #{returning.inspect}: #{exception.class}: #{exception.message}"
+          }
       )
     end
 
@@ -181,22 +184,5 @@ class ApiClient
       end
     end
     prepend Benchmark
-
-    module RescueAllRedisErrors
-      %i(
-        read
-        write
-        fetch
-      ).each do |method_name|
-        define_method(method_name) do |*args, &blk|
-          super(*args, &blk)
-        rescue Redis::BaseError => e
-          Rails.logger.warn "Rescue all errors in #{self.class}##{method_name} #{e.inspect}"
-          Rails.logger.info { e.backtrace.join("\n") }
-          nil
-        end
-      end
-    end
-    prepend RescueAllRedisErrors
   end
 end

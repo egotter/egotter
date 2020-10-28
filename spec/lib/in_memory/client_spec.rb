@@ -54,13 +54,7 @@ RSpec.describe InMemory::Client do
     ].each do |method_name, args|
       describe "##{method_name}" do
         subject { instance.send(method_name, *args) }
-        it "returns nil" do
-          is_expected.to be_nil
-        end
-
-        it "doesn't raise an exception" do
-          expect { subject }.not_to raise_error
-        end
+        it { expect { subject }.to raise_error(RuntimeError) }
       end
     end
   end
