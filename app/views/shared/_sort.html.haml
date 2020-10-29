@@ -7,6 +7,12 @@
       - SortOrder::VALUES.each.with_index do |(label, value), i|
         %a.sort-orders.dropdown-item{href: "#", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
           = label
+  :javascript
+    $('.sort-order-container .sort-orders').on('click', function () {
+      var page = '#{request.path}';
+      var text = $(this).text().trim();
+      ahoy.track('Sort', {page: page, text: text});
+    });
 - else
   = link_to sign_in_path(redirect_path: request.path, via: current_via('sort_button')), class: 'btn btn-outline-secondary btn-sm' do
     = SortOrder::VALUES[0][0]
