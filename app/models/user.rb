@@ -251,7 +251,11 @@ class User < ApplicationRecord
   end
 
   def has_valid_subscription?
-    orders.unexpired.any?
+    if instance_variable_defined?(:@has_valid_subscription)
+      @has_valid_subscription
+    else
+      @has_valid_subscription = orders.unexpired.any?
+    end
   end
 
   def purchased_plan_name

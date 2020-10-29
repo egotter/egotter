@@ -4,9 +4,15 @@
       %span.label= SortOrder::VALUES[0][0]
       %i.fas.fa-sort
     .dropdown-menu
+      - purchased = current_user.has_valid_subscription?
       - SortOrder::VALUES.each.with_index do |(label, value), i|
-        %a.sort-orders.dropdown-item{href: "#", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
-          = label
+        - if i < 2 || purchased
+          %a.sort-orders.dropdown-item{href: "#", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
+            = label
+        - else
+          %a.sort-orders.dropdown-item.btn-checkout.text-muted{href: "#"}
+            = label
+            %i.fas.fa-unlock
   :javascript
     $('.sort-order-container .sort-orders').on('click', function () {
       var page = '#{request.path}';

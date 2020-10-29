@@ -5,9 +5,15 @@
       %span.filter-count
       %i.fas.fa-filter
     .dropdown-menu
-      - Filter::VALUES.each do |label, value|
-        %a.filters.dropdown-item{href: "#", data: {filter: value}}
-          = label
+      - purchased = current_user.has_valid_subscription?
+      - Filter::VALUES.each.with_index do |(label, value), i|
+        - if i < 2 || purchased
+          %a.filters.dropdown-item{href: "#", data: {filter: value}}
+            = label
+        - else
+          %a.filters.dropdown-item.btn-checkout.text-muted{href: "#"}
+            = label
+            %i.fas.fa-unlock
   :javascript
     $('.filter-container .filters').on('click', function () {
       var page = '#{request.path}';

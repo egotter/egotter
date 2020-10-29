@@ -4,7 +4,7 @@ class SortButton {
     this.$container = $('.sort-order-container');
     var self = this;
 
-    this.$container.find('.dropdown-item').on('click', function () {
+    this.$container.find('.dropdown-item').not('.btn-checkout').on('click', function () {
       return self.clickItem($(this));
     });
   }
@@ -41,7 +41,7 @@ class FilterButton {
   constructor(callback) {
     var $container = $('.filter-container');
 
-    $container.find('.dropdown-item').on('click', function () {
+    $container.find('.dropdown-item').not('.btn-checkout').on('click', function () {
       var $selected = $(this);
       var $button = $container.find('button');
       $button.trigger('click');
