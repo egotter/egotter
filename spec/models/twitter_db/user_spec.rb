@@ -56,12 +56,24 @@ end
 RSpec.describe TwitterDB::User::QueryMethods do
   describe '.where_and_order_by_field' do
     let(:uids) { [1, 2, 3] + (1..1200).to_a } # Including duplicate values
-    subject { TwitterDB::User.where_and_order_by_field(uids: uids) }
+    let(:use_thread) { false }
+    subject { TwitterDB::User.where_and_order_by_field(uids: uids, thread: use_thread) }
 
     it do
+      expect(Parallel).not_to receive(:each_with_index)
       expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1..1000).to_a, nil, anything).and_return(['result1'])
       expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1001..1200).to_a, nil, anything).and_return(['result2'])
       is_expected.to eq(['result1', 'result2'])
+    end
+
+    context 'thread is true' do
+      let(:use_thread) { true }
+      it do
+        expect(Parallel).to receive(:each_with_index).with(any_args).and_call_original
+        expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1..1000).to_a, nil, anything).and_return(['result1'])
+        expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1001..1200).to_a, nil, anything).and_return(['result2'])
+        is_expected.to eq(['result1', 'result2'])
+      end
     end
   end
 

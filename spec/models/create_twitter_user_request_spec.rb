@@ -198,7 +198,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
       allow(request).to receive(:client).and_return(client)
     end
     it do
-      expect(TwitterUserFetcher).to receive_message_chain(:new, :fetch).
+      expect(TwitterUserFetcher).to receive_message_chain(:new, :fetch_in_threads).
           with(client, snapshot.uid, snapshot.screen_name, true, false, false).with(no_args).and_return('result')
       is_expected.to eq('result')
     end
