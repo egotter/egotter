@@ -3,6 +3,7 @@ require 'digest/md5'
 class ProcessWebhookEventWorker
   include Sidekiq::Worker
   include PeriodicReportConcern
+  include SearchReportConcern
   sidekiq_options queue: 'webhook', retry: 0, backtrace: false
 
   def unique_key(event, options = {})
@@ -63,7 +64,11 @@ class ProcessWebhookEventWorker
     GlobalDirectMessageReceivedFlag.new.received(dm.sender_id)
     GlobalSendDirectMessageCountByUser.new.clear(dm.sender_id)
 
-    if restart_requested?(dm)
+    if stop_search_report_requested?(dm)
+      process_stopping_search_report(dm)
+    elsif restart_search_report_requested?(dm)
+      process_restarting_search_report(dm)
+    elsif restart_requested?(dm)
       enqueue_user_requested_restarting_periodic_report(dm)
       enqueue_user_requested_periodic_report(dm, fuzzy: true)
     elsif send_now_requested?(dm)

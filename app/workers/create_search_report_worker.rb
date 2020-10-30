@@ -1,6 +1,5 @@
 class CreateSearchReportWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(searchee_id, options = {})
@@ -15,7 +14,7 @@ class CreateSearchReportWorker
   #   searcher_uid
   def perform(searchee_id, options = {})
     searchee = User.find(searchee_id)
-    return if !searchee.authorized? || !searchee.notification_setting.can_send_search?
+    return unless send_search_report?(searchee)
 
     SearchReport.you_are_searched(searchee.id, options['searcher_uid']).deliver!
 
@@ -27,7 +26,12 @@ class CreateSearchReportWorker
       # Do nothing
     else
       logger.warn "#{e.inspect} searchee_id=#{searchee_id} options=#{options.inspect}"
-      notify_airbrake(e, searchee_id: searchee_id, options: options)
     end
+  end
+
+  private
+
+  def send_search_report?(user)
+    user.authorized? && user.notification_setting.can_send_search? && !StopSearchReportRequest.exists?(user_id: user.id)
   end
 end

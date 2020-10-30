@@ -1802,9 +1802,13 @@ ja:
       description2: '初期設定に失敗した場合に押してください'
     search_reports:
       label1: '検索通知 届きました'
-      description1: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
+      description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
       label2: '検索通知 届いてません'
       description2: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
+      label3: '検索通知 再開'
+      description3: '検索された時の通知を再開します'
+      label4: '検索通知 停止'
+      description4: '検索された時の通知を停止します'
     block_reports:
       label1: 'ブロック通知 届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'

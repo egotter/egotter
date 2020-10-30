@@ -26,8 +26,20 @@ class SearchReport < ApplicationRecord
 
   attr_accessor :searcher_uid
 
-  def self.you_are_searched(searchee_id, searcher_uid = nil)
-    new(user_id: searchee_id, token: generate_token, searcher_uid: searcher_uid)
+  class << self
+    def you_are_searched(searchee_id, searcher_uid = nil)
+      new(user_id: searchee_id, token: generate_token, searcher_uid: searcher_uid)
+    end
+
+    def report_stopped_message(user)
+      template = Rails.root.join('app/views/search_reports/stopped.ja.text.erb')
+      ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
+    end
+
+    def report_restarted_message(user)
+      template = Rails.root.join('app/views/search_reports/restarted.ja.text.erb')
+      ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
+    end
   end
 
   def deliver!
@@ -68,9 +80,13 @@ class SearchReport < ApplicationRecord
                               description: I18n.t('quick_replies.search_reports.description1')
                           },
                           {
-                              label: I18n.t('quick_replies.search_reports.label2'),
-                              description: I18n.t('quick_replies.search_reports.description2')
-                          }
+                              label: I18n.t('quick_replies.search_reports.label3'),
+                              description: I18n.t('quick_replies.search_reports.description3')
+                          },
+                          {
+                              label: I18n.t('quick_replies.search_reports.label4'),
+                              description: I18n.t('quick_replies.search_reports.description4')
+                          },
                       ]
                   }
               }
