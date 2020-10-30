@@ -1,76 +1,84 @@
-# TODO Refactoring and adding test cases
 class TwitterUserFetcher
   attr_reader :api_name
 
-  def initialize(twitter_user, login_user:, context:)
-    @uid = twitter_user.uid
-    # TODO Try disabling the cache for speed
-    @client = (login_user || Bot).api_client
-    @login_user = login_user
-    @twitter_user = twitter_user
-    @context = context
+  def initialize(client, uid, screen_name, fetch_friends, search_for_yourself, reporting)
+    @client = ClientWrapper.new(client)
+    @uid = uid
+    @search_query = "@#{screen_name}"
+    @fetch_friends = fetch_friends
+    @search_for_yourself = search_for_yourself
+    @reporting = reporting
   end
 
   # Not using uniq for mentions, search_results and favorites intentionally
   def fetch
-    reject_names = reject_relation_names
-    signatures = fetch_signatures(reject_names)
+    result = {}
 
-    if @context == :reporting
-      # Requests/24-hour window 100,000
-      signatures.delete_if { |hash| hash[:method] == :user_timeline }
+    if @fetch_friends
+      result[:friend_ids] = @client.friend_ids(@uid)
+      result[:follower_ids] = @client.follower_ids(@uid)
     end
 
-    # fetch_results =
-    #   client.parallel do |batch|
-    #     signatures.each { |signature| batch.send(signature[:method], *signature[:args]) }
-    #   end
-
-    signatures.each_with_object({}).with_index do |(item, memo), i|
-      # memo[item[:method]] = fetch_results[i]
-      @api_name = item[:method]
-      memo[item[:method]] = @client.send(item[:method], *item[:args])
-    rescue => e
-      if negligible_error?(item[:method], e)
-        Rails.logger.warn "#{self.class}##{__method__}: Ignore specific errors for #{item[:method]} user_id=#{@login_user&.id} uid=#{@uid}"
-        memo[item[:method]] = []
-      else
-        raise
-      end
+    if @search_for_yourself
+      result[:mentions_timeline] = @client.mentions_timeline
+    else
+      result[:search] = @client.search(@search_query)
     end
+
+    unless @reporting
+      result[:user_timeline] = @client.user_timeline(@uid)
+    end
+
+    result[:favorites] = @client.favorites(@uid)
+
+    result
   end
 
   private
 
-  def negligible_error?(method_name, error)
-    %i(user_timeline mentions_timeline favorites).include?(method_name) &&
-        (TwitterApiStatus.too_many_requests?(error) || ServiceStatus.internal_server_error?(error))
-  end
-
-  def fetch_signatures(reject_names)
-    [
-      {method: :friend_ids,        args: [@uid]},
-      {method: :follower_ids,      args: [@uid]},
-      {method: :user_timeline,     args: [@uid, {include_rts: false}]},     # replying
-      sign_in_yourself? ? {method: :mentions_timeline, args: []} : {method: :search, args: [search_query]}, # replied
-      {method: :favorites,         args: [@uid]}      # favoriting
-    ].delete_if { |item| reject_names.include?(item[:method]) }
-  end
-
-  def reject_relation_names
-    case [sign_in_yourself?, SearchLimitation.limited?(@twitter_user, signed_in: @login_user)]
-      when [true, true]   then %i(friend_ids follower_ids)
-      when [true, false]  then []
-      when [false, true]  then %i(friend_ids follower_ids)
-      when [false, false] then []
+  class ClientWrapper
+    def initialize(client)
+      @client = client
     end
-  end
 
-  def search_query
-    "@#{@twitter_user.screen_name}"
-  end
+    def friend_ids(uid)
+      @client.friend_ids(uid)
+    end
 
-  def sign_in_yourself?
-    @login_user&.uid == @uid
+    def follower_ids(uid)
+      @client.follower_ids(uid)
+    end
+
+    def user_timeline(uid)
+      @client.user_timeline(uid, include_rts: false)
+    end
+
+    def mentions_timeline
+      @client.mentions_timeline
+    end
+
+    def search(word)
+      @client.search(word)
+    end
+
+    def favorites(uid)
+      @client.favorites(uid)
+    end
+
+    module RescueNegligibleError
+      %i(user_timeline mentions_timeline favorites).each do |method_name|
+        define_method(method_name) do |*args, &blk|
+          super(*args, &blk)
+        rescue => e
+          if TwitterApiStatus.too_many_requests?(e) ||
+              ServiceStatus.internal_server_error?(e)
+            []
+          else
+            raise
+          end
+        end
+      end
+    end
+    prepend RescueNegligibleError
   end
 end

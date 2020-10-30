@@ -142,8 +142,14 @@ class CreateTwitterUserRequest < ApplicationRecord
     end
   end
 
-  def fetch_relations(twitter_user, context)
-    @fetcher ||= TwitterUserFetcher.new(twitter_user, login_user: user, context: context)
+  def fetch_relations(snapshot, context)
+    unless @fetcher
+      fetch_friends = !SearchLimitation.limited?(snapshot, signed_in: user)
+      search_for_yourself = snapshot.uid == user&.uid
+      reporting = context == :reporting
+      # TODO Try disabling the cache for speed
+      @fetcher = TwitterUserFetcher.new(client, snapshot.uid, snapshot.screen_name, fetch_friends, search_for_yourself, reporting)
+    end
     @fetcher.fetch
   end
 

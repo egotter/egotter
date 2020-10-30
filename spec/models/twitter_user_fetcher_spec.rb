@@ -1,39 +1,145 @@
 require 'rails_helper'
 
 RSpec.describe TwitterUserFetcher do
-  let(:twitter_user) { build(:twitter_user) }
-  let(:client) { double('Client') }
-  let(:instance) { described_class.new(twitter_user, login_user: nil, context: nil) }
+  let(:user) { create(:user) }
+  let(:uid) { user.uid }
+  let(:screen_name) { user.screen_name }
+  let(:client) { described_class::ClientWrapper.new(nil) }
+  let(:fetch_friends) { true }
+  let(:search_for_yourself) { true }
+  let(:reporting) { false }
+  let(:instance) { described_class.new(nil, uid, screen_name, fetch_friends, search_for_yourself, reporting) }
 
-  before { allow(Bot).to receive(:api_client).and_return(client) }
+  before do
+    allow(described_class::ClientWrapper).to receive(:new).with(anything).and_return(client)
+  end
 
   describe '#fetch' do
-    let(:signatures) do
-      [
-          {method: :friend_ids, args: [123]},
-          {method: :follower_ids, args: [456]},
-      ]
-    end
     subject { instance.fetch }
-    before do
-      allow(instance).to receive(:reject_relation_names).and_return('reject_names')
-      allow(instance).to receive(:fetch_signatures).and_return(signatures)
-    end
+
     it do
-      expect(client).to receive(:friend_ids).with(123).and_return('r1')
-      expect(client).to receive(:follower_ids).with(456).and_return('r2')
-      is_expected.to eq(friend_ids: 'r1', follower_ids: 'r2')
-      expect(instance.api_name).to eq(:follower_ids)
+      expect(client).to receive(:friend_ids).with(uid)
+      expect(client).to receive(:follower_ids).with(uid)
+      expect(client).to receive(:user_timeline).with(uid)
+      expect(client).to receive(:mentions_timeline)
+      expect(client).to receive(:favorites).with(uid)
+      is_expected.to be_truthy
+    end
+
+    context 'fetch_friends is false' do
+      let(:fetch_friends) { false }
+      it do
+        expect(client).not_to receive(:friend_ids)
+        expect(client).not_to receive(:follower_ids)
+        expect(client).to receive(:user_timeline).with(uid)
+        expect(client).to receive(:mentions_timeline)
+        expect(client).to receive(:favorites).with(uid)
+        is_expected.to be_truthy
+      end
+    end
+
+    context 'search_for_yourself is false' do
+      let(:search_for_yourself) { false }
+      it do
+        expect(client).to receive(:friend_ids).with(uid)
+        expect(client).to receive(:follower_ids).with(uid)
+        expect(client).to receive(:user_timeline).with(uid)
+        expect(client).to receive(:search).with("@#{screen_name}")
+        expect(client).to receive(:favorites).with(uid)
+        is_expected.to be_truthy
+      end
+    end
+
+    context 'reporting is true' do
+      let(:reporting) { true }
+      it do
+        expect(client).to receive(:friend_ids).with(uid)
+        expect(client).to receive(:follower_ids).with(uid)
+        expect(client).not_to receive(:user_timeline)
+        expect(client).to receive(:mentions_timeline)
+        expect(client).to receive(:favorites).with(uid)
+        is_expected.to be_truthy
+      end
+    end
+  end
+end
+
+RSpec.describe TwitterUserFetcher::ClientWrapper do
+  let(:client) { double('client') }
+  let(:instance) { described_class.new(client) }
+
+  describe 'friend_ids' do
+    subject { instance.friend_ids(1) }
+    it do
+      expect(client).to receive(:friend_ids).with(1)
+      subject
     end
   end
 
-  describe '#reject_relation_names' do
-    subject { instance.send(:reject_relation_names) }
+  describe 'follower_ids' do
+    subject { instance.follower_ids(1) }
+    it do
+      expect(client).to receive(:follower_ids).with(1)
+      subject
+    end
+  end
 
-    context 'SearchLimitation.limited? == true' do
-      before { allow(SearchLimitation).to receive(:limited?).with(any_args).and_return(true) }
+  describe 'user_timeline' do
+    subject { instance.user_timeline(1) }
+    it do
+      expect(client).to receive(:user_timeline).with(1, include_rts: false)
+      subject
+    end
 
-      it { is_expected.to match(%i(friend_ids follower_ids)) }
+    context 'An exception is raised' do
+      let(:error) { RuntimeError.new }
+      before do
+        allow(client).to receive(:user_timeline).and_raise(error)
+        allow(TwitterApiStatus).to receive(:too_many_requests?).with(error).and_return(true)
+      end
+      it { expect { subject }.not_to raise_error }
+    end
+  end
+
+  describe 'mentions_timeline' do
+    subject { instance.mentions_timeline }
+    it do
+      expect(client).to receive(:mentions_timeline)
+      subject
+    end
+
+    context 'An exception is raised' do
+      let(:error) { RuntimeError.new }
+      before do
+        allow(client).to receive(:mentions_timeline).and_raise(error)
+        allow(TwitterApiStatus).to receive(:too_many_requests?).with(error).and_return(true)
+      end
+      it { expect { subject }.not_to raise_error }
+    end
+  end
+
+  describe 'search' do
+    subject { instance.search('word') }
+    it do
+      expect(client).to receive(:search).with('word')
+      subject
+    end
+  end
+
+  describe 'favorites' do
+    subject { instance.favorites(1) }
+    it do
+      expect(client).to receive(:favorites).with(1)
+      subject
+    end
+
+    context 'An exception is raised' do
+      let(:error) { RuntimeError.new }
+      before do
+        allow(client).to receive(:favorites).and_raise(error)
+        allow(TwitterApiStatus).to receive(:too_many_requests?).with(error).and_return(true)
+      end
+      it { expect { subject }.not_to raise_error }
     end
   end
 end

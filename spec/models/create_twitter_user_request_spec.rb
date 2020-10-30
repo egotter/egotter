@@ -190,10 +190,16 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   end
 
   describe '#fetch_relations' do
-    subject { request.send(:fetch_relations, 'twitter_user', 'context') }
+    let(:snapshot) { create(:twitter_user) }
+    let(:client) { double('client') }
+    let(:context) { 'context' }
+    subject { request.send(:fetch_relations, snapshot, context) }
+    before do
+      allow(request).to receive(:client).and_return(client)
+    end
     it do
       expect(TwitterUserFetcher).to receive_message_chain(:new, :fetch).
-          with(twitter_user: 'twitter_user', login_user: 'user', context: 'context').with(no_args).and_return('result')
+          with(client, snapshot.uid, snapshot.screen_name, true, false, false).with(no_args).and_return('result')
       is_expected.to eq('result')
     end
   end
