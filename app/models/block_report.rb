@@ -99,7 +99,7 @@ class BlockReport < ApplicationRecord
 
     def generate_profile_urls(users, url_options, add_atmark)
       users.map.with_index do |user, i|
-        screen_name = user['screen_name']
+        screen_name = user[:screen_name]
         url = url_helper.profile_url({screen_name: screen_name}.merge(url_options))
         "#{'@' if add_atmark || i < 1}#{screen_name} #{url}"
       end
