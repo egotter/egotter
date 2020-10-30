@@ -34,6 +34,32 @@ class TwitterUserFetcher
     result
   end
 
+  def fetch_in_threads
+    threads = []
+    result = Queue.new
+
+    if @fetch_friends
+      threads << Thread.new { result << [:friend_ids, @client.friend_ids(@uid)] }
+      threads << Thread.new { result << [:follower_ids, @client.follower_ids(@uid)] }
+    end
+
+    if @search_for_yourself
+      threads << Thread.new { result << [:mentions_timeline, @client.mentions_timeline] }
+    else
+      threads << Thread.new { result << [:search, @client.search(@search_query)] }
+    end
+
+    unless @reporting
+      threads << Thread.new { result << [:user_timeline, @client.user_timeline(@uid)] }
+    end
+
+    threads << Thread.new { result << [:favorites, @client.favorites(@uid)] }
+
+    threads.each(&:join)
+
+    result.size.times.map { result.pop }.to_h
+  end
+
   private
 
   class ClientWrapper

@@ -62,6 +62,18 @@ RSpec.describe TwitterUserFetcher do
       end
     end
   end
+
+  describe '#fetch_in_threads' do
+    subject { instance.fetch_in_threads }
+    it do
+      expect(client).to receive(:friend_ids).with(uid)
+      expect(client).to receive(:follower_ids).with(uid)
+      expect(client).to receive(:user_timeline).with(uid)
+      expect(client).to receive(:mentions_timeline)
+      expect(client).to receive(:favorites).with(uid)
+      is_expected.to be_truthy
+    end
+  end
 end
 
 RSpec.describe TwitterUserFetcher::ClientWrapper do
