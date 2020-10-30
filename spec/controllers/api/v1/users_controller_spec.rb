@@ -21,7 +21,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       end
 
       it do
-        expect(controller).to receive(:enqueue_create_periodic_report_job).with(user).and_return('jid')
+        expect(controller).to receive(:enqueue_create_periodic_report_job).with(user, anything).and_return('jid')
         expect(controller).to receive(:build_android_response).with(user, 'jid').and_return(response_body)
         is_expected.to have_http_status(:ok)
         expect(response.body).to eq(response_body.to_json)
@@ -57,9 +57,9 @@ RSpec.describe Api::V1::UsersController, type: :controller do
 
   describe '#enqueue_create_periodic_report_job' do
     let(:request) { CreatePeriodicReportRequest.create(user_id: user.id) }
-    subject { controller.send(:enqueue_create_periodic_report_job, user) }
+    subject { controller.send(:enqueue_create_periodic_report_job, user, 'smartphone') }
     before do
-      allow(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request)
+      allow(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'smartphone').and_return(request)
     end
     it do
       expect(CreateAndroidRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id, requested_by: 'android_app')

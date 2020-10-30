@@ -8,7 +8,7 @@ module Api
       def update_instance_id
         if verified_android_request?
           @user.credential_token.update!(instance_id: params[:instance_id])
-          jid = enqueue_create_periodic_report_job(@user)
+          jid = enqueue_create_periodic_report_job(@user, request.device_type)
           render json: build_android_response(@user, jid)
         else
           render json: {found: false}, status: :not_found
@@ -53,8 +53,8 @@ module Api
             (@user = User.find_by(uid: params[:uid], token: params[:access_token]))
       end
 
-      def enqueue_create_periodic_report_job(user)
-        request = CreatePeriodicReportRequest.create(user_id: user.id)
+      def enqueue_create_periodic_report_job(user, device_type)
+        request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: device_type)
         CreateAndroidRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, requested_by: 'android_app')
       end
 
