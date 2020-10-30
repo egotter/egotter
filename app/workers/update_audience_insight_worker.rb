@@ -35,63 +35,23 @@ class UpdateAudienceInsightWorker
     insight = AudienceInsight.find_or_initialize_by(uid: uid) # TODO Select only specific columns
     return if insight.fresh?
 
-    chart_builder = nil
-    bm('Builder.new') do
-      chart_builder = AudienceInsightChartBuilder.new(uid, limit: 100)
+    timeout_handler = Proc.new { |records_size| after_timeout(uid, {records_size: records_size}.merge(options)) }
+    attrs = AudienceInsight::Builder.new(uid, timeout: _timeout_in, concurrency: 1, timeout_handler: timeout_handler).build
+
+    if attrs.any?
+      insight.assign_attributes(attrs)
+      insight.save! if insight.changed?
     end
-
-    records = []
-    bm('CacheLoader.load') do
-      # This code might break the sidekiq process which is processing UpdateAudienceInsightWorker
-      records = chart_builder.builder.users
-      loader = CacheLoader.new(records, timeout: _timeout_in, concurrency: 1) do |record|
-        record.friend_uids
-        record.follower_uids
-      end
-      loader.load
-    rescue CacheLoader::Timeout => e
-      after_timeout(uid, {'records.size' => records.size}.merge(options))
-      return
-    end
-
-    AudienceInsight::CHART_NAMES.each do |chart_name|
-      bm(chart_name) do
-        insight.send("#{chart_name}_text=", chart_builder.send(chart_name).to_json)
-      end
-    end
-
-    bm('save!') { insight.save! if insight.changed? }
-
   rescue => e
     handle_exception(e, uid, options)
   end
 
   def handle_exception(e, uid, options)
     if e.class == ActiveRecord::RecordNotUnique
-      return
-    end
-
-    logger.warn "#{e.inspect} uid=#{uid} options=#{options}"
-    logger.info e.backtrace.join("\n")
-  end
-
-  module Instrumentation
-    def bm(message, &block)
-      start = Time.zone.now
-      yield
-      @benchmark[message] = Time.zone.now - start
-    end
-
-    def perform(*args, &blk)
-      @benchmark = {}
-      start = Time.zone.now
-
-      super
-
-      @benchmark['sum'] = @benchmark.values.sum
-      @benchmark['elapsed'] = Time.zone.now - start
-      logger.info "Benchmark UpdateAudienceInsightWorker #{@benchmark.inspect}"
+      # Do nothing
+    else
+      logger.warn "#{e.inspect} uid=#{uid} options=#{options}"
+      logger.info e.backtrace.join("\n")
     end
   end
-  prepend Instrumentation
 end

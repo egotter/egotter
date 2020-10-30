@@ -97,4 +97,74 @@ class AudienceInsight < ApplicationRecord
       Time.zone.now - updated_at < ttl
     end
   end
+
+  # For debug
+  def builder
+    Builder.new(uid)
+  end
+
+  class Builder
+    DEFAULT_TIMEOUT_HANDLER = Proc.new {}
+
+    def initialize(uid, timeout: 10.seconds, concurrency: 1, timeout_handler: DEFAULT_TIMEOUT_HANDLER)
+      @uid = uid
+      @timeout = timeout
+      @concurrency = concurrency
+      @timeout_handler = timeout_handler
+      @limit = 100
+    end
+
+    def build
+      chart_builder = nil
+      bm('Builder.new') do
+        statuses = TwitterUser.latest_by(uid: @uid).status_tweets
+        chart_builder = AudienceInsightChartBuilder.new(@uid, statuses: statuses, limit: @limit)
+      end
+
+      records = []
+      bm('CacheLoader.load') do
+        # This code might break the sidekiq process which is processing UpdateAudienceInsightWorker
+        records = chart_builder.builder.users
+        loader = CacheLoader.new(records, timeout: @timeout, concurrency: @concurrency) do |record|
+          record.friend_uids
+          record.follower_uids
+        end
+        loader.load
+      rescue CacheLoader::Timeout => e
+        @timeout_handler.call(records.size)
+        return {}
+      end
+
+      attrs = {}
+      AudienceInsight::CHART_NAMES.each do |chart_name|
+        bm(chart_name) do
+          attrs["#{chart_name}_text"] = chart_builder.send(chart_name).to_json
+        end
+      end
+
+      attrs
+    end
+
+    module Instrumentation
+      def bm(message, &block)
+        start = Time.zone.now
+        yield
+        @benchmark[message] = Time.zone.now - start
+      end
+
+      def build(*args, &blk)
+        @benchmark = {}
+        start = Time.zone.now
+
+        result = super
+
+        @benchmark['sum'] = @benchmark.values.sum
+        @benchmark['elapsed'] = Time.zone.now - start
+        Rails.logger.info "Benchmark AudienceInsight::Builder #{@benchmark.inspect}"
+
+        result
+      end
+    end
+    prepend Instrumentation
+  end
 end
