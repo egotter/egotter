@@ -1805,6 +1805,9 @@ ja:
       description1: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
       label2: '検索通知 届いてません'
       description2: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
+    block_reports:
+      label1: 'ブロック通知 届きました'
+      description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
   directory:
     profiles:
       footer_title: プロフィール

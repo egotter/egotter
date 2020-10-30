@@ -15,6 +15,12 @@ class ImportBlockingRelationshipsWorker
     user = User.find(user_id)
     blocked_ids = fetch_blocked_uids(user.api_client.twitter)
     BlockingRelationship.import_from(user.uid, blocked_ids)
+
+    blocked_ids.each_slice(1000) do |uids_array|
+      User.where(uid: uids_array).each do |user|
+        CreateBlockReportWorker.perform_async(user.id)
+      end
+    end
   rescue => e
     if TwitterApiStatus.invalid_or_expired_token?(e) ||
         TwitterApiStatus.temporarily_locked?(e)

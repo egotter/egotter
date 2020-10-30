@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_12_233339) do
+ActiveRecord::Schema.define(version: 2020_10_29_141401) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -217,6 +217,19 @@ ActiveRecord::Schema.define(version: 2020_10_12_233339) do
     t.integer "sequence", null: false
     t.index ["friend_uid"], name: "index_block_friendships_on_friend_uid"
     t.index ["from_uid"], name: "index_block_friendships_on_from_uid"
+  end
+
+  create_table "block_reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "message_id", default: "", null: false
+    t.string "message", default: "", null: false
+    t.string "token", null: false
+    t.datetime "read_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_block_reports_on_created_at"
+    t.index ["token"], name: "index_block_reports_on_token", unique: true
+    t.index ["user_id"], name: "index_block_reports_on_user_id"
   end
 
   create_table "blocked_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
