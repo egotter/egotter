@@ -10,23 +10,23 @@ class CacheLoader
 
   def load
     @start = Time.zone.now
-    q = Queue.new
+    processed = Queue.new
 
     if @concurrency > 1
       Parallel.each(@records, in_threads: @concurrency) do |record|
         raise Parallel::Break if timeout?
         @block.call(record)
-        q.push(true)
+        processed.push(true)
       end
     else
       @records.each do |record|
         break if timeout?
         @block.call(record)
-        q.push(true)
+        processed.push(true)
       end
     end
 
-    unless q.size == @records.size
+    unless processed.size == @records.size
       raise Timeout
     end
   end

@@ -10,6 +10,16 @@ class UpdateAudienceInsightWorker
     3.minute
   end
 
+  # Handle timeout by myself
+  def _timeout_in
+    10.seconds
+  end
+
+  def after_timeout(*args)
+    logger.info { "Timeout seconds=#{_timeout_in} args=#{args.inspect}" }
+    UpdateAudienceInsightWorker.perform_in(retry_in, *args)
+  end
+
   def retry_in
     unique_in + rand(120)
   end
@@ -30,17 +40,17 @@ class UpdateAudienceInsightWorker
       chart_builder = AudienceInsightChartBuilder.new(uid, limit: 100)
     end
 
+    records = []
     bm('CacheLoader.load') do
       # This code might break the sidekiq process which is processing UpdateAudienceInsightWorker
       records = chart_builder.builder.users
-      loader = CacheLoader.new(records, timeout: 10.seconds, concurrency: 1) do |record|
+      loader = CacheLoader.new(records, timeout: _timeout_in, concurrency: 1) do |record|
         record.friend_uids
         record.follower_uids
       end
       loader.load
     rescue CacheLoader::Timeout => e
-      logger.info { "Time is up! Retry later uid=#{uid} options=#{options}" }
-      UpdateAudienceInsightWorker.perform_in(retry_in, uid, options)
+      after_timeout(uid, {'records.size' => records.size}.merge(options))
       return
     end
 

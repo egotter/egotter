@@ -6,7 +6,7 @@ RSpec.describe CacheLoader, type: :model do
   let(:concurrency) { 2 }
   let(:block) { Proc.new { |record| record.inspect } }
   let(:instance) do
-    CacheLoader.new(records, timeout: timeout, concurrency: concurrency, &block)
+    described_class.new(records, timeout: timeout, concurrency: concurrency, &block)
   end
 
   describe '#load' do
