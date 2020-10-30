@@ -150,7 +150,7 @@ class CreateTwitterUserRequest < ApplicationRecord
       # TODO Try disabling the cache for speed
       @fetcher = TwitterUserFetcher.new(client, snapshot.uid, snapshot.screen_name, fetch_friends, search_for_yourself, reporting)
     end
-    @fetcher.fetch
+    @fetcher.fetch_in_threads
   end
 
   def diff_values_empty?(twitter_user)
