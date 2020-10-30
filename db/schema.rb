@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_30_150234) do
+ActiveRecord::Schema.define(version: 2020_10_30_161929) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1176,6 +1176,14 @@ ActiveRecord::Schema.define(version: 2020_10_30_150234) do
     t.index ["from_id"], name: "index_statuses_on_from_id"
     t.index ["screen_name"], name: "index_statuses_on_screen_name"
     t.index ["uid"], name: "index_statuses_on_uid"
+  end
+
+  create_table "stop_block_report_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_stop_block_report_requests_on_created_at"
+    t.index ["user_id"], name: "index_stop_block_report_requests_on_user_id", unique: true
   end
 
   create_table "stop_periodic_report_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

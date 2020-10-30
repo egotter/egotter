@@ -32,6 +32,16 @@ class BlockReport < ApplicationRecord
       # Create a message as late as possible
       new(user_id: user_id, token: generate_token, blocked_users: users)
     end
+
+    def report_stopped_message(user)
+      template = Rails.root.join('app/views/block_reports/stopped.ja.text.erb')
+      ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
+    end
+
+    def report_restarted_message(user)
+      template = Rails.root.join('app/views/block_reports/restarted.ja.text.erb')
+      ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
+    end
   end
 
   def deliver!
@@ -69,7 +79,15 @@ class BlockReport < ApplicationRecord
                           {
                               label: I18n.t('quick_replies.block_reports.label1'),
                               description: I18n.t('quick_replies.block_reports.description1')
-                          }
+                          },
+                          {
+                              label: I18n.t('quick_replies.block_reports.label2'),
+                              description: I18n.t('quick_replies.block_reports.description2')
+                          },
+                          {
+                              label: I18n.t('quick_replies.block_reports.label3'),
+                              description: I18n.t('quick_replies.block_reports.description3')
+                          },
                       ]
                   }
               }
