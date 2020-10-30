@@ -95,12 +95,21 @@ module TwitterDB
       class_methods do
         # TODO Set user_id
         # This method makes the result unique.
-        def where_and_order_by_field(uids:, inactive: nil)
+        def where_and_order_by_field(uids:, inactive: nil, thread: false)
           caller_name = (caller[0][/`([^']*)'/, 1] rescue '')
 
-          uids.uniq.each_slice(1000).map do |uids_array|
-            where_and_order_by_field_each_slice(uids_array, inactive, caller_name)
-          end.flatten
+          if thread
+            # TODO Experimental
+            result = Queue.new
+            Parallel.each_with_index(uids.uniq.each_slice(1000), in_threads: 10) do |uids_array, i|
+              result << [i, where_and_order_by_field_each_slice(uids_array, inactive, caller_name)]
+            end
+            result.size.times.map { result.pop }.sort_by { |i, _| i }.map(&:second).flatten
+          else
+            uids.uniq.each_slice(1000).map do |uids_array|
+              where_and_order_by_field_each_slice(uids_array, inactive, caller_name)
+            end.flatten
+          end
         end
 
         private
