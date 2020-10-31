@@ -45,7 +45,7 @@ class CreateTwitterDBUserWorker
   private
 
   def do_perform(client, uids, options)
-    TwitterDBUserBatch.fetch_and_import!(uids, client: client, force_update: options['force_update'])
+    TwitterDBUserBatch.new(client).import!(uids, force_update: options['force_update'])
   rescue => e
     exception_handler(e)
     client = Bot.api_client
@@ -69,8 +69,6 @@ class CreateTwitterDBUserWorker
   end
 
   class RetryExhausted < StandardError; end
-
-  class CredentialsNotFound < StandardError; end
 
   class << self
     def compress_and_perform_async(uids, options = {})

@@ -1,50 +1,48 @@
 require 'rails_helper'
 
 RSpec.describe TwitterDBUserBatch, type: :model do
-  describe '.import' do
-    let(:users) { 3.times.map { build(:t_user) } }
+  let(:client) { double('client') }
+  let(:instance) { described_class.new(client) }
 
-    context 'There are 3 new records' do
-      it 'imports all records' do
-        expect { described_class.import(users) }.to change { TwitterDB::User.all.size }.by(users.size)
-      end
+  describe '#import!' do
+    let(:uids) { [1, 2, 2, 3] }
+    let(:users) { [{id: 1}, {id: 2}, {id: 3}] }
+    subject { instance.import!(uids) }
+
+    it do
+      expect(instance).to receive(:fetch_users).with([1, 2, 3]).and_return(users)
+      expect(instance).to receive(:import_users).with(users, false).and_return(users)
+      expect(instance).not_to receive(:import_suspended_users)
+      subject
     end
+  end
 
-    context 'There are 2 new records and 1 persisted record' do
-      before { TwitterDB::User.create!(uid: users[0][:id], screen_name: users[0][:screen_name]) }
-      it 'imports only new records' do
-        expect { described_class.import(users) }.to change { TwitterDB::User.all.size }.by(users.size - 1)
-      end
+  describe '#fetch_users' do
+    let(:uids) { [1, 2, 2, 3] }
+    let(:users) { [{id: 1}, {id: 2}, {id: 3}] }
+    subject { instance.send(:fetch_users, uids) }
+
+    it do
+      expect(client).to receive_message_chain(:twitter, :users).with(uids).and_return(users)
+      subject
     end
+  end
 
-    context 'There are 3 persisted records' do
-      let(:time) { (described_class::UPDATE_RECORD_INTERVAL - 1.second).ago.round }
-      before do
-        users.each do |user|
-          TwitterDB::User.create!(uid: user[:id], screen_name: user[:screen_name], created_at: time, updated_at: time)
-        end
-      end
+  describe '#import_users' do
+    let(:users) { [{id: 1}, {id: 2}, {id: 3}] }
+    subject { instance.send(:import_users, users, false) }
 
-      context 'force_update == true' do
-        it 'imports all records' do
-          freeze_time do
-            described_class.import(users, force_update: true)
-            users.each do |user|
-              expect(TwitterDB::User.find_by(uid: user[:id]).updated_at).to eq(Time.zone.now.round)
-            end
-          end
-        end
-      end
-
-      context 'force_update == false' do
-        it "doesn't import any records" do
-          described_class.import(users, force_update: false)
-          users.each do |user|
-            expect(TwitterDB::User.find_by(uid: user[:id]).updated_at).to eq(time)
-          end
-        end
-      end
+    it do
+      expect(TwitterDB::User).to receive(:import_by!).with(users: users)
+      subject
     end
+  end
+
+  describe '#import_suspended_users' do
+    let(:uids) { [1, 2, 2, 3] }
+    subject { instance.send(:import_suspended_users, uids) }
+
+    it { is_expected.to eq([1, 2, 3]) }
   end
 end
 
