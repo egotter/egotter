@@ -40,6 +40,7 @@ class CreateTwitterDBUserWorker
     # Errno::ENOENT No such file or directory @ rb_sysopen
     logger.warn "#{e.inspect.truncate(150)} options=#{options.inspect.truncate(150)}"
     logger.info e.backtrace.join("\n")
+    FailedCreateTwitterDBUserWorker.perform_async(uids, options.merge(klass: self.class))
   end
 
   private
