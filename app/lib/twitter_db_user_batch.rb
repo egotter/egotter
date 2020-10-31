@@ -40,6 +40,7 @@ class TwitterDBUserBatch
     begin
       TwitterDB::User.import_by!(users: users)
     rescue => e
+      logger.info "#{self.class}##{__method__}: TwitterDB::User.import_by! failed #{e.inspect.truncate(200)}"
       handle_exception(e)
       sleep(sleep_in)
       retry
