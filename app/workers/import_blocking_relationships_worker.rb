@@ -14,10 +14,12 @@ class ImportBlockingRelationshipsWorker
   def perform(user_id, options = {})
     user = User.find(user_id)
     blocked_ids = fetch_blocked_uids(user.api_client.twitter)
+    return if blocked_ids.blank?
+
     BlockingRelationship.import_from(user.uid, blocked_ids)
 
     blocked_ids.each_slice(100).each do |uids_array|
-      CreateTwitterDBUserWorker.compress_and_perform_async(uids_array, user_id: user_id)
+      CreateTwitterDBUserWorker.compress_and_perform_async(uids_array, user_id: user_id, enqueued_by: self.class)
     end
 
     blocked_ids.each_slice(1000) do |uids_array|

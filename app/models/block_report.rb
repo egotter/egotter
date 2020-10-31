@@ -25,22 +25,38 @@ class BlockReport < ApplicationRecord
 
   belongs_to :user
 
+  # TODO Remove later
   attr_accessor :blocked_users
 
   class << self
-    def you_are_blocked(user_id, users)
+    # TODO Remove users
+    def you_are_blocked(user_id, users = nil)
       # Create a message as late as possible
-      new(user_id: user_id, token: generate_token, blocked_users: users)
+      new(user_id: user_id, token: generate_token)
     end
 
     def report_stopped_message(user)
+      users = fetch_blocked_users(user)
+      url_options = campaign_params('block_report_stopped').merge(dialog_params)
+
       template = Rails.root.join('app/views/block_reports/stopped.ja.text.erb')
-      ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
+      ERB.new(template.read).result_with_hash(
+          screen_name: user.screen_name,
+          profile_urls: generate_profile_urls(users, url_options, user.add_atmark_to_periodic_report?),
+          timeline_url: url_helper.timeline_url(user, url_options),
+      )
     end
 
     def report_restarted_message(user)
+      users = fetch_blocked_users(user)
+      url_options = campaign_params('block_report_restarted').merge(dialog_params)
+
       template = Rails.root.join('app/views/block_reports/restarted.ja.text.erb')
-      ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
+      ERB.new(template.read).result_with_hash(
+          screen_name: user.screen_name,
+          profile_urls: generate_profile_urls(users, url_options, user.add_atmark_to_periodic_report?),
+          timeline_url: url_helper.timeline_url(user, url_options),
+      )
     end
   end
 
@@ -50,7 +66,8 @@ class BlockReport < ApplicationRecord
     #   user.api_client.create_direct_message_event(User::EGOTTER_UID, self.class.start_message(user))
     # end
 
-    message = self.class.report_message(user, token, blocked_users)
+    users = self.class.fetch_blocked_users(user)
+    message = self.class.report_message(user, token, users)
     event = self.class.build_direct_message_event(user.uid, message)
     dm = User.egotter.api_client.create_direct_message_event(event: event)
 
@@ -111,6 +128,17 @@ class BlockReport < ApplicationRecord
     def start_message(user)
       template = Rails.root.join('app/views/block_reports/start.ja.text.erb')
       ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
+    end
+
+    def fetch_blocked_users(user, limit: 10)
+      blocked_uids = BlockingRelationship.where(to_uid: user.uid).order(created_at: :desc).limit(limit).pluck(:from_uid).uniq
+      users = TwitterDB::User.where_and_order_by_field(uids: blocked_uids)
+
+      if (missing_uids = blocked_uids - users.map(&:uid)).any?
+        CreateTwitterDBUserWorker.perform_async(missing_uids, user_id: user.id, enqueued_by: self.class)
+      end
+
+      users
     end
 
     private

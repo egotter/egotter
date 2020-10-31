@@ -15,9 +15,9 @@ class CreateBlockReportWorker
     user = User.find(user_id)
     return unless user.authorized?
 
-    blocked_uids = BlockingRelationship.where(to_uid: user.uid).order(created_at: :desc).limit(10).pluck(:from_uid).uniq
-    users = user.api_client.users(blocked_uids).map { |user| {uid: user[:id], screen_name: user[:screen_name]} }
-    BlockReport.you_are_blocked(user.id, users).deliver! if users.any?
+    if BlockingRelationship.where(to_uid: user.uid).exists?
+      BlockReport.you_are_blocked(user.id).deliver!
+    end
   rescue => e
     if TwitterApiStatus.unauthorized?(e) ||
         DirectMessageStatus.protect_out_users_from_spam?(e) ||
