@@ -19,7 +19,7 @@ module JobQueueingConcern
 
     debug_info = {
         search_for_yourself: current_user&.uid == uid,
-        controller: controller_name,
+        controller: controller_path,
         action: action_name,
         user_id: user_id,
         uid: uid

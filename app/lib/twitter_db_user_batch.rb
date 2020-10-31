@@ -54,7 +54,7 @@ class TwitterDBUserBatch
     return [] if not_persisted.empty?
 
     t_users = not_persisted.map { |uid| Hashie::Mash.new(id: uid, screen_name: 'suspended', description: '') }
-    import_users(t_users, false)
+    import_users(t_users, false) # TODO Disable benchmarking
 
     if not_persisted.size >= 10
       logger.warn { "#{self.class}##{__method__} #{not_persisted.size} records" }

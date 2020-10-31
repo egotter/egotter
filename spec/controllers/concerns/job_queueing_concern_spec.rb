@@ -15,6 +15,7 @@ RSpec.describe JobQueueingConcern do
       allow(instance).to receive(:user_signed_in?).and_return(true)
       allow(instance).to receive(:current_user).and_return(user)
       allow(instance).to receive(:controller_name).and_return('controller')
+      allow(instance).to receive(:controller_path).and_return('controller')
       allow(instance).to receive(:action_name).and_return('action')
       allow(instance).to receive(:egotter_visit_id).and_return('visit_id')
       allow(instance).to receive(:current_visit).and_return(nil)
@@ -34,6 +35,7 @@ RSpec.describe JobQueueingConcern do
       allow(instance).to receive(:user_signed_in?).and_return(true)
       allow(instance).to receive(:current_user).and_return(user)
       allow(instance).to receive(:controller_name).and_return('name')
+      allow(instance).to receive(:controller_path).and_return('name')
     end
     it do
       expect(AssembleTwitterUserWorker).to receive(:perform_async).with(any_args)
