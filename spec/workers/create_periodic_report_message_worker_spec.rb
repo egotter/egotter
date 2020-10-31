@@ -85,8 +85,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       let(:user_id) { user.id }
       let(:options) { {request_interval_too_short: true} }
       it do
-        expect(worker).to receive(:handle_weird_error).with(user).and_call_original
-        expect(PeriodicReport).to receive_message_chain(:request_interval_too_short_message, :deliver!).with(user.id).with(no_args)
+        expect(CreatePeriodicReportRequestIntervalTooShortMessageWorker).to receive(:perform_async).with(user_id)
         subject
       end
     end

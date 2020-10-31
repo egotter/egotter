@@ -1816,6 +1816,9 @@ ja:
       description2: 'ブロックされた時の通知を再開します'
       label3: 'ブロック通知 停止'
       description3: 'ブロックされた時の通知を停止します'
+    shared:
+      label1: 'DM届きました'
+      description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
   directory:
     profiles:
       footer_title: プロフィール

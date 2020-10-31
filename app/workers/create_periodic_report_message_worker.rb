@@ -89,10 +89,9 @@ class CreatePeriodicReportMessageWorker
       return
     end
 
+    # TODO Remove later
     if options[:request_interval_too_short]
-      handle_weird_error(user) do
-        PeriodicReport.request_interval_too_short_message(user_id).deliver!
-      end
+      CreatePeriodicReportRequestIntervalTooShortMessageWorker.perform_async(user_id)
       return
     end
 
