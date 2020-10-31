@@ -56,7 +56,7 @@ class CreateTwitterDBUserWorker
     @retries ||= 3
 
     unless meet_requirements_for_retrying?(e) && (@retries -= 1) >= 0
-      raise RetryExhausted
+      raise RetryExhausted.new(e.inspect.truncate(100))
     end
   end
 
