@@ -73,7 +73,7 @@ RSpec.describe CreateTwitterDBUserWorker do
       context 'the exception is not retryable' do
         before { allow(worker).to receive(:exception_handler).with(error).and_raise(error) }
         it do
-          expect(worker).not_to receive(:pick_client)
+          expect(Bot).not_to receive(:api_client)
           expect { subject }.to raise_error(error)
         end
       end
@@ -117,55 +117,4 @@ RSpec.describe CreateTwitterDBUserWorker do
       end
     end
   end
-
-  describe '#pick_client' do
-    let(:options) { {'user_id' => user_id} }
-    let(:user) { create(:user) }
-    subject { worker.send(:pick_client, options) }
-
-    shared_examples 'it returns bot client' do
-      before do
-        allow(User).to receive(:pick_authorized_id).and_return(user.id)
-        allow(User).to receive(:find).with(user.id).and_return(user)
-      end
-      it do
-        expect(user).to receive(:api_client).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-
-    context 'user_id is not set' do
-      let(:user_id) { nil }
-      include_examples 'it returns bot client'
-    end
-
-    context 'user_id is -1' do
-      let(:user_id) { -1 }
-      include_examples 'it returns bot client'
-    end
-
-    context 'user_id is set but the user is not persisted' do
-      let(:user_id) { 123 }
-      include_examples 'it returns bot client'
-    end
-
-    context 'user_id is set but the user is unauthorized' do
-      let(:user) { create(:user, authorized: false) }
-      let(:user_id) { user.id }
-      include_examples 'it returns bot client'
-    end
-
-    context 'user_id is set and the user is authorized' do
-      let(:user) { create(:user) }
-      let(:user_id) { user.id }
-      before do
-        allow(User).to receive(:find_by).with(id: user_id).and_return(user)
-      end
-      it do
-        expect(user).to receive(:api_client).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-  end
-
 end

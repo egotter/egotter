@@ -103,27 +103,6 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '.authorized_ids' do
-    subject { User.authorized_ids }
-    before do
-      Redis.client.flushdb
-      user.save!
-    end
-    it { is_expected.to eq([user.id]) }
-  end
-
-  describe '.pick_authorized_id' do
-    subject { User.pick_authorized_id }
-    before do
-      user.save!
-      allow(User).to receive(:authorized_ids).and_return([user.id])
-      allow(User).to receive(:find).with(user.id).and_return(user)
-      allow(user).to receive_message_chain(:api_client, :twitter, :verify_credentials)
-      allow(user).to receive_message_chain(:api_client, :twitter, :users).with(no_args).with([user.uid, user.id])
-    end
-    it { is_expected.to eq(user.id) }
-  end
-
   describe '.api_client' do
     it 'returns ApiClient' do
       client = user.api_client

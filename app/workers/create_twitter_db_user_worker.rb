@@ -38,7 +38,7 @@ class CreateTwitterDBUserWorker
   rescue => e
     # Errno::EEXIST File exists @ dir_s_mkdir
     # Errno::ENOENT No such file or directory @ rb_sysopen
-    logger.warn "#{e.inspect.truncate(150)} client_id=#{@client_id} options=#{options.inspect.truncate(150)}"
+    logger.warn "#{e.inspect.truncate(150)} options=#{options.inspect.truncate(150)}"
     logger.info e.backtrace.join("\n")
   end
 
@@ -66,34 +66,6 @@ class CreateTwitterDBUserWorker
         TwitterApiStatus.forbidden?(e) ||
         TwitterApiStatus.too_many_requests?(e) ||
         ServiceStatus.retryable_error?(e)
-  end
-
-  # TODO Remove later
-  def pick_client(options)
-    if valid_user_specified?(options)
-      @client_id = "user:#{@user.id}"
-      @user.api_client
-    elsif @retries && @retries == 0
-      Bot.api_client
-    else
-      if (user_id = User.pick_authorized_id)
-        user = User.find(user_id)
-        @client_id = "anonymous:#{user.id}"
-        user.api_client
-      else
-        # raise CredentialsNotFound
-        Bot.api_client
-      end
-    end
-  end
-
-  def valid_user_specified?(options)
-    if options['user_id'] &&
-        options['user_id'] != -1 &&
-        (user = User.find_by(id: options['user_id'])) &&
-        user.authorized?
-      @user = user
-    end
   end
 
   class RetryExhausted < StandardError; end
