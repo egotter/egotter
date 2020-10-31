@@ -30,12 +30,20 @@ class AssembleTwitterUserRequest < ApplicationRecord
     CreateFollowerInsightWorker.perform_async(twitter_user.uid, location: self.class)
     CreateTopFollowerWorker.perform_async(twitter_user.id)
 
+    perform_direct
+  end
+
+  private
+
+  # TODO Implement #perform_in_threads
+  def perform_direct
     login_user = User.find_by(id: twitter_user.user_id)
+
     [
         S3::CloseFriendship,
         S3::FavoriteFriendship,
     ].each do |klass|
-      bm("#{klass}(s3)") do
+      bm(klass) do
         uids = twitter_user.calc_uids_for(klass, login_user: login_user)
         klass.import_from!(twitter_user.uid, uids)
         CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: twitter_user.user_id, enqueued_by: "#{self.class} > #{klass}")
@@ -43,10 +51,10 @@ class AssembleTwitterUserRequest < ApplicationRecord
         if klass == S3::CloseFriendship && uids.present?
           CreateCloseFriendsOgImageWorker.perform_async(twitter_user.uid, uids: uids)
         end
+      rescue => e
+        logger.warn "#{klass}#import_from! #{e.inspect.truncate(200)} twitter_user_id=#{twitter_user.id}"
+        logger.info e.backtrace.join("\n")
       end
-    rescue => e
-      logger.warn "#{klass}#import_from! #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"
-      logger.info e.backtrace.join("\n")
     end
 
     return unless validate_record_friends!
@@ -62,14 +70,14 @@ class AssembleTwitterUserRequest < ApplicationRecord
         S3::Unfollowership,
         S3::MutualUnfriendship,
     ].each do |klass|
-      bm("#{klass}(s3)") do
+      bm(klass) do
         uids = twitter_user.calc_uids_for(klass)
         klass.import_from!(twitter_user.uid, uids)
         twitter_user.update_counter_cache_for(klass, uids.size)
+      rescue => e
+        logger.warn "#{klass}#import_from! #{e.inspect.truncate(200)} twitter_user_id=#{twitter_user.id}"
+        logger.info e.backtrace.join("\n")
       end
-    rescue => e
-      logger.warn "#{klass}#import_from! #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"
-      logger.info e.backtrace.join("\n")
     end
 
     twitter_user.update(statuses_interval: twitter_user.calc_statuses_interval)
@@ -80,8 +88,6 @@ class AssembleTwitterUserRequest < ApplicationRecord
 
     DeleteDisusedRecordsWorker.perform_async(twitter_user.uid)
   end
-
-  private
 
   def validate_record_creation_order!
     latest = TwitterUser.latest_by(uid: twitter_user.uid)
@@ -117,7 +123,7 @@ class AssembleTwitterUserRequest < ApplicationRecord
     def bm(message, &block)
       start = Time.zone.now
       yield
-      @benchmark[message] = Time.zone.now - start
+      @benchmark[message.to_s] = Time.zone.now - start if @benchmark
     end
 
     def perform!(*args, &blk)
@@ -130,7 +136,6 @@ class AssembleTwitterUserRequest < ApplicationRecord
       @benchmark['sum'] = @benchmark.values.sum
       @benchmark['elapsed'] = elapsed
 
-      logger.info "Benchmark AssembleTwitterUserRequest twitter_user_id=#{twitter_user_id} #{sprintf("%.3f sec", elapsed)}"
       logger.info "Benchmark AssembleTwitterUserRequest twitter_user_id=#{twitter_user_id} #{@benchmark.inspect}"
     end
   end

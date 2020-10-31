@@ -5,30 +5,37 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
   let(:twitter_user) { create(:twitter_user, user_id: user.id, with_relations: false) }
   let(:request) { described_class.create!(twitter_user: twitter_user) }
 
+  before do
+    allow(User).to receive(:find_by).with(id: user.id).and_return(user)
+  end
+
   describe '#perform!' do
     subject { request.perform! }
 
-    before do
-      allow(User).to receive(:find_by).with(id: user.id).and_return(user)
-    end
-
     it do
-      expect(UpdateUsageStatWorker).to receive(:perform_async).
-          with(twitter_user.uid, user_id: twitter_user.user_id, location: described_class)
-      expect(UpdateAudienceInsightWorker).to receive(:perform_async).
-          with(twitter_user.uid, location: described_class)
-      expect(CreateFriendInsightWorker).to receive(:perform_async).
-          with(twitter_user.uid, location: described_class)
-      expect(CreateFollowerInsightWorker).to receive(:perform_async).
-          with(twitter_user.uid, location: described_class)
+      expect(UpdateUsageStatWorker).to receive(:perform_async).with(twitter_user.uid, user_id: twitter_user.user_id, location: described_class)
+      expect(UpdateAudienceInsightWorker).to receive(:perform_async).with(twitter_user.uid, anything)
+      expect(CreateFriendInsightWorker).to receive(:perform_async).with(twitter_user.uid, anything)
+      expect(CreateFollowerInsightWorker).to receive(:perform_async).with(twitter_user.uid, anything)
       expect(CreateTopFollowerWorker).to receive(:perform_async).with(twitter_user.id)
 
+      expect(request).to receive(:perform_direct)
+      subject
+    end
+  end
+
+  describe 'perform_direct' do
+    subject { request.send(:perform_direct) }
+
+    it do
       [
           S3::CloseFriendship,
           S3::FavoriteFriendship,
       ].each do |klass|
         expect(twitter_user).to receive(:calc_uids_for).with(klass, login_user: user).and_return("result of #{klass}")
         expect(klass).to receive(:import_from!).with(twitter_user.uid, "result of #{klass}")
+        expect(CreateHighPriorityTwitterDBUserWorker).to receive(:compress_and_perform_async).
+            with("result of #{klass}", user_id: user.id, enqueued_by: "AssembleTwitterUserRequest > #{klass}")
       end
 
       [
