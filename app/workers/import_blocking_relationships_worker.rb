@@ -16,6 +16,10 @@ class ImportBlockingRelationshipsWorker
     blocked_ids = fetch_blocked_uids(user.api_client.twitter)
     BlockingRelationship.import_from(user.uid, blocked_ids)
 
+    blocked_ids.each_slice(100).each do |uids_array|
+      CreateTwitterDBUserWorker.compress_and_perform_async(uids_array, user_id: user_id)
+    end
+
     blocked_ids.each_slice(1000) do |uids_array|
       User.where(uid: uids_array).each do |user|
         CreateBlockReportWorker.perform_async(user.id)
