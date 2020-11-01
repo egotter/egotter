@@ -4,6 +4,14 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
   let(:user) { create(:user) }
   let(:request) { create(:create_periodic_report_request, user: user) }
 
+  describe '#append_status' do
+    subject { request.append_status('text') }
+    it do
+      subject
+      expect(request.status).to eq('text')
+    end
+  end
+
   describe '#perform!' do
     subject { request.perform! }
 

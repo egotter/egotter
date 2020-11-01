@@ -1,6 +1,5 @@
 class CreatePeriodicReportWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
@@ -31,6 +30,7 @@ class CreatePeriodicReportWorker
 
   def after_timeout(request_id, options = {})
     logger.warn "The job of #{self.class} timed out request_id=#{request_id} options=#{options.inspect}"
+    CreatePeriodicReportRequest.find(request_id).append_status('timeout').save
   end
 
   # options:
@@ -70,7 +70,6 @@ class CreatePeriodicReportWorker
     CreatePeriodicReportTask.new(request).start!
 
   rescue => e
-    notify_airbrake(e, request_id: request_id, options: options)
     logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
   end

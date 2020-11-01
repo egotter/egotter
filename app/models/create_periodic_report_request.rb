@@ -25,6 +25,16 @@ class CreatePeriodicReportRequest < ApplicationRecord
   attr_accessor :send_only_if_changed, :check_web_access, :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials, :check_twitter_user
   attr_accessor :worker_context
 
+  def append_status(text)
+    if status.blank?
+      self.status = text
+    else
+      self.status = "#{status},#{text}"
+    end
+
+    self
+  end
+
   def perform!
     return unless validate_report!
 

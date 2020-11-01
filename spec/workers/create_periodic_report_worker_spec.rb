@@ -40,6 +40,14 @@ RSpec.describe CreatePeriodicReportWorker do
     end
   end
 
+  describe '#after_timeout' do
+    subject { worker.after_timeout(request.id) }
+    it do
+      subject
+      expect(request.reload.status).to eq('timeout')
+    end
+  end
+
   describe '#perform' do
     let(:task) { double('task') }
     subject { worker.perform(request.id) }
