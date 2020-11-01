@@ -40,7 +40,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       let(:user_id) { user.id }
       let(:options) { {restart_requested: true} }
       it do
-        expect(worker).to receive(:perform_restart_request).with(user)
+        expect(CreatePeriodicReportRestartRequestedMessageWorker).to receive(:perform_async).with(user.id)
         subject
       end
     end
@@ -189,15 +189,6 @@ RSpec.describe CreatePeriodicReportMessageWorker do
     subject { worker.perform_unregistered(('uid')) }
     it do
       expect(worker).to receive(:send_message_from_egotter).with('uid', message)
-      subject
-    end
-  end
-
-  describe '#perform_restart_request' do
-    let(:message) { PeriodicReport.restart_requested_message.message }
-    subject { worker.perform_restart_request(user) }
-    it do
-      expect(worker).to receive(:send_message_from_egotter).with(user.uid, message)
       subject
     end
   end

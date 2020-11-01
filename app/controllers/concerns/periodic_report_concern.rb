@@ -155,7 +155,7 @@ module PeriodicReportConcern
   def restart_periodic_report(uid)
     if (user = User.find_by(uid: uid))
       StopPeriodicReportRequest.find_by(user_id: user.id)&.destroy
-      CreatePeriodicReportMessageWorker.perform_async(user.id, restart_requested: true)
+      CreatePeriodicReportRestartRequestedMessageWorker.perform_async(user.id)
     end
   rescue => e
     logger.warn "##{__method__} #{e.inspect} uid=#{uid}"

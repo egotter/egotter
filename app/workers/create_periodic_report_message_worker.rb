@@ -64,8 +64,9 @@ class CreatePeriodicReportMessageWorker
 
     user = User.find(user_id)
 
+    # TODO Remove later
     if options[:restart_requested]
-      perform_restart_request(user)
+      CreatePeriodicReportRestartRequestedMessageWorker.perform_async(user_id)
       return
     end
 
@@ -163,10 +164,6 @@ class CreatePeriodicReportMessageWorker
 
   def perform_unregistered(uid)
     send_message_from_egotter(uid, PeriodicReport.unregistered_message.message)
-  end
-
-  def perform_restart_request(user)
-    send_message_from_egotter(user.uid, PeriodicReport.restart_requested_message.message)
   end
 
   def perform_not_following(user)
