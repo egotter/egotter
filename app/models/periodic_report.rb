@@ -645,6 +645,24 @@ class PeriodicReport < ApplicationRecord
       ]
     end
 
+    def stop_requested_quick_reply_options
+      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
+      [
+          {
+              label: I18n.t('quick_replies.shared.label1'),
+              description: I18n.t('quick_replies.shared.description1')
+          },
+          {
+              label: I18n.t('quick_replies.prompt_reports.label4'),
+              description: I18n.t('quick_replies.prompt_reports.description4')
+          },
+          {
+              label: I18n.t('quick_replies.prompt_reports.label3'),
+              description: I18n.t('quick_replies.prompt_reports.description3')
+          }
+      ]
+    end
+
     # options:
     #   unsubscribe
     def build_direct_message_event(uid, message, options = {})

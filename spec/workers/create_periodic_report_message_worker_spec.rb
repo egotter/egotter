@@ -49,7 +49,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       let(:user_id) { user.id }
       let(:options) { {stop_requested: true} }
       it do
-        expect(worker).to receive(:perform_stop_request).with(user)
+        expect(CreatePeriodicReportStopRequestedMessageWorker).to receive(:perform_async).with(user.id)
         subject
       end
     end
@@ -198,15 +198,6 @@ RSpec.describe CreatePeriodicReportMessageWorker do
     subject { worker.perform_restart_request(user) }
     it do
       expect(worker).to receive(:send_message_from_egotter).with(user.uid, message)
-      subject
-    end
-  end
-
-  describe '#perform_stop_request' do
-    let(:message) { PeriodicReport.stop_requested_message.message }
-    subject { worker.perform_stop_request(user) }
-    it do
-      expect(worker).to receive(:send_message_from_egotter).with(user.uid, message, unsubscribe: true)
       subject
     end
   end

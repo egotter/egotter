@@ -376,7 +376,7 @@ describe PeriodicReportConcern, type: :controller do
       before { allow(User).to receive(:find_by).with(uid: uid).and_return(user) }
       it do
         expect(StopPeriodicReportRequest).to receive(:create).with(user_id: user.id)
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, stop_requested: true)
+        expect(CreatePeriodicReportStopRequestedMessageWorker).to receive(:perform_async).with(user.id)
         subject
       end
     end

@@ -146,7 +146,7 @@ module PeriodicReportConcern
   def stop_periodic_report(uid)
     if (user = User.find_by(uid: uid))
       StopPeriodicReportRequest.create(user_id: user.id) # If the same record exists, this process may fail
-      CreatePeriodicReportMessageWorker.perform_async(user.id, stop_requested: true)
+      CreatePeriodicReportStopRequestedMessageWorker.perform_async(user.id)
     end
   rescue => e
     logger.warn "##{__method__} #{e.inspect} uid=#{uid}"

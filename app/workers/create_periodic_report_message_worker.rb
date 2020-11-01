@@ -69,8 +69,9 @@ class CreatePeriodicReportMessageWorker
       return
     end
 
+    # TODO Remove later
     if options[:stop_requested]
-      perform_stop_request(user)
+      CreatePeriodicReportStopRequestedMessageWorker.perform_async(user_id)
       return
     end
 
@@ -166,10 +167,6 @@ class CreatePeriodicReportMessageWorker
 
   def perform_restart_request(user)
     send_message_from_egotter(user.uid, PeriodicReport.restart_requested_message.message)
-  end
-
-  def perform_stop_request(user)
-    send_message_from_egotter(user.uid, PeriodicReport.stop_requested_message.message, unsubscribe: true)
   end
 
   def perform_not_following(user)
