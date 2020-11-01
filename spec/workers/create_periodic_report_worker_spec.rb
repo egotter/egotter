@@ -34,7 +34,7 @@ RSpec.describe CreatePeriodicReportWorker do
       end
 
       it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_in).with(waiting_time, request.user_id, request_interval_too_short: true)
+        expect(CreatePeriodicReportRequestIntervalTooShortMessageWorker).to receive(:perform_in).with(waiting_time, request.user_id)
         subject
       end
     end

@@ -19,7 +19,7 @@ class CreatePeriodicReportWorker
 
     if user_requested_job?
       waiting_time = CreatePeriodicReportMessageWorker::UNIQUE_IN + 3.seconds
-      CreatePeriodicReportMessageWorker.perform_in(waiting_time, request.user_id, request_interval_too_short: true)
+      CreatePeriodicReportRequestIntervalTooShortMessageWorker.perform_in(waiting_time, request.user_id)
     end
 
     logger.info "The job of #{self.class} is skipped request_id=#{request_id} options=#{options.inspect}"
