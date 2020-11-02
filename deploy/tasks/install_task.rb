@@ -153,6 +153,8 @@ module Tasks
 
       def update_sidekiq
         run_copy('./setup/etc/init/sidekiq*', '/etc/init')
+        run_copy('./setup/etc/init/_sidekiq.conf', '/etc/init')
+        run_copy('./setup/etc/init/_sidekiq_misc.conf', '/etc/init')
         self
       end
 
@@ -313,9 +315,8 @@ module Tasks
             'sudo service td-agent restart',
             'sudo service nginx stop || :',
             'sudo service puma stop || :',
-            'sudo stop sidekiq_misc || :',
-            'sudo start sidekiq_workers || :',
-            'sudo start sidekiq_prompt_reports_workers',
+            'sudo start sidekiq_misc || :',
+            'sudo start sidekiq || :',
             'sudo restart datadog-agent',
         ].each do |cmd|
           backend(cmd)
