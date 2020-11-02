@@ -12,7 +12,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   end
 
   describe '.too_short_request_interval?' do
-    subject { described_class.too_short_request_interval?(uid: 1) }
+    subject { described_class.too_short_request_interval?(1) }
     it { is_expected.to be_falsey }
 
     context 'the creation request is has already been created' do

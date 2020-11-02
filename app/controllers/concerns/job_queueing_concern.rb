@@ -8,10 +8,10 @@ module JobQueueingConcern
     return if !force && !user_signed_in?
     return if user_signed_in? && TooManyRequestsUsers.new.exists?(current_user.id)
     return if TwitterUser.too_short_create_interval?(uid)
-    return if CreateTwitterUserRequest.too_short_request_interval?(uid: uid)
+    return if CreateTwitterUserRequest.too_short_request_interval?(uid)
 
     request = CreateTwitterUserRequest.create(
-        requested_by: controller_name,
+        requested_by: controller_path,
         session_id: egotter_visit_id,
         user_id: user_id,
         uid: uid,
