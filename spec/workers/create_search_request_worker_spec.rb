@@ -1,10 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe CreateSearchRequestWorker do
+  let(:screen_name) { 'name' }
   let(:worker) { described_class.new }
 
+  describe '#after_expire' do
+    subject { worker.after_expire(screen_name) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '#after_timeout' do
+    subject { worker.after_timeout(screen_name) }
+    it { is_expected.to be_truthy }
+  end
+
   describe '#perform' do
-    let(:screen_name) { 'name' }
     let(:client) { double('client') }
     subject { worker.perform(screen_name) }
     before { allow(Bot).to receive(:api_client).and_return(client) }

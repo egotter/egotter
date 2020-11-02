@@ -7,15 +7,23 @@ class CreateSearchRequestWorker
   end
 
   def unique_in
-    1.minute
+    10.seconds
   end
 
   def expire_in
-    1.minute
+    10.seconds
+  end
+
+  def after_expire(*args)
+    logger.warn "The job of #{self.class} is expired args=#{args.inspect}"
   end
 
   def timeout_in
     10.seconds
+  end
+
+  def after_timeout(*args)
+    logger.warn "The job of #{self.class} timed out args=#{args.inspect}"
   end
 
   # options:

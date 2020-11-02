@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CreateSearchReportWorker do
+  let(:user) { create(:user, with_settings: true) }
   let(:worker) { described_class.new }
 
   describe '#perform' do
-    let(:user) { create(:user, with_settings: true) }
     subject { worker.perform(user.id) }
     it do
       expect(SearchReport).to receive_message_chain(:you_are_searched, :deliver!).
