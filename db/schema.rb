@@ -458,6 +458,7 @@ ActiveRecord::Schema.define(version: 2020_10_30_161929) do
     t.integer "user_id", null: false
     t.bigint "uid", null: false
     t.integer "twitter_user_id"
+    t.string "status_message"
     t.string "requested_by", default: "", null: false
     t.datetime "finished_at"
     t.bigint "ahoy_visit_id"
