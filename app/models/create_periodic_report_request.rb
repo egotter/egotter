@@ -122,8 +122,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
       elapsed = Time.zone.now - start
       @bm_perform[:sum] = @bm_perform.values.sum
       @bm_perform[:elapsed] = elapsed
+      @bm_perform.transform_values! { |v| sprintf("%.3f", v) }
 
-      Rails.logger.info "Benchmark CreatePeriodicReportRequest user_id=#{user_id} request_id=#{id} #{sprintf("%.3f sec", elapsed)}"
       Rails.logger.info "Benchmark CreatePeriodicReportRequest user_id=#{user_id} request_id=#{id} #{@bm_perform.inspect}"
 
       result
