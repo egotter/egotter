@@ -17,7 +17,7 @@ class CreateTwitterUserWorker
   end
 
   def expire_in
-    1.minute
+    30.seconds
   end
 
   def after_expire(request_id, options = {})
