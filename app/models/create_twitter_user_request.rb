@@ -57,8 +57,7 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   def validate_creation_interval!
-    # TODO Implement #too_short_create_interval? as class method
-    raise TooShortCreateInterval if TwitterUser.select(:id, :created_at).latest_by(uid: uid)&.too_short_create_interval?
+    raise TooShortCreateInterval if TwitterUser.too_short_create_interval?(uid)
   end
 
   def build_snapshot(context)
@@ -228,7 +227,7 @@ class CreateTwitterUserRequest < ApplicationRecord
       @bm_perform['elapsed'] = elapsed
       @bm_perform.transform_values! { |v| sprintf("%.3f", v) }
 
-      Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{sprintf("%.3f sec", elapsed)} #{@bm_perform.inspect}"
+      Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{@bm_perform.inspect}"
 
       result
     end

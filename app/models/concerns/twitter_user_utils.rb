@@ -39,9 +39,16 @@ module TwitterUserUtils
 
   CREATE_RECORD_INTERVAL = 30.minutes
 
-  def too_short_create_interval?(interval = nil)
-    interval = CREATE_RECORD_INTERVAL unless interval
-    interval.seconds.ago < created_at
+  # TODO Replace with class method
+  def too_short_create_interval?
+    CREATE_RECORD_INTERVAL.seconds.ago < created_at
+  end
+
+
+  class_methods do
+    def too_short_create_interval?(uid)
+      exists?(uid: uid, created_at: CREATE_RECORD_INTERVAL.ago..Time.zone.now)
+    end
   end
 
   def to_summary

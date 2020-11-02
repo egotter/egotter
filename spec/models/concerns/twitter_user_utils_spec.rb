@@ -105,10 +105,20 @@ RSpec.describe TwitterUserUtils do
       before { twitter_user.update!(created_at: 1.minute.ago) }
       it { is_expected.to be_truthy }
     end
+  end
 
-    context 'The record was created [interval] ago' do
-      before { twitter_user.update!(created_at: TwitterUser::CREATE_RECORD_INTERVAL.ago) }
+  describe '.too_short_create_interval?' do
+    subject { TwitterUser.too_short_create_interval?(twitter_user.uid) }
+    before { twitter_user.save!(validate: false) }
+
+    context 'The record was created 1 hour ago' do
+      before { twitter_user.update!(created_at: 1.hour.ago) }
       it { is_expected.to be_falsey }
+    end
+
+    context 'The record was created 1 minute ago' do
+      before { twitter_user.update!(created_at: 1.minute.ago) }
+      it { is_expected.to be_truthy }
     end
   end
 end

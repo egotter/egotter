@@ -61,7 +61,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     end
 
     context 'too_short_create_interval? returns true' do
-      before { allow(TwitterUser).to receive_message_chain(:latest_by, :too_short_create_interval?).with(uid: 1).with(no_args).and_return(true) }
+      before { allow(TwitterUser).to receive(:too_short_create_interval?).with(1).and_return(true) }
       it { expect { subject }.to raise_error(described_class::TooShortCreateInterval) }
     end
   end
