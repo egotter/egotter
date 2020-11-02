@@ -19,6 +19,7 @@
 #  index_create_twitter_user_logs_on_user_id     (user_id)
 #
 
+# TODO Remove later
 class CreateTwitterUserLog < ApplicationRecord
   before_validation do
     if self.error_message

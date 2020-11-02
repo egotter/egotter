@@ -182,23 +182,6 @@ class SendMetricsToCloudWatchWorker
     end
   end
 
-  def send_create_twitter_user_logs_metrics
-    namespace = "CreateTwitterUserLogs/#{Rails.env}"
-    duration = {created_at: 10.minutes.ago..Time.zone.now}
-
-    CreateTwitterUserLog.where(duration).where(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, count|
-      name = key.demodulize
-      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
-      put_metric_data(name, count, options)
-    end
-
-    CreateTwitterUserLog.where(duration).where.not(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, count|
-      name = key.demodulize
-      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
-      put_metric_data(name, count, options)
-    end
-  end
-
   def send_twitter_db_users_metrics
     namespace = "TwitterDBUsers#{"/#{Rails.env}" unless Rails.env.production?}"
 
