@@ -8,14 +8,6 @@
 
 <source>
   @type tail
-  path /var/egotter/log/puma.log
-  pos_file /tmp/puma.log.pos
-  tag <%= name %>.puma
-  format /^(?<message>.*)$/
-</source>
-
-<source>
-  @type tail
   path /var/egotter/log/sidekiq.log
   pos_file /tmp/sidekiq.log.pos
   tag <%= name %>.sidekiq
@@ -46,14 +38,6 @@
   format /^(?<message>.*)$/
 </source>
 
-<source>
-  @type tail
-  path /var/log/nginx/error.log
-  pos_file /tmp/error.log.pos
-  tag <%= name %>.error_log
-  format /^(?<message>.*)$/
-</source>
-
 <match <%= name %>.*>
   @type rewrite_tag_filter
   <rule>
@@ -67,14 +51,6 @@
   @type slack
   webhook_url <%= webhook_rails_sidekiq %>
   channel rails_sidekiq
-  username <%= name %>
-  flush_interval 2s
-</match>
-
-<match <%= name %>.puma.*>
-  @type slack
-  webhook_url <%= webhook_puma %>
-  channel puma
   username <%= name %>
   flush_interval 2s
 </match>
@@ -107,14 +83,6 @@
   @type slack
   webhook_url <%= webhook_syslog %>
   channel syslog
-  username <%= name %>
-  flush_interval 2s
-</match>
-
-<match <%= name %>.error_log.*>
-  @type slack
-  webhook_url <%= webhook_error_log %>
-  channel error_log
   username <%= name %>
   flush_interval 2s
 </match>
