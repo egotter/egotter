@@ -6,33 +6,42 @@ require_relative './sync_task'
 require_relative './list_task'
 
 module Tasks
-  module TaskBuilder
-    module_function
+  class TaskBuilder
+    class << self
+      def build(params)
+        instance = new(params.dup)
 
-    def build(params)
-      params = params.dup
-
-      case
-      when params['release']
-        build_release_task(params)
-      when params['launch']
-        build_launch_task(params)
-      when params['adjust']
-        build_adjust_task(params)
-      when params['terminate']
-        build_terminate_task(params)
-      when params['sync']
-        build_sync_task(params)
-      when params['list']
-        build_list_task(params)
-      else
-        raise "Invalid action params=#{params.inspect}"
+        case
+        when params['release']
+          instance.release_task
+        when params['launch']
+          instance.launch_task
+        when params['adjust']
+          instance.adjust_task
+        when params['terminate']
+          instance.terminate_task
+        when params['sync']
+          instance.sync_task
+        when params['list']
+          instance.list_task
+        else
+          raise UnknownActionError, "params=#{params.inspect}"
+        end
       end
     end
 
-    def build_release_task(params)
-      role = params['role']
-      hosts = params['hosts'].split(',')
+    class UnknownActionError < RuntimeError; end
+
+    class UnknownRoleError < RuntimeError; end
+
+    def initialize(params)
+      @params = params
+    end
+
+    # Install latest applications on a server that is already running
+    def release_task
+      role = @params['role']
+      hosts = @params['hosts'].split(',')
 
       if role == 'web'
         if hosts.size > 1
@@ -47,14 +56,14 @@ module Tasks
           Tasks::ReleaseTask::Sidekiq.new(hosts[0])
         end
       else
-        raise "Invalid role params=#{params.inspect}"
+        raise UnknownRoleError, "params=#{@params.inspect}"
       end
     end
 
-    def build_launch_task(params)
-      if multiple_task?(params)
-        count = params['count'].to_i
-        tasks = count.times.map { Tasks::LaunchTask.build(params) }
+    def launch_task
+      if multiple_task?
+        count = @params['count'].to_i
+        tasks = count.times.map { Tasks::LaunchTask.build(@params) }
 
         logger.info "Launch #{count} instances in parallel"
 
@@ -64,47 +73,47 @@ module Tasks
 
         Tasks::EnumerableTask.new(tasks)
       else
-        Tasks::LaunchTask.build(params)
+        Tasks::LaunchTask.build(@params)
       end
     end
 
-    def build_adjust_task(params)
-      count = params['count'].to_i
-      current_count = ::DeployRuby::Aws::TargetGroup.new(params['target-group']).registered_instances.size
+    def adjust_task
+      count = @params['count'].to_i
+      current_count = ::DeployRuby::Aws::TargetGroup.new(@params['target-group']).registered_instances.size
 
       if count > current_count
-        params['count'] = count - current_count
-        logger.info "Launch #{params['count']} #{params['role']} instances"
-        build_launch_task(params)
+        @params['count'] = count - current_count
+        logger.info "Launch #{@params['count']} #{@params['role']} instances"
+        launch_task
 
       elsif count < current_count
-        params['count'] = current_count - count
-        logger.info "Terminate #{params['count']} #{params['role']} instances"
-        build_terminate_task(params)
+        @params['count'] = current_count - count
+        logger.info "Terminate #{@params['count']} #{@params['role']} instances"
+        terminate_task
 
       else
         raise "Already adjusted params=#{params.inspect}"
       end
     end
 
-    def build_terminate_task(params)
-      if multiple_task?(params)
-        Tasks::EnumerableTask.new(params['count'].to_i.times.map { Tasks::TerminateTask.build(params) })
+    def terminate_task
+      if multiple_task?
+        Tasks::EnumerableTask.new(@params['count'].to_i.times.map { Tasks::TerminateTask.build(@params) })
       else
-        Tasks::TerminateTask.build(params)
+        Tasks::TerminateTask.build(@params)
       end
     end
 
-    def build_sync_task(params)
-      Tasks::SyncTask.build(params)
+    def sync_task
+      Tasks::SyncTask.build(@params)
     end
 
-    def build_list_task(params)
-      Tasks::ListTask.build(params)
+    def list_task
+      Tasks::ListTask.build(@params)
     end
 
-    def multiple_task?(params)
-      params['count'] && params['count'].to_i > 1
+    def multiple_task?
+      @params['count'] && @params['count'].to_i > 1
     end
 
     def logger

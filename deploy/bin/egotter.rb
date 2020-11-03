@@ -71,10 +71,10 @@ def main(params)
     return
   end
 
-  Tasks::TaskBuilder.logger.info "deploy started params=#{params.inspect}" unless params['list']
+  DeployRuby.logger.info "deploy started params=#{params.inspect}" unless params['list']
   task = Tasks::TaskBuilder.build(params)
   task.run
-  Tasks::TaskBuilder.logger.info "deploy finished params=#{params.inspect}" unless params['list']
+  DeployRuby.logger.info "deploy finished params=#{params.inspect}" unless params['list']
 
   unless params['list']
     system("git tag #{task.action}-#{params['role']}-#{Time.now.to_i}")
