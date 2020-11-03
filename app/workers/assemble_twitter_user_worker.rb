@@ -22,7 +22,7 @@ class AssembleTwitterUserWorker
     logger.warn "The job of #{self.class} is expired args=#{args.inspect}"
   end
 
-  def _timeout_in(*args)
+  def _timeout_in
     3.minutes
   end
 
