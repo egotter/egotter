@@ -90,7 +90,7 @@ module Tasks
         terminate_task
 
       else
-        raise "Already adjusted params=#{params.inspect}"
+        logger.info "Don't launch/terminate any instances"
       end
     end
 
