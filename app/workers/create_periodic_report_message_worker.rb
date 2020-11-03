@@ -2,7 +2,7 @@ require 'digest/md5'
 
 class CreatePeriodicReportMessageWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
+  prepend TimeoutableWorker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -20,12 +20,8 @@ class CreatePeriodicReportMessageWorker
     logger.warn "The job of #{self.class} is skipped args=#{args.inspect}"
   end
 
-  def timeout_in
+  def _timeout_in
     30.seconds
-  end
-
-  def after_timeout(user_id, options = {})
-    logger.warn "The job of #{self.class} timed out user_id=#{user_id} options=#{options.inspect}"
   end
 
   # options:
@@ -156,7 +152,6 @@ class CreatePeriodicReportMessageWorker
     if not_fatal_error?(e)
       logger.info "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
     else
-      notify_airbrake(e, user_id: user_id, options: options)
       logger.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
       logger.info e.backtrace.join("\n")
     end
