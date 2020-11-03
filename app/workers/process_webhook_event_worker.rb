@@ -2,6 +2,7 @@ require 'digest/md5'
 
 class ProcessWebhookEventWorker
   include Sidekiq::Worker
+  prepend TimeoutableWorker
   include PeriodicReportConcern
   include SearchReportConcern
   include BlockReportConcern
@@ -19,12 +20,8 @@ class ProcessWebhookEventWorker
     logger.info "The job of #{self.class} is skipped digest=#{digest(args[0])} args=#{args.inspect}"
   end
 
-  def timeout_in
+  def _timeout_in
     10.seconds
-  end
-
-  def after_timeout(*args)
-    logger.warn "The job of #{self.class} timed out digest=#{digest(args[0])} args=#{args.inspect.truncate(200)}"
   end
 
   # options:
