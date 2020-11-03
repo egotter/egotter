@@ -19,7 +19,7 @@ class CreatePeriodicReportRequestIntervalTooShortMessageWorker
   end
 
   def after_timeout(user_id, options = {})
-    logger.warn "The job of #{self.class} timed out user_id=#{user_id} options=#{options.inspect}"
+    logger.info "The job of #{self.class} timed out user_id=#{user_id} options=#{options.inspect}"
   end
 
   # options:

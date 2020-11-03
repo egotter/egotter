@@ -25,6 +25,8 @@ module Egotter
       @redis.zremrangebyscore(key, 0, current_time - ttl)
     end
 
+    # TODO Stop using pipeline
+
     def exists?(val)
       @redis.pipelined do
         cleanup
