@@ -24,8 +24,12 @@ class CreatePeriodicReportWorker
     logger.info "The job of #{self.class} is skipped request_id=#{request_id} options=#{options.inspect}"
   end
 
-  def timeout_in(*args)
+  def _timeout_in(*args)
     60.seconds
+  end
+
+  def timeout?
+    @start && Time.zone.now - @start > _timeout_in
   end
 
   def after_timeout(request_id, options = {})
@@ -39,6 +43,7 @@ class CreatePeriodicReportWorker
   #   scheduled_request
   #   send_only_if_changed
   def perform(request_id, options = {})
+    @start = Time.zone.now
     request = CreatePeriodicReportRequest.find(request_id)
 
     if sending_dm_limited?(request.user.uid)
@@ -68,6 +73,10 @@ class CreatePeriodicReportWorker
     request.check_twitter_user = options['create_twitter_user']
 
     CreatePeriodicReportTask.new(request).start!
+
+    if timeout?
+      after_timeout(request_id, options)
+    end
 
   rescue => e
     logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
