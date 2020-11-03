@@ -62,10 +62,9 @@ module Tasks
 
     def launch_task
       if multiple_task?
-        count = @params['count'].to_i
-        tasks = count.times.map { Tasks::LaunchTask.build(@params) }
+        tasks = tasks_count.times.map { Tasks::LaunchTask.build(@params) }
 
-        logger.info "Launch #{count} instances in parallel"
+        logger.info "Launch #{tasks_count} instances in parallel"
 
         tasks.map.with_index do |task, i|
           Thread.new { task.launch_instance(i) }
@@ -78,16 +77,15 @@ module Tasks
     end
 
     def adjust_task
-      count = @params['count'].to_i
       current_count = ::DeployRuby::Aws::TargetGroup.new(@params['target-group']).registered_instances.size
 
-      if count > current_count
-        @params['count'] = count - current_count
+      if tasks_count > current_count
+        @params['count'] = tasks_count - current_count
         logger.info "Launch #{@params['count']} #{@params['role']} instances"
         launch_task
 
-      elsif count < current_count
-        @params['count'] = current_count - count
+      elsif tasks_count < current_count
+        @params['count'] = current_count - tasks_count
         logger.info "Terminate #{@params['count']} #{@params['role']} instances"
         terminate_task
 
@@ -98,7 +96,7 @@ module Tasks
 
     def terminate_task
       if multiple_task?
-        Tasks::EnumerableTask.new(@params['count'].to_i.times.map { Tasks::TerminateTask.build(@params) })
+        Tasks::EnumerableTask.new(tasks_count.times.map { Tasks::TerminateTask.build(@params) })
       else
         Tasks::TerminateTask.build(@params)
       end
@@ -114,6 +112,10 @@ module Tasks
 
     def multiple_task?
       @params['count'] && @params['count'].to_i > 1
+    end
+
+    def tasks_count
+      @params['count'].to_i
     end
 
     def logger

@@ -18,15 +18,17 @@ module Tasks
       when 'sidekiq'
         Sidekiq.new(params)
       when 'sidekiq_prompt_reports'
-        SidekiqPromptReports.new(params)
+        raise UnknownRoleError, "params=#{params.inspect}"
       when 'plain'
         Plain.new(params)
       else
-        raise "Invalid role params=#{params.inspect}"
+        raise UnknownRoleError, "params=#{params.inspect}"
       end
     end
 
     module_function :build
+
+    class UnknownRoleError < RuntimeError; end
 
     class Base
       attr_reader :action, :instance
@@ -150,6 +152,7 @@ module Tasks
       end
     end
 
+    # TODO Remove later
     class SidekiqPromptReports < Base
       def initialize(params)
         super()

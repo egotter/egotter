@@ -283,7 +283,6 @@ module Tasks
             'sudo service puma stop || :',
             'sudo start sidekiq',
             'sudo start sidekiq_misc',
-            'sudo stop sidekiq_prompt_reports_workers',
             'sudo restart datadog-agent',
         ].each do |cmd|
           backend(cmd)
@@ -296,13 +295,13 @@ module Tasks
         [
             'sudo stop sidekiq || :',
             'sudo stop sidekiq_misc || :',
-            'sudo stop sidekiq_prompt_reports_workers || :',
         ].each do |cmd|
           backend(cmd)
         end
       end
     end
 
+    # TODO Remover later
     class SidekiqPromptReports < Sidekiq
       attr_reader :instance
 
@@ -362,7 +361,6 @@ module Tasks
             'sudo restart datadog-agent',
             'sudo stop sidekiq || :',
             'sudo stop sidekiq_misc || :',
-            'sudo stop sidekiq_prompt_reports_workers || :',
         ].each do |cmd|
           backend(cmd)
         end

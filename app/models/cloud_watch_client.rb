@@ -99,10 +99,6 @@ class CloudWatchClient
       @changes = []
     end
 
-    def set_dashboard_body
-      @dashboard_body ||= JSON.parse(@client.get_dashboard(@name).dashboard_body)
-    end
-
     def append_cpu_utilization(role, instance_id)
       append_instance("CPUUtilization#{role_suffix(role)}", 'AWS/EC2', ['...', instance_id])
     end
@@ -146,7 +142,7 @@ class CloudWatchClient
     end
 
     def append_instance(widget_name, namespace, metric)
-      set_dashboard_body['widgets'].each do |widget|
+      dashboard_body['widgets'].each do |widget|
         if widget['properties']['title'].to_s == widget_name && widget['properties']['metrics'][0][0] == namespace
           widget['properties']['metrics'] << metric
           @changes << widget['properties']['metrics']
@@ -158,7 +154,7 @@ class CloudWatchClient
     end
 
     def remove_instance(widget_name, namespace, instance_id)
-      set_dashboard_body['widgets'].each do |widget|
+      dashboard_body['widgets'].each do |widget|
         if widget['properties']['title'].to_s == widget_name && widget['properties']['metrics'][0][0] == namespace
           widget['properties']['metrics'].delete_if.with_index { |metric, i| i != 0 && metric.include?(instance_id) }
           @changes << widget['properties']['metrics']
@@ -167,6 +163,10 @@ class CloudWatchClient
       end
 
       self
+    end
+
+    def dashboard_body
+      @dashboard_body ||= JSON.parse(@client.get_dashboard(@name).dashboard_body)
     end
 
     def update
