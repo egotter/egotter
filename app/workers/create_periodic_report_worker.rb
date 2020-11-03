@@ -1,5 +1,6 @@
 class CreatePeriodicReportWorker
   include Sidekiq::Worker
+  prepend TimeoutableWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
@@ -28,12 +29,8 @@ class CreatePeriodicReportWorker
     60.seconds
   end
 
-  def timeout?
-    @start && Time.zone.now - @start > _timeout_in
-  end
-
   def after_timeout(request_id, options = {})
-    logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", Time.zone.now - @start)} request_id=#{request_id} options=#{options.inspect}"
+    logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} request_id=#{request_id} options=#{options.inspect}"
     CreatePeriodicReportRequest.find(request_id).append_status('timeout').save
   end
 
@@ -43,7 +40,6 @@ class CreatePeriodicReportWorker
   #   scheduled_request
   #   send_only_if_changed
   def perform(request_id, options = {})
-    @start = Time.zone.now
     request = CreatePeriodicReportRequest.find(request_id)
 
     if sending_dm_limited?(request.user.uid)
@@ -73,11 +69,6 @@ class CreatePeriodicReportWorker
     request.check_twitter_user = options['create_twitter_user']
 
     CreatePeriodicReportTask.new(request).start!
-
-    if timeout?
-      after_timeout(request_id, options)
-    end
-
   rescue => e
     logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")

@@ -1,5 +1,6 @@
 class AssembleTwitterUserWorker
   include Sidekiq::Worker
+  prepend TimeoutableWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
@@ -26,25 +27,16 @@ class AssembleTwitterUserWorker
     3.minutes
   end
 
-  def timeout?
-    @start && Time.zone.now - @start > _timeout_in
-  end
-
   def after_timeout(request_id, options = {})
-    logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", Time.zone.now - @start)} request_id=#{request_id} options=#{options.inspect}"
+    logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} request_id=#{request_id} options=#{options.inspect}"
     TimedOutAssembleTwitterUserWorker.perform_async(request_id, options)
   end
 
   # options:
   def perform(request_id, options = {})
-    @start = Time.zone.now
     request = AssembleTwitterUserRequest.find(request_id)
     request.perform!
     request.finished!
-
-    if timeout?
-      after_timeout(request_id, options)
-    end
   rescue => e
     logger.warn "#{e.class} #{e.message.truncate(100)} request_id=#{request_id} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
