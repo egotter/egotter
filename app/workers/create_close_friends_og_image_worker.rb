@@ -1,5 +1,6 @@
 class CreateCloseFriendsOgImageWorker
   include Sidekiq::Worker
+  prepend TimeoutableWorker
   sidekiq_options queue: 'misc_low', retry: 0, backtrace: false
 
   def unique_key(uid, options = {})
@@ -14,12 +15,13 @@ class CreateCloseFriendsOgImageWorker
     1.minute
   end
 
-  def timeout_in
+  def _timeout_in
     1.minute
   end
 
   def after_timeout
     @image_generator&.delete_outfile
+    logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)}"
   end
 
   # options:

@@ -13,7 +13,11 @@ module TimeoutableWorker
     super
 
     if timeout?
-      after_timeout(*args)
+      if respond_to?(:after_timeout)
+        after_timeout(*args)
+      else
+        logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} args=#{args.inspect}"
+      end
     end
   end
 end
