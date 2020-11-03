@@ -9,11 +9,6 @@ RSpec.describe CreateSearchRequestWorker do
     it { is_expected.to be_truthy }
   end
 
-  describe '#after_timeout' do
-    subject { worker.after_timeout(screen_name) }
-    it { is_expected.to be_truthy }
-  end
-
   describe '#perform' do
     let(:client) { double('client') }
     subject { worker.perform(screen_name) }

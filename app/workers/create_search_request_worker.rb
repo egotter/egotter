@@ -1,5 +1,6 @@
 class CreateSearchRequestWorker
   include Sidekiq::Worker
+  prepend TimeoutableWorker
   sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
 
   def unique_key(screen_name, options = {})
@@ -18,12 +19,8 @@ class CreateSearchRequestWorker
     logger.warn "The job of #{self.class} is expired args=#{args.inspect}"
   end
 
-  def timeout_in
+  def _timeout_in
     10.seconds
-  end
-
-  def after_timeout(*args)
-    logger.warn "The job of #{self.class} timed out args=#{args.inspect}"
   end
 
   # options:
