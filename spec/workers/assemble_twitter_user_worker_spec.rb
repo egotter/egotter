@@ -14,9 +14,15 @@ RSpec.describe AssembleTwitterUserWorker do
 
   describe '#after_timeout' do
     subject { worker.after_timeout(request.id) }
+    before { worker.instance_variable_set(:@start, Time.zone.now) }
     it do
       expect(TimedOutAssembleTwitterUserWorker).to receive(:perform_async).with(request.id, {})
       subject
     end
+  end
+
+  describe '#perform' do
+    subject { worker.perform(request.id) }
+    it { is_expected.to be_falsey }
   end
 end

@@ -33,7 +33,7 @@ class CreatePeriodicReportWorker
   end
 
   def after_timeout(request_id, options = {})
-    logger.warn "The job of #{self.class} timed out request_id=#{request_id} options=#{options.inspect}"
+    logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", Time.zone.now - @start)} request_id=#{request_id} options=#{options.inspect}"
     CreatePeriodicReportRequest.find(request_id).append_status('timeout').save
   end
 

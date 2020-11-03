@@ -57,6 +57,7 @@ RSpec.describe CreatePeriodicReportWorker do
 
   describe '#after_timeout' do
     subject { worker.after_timeout(request.id) }
+    before { worker.instance_variable_set(:@start, Time.zone.now) }
     it do
       subject
       expect(request.reload.status).to eq('timeout')
