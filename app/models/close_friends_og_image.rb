@@ -69,8 +69,12 @@ class CloseFriendsOgImage < ApplicationRecord
       end
     end
 
+    MX_RMFILE = Mutex.new
+
     def delete_outfile
-      File.delete(@outfile) if File.exist?(@outfile)
+      MX_RMFILE.synchronize do
+        File.delete(@outfile) if File.exist?(@outfile)
+      end
     end
 
     private

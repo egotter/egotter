@@ -16,12 +16,7 @@ class CreateCloseFriendsOgImageWorker
   end
 
   def _timeout_in
-    1.minute
-  end
-
-  def after_timeout(*args)
-    @image_generator&.delete_outfile
-    logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} args=#{args.inspect.truncate(100)}"
+    3.minutes
   end
 
   # options:
@@ -46,11 +41,10 @@ class CreateCloseFriendsOgImageWorker
     @image_generator = CloseFriendsOgImage::Generator.new(twitter_user)
     @image_generator.generate(friends)
 
-  rescue Errno::ENOENT => e
-    logger.info "#{e.inspect.truncate(100)} uid=#{uid} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
   rescue => e
     logger.warn "#{e.inspect.truncate(100)} uid=#{uid} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
+  ensure
+    @image_generator&.delete_outfile
   end
 end
