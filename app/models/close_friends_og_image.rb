@@ -21,7 +21,7 @@ class CloseFriendsOgImage < ApplicationRecord
   validates :uid, presence: true, uniqueness: true
 
   def fresh?
-    updated_at && updated_at > 30.minutes.ago
+    updated_at && updated_at > 12.hours.ago
   end
 
   def cdn_url

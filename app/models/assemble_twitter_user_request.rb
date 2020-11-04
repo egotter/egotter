@@ -49,7 +49,7 @@ class AssembleTwitterUserRequest < ApplicationRecord
         CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: twitter_user.user_id, enqueued_by: "#{self.class} > #{klass}")
 
         if klass == S3::CloseFriendship && uids.present?
-          CreateCloseFriendsOgImageWorker.perform_async(twitter_user.uid, uids: uids)
+          CreateCloseFriendsOgImageWorker.perform_async(twitter_user.uid, uids: uids, force: true)
         end
       rescue => e
         logger.warn "#{klass}#import_from! #{e.inspect.truncate(200)} twitter_user_id=#{twitter_user.id}"
