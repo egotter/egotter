@@ -48,26 +48,23 @@ class CloseFriendsOgImage < ApplicationRecord
     OG_IMAGE_TMP_DIR = Rails.root.join('public/og_image')
 
     def initialize(twitter_user)
-      @outfile = self.class.outfile_path(twitter_user.uid)
       @twitter_user = twitter_user
     end
 
     def generate(friends)
+      @outfile = self.class.outfile_path(twitter_user.uid)
       text = I18n.t('og_image_text.close_friends', user: @twitter_user.screen_name, friend1: friends[0][:screen_name], friend2: friends[1][:screen_name], friend3: friends[2][:screen_name])
       heart = self.class.generate_heart_image(friends)
 
-      block = Proc.new do |file|
+      begin
+        self.class.generate_image(text, heart, @outfile)
+
         image = CloseFriendsOgImage.find_or_initialize_by(uid: @twitter_user.uid)
         image.image.purge if image.image.attached?
-        image.image.attach(io: File.open(file), filename: File.basename(file))
+        image.image.attach(io: File.open(@outfile), filename: File.basename(@outfile))
         image.assign_attributes(properties: {twitter_user_id: @twitter_user.id})
         image.save!
         image.update_acl_async
-      end
-
-      begin
-        self.class.generate_image(text, heart, @outfile)
-        block.call(@outfile)
       ensure
         delete_outfile
       end
@@ -77,7 +74,7 @@ class CloseFriendsOgImage < ApplicationRecord
 
     def delete_outfile
       MX_RMFILE.synchronize do
-        File.delete(@outfile) if File.exist?(@outfile)
+        File.delete(@outfile) if @outfile && File.exist?(@outfile)
       end
     end
 
