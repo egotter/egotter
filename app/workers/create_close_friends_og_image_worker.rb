@@ -45,6 +45,6 @@ class CreateCloseFriendsOgImageWorker
     logger.warn "#{e.inspect.truncate(100)} uid=#{uid} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
   ensure
-    @image_generator&.delete_outfile
+    @image_generator&.cleanup
   end
 end

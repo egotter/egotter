@@ -52,9 +52,9 @@ class CloseFriendsOgImage < ApplicationRecord
     end
 
     def generate(friends)
-      @outfile = self.class.outfile_path(twitter_user.uid)
+      @outfile = self.class.outfile_path(@twitter_user.uid)
       text = I18n.t('og_image_text.close_friends', user: @twitter_user.screen_name, friend1: friends[0][:screen_name], friend2: friends[1][:screen_name], friend3: friends[2][:screen_name])
-      heart = self.class.generate_heart_image(friends)
+      heart = self.class.generate_heart_image(@twitter_user.uid, friends)
 
       begin
         self.class.generate_image(text, heart, @outfile)
@@ -66,13 +66,20 @@ class CloseFriendsOgImage < ApplicationRecord
         image.save!
         image.update_acl_async
       ensure
-        delete_outfile
+        cleanup
       end
     end
 
+    require 'fileutils'
+
     MX_RMFILE = Mutex.new
 
-    def delete_outfile
+    def cleanup
+      path = ImagesLoader.dir_path(@twitter_user.uid)
+      MX_RMFILE.synchronize do
+        FileUtils.rm_rf(path) if File.exist?(path)
+      end
+
       MX_RMFILE.synchronize do
         File.delete(@outfile) if @outfile && File.exist?(@outfile)
       end
@@ -92,8 +99,9 @@ class CloseFriendsOgImage < ApplicationRecord
         Rails.root.join(OG_IMAGE_TMP_DIR, file)
       end
 
-      def generate_heart_image(users)
+      def generate_heart_image(uid, users)
         hash = {}
+        image_urls = []
 
         100.times do |i|
           user = users[i]
@@ -102,8 +110,28 @@ class CloseFriendsOgImage < ApplicationRecord
             hash["screen_name_#{i}"] = user ? user[:screen_name] : ''
           end
 
-          hash["image_url_#{i}"] = user ? user[:profile_image_url_https] : OG_IMAGE_RECT
+          if user
+            hash["image_url_#{i}"] = user[:profile_image_url_https]
+            image_urls << user[:profile_image_url_https]
+          else
+            hash["image_url_#{i}"] = OG_IMAGE_RECT
+          end
         end
+
+        image_files = ImagesLoader.new(uid, image_urls).load
+        hash = hash.map do |key, value|
+          if key.match?(/^image_url/)
+            url, file = image_files.find { |url, _| url == value }
+            if url && file
+              [key, file]
+            else
+              Rails.logger.debug { "#{self.class}##{__method__}: file not found url=#{value}" }
+              [key, value]
+            end
+          else
+            [key, value]
+          end
+        end.to_h
 
         ERB.new(OG_IMAGE_HEART).result_with_hash(hash)
       end
@@ -120,5 +148,63 @@ class CloseFriendsOgImage < ApplicationRecord
         end
       end
     end
+  end
+
+  class ImagesLoader
+    def initialize(uid, urls)
+      @uid = uid
+      @urls = urls
+      @queue = Queue.new
+      @concurrency = 10
+    end
+
+    MX_MKDIR = Mutex.new
+
+    class << self
+      def dir_path(uid)
+        path = Rails.root.join("public/og_image/profile_images_#{uid}")
+        MX_MKDIR.synchronize do
+          Dir.mkdir(path) unless File.exist?(path)
+        end
+        path
+      end
+    end
+
+    def load
+      Parallel.each(@urls, in_threads: @concurrency) do |url|
+        basename = File.basename(url)
+        filename = "#{self.class.dir_path(@uid)}/profile_image_#{@uid}_#{basename}"
+        unless File.exist?(filename)
+          File.open(filename, 'wb') do |f|
+            f.write(open(url))
+          end
+        end
+        @queue << [url, filename]
+      rescue => e
+        Rails.logger.debug { "#{self.class}##{__method__}: open url failed url=#{url} exception=#{e.inspect}" }
+        @queue << [url, nil]
+      end
+
+      @queue.size.times.map { @queue.pop }.to_h
+    end
+
+    def open(url, retries: 3)
+      uri = URI.parse(url)
+      https = Net::HTTP.new(uri.host, uri.port)
+      https.use_ssl = true
+      https.open_timeout = 1
+      https.read_timeout = 1
+      req = Net::HTTP::Get.new(uri)
+      https.start { https.request(req) }.body
+    rescue Net::OpenTimeout => e
+      if (retries -= 1) >= 0
+        sleep(rand(2) + 1)
+        retry
+      else
+        raise RetryExhausted.new("#{e.inspect}")
+      end
+    end
+
+    class RetryExhausted < StandardError; end
   end
 end
