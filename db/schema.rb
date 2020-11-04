@@ -274,6 +274,7 @@ ActiveRecord::Schema.define(version: 2020_10_30_161929) do
 
   create_table "close_friends_og_images", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "uid", null: false
+    t.json "properties"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["uid"], name: "index_close_friends_og_images_on_uid", unique: true

@@ -21,7 +21,7 @@ class CreateCloseFriendsOgImageWorker
 
   def after_timeout(*args)
     @image_generator&.delete_outfile
-    logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)}"
+    logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} args=#{args.inspect.truncate(100)}"
   end
 
   # options:
