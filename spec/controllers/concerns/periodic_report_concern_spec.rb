@@ -5,13 +5,13 @@ describe PeriodicReportConcern, type: :controller do
     include PeriodicReportConcern
   end
 
-  let(:user) { create(:user) }
+  let(:user) { create(:user, with_settings: true) }
 
-  describe '#send_now_requested?' do
+  describe '#send_periodic_report_requested?' do
     let(:dm) { double('dm', text: text) }
-    subject { controller.send(:send_now_requested?, dm) }
+    subject { controller.send(:send_periodic_report_requested?, dm) }
 
-    %w(今すぐ いますぐ).product(%w(送信 そうしん 受信 じゅしん 痩身 通知 返信)).each do |word1, word2|
+    %w(リム通知 リムられ通知).product(%w(送信 そうしん 受信 じゅしん 痩身 通知 返信)).each do |word1, word2|
       context "text is #{word1 + word2}" do
         let(:text) { word1 + word2 }
         it { is_expected.to be_truthy }
@@ -26,32 +26,13 @@ describe PeriodicReportConcern, type: :controller do
     end
   end
 
-  describe '#send_now_exactly_requested?' do
-    let(:dm) { double('dm', text: text) }
-    subject { controller.send(:send_now_exactly_requested?, dm) }
-
-    ['リムられ通知 今すぐ送信'].each do |word|
-      context "text is #{word}" do
-        let(:text) { word }
-        it { is_expected.to be_truthy }
-      end
-    end
-
-    ['【リムられ通知 今すぐ送信】'].each do |word|
-      context "text is #{word}" do
-        let(:text) { word }
-        it { is_expected.to be_falsey }
-      end
-    end
-  end
-
   describe '#continue_requested?' do
     let(:dm) { double('dm', text: text) }
     subject { controller.send(:continue_requested?, dm) }
 
     described_class::CONTINUE_WORDS.each do |word|
       context "text is #{word}" do
-        let(:text) { SecureRandom.hex(1) + word + SecureRandom.hex(1) }
+        let(:text) { 'a' + word + 'b' }
         it { is_expected.to be_truthy }
       end
     end
@@ -74,9 +55,9 @@ describe PeriodicReportConcern, type: :controller do
     end
   end
 
-  describe '#stop_now_requested?' do
+  describe '#stop_periodic_report_requested?' do
     let(:dm) { double('dm', text: text) }
-    subject { controller.send(:stop_now_requested?, dm) }
+    subject { controller.send(:stop_periodic_report_requested?, dm) }
 
     [' ', '　', ''].product(%w(停止 ていし)).each do |word1, word2|
       context "text is リムられ通知#{word1 + word2}" do
@@ -93,28 +74,9 @@ describe PeriodicReportConcern, type: :controller do
     end
   end
 
-  describe '#stop_now_exactly_requested?' do
+  describe '#restart_periodic_report_requested?' do
     let(:dm) { double('dm', text: text) }
-    subject { controller.send(:stop_now_exactly_requested?, dm) }
-
-    ['リムられ通知 停止'].each do |word|
-      context "text is #{word}" do
-        let(:text) { word }
-        it { is_expected.to be_truthy }
-      end
-    end
-
-    ['【リムられ通知 停止】'].each do |word|
-      context "text is #{word}" do
-        let(:text) { word }
-        it { is_expected.to be_falsey }
-      end
-    end
-  end
-
-  describe '#restart_requested?' do
-    let(:dm) { double('dm', text: text) }
-    subject { controller.send(:restart_requested?, dm) }
+    subject { controller.send(:restart_periodic_report_requested?, dm) }
 
     [' ', '　', ''].product(%w(再開 さいかい)).each do |word1, word2|
       context "text is リムられ通知#{word1 + word2}" do
@@ -131,25 +93,6 @@ describe PeriodicReportConcern, type: :controller do
     end
   end
 
-  describe '#restart_exactly_requested?' do
-    let(:dm) { double('dm', text: text) }
-    subject { controller.send(:restart_exactly_requested?, dm) }
-
-    ['リムられ通知 再開'].each do |word|
-      context "text is #{word}" do
-        let(:text) { word }
-        it { is_expected.to be_truthy }
-      end
-    end
-
-    ['【リムられ通知 再開】'].each do |word|
-      context "text is #{word}" do
-        let(:text) { word }
-        it { is_expected.to be_falsey }
-      end
-    end
-  end
-
   describe '#report_received?' do
     let(:dm) { double('dm', text: text) }
     subject { controller.send(:report_received?, dm) }
@@ -161,106 +104,66 @@ describe PeriodicReportConcern, type: :controller do
   end
 
   describe '#enqueue_user_requested_periodic_report' do
-    shared_context 'find_by returns user' do
-      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
-    end
-
-    shared_context 'user is unauthorized' do
-      before { user.update(authorized: false) }
-    end
-
-    let(:user) { create(:user) }
     let(:dm) { double('dm', sender_id: user.uid) }
+    let(:is_following) { true }
+    let(:sufficient_interval) { true }
     subject { controller.send(:enqueue_user_requested_periodic_report, dm) }
+
+    before do
+      allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user)
+      allow(EgotterFollower).to receive(:exists?).with(uid: user.uid).and_return(is_following)
+      allow(CreatePeriodicReportRequest).to receive(:sufficient_interval?).with(user.id).and_return(sufficient_interval)
+    end
 
     context 'user is not found' do
       before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(nil) }
-
       it do
         expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, unregistered: true, uid: dm.sender_id)
+        expect(CreatePeriodicReportRequest).not_to receive(:create)
         subject
       end
     end
 
-    context 'user is authorized' do
-      include_context 'find_by returns user'
-      let(:request) { create(:create_periodic_report_request, user: user) }
-
-      shared_examples 'enqueue one job' do
-        it do
-          expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'user').and_return(request)
-          expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
-          subject
-        end
-      end
-
-      shared_examples 'enqueue no job' do
-        it do
-          expect(CreatePeriodicReportRequest).not_to receive(:create)
-          subject
-        end
-      end
-
-      context 'fuzzy is false (not specified)' do
-        include_examples 'enqueue one job'
-      end
-
-      context 'fuzzy is true' do
-        subject { controller.send(:enqueue_user_requested_periodic_report, dm, fuzzy: true) }
-
-        context 'sufficient_interval? returns true' do
-          before { allow(CreatePeriodicReportRequest).to receive(:sufficient_interval?).with(user.id).and_return(true) }
-          include_examples 'enqueue one job'
-        end
-
-        context 'sufficient_interval? returns false' do
-          before { allow(CreatePeriodicReportRequest).to receive(:sufficient_interval?).with(user.id).and_return(false) }
-          include_examples 'enqueue no job'
-        end
+    context 'user is not authorized' do
+      before { user.update(authorized: false) }
+      it do
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, unauthorized: true)
+        expect(CreatePeriodicReportRequest).not_to receive(:create)
+        subject
       end
     end
 
     context 'enough_permission_level? returns false' do
-      include_context 'find_by returns user'
-      include_context 'user is unauthorized'
       before do
         allow(user).to receive_message_chain(:notification_setting, :enough_permission_level?).and_return(false)
       end
-
       it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
-            with(user.id, permission_level_not_enough: true)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, permission_level_not_enough: true)
+        expect(CreatePeriodicReportRequest).not_to receive(:create)
         subject
       end
     end
 
-    context 'else' do
-      include_context 'find_by returns user'
-      include_context 'user is unauthorized'
-      before do
-        allow(user).to receive_message_chain(:notification_setting, :enough_permission_level?).and_return(true)
-      end
-
+    context 'user is not following egotter' do
+      let(:is_following) { false }
       it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, unauthorized: true)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, not_following: true)
+        expect(CreatePeriodicReportRequest).not_to receive(:create)
         subject
       end
     end
-  end
 
-  describe '#enqueue_user_received_periodic_report' do
-    let(:user) { create(:user) }
-    let(:dm) { double('dm', sender_id: user.uid) }
-    subject { controller.send(:enqueue_user_received_periodic_report, dm) }
-
-    context 'user is found' do
-      let(:request) { create(:create_periodic_report_request, user: user) }
-
-      before do
-        allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user)
-        allow(EgotterFollower).to receive(:exists?).with(uid: user.uid).and_return(true)
+    context 'sufficient_interval? returns false' do
+      let(:sufficient_interval) { false }
+      it do
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, interval_too_short: true)
+        expect(CreatePeriodicReportRequest).not_to receive(:create)
+        subject
       end
+    end
 
+    context 'success' do
+      let(:request) { double('request', id: 1) }
       it do
         expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'user').and_return(request)
         expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
@@ -269,101 +172,50 @@ describe PeriodicReportConcern, type: :controller do
     end
   end
 
-  describe '#enqueue_user_requested_stopping_periodic_report' do
-    let(:dm) { double('dm', sender_id: 1) }
-    subject { controller.send(:enqueue_user_requested_stopping_periodic_report, dm) }
-    it do
-      expect(controller).to receive(:stop_periodic_report).with(dm.sender_id)
-      subject
-    end
-  end
-
-  describe '#enqueue_user_requested_restarting_periodic_report' do
-    let(:dm) { double('dm', sender_id: 1) }
-    subject { controller.send(:enqueue_user_requested_restarting_periodic_report, dm) }
-    it do
-      expect(controller).to receive(:restart_periodic_report).with(dm.sender_id)
-      subject
-    end
-  end
-
   describe '#enqueue_egotter_requested_periodic_report' do
-    shared_context 'find_by returns user' do
-      before { allow(User).to receive(:find_by).with(uid: dm.recipient_id).and_return(user) }
-    end
-
-    shared_context 'user is unauthorized' do
-      before { user.update(authorized: false) }
-    end
-
-    let(:user) { create(:user) }
     let(:dm) { double('dm', recipient_id: user.uid) }
     subject { controller.send(:enqueue_egotter_requested_periodic_report, dm) }
 
+    before do
+      allow(User).to receive(:find_by).with(uid: dm.recipient_id).and_return(user)
+    end
+
     context 'user is not found' do
       before { allow(User).to receive(:find_by).with(uid: dm.recipient_id).and_return(nil) }
-
       it do
         expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, unregistered: true, uid: dm.recipient_id)
+        expect(CreatePeriodicReportRequest).not_to receive(:create)
         subject
       end
     end
 
-    context 'user is authorized' do
-      include_context 'find_by returns user'
-      let(:request) { create(:create_periodic_report_request, user: user) }
-
+    context 'user is not authorized' do
+      before { user.update(authorized: false) }
       it do
-        expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'egotter').and_return(request)
-        expect(CreateEgotterRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, unauthorized: true)
+        expect(CreatePeriodicReportRequest).not_to receive(:create)
         subject
       end
     end
 
     context 'enough_permission_level? returns false' do
-      include_context 'find_by returns user'
-      include_context 'user is unauthorized'
       before do
         allow(user).to receive_message_chain(:notification_setting, :enough_permission_level?).and_return(false)
       end
-
       it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
-            with(user.id, permission_level_not_enough: true)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, permission_level_not_enough: true)
+        expect(CreatePeriodicReportRequest).not_to receive(:create)
         subject
       end
     end
 
-    context 'else' do
-      include_context 'find_by returns user'
-      include_context 'user is unauthorized'
-      before do
-        allow(user).to receive_message_chain(:notification_setting, :enough_permission_level?).and_return(true)
-      end
-
+    context 'success' do
+      let(:request) { double('request', id: 1) }
       it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
-            with(user.id, unauthorized: true)
+        expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'egotter').and_return(request)
+        expect(CreateEgotterRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
         subject
       end
-    end
-  end
-
-  describe '#enqueue_egotter_requested_stopping_periodic_report' do
-    let(:dm) { double('dm', recipient_id: 1) }
-    subject { controller.send(:enqueue_egotter_requested_stopping_periodic_report, dm) }
-    it do
-      expect(controller).to receive(:stop_periodic_report).with(dm.recipient_id)
-      subject
-    end
-  end
-
-  describe '#enqueue_egotter_requested_restarting_periodic_report' do
-    let(:dm) { double('dm', recipient_id: 1) }
-    subject { controller.send(:enqueue_egotter_requested_restarting_periodic_report, dm) }
-    it do
-      expect(controller).to receive(:restart_periodic_report).with(dm.recipient_id)
-      subject
     end
   end
 

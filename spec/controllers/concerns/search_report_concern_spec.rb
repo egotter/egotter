@@ -35,19 +35,19 @@ describe SearchReportConcern, type: :controller do
     end
   end
 
-  describe '#process_stopping_search_report' do
+  describe '#stop_search_report' do
     let(:dm) { double('dm', sender_id: user.uid) }
-    subject { controller.send(:process_stopping_search_report, dm) }
+    subject { controller.send(:stop_search_report, dm) }
 
     it do
-      expect(CreateSearchReportStoppedMessageWorker).to receive(:perform_async).with(user.id, anything)
+      expect(CreateSearchReportStoppedMessageWorker).to receive(:perform_async).with(user.id)
       subject
     end
   end
 
-  describe '#process_restarting_search_report' do
+  describe '#restart_search_report' do
     let(:dm) { double('dm', sender_id: user.uid) }
-    subject { controller.send(:process_restarting_search_report, dm) }
+    subject { controller.send(:restart_search_report, dm) }
 
     it do
       expect(CreateSearchReportRestartedMessageWorker).to receive(:perform_async).with(user.id)

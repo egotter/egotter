@@ -117,43 +117,26 @@ RSpec.describe ProcessWebhookEventWorker do
       subject
     end
 
-    context 'restart_requested? returns true' do
-      before { allow(worker).to receive(:restart_requested?).with(dm).and_return(true) }
+    context 'restart_periodic_report_requested? returns true' do
+      before { allow(worker).to receive(:restart_periodic_report_requested?).with(dm).and_return(true) }
       it do
-        expect(worker).to receive(:enqueue_user_requested_restarting_periodic_report).with(dm)
-        expect(worker).to receive(:enqueue_user_requested_periodic_report).with(dm, fuzzy: true)
+        expect(worker).to receive(:restart_periodic_report).with(dm.sender_id)
         subject
       end
     end
 
-    context 'send_now_requested? returns true' do
-      before { allow(worker).to receive(:send_now_requested?).with(dm).and_return(true) }
+    context 'send_periodic_report_requested? returns true' do
+      before { allow(worker).to receive(:send_periodic_report_requested?).with(dm).and_return(true) }
       it do
         expect(worker).to receive(:enqueue_user_requested_periodic_report).with(dm)
         subject
       end
     end
 
-    context 'continue_requested? returns true' do
-      before { allow(worker).to receive(:continue_requested?).with(dm).and_return(true) }
+    context 'stop_periodic_report_requested? returns true' do
+      before { allow(worker).to receive(:stop_periodic_report_requested?).with(dm).and_return(true) }
       it do
-        expect(worker).to receive(:enqueue_user_requested_periodic_report).with(dm, fuzzy: true)
-        subject
-      end
-    end
-
-    context 'stop_now_requested? returns true' do
-      before { allow(worker).to receive(:stop_now_requested?).with(dm).and_return(true) }
-      it do
-        expect(worker).to receive(:enqueue_user_requested_stopping_periodic_report).with(dm)
-        subject
-      end
-    end
-
-    context 'report_received? returns true' do
-      before { allow(worker).to receive(:report_received?).with(dm).and_return(true) }
-      it do
-        expect(worker).to receive(:enqueue_user_received_periodic_report).with(dm)
+        expect(worker).to receive(:stop_periodic_report).with(dm.sender_id)
         subject
       end
     end
@@ -169,26 +152,26 @@ RSpec.describe ProcessWebhookEventWorker do
       subject
     end
 
-    context 'send_now_exactly_requested? returns true' do
-      before { allow(worker).to receive(:send_now_exactly_requested?).with(dm).and_return(true) }
+    context 'send_periodic_report_requested? returns true' do
+      before { allow(worker).to receive(:send_periodic_report_requested?).with(dm).and_return(true) }
       it do
         expect(worker).to receive(:enqueue_egotter_requested_periodic_report).with(dm)
         subject
       end
     end
 
-    context 'stop_now_exactly_requested? returns true' do
-      before { allow(worker).to receive(:stop_now_exactly_requested?).with(dm).and_return(true) }
+    context 'stop_periodic_report_requested? returns true' do
+      before { allow(worker).to receive(:stop_periodic_report_requested?).with(dm).and_return(true) }
       it do
-        expect(worker).to receive(:enqueue_egotter_requested_stopping_periodic_report).with(dm)
+        expect(worker).to receive(:stop_periodic_report).with(dm.recipient_id)
         subject
       end
     end
 
-    context 'restart_exactly_requested? returns true' do
-      before { allow(worker).to receive(:restart_exactly_requested?).with(dm).and_return(true) }
+    context 'restart_periodic_report_requested? returns true' do
+      before { allow(worker).to receive(:restart_periodic_report_requested?).with(dm).and_return(true) }
       it do
-        expect(worker).to receive(:enqueue_egotter_requested_restarting_periodic_report).with(dm)
+        expect(worker).to receive(:restart_periodic_report).with(dm.recipient_id)
         subject
       end
     end

@@ -15,7 +15,7 @@ FactoryBot.define do
 
     after(:create) do |user, evaluator|
       if evaluator.with_settings
-        user.create_notification_setting!
+        user.create_notification_setting!(permission_level: 'read-write-directmessages')
       end
 
       if evaluator.with_credential_token

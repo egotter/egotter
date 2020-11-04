@@ -9,35 +9,29 @@ module SearchReportConcern
     dm.text.length < 15 && dm.text.match?(STOP_SEARCH_REPORT_REGEXP)
   end
 
-  RESTART_SEARCH_REPORT_REGEXP = /検索通知(\s|　)*再開/
+  RESTART_SEARCH_REPORT_REGEXP = /検索通知(\s|　)*(再開|開始)/
 
   def restart_search_report_requested?(dm)
     dm.text.length < 15 && dm.text.match?(RESTART_SEARCH_REPORT_REGEXP)
   end
 
-  def process_stopping_search_report(dm)
+  def stop_search_report(dm)
     unless (user = User.where(authorized: true).find_by(uid: dm.sender_id))
       return
     end
 
-    unless (request = StopSearchReportRequest.find_by(user_id: user.id))
-      request = StopSearchReportRequest.create(user_id: user.id)
-    end
-
-    CreateSearchReportStoppedMessageWorker.perform_async(user.id, request_id: request.id)
+    StopSearchReportRequest.create(user_id: user.id)
+    CreateSearchReportStoppedMessageWorker.perform_async(user.id)
   rescue => e
     logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
   end
 
-  def process_restarting_search_report(dm)
+  def restart_search_report(dm)
     unless (user = User.where(authorized: true).find_by(uid: dm.sender_id))
       return
     end
 
-    if (request = StopSearchReportRequest.find_by(user_id: user.id))
-      request.destroy
-    end
-
+    StopSearchReportRequest.find_by(user_id: user.id)&.destroy
     CreateSearchReportRestartedMessageWorker.perform_async(user.id)
   rescue => e
     logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"

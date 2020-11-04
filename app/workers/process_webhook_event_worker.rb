@@ -63,24 +63,23 @@ class ProcessWebhookEventWorker
     GlobalSendDirectMessageCountByUser.new.clear(dm.sender_id)
 
     if stop_block_report_requested?(dm)
-      process_stopping_block_report(dm)
+      stop_block_report(dm)
     elsif restart_block_report_requested?(dm)
-      process_restarting_block_report(dm)
+      restart_block_report(dm)
     elsif stop_search_report_requested?(dm)
-      process_stopping_search_report(dm)
+      stop_search_report(dm)
     elsif restart_search_report_requested?(dm)
-      process_restarting_search_report(dm)
-    elsif restart_requested?(dm)
-      enqueue_user_requested_restarting_periodic_report(dm)
-      enqueue_user_requested_periodic_report(dm, fuzzy: true)
-    elsif send_now_requested?(dm)
+      restart_search_report(dm)
+    elsif restart_periodic_report_requested?(dm)
+      restart_periodic_report(dm.sender_id)
+    elsif stop_periodic_report_requested?(dm)
+      stop_periodic_report(dm.sender_id)
+    elsif send_periodic_report_requested?(dm)
       enqueue_user_requested_periodic_report(dm)
     elsif continue_requested?(dm)
-      enqueue_user_requested_periodic_report(dm, fuzzy: true)
-    elsif stop_now_requested?(dm)
-      enqueue_user_requested_stopping_periodic_report(dm)
+      # Do nothing
     elsif report_received?(dm)
-      enqueue_user_received_periodic_report(dm)
+      # Do nothing
     else
       logger.info { "#{__method__} dm is ignored #{dm.text}" }
     end
@@ -91,12 +90,12 @@ class ProcessWebhookEventWorker
   def process_message_from_egotter(dm)
     GlobalDirectMessageSentFlag.new.received(dm.recipient_id)
 
-    if send_now_exactly_requested?(dm)
+    if send_periodic_report_requested?(dm)
       enqueue_egotter_requested_periodic_report(dm)
-    elsif stop_now_exactly_requested?(dm)
-      enqueue_egotter_requested_stopping_periodic_report(dm)
-    elsif restart_exactly_requested?(dm)
-      enqueue_egotter_requested_restarting_periodic_report(dm)
+    elsif stop_periodic_report_requested?(dm)
+      stop_periodic_report(dm.recipient_id)
+    elsif restart_periodic_report_requested?(dm)
+      restart_periodic_report(dm.recipient_id)
     end
 
     SendSentMessageWorker.perform_async(dm.recipient_id, dm_id: dm.id, text: dm.text)

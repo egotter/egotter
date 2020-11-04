@@ -37,9 +37,9 @@ class SendReceivedMessageWorker
         text == I18n.t('quick_replies.prompt_reports.label3') ||
         text == I18n.t('quick_replies.prompt_reports.label4') ||
         text == I18n.t('quick_replies.prompt_reports.label5') ||
-        text.match?(PeriodicReportConcern::SEND_NOW_REGEXP) ||
-        text.match?(PeriodicReportConcern::STOP_NOW_REGEXP) ||
-        text.match?(PeriodicReportConcern::RESTART_REGEXP) ||
+        text.match?(PeriodicReportConcern::SEND_PERIODIC_REPORT_REGEXP) ||
+        text.match?(PeriodicReportConcern::STOP_PERIODIC_REPORT_REGEXP) ||
+        text.match?(PeriodicReportConcern::RESTART_PERIODIC_REPORT_REGEXP) ||
         text.match?(PeriodicReportConcern::RECEIVED_REGEXP) ||
         text.match?(PeriodicReportConcern::CONTINUE_EXACT_REGEXP) ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
