@@ -46,8 +46,11 @@ class CreateCloseFriendsOgImageWorker
     @image_generator = CloseFriendsOgImage::Generator.new(twitter_user)
     @image_generator.generate(friends)
 
+  rescue Errno::ENOENT => e
+    logger.info "#{e.inspect.truncate(100)} uid=#{uid} options=#{options.inspect}"
+    logger.info e.backtrace.join("\n")
   rescue => e
-    logger.warn "#{e.inspect} uid=#{uid} options=#{options}"
+    logger.warn "#{e.inspect.truncate(100)} uid=#{uid} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
   end
 end
