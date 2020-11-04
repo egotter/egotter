@@ -20,6 +20,7 @@ class UpdatePermissionLevelWorker
   end
 
   def after_timeout(user_id, options = {})
+    logger.warn "The job of #{self.class} timed out user_id=#{user_id} options=#{options.inspect}"
     UpdatePermissionLevelWorker.perform_in(2.minutes, user_id, options)
   end
 

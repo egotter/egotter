@@ -21,6 +21,10 @@ class CreatePushNotificationWorker
     1.minute
   end
 
+  def after_timeout(*args)
+    logger.warn "The job of #{self.class} timed out args=#{args.inspect}"
+  end
+
   # options:
   def perform(user_id, title, body, options = {})
     user = User.find(user_id)

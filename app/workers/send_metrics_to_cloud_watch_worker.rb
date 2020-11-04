@@ -15,6 +15,10 @@ class SendMetricsToCloudWatchWorker
     50.seconds
   end
 
+  def after_timeout(*args)
+    logger.warn "The job of #{self.class} timed out args=#{args.inspect.truncate(200)}"
+  end
+
   # Run every minute
   def perform
     %i(send_google_analytics_metrics

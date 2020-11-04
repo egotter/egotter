@@ -17,6 +17,10 @@ class CreateTwitterDBUserWorker
     10.seconds
   end
 
+  def after_timeout(*args)
+    logger.warn "The job of #{self.class} timed out args=#{args.inspect.truncate(200)}"
+  end
+
   # options:
   #   compressed
   #   force_update
