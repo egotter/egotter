@@ -22,7 +22,7 @@ namespace :servers do
     params = {
         'adjust' => true,
         'role' => 'sidekiq',
-        'count' => 4,
+        'count' => ENV['SIDEKIQ_INSTANCES_MAX'] || 4,
     }
     begin
       Tasks::TaskBuilder.build(params).run
@@ -57,7 +57,7 @@ namespace :servers do
     params = {
         'adjust' => true,
         'role' => 'sidekiq',
-        'count' => 0,
+        'count' => ENV['SIDEKIQ_INSTANCES_MIN'] || 0,
     }
     begin
       Tasks::TaskBuilder.build(params).run
