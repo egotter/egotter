@@ -3,7 +3,7 @@ module Api
     class CloseFriendsController < ::Api::V1::Base
 
       def show
-        CreateCloseFriendsOgImageWorker.perform_async(@twitter_user.uid) if user_signed_in?
+        # CreateCloseFriendsOgImageWorker.perform_async(@twitter_user.uid) if user_signed_in?
         summary
       end
 
