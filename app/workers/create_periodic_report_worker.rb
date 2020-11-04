@@ -42,12 +42,21 @@ class CreatePeriodicReportWorker
   def perform(request_id, options = {})
     request = CreatePeriodicReportRequest.find(request_id)
 
-    if sending_dm_limited?(request.user.uid)
+    unless send_report?(request.user)
       SkippedCreatePeriodicReportWorker.perform_async(request_id, options)
       request.update(status: 'limited')
       return
     end
 
+    do_perform(request, options)
+  rescue => e
+    logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
+    logger.info e.backtrace.join("\n")
+  end
+
+  private
+
+  def do_perform(request, options)
     request.worker_context = self.class
     request.check_credentials = true
 
@@ -69,12 +78,7 @@ class CreatePeriodicReportWorker
     request.check_twitter_user = options['create_twitter_user']
 
     CreatePeriodicReportTask.new(request).start!
-  rescue => e
-    logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
   end
-
-  private
 
   def user_requested_job?
     self.class == CreateUserRequestedPeriodicReportWorker
@@ -82,6 +86,11 @@ class CreatePeriodicReportWorker
 
   def batch_requested_job?
     self.class == CreatePeriodicReportWorker
+  end
+
+  def send_report?(user)
+    # Don't check StopPeriodicReportRequest here
+    user.authorized? && !sending_dm_limited?(user.uid)
   end
 
   def sending_dm_limited?(uid)

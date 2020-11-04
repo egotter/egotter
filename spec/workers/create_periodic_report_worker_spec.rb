@@ -7,6 +7,7 @@ RSpec.describe CreatePeriodicReportWorker do
 
   before do
     allow(request).to receive(:perform!)
+    allow(CreatePeriodicReportRequest).to receive(:find).with(request.id).and_return(request)
   end
 
   describe '#unique_key' do
@@ -65,15 +66,34 @@ RSpec.describe CreatePeriodicReportWorker do
   end
 
   describe '#perform' do
+    subject { worker.perform(request.id, {}) }
+
+    it do
+      expect(worker).to receive(:do_perform).with(request, {})
+      subject
+    end
+
+    context 'send_report? returns false' do
+      before { allow(worker).to receive(:send_report?).with(user).and_return(false) }
+      it do
+        expect(SkippedCreatePeriodicReportWorker).to receive(:perform_async).with(request.id, anything)
+        expect(request).to receive(:update).with(status: 'limited')
+        expect(CreatePeriodicReportTask).not_to receive(:new)
+        subject
+      end
+    end
+  end
+
+  describe '#do_perform' do
     let(:task) { double('task') }
-    subject { worker.perform(request.id) }
+    subject { worker.send(:do_perform, request, {}) }
 
     before do
-      allow(CreatePeriodicReportRequest).to receive(:find).with(request.id).and_return(request)
+      allow(CreatePeriodicReportTask).to receive(:new).with(request).and_return(task)
+      allow(task).to receive(:start!)
     end
 
     it do
-      expect(CreatePeriodicReportTask).to receive(:new).with(request).and_return(task)
       expect(task).to receive(:start!)
       subject
       expect(request.worker_context).to eq(described_class)
@@ -84,18 +104,6 @@ RSpec.describe CreatePeriodicReportWorker do
       expect(request.check_web_access).to be_falsey
       expect(request.send_only_if_changed).to be_falsey
       expect(request.check_twitter_user).to be_truthy
-    end
-
-    context 'sending_dm_limited? returns true' do
-      before do
-        allow(worker).to receive(:sending_dm_limited?).with(user.uid).and_return(true)
-      end
-      it do
-        expect(SkippedCreatePeriodicReportWorker).to receive(:perform_async).with(request.id, anything)
-        expect(request).to receive(:update).with(status: 'limited')
-        expect(CreatePeriodicReportTask).not_to receive(:new)
-        subject
-      end
     end
 
     context 'user_requested_job? returns true' do
