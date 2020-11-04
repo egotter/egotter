@@ -34,6 +34,10 @@ class CloseFriendsOgImage < ApplicationRecord
     client.put_object_acl(acl: value, bucket: config['bucket'], key: image.blob.key)
   end
 
+  def update_acl_async
+    UpdateCloseFriendsOgImageAclWorker.perform_async(id)
+  end
+
   class Generator
 
     OG_IMAGE_IMAGEMAGICK = ENV['OG_IMAGE_IMAGEMAGICK']
@@ -58,7 +62,7 @@ class CloseFriendsOgImage < ApplicationRecord
         image.image.attach(io: File.open(file), filename: File.basename(file))
         image.assign_attributes(properties: {twitter_user_id: @twitter_user.id})
         image.save!
-        image.update_acl
+        image.update_acl_async
       end
 
       begin
