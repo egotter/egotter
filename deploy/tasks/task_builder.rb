@@ -77,15 +77,15 @@ module Tasks
     end
 
     def adjust_task
-      current_count = ::DeployRuby::Aws::TargetGroup.new(@params['target-group']).registered_instances.size
+      instance_names = list_task.instance_names
 
-      if tasks_count > current_count
-        @params['count'] = tasks_count - current_count
+      if tasks_count > instance_names.size
+        @params['count'] = tasks_count - instance_names.size
         logger.info "Launch #{@params['count']} #{@params['role']} instances"
         launch_task
 
-      elsif tasks_count < current_count
-        @params['count'] = current_count - tasks_count
+      elsif tasks_count < instance_names.size
+        @params['count'] = instance_names.size - tasks_count
         logger.info "Terminate #{@params['count']} #{@params['role']} instances"
         terminate_task
 

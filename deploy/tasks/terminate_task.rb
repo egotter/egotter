@@ -14,7 +14,7 @@ module Tasks
 
       if role == 'web'
         WebTask.new(params)
-      elsif role == 'sidekiq' || role == 'sidekiq_prompt_reports'
+      elsif role == 'sidekiq'
         SidekiqTask.new(params)
       elsif role == 'plain'
         PlainTask.new(params)
@@ -52,7 +52,7 @@ module Tasks
       end
 
       def run
-        after_terminate if @terminated && %w(web sidekiq sidekiq_prompt_reports).include?(@role)
+        after_terminate if @terminated && %w(web sidekiq).include?(@role)
       end
 
       def after_terminate
@@ -97,7 +97,11 @@ module Tasks
       end
 
       def run
-        instance = ::DeployRuby::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'], name_regexp: @params['instance-name-regexp'])
+        if @params['instance-id'] || @params['instance-name'] || @params['instance-name-regexp']
+          instance = ::DeployRuby::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'], name_regexp: @params['instance-name-regexp'])
+        else
+          instance = ::DeployRuby::Aws::Instance.retrieve_by(id: nil, name: nil, name_regexp: 'egotter_sidekiq\\d{8}')
+        end
         if instance
           Tasks::UninstallTask::Sidekiq.new(instance.id).uninstall
           instance.terminate

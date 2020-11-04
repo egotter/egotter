@@ -20,9 +20,9 @@ namespace :servers do
     end
 
     params = {
-        'launch' => true,
+        'adjust' => true,
         'role' => 'sidekiq',
-        'instance-type' => 'm5.xlarge'
+        'count' => 4,
     }
     begin
       Tasks::TaskBuilder.build(params).run
@@ -55,9 +55,9 @@ namespace :servers do
     end
 
     params = {
-        'terminate' => true,
+        'adjust' => true,
         'role' => 'sidekiq',
-        'instance-name-regexp' => 'egotter_sidekiq\\d{8}'
+        'count' => 0,
     }
     begin
       Tasks::TaskBuilder.build(params).run

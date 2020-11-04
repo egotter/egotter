@@ -25,6 +25,10 @@ module Tasks
         @delim = params['delim'] || ' '
       end
 
+      def run
+        puts instance_names.join(@delim)
+      end
+
       def logger
         DeployRuby.logger
       end
@@ -37,8 +41,8 @@ module Tasks
         @target_group = ::DeployRuby::Aws::TargetGroup.new(params['target-group'])
       end
 
-      def run
-        puts @target_group.registered_instances(state: @state).map(&:name).sort.join(@delim)
+      def instance_names
+        @target_group.registered_instances(state: @state).map(&:name).sort
       end
     end
 
@@ -47,14 +51,12 @@ module Tasks
         super
       end
 
-      def run
-        instances =
-            ::DeployRuby::Aws::EC2.new.retrieve_instances.map do |i|
-              ::DeployRuby::Aws::Instance.new(i)
-            end.select do |i|
-              i.name&.start_with?('egotter_sidekiq')
-            end
-        puts instances.map(&:name).join(@delim)
+      def instance_names
+        ::DeployRuby::Aws::EC2.new.retrieve_instances.map do |i|
+          ::DeployRuby::Aws::Instance.new(i)
+        end.select do |i|
+          i.name&.match?(/^egotter_sidekiq[^5]/)
+        end.map(&:name).sort
       end
     end
 
@@ -63,14 +65,12 @@ module Tasks
         super
       end
 
-      def run
-        instances =
-            ::DeployRuby::Aws::EC2.new.retrieve_instances.map do |i|
-              ::DeployRuby::Aws::Instance.new(i)
-            end.select do |i|
-              i.name&.start_with?('egotter_plain')
-            end
-        puts instances.map(&:name).join(@delim)
+      def instance_names
+        ::DeployRuby::Aws::EC2.new.retrieve_instances.map do |i|
+          ::DeployRuby::Aws::Instance.new(i)
+        end.select do |i|
+          i.name&.start_with?('egotter_plain')
+        end.map(&:name).sort
       end
     end
   end
