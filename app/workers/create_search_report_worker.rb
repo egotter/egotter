@@ -14,7 +14,7 @@ class CreateSearchReportWorker
   #   searcher_uid
   def perform(searchee_id, options = {})
     searchee = User.find(searchee_id)
-    return unless send_search_report?(searchee)
+    return unless send_report?(searchee)
 
     SearchReport.you_are_searched(searchee.id, options['searcher_uid']).deliver!
 
@@ -31,7 +31,7 @@ class CreateSearchReportWorker
 
   private
 
-  def send_search_report?(user)
+  def send_report?(user)
     user.authorized? && user.notification_setting.can_send_search? && !StopSearchReportRequest.exists?(user_id: user.id)
   end
 end

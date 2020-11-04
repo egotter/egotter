@@ -12,4 +12,14 @@ RSpec.describe CreateSearchReportWorker do
       subject
     end
   end
+
+  describe '#send_report?' do
+    subject { worker.send(:send_report?, user) }
+    it { is_expected.to be_truthy }
+
+    context 'stop is requested' do
+      before { StopSearchReportRequest.create(user_id: user.id) }
+      it { is_expected.to be_falsey }
+    end
+  end
 end

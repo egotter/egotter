@@ -13,7 +13,7 @@ class CreateBlockReportWorker
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
-    return unless user.authorized?
+    return unless send_report?(user)
 
     if BlockingRelationship.where(to_uid: user.uid).exists?
       BlockReport.you_are_blocked(user.id).deliver!
@@ -27,5 +27,11 @@ class CreateBlockReportWorker
     else
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
     end
+  end
+
+  private
+
+  def send_report?(user)
+    user.authorized? && !StopBlockReportRequest.exists?(user_id: user.id)
   end
 end
