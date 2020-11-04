@@ -23,6 +23,12 @@ class SendReceivedMessageWorker
       /\A【?#{I18n.t('quick_replies.welcome_messages.label2')}】?\z/,
       /\A【?#{I18n.t('quick_replies.search_reports.label1')}】?\z/,
       /\A【?#{I18n.t('quick_replies.search_reports.label2')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.search_reports.label3')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.search_reports.label4')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.block_reports.label1')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.block_reports.label2')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.block_reports.label3')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.shared.label1')}】?\z/,
   ]
 
   def static_message?(text)
