@@ -1,9 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe CloseFriendsOgImage, type: :model do
+  let(:instance) { described_class.create(uid: 1) }
+
+  describe '#fresh?' do
+    subject { instance.fresh? }
+    it { is_expected.to be_truthy }
+  end
 end
 
 RSpec.describe CloseFriendsOgImage::Generator, type: :model do
+  describe '#generate' do
+
+  end
+
   describe '.outfile_path' do
     let(:uid) { 123 }
     subject { described_class.outfile_path(uid) }
@@ -25,5 +35,9 @@ RSpec.describe CloseFriendsOgImage::Generator, type: :model do
         expect(result).not_to match(/image_url_\d+/)
       end
     end
+  end
+
+  describe '.generate_image' do
+
   end
 end
