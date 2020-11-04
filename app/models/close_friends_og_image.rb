@@ -29,7 +29,7 @@ class CloseFriendsOgImage < ApplicationRecord
   end
 
   def update_acl(value = 'public-read')
-    config = YAML.load(ERB.new(File.read('config/storage.yml')).result)['amazon']
+    config = YAML.load(ERB.new(Rails.root.join('config/storage.yml').read).result)['amazon']
     client = Aws::S3::Client.new(region: config['region'], retry_limit: 4, http_open_timeout: 3, http_read_timeout: 3)
     client.put_object_acl(acl: value, bucket: config['bucket'], key: image.blob.key)
   end
@@ -41,6 +41,7 @@ class CloseFriendsOgImage < ApplicationRecord
     OG_IMAGE_HEART = Rails.root.join('app/views/og_images/heart_300x350.svg.erb').read
     OG_IMAGE_RECT = Rails.root.join('app/views/pink_48x48.gif')
     OG_IMAGE_FONT = Rails.root.join('app/views/og_images/azukiP.ttf')
+    OG_IMAGE_TMP_DIR = Rails.root.join('public/og_image')
 
     def initialize(twitter_user)
       @outfile = self.class.outfile_path(twitter_user.uid)
@@ -75,8 +76,15 @@ class CloseFriendsOgImage < ApplicationRecord
     private
 
     class << self
+
+      MX_MKDIR = Mutex.new
+
       def outfile_path(uid)
-        "public/og_image/close_friends_og_image.#{uid}.#{Date.today}.#{Process.pid}.#{Thread.current.object_id.to_s(36)}.png"
+        MX_MKDIR.synchronize do
+          Dir.mkdir(OG_IMAGE_TMP_DIR) unless File.exist?(OG_IMAGE_TMP_DIR)
+        end
+        file = "close_friends_og_image.#{uid}.#{Date.today}.#{Process.pid}.#{Thread.current.object_id.to_s(36)}.png"
+        Rails.root.join(OG_IMAGE_TMP_DIR, file)
       end
 
       def generate_heart_image(users)
@@ -95,11 +103,15 @@ class CloseFriendsOgImage < ApplicationRecord
         ERB.new(OG_IMAGE_HEART).result_with_hash(hash)
       end
 
+      MX_CONVERT = Mutex.new
+
       def generate_image(text, heart, outfile)
-        system(%Q(#{OG_IMAGE_IMAGEMAGICK} #{OG_IMAGE_OUTLINE} -font "#{OG_IMAGE_FONT}" -fill black -pointsize 24 -interline-spacing 20 -annotate +50+120 "#{text}" #{outfile}))
-        Tempfile.open(['heart', '.svg']) do |f|
-          f.write heart
-          system(%Q(#{OG_IMAGE_IMAGEMAGICK} #{outfile} #{f.path} -gravity center -geometry +200+0 -composite #{outfile}))
+        MX_CONVERT.synchronize do
+          system(%Q(#{OG_IMAGE_IMAGEMAGICK} #{OG_IMAGE_OUTLINE} -font "#{OG_IMAGE_FONT}" -fill black -pointsize 24 -interline-spacing 20 -annotate +50+120 "#{text}" #{outfile}))
+          Tempfile.open(['heart', '.svg']) do |f|
+            f.write heart
+            system(%Q(#{OG_IMAGE_IMAGEMAGICK} #{outfile} #{f.path} -gravity center -geometry +200+0 -composite #{outfile}))
+          end
         end
       end
     end
