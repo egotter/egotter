@@ -55,6 +55,7 @@ class CloseFriendsOgImage < ApplicationRecord
         image = CloseFriendsOgImage.find_or_initialize_by(uid: @twitter_user.uid)
         image.image.purge if image.image.attached?
         image.image.attach(io: File.open(file), filename: File.basename(file))
+        image.assign_attributes(properties: {twitter_user_id: @twitter_user.id})
         image.save!
         image.update_acl
       end
