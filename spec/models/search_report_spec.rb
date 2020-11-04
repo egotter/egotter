@@ -11,8 +11,8 @@ RSpec.describe SearchReport, type: :model do
     end
   end
 
-  describe '#send_starting_message_from_user?' do
-    subject { report.send(:send_starting_message_from_user?) }
+  describe '#messages_not_allotted?' do
+    subject { report.send(:messages_not_allotted?) }
     before { allow(report).to receive(:user).and_return(user) }
     it do
       expect(PeriodicReport).to receive(:messages_allotted?).with(user).and_return(true)

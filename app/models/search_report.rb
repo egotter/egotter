@@ -43,9 +43,10 @@ class SearchReport < ApplicationRecord
   end
 
   def deliver!
-    if send_starting_message_from_user?
-      user.api_client.create_direct_message_event(User::EGOTTER_UID, start_message)
-    end
+    return if messages_not_allotted?
+    # if messages_not_allotted?
+    #   user.api_client.create_direct_message_event(User::EGOTTER_UID, start_message)
+    # end
 
     event = self.class.build_direct_message_event(user.uid, report_message)
     dm = User.egotter.api_client.create_direct_message_event(event: event)
@@ -60,7 +61,7 @@ class SearchReport < ApplicationRecord
 
   private
 
-  def send_starting_message_from_user?
+  def messages_not_allotted?
     !PeriodicReport.messages_allotted?(user) || !PeriodicReport.allotted_messages_left?(user)
   end
 

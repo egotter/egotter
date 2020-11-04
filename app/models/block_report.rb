@@ -61,8 +61,8 @@ class BlockReport < ApplicationRecord
   end
 
   def deliver!
-    return if send_starting_message_from_user?
-    # if send_starting_message_from_user?
+    return if messages_not_allotted?
+    # if messages_not_allotted?
     #   user.api_client.create_direct_message_event(User::EGOTTER_UID, self.class.start_message(user))
     # end
 
@@ -78,7 +78,7 @@ class BlockReport < ApplicationRecord
 
   private
 
-  def send_starting_message_from_user?
+  def messages_not_allotted?
     !PeriodicReport.messages_allotted?(user) || !PeriodicReport.allotted_messages_left?(user)
   end
 

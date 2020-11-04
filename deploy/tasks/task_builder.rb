@@ -90,6 +90,7 @@ module Tasks
         terminate_task
 
       else
+        # TODO Return task object
         logger.info "Don't launch/terminate any instances"
       end
     end
