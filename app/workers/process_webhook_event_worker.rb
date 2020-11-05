@@ -64,6 +64,8 @@ class ProcessWebhookEventWorker
     GlobalDirectMessageReceivedFlag.new.received(dm.sender_id)
     GlobalSendDirectMessageCountByUser.new.clear(dm.sender_id)
 
+    DeleteRemindPeriodicReportRequestWorker.perform_async(nil, uid: dm.sender_id)
+
     if stop_block_report_requested?(dm)
       stop_block_report(dm)
     elsif restart_block_report_requested?(dm)
@@ -79,7 +81,7 @@ class ProcessWebhookEventWorker
     elsif send_periodic_report_requested?(dm)
       enqueue_user_requested_periodic_report(dm)
     elsif continue_requested?(dm)
-      # Do nothing
+      continue_periodic_report(dm.sender_id)
     elsif report_received?(dm)
       # Do nothing
     elsif schedule_tweets_questioned?(dm)

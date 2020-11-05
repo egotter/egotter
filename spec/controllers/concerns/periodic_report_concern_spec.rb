@@ -105,117 +105,23 @@ describe PeriodicReportConcern, type: :controller do
 
   describe '#enqueue_user_requested_periodic_report' do
     let(:dm) { double('dm', sender_id: user.uid) }
-    let(:is_following) { true }
-    let(:sufficient_interval) { true }
     subject { controller.send(:enqueue_user_requested_periodic_report, dm) }
-
-    before do
-      allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user)
-      allow(EgotterFollower).to receive(:exists?).with(uid: user.uid).and_return(is_following)
-      allow(CreatePeriodicReportRequest).to receive(:sufficient_interval?).with(user.id).and_return(sufficient_interval)
-    end
-
-    context 'user is not found' do
-      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(nil) }
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, unregistered: true, uid: dm.sender_id)
-        expect(CreatePeriodicReportRequest).not_to receive(:create)
-        subject
-      end
-    end
-
-    context 'user is not authorized' do
-      before { user.update(authorized: false) }
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, unauthorized: true)
-        expect(CreatePeriodicReportRequest).not_to receive(:create)
-        subject
-      end
-    end
-
-    context 'enough_permission_level? returns false' do
-      before do
-        allow(user).to receive_message_chain(:notification_setting, :enough_permission_level?).and_return(false)
-      end
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, permission_level_not_enough: true)
-        expect(CreatePeriodicReportRequest).not_to receive(:create)
-        subject
-      end
-    end
-
-    context 'user is not following egotter' do
-      let(:is_following) { false }
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, not_following: true)
-        expect(CreatePeriodicReportRequest).not_to receive(:create)
-        subject
-      end
-    end
-
-    context 'sufficient_interval? returns false' do
-      let(:sufficient_interval) { false }
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, interval_too_short: true)
-        expect(CreatePeriodicReportRequest).not_to receive(:create)
-        subject
-      end
-    end
-
-    context 'success' do
-      let(:request) { double('request', id: 1) }
-      it do
-        expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'user').and_return(request)
-        expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
-        subject
-      end
+    before { allow(controller).to receive(:validate_periodic_report_status).with(dm.sender_id).and_return(user) }
+    it do
+      expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'user').and_call_original
+      expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(any_args)
+      subject
     end
   end
 
   describe '#enqueue_egotter_requested_periodic_report' do
     let(:dm) { double('dm', recipient_id: user.uid) }
     subject { controller.send(:enqueue_egotter_requested_periodic_report, dm) }
-
-    before do
-      allow(User).to receive(:find_by).with(uid: dm.recipient_id).and_return(user)
-    end
-
-    context 'user is not found' do
-      before { allow(User).to receive(:find_by).with(uid: dm.recipient_id).and_return(nil) }
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, unregistered: true, uid: dm.recipient_id)
-        expect(CreatePeriodicReportRequest).not_to receive(:create)
-        subject
-      end
-    end
-
-    context 'user is not authorized' do
-      before { user.update(authorized: false) }
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, unauthorized: true)
-        expect(CreatePeriodicReportRequest).not_to receive(:create)
-        subject
-      end
-    end
-
-    context 'enough_permission_level? returns false' do
-      before do
-        allow(user).to receive_message_chain(:notification_setting, :enough_permission_level?).and_return(false)
-      end
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, permission_level_not_enough: true)
-        expect(CreatePeriodicReportRequest).not_to receive(:create)
-        subject
-      end
-    end
-
-    context 'success' do
-      let(:request) { double('request', id: 1) }
-      it do
-        expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'egotter').and_return(request)
-        expect(CreateEgotterRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
-        subject
-      end
+    before { allow(controller).to receive(:validate_periodic_report_status).with(dm.recipient_id, true).and_return(user) }
+    it do
+      expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'egotter').and_call_original
+      expect(CreateEgotterRequestedPeriodicReportWorker).to receive(:perform_async).with(any_args)
+      subject
     end
   end
 
@@ -236,7 +142,7 @@ describe PeriodicReportConcern, type: :controller do
     context 'user is not found' do
       before { allow(User).to receive(:find_by).with(uid: uid).and_return(nil) }
       it do
-        expect(StopPeriodicReportRequest).not_to receive(:create)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, unregistered: true, uid: uid)
         subject
       end
     end
@@ -259,7 +165,73 @@ describe PeriodicReportConcern, type: :controller do
     context 'user is not found' do
       before { allow(User).to receive(:find_by).with(uid: uid).and_return(nil) }
       it do
-        expect(StopPeriodicReportRequest).not_to receive(:find_by)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, unregistered: true, uid: uid)
+        subject
+      end
+    end
+  end
+
+  describe '#continue_periodic_report' do
+    let(:uid) { user.uid }
+    subject { controller.send(:continue_periodic_report, uid) }
+    before { allow(controller).to receive(:validate_periodic_report_status).with(uid).and_return(user) }
+    it do
+      expect(CreatePeriodicReportContinueRequestedMessageWorker).to receive(:perform_async).with(user.id)
+      subject
+    end
+  end
+
+  describe '#validate_periodic_report_status' do
+    let(:uid) { user.uid }
+    let(:admin) { false }
+    let(:is_following) { true }
+    let(:sufficient_interval) { true }
+    subject { controller.send(:validate_periodic_report_status, uid, admin) }
+
+    before do
+      allow(User).to receive(:find_by).with(uid: uid).and_return(user)
+      allow(EgotterFollower).to receive(:exists?).with(uid: uid).and_return(is_following)
+      allow(CreatePeriodicReportRequest).to receive(:sufficient_interval?).with(user.id).and_return(sufficient_interval)
+    end
+
+    context 'user is not found' do
+      before { allow(User).to receive(:find_by).with(uid: uid).and_return(nil) }
+      it do
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, unregistered: true, uid: uid)
+        subject
+      end
+    end
+
+    context 'user is not authorized' do
+      before { user.update(authorized: false) }
+      it do
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, unauthorized: true)
+        subject
+      end
+    end
+
+    context 'enough_permission_level? returns false' do
+      before do
+        allow(user).to receive_message_chain(:notification_setting, :enough_permission_level?).and_return(false)
+      end
+      it do
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, permission_level_not_enough: true)
+        subject
+      end
+    end
+
+    context 'user is not following egotter' do
+      let(:is_following) { false }
+      it do
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, not_following: true)
+        subject
+      end
+    end
+
+    context 'sufficient_interval? returns false' do
+      let(:sufficient_interval) { false }
+      it do
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, interval_too_short: true)
         subject
       end
     end

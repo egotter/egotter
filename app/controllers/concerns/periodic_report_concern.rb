@@ -52,32 +52,8 @@ module PeriodicReportConcern
   end
 
   def enqueue_user_requested_periodic_report(dm)
-    unless (user = User.find_by(uid: dm.sender_id))
-      CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.sender_id)
-      return
-    end
-
-    DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
-
-    unless user.authorized?
-      CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
-      return
-    end
-
-    unless user.notification_setting.enough_permission_level?
-      CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
-      return
-    end
-
-    if !user.has_valid_subscription? && !EgotterFollower.exists?(uid: user.uid)
-      CreatePeriodicReportMessageWorker.perform_async(user.id, not_following: true)
-      return
-    end
-
-    if !user.has_valid_subscription? && !CreatePeriodicReportRequest.sufficient_interval?(user.id)
-      CreatePeriodicReportMessageWorker.perform_async(user.id, interval_too_short: true)
-      return
-    end
+    user = validate_periodic_report_status(dm.sender_id)
+    return unless user
 
     request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'user')
     CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
@@ -86,20 +62,8 @@ module PeriodicReportConcern
   end
 
   def enqueue_egotter_requested_periodic_report(dm)
-    unless (user = User.find_by(uid: dm.recipient_id))
-      CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.recipient_id)
-      return
-    end
-
-    unless user.authorized?
-      CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
-      return
-    end
-
-    unless user.notification_setting.enough_permission_level?
-      CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
-      return
-    end
+    user = validate_periodic_report_status(dm.recipient_id, true)
+    return unless user
 
     request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'egotter')
     CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
@@ -107,12 +71,12 @@ module PeriodicReportConcern
     logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
   end
 
-  private
-
   def stop_periodic_report(uid)
     if (user = User.find_by(uid: uid))
       StopPeriodicReportRequest.create(user_id: user.id)
       CreatePeriodicReportStopRequestedMessageWorker.perform_async(user.id)
+    else
+      CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: uid)
     end
   rescue => e
     logger.warn "##{__method__} #{e.inspect} uid=#{uid}"
@@ -122,8 +86,50 @@ module PeriodicReportConcern
     if (user = User.find_by(uid: uid))
       StopPeriodicReportRequest.find_by(user_id: user.id)&.destroy
       CreatePeriodicReportRestartRequestedMessageWorker.perform_async(user.id)
+    else
+      CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: uid)
     end
   rescue => e
     logger.warn "##{__method__} #{e.inspect} uid=#{uid}"
+  end
+
+  def continue_periodic_report(uid)
+    user = validate_periodic_report_status(uid)
+    return unless user
+
+    CreatePeriodicReportContinueRequestedMessageWorker.perform_async(user.id)
+  rescue => e
+    logger.warn "##{__method__} #{e.inspect} uid=#{uid}"
+  end
+
+  private
+
+  def validate_periodic_report_status(uid, admin = false)
+    unless (user = User.find_by(uid: uid))
+      CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: uid)
+      return
+    end
+
+    unless user.authorized?
+      CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
+      return
+    end
+
+    unless user.notification_setting.enough_permission_level?
+      CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
+      return
+    end
+
+    if !admin && !user.has_valid_subscription? && !EgotterFollower.exists?(uid: user.uid)
+      CreatePeriodicReportMessageWorker.perform_async(user.id, not_following: true)
+      return
+    end
+
+    if !admin && !user.has_valid_subscription? && !CreatePeriodicReportRequest.sufficient_interval?(user.id)
+      CreatePeriodicReportMessageWorker.perform_async(user.id, interval_too_short: true)
+      return
+    end
+
+    user
   end
 end

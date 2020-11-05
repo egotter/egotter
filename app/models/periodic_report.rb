@@ -357,6 +357,15 @@ class PeriodicReport < ApplicationRecord
       new(user: nil, message: message, token: nil)
     end
 
+    def continue_requested_message
+      template = Rails.root.join('app/views/periodic_reports/continue_requested.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash(
+          support_url: support_url(campaign_params('continue_requested_support')),
+      )
+
+      new(user: nil, message: message, token: nil)
+    end
+
     def pick_period_name
       time = Time.zone.now.in_time_zone('Tokyo')
       case time.hour
@@ -673,6 +682,20 @@ class PeriodicReport < ApplicationRecord
           {
               label: I18n.t('quick_replies.prompt_reports.label5'),
               description: I18n.t('quick_replies.prompt_reports.description5')
+          },
+          {
+              label: I18n.t('quick_replies.prompt_reports.label3'),
+              description: I18n.t('quick_replies.prompt_reports.description3')
+          }
+      ]
+    end
+
+    def continue_requested_quick_reply_options
+      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
+      [
+          {
+              label: I18n.t('quick_replies.shared.label1'),
+              description: I18n.t('quick_replies.shared.description1')
           },
           {
               label: I18n.t('quick_replies.prompt_reports.label3'),
