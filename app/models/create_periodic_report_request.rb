@@ -194,33 +194,12 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
     def deliver!
       if user_or_egotter_requested_job?
-        if ScheduledJob.exists?(user_id: user_id)
-          @request.update(status: 'interval_too_short,scheduled_job_exists')
-          scheduled_jid = ScheduledJob.find_by(user_id: user_id)&.jid
-
-          if scheduled_jid
-            jid = CreatePeriodicReportMessageWorker.perform_async(user_id, scheduled_job_exists: true, scheduled_jid: scheduled_jid)
-            @request.update(status: 'interval_too_short,scheduled_job_exists,message_skipped') unless jid
-          else
-            logger.warn "#{self.class}##{__method__} scheduled job exists but jid is invalid request=#{@request.inspect}"
-            @request.update(status: 'interval_too_short,scheduled_job_exists,jid_not_found')
-          end
-        else
-          @request.update(status: 'interval_too_short,scheduled_job_created')
-          scheduled_jid = ScheduledJob.create(user_id: user_id).jid
-
-          if scheduled_jid
-            jid = CreatePeriodicReportMessageWorker.perform_async(user_id, scheduled_job_created: true, scheduled_jid: scheduled_jid)
-            @request.update(status: 'interval_too_short,scheduled_job_created,message_skipped') unless jid
-          else
-            logger.warn "#{self.class}##{__method__} scheduled job is created but jid is invalid request=#{@request.inspect}"
-            @request.update(status: 'interval_too_short,scheduled_job_created,jid_not_found')
-          end
-        end
+        CreatePeriodicReportMessageWorker.perform_async(user_id, interval_too_short: true)
       end
     end
   end
 
+  # TODO Remove later
   class ScheduledJob
     attr_reader :jid, :perform_at
 
