@@ -10,6 +10,7 @@ namespace :servers do
     params = {
         'adjust' => true,
         'role' => 'web',
+        'instance-type' => 't3.small',
         'count' => ENV['WEB_INSTANCES_MAX'] || 2
     }
     begin
@@ -22,6 +23,7 @@ namespace :servers do
     params = {
         'adjust' => true,
         'role' => 'sidekiq',
+        'instance-type' => 't3.medium',
         'count' => ENV['SIDEKIQ_INSTANCES_MAX'] || 4,
     }
     begin
