@@ -477,7 +477,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
   end
 
-  SHORT_INTERVAL = TwitterUser::CREATE_RECORD_INTERVAL
+  SHORT_INTERVAL = 3.hours
   SUFFICIENT_INTERVAL = 6.hours
 
   class << self
