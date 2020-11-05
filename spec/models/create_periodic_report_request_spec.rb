@@ -315,27 +315,9 @@ RSpec.describe CreatePeriodicReportRequest::IntervalValidator, type: :model do
     subject { instance.deliver! }
     before { allow(instance).to receive(:user_or_egotter_requested_job?).and_return(true) }
 
-    context 'ScheduledJob exists' do
-      before do
-        allow(CreatePeriodicReportRequest::ScheduledJob).to receive(:exists?).with(user_id: user.id).and_return(true)
-        allow(CreatePeriodicReportRequest::ScheduledJob).to receive(:find_by).with(user_id: user.id).and_return(double('job', jid: 'scheduled_jid'))
-      end
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
-            with(request.user_id, scheduled_job_exists: true, scheduled_jid: 'scheduled_jid').and_return('jid')
-        subject
-      end
-    end
-
-    context "ScheduledJob doesn't exist" do
-      before do
-        allow(CreatePeriodicReportRequest::ScheduledJob).to receive(:exists?).with(user_id: user.id).and_return(false)
-      end
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
-            with(request.user_id, scheduled_job_created: true, scheduled_jid: instance_of(String)).and_return('jid')
-        subject
-      end
+    it do
+      expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, interval_too_short: true)
+      subject
     end
   end
 end

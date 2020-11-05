@@ -108,6 +108,10 @@ describe PeriodicReportConcern, type: :controller do
     subject { controller.send(:enqueue_user_requested_periodic_report, dm) }
     before { allow(controller).to receive(:validate_periodic_report_status).with(dm.sender_id).and_return(user) }
     it do
+      expect(DeleteRemindPeriodicReportRequestWorker).to receive(:perform_async).with(user.id)
+      expect(user).to receive(:has_valid_subscription?)
+      expect(EgotterFollower).to receive(:exists?).with(uid: user.uid).and_return(true)
+      expect(CreatePeriodicReportRequest).to receive(:sufficient_interval?).and_return(true)
       expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'user').and_call_original
       expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(any_args)
       subject
@@ -117,7 +121,7 @@ describe PeriodicReportConcern, type: :controller do
   describe '#enqueue_egotter_requested_periodic_report' do
     let(:dm) { double('dm', recipient_id: user.uid) }
     subject { controller.send(:enqueue_egotter_requested_periodic_report, dm) }
-    before { allow(controller).to receive(:validate_periodic_report_status).with(dm.recipient_id, true).and_return(user) }
+    before { allow(controller).to receive(:validate_periodic_report_status).with(dm.recipient_id).and_return(user) }
     it do
       expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'egotter').and_call_original
       expect(CreateEgotterRequestedPeriodicReportWorker).to receive(:perform_async).with(any_args)
@@ -126,48 +130,27 @@ describe PeriodicReportConcern, type: :controller do
   end
 
   describe '#stop_periodic_report' do
-    let(:uid) { 1 }
+    let(:uid) { user.uid }
     subject { controller.send(:stop_periodic_report, uid) }
-
-    context 'user is found' do
-      let(:user) { create(:user, uid: uid) }
-      before { allow(User).to receive(:find_by).with(uid: uid).and_return(user) }
-      it do
-        expect(StopPeriodicReportRequest).to receive(:create).with(user_id: user.id)
-        expect(CreatePeriodicReportStopRequestedMessageWorker).to receive(:perform_async).with(user.id)
-        subject
-      end
-    end
-
-    context 'user is not found' do
-      before { allow(User).to receive(:find_by).with(uid: uid).and_return(nil) }
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, unregistered: true, uid: uid)
-        subject
-      end
+    before { allow(controller).to receive(:validate_periodic_report_status).with(uid).and_return(user) }
+    it do
+      expect(DeleteRemindPeriodicReportRequestWorker).to receive(:perform_async).with(user.id)
+      expect(StopPeriodicReportRequest).to receive(:create).with(user_id: user.id)
+      expect(CreatePeriodicReportStopRequestedMessageWorker).to receive(:perform_async).with(user.id)
+      subject
     end
   end
 
   describe '#restart_periodic_report' do
-    let(:uid) { 1 }
+    let(:uid) { user.uid }
+    let(:request) { double('request', id: 1) }
     subject { controller.send(:restart_periodic_report, uid) }
-
-    context 'user is found' do
-      let(:user) { create(:user, uid: uid) }
-      before { allow(User).to receive(:find_by).with(uid: uid).and_return(user) }
-      it do
-        expect(StopPeriodicReportRequest).to receive_message_chain(:find_by, :destroy).with(user_id: user.id).with(no_args)
-        expect(CreatePeriodicReportRestartRequestedMessageWorker).to receive(:perform_async).with(user.id)
-        subject
-      end
-    end
-
-    context 'user is not found' do
-      before { allow(User).to receive(:find_by).with(uid: uid).and_return(nil) }
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, unregistered: true, uid: uid)
-        subject
-      end
+    before { allow(controller).to receive(:validate_periodic_report_status).with(uid).and_return(user) }
+    it do
+      expect(DeleteRemindPeriodicReportRequestWorker).to receive(:perform_async).with(user.id)
+      expect(StopPeriodicReportRequest).to receive_message_chain(:find_by, :destroy).with(user_id: user.id).with(no_args)
+      expect(CreatePeriodicReportRestartRequestedMessageWorker).to receive(:perform_async).with(user.id)
+      subject
     end
   end
 
@@ -176,6 +159,7 @@ describe PeriodicReportConcern, type: :controller do
     subject { controller.send(:continue_periodic_report, uid) }
     before { allow(controller).to receive(:validate_periodic_report_status).with(uid).and_return(user) }
     it do
+      expect(DeleteRemindPeriodicReportRequestWorker).to receive(:perform_async).with(user.id)
       expect(CreatePeriodicReportContinueRequestedMessageWorker).to receive(:perform_async).with(user.id)
       subject
     end
@@ -183,15 +167,10 @@ describe PeriodicReportConcern, type: :controller do
 
   describe '#validate_periodic_report_status' do
     let(:uid) { user.uid }
-    let(:admin) { false }
-    let(:is_following) { true }
-    let(:sufficient_interval) { true }
-    subject { controller.send(:validate_periodic_report_status, uid, admin) }
+    subject { controller.send(:validate_periodic_report_status, uid) }
 
     before do
       allow(User).to receive(:find_by).with(uid: uid).and_return(user)
-      allow(EgotterFollower).to receive(:exists?).with(uid: uid).and_return(is_following)
-      allow(CreatePeriodicReportRequest).to receive(:sufficient_interval?).with(user.id).and_return(sufficient_interval)
     end
 
     context 'user is not found' do
@@ -216,22 +195,6 @@ describe PeriodicReportConcern, type: :controller do
       end
       it do
         expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, permission_level_not_enough: true)
-        subject
-      end
-    end
-
-    context 'user is not following egotter' do
-      let(:is_following) { false }
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, not_following: true)
-        subject
-      end
-    end
-
-    context 'sufficient_interval? returns false' do
-      let(:sufficient_interval) { false }
-      it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, interval_too_short: true)
         subject
       end
     end

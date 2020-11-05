@@ -58,6 +58,18 @@ module PeriodicReportConcern
 
     DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
 
+    unless user.has_valid_subscription?
+      unless EgotterFollower.exists?(uid: user.uid)
+        CreatePeriodicReportMessageWorker.perform_async(user.id, not_following: true)
+        return
+      end
+
+      unless CreatePeriodicReportRequest.sufficient_interval?(user.id)
+        CreatePeriodicReportMessageWorker.perform_async(user.id, interval_too_short: true)
+        return
+      end
+    end
+
     request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'user')
     CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
   rescue => e
@@ -67,16 +79,6 @@ module PeriodicReportConcern
   def enqueue_egotter_requested_periodic_report(dm)
     user = validate_periodic_report_status(dm.recipient_id)
     return unless user
-
-    if !user.has_valid_subscription? && !EgotterFollower.exists?(uid: user.uid)
-      CreatePeriodicReportMessageWorker.perform_async(user.id, not_following: true)
-      return
-    end
-
-    if !user.has_valid_subscription? && !CreatePeriodicReportRequest.sufficient_interval?(user.id)
-      CreatePeriodicReportMessageWorker.perform_async(user.id, interval_too_short: true)
-      return
-    end
 
     request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'egotter')
     CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
