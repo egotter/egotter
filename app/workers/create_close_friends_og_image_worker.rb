@@ -16,7 +16,7 @@ class CreateCloseFriendsOgImageWorker
   end
 
   def _timeout_in
-    3.minutes
+    1.minute
   end
 
   # options:
