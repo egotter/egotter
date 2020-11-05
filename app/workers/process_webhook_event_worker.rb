@@ -6,6 +6,8 @@ class ProcessWebhookEventWorker
   include PeriodicReportConcern
   include SearchReportConcern
   include BlockReportConcern
+  include ScheduleTweetsConcern
+  include DeleteTweetsConcern
   sidekiq_options queue: 'webhook', retry: 0, backtrace: false
 
   def unique_key(event, options = {})
@@ -80,6 +82,10 @@ class ProcessWebhookEventWorker
       # Do nothing
     elsif report_received?(dm)
       # Do nothing
+    elsif schedule_tweets_questioned?(dm)
+      answer_schedule_tweets_question(dm)
+    elsif delete_tweets_questioned?(dm)
+      answer_delete_tweets_question(dm)
     else
       logger.info { "#{__method__} dm is ignored #{dm.text}" }
     end
