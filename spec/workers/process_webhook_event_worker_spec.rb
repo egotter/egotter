@@ -113,7 +113,6 @@ RSpec.describe ProcessWebhookEventWorker do
     it do
       expect(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received).with(dm.sender_id)
       expect(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :clear).with(dm.sender_id)
-      expect(DeleteRemindPeriodicReportRequestWorker).to receive(:perform_async).with(nil, uid: dm.sender_id)
       expect(SendReceivedMessageWorker).to receive(:perform_async).with(dm.sender_id, dm_id: dm.id, text: dm.text)
       subject
     end
