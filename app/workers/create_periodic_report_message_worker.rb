@@ -100,13 +100,6 @@ class CreatePeriodicReportMessageWorker
       return
     end
 
-    if options[:scheduled_job_exists]
-      handle_weird_error(user) do
-        PeriodicReport.scheduled_job_exists_message(user_id, options[:scheduled_jid]).deliver!
-      end
-      return
-    end
-
     if options[:scheduled_job_created]
       handle_weird_error(user) do
         PeriodicReport.scheduled_job_created_message(user_id, options[:scheduled_jid]).deliver!
