@@ -88,6 +88,8 @@ module PeriodicReportConcern
     user = validate_periodic_report_status(uid)
     return unless user
 
+    DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
+
     StopPeriodicReportRequest.create(user_id: user.id)
     CreatePeriodicReportStopRequestedMessageWorker.perform_async(user.id)
   rescue => e
@@ -98,6 +100,8 @@ module PeriodicReportConcern
     user = validate_periodic_report_status(uid)
     return unless user
 
+    DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
+
     StopPeriodicReportRequest.find_by(user_id: user.id)&.destroy
     CreatePeriodicReportRestartRequestedMessageWorker.perform_async(user.id)
   rescue => e
@@ -107,6 +111,8 @@ module PeriodicReportConcern
   def continue_periodic_report(uid)
     user = validate_periodic_report_status(uid)
     return unless user
+
+    DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
 
     CreatePeriodicReportContinueRequestedMessageWorker.perform_async(user.id)
   rescue => e
