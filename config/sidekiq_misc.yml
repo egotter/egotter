@@ -26,3 +26,4 @@
   - StartSendingPeriodicReportsWorker
   - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
+  - CreateReportTwitterUserWorker

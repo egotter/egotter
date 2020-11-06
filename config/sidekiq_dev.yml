@@ -22,6 +22,7 @@
   - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
+  - CreateReportTwitterUserWorker
   - AssembleTwitterUserWorker
   - StartSendingPeriodicReportsWorker
   - WriteToS3Worker

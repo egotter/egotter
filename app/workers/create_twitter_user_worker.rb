@@ -43,7 +43,8 @@ class CreateTwitterUserWorker
   def perform(request_id, options = {})
     request = CreateTwitterUserRequest.find(request_id)
     task = CreateTwitterUserTask.new(request)
-    task.start!
+    context = options['context'] == :reporting ? :reporting : nil
+    task.start!(context)
 
     notify(request.user, request.uid)
 
