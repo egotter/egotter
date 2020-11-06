@@ -14,13 +14,8 @@ class UpdateEgotterFriendshipWorker
     10.minutes
   end
 
-  def timeout_in
+  def _timeout_in
     10.seconds
-  end
-
-  def after_timeout(user_id, options = {})
-    logger.warn "The job of #{self.class} timed out user_id=#{user_id} options=#{options.inspect}"
-    UpdateEgotterFriendshipWorker.perform_in(2.minutes, user_id, options)
   end
 
   # options:

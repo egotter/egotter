@@ -14,12 +14,8 @@ class CreatePeriodicReportContinueRequestedMessageWorker
     logger.warn "The job of #{self.class} is skipped args=#{args.inspect}"
   end
 
-  def timeout_in
+  def _timeout_in
     10.seconds
-  end
-
-  def after_timeout(user_id, options = {})
-    logger.warn "The job of #{self.class} timed out user_id=#{user_id} options=#{options.inspect}"
   end
 
   # options:

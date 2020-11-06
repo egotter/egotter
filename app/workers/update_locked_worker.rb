@@ -14,17 +14,8 @@ class UpdateLockedWorker
     1.minute
   end
 
-  def timeout_in
+  def _timeout_in
     5.seconds
-  end
-
-  def after_timeout(*args)
-    logger.warn "The job of #{self.class} timed out args=#{args.inspect.truncate(200)}"
-    UpdateLockedWorker.perform_in(retry_in, *args)
-  end
-
-  def retry_in
-    unique_in + rand(120)
   end
 
   # options:

@@ -11,12 +11,8 @@ class SendMetricsToCloudWatchWorker
     30.seconds
   end
 
-  def timeout_in
+  def _timeout_in
     50.seconds
-  end
-
-  def after_timeout(*args)
-    logger.warn "The job of #{self.class} timed out args=#{args.inspect.truncate(200)}"
   end
 
   # Run every minute

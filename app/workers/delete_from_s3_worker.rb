@@ -2,12 +2,8 @@ class DeleteFromS3Worker
   include Sidekiq::Worker
   sidekiq_options queue: 'deleting_low', retry: 0, backtrace: false
 
-  def timeout_in
+  def _timeout_in
     10.seconds
-  end
-
-  def after_timeout(*args)
-    logger.warn "Timeout #{timeout_in} #{args.inspect.truncate(100)}"
   end
 
   # params:
