@@ -103,7 +103,7 @@ module TwitterUserPersistence
       @bm_before_commit['elapsed'] = elapsed
       @bm_before_commit.transform_values! { |v| sprintf("%.3f", v) }
 
-      logger.info "Benchmark CreateTwitterUserRequest #{__method__} twitter_user=#{id} user_id=#{user_id} uid=#{uid} #{@bm_before_commit.inspect}"
+      logger.info "Benchmark CreateTwitterUserRequest before_commit twitter_user=#{id} user_id=#{user_id} uid=#{uid} #{@bm_before_commit.inspect}"
     end
 
     def bm_after_commit(message, &block)
@@ -123,7 +123,7 @@ module TwitterUserPersistence
       @bm_after_commit['elapsed'] = elapsed
       @bm_after_commit.transform_values! { |v| sprintf("%.3f", v) }
 
-      logger.info "Benchmark CreateTwitterUserRequest #{__method__} twitter_user=#{id} user_id=#{user_id} uid=#{uid} #{@bm_after_commit.inspect}"
+      logger.info "Benchmark CreateTwitterUserRequest after_commit twitter_user=#{id} user_id=#{user_id} uid=#{uid} #{@bm_after_commit.inspect}"
     end
   end
   prepend Instrumentation

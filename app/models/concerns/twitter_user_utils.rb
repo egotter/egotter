@@ -65,30 +65,56 @@ module TwitterUserUtils
   private
 
   def fetch_friend_uids
-    uids = nil
-    uids = InMemory::TwitterUser.find_by(id)&.friend_uids if InMemory.enabled? && InMemory.cache_alive?(created_at)
-    uids = Efs::TwitterUser.find_by(id)&.friend_uids if uids.nil? && Efs.enabled?
-    uids = S3::Friendship.find_by(twitter_user_id: id)&.friend_uids if uids.nil?
-    if uids.nil?
-      logger.warn "#{__method__}: failed twitter_user_id=#{id} uid=#{uid} elapsed=#{sprintf("%.3f sec", Time.zone.now - created_at)}"
+    wrapper = nil
+    start = Time.zone.now
+
+    if InMemory.enabled? && InMemory.cache_alive?(created_at)
+      wrapper = InMemory::TwitterUser.find_by(id)
+    end
+
+    if wrapper.nil? && Efs.enabled?
+      wrapper = Efs::TwitterUser.find_by(id)
+    end
+
+    if wrapper.nil?
+      wrapper = S3::Friendship.find_by(twitter_user_id: id)
+    end
+
+    time = "elapsed=#{sprintf("%.3f sec", Time.zone.now - created_at)} duration=#{sprintf("%.3f sec", Time.zone.now - start)}"
+    if wrapper.nil?
+      logger.warn "#{__method__}: Failed twitter_user_id=#{id} uid=#{uid} #{times}"
       logger.info caller.join("\n")
       []
     else
-      uids
+      logger.info "#{__method__}: Found twitter_user_id=#{id} uid=#{uid} wrapper=#{wrapper.class} #{time}"
+      wrapper.friend_uids || []
     end
   end
 
   def fetch_follower_uids
-    uids = nil
-    uids = InMemory::TwitterUser.find_by(id)&.follower_uids if InMemory.enabled? && InMemory.cache_alive?(created_at)
-    uids = Efs::TwitterUser.find_by(id)&.follower_uids if uids.nil? && Efs.enabled?
-    uids = S3::Followership.find_by(twitter_user_id: id)&.follower_uids if uids.nil?
-    if uids.nil?
-      logger.warn "#{__method__}: failed twitter_user_id=#{id} uid=#{uid} elapsed=#{sprintf("%.3f sec", Time.zone.now - created_at)}"
+    wrapper = nil
+    start = Time.zone.now
+
+    if InMemory.enabled? && InMemory.cache_alive?(created_at)
+      wrapper = InMemory::TwitterUser.find_by(id)
+    end
+
+    if wrapper.nil? && Efs.enabled?
+      wrapper = Efs::TwitterUser.find_by(id)
+    end
+
+    if wrapper.nil?
+      wrapper = S3::Followership.find_by(twitter_user_id: id)
+    end
+
+    time = "elapsed=#{sprintf("%.3f sec", Time.zone.now - created_at)} duration=#{sprintf("%.3f sec", Time.zone.now - start)}"
+    if wrapper.nil?
+      logger.warn "#{__method__}: Failed twitter_user_id=#{id} uid=#{uid} #{time}"
       logger.info caller.join("\n")
       []
     else
-      uids
+      logger.info "#{__method__}: Found twitter_user_id=#{id} uid=#{uid} wrapper=#{wrapper.class} #{time}"
+      wrapper.follower_uids || []
     end
   end
 end
