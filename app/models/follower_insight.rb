@@ -32,7 +32,7 @@ class FollowerInsight < ApplicationRecord
     end
 
     def build
-      twitter_user = TwitterUser.select(:id, :created_at).latest_by(uid: @uid)
+      twitter_user = TwitterUser.latest_by(uid: @uid)
       users = twitter_user.followers
       return if users.blank?
 
