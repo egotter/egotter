@@ -41,48 +41,20 @@ module TwitterUserPersistence
     raise ActiveRecord::Rollback
   end
 
-  # This method is processed on `after_commit` to avoid long transaction.
-  # WARNING: Don't create threads in this method!
   def perform_after_commit
-    bm_after_commit('Efs::TwitterUser.import_from!') do
-      Efs::TwitterUser.import_from!(id, uid, screen_name, profile_text, copied_friend_uids, copied_follower_uids)
-    end
-
-    # Efs::StatusTweet, Efs::FavoriteTweet and Efs::MentionTweet are not imported for performance reasons
-
-    bm_after_commit('S3::Friendship.import_from!') do
-      S3::Friendship.import_from!(id, uid, screen_name, copied_friend_uids, async: true)
-    end
-
-    bm_after_commit('S3::Followership.import_from!') do
-      S3::Followership.import_from!(id, uid, screen_name, copied_follower_uids, async: true)
-    end
-
-    bm_after_commit('S3::Profile.import_from!') do
-      S3::Profile.import_from!(id, uid, screen_name, profile_text, async: true)
-    end
-
-    if copied_user_timeline.present?
-      bm_after_commit('S3::StatusTweet.import_from!') do
-        S3::StatusTweet.import_from!(uid, screen_name, copied_user_timeline)
-      end
-    end
-
-    if copied_favorite_tweets.present?
-      bm_after_commit('S3::FavoriteTweet.import_from!') do
-        S3::FavoriteTweet.import_from!(uid, screen_name, copied_favorite_tweets)
-      end
-    end
-
-    if copied_mention_tweets.present?
-      bm_after_commit('S3::MentionTweet.import_from!') do
-        S3::MentionTweet.import_from!(uid, screen_name, copied_mention_tweets)
-      end
-    end
-  rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(120)} twitter_user=#{self.inspect}"
-    logger.info e.backtrace.join("\n")
-    destroy
+    data = {
+        id: id,
+        uid: uid,
+        screen_name: screen_name,
+        profile: profile_text,
+        friend_uids: copied_friend_uids,
+        follower_uids: copied_follower_uids,
+        status_tweets: copied_user_timeline,
+        favorite_tweets: copied_favorite_tweets,
+        mention_tweets: copied_mention_tweets,
+    }
+    data = Base64.encode64(Zlib::Deflate.deflate(data.to_json))
+    PerformAfterCommitWorker.perform_async(id, data)
   end
 
   module Instrumentation
@@ -104,26 +76,6 @@ module TwitterUserPersistence
       @bm_before_commit.transform_values! { |v| sprintf("%.3f", v) }
 
       logger.info "Benchmark CreateTwitterUserRequest before_commit twitter_user=#{id} user_id=#{user_id} uid=#{uid} #{@bm_before_commit.inspect}"
-    end
-
-    def bm_after_commit(message, &block)
-      start = Time.zone.now
-      yield
-      @bm_after_commit[message] = Time.zone.now - start
-    end
-
-    def perform_after_commit(*args, &blk)
-      @bm_after_commit = {}
-      start = Time.zone.now
-
-      super
-
-      elapsed = Time.zone.now - start
-      @bm_after_commit['sum'] = @bm_after_commit.values.sum
-      @bm_after_commit['elapsed'] = elapsed
-      @bm_after_commit.transform_values! { |v| sprintf("%.3f", v) }
-
-      logger.info "Benchmark CreateTwitterUserRequest after_commit twitter_user=#{id} user_id=#{user_id} uid=#{uid} #{@bm_after_commit.inspect}"
     end
   end
   prepend Instrumentation
