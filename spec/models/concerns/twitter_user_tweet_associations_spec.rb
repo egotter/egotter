@@ -2,152 +2,68 @@ require 'rails_helper'
 
 RSpec.describe TwitterUserAssociations do
   let(:twitter_user) { create(:twitter_user) }
-  let(:uid) { twitter_user.uid }
 
   describe '#status_tweets' do
-    shared_examples 'result matches return_data' do
-      it do
-        result = subject
-        expect(result[0].uid).to eq(return_data[0].uid)
-        expect(result[0].screen_name).to eq(return_data[0].screen_name)
-        expect(result[0].raw_attrs_text).to eq(return_data[0].raw_attrs_text)
-        expect(result[1].uid).to eq(return_data[1].uid)
-        expect(result[1].screen_name).to eq(return_data[1].screen_name)
-        expect(result[1].raw_attrs_text).to eq(return_data[1].raw_attrs_text)
-      end
-    end
-
-    let(:return_data) do
-      [
-          double('tweet', uid: twitter_user.uid, screen_name: twitter_user.screen_name, raw_attrs_text: {text: 'text1'}.to_json),
-          double('tweet', uid: twitter_user.uid, screen_name: twitter_user.screen_name, raw_attrs_text: {text: 'text2'}.to_json),
-      ]
-    end
     subject { twitter_user.status_tweets }
-
-    context 'InMemory returns data' do
-      before do
-        allow(InMemory::StatusTweet).to receive(:find_by).with(twitter_user.uid).and_return(return_data)
-      end
-
-      include_examples('result matches return_data')
-    end
-
-    context 'Efs returns data' do
-      before do
-        allow(InMemory).to receive(:enabled?).and_return(false)
-        allow(Efs::StatusTweet).to receive(:where).with(uid: twitter_user.uid).and_return(return_data)
-      end
-
-      include_examples('result matches return_data')
-    end
-
-    context 'Efs returns data' do
-      before do
-        allow(InMemory).to receive(:enabled?).and_return(false)
-        allow(Efs::Tweet).to receive(:cache_alive?).with(anything).and_return(false)
-        allow(S3::StatusTweet).to receive(:where).with(uid: twitter_user.uid).and_return(return_data)
-      end
-
-      include_examples('result matches return_data')
+    it do
+      expect(twitter_user).to receive(:fetch_tweets).with(InMemory::StatusTweet, Efs::StatusTweet, S3::StatusTweet)
+      subject
     end
   end
 
   describe '#favorite_tweets' do
-    shared_examples 'result matches return_data' do
-      it do
-        result = subject
-        expect(result[0].uid).to eq(return_data[0].uid)
-        expect(result[0].screen_name).to eq(return_data[0].screen_name)
-        expect(result[0].raw_attrs_text).to eq(return_data[0].raw_attrs_text)
-        expect(result[1].uid).to eq(return_data[1].uid)
-        expect(result[1].screen_name).to eq(return_data[1].screen_name)
-        expect(result[1].raw_attrs_text).to eq(return_data[1].raw_attrs_text)
-      end
-    end
-
-    let(:return_data) do
-      [
-          double('tweet', uid: twitter_user.uid, screen_name: twitter_user.screen_name, raw_attrs_text: {text: 'text1'}.to_json),
-          double('tweet', uid: twitter_user.uid, screen_name: twitter_user.screen_name, raw_attrs_text: {text: 'text2'}.to_json),
-      ]
-    end
     subject { twitter_user.favorite_tweets }
-
-    context 'InMemory returns data' do
-      before do
-        allow(InMemory::FavoriteTweet).to receive(:find_by).with(twitter_user.uid).and_return(return_data)
-      end
-
-      include_examples('result matches return_data')
-    end
-
-    context 'Efs returns data' do
-      before do
-        allow(InMemory).to receive(:enabled?).and_return(false)
-        allow(Efs::FavoriteTweet).to receive(:where).with(uid: twitter_user.uid).and_return(return_data)
-      end
-
-      include_examples('result matches return_data')
-    end
-
-    context 'Efs returns data' do
-      before do
-        allow(InMemory).to receive(:enabled?).and_return(false)
-        allow(Efs::Tweet).to receive(:cache_alive?).with(anything).and_return(false)
-        allow(S3::FavoriteTweet).to receive(:where).with(uid: twitter_user.uid).and_return(return_data)
-      end
-
-      include_examples('result matches return_data')
+    it do
+      expect(twitter_user).to receive(:fetch_tweets).with(InMemory::FavoriteTweet, Efs::FavoriteTweet, S3::FavoriteTweet)
+      subject
     end
   end
 
   describe '#mention_tweets' do
-    shared_examples 'result matches return_data' do
-      it do
-        result = subject
-        expect(result[0].uid).to eq(return_data[0].uid)
-        expect(result[0].screen_name).to eq(return_data[0].screen_name)
-        expect(result[0].raw_attrs_text).to eq(return_data[0].raw_attrs_text)
-        expect(result[1].uid).to eq(return_data[1].uid)
-        expect(result[1].screen_name).to eq(return_data[1].screen_name)
-        expect(result[1].raw_attrs_text).to eq(return_data[1].raw_attrs_text)
-      end
-    end
-
-    let(:return_data) do
-      [
-          double('tweet', uid: twitter_user.uid, screen_name: twitter_user.screen_name, raw_attrs_text: {text: 'text1'}.to_json),
-          double('tweet', uid: twitter_user.uid, screen_name: twitter_user.screen_name, raw_attrs_text: {text: 'text2'}.to_json),
-      ]
-    end
     subject { twitter_user.mention_tweets }
+    it do
+      expect(twitter_user).to receive(:fetch_tweets).with(InMemory::MentionTweet, Efs::MentionTweet, S3::MentionTweet)
+      subject
+    end
+  end
+
+  describe '#fetch_tweets' do
+    let(:memory_class) { InMemory::StatusTweet }
+    let(:efs_class) { Efs::StatusTweet }
+    let(:s3_class) { S3::StatusTweet }
+    subject { twitter_user.send(:fetch_tweets, memory_class, efs_class, s3_class) }
 
     context 'InMemory returns data' do
-      before do
-        allow(InMemory::MentionTweet).to receive(:find_by).with(twitter_user.uid).and_return(return_data)
+      let(:wrapper) { memory_class.new(nil) }
+      it do
+        expect(memory_class).to receive(:find_by).with(twitter_user.uid).and_return(wrapper)
+        expect(wrapper).to receive(:tweets)
+        subject
       end
-
-      include_examples('result matches return_data')
     end
 
     context 'Efs returns data' do
-      before do
-        allow(InMemory).to receive(:enabled?).and_return(false)
-        allow(Efs::MentionTweet).to receive(:where).with(uid: twitter_user.uid).and_return(return_data)
-      end
+      let(:wrapper) { efs_class.new(nil) }
+      before { allow(InMemory).to receive(:enabled?).and_return(false) }
 
-      include_examples('result matches return_data')
+      it do
+        expect(efs_class).to receive(:find_by).with(twitter_user.uid).and_return(wrapper)
+        expect(wrapper).to receive(:tweets)
+        subject
+      end
     end
 
-    context 'Efs returns data' do
+    context 'S3 returns data' do
+      let(:wrapper) { s3_class.new(nil) }
       before do
         allow(InMemory).to receive(:enabled?).and_return(false)
-        allow(Efs::Tweet).to receive(:cache_alive?).with(anything).and_return(false)
-        allow(S3::MentionTweet).to receive(:where).with(uid: twitter_user.uid).and_return(return_data)
+        allow(Efs::Tweet).to receive(:cache_alive?).with(twitter_user.created_at).and_return(false)
       end
-
-      include_examples('result matches return_data')
+      it do
+        expect(s3_class).to receive(:find_by).with(twitter_user.uid).and_return(wrapper)
+        expect(wrapper).to receive(:tweets)
+        subject
+      end
     end
   end
 end

@@ -72,7 +72,7 @@ RSpec.describe TwitterUserPersistence do
 
       it do
         subject
-        tweets = InMemory::StatusTweet.find_by(twitter_user.uid)
+        tweets = InMemory::StatusTweet.find_by(twitter_user.uid).tweets
         expect(tweets.size).to eq(status_tweets.size)
         tweets.each.with_index do |tweet, i|
           expect(tweet.raw_attrs_text).to eq(status_tweets[i][:raw_attrs_text])
@@ -88,7 +88,7 @@ RSpec.describe TwitterUserPersistence do
 
       it do
         subject
-        tweets = InMemory::FavoriteTweet.find_by(twitter_user.uid)
+        tweets = InMemory::FavoriteTweet.find_by(twitter_user.uid).tweets
         tweets.each.with_index do |tweet, i|
           expect(tweet.raw_attrs_text).to eq(favorite_tweets[i][:raw_attrs_text])
         end
@@ -103,7 +103,7 @@ RSpec.describe TwitterUserPersistence do
 
       it do
         subject
-        tweets = InMemory::MentionTweet.find_by(twitter_user.uid)
+        tweets = InMemory::MentionTweet.find_by(twitter_user.uid).tweets
         tweets.each.with_index do |tweet, i|
           expect(tweet.raw_attrs_text).to eq(mention_tweets[i][:raw_attrs_text])
         end

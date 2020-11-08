@@ -2,10 +2,15 @@
 
 module S3
   class Tweet
-    attr_reader :raw_attrs_text
 
-    def initialize(tweet)
-      @raw_attrs_text = tweet['raw_attrs_text']
+    def initialize(tweets)
+      @tweets = tweets
+    end
+
+    def tweets
+      @tweets.map do |tweet|
+        TwitterDB::Status.new(uid: tweet['uid'], screen_name: tweet['screen_name'], raw_attrs_text: tweet['raw_attrs_text'])
+      end
     end
 
     class << self
@@ -13,15 +18,11 @@ module S3
         'not-specified'
       end
 
-      def array_from(tweets)
-        tweets.map { |t| new(t) }
-      end
-
-      def where(uid:)
+      def find_by(uid)
         obj = client.read(uid)
-        obj ? array_from(decode(obj)['tweets']) : []
+        obj ? new(decode(obj)['tweets']) : nil
       rescue Aws::S3::Errors::NoSuchKey => e
-        []
+        nil
       end
 
       def import_from!(uid, screen_name, tweets)

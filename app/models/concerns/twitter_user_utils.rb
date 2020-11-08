@@ -64,6 +64,7 @@ module TwitterUserUtils
 
   private
 
+  # TODO Fix
   def fetch_friend_uids
     wrapper = nil
     start = Time.zone.now
@@ -91,6 +92,7 @@ module TwitterUserUtils
     end
   end
 
+  # TODO Fix
   def fetch_follower_uids
     wrapper = nil
     start = Time.zone.now

@@ -4,24 +4,24 @@ module InMemory
   class Tweet
     extend ::InMemory::Util
 
-    attr_reader :raw_attrs_text
+    def initialize(tweets)
+      @tweets = tweets
+    end
 
-    def initialize(tweet)
-      @raw_attrs_text = tweet[:raw_attrs_text]
+    def tweets
+      @tweets.map do |tweet|
+        TwitterDB::Status.new(uid: tweet['uid'], screen_name: tweet['screen_name'], raw_attrs_text: tweet['raw_attrs_text'])
+      end
     end
 
     class << self
-      def array_from(tweets)
-        tweets.map { |t| new(t) }
-      end
-
       def find_by(uid)
         data = client.read(uid)
-        tweets = data ? parse_json(decompress(data)) : nil
-        tweets ? array_from(tweets) : []
+        tweets = data ? parse_json(decompress(data), symbol_keys: false) : nil
+        tweets ? new(tweets) : nil
       rescue => e
         Rails.logger.warn "#{self}##{__method__} failed #{e.inspect}"
-        []
+        nil
       end
 
       def delete_by(uid)

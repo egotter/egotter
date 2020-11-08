@@ -2,12 +2,17 @@
 
 module Efs
   class Tweet
-    attr_reader :raw_attrs_text
 
     TWEET_TTL = 1.hour
 
-    def initialize(tweet)
-      @raw_attrs_text = tweet['raw_attrs_text']
+    def initialize(tweets)
+      @tweets = tweets
+    end
+
+    def tweets
+      @tweets.map do |tweet|
+        TwitterDB::Status.new(uid: tweet['uid'], screen_name: tweet['screen_name'], raw_attrs_text: tweet['raw_attrs_text'])
+      end
     end
 
     class << self
@@ -23,13 +28,12 @@ module Efs
         time > TWEET_TTL.ago
       end
 
-      def array_from(tweets)
-        tweets.map { |t| new(t) }
-      end
-
-      def where(uid:)
+      def find_by(uid)
         obj = client.read(uid)
-        obj ? array_from(decompress(obj)['tweets']) : []
+        obj ? new(decompress(obj)['tweets']) : nil
+      rescue => e
+        Rails.logger.warn "#{self}##{__method__} failed #{e.inspect}"
+        nil
       end
 
       def import_from!(uid, screen_name, tweets)
