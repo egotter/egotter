@@ -82,7 +82,7 @@ module TwitterUserUtils
 
     time = "elapsed=#{sprintf("%.3f sec", Time.zone.now - created_at)} duration=#{sprintf("%.3f sec", Time.zone.now - start)}"
     if wrapper.nil?
-      logger.warn "#{__method__}: Failed twitter_user_id=#{id} uid=#{uid} #{times}"
+      logger.warn "#{__method__}: Failed twitter_user_id=#{id} uid=#{uid} #{time}"
       logger.info caller.join("\n")
       []
     else
