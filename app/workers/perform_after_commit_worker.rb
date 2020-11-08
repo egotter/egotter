@@ -12,7 +12,7 @@ class PerformAfterCommitWorker
   end
 
   def after_skip(twitter_user_id, data, options = {})
-    logger.info "The job of #{self.class} is skipped twitter_user_id=#{twitter_user_id}"
+    logger.warn "The job of #{self.class} is skipped twitter_user_id=#{twitter_user_id}"
   end
 
   def expire_in
