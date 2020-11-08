@@ -17,10 +17,7 @@ APP_ROOT="/var/egotter/"
 do_stop() {
   /etc/init.d/puma stop
   stop sidekiq
-  stop sidekiq_import
   stop sidekiq_misc
-  stop sidekiq_follow
-  stop sidekiq_unfollow
 }
 
 rh_status() {

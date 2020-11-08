@@ -133,7 +133,7 @@ class CalculateMetricsWorker
 
   def send_sidekiq_worker_metrics(types = nil)
     unless types
-      types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc sidekiq_import sidekiq_prompt_reports)
+      types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc)
     end
 
     types.each do |type|

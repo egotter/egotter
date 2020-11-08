@@ -98,9 +98,7 @@ module Tasks
             webhook_rails_sidekiq: ENV['SLACK_TD_AGENT_RAILS_SIDEKIQ'],
             webhook_puma: ENV['SLACK_TD_AGENT_PUMA'],
             webhook_sidekiq: ENV['SLACK_TD_AGENT_SIDEKIQ'],
-            webhook_sidekiq_import: ENV['SLACK_TD_AGENT_SIDEKIQ_IMPORT'],
             webhook_sidekiq_misc: ENV['SLACK_TD_AGENT_SIDEKIQ_MISC'],
-            webhook_sidekiq_prompt_reports: ENV['SLACK_TD_AGENT_SIDEKIQ_PROMPT_REPORTS'],
             webhook_syslog: ENV['SLACK_TD_AGENT_SYSLOG'],
             webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'],
         }

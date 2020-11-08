@@ -24,14 +24,6 @@
 
 <source>
   @type tail
-  path /var/egotter/log/sidekiq_prompt_reports.log
-  pos_file /tmp/sidekiq_prompt_reports.log.pos
-  tag <%= name %>.sidekiq_prompt_reports
-  format /^(?<message>.*)$/
-</source>
-
-<source>
-  @type tail
   path /var/log/messages
   pos_file /tmp/messages.log.pos
   tag <%= name %>.syslog
@@ -67,14 +59,6 @@
   @type slack
   webhook_url <%= webhook_sidekiq_misc %>
   channel sidekiq_misc
-  username <%= name %>
-  flush_interval 2s
-</match>
-
-<match <%= name %>.sidekiq_prompt_reports.*>
-  @type slack
-  webhook_url <%= webhook_sidekiq_prompt_reports %>
-  channel sidekiq_prompt_reports
   username <%= name %>
   flush_interval 2s
 </match>

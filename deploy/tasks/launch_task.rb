@@ -17,8 +17,6 @@ module Tasks
         Web.new(params)
       when 'sidekiq'
         Sidekiq.new(params)
-      when 'sidekiq_prompt_reports'
-        raise UnknownRoleError, "params=#{params.inspect}"
       when 'plain'
         Plain.new(params)
       else
