@@ -114,6 +114,7 @@ class AudienceInsight < ApplicationRecord
       @limit = 100
     end
 
+    # TODO Fix too complicated implementation
     def build
       chart_builder = nil
       bm('Builder.new') do

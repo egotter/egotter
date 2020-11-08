@@ -64,59 +64,30 @@ module TwitterUserUtils
 
   private
 
-  # TODO Fix
   def fetch_friend_uids
-    wrapper = nil
-    start = Time.zone.now
-
-    if InMemory.enabled? && InMemory.cache_alive?(created_at)
-      wrapper = InMemory::TwitterUser.find_by(id)
-    end
-
-    if wrapper.nil? && Efs.enabled?
-      wrapper = Efs::TwitterUser.find_by(id)
-    end
-
-    if wrapper.nil?
-      wrapper = S3::Friendship.find_by(twitter_user_id: id)
-    end
-
-    time = "elapsed=#{sprintf("%.3f sec", Time.zone.now - created_at)} duration=#{sprintf("%.3f sec", Time.zone.now - start)}"
-    if wrapper.nil?
-      logger.warn "#{__method__}: Failed twitter_user_id=#{id} uid=#{uid} #{time}"
-      logger.info caller.join("\n")
-      []
-    else
-      logger.info "#{__method__}: Found twitter_user_id=#{id} uid=#{uid} wrapper=#{wrapper.class} #{time}"
-      wrapper.friend_uids || []
-    end
+    fetch_uids(:friend_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Friendship)
   end
 
-  # TODO Fix
   def fetch_follower_uids
+    fetch_uids(:follower_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Followership)
+  end
+
+  def fetch_uids(method_name, memory_class, efs_class, s3_class)
     wrapper = nil
     start = Time.zone.now
 
-    if InMemory.enabled? && InMemory.cache_alive?(created_at)
-      wrapper = InMemory::TwitterUser.find_by(id)
-    end
-
-    if wrapper.nil? && Efs.enabled?
-      wrapper = Efs::TwitterUser.find_by(id)
-    end
-
-    if wrapper.nil?
-      wrapper = S3::Followership.find_by(twitter_user_id: id)
-    end
+    wrapper = memory_class.find_by(id) if InMemory.enabled? && InMemory.cache_alive?(created_at)
+    wrapper = efs_class.find_by(id) if wrapper.nil? && Efs.enabled?
+    wrapper = s3_class.find_by(twitter_user_id: id) if wrapper.nil?
 
     time = "elapsed=#{sprintf("%.3f sec", Time.zone.now - created_at)} duration=#{sprintf("%.3f sec", Time.zone.now - start)}"
     if wrapper.nil?
-      logger.warn "#{__method__}: Failed twitter_user_id=#{id} uid=#{uid} #{time}"
+      logger.warn "#{__method__}: Failed twitter_user_id=#{id} uid=#{uid} method=#{method_name} #{time}"
       logger.info caller.join("\n")
       []
     else
-      logger.info "#{__method__}: Found twitter_user_id=#{id} uid=#{uid} wrapper=#{wrapper.class} #{time}"
-      wrapper.follower_uids || []
+      logger.info "#{__method__}: Found twitter_user_id=#{id} uid=#{uid} method=#{method_name} wrapper=#{wrapper.class} #{time}"
+      wrapper.send(method_name)
     end
   end
 end

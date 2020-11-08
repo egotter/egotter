@@ -159,16 +159,18 @@ RSpec.describe TwitterUserAssociations do
 
   describe '#friends' do
     subject { twitter_user.friends }
+    before { allow(twitter_user).to receive(:friend_uids).and_return([1]) }
     it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: twitter_user.friend_uids, inactive: nil)
+      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1], inactive: nil)
       subject
     end
   end
 
   describe '#followers' do
     subject { twitter_user.followers }
+    before { allow(twitter_user).to receive(:follower_uids).and_return([1]) }
     it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: twitter_user.follower_uids, inactive: nil)
+      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1], inactive: nil)
       subject
     end
   end
