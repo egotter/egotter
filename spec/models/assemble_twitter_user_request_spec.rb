@@ -29,26 +29,9 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
 
     it do
       expect(CreateTwitterUserCloseFriendsWorker).to receive(:perform_async).with(twitter_user.id)
-
-      [
-          S3::OneSidedFriendship,
-          S3::OneSidedFollowership,
-          S3::MutualFriendship,
-          S3::InactiveFriendship,
-          S3::InactiveFollowership,
-          S3::InactiveMutualFriendship,
-          S3::Unfriendship,
-          S3::Unfollowership,
-          S3::MutualUnfriendship,
-      ].each.with_index do |klass, i|
-        uids = Array.new(3).map { i }
-        expect(twitter_user).to receive(:calc_uids_for).with(klass).and_return(uids)
-        expect(klass).to receive(:import_from!).with(twitter_user.uid, uids)
-        expect(twitter_user).to receive(:update_counter_cache_for).with(klass, uids.size)
-      end
-
+      expect(CreateTwitterUserInactiveFriendsWorker).to receive(:perform_async).with(twitter_user.id)
+      expect(CreateTwitterUserUnfriendsWorker).to receive(:perform_async).with(twitter_user.id)
       expect(DeleteDisusedRecordsWorker).to receive(:perform_async).with(twitter_user.uid)
-
       subject
     end
   end

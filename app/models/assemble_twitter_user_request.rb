@@ -40,26 +40,9 @@ class AssembleTwitterUserRequest < ApplicationRecord
 
     return unless validate_record_friends!
 
-    [
-        S3::OneSidedFriendship,
-        S3::OneSidedFollowership,
-        S3::MutualFriendship,
-        S3::InactiveFriendship,
-        S3::InactiveFollowership,
-        S3::InactiveMutualFriendship,
-        S3::Unfriendship,
-        S3::Unfollowership,
-        S3::MutualUnfriendship,
-    ].each do |klass|
-      bm(klass) do
-        uids = twitter_user.calc_uids_for(klass)
-        klass.import_from!(twitter_user.uid, uids)
-        twitter_user.update_counter_cache_for(klass, uids.size)
-      rescue => e
-        logger.warn "#{klass}#import_from! #{e.inspect.truncate(200)} twitter_user_id=#{twitter_user.id}"
-        logger.info e.backtrace.join("\n")
-      end
-    end
+    CreateTwitterUserOneSidedFriendsWorker.perform_async(twitter_user.id)
+    CreateTwitterUserInactiveFriendsWorker.perform_async(twitter_user.id)
+    CreateTwitterUserUnfriendsWorker.perform_async(twitter_user.id)
 
     twitter_user.update(statuses_interval: twitter_user.calc_statuses_interval)
     twitter_user.update(follow_back_rate: twitter_user.calc_follow_back_rate)
