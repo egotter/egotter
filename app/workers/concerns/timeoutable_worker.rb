@@ -10,7 +10,7 @@ module TimeoutableWorker
   def perform(*args)
     @start = Time.zone.now
 
-    super
+    result = super
 
     if timeout?
       if respond_to?(:after_timeout)
@@ -19,5 +19,7 @@ module TimeoutableWorker
         logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} args=#{args.inspect.truncate(100)}"
       end
     end
+
+    result
   end
 end

@@ -26,8 +26,7 @@ class UpdateAudienceInsightWorker
     insight = AudienceInsight.find_or_initialize_by(uid: uid) # TODO Select only specific columns
     return if insight.fresh?
 
-    timeout_handler = Proc.new { |records_size| after_timeout(uid, {records_size: records_size}.merge(options)) }
-    attrs = AudienceInsight::Builder.new(uid, timeout: _timeout_in, concurrency: 10, timeout_handler: timeout_handler).build
+    attrs = AudienceInsight::Builder.new(uid, timeout: 10.minutes, concurrency: 10).build
 
     if attrs.any?
       insight.assign_attributes(attrs)
