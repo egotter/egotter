@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe AssembleTwitterUserRequest, type: :model do
   let(:user) { create(:user) }
-  let(:twitter_user) { create(:twitter_user, user_id: user.id, with_relations: false) }
+  let(:twitter_user) { create(:twitter_user, user_id: user.id) }
   let(:request) { described_class.create!(twitter_user: twitter_user) }
 
   before do
@@ -31,6 +31,7 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
       expect(CreateTwitterUserCloseFriendsWorker).to receive(:perform_async).with(twitter_user.id)
       expect(CreateTwitterUserInactiveFriendsWorker).to receive(:perform_async).with(twitter_user.id)
       expect(CreateTwitterUserUnfriendsWorker).to receive(:perform_async).with(twitter_user.id)
+      expect(twitter_user).to receive(:update).with(any_args)
       subject
     end
   end

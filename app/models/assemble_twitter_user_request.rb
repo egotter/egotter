@@ -44,11 +44,13 @@ class AssembleTwitterUserRequest < ApplicationRecord
     CreateTwitterUserInactiveFriendsWorker.perform_async(twitter_user.id)
     CreateTwitterUserUnfriendsWorker.perform_async(twitter_user.id)
 
-    twitter_user.update(statuses_interval: twitter_user.calc_statuses_interval)
-    twitter_user.update(follow_back_rate: twitter_user.calc_follow_back_rate)
-    twitter_user.update(reverse_follow_back_rate: twitter_user.calc_reverse_follow_back_rate)
-
-    twitter_user.update(assembled_at: Time.zone.now)
+    values = {
+        statuses_interval: twitter_user.calc_statuses_interval,
+        follow_back_rate: twitter_user.calc_follow_back_rate,
+        reverse_follow_back_rate: twitter_user.calc_reverse_follow_back_rate,
+        assembled_at: Time.zone.now,
+    }
+    twitter_user.update(values)
   end
 
   def validate_record_creation_order!
