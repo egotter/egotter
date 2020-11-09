@@ -1,4 +1,5 @@
 # -*- SkipSchemaAnnotations
+require 'aws-sdk-dynamodb'
 
 module DynamoDB
   class Client
