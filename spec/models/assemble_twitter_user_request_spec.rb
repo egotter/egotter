@@ -28,15 +28,7 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
     subject { request.send(:perform_direct) }
 
     it do
-      [
-          S3::CloseFriendship,
-          S3::FavoriteFriendship,
-      ].each do |klass|
-        expect(twitter_user).to receive(:calc_uids_for).with(klass, login_user: user).and_return("result of #{klass}")
-        expect(klass).to receive(:import_from!).with(twitter_user.uid, "result of #{klass}")
-        expect(CreateHighPriorityTwitterDBUserWorker).to receive(:compress_and_perform_async).
-            with("result of #{klass}", user_id: user.id, enqueued_by: "AssembleTwitterUserRequest > #{klass}")
-      end
+      expect(CreateTwitterUserCloseFriendsWorker).to receive(:perform_async).with(twitter_user.id)
 
       [
           S3::OneSidedFriendship,

@@ -4,8 +4,10 @@ class DeleteDisusedRecordsWorker
 
   # options:
   def perform(uid, options = {})
+    # TODO Remove later
     CloseFriendship.delete_by_uid(uid)
     FavoriteFriendship.delete_by_uid(uid)
+
     OneSidedFriendship.delete_by_uid(uid)
     OneSidedFollowership.delete_by_uid(uid)
     MutualFriendship.delete_by_uid(uid)

@@ -35,27 +35,8 @@ class AssembleTwitterUserRequest < ApplicationRecord
 
   private
 
-  # TODO Implement #perform_in_threads
   def perform_direct
-    login_user = User.find_by(id: twitter_user.user_id)
-
-    [
-        S3::CloseFriendship,
-        S3::FavoriteFriendship,
-    ].each do |klass|
-      bm(klass) do
-        uids = twitter_user.calc_uids_for(klass, login_user: login_user)
-        klass.import_from!(twitter_user.uid, uids)
-        CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: twitter_user.user_id, enqueued_by: "#{self.class} > #{klass}")
-
-        if klass == S3::CloseFriendship && uids.present?
-          CreateCloseFriendsOgImageWorker.perform_async(twitter_user.uid, uids: uids, force: true)
-        end
-      rescue => e
-        logger.warn "#{klass}#import_from! #{e.inspect.truncate(200)} twitter_user_id=#{twitter_user.id}"
-        logger.info e.backtrace.join("\n")
-      end
-    end
+    CreateTwitterUserCloseFriendsWorker.perform_async(twitter_user.id)
 
     return unless validate_record_friends!
 
