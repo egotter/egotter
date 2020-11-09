@@ -162,6 +162,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     subject { request.send(:save_twitter_user, snapshot) }
     it do
       expect(snapshot).to receive(:copy).and_return(twitter_user)
+      expect(twitter_user).to receive(:perform_before_transaction!)
       expect(twitter_user).to receive(:save!)
       expect(request).to receive(:update).with(twitter_user_id: 1)
       is_expected.to eq(twitter_user)
