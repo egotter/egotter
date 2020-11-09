@@ -11,8 +11,8 @@ module DeployRuby
         @ec2_resource = ::Aws::EC2::Resource.new(region: 'ap-northeast-1')
       end
 
-      def launch_instance(name, params)
-        instance = @ec2_resource.create_instances(params).first
+      def launch_instance(name, launch_params, params)
+        instance = @ec2_resource.create_instances(launch_params).first
         wait_until(instance.id, :instance_running)
         wait_until(instance.id, :instance_status_ok)
 
@@ -23,7 +23,7 @@ module DeployRuby
         instance.volumes.first.create_tags(tags: [{key: 'Name', value: name}])
         instance.id
       rescue ::Aws::EC2::Errors::InvalidParameterCombination => e
-        red "Invalid params params=#{params.inspect}"
+        red "Invalid launch_params values=#{launch_params.inspect}"
         exit
       rescue Interrupt, StandardError => e
         red "#{e.class} is raised and terminates already started instance."
