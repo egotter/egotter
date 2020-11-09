@@ -20,7 +20,6 @@
   - unfollow
   - misc_low
   - report_high
-  - StartSendingPeriodicReportsWorker
   - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
   - report_low

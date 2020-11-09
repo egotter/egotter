@@ -6,5 +6,4 @@ class CreateEgotterRequestedPeriodicReportWorker < CreatePeriodicReportWorker
   def unique_in
     1.second
   end
-
 end

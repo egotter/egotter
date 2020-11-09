@@ -21,7 +21,6 @@
   - CreateTwitterUserWorker
   - CreateReportTwitterUserWorker
   - AssembleTwitterUserWorker
-  - StartSendingPeriodicReportsWorker
   - WriteToS3Worker
   - follow
   - unfollow
