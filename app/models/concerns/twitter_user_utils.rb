@@ -87,7 +87,7 @@ module TwitterUserUtils
       []
     else
       logger.info "#{__method__}: Found twitter_user_id=#{id} uid=#{uid} method=#{method_name} wrapper=#{wrapper.class} #{time}"
-      wrapper.send(method_name)
+      wrapper.send(method_name) || []
     end
   end
 end

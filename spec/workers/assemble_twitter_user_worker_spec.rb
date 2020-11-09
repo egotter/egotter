@@ -23,6 +23,6 @@ RSpec.describe AssembleTwitterUserWorker do
 
   describe '#perform' do
     subject { worker.perform(request.id) }
-    it { is_expected.to be_falsey }
+    it { is_expected.to be_truthy }
   end
 end

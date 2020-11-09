@@ -32,7 +32,7 @@ module TwitterUserTweetAssociations
       []
     else
       logger.info "#{__method__}: Found twitter_user_id=#{id} uid=#{uid} wrapper=#{wrapper.class} #{time}"
-      wrapper.tweets
+      wrapper.tweets || []
     end
   end
 end

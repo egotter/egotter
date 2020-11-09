@@ -2,7 +2,6 @@
 
 module S3
   module Util
-    include Querying
 
     def bucket_name
       @bucket_name
@@ -56,6 +55,25 @@ module S3
     end
 
     module_function :unpack
+
+    def find_by_current_scope(payload_key, key_attr, key_value)
+      text = fetch(key_value)
+      item = parse_json(text)
+      payload = item.has_key?('compress') ? unpack(item[payload_key.to_s]) : item[payload_key.to_s]
+      values = {
+          key_attr.to_sym => item[key_attr.to_s],
+          screen_name: item['screen_name'],
+          payload_key.to_sym => payload
+      }
+
+      unless key_attr.to_sym == :uid
+        values[:uid] = item['uid']
+      end
+
+      values
+    rescue Aws::S3::Errors::NoSuchKey => e
+      nil
+    end
 
     def store(key, body, async: true)
       raise 'key is nil' if key.nil?
