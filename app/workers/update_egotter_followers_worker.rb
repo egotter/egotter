@@ -1,5 +1,6 @@
 class UpdateEgotterFollowersWorker
   include Sidekiq::Worker
+  prepend TimeoutableWorker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(*args)
@@ -10,17 +11,8 @@ class UpdateEgotterFollowersWorker
     30.minutes
   end
 
-  # Handle timeout by myself
   def _timeout_in
     1.minute
-  end
-
-  def timeout?
-    Time.zone.now - @start > _timeout_in
-  end
-
-  def after_timeout(*args)
-    logger.warn "Timeout seconds=#{_timeout_in} args=#{args.inspect}"
   end
 
   def expire_in
@@ -29,18 +21,9 @@ class UpdateEgotterFollowersWorker
 
   # options:
   def perform(options = {})
-    @start = Time.zone.now
-
     follower_uids = fetch_follower_uids(User::EGOTTER_UID)
-    raise Timeout if timeout?
-
     followers = build_followers(follower_uids)
-    raise Timeout if timeout?
-
     import_followers(followers)
-
-  rescue Timeout => e
-    after_timeout(options)
   rescue => e
     logger.warn "#{e.class}: #{e.message.truncate(200)} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
@@ -84,8 +67,6 @@ class UpdateEgotterFollowersWorker
       end
     end
   end
-
-  class Timeout < StandardError; end
 
   class RetryExhausted < StandardError; end
 end

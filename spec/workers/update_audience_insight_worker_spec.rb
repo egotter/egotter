@@ -3,11 +3,6 @@ require 'rails_helper'
 RSpec.describe UpdateAudienceInsightWorker do
   let(:worker) { described_class.new }
 
-  describe '#retry_in' do
-    subject { worker.retry_in }
-    it { is_expected.to be >= worker.unique_in }
-  end
-
   describe '#perform' do
     let(:options) { {} }
     let(:twitter_user) { create(:twitter_user) }

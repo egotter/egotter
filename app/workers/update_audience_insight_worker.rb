@@ -1,5 +1,6 @@
 class UpdateAudienceInsightWorker
   include Sidekiq::Worker
+  prepend TimeoutableWorker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(uid, options = {})
@@ -10,18 +11,8 @@ class UpdateAudienceInsightWorker
     3.minute
   end
 
-  # Handle timeout by myself
   def _timeout_in
     10.seconds
-  end
-
-  def after_timeout(*args)
-    logger.info { "Timeout seconds=#{_timeout_in} args=#{args.inspect}" }
-    UpdateAudienceInsightWorker.perform_in(retry_in, *args)
-  end
-
-  def retry_in
-    unique_in + rand(120)
   end
 
   def expire_in

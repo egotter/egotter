@@ -1,6 +1,6 @@
 class StartSendingPeriodicReportsWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
+  prepend TimeoutableWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(*args)
@@ -15,12 +15,8 @@ class StartSendingPeriodicReportsWorker
     logger.warn "The job execution is skipped."
   end
 
-  def timeout_in
+  def _timeout_in
     120.minutes
-  end
-
-  def after_timeout
-    logger.warn "The job execution is timed out."
   end
 
   def retry_in
@@ -38,7 +34,6 @@ class StartSendingPeriodicReportsWorker
     StartSendingPeriodicReportsTask.new.start!
 
   rescue => e
-    notify_airbrake(e, options: options)
     logger.warn "#{e.class} #{e.message}"
     logger.info e.backtrace.join("\n")
   end
