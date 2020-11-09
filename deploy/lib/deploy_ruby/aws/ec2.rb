@@ -19,7 +19,7 @@ module DeployRuby
         instance = retrieve_instance(instance.id)
         test_ssh_connection(instance.public_ip_address)
 
-        instance.create_tags(tags: [{key: 'Name', value: name}])
+        instance.create_tags(tags: [{key: 'Name', value: name}, {key: 'Role', value: params['role']}])
         instance.volumes.first.create_tags(tags: [{key: 'Name', value: name}])
         instance.id
       rescue ::Aws::EC2::Errors::InvalidParameterCombination => e
