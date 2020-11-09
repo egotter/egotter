@@ -36,7 +36,7 @@
 #
 
 module TwitterDB
-  class User < ApplicationRecord
+  class User < TwitterDBBase
 
     validates_with Validations::UidValidator
     validates_with Validations::ScreenNameValidator

@@ -21,15 +21,25 @@ default: &default
   socket: <%= ENV['EGOTTER_DATABASE_SOCKET'] %>
 
 development:
-  <<: *default
-  database: egotter_development
+  primary:
+    <<: *default
+    database: egotter_development
+  twitter_db:
+    <<: *default
+    database: egotter_development
+    migrations_paths: db/twitter_db_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: egotter_test
+  primary:
+    <<: *default
+    database: egotter_test
+  twitter_db:
+    <<: *default
+    database: egotter_test
+    migrations_paths: db/twitter_db_migrate
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -51,5 +61,10 @@ test:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  <<: *default
-  database: egotter_production
+  primary:
+    <<: *default
+    database: egotter_production
+  twitter_db:
+    <<: *default
+    database: egotter_production
+    migrations_paths: db/twitter_db_migrate
