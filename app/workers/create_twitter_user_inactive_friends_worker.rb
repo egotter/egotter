@@ -4,7 +4,7 @@ class CreateTwitterUserInactiveFriendsWorker
   sidekiq_options queue: 'creating_low', retry: 0, backtrace: false
 
   def unique_key(twitter_user_id, options = {})
-    TwitterUser.find(twitter_user_id).uid
+    twitter_user_id
   end
 
   def unique_in
