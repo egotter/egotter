@@ -20,6 +20,7 @@ module DeployRuby
         test_ssh_connection(instance.public_ip_address)
 
         instance.create_tags(tags: [{key: 'Name', value: name}])
+        instance.volumes.first.create_tags(tags: [{key: 'Name', value: name}])
         instance.id
       rescue ::Aws::EC2::Errors::InvalidParameterCombination => e
         red "Invalid params params=#{params.inspect}"
