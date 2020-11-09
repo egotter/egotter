@@ -49,8 +49,6 @@ class AssembleTwitterUserRequest < ApplicationRecord
     twitter_user.update(reverse_follow_back_rate: twitter_user.calc_reverse_follow_back_rate)
 
     twitter_user.update(assembled_at: Time.zone.now)
-
-    DeleteDisusedRecordsWorker.perform_async(twitter_user.uid)
   end
 
   def validate_record_creation_order!
