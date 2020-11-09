@@ -44,5 +44,10 @@ RSpec.describe TwitterDBUserBatch, type: :model do
 
     it { is_expected.to eq([1, 2, 3]) }
   end
+
+  describe '#handle_exception' do
+    subject { instance.send(:handle_exception, RuntimeError.new('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')) }
+    it { is_expected.to be_falsey }
+  end
 end
 

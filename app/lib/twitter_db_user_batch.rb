@@ -66,7 +66,13 @@ class TwitterDBUserBatch
   def handle_exception(e)
     @retry_count ||= 3
 
-    if !deadlock_exception?(e) || (@retry_count -= 1) <= 0
+    unless deadlock_exception?(e)
+      raise e
+    end
+
+    logger.info "Deadlock found! #{e.inspect.truncate(200)}"
+
+    if (@retry_count -= 1) <= 0
       raise RetryExhausted.new(e.inspect.truncate(200))
     end
   end
