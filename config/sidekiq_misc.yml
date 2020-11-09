@@ -19,11 +19,9 @@
   - follow
   - unfollow
   - misc_low
-  - CreateUserRequestedPeriodicReportWorker
-  - CreateAndroidRequestedPeriodicReportWorker
-  - CreateEgotterRequestedPeriodicReportWorker
-  - CreatePeriodicReportWorker
+  - report_high
   - StartSendingPeriodicReportsWorker
   - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
+  - report_low
   - CreateReportTwitterUserWorker

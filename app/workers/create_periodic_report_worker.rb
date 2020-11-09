@@ -1,7 +1,7 @@
 class CreatePeriodicReportWorker
   include Sidekiq::Worker
   prepend TimeoutableWorker
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'report_low', retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
     CreatePeriodicReportRequest.find(request_id).user_id

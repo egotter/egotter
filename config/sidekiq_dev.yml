@@ -13,10 +13,7 @@
   - misc
   - creating_low
   - deleting_low
-  - CreateUserRequestedPeriodicReportWorker
-  - CreateAndroidRequestedPeriodicReportWorker
-  - CreateEgotterRequestedPeriodicReportWorker
-  - CreatePeriodicReportWorker
+  - report_high
   - CreateHighPriorityTwitterUserWorker
   - CreateSignedInTwitterUserWorker
   - CreateHighPriorityTwitterDBUserWorker
@@ -29,3 +26,4 @@
   - follow
   - unfollow
   - misc_low
+  - report_low
