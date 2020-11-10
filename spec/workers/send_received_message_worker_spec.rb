@@ -26,6 +26,22 @@ RSpec.describe SendReceivedMessageWorker do
     end
   end
 
+  describe '#send_message_to_slack' do
+    let(:uid) { 1 }
+    let(:name) { 'name' }
+    subject { worker.send_message_to_slack(uid, 'text') }
+    before do
+      allow(worker).to receive(:fetch_screen_name).with(uid).and_return(name)
+      allow(worker).to receive(:dm_url).with(name).and_return('url1')
+      allow(worker).to receive(:dm_url_by_uid).with(uid).and_return('url2')
+      allow(worker).to receive(:recently_tweets_deleted_user?).with(uid).and_return(false)
+    end
+    it do
+      expect(SlackClient).to receive_message_chain(:received_messages, :send_message).with(instance_of(String), title: instance_of(String))
+      subject
+    end
+  end
+
   describe '#recently_tweets_deleted_user?' do
     context 'user is not found' do
       subject { worker.recently_tweets_deleted_user?(1) }

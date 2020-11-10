@@ -56,7 +56,7 @@ class SendReceivedMessageWorker
 
   def send_message_to_slack(sender_uid, text)
     screen_name = fetch_screen_name(sender_uid)
-    text = dm_url(screen_name) + "\n" + text
+    text = dm_url(screen_name) + ' ' + dm_url_by_uid(sender_uid) + "\n" + text
     SlackClient.received_messages.send_message(text, title: "`#{screen_name}` `#{sender_uid}`")
 
     if recently_tweets_deleted_user?(sender_uid)
@@ -78,5 +78,9 @@ class SendReceivedMessageWorker
 
   def dm_url(screen_name)
     "https://twitter.com/direct_messages/create/#{screen_name}"
+  end
+
+  def dm_url_by_uid(uid)
+    "https://twitter.com/messages/#{User::EGOTTER_UID}-#{uid}"
   end
 end
