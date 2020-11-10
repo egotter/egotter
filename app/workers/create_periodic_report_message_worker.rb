@@ -108,10 +108,9 @@ class CreatePeriodicReportMessageWorker
       return
     end
 
+    # TODO Remove later
     if options[:sending_soft_limited]
-      handle_weird_error(user) do
-        PeriodicReport.sending_soft_limited_message(user_id).deliver!
-      end
+      CreatePeriodicReportAllottedMessagesNotEnoughMessageWorker.perform_async(user_id)
       return
     end
 

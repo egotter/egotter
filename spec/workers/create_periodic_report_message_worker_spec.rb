@@ -113,8 +113,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       let(:user_id) { user.id }
       let(:options) { {sending_soft_limited: true} }
       it do
-        expect(worker).to receive(:handle_weird_error).with(user).and_call_original
-        expect(PeriodicReport).to receive_message_chain(:sending_soft_limited_message, :deliver!).with(user.id).with(no_args)
+        expect(CreatePeriodicReportAllottedMessagesNotEnoughMessageWorker).to receive(:perform_async).with(user_id)
         subject
       end
     end

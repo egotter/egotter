@@ -399,8 +399,7 @@ RSpec.describe CreatePeriodicReportRequest::AllottedMessagesCountValidator, type
   describe '#deliver!' do
     subject { instance.deliver! }
     it do
-      expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
-          with(request.user_id, sending_soft_limited: true).and_return('jid')
+      expect(CreatePeriodicReportAllottedMessagesNotEnoughMessageWorker).to receive(:perform_async).with(request.user_id).and_return('jid')
       subject
     end
   end

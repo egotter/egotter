@@ -289,7 +289,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
 
     def deliver!
-      jid = CreatePeriodicReportMessageWorker.perform_async(user_id, sending_soft_limited: true)
+      jid = CreatePeriodicReportAllottedMessagesNotEnoughMessageWorker.perform_async(user_id)
       @request.update(status: 'soft_limited,message_skipped') unless jid
     end
   end

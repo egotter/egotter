@@ -139,8 +139,8 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
-  describe '.sending_soft_limited_message' do
-    subject { described_class.sending_soft_limited_message(user.id) }
+  describe '.allotted_messages_not_enough_message' do
+    subject { described_class.allotted_messages_not_enough_message(user.id) }
     it { is_expected.to be_truthy }
   end
 

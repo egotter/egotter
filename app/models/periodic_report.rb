@@ -204,7 +204,12 @@ class PeriodicReport < ApplicationRecord
       new(user: user, message: message, token: generate_token, dont_send_remind_message: true, quick_reply_buttons: will_expire_quick_reply_options)
     end
 
+    # TODO Remove later
     def sending_soft_limited_message(user_id)
+      allotted_messages_not_enough_message(user_id)
+    end
+
+    def allotted_messages_not_enough_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/sending_soft_limited.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           url: support_url(campaign_params('soft_limited')),
@@ -652,6 +657,10 @@ class PeriodicReport < ApplicationRecord
 
     def access_interval_too_long_quick_reply_options
       interval_too_short_quick_reply_options
+    end
+
+    def allotted_messages_not_enough_quick_reply_options
+      will_expire_quick_reply_options
     end
 
     def stop_requested_quick_reply_options
