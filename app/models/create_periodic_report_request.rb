@@ -269,7 +269,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
     def deliver!
       if user_or_egotter_requested_job?
-        jid = CreatePeriodicReportMessageWorker.perform_async(@request.user_id, not_following: true)
+        jid = CreatePeriodicReportNotFollowingMessageWorker.perform_async(@request.user_id)
         @request.update(status: 'not_following,message_skipped') unless jid
       end
     end

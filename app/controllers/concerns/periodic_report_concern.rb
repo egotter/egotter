@@ -60,7 +60,7 @@ module PeriodicReportConcern
 
     unless user.has_valid_subscription?
       unless EgotterFollower.exists?(uid: user.uid)
-        CreatePeriodicReportMessageWorker.perform_async(user.id, not_following: true)
+        CreatePeriodicReportNotFollowingMessageWorker.perform_async(user.id)
         return
       end
 

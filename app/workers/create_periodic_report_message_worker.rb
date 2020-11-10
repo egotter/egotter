@@ -72,8 +72,9 @@ class CreatePeriodicReportMessageWorker
       return
     end
 
+    # TODO Remove later
     if options[:not_following]
-      perform_not_following(user)
+      CreatePeriodicReportNotFollowingMessageWorker.perform_async(user_id)
       return
     end
 
@@ -152,10 +153,6 @@ class CreatePeriodicReportMessageWorker
 
   def perform_unregistered(uid)
     send_message_from_egotter(uid, PeriodicReport.unregistered_message.message)
-  end
-
-  def perform_not_following(user)
-    send_message_from_egotter(user.uid, PeriodicReport.not_following_message.message)
   end
 
   def perform_permission_level_not_enough(user)

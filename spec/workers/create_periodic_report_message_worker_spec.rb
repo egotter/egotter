@@ -58,7 +58,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       let(:user_id) { user.id }
       let(:options) { {not_following: true} }
       it do
-        expect(worker).to receive(:perform_not_following).with(user)
+        expect(CreatePeriodicReportNotFollowingMessageWorker).to receive(:perform_async).with(user_id)
         subject
       end
     end
@@ -179,15 +179,6 @@ RSpec.describe CreatePeriodicReportMessageWorker do
     subject { worker.perform_unregistered(('uid')) }
     it do
       expect(worker).to receive(:send_message_from_egotter).with('uid', message)
-      subject
-    end
-  end
-
-  describe '#perform_not_following' do
-    let(:message) { PeriodicReport.not_following_message.message }
-    subject { worker.perform_not_following(user) }
-    it do
-      expect(worker).to receive(:send_message_from_egotter).with(user.uid, message)
       subject
     end
   end

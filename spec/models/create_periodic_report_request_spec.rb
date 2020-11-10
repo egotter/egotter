@@ -359,8 +359,8 @@ RSpec.describe CreatePeriodicReportRequest::FollowingStatusValidator, type: :mod
     subject { instance.deliver! }
     before { allow(instance).to receive(:user_or_egotter_requested_job?).and_return(true) }
     it do
-      expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
-          with(request.user_id, not_following: true).and_return('jid')
+      expect(CreatePeriodicReportNotFollowingMessageWorker).to receive(:perform_async).
+          with(request.user_id).and_return('jid')
       subject
     end
   end
