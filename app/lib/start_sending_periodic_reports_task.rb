@@ -71,7 +71,7 @@ class StartSendingPeriodicReportsTask
     RemindPeriodicReportRequest.import requests, validate: false
 
     user_ids.each.with_index do |user_id, i|
-      CreatePeriodicReportMessageWorker.perform_in(@delay.call(i), user_id, allotted_messages_will_expire: true)
+      CreatePeriodicReportAllottedMessagesWillExpireMessageWorker.perform_in(@delay.call(i), user_id)
     end
   end
 

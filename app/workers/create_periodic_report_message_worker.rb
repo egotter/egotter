@@ -120,10 +120,9 @@ class CreatePeriodicReportMessageWorker
       return
     end
 
+    # TODO Remove later
     if options[:allotted_messages_will_expire]
-      handle_weird_error(user) do
-        PeriodicReport.allotted_messages_will_expire_message(user_id).deliver!
-      end
+      CreatePeriodicReportAllottedMessagesWillExpireMessageWorker.perform_async(user_id)
       return
     end
 
