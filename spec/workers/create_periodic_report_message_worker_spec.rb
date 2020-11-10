@@ -36,33 +36,6 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       end
     end
 
-    context 'options[:restart_requested] is specified' do
-      let(:user_id) { user.id }
-      let(:options) { {restart_requested: true} }
-      it do
-        expect(CreatePeriodicReportRestartRequestedMessageWorker).to receive(:perform_async).with(user.id)
-        subject
-      end
-    end
-
-    context 'options[:stop_requested] is specified' do
-      let(:user_id) { user.id }
-      let(:options) { {stop_requested: true} }
-      it do
-        expect(CreatePeriodicReportStopRequestedMessageWorker).to receive(:perform_async).with(user.id)
-        subject
-      end
-    end
-
-    context 'options[:not_following] is specified' do
-      let(:user_id) { user.id }
-      let(:options) { {not_following: true} }
-      it do
-        expect(CreatePeriodicReportNotFollowingMessageWorker).to receive(:perform_async).with(user_id)
-        subject
-      end
-    end
-
     context 'options[:permission_level_not_enough] is specified' do
       let(:user_id) { user.id }
       let(:options) { {permission_level_not_enough: true} }
@@ -77,61 +50,6 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       let(:options) { {unauthorized: true} }
       it do
         expect(worker).to receive(:perform_unauthorized).with(user)
-        subject
-      end
-    end
-
-    context 'options[:request_interval_too_short] is specified' do
-      let(:user_id) { user.id }
-      let(:options) { {request_interval_too_short: true} }
-      it do
-        expect(CreatePeriodicReportRequestIntervalTooShortMessageWorker).to receive(:perform_async).with(user_id)
-        subject
-      end
-    end
-
-    context 'options[:interval_too_short] is specified' do
-      let(:user_id) { user.id }
-      let(:options) { {interval_too_short: true} }
-      it do
-        expect(CreatePeriodicReportIntervalTooShortMessageWorker).to receive(:perform_async).with(user_id)
-        subject
-      end
-    end
-
-    context 'options[:scheduled_job_created] is specified' do
-      let(:user_id) { user.id }
-      let(:options) { {scheduled_job_created: true, jid: 'jid'} }
-      it do
-        expect(worker).to receive(:handle_weird_error).with(user).and_call_original
-        expect(PeriodicReport).to receive_message_chain(:scheduled_job_created_message, :deliver!).with(user.id, 'jid').with(no_args)
-        subject
-      end
-    end
-
-    context 'options[:sending_soft_limited] is specified' do
-      let(:user_id) { user.id }
-      let(:options) { {sending_soft_limited: true} }
-      it do
-        expect(CreatePeriodicReportAllottedMessagesNotEnoughMessageWorker).to receive(:perform_async).with(user_id)
-        subject
-      end
-    end
-
-    context 'options[:web_access_hard_limited] is specified' do
-      let(:user_id) { user.id }
-      let(:options) { {web_access_hard_limited: true} }
-      it do
-        expect(CreatePeriodicReportAccessIntervalTooLongMessageWorker).to receive(:perform_async).with(user_id)
-        subject
-      end
-    end
-
-    context 'options[:allotted_messages_will_expire] is specified' do
-      let(:user_id) { user.id }
-      let(:options) { {allotted_messages_will_expire: true} }
-      it do
-        expect(CreatePeriodicReportAllottedMessagesWillExpireMessageWorker).to receive(:perform_async).with(user_id)
         subject
       end
     end

@@ -61,20 +61,14 @@ class CreatePeriodicReportMessageWorker
     user = User.find(user_id)
 
     # TODO Remove later
-    if options[:restart_requested]
-      CreatePeriodicReportRestartRequestedMessageWorker.perform_async(user_id)
-      return
-    end
-
-    # TODO Remove later
     if options[:stop_requested]
-      CreatePeriodicReportStopRequestedMessageWorker.perform_async(user_id)
+      logger.warn "stop_requested is specified and do nothing"
       return
     end
 
     # TODO Remove later
     if options[:not_following]
-      CreatePeriodicReportNotFollowingMessageWorker.perform_async(user_id)
+      logger.warn "not_following is specified and do nothing"
       return
     end
 
@@ -90,39 +84,31 @@ class CreatePeriodicReportMessageWorker
 
     # TODO Remove later
     if options[:request_interval_too_short]
-      CreatePeriodicReportRequestIntervalTooShortMessageWorker.perform_async(user_id)
+      logger.warn "request_interval_too_short is specified and do nothing"
       return
     end
 
     # TODO Remove later
     if options[:interval_too_short]
-      CreatePeriodicReportIntervalTooShortMessageWorker.perform_async(user_id)
-      return
-    end
-
-    # TODO Remove later
-    if options[:scheduled_job_created]
-      handle_weird_error(user) do
-        PeriodicReport.scheduled_job_created_message(user_id, options[:scheduled_jid]).deliver!
-      end
+      logger.warn "interval_too_short is specified and do nothing"
       return
     end
 
     # TODO Remove later
     if options[:sending_soft_limited]
-      CreatePeriodicReportAllottedMessagesNotEnoughMessageWorker.perform_async(user_id)
+      logger.warn "sending_soft_limited is specified and do nothing"
       return
     end
 
     # TODO Remove later
     if options[:web_access_hard_limited]
-      CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user_id)
+      logger.warn "web_access_hard_limited is specified and do nothing"
       return
     end
 
     # TODO Remove later
     if options[:allotted_messages_will_expire]
-      CreatePeriodicReportAllottedMessagesWillExpireMessageWorker.perform_async(user_id)
+      logger.warn "allotted_messages_will_expire is specified and do nothing"
       return
     end
 
