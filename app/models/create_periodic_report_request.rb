@@ -306,7 +306,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
 
     def deliver!
-      jid = CreatePeriodicReportMessageWorker.perform_async(user_id, web_access_hard_limited: true)
+      jid = CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user_id)
       @request.update(status: 'too_little_access,message_skipped') unless jid
     end
   end
@@ -494,11 +494,13 @@ class CreatePeriodicReportRequest < ApplicationRecord
       query.order(created_at: :desc).first
     end
 
+    # TODO Fix
     def interval_too_short?(include_user_id:, reject_id:)
       last_request = fetch_last_request(include_user_id: include_user_id, reject_id: reject_id)
       last_request && last_request.finished_at > SHORT_INTERVAL.ago
     end
 
+    # TODO Fix
     def sufficient_interval?(user_id)
       last_request = fetch_last_request(include_user_id: user_id, reject_id: nil)
       !last_request || last_request.finished_at < SUFFICIENT_INTERVAL.ago

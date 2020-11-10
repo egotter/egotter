@@ -215,7 +215,12 @@ class PeriodicReport < ApplicationRecord
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true, quick_reply_buttons: sending_soft_limited_quick_reply_options)
     end
 
+    # TODO Remove later
     def web_access_hard_limited_message(user_id)
+      access_interval_too_long_message(user_id)
+    end
+
+    def access_interval_too_long_message(user_id)
       user = User.find(user_id)
       dialog_params = {follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}
       template = Rails.root.join('app/views/periodic_reports/web_access_hard_limited.ja.text.erb')
@@ -642,6 +647,10 @@ class PeriodicReport < ApplicationRecord
     end
 
     def not_following_quick_reply_options
+      interval_too_short_quick_reply_options
+    end
+
+    def access_interval_too_long_quick_reply_options
       interval_too_short_quick_reply_options
     end
 

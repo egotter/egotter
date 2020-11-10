@@ -100,6 +100,7 @@ class CreatePeriodicReportMessageWorker
       return
     end
 
+    # TODO Remove later
     if options[:scheduled_job_created]
       handle_weird_error(user) do
         PeriodicReport.scheduled_job_created_message(user_id, options[:scheduled_jid]).deliver!
@@ -114,10 +115,9 @@ class CreatePeriodicReportMessageWorker
       return
     end
 
+    # TODO Remove later
     if options[:web_access_hard_limited]
-      handle_weird_error(user) do
-        PeriodicReport.web_access_hard_limited_message(user_id).deliver!
-      end
+      CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user_id)
       return
     end
 

@@ -144,8 +144,8 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
-  describe '.web_access_hard_limited_message' do
-    subject { described_class.web_access_hard_limited_message(user.id) }
+  describe '.access_interval_too_long_message' do
+    subject { described_class.access_interval_too_long_message(user.id) }
     it { is_expected.to be_truthy }
   end
 
