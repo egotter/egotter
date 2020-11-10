@@ -194,7 +194,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
     def deliver!
       if user_or_egotter_requested_job?
-        CreatePeriodicReportMessageWorker.perform_async(user_id, interval_too_short: true)
+        CreatePeriodicReportIntervalTooShortMessageWorker.perform_async(user_id)
       end
     end
   end

@@ -627,7 +627,7 @@ class PeriodicReport < ApplicationRecord
       will_expire_quick_reply_options
     end
 
-    def request_interval_too_short_quick_reply_options
+    def interval_too_short_quick_reply_options
       # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
       [
           {
@@ -637,14 +637,12 @@ class PeriodicReport < ApplicationRecord
       ]
     end
 
+    def request_interval_too_short_quick_reply_options
+      interval_too_short_quick_reply_options
+    end
+
     def not_following_quick_reply_options
-      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
-      [
-          {
-              label: I18n.t('quick_replies.shared.label1'),
-              description: I18n.t('quick_replies.shared.description1')
-          }
-      ]
+      interval_too_short_quick_reply_options
     end
 
     def stop_requested_quick_reply_options

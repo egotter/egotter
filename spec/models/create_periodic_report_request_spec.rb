@@ -316,7 +316,7 @@ RSpec.describe CreatePeriodicReportRequest::IntervalValidator, type: :model do
     before { allow(instance).to receive(:user_or_egotter_requested_job?).and_return(true) }
 
     it do
-      expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, interval_too_short: true)
+      expect(CreatePeriodicReportIntervalTooShortMessageWorker).to receive(:perform_async).with(user.id)
       subject
     end
   end

@@ -65,7 +65,7 @@ module PeriodicReportConcern
       end
 
       unless CreatePeriodicReportRequest.sufficient_interval?(user.id)
-        CreatePeriodicReportMessageWorker.perform_async(user.id, interval_too_short: true)
+        CreatePeriodicReportIntervalTooShortMessageWorker.perform_async(user.id)
         return
       end
     end
