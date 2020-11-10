@@ -759,6 +759,10 @@ class PeriodicReport < ApplicationRecord
       access_day = user.access_days.last
       access_day && access_day.date < ACCESS_DAYS_HARD_LIMIT.ago
     end
+
+    def interval_too_short?(user)
+      where(user_id: user.id, created_at: CreatePeriodicReportRequest::SHORT_INTERVAL.ago..Time.zone.now).exists?
+    end
   end
 
   def report_sender

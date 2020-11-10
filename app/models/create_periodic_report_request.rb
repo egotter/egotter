@@ -478,7 +478,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
   end
 
   SHORT_INTERVAL = 3.hours
-  SUFFICIENT_INTERVAL = 6.hours
 
   class << self
     def next_creation_time(user_id)
@@ -498,12 +497,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
     def interval_too_short?(include_user_id:, reject_id:)
       last_request = fetch_last_request(include_user_id: include_user_id, reject_id: reject_id)
       last_request && last_request.finished_at > SHORT_INTERVAL.ago
-    end
-
-    # TODO Fix
-    def sufficient_interval?(user_id)
-      last_request = fetch_last_request(include_user_id: user_id, reject_id: nil)
-      !last_request || last_request.finished_at < SUFFICIENT_INTERVAL.ago
     end
 
     def correctly_completed

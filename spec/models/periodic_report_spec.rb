@@ -479,6 +479,12 @@ RSpec.describe PeriodicReport do
     end
   end
 
+  describe '.interval_too_short?' do
+    subject { described_class.interval_too_short?(user) }
+    before { described_class.create!(user_id: user.id, token: 't', message_id: 'id') }
+    it { is_expected.to be_truthy }
+  end
+
   describe '#report_sender' do
     let(:report) { described_class.new }
     subject { report.report_sender }

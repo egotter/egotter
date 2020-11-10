@@ -111,7 +111,7 @@ describe PeriodicReportConcern, type: :controller do
       expect(DeleteRemindPeriodicReportRequestWorker).to receive(:perform_async).with(user.id)
       expect(user).to receive(:has_valid_subscription?)
       expect(EgotterFollower).to receive(:exists?).with(uid: user.uid).and_return(true)
-      expect(CreatePeriodicReportRequest).to receive(:sufficient_interval?).and_return(true)
+      expect(PeriodicReport).to receive(:interval_too_short?).with(user).and_return(false)
       expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'user').and_call_original
       expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(any_args)
       subject
