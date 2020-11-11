@@ -48,16 +48,6 @@ RSpec.describe SearchReport, type: :model do
     end
   end
 
-  describe '#messages_not_allotted?' do
-    subject { report.send(:messages_not_allotted?) }
-    before { allow(report).to receive(:user).and_return(user) }
-    it do
-      expect(PeriodicReport).to receive(:messages_allotted?).with(user).and_return(true)
-      expect(PeriodicReport).to receive(:allotted_messages_left?).with(user).and_return(true)
-      is_expected.to be_falsey
-    end
-  end
-
   describe '.build_direct_message_event' do
     subject { described_class.build_direct_message_event(1, 'message') }
     it do

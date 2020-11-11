@@ -61,10 +61,6 @@ class SearchReport < ApplicationRecord
     User.egotter.api_client.create_direct_message_event(event: event)
   end
 
-  def messages_not_allotted?
-    !PeriodicReport.messages_allotted?(user) || !PeriodicReport.allotted_messages_left?(user)
-  end
-
   class << self
     def build_direct_message_event(uid, message)
       {
