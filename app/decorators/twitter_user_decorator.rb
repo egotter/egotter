@@ -61,6 +61,10 @@ class TwitterUserDecorator < ApplicationDecorator
     description&.include?('instagram.com') || url&.include?('instagram.com')
   end
 
+  def has_secret_account?
+    description&.match?(/(裏|サブ)(垢|アカ)/)
+  end
+
   def profile_icon_url?
     profile_image_url_https.present?
   end
@@ -163,13 +167,13 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def protected_icon
-    if protected?
+    if protected_account?
       h.tag.i(class: 'fas fa-lock text-warning')
     end
   end
 
   def verified_icon
-    if verified?
+    if verified_account?
       h.tag.i(class: 'fas fa-check text-primary')
     end
   end
@@ -233,6 +237,22 @@ class TwitterUserDecorator < ApplicationDecorator
     inactive_period?(1.year)
   end
 
+  def protected_account?
+    object.protected
+  end
+
+  def verified_account?
+    verified
+  end
+
+  def has_more_friends?
+    object.friends_count > object.followers_count
+  end
+
+  def has_more_followers?
+    object.followers_count > object.friends_count
+  end
+
   private
 
   def refollow?
@@ -249,13 +269,5 @@ class TwitterUserDecorator < ApplicationDecorator
 
   def inactive_period?(duration)
     object.status_created_at && object.status_created_at < duration.ago
-  end
-
-  def protected?
-    object.protected
-  end
-
-  def verified?
-    verified
   end
 end

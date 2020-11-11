@@ -9,8 +9,4 @@ module TwitterUserValidation
     validates_with Validations::ProfileTextValidator, on: :create
     validates_with Validations::FreshRecordValidator, on: :create
   end
-
-  def protected_account?
-    !!self.protected
-  end
 end
