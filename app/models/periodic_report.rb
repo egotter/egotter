@@ -536,17 +536,6 @@ class PeriodicReport < ApplicationRecord
     message
   end
 
-  # TODO Remove later
-  def send_remind_message_if_needed
-    unless user.has_valid_subscription?
-      if send_remind_reply_message?
-        send_remind_reply_message
-      elsif send_remind_access_message?
-        send_remind_access_message
-      end
-    end
-  end
-
   REMAINING_TTL_SOFT_LIMIT = 12.hours
   REMAINING_TTL_HARD_LIMIT = 3.hours
 

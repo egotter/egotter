@@ -266,31 +266,6 @@ RSpec.describe PeriodicReport do
     end
   end
 
-  describe '#send_remind_message_if_needed' do
-    let(:user) { create(:user) }
-    let(:report) { described_class.new(user_id: user.id) }
-    subject { report.send_remind_message_if_needed }
-
-    context 'send_remind_reply_message? returns true' do
-      before { allow(report).to receive(:send_remind_reply_message?).and_return(true) }
-      it do
-        expect(report).to receive(:send_remind_reply_message)
-        subject
-      end
-    end
-
-    context 'send_remind_access_message? returns true' do
-      before do
-        allow(report).to receive(:send_remind_reply_message?).and_return(false)
-        allow(report).to receive(:send_remind_access_message?).and_return(true)
-      end
-      it do
-        expect(report).to receive(:send_remind_access_message)
-        subject
-      end
-    end
-  end
-
   describe '#send_remind_reply_message?' do
     let(:report) { described_class.new }
     subject { report.send_remind_reply_message? }
