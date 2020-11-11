@@ -16,18 +16,18 @@ namespace :periodic_tweets do
 
     access_day_user_ids = AccessDay.where(created_at: 3.days.ago..Time.zone.now).pluck(:user_id).uniq
     users.select! { |user| access_day_user_ids.include?(user.id) }
-    puts "users=#{users.size} access_days=#{access_day_user_ids.size}"
+    puts "users=#{users.size} access_days(3)=#{access_day_user_ids.size}"
 
     egotter_follower_uids = EgotterFollower.where(uid: users.map(&:uid)).pluck(:uid)
     users.select! { |user| egotter_follower_uids.include?(user.uid) }
     puts "users=#{users.size} is_follower=#{egotter_follower_uids.size}"
 
-    twitter_users = TwitterUser.where(created_at: 3.days.ago..Time.zone.now, uid: users.map(&:uid)).order(followers_count: :desc).to_a.uniq(&:uid)
+    twitter_users = TwitterDB::User.where(uid: users.map(&:uid)).order(followers_count: :desc).to_a
     users.select! do |user|
       twitter_user = twitter_users.find { |twitter_user| twitter_user.uid == user.uid }
-      twitter_user && twitter_user.followers_count > 1000
+      twitter_user && twitter_user.followers_count > 500
     end
-    puts "users=#{users.size} twitter_users.size=#{twitter_users.size} followers_count.sum=#{twitter_users.map(&:followers_count).sum}"
+    puts "users=#{users.size} twitter_users.size=#{twitter_users.size} followers_count.limit=500 followers_count.sum=#{twitter_users.map(&:followers_count).sum}"
 
     puts "user_ids=#{users.map(&:id)}"
     retweeted = 0
