@@ -224,7 +224,7 @@ module Tasks
         [
             'sudo service td-agent restart',
             'sudo service nginx restart',
-            'sudo start puma && sleep 10',
+            'sudo start puma && sleep 20',
             'sudo restart datadog-agent',
             'ab -n 50 -c 2 http://localhost:80/',
         ].each do |cmd|
