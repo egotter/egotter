@@ -45,8 +45,8 @@ class WelcomeMessage < ApplicationRecord
 
   def deliver!
     send_starting_message!
-    send_message!.tap { |dm| update!(message_id: dm.id) }
-    save!
+    dm = send_message!
+    update!(message_id: dm.id)
   end
 
   private
