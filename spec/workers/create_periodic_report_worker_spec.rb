@@ -41,24 +41,8 @@ RSpec.describe CreatePeriodicReportWorker do
     end
   end
 
-  describe '#timeout?' do
-    subject { worker.timeout? }
-    before { worker.instance_variable_set(:@start, start_time) }
-
-    context 'start_time is 1 hour ago' do
-      let(:start_time) { 1.hour.ago }
-      it { expect(is_expected).to be_truthy }
-    end
-
-    context 'start_time is 10 seconds ago' do
-      let(:start_time) { 10.seconds.ago }
-      it { expect(is_expected).to be_truthy }
-    end
-  end
-
   describe '#after_timeout' do
     subject { worker.after_timeout(request.id) }
-    before { worker.instance_variable_set(:@start, Time.zone.now) }
     it do
       subject
       expect(request.reload.status).to eq('timeout')
@@ -71,16 +55,6 @@ RSpec.describe CreatePeriodicReportWorker do
     it do
       expect(worker).to receive(:do_perform).with(request, {})
       subject
-    end
-
-    context 'send_report? returns false' do
-      before { allow(worker).to receive(:send_report?).with(user).and_return(false) }
-      it do
-        expect(SkippedCreatePeriodicReportWorker).to receive(:perform_async).with(request.id, anything)
-        expect(request).to receive(:update).with(status: 'limited')
-        expect(CreatePeriodicReportTask).not_to receive(:new)
-        subject
-      end
     end
   end
 

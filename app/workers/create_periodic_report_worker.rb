@@ -41,10 +41,10 @@ class CreatePeriodicReportWorker
   #   send_only_if_changed
   def perform(request_id, options = {})
     request = CreatePeriodicReportRequest.find(request_id)
+    return unless request.user.authorized?
 
-    unless send_report?(request.user)
-      SkippedCreatePeriodicReportWorker.perform_async(request_id, options)
-      request.update(status: 'limited')
+    if PeriodicReport.send_report_limited?(request.user.uid)
+      CreatePeriodicReportWorker.perform_in(1.hour, request_id, options)
       return
     end
 
@@ -86,15 +86,5 @@ class CreatePeriodicReportWorker
 
   def batch_requested_job?
     self.class == CreatePeriodicReportWorker
-  end
-
-  def send_report?(user)
-    # Don't check StopPeriodicReportRequest here
-    user.authorized? && !sending_dm_limited?(user.uid)
-  end
-
-  def sending_dm_limited?(uid)
-    !GlobalDirectMessageReceivedFlag.new.exists?(uid) &&
-        GlobalDirectMessageLimitation.new.limited?
   end
 end

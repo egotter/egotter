@@ -60,15 +60,8 @@ class CreatePeriodicReportMessageWorker
 
     user = User.find(user_id)
 
-    # TODO Remove later
-    if options[:stop_requested]
-      logger.warn "stop_requested is specified and do nothing"
-      return
-    end
-
-    # TODO Remove later
-    if options[:not_following]
-      logger.warn "not_following is specified and do nothing"
+    if PeriodicReport.send_report_limited?(user.uid)
+      CreatePeriodicReportMessageWorker.perform_in(1.hour, user_id, options.merge(delay: true))
       return
     end
 
@@ -79,36 +72,6 @@ class CreatePeriodicReportMessageWorker
 
     if options[:unauthorized] || !user.authorized?
       perform_unauthorized(user)
-      return
-    end
-
-    # TODO Remove later
-    if options[:request_interval_too_short]
-      logger.warn "request_interval_too_short is specified and do nothing"
-      return
-    end
-
-    # TODO Remove later
-    if options[:interval_too_short]
-      logger.warn "interval_too_short is specified and do nothing"
-      return
-    end
-
-    # TODO Remove later
-    if options[:sending_soft_limited]
-      logger.warn "sending_soft_limited is specified and do nothing"
-      return
-    end
-
-    # TODO Remove later
-    if options[:web_access_hard_limited]
-      logger.warn "web_access_hard_limited is specified and do nothing"
-      return
-    end
-
-    # TODO Remove later
-    if options[:allotted_messages_will_expire]
-      logger.warn "allotted_messages_will_expire is specified and do nothing"
       return
     end
 
