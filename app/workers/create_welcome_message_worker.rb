@@ -18,7 +18,7 @@ class CreateWelcomeMessageWorker
 
     if PeriodicReport.send_report_limited?(user.uid)
       logger.warn "Send welcome message later user_id=#{user_id}"
-      CreateWelcomeMessageWorker.perform_in(1.hour, user_id, options.merge(delay: true))
+      CreateWelcomeMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
       return
     end
 

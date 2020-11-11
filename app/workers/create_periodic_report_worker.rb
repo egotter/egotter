@@ -44,7 +44,7 @@ class CreatePeriodicReportWorker
     return unless request.user.authorized?
 
     if PeriodicReport.send_report_limited?(request.user.uid)
-      CreatePeriodicReportWorker.perform_in(1.hour, request_id, options)
+      CreatePeriodicReportWorker.perform_in(1.hour + rand(30).minutes, request_id, options)
       return
     end
 

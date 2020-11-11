@@ -18,7 +18,7 @@ class CreateBlockReportWorker
     return unless BlockingRelationship.where(to_uid: user.uid).exists?
 
     if PeriodicReport.send_report_limited?(user.uid)
-      CreateBlockReportWorker.perform_in(1.hour, user_id, options.merge(delay: true))
+      CreateBlockReportWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
       return
     end
 

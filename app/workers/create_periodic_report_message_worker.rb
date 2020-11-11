@@ -61,7 +61,7 @@ class CreatePeriodicReportMessageWorker
     user = User.find(user_id)
 
     if PeriodicReport.send_report_limited?(user.uid)
-      CreatePeriodicReportMessageWorker.perform_in(1.hour, user_id, options.merge(delay: true))
+      CreatePeriodicReportMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
       return
     end
 
