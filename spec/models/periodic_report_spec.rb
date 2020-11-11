@@ -485,6 +485,16 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
+  describe '.last_report_time' do
+    subject { described_class.last_report_time(user.id) }
+    it { is_expected.to be_falsey }
+  end
+
+  describe '.next_report_time' do
+    subject { described_class.next_report_time(user.id) }
+    it { is_expected.to be_falsey }
+  end
+
   describe '.messages_not_allotted?' do
     subject { described_class.messages_not_allotted?(user) }
     it { is_expected.to be_truthy }

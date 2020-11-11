@@ -244,6 +244,8 @@ class PeriodicReport < ApplicationRecord
       message = ERB.new(template.read).result_with_hash(
           interval: DateHelper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
           sent_at: last_report_time(user_id),
+          last_time: last_report_time(user_id),
+          next_time: next_report_time(user_id),
           support_url: support_url(campaign_params('interval_too_short_support')),
           pricing_url: pricing_url(campaign_params('interval_too_short_pricing')),
       )
@@ -767,6 +769,11 @@ class PeriodicReport < ApplicationRecord
 
     def last_report_time(user_id)
       where(user_id: user_id).order(created_at: :desc).limit(1).pluck(:created_at).first
+    end
+
+    def next_report_time(user_id)
+      time = last_report_time(user_id)
+      time ? time + CreatePeriodicReportRequest::SHORT_INTERVAL : nil
     end
 
     def messages_not_allotted?(user)
