@@ -31,13 +31,11 @@ RSpec.describe SendReceivedMessageWorker do
     let(:name) { 'name' }
     subject { worker.send_message_to_slack(uid, 'text') }
     before do
-      allow(worker).to receive(:fetch_screen_name).with(uid).and_return(name)
-      allow(worker).to receive(:dm_url).with(name).and_return('url1')
-      allow(worker).to receive(:dm_url_by_uid).with(uid).and_return('url2')
+      allow(described_class::Message).to receive_message_chain(:new, :to_s).with(uid, name).with(no_args).and_return('message')
       allow(worker).to receive(:recently_tweets_deleted_user?).with(uid).and_return(false)
     end
     it do
-      expect(SlackClient).to receive_message_chain(:received_messages, :send_message).with(instance_of(String), title: instance_of(String))
+      expect(SlackClient).to receive_message_chain(:channel, :send_message).with('received_messages').with('message')
       subject
     end
   end

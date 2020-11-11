@@ -45,6 +45,7 @@ class SendReceivedMessageWorker
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
         text.match?(/\Aリムられ通知(\s|　)*(送信|受信|継続|今すぐ)?\z/) ||
         text == 'リムられ' ||
+        text == /\Aブロック通知(\s|　)*送信\z/ ||
         text == '通知' ||
         text == '再開' ||
         text == '継続' ||
@@ -55,12 +56,11 @@ class SendReceivedMessageWorker
   end
 
   def send_message_to_slack(sender_uid, text)
-    screen_name = fetch_screen_name(sender_uid)
-    text = dm_url(screen_name) + ' ' + dm_url_by_uid(sender_uid) + "\n" + text
-    SlackClient.received_messages.send_message(text, title: "`#{screen_name}` `#{sender_uid}`")
+    message = Message.new(sender_uid, text).to_s
+    SlackClient.channel('received_messages').send_message(message)
 
     if recently_tweets_deleted_user?(sender_uid)
-      SlackClient.delete_tweets.send_message(text, title: "`#{screen_name}` `#{sender_uid}`")
+      SlackClient.channel('delete_tweets').send_message(message)
     end
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
@@ -71,16 +71,36 @@ class SendReceivedMessageWorker
     (user = User.find_by(uid: uid)) && DeleteTweetsRequest.order(created_at: :desc).limit(10).pluck(:user_id).include?(user.id)
   end
 
-  def fetch_screen_name(uid)
-    user = User.find_by(uid: uid)
-    user ? user.screen_name : (Bot.api_client.user(uid)[:screen_name] rescue uid)
-  end
+  class Message
+    def initialize(uid, text)
+      @uid = uid
+      @text = text
+    end
 
-  def dm_url(screen_name)
-    "https://twitter.com/direct_messages/create/#{screen_name}"
-  end
+    def to_s
+      screen_name = fetch_screen_name(@uid)
+      "`#{screen_name}` `#{@uid}`\n#{dm_url(screen_name)} | #{dm_url_by_uid(@uid)}\n#{@text}\n#{fetch_profile_image_url(@uid)}"
+    rescue => e
+      "uid=#{@uid} text=#{@text}"
+    end
 
-  def dm_url_by_uid(uid)
-    "https://twitter.com/messages/#{User::EGOTTER_UID}-#{uid}"
+    private
+
+    def fetch_screen_name(uid)
+      user = User.find_by(uid: uid)
+      user ? user.screen_name : (Bot.api_client.user(uid)[:screen_name] rescue uid)
+    end
+
+    def dm_url(screen_name)
+      "https://twitter.com/direct_messages/create/#{screen_name}"
+    end
+
+    def dm_url_by_uid(uid)
+      "https://twitter.com/messages/#{User::EGOTTER_UID}-#{uid}"
+    end
+
+    def fetch_profile_image_url(uid)
+      TwitterDB::User.find_by(uid: uid)&.profile_image_url_https
+    end
   end
 end
