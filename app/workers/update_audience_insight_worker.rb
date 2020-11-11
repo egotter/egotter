@@ -12,7 +12,7 @@ class UpdateAudienceInsightWorker
   end
 
   def _timeout_in
-    15.seconds
+    30.seconds
   end
 
   def expire_in
