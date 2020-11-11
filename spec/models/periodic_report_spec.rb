@@ -485,6 +485,16 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
+  describe '.messages_not_allotted?' do
+    subject { described_class.messages_not_allotted?(user) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe 'send_report_limited?' do
+    subject { described_class.send_report_limited?(user.uid) }
+    it { is_expected.to be_falsey }
+  end
+
   describe '#report_sender' do
     let(:report) { described_class.new }
     subject { report.report_sender }

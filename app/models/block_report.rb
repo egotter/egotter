@@ -61,25 +61,24 @@ class BlockReport < ApplicationRecord
   end
 
   def deliver!
-    return if messages_not_allotted?
-    # if messages_not_allotted?
-    #   user.api_client.create_direct_message_event(User::EGOTTER_UID, self.class.start_message(user))
-    # end
-
-    users = self.class.fetch_blocked_users(user)
-    message = self.class.report_message(user, token, users)
-    event = self.class.build_direct_message_event(user.uid, message)
-    dm = User.egotter.api_client.create_direct_message_event(event: event)
-
+    send_start_message
+    dm = send_message
     update!(message_id: dm.id, message: dm.truncated_message)
-
-    dm
   end
 
   private
 
-  def messages_not_allotted?
-    !PeriodicReport.messages_allotted?(user) || !PeriodicReport.allotted_messages_left?(user)
+  def send_start_message
+    if PeriodicReport.messages_not_allotted?(user)
+      user.api_client.create_direct_message_event(User::EGOTTER_UID, self.class.start_message(user))
+    end
+  end
+
+  def send_message
+    users = self.class.fetch_blocked_users(user)
+    message = self.class.report_message(user, token, users)
+    event = self.class.build_direct_message_event(user.uid, message)
+    User.egotter.api_client.create_direct_message_event(event: event)
   end
 
   class << self

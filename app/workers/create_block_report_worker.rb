@@ -13,11 +13,16 @@ class CreateBlockReportWorker
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
-    return unless send_report?(user)
+    return unless user.authorized?
+    return if StopBlockReportRequest.exists?(user_id: user.id)
+    return unless BlockingRelationship.where(to_uid: user.uid).exists?
 
-    if BlockingRelationship.where(to_uid: user.uid).exists?
-      BlockReport.you_are_blocked(user.id).deliver!
+    if PeriodicReport.send_report_limited?(user.uid)
+      CreateBlockReportWorker.perform_in(1.hour, user_id, options.merge(delay: true))
+      return
     end
+
+    BlockReport.you_are_blocked(user.id).deliver!
   rescue => e
     if TwitterApiStatus.unauthorized?(e) ||
         DirectMessageStatus.protect_out_users_from_spam?(e) ||
@@ -27,11 +32,5 @@ class CreateBlockReportWorker
     else
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
     end
-  end
-
-  private
-
-  def send_report?(user)
-    user.authorized? && !StopBlockReportRequest.exists?(user_id: user.id)
   end
 end

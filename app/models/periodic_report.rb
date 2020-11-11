@@ -768,6 +768,15 @@ class PeriodicReport < ApplicationRecord
     def last_report_time(user_id)
       where(user_id: user_id).order(created_at: :desc).limit(1).pluck(:created_at).first
     end
+
+    def messages_not_allotted?(user)
+      !messages_allotted?(user) || !allotted_messages_left?(user)
+    end
+
+    def send_report_limited?(uid)
+      !GlobalDirectMessageReceivedFlag.new.exists?(uid) &&
+          GlobalDirectMessageLimitation.new.limited?
+    end
   end
 
   def report_sender
