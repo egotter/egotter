@@ -12,6 +12,6 @@ class CallPersonalityInsightCount < ::Egotter::SortedSet
   end
 
   def rate_limited?
-    size > 30
+    size > 10
   end
 end
