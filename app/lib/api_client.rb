@@ -13,6 +13,11 @@ class ApiClient
     DirectMessage.new(event: resp)
   end
 
+  def direct_messages
+    events = twitter.direct_messages_events
+    events.map { |e| DirectMessage.from_event(e.to_h) }
+  end
+
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
       RequestWithRetryHandler.new(method).perform do

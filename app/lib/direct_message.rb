@@ -5,6 +5,12 @@ class DirectMessage
     @response = response
   end
 
+  class << self
+    def from_event(event)
+      new(event: event)
+    end
+  end
+
   def id
     @response.dig(:event, :id)
   end
@@ -23,6 +29,47 @@ class DirectMessage
 
   def recipient_id
     @response.dig(:event, :message_create, :target, :recipient_id)&.to_i
+  end
+
+  def media_url
+    @response.dig(:event, :message_create, :message_data, :attachment, :media, :media_url_https)
+  end
+
+  def retrieve_media(client)
+    request = Twitter::REST::Request.new(client, :get, media_url)
+    header = request.headers[:authorization]
+
+    uri = URI.parse(media_url)
+    https = Net::HTTP.new(uri.host, uri.port)
+    https.use_ssl = true
+    https.open_timeout = 3
+    https.read_timeout = 3
+    req = Net::HTTP::Get.new(uri)
+    req['authorization'] = header
+
+    res = https.start { https.request(req) }
+    Media.new(res.body, res['content-type'])
+  end
+
+  def dig(*args)
+    @response.dig(*args)
+  end
+
+  def to_json
+    @response.to_json
+  end
+
+  class Media
+    attr_reader :content_type
+
+    def initialize(body, content_type)
+      @body = body
+      @content_type = content_type
+    end
+
+    def to_io
+      StringIO.new(@body)
+    end
   end
 
   class EmptyResponse < StandardError
