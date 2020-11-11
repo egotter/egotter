@@ -91,6 +91,7 @@ class ProcessWebhookEventWorker
     end
 
     SendReceivedMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text)
+    SendReceivedMediaToSlackWorker.perform_async(dm.to_json)
   end
 
   def process_message_from_egotter(dm)

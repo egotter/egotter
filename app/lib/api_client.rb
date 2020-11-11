@@ -13,6 +13,11 @@ class ApiClient
     DirectMessage.new(event: resp)
   end
 
+  def direct_message(id)
+    event = twitter.direct_message_event(id)
+    DirectMessage.from_event(event.to_h)
+  end
+
   def direct_messages
     events = twitter.direct_messages_events
     events.map { |e| DirectMessage.from_event(e.to_h) }

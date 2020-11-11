@@ -9,6 +9,10 @@ class DirectMessage
     def from_event(event)
       new(event: event)
     end
+
+    def from_response(res)
+      new(res)
+    end
   end
 
   def id
