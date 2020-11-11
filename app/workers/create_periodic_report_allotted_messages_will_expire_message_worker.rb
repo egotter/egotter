@@ -28,7 +28,11 @@ class CreatePeriodicReportAllottedMessagesWillExpireMessageWorker
     User.egotter.api_client.create_direct_message_event(event: event)
 
   rescue => e
-    logger.warn "#{e.inspect} user_id=#{user_id} options=#{options}"
-    logger.info e.backtrace.join("\n")
+    if DirectMessageStatus.not_following_you?(e) || DirectMessageStatus.cannot_find_specified_user?(e)
+      # Do nothing
+    else
+      logger.warn "#{e.inspect} user_id=#{user_id} options=#{options}"
+      logger.info e.backtrace.join("\n")
+    end
   end
 end
