@@ -243,6 +243,7 @@ class PeriodicReport < ApplicationRecord
       template = Rails.root.join('app/views/periodic_reports/interval_too_short.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           interval: DateHelper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
+          sent_at: last_report_time(user_id),
           support_url: support_url(campaign_params('interval_too_short_support')),
           pricing_url: pricing_url(campaign_params('interval_too_short_pricing')),
       )
@@ -762,6 +763,10 @@ class PeriodicReport < ApplicationRecord
 
     def interval_too_short?(user)
       where(user_id: user.id, created_at: CreatePeriodicReportRequest::SHORT_INTERVAL.ago..Time.zone.now).exists?
+    end
+
+    def last_report_time(user_id)
+      where(user_id: user_id).order(created_at: :desc).limit(1).pluck(:created_at).first
     end
   end
 
