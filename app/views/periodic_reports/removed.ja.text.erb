@@ -1,5 +1,7 @@
 <%= removed_by %> からリムられました。直近の <%= date_range %>、<%= period_name %>のリムられ通知です。
 
+<%= regular_subscription ? '' : '※定期配信の停止中は、リムられの集計が非常に不正確になります。' %>
+
 集計期間：
 <%= aggregation_period %>
 
