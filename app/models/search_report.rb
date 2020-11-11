@@ -43,23 +43,23 @@ class SearchReport < ApplicationRecord
   end
 
   def deliver!
-    return if messages_not_allotted?
-    # if messages_not_allotted?
-    #   user.api_client.create_direct_message_event(User::EGOTTER_UID, start_message)
-    # end
-
-    event = self.class.build_direct_message_event(user.uid, report_message)
-    dm = User.egotter.api_client.create_direct_message_event(event: event)
-
-    transaction do
-      update!(message_id: dm.id, message: dm.truncated_message)
-      user.notification_setting.update!(search_sent_at: Time.zone.now)
-    end
-
-    dm
+    send_start_message
+    dm = send_message
+    update!(message_id: dm.id, message: dm.truncated_message)
   end
 
   private
+
+  def send_start_message
+    if PeriodicReport.messages_not_allotted?(user)
+      user.api_client.create_direct_message_event(User::EGOTTER_UID, start_message)
+    end
+  end
+
+  def send_message
+    event = self.class.build_direct_message_event(user.uid, report_message)
+    User.egotter.api_client.create_direct_message_event(event: event)
+  end
 
   def messages_not_allotted?
     !PeriodicReport.messages_allotted?(user) || !PeriodicReport.allotted_messages_left?(user)

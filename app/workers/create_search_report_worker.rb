@@ -14,10 +14,15 @@ class CreateSearchReportWorker
   #   searcher_uid
   def perform(searchee_id, options = {})
     searchee = User.find(searchee_id)
-    return unless send_report?(searchee)
+    return unless searchee.authorized?
+    return if StopSearchReportRequest.exists?(user_id: searchee.id)
+
+    if PeriodicReport.send_report_limited?(searchee.uid)
+      CreateSearchReportWorker.perform_in(1.hour, searchee_id, options.merge(delay: true))
+      return
+    end
 
     SearchReport.you_are_searched(searchee.id, options['searcher_uid']).deliver!
-
   rescue => e
     if TwitterApiStatus.unauthorized?(e) ||
         DirectMessageStatus.protect_out_users_from_spam?(e) ||
@@ -27,11 +32,5 @@ class CreateSearchReportWorker
     else
       logger.warn "#{e.inspect} searchee_id=#{searchee_id} options=#{options.inspect}"
     end
-  end
-
-  private
-
-  def send_report?(user)
-    user.authorized? && user.notification_setting.can_send_search? && !StopSearchReportRequest.exists?(user_id: user.id)
   end
 end

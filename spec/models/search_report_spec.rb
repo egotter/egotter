@@ -11,6 +11,43 @@ RSpec.describe SearchReport, type: :model do
     end
   end
 
+  describe '#deliver!' do
+    let(:dm) { double('dm', id: 1, truncated_message: 'tm') }
+    let(:report) { described_class.new(user: user, token: 'token') }
+    subject { report.deliver! }
+    it do
+      expect(report).to receive(:send_start_message)
+      expect(report).to receive(:send_message).and_return(dm)
+      expect(report).to receive(:update!).with(message_id: dm.id, message: dm.truncated_message)
+      subject
+    end
+  end
+
+  describe '#send_start_message' do
+    let(:report) { described_class.new(user: user) }
+    subject { report.send(:send_start_message) }
+    before do
+      allow(report).to receive(:start_message).and_return('message')
+    end
+    it do
+      expect(user).to receive_message_chain(:api_client, :create_direct_message_event).with(User::EGOTTER_UID, 'message')
+      subject
+    end
+  end
+
+  describe '#send_message' do
+    let(:report) { described_class.new(user: user) }
+    subject { report.send(:send_message) }
+    before do
+      allow(report).to receive(:report_message).and_return('message')
+      allow(described_class).to receive(:build_direct_message_event).with(user.uid, 'message').and_return('event')
+    end
+    it do
+      expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(event: 'event')
+      subject
+    end
+  end
+
   describe '#messages_not_allotted?' do
     subject { report.send(:messages_not_allotted?) }
     before { allow(report).to receive(:user).and_return(user) }

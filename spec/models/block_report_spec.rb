@@ -22,7 +22,7 @@ RSpec.describe BlockReport, type: :model do
     it { is_expected.to be_truthy }
   end
 
-  describe 'deliver!' do
+  describe '#deliver!' do
     let(:dm) { double('dm', id: 1, truncated_message: 'tm') }
     let(:report) { described_class.new(user: user, token: 'token') }
     subject { report.deliver! }
