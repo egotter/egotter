@@ -9,16 +9,21 @@ describe PeriodicReportConcern, type: :controller do
 
   describe '#send_periodic_report_requested?' do
     let(:dm) { double('dm', text: text) }
-    subject { controller.send(:send_periodic_report_requested?, dm) }
+    subject { controller.send(:send_periodic_report_requested?, dm.text) }
 
-    %w(リム通知 リムられ通知).product(%w(送信 そうしん 受信 じゅしん 痩身 通知 返信)).each do |word1, word2|
-      context "text is #{word1 + word2}" do
-        let(:text) { word1 + word2 }
-        it { is_expected.to be_truthy }
-      end
-    end
-
-    ['【リムられ通知 今すぐ送信】', 'リム通知 今すぐ送信'].each do |word|
+    [
+        'リム通知',
+        'リムられ通知',
+        'リムられた通知',
+        'リム通知 今すぐ送信',
+        'リムられ通知 今すぐ送信',
+        'リムられた通知 今すぐ送信',
+        '【リム通知 今すぐ送信】',
+        '【リムられ通知 今すぐ送信】',
+        '【リムられた通知 今すぐ送信】',
+        '今すぐ',
+        '今すぐ送信',
+    ].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
@@ -95,7 +100,7 @@ describe PeriodicReportConcern, type: :controller do
 
   describe '#report_received?' do
     let(:dm) { double('dm', text: text) }
-    subject { controller.send(:report_received?, dm) }
+    subject { controller.send(:periodic_report_received?, dm) }
 
     context "text is 'リムられ通知 届きました'" do
       let(:text) { "リムられ通知 届きました" }

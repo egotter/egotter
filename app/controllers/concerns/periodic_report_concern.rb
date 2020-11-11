@@ -3,11 +3,13 @@ require 'active_support/concern'
 module PeriodicReportConcern
   extend ActiveSupport::Concern
 
-  SEND_PERIODIC_REPORT_REGEXP = /(リム(られ)?通知)(\s|　)*(今すぐ|いますぐ|送信|そうしん|受信|じゅしん|痩身|通知|返信|配信|はいしん|更新|こうしん)/
+  SEND_PERIODIC_REPORT_REGEXP = /\A((リム|りむ)(られた?)?通知)|今すぐ(送信)?/
 
-  def send_periodic_report_requested?(dm)
-    dm.text.length < 15 && dm.text.match?(SEND_PERIODIC_REPORT_REGEXP)
+  def send_periodic_report_requested?(text)
+    text.length <= 15 && text.match?(SEND_PERIODIC_REPORT_REGEXP)
   end
+
+  module_function :send_periodic_report_requested?
 
   CONTINUE_WORDS = [
       '継続',
@@ -48,7 +50,7 @@ module PeriodicReportConcern
 
   RECEIVED_REGEXP = /リム(られ)?通知(\s|　)*届きました/
 
-  def report_received?(dm)
+  def periodic_report_received?(dm)
     dm.text.length < 15 && dm.text.match?(RECEIVED_REGEXP)
   end
 

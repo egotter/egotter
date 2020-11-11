@@ -78,10 +78,10 @@ class ProcessWebhookEventWorker
       stop_periodic_report(dm.sender_id)
     elsif continue_requested?(dm)
       continue_periodic_report(dm.sender_id)
-    elsif send_periodic_report_requested?(dm)
-      enqueue_user_requested_periodic_report(dm)
-    elsif report_received?(dm)
+    elsif periodic_report_received?(dm)
       # Do nothing
+    elsif send_periodic_report_requested?(dm.text)
+      enqueue_user_requested_periodic_report(dm)
     elsif schedule_tweets_questioned?(dm)
       answer_schedule_tweets_question(dm)
     elsif delete_tweets_questioned?(dm)
@@ -97,7 +97,7 @@ class ProcessWebhookEventWorker
   def process_message_from_egotter(dm)
     GlobalDirectMessageSentFlag.new.received(dm.recipient_id)
 
-    if send_periodic_report_requested?(dm)
+    if send_periodic_report_requested?(dm.text)
       enqueue_egotter_requested_periodic_report(dm)
     elsif stop_periodic_report_requested?(dm)
       stop_periodic_report(dm.recipient_id)

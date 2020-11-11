@@ -126,7 +126,7 @@ RSpec.describe ProcessWebhookEventWorker do
     end
 
     context 'send_periodic_report_requested? returns true' do
-      before { allow(worker).to receive(:send_periodic_report_requested?).with(dm).and_return(true) }
+      before { allow(worker).to receive(:send_periodic_report_requested?).with(dm.text).and_return(true) }
       it do
         expect(worker).to receive(:enqueue_user_requested_periodic_report).with(dm)
         subject
@@ -153,7 +153,7 @@ RSpec.describe ProcessWebhookEventWorker do
     end
 
     context 'send_periodic_report_requested? returns true' do
-      before { allow(worker).to receive(:send_periodic_report_requested?).with(dm).and_return(true) }
+      before { allow(worker).to receive(:send_periodic_report_requested?).with(dm.text).and_return(true) }
       it do
         expect(worker).to receive(:enqueue_egotter_requested_periodic_report).with(dm)
         subject
