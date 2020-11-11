@@ -12,6 +12,12 @@ RSpec.describe TwitterUserProfile do
     end
   end
 
+  describe 'status_created_at' do
+    subject { twitter_user.status_created_at }
+    before { allow(twitter_user).to receive(:status).and_return(double('status', created_at: 'time')) }
+    it { is_expected.to eq('time') }
+  end
+
   describe '#profile_not_found?' do
     subject { twitter_user.profile_not_found? }
     it { is_expected.to be_falsey }

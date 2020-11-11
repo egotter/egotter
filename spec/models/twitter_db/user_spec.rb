@@ -6,26 +6,6 @@ RSpec.describe TwitterDB::User, type: :model do
     let(:rest_users) { users - [users[0]] }
   end
 
-  describe '#inactive?' do
-    let(:user) { create(:twitter_db_user, status_created_at: time) }
-    subject { user.inactive? }
-
-    context 'status_created_at is nil' do
-      let(:time) { nil }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'status_created_at is 1.month.ago' do
-      let(:time) { 1.month.ago }
-      it { is_expected.to be_truthy }
-    end
-
-    context 'status_created_at is 1.day.ago' do
-      let(:time) { 1.day.ago }
-      it { is_expected.to be_falsey }
-    end
-  end
-
   describe '.inactive_user' do
     let!(:user) { create(:twitter_db_user, status_created_at: time) }
     subject { TwitterDB::User.inactive_user }

@@ -57,6 +57,10 @@ class TwitterUserDecorator < ApplicationDecorator
     description.present?
   end
 
+  def has_instagram?
+    description&.include?('instagram.com') || url&.include?('instagram.com')
+  end
+
   def profile_icon_url?
     profile_image_url_https.present?
   end
@@ -95,9 +99,34 @@ class TwitterUserDecorator < ApplicationDecorator
     end
   end
 
-  def inactive_label
-    if !suspended? && inactive?
-      h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.inactive') }
+
+  def inactive_2weeks_label
+    if !suspended? && inactive_2weeks?
+      h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.inactive_2weeks') }
+    end
+  end
+
+  def inactive_1month_label
+    if !suspended? && inactive_1month?
+      h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.inactive_1month') }
+    end
+  end
+
+  def inactive_3months_label
+    if !suspended? && inactive_3months?
+      h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.inactive_3months') }
+    end
+  end
+
+  def inactive_6months_label
+    if !suspended? && inactive_6months?
+      h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.inactive_6months') }
+    end
+  end
+
+  def inactive_1year_label
+    if !suspended? && inactive_1year?
+      h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.inactive_1year') }
     end
   end
 
@@ -121,7 +150,7 @@ class TwitterUserDecorator < ApplicationDecorator
     [
         suspended_label,
         blocked_label,
-        inactive_label,
+        inactive_1year_label || inactive_6months_label || inactive_3months_label || inactive_1month_label || inactive_2weeks_label,
         refollow_label,
         refollowed_label,
     ].compact.join('&nbsp;').html_safe
@@ -180,6 +209,30 @@ class TwitterUserDecorator < ApplicationDecorator
     I18n.t('twitter.profile.updated_at', text: text)
   end
 
+  def active?
+    !inactive_2weeks?
+  end
+
+  def inactive_2weeks?
+    inactive_period?(2.weeks)
+  end
+
+  def inactive_1month?
+    inactive_period?(1.month)
+  end
+
+  def inactive_3months?
+    inactive_period?(3.months)
+  end
+
+  def inactive_6months?
+    inactive_period?(6.months)
+  end
+
+  def inactive_1year?
+    inactive_period?(1.year)
+  end
+
   private
 
   def refollow?
@@ -194,12 +247,8 @@ class TwitterUserDecorator < ApplicationDecorator
     end
   end
 
-  def inactive?
-    if object.respond_to?(:inactive?)
-      object.inactive?
-    elsif object.respond_to?(:status)
-      status&.created_at && Time.parse(status.created_at) < 2.weeks.ago
-    end
+  def inactive_period?(duration)
+    object.status_created_at && object.status_created_at < duration.ago
   end
 
   def protected?

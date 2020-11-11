@@ -79,6 +79,10 @@ module TwitterUserProfile
     nil
   end
 
+  def status_created_at
+    status&.created_at
+  end
+
   def profile_not_found?
     profile.blank?
   end

@@ -43,14 +43,6 @@ module TwitterDB
 
     attr_accessor :account_status
 
-    def inactive?
-      status_created_at && status_created_at < INACTIVE_INTERVAL.ago
-    end
-
-    def active?
-      !inactive?
-    end
-
     def protected?
       self.protected
     end
