@@ -9,7 +9,7 @@ module BlockReportConcern
     dm.text.length < 15 && dm.text.match?(STOP_BLOCK_REPORT_REGEXP)
   end
 
-  RESTART_BLOCK_REPORT_REGEXP = /ブロック通知(\s|　)*(再開|開始)/
+  RESTART_BLOCK_REPORT_REGEXP = /ブロック通知(\s|　)*(再開|開始|送信)/
 
   def restart_block_report_requested?(dm)
     dm.text.length < 15 && dm.text.match?(RESTART_BLOCK_REPORT_REGEXP)
