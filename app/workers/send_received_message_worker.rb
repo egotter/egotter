@@ -100,8 +100,7 @@ class SendReceivedMessageWorker
     end
 
     def fetch_profile_image_url(uid)
-      url = TwitterDB::User.find_by(uid: uid)&.profile_image_url_https
-      url ? "#{url}?t=#{Time.zone.now.to_i}" : nil
+      TwitterDB::User.find_by(uid: uid)&.profile_image_url_https
     end
   end
 end
