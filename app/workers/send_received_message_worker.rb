@@ -39,13 +39,13 @@ class SendReceivedMessageWorker
         text == I18n.t('quick_replies.prompt_reports.label5') ||
         PeriodicReportConcern.send_periodic_report_requested?(text) ||
         PeriodicReportConcern.continue_periodic_report_requested?(text) ||
+        BlockReportConcern.restart_block_report_requested?(text) ||
         text.match?(PeriodicReportConcern::STOP_PERIODIC_REPORT_REGEXP) ||
         text.match?(PeriodicReportConcern::RESTART_PERIODIC_REPORT_REGEXP) ||
         text.match?(PeriodicReportConcern::RECEIVED_REGEXP) ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
         text.match?(/\Aリムられ通知(\s|　)*(送信|受信|継続|今すぐ)?\z/) ||
         text == 'リムられ' ||
-        text == /\Aブロック通知(\s|　)*送信\z/ ||
         text == '通知' ||
         text == '再開' ||
         text == '継続' ||
@@ -100,7 +100,8 @@ class SendReceivedMessageWorker
     end
 
     def fetch_profile_image_url(uid)
-      TwitterDB::User.find_by(uid: uid)&.profile_image_url_https
+      url = TwitterDB::User.find_by(uid: uid)&.profile_image_url_https
+      url ? "#{url}?t=#{Time.zone.now.to_i}" : nil
     end
   end
 end

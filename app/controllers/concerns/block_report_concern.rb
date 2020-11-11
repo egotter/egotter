@@ -11,9 +11,11 @@ module BlockReportConcern
 
   RESTART_BLOCK_REPORT_REGEXP = /ブロック通知(\s|　)*(再開|開始|送信)/
 
-  def restart_block_report_requested?(dm)
-    dm.text.length < 15 && dm.text.match?(RESTART_BLOCK_REPORT_REGEXP)
+  def restart_block_report_requested?(text)
+    text.length < 15 && text.match?(RESTART_BLOCK_REPORT_REGEXP)
   end
+
+  module_function :restart_block_report_requested?
 
   def stop_block_report(dm)
     unless (user = User.where(authorized: true).find_by(uid: dm.sender_id))

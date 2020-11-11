@@ -66,7 +66,7 @@ class ProcessWebhookEventWorker
 
     if stop_block_report_requested?(dm)
       stop_block_report(dm)
-    elsif restart_block_report_requested?(dm)
+    elsif restart_block_report_requested?(dm.text)
       restart_block_report(dm)
     elsif stop_search_report_requested?(dm)
       stop_search_report(dm)

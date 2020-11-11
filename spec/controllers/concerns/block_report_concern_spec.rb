@@ -25,7 +25,7 @@ describe BlockReportConcern, type: :controller do
 
   describe '#restart_block_report_requested?' do
     let(:dm) { double('dm', text: text) }
-    subject { controller.send(:restart_block_report_requested?, dm) }
+    subject { controller.send(:restart_block_report_requested?, dm.text) }
 
     ['【ブロック通知 再開】', 'ブロック通知 再開', 'ブロック通知再開'].each do |word|
       context "text is #{word}" do
