@@ -38,10 +38,10 @@ class SendReceivedMessageWorker
         text == I18n.t('quick_replies.prompt_reports.label4') ||
         text == I18n.t('quick_replies.prompt_reports.label5') ||
         PeriodicReportConcern.send_periodic_report_requested?(text) ||
+        PeriodicReportConcern.continue_periodic_report_requested?(text) ||
         text.match?(PeriodicReportConcern::STOP_PERIODIC_REPORT_REGEXP) ||
         text.match?(PeriodicReportConcern::RESTART_PERIODIC_REPORT_REGEXP) ||
         text.match?(PeriodicReportConcern::RECEIVED_REGEXP) ||
-        text.match?(PeriodicReportConcern::CONTINUE_EXACT_REGEXP) ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
         text.match?(/\Aリムられ通知(\s|　)*(送信|受信|継続|今すぐ)?\z/) ||
         text == 'リムられ' ||

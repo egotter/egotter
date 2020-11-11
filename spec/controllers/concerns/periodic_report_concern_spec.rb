@@ -31,27 +31,24 @@ describe PeriodicReportConcern, type: :controller do
     end
   end
 
-  describe '#continue_requested?' do
+  describe '#continue_periodic_report_requested?' do
     let(:dm) { double('dm', text: text) }
-    subject { controller.send(:continue_requested?, dm) }
+    subject { controller.send(:continue_periodic_report_requested?, dm.text) }
 
-    described_class::CONTINUE_WORDS.each do |word|
-      context "text is #{word}" do
-        let(:text) { 'a' + word + 'b' }
-        it { is_expected.to be_truthy }
-      end
-    end
-
-    ['あ', 'あー', 'リムられ通知'].each do |word|
+    [
+        '継続',
+        '断続',
+        '復活',
+        '再会',
+        'リムられ通知 継続',
+        'リムられ通知 断続',
+        'リムられ通知 復活',
+        'リムられ通知 再会',
+    ].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
       end
-    end
-
-    context "text is あいうえお" do
-      let(:text) { 'あいうえお' }
-      it { is_expected.to be_falsey }
     end
 
     context "text is #{I18n.t('quick_replies.prompt_reports.label1')}" do
@@ -98,7 +95,7 @@ describe PeriodicReportConcern, type: :controller do
     end
   end
 
-  describe '#report_received?' do
+  describe '#periodic_report_received?' do
     let(:dm) { double('dm', text: text) }
     subject { controller.send(:periodic_report_received?, dm) }
 

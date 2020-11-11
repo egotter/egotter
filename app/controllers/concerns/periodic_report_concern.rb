@@ -11,30 +11,13 @@ module PeriodicReportConcern
 
   module_function :send_periodic_report_requested?
 
-  CONTINUE_WORDS = [
-      '継続',
-      '断続',
-      'けいぞく',
-      '再開',
-      '復活',
-      '届いてません',
-      'フォローしました',
-      'フォローしたよ',
-      'テスト送信 届きました',
-      '初期設定 届きました',
-      '通知がきません',
-      '更新して',
-      '早くしろよ',
-      'まだですか',
-      'ぴえん'
-  ]
-  CONTINUE_REGEXP = Regexp.union(CONTINUE_WORDS)
-  CONTINUE_FUZZY_REGEXP = /\A(あー?|リムられ通知)\z/
-  CONTINUE_EXACT_REGEXP = /リム(られ)?通知(\s|　)*継続/
+  CONTINUE_PERIODIC_REPORT_REGEXP = /継続|断続|けいぞく|復活|再会/
 
-  def continue_requested?(dm)
-    dm.text.length < 15 && (dm.text.match?(CONTINUE_REGEXP) || dm.text.match?(CONTINUE_FUZZY_REGEXP))
+  def continue_periodic_report_requested?(text)
+    text.length < 15 && text.match?(CONTINUE_PERIODIC_REPORT_REGEXP)
   end
+
+  module_function :continue_periodic_report_requested?
 
   STOP_PERIODIC_REPORT_REGEXP = /【?リム(られ)?通知(\s|　)*(停止|ていし)】?/
 

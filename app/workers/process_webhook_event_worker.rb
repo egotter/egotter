@@ -76,10 +76,10 @@ class ProcessWebhookEventWorker
       restart_periodic_report(dm.sender_id)
     elsif stop_periodic_report_requested?(dm)
       stop_periodic_report(dm.sender_id)
-    elsif continue_requested?(dm)
-      continue_periodic_report(dm.sender_id)
     elsif periodic_report_received?(dm)
       # Do nothing
+    elsif continue_periodic_report_requested?(dm.text)
+      continue_periodic_report(dm.sender_id)
     elsif send_periodic_report_requested?(dm.text)
       enqueue_user_requested_periodic_report(dm)
     elsif schedule_tweets_questioned?(dm)
