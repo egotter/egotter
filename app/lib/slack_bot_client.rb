@@ -16,10 +16,11 @@ class SlackBotClient
     @client.chat_postMessage(channel: @channel, text: text)
   end
 
-  def upload_media(media)
+  def upload_media(media, initial_comment: '')
     @client.files_upload(
         channels: @channel,
         file: Faraday::UploadIO.new(media.to_io, media.content_type),
-        )
+        initial_comment: initial_comment,
+    )
   end
 end
