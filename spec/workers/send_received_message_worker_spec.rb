@@ -26,36 +26,43 @@ RSpec.describe SendReceivedMessageWorker do
     end
   end
 
-  describe '#send_message_to_slack' do
+  describe '#send_message' do
     let(:uid) { 1 }
     let(:name) { 'name' }
-    subject { worker.send_message_to_slack(uid, 'text') }
+    let(:client1) { double('client1') }
+    let(:client2) { double('client2') }
+    subject { worker.send(:send_message, uid, 'text') }
     before do
-      allow(described_class::Message).to receive_message_chain(:new, :to_s).with(uid, name).with(no_args).and_return('message')
-      allow(worker).to receive(:recently_tweets_deleted_user?).with(uid).and_return(false)
+      allow(SlackClient).to receive(:channel).with('received_messages').and_return(client1)
+      allow(SlackClient).to receive(:channel).with('delete_tweets').and_return(client2)
+      allow(worker).to receive(:recently_tweets_deleted_user?).with(uid).and_return(true)
     end
     it do
-      expect(SlackClient).to receive_message_chain(:channel, :send_message).with('received_messages').with('message')
+      expect(client1).to receive(:send_context_message).with(any_args)
+      expect(client2).to receive(:send_context_message).with(any_args)
       subject
     end
   end
 
   describe '#recently_tweets_deleted_user?' do
+    let(:user) { create(:user) }
+    subject { worker.send(:recently_tweets_deleted_user?, user.uid) }
+
     context 'user is not found' do
-      subject { worker.recently_tweets_deleted_user?(1) }
+      before { allow(User).to receive(:find_by).with(uid: user.uid).and_return(nil) }
       it { is_expected.to be_falsey }
     end
 
     context 'request is not found' do
-      let(:user) { create(:user) }
-      subject { worker.recently_tweets_deleted_user?(user.uid) }
+      before { allow(User).to receive(:find_by).with(uid: user.uid).and_return(user) }
       it { is_expected.to be_falsey }
     end
 
     context 'request is found' do
-      let(:user) { create(:user) }
-      subject { worker.recently_tweets_deleted_user?(user.uid) }
-      before { DeleteTweetsRequest.create!(user_id: user.id) }
+      before do
+        allow(User).to receive(:find_by).with(uid: user.uid).and_return(user)
+        DeleteTweetsRequest.create!(user_id: user.id)
+      end
       it { is_expected.to be_truthy }
     end
   end

@@ -47,12 +47,24 @@ class SlackClient
   def send_message(text, title: nil)
     text = format(text) if text.is_a?(Hash)
     text = "#{title}\n#{text}" if title
-    perform_request(text)
+    perform_request({text: text})
+  end
+
+  def send_context_message(text, screen_name, icon_url, urls)
+    mrkdwn_text = urls.map.with_index { |url, i| "<#{url}|url#{i + 1}>" }.join(' ') + ' ' + text
+    block = {
+        type: 'context',
+        elements: [
+            {type: 'image', image_url: icon_url, alt_text: "@#{screen_name}"},
+            {type: 'mrkdwn', text: mrkdwn_text}
+        ],
+    }
+    perform_request({blocks: [block]})
   end
 
   private
 
-  def perform_request(text, retries: 3)
+  def perform_request(request_body, retries: 3)
     uri = URI.parse(@webhook)
     https = Net::HTTP.new(uri.host, uri.port)
     https.use_ssl = true
@@ -61,7 +73,7 @@ class SlackClient
     req = Net::HTTP::Post.new(uri)
     req['Content-Type'] = 'application/json'
     req['User-Agent'] = 'egotter'
-    req.body = {text: text}.to_json
+    req.body = request_body.to_json
     https.start { https.request(req) }.body
   rescue Net::ReadTimeout => e
     if (retries -= 1) >= 0

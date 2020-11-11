@@ -1,6 +1,5 @@
 class SendReceivedMessageWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   # options:
@@ -8,9 +7,10 @@ class SendReceivedMessageWorker
   #   dm_id
   def perform(sender_uid, options = {})
     return if static_message?(options['text'])
-    send_message_to_slack(sender_uid, options['text'])
+    send_message(sender_uid, options['text'])
   rescue => e
-    notify_airbrake(e, sender_uid: sender_uid, options: options)
+    logger.warn "sender_uid=#{sender_uid} options=#{options.inspect}"
+    logger.info e.backtrace.join("\n")
   end
 
   QUICK_REPLIES = [
@@ -55,52 +55,38 @@ class SendReceivedMessageWorker
         text == 'り'
   end
 
-  def send_message_to_slack(sender_uid, text)
-    message = Message.new(sender_uid, text).to_s
-    SlackClient.channel('received_messages').send_message(message)
+  private
+
+  def send_message(sender_uid, text)
+    user = TwitterDB::User.find_by(uid: sender_uid)
+    screen_name = user&.screen_name
+    icon_url = user&.profile_image_url_https
+    urls = [dm_url(screen_name), dm_url_by_uid(sender_uid)]
+
+    begin
+      SlackClient.channel('received_messages').send_context_message(text, screen_name, icon_url, urls)
+    rescue => e
+      SlackClient.channel('received_messages').send_message("sender_uid=#{sender_uid} text=#{text}")
+    end
 
     if recently_tweets_deleted_user?(sender_uid)
-      SlackClient.channel('delete_tweets').send_message(message)
+      begin
+        SlackClient.channel('delete_tweets').send_context_message(text, screen_name, icon_url, urls)
+      rescue => e
+        SlackClient.channel('delete_tweets').send_message("sender_uid=#{sender_uid} text=#{text}")
+      end
     end
-  rescue => e
-    logger.warn "Sending a message to slack is failed #{e.inspect}"
-    notify_airbrake(e, sender_uid: sender_uid, text: text)
+  end
+
+  def dm_url(screen_name)
+    "https://twitter.com/direct_messages/create/#{screen_name}"
+  end
+
+  def dm_url_by_uid(uid)
+    "https://twitter.com/messages/#{User::EGOTTER_UID}-#{uid}"
   end
 
   def recently_tweets_deleted_user?(uid)
     (user = User.find_by(uid: uid)) && DeleteTweetsRequest.order(created_at: :desc).limit(10).pluck(:user_id).include?(user.id)
-  end
-
-  class Message
-    def initialize(uid, text)
-      @uid = uid
-      @text = text
-    end
-
-    def to_s
-      screen_name = fetch_screen_name(@uid)
-      "`#{screen_name}` `#{@uid}`\n#{dm_url(screen_name)} | #{dm_url_by_uid(@uid)}\n#{@text}\n#{fetch_profile_image_url(@uid)}"
-    rescue => e
-      "uid=#{@uid} text=#{@text}"
-    end
-
-    private
-
-    def fetch_screen_name(uid)
-      user = User.find_by(uid: uid)
-      user ? user.screen_name : (Bot.api_client.user(uid)[:screen_name] rescue uid)
-    end
-
-    def dm_url(screen_name)
-      "https://twitter.com/direct_messages/create/#{screen_name}"
-    end
-
-    def dm_url_by_uid(uid)
-      "https://twitter.com/messages/#{User::EGOTTER_UID}-#{uid}"
-    end
-
-    def fetch_profile_image_url(uid)
-      TwitterDB::User.find_by(uid: uid)&.profile_image_url_https
-    end
   end
 end

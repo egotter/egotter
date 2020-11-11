@@ -65,13 +65,13 @@ RSpec.describe TwitterUserDecorator do
 
   describe '#protected_icon' do
     subject { decorator.protected_icon }
-    before { allow(decorator).to receive(:protected?).and_return(true) }
+    before { allow(decorator).to receive(:protected_account?).and_return(true) }
     it { is_expected.to be_truthy }
   end
 
   describe '#verified_icon' do
     subject { decorator.verified_icon }
-    before { allow(decorator).to receive(:verified?).and_return(true) }
+    before { allow(decorator).to receive(:verified_account?).and_return(true) }
     it { is_expected.to be_truthy }
   end
 
