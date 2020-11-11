@@ -33,7 +33,7 @@ module Egotter
 
         if !GlobalDirectMessageReceivedFlag.new.exists?(recipient_uid) &&
             GlobalDirectMessageLimitation.new.limited?
-          raise ::Twitter::Error::EnhanceYourCalm.new('Already raised')
+          raise ::Twitter::Error::EnhanceYourCalm.new("started_at=#{GlobalDirectMessageLimitation.new.limit_started_at}")
         end
 
         result = nil

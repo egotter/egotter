@@ -16,6 +16,12 @@ class CreateWelcomeMessageWorker
     user = User.find(user_id)
     return unless user.authorized?
 
+    if GlobalDirectMessageLimitation.new.limited?
+      logger.warn "Send welcome message later user_id=#{user_id}"
+      CreateWelcomeMessageWorker.perform_in(1.hour, user_id, options)
+      return
+    end
+
     begin
       message = WelcomeMessage.welcome(user.id)
       message.set_prefix_message(options['prefix']) if options['prefix']

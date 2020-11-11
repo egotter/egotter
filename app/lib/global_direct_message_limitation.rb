@@ -8,7 +8,11 @@ class GlobalDirectMessageLimitation
   end
 
   def limit_start
-    @redis.setex(@key, @ttl, true)
+    @redis.setex(@key, @ttl, Time.zone.now.to_s)
+  end
+
+  def limit_started_at
+    @redis.get(@key)
   end
 
   def limit_finish
