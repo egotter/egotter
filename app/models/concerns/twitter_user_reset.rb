@@ -9,6 +9,13 @@ module TwitterUserReset
   included do
   end
 
+  def destroy
+    S3::Friendship.delete_by(twitter_user_id: id)
+    S3::Followership.delete_by(twitter_user_id: id)
+    S3::Profile.delete_by(twitter_user_id: id)
+    super
+  end
+
   def reset_data
     twitter_user_ids = TwitterUser.where(uid: uid).pluck(:id)
     result = {}
