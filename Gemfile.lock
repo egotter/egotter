@@ -298,7 +298,7 @@ GEM
     pry-rails (0.3.9)
       pry (>= 0.10.4)
     public_suffix (4.0.5)
-    puma (4.3.5)
+    puma (5.0.4)
       nio4r (~> 2.0)
     rack (2.2.3)
     rack-protection (2.0.8.1)
@@ -508,7 +508,7 @@ DEPENDENCIES
   omniauth-twitter
   parallel
   pry-rails
-  puma (~> 4.1)
+  puma (~> 5.0)
   rack-timeout
   rack-user_agent
   rails (~> 6.0)

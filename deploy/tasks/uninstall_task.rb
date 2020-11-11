@@ -35,7 +35,7 @@ module Tasks
       def stop_processes
         [
             'sudo service nginx stop',
-            'sudo service puma stop',
+            'sudo stop puma',
         ].each do |cmd|
           exec_command(cmd)
         end

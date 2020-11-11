@@ -43,7 +43,6 @@ if ENV.fetch("RAILS_ENV") == 'production'
 
   threads 10, 10
   workers 2
-  daemonize true
   pidfile "#{Dir.pwd}/tmp/pids/puma.pid"
   state_path "#{Dir.pwd}/tmp/pids/puma.state"
   bind 'unix:///tmp/puma.sock'

@@ -146,6 +146,7 @@ module Tasks
 
       def update_puma
         run_copy('./setup/etc/init.d/puma', '/etc/init.d/puma')
+        run_copy('./setup/etc/init/puma.conf', '/etc/init/puma.conf')
         self
       end
 
@@ -223,7 +224,7 @@ module Tasks
         [
             'sudo service td-agent restart',
             'sudo service nginx restart',
-            'sudo service puma restart',
+            'sudo restart puma',
             'sudo restart datadog-agent',
             'ab -n 50 -c 2 http://localhost:80/',
         ].each do |cmd|
@@ -278,7 +279,7 @@ module Tasks
         [
             'sudo service td-agent restart',
             'sudo service nginx stop || :',
-            'sudo service puma stop || :',
+            'sudo stop puma || :',
             'sudo start sidekiq',
             'sudo start sidekiq_misc',
             'sudo restart datadog-agent',
@@ -311,7 +312,7 @@ module Tasks
         [
             'sudo service td-agent restart',
             'sudo service nginx stop || :',
-            'sudo service puma stop || :',
+            'sudo stop puma || :',
             'sudo start sidekiq_misc || :',
             'sudo start sidekiq || :',
             'sudo restart datadog-agent',
@@ -355,7 +356,7 @@ module Tasks
         [
             'sudo service td-agent stop || :',
             'sudo service nginx stop || :',
-            'sudo service puma stop || :',
+            'sudo stop puma || :',
             'sudo restart datadog-agent',
             'sudo stop sidekiq || :',
             'sudo stop sidekiq_misc || :',
