@@ -415,12 +415,12 @@ RSpec.describe CreatePeriodicReportRequest::WebAccessValidator, type: :model do
     subject { instance.validate! }
 
     context 'web_access is limited' do
-      before { allow(PeriodicReport).to receive(:web_access_hard_limited?).with(user).and_return(true) }
+      before { allow(PeriodicReport).to receive(:access_interval_too_long?).with(user).and_return(true) }
       it { is_expected.to be_falsey }
     end
 
     context 'web_access is not limited' do
-      before { allow(PeriodicReport).to receive(:web_access_hard_limited?).with(user).and_return(false) }
+      before { allow(PeriodicReport).to receive(:access_interval_too_long?).with(user).and_return(false) }
       it { is_expected.to be_truthy }
     end
   end

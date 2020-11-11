@@ -753,11 +753,18 @@ class PeriodicReport < ApplicationRecord
       GlobalDirectMessageReceivedFlag.new.received?(user.uid)
     end
 
+    def access_interval_too_long?(user)
+      access_day = user.access_days.last
+      access_day && access_day.date < ACCESS_DAYS_SOFT_LIMIT.ago
+    end
+
+    # TODO Remove later
     def web_access_soft_limited?(user)
       access_day = user.access_days.last
       access_day && access_day.date < ACCESS_DAYS_SOFT_LIMIT.ago
     end
 
+    # TODO Remove later
     def web_access_hard_limited?(user)
       access_day = user.access_days.last
       access_day && access_day.date < ACCESS_DAYS_HARD_LIMIT.ago

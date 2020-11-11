@@ -53,6 +53,11 @@ module PeriodicReportConcern
         CreatePeriodicReportIntervalTooShortMessageWorker.perform_async(user.id)
         return
       end
+
+      if PeriodicReport.access_interval_too_long?(user)
+        CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
+        return
+      end
     end
 
     request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'user')

@@ -297,7 +297,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
   class WebAccessValidator < Validator
     def validate!
       user = @request.user
-      if PeriodicReport.web_access_hard_limited?(user)
+      if PeriodicReport.access_interval_too_long?(user)
         @request.update(status: 'too_little_access')
         false
       else

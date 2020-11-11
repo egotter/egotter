@@ -59,17 +59,16 @@ class CreatePeriodicReportWorker
   def do_perform(request, options)
     request.worker_context = self.class
     request.check_credentials = true
+    request.check_web_access = !request.user.has_valid_subscription?
 
     if request.user.has_valid_subscription?
       request.check_interval = false
       request.check_following_status = false
       request.check_allotted_messages_count = false
-      request.check_web_access = false
     else
       request.check_interval = user_requested_job? && !options.has_key?('scheduled_request')
       request.check_following_status = !request.user.has_valid_subscription? && user_requested_job?
       request.check_allotted_messages_count = batch_requested_job?
-      request.check_web_access = !request.user.has_valid_subscription? && user_requested_job?
     end
 
     request.send_only_if_changed = options['send_only_if_changed']
