@@ -3,7 +3,7 @@ require 'active_support/concern'
 module PeriodicReportConcern
   extend ActiveSupport::Concern
 
-  SEND_PERIODIC_REPORT_REGEXP = /\A((リム|りむ)(られた?)?通知)|今すぐ(送信)?/
+  SEND_PERIODIC_REPORT_REGEXP = /((リム|りむ)(られた?)?通知)|今すぐ(送信)?/
 
   def send_periodic_report_requested?(text)
     text.length <= 15 && text.match?(SEND_PERIODIC_REPORT_REGEXP)
