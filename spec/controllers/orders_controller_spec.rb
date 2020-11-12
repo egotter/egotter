@@ -88,7 +88,7 @@ RSpec.describe OrdersController, type: :controller do
     subject { controller.send(:send_message_to_slack) }
     before { allow(controller).to receive(:fetch_order).and_return(order) }
     it do
-      expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders, order.inspect, instance_of(String))
+      expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders, "order=#{order.inspect}", instance_of(String))
       subject
     end
   end
