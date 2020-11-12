@@ -23,6 +23,18 @@ describe BlockReportConcern, type: :controller do
     end
   end
 
+  describe '#block_report_received?' do
+    let(:dm) { double('dm', text: text) }
+    subject { controller.send(:block_report_received?, dm.text) }
+
+    ['ブロック通知 届きました'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
   describe '#stop_block_report_requested?' do
     let(:dm) { double('dm', text: text) }
     subject { controller.send(:stop_block_report_requested?, dm) }

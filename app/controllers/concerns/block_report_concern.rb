@@ -10,6 +10,12 @@ module BlockReportConcern
     text.length < 15 && text.match?(SEND_BLOCK_REPORT_REGEXP)
   end
 
+  BLOCK_REPORT_RECEIVED_REGEXP = /ブロック通知(\s|　)*届きました/
+
+  def block_report_received?(text)
+    text.length < 15 && text.match?(BLOCK_REPORT_RECEIVED_REGEXP)
+  end
+
   STOP_BLOCK_REPORT_REGEXP = /ブロック通知(\s|　)*停止/
 
   def stop_block_report_requested?(dm)
