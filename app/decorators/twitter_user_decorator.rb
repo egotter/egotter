@@ -61,6 +61,10 @@ class TwitterUserDecorator < ApplicationDecorator
     description&.include?('instagram.com') || url&.include?('instagram.com')
   end
 
+  def has_tiktok?
+    description&.include?('tiktok.com') || url&.include?('tiktok.com')
+  end
+
   def has_secret_account?
     description&.match?(/(裏|サブ)(垢|アカ)/)
   end

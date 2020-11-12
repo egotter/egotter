@@ -2379,6 +2379,7 @@ ja:
     friends_>_followers: "フォロー数 > フォロワー数"
     followers_>_friends: "フォロワー数 > フォロー数"
     has_instagram: "インスタを持っている"
+    has_tiktok: "TikTokを持っている"
     has_secret_account: "裏アカあり"
   download:
     title: "ダウンロード"

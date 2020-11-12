@@ -11,6 +11,7 @@ class Filter
       [I18n.t('filter.friends_>_followers'), 'friends_>_followers'],
       [I18n.t('filter.followers_>_friends'), 'followers_>_friends'],
       [I18n.t('filter.has_instagram'), 'has_instagram'],
+      [I18n.t('filter.has_tiktok'), 'has_tiktok'],
       [I18n.t('filter.has_secret_account'), 'has_secret_account'],
   ]
 
@@ -37,7 +38,8 @@ class Filter
         when VALUES[8][1] then tmp.select!(&:has_more_friends?)
         when VALUES[9][1] then tmp.select!(&:has_more_followers?)
         when VALUES[10][1] then tmp.select!(&:has_instagram?)
-        when VALUES[11][1] then tmp.select!(&:has_secret_account?)
+        when VALUES[11][1] then tmp.select!(&:has_tiktok?)
+        when VALUES[12][1] then tmp.select!(&:has_secret_account?)
         else raise "Invalid filter value=#{value}"
         end
       end

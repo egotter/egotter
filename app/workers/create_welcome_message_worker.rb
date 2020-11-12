@@ -31,10 +31,10 @@ class CreateWelcomeMessageWorker
         logger.warn "Send welcome message later user_id=#{user_id} raised=true"
         CreateWelcomeMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
       else
-        SendMessageToSlackWorker.perform_async(:welcome_messages, "#{e.inspect} screen_name=#{user.screen_name}", user_id)
+        SendMessageToSlackWorker.perform_async(:welcome_messages, "#{e.inspect} screen_name=#{user.screen_name} options=#{options.inspect}", user_id)
       end
     end
   rescue => e
-    logger.info "#{e.inspect} user_id=#{user_id}"
+    logger.info "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
   end
 end
