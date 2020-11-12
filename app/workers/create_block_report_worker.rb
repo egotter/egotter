@@ -23,11 +23,19 @@ class CreateBlockReportWorker
       return
     end
 
-    if user.has_valid_subscription? || user.following_egotter?
-      BlockReport.you_are_blocked(user.id).deliver!
-    else
-      CreateBlockReportNotFollowingMessageWorker.perform_async(user.id)
+    unless user.has_valid_subscription?
+      unless user.following_egotter?
+        CreateBlockReportNotFollowingMessageWorker.perform_async(user.id)
+        return
+      end
+
+      if PeriodicReport.access_interval_too_long?(user)
+        CreateBlockReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
+        return
+      end
     end
+
+    BlockReport.you_are_blocked(user.id).deliver!
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
       logger.warn "Send block report later user_id=#{user_id} raised=true"

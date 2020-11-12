@@ -33,14 +33,28 @@ class BlockReport < ApplicationRecord
 
     def not_following_message(user)
       blocked_user = fetch_blocked_users(user, limit: 1)[0]
+      url_options = dialog_params
       template = Rails.root.join('app/views/block_reports/not_following.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           name: mask_name(blocked_user.screen_name),
           total_count: blocked_users_count(user),
           records_count: EgotterFollower.all.size,
-          follow_url: url_helper.sign_in_url(force_login: true, follow: true, via: 'block_report_not_following'),
-          pricing_url: url_helper.pricing_url(campaign_params('block_report_not_following_pricing')),
-          support_url: url_helper.support_url(campaign_params('block_report_not_following_support')),
+          follow_url: url_helper.sign_in_url(url_options.merge(campaign_params('block_report_not_following_follow'), {force_login: true, follow: true})),
+          pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('block_report_not_following_pricing'))),
+          support_url: url_helper.support_url(url_options.merge(campaign_params('block_report_not_following_support'))),
+      )
+    end
+
+    def access_interval_too_long_message(user)
+      blocked_user = fetch_blocked_users(user, limit: 1)[0]
+      url_options = dialog_params
+      template = Rails.root.join('app/views/block_reports/access_interval_too_long.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          name: mask_name(blocked_user.screen_name),
+          total_count: blocked_users_count(user),
+          access_url: url_helper.root_url(url_options.merge(campaign_params('block_report_access_interval_too_long_access'))),
+          pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('block_report_access_interval_too_long_pricing'))),
+          support_url: url_helper.support_url(url_options.merge(campaign_params('block_report_access_interval_too_long_support'))),
       )
     end
 
@@ -90,8 +104,22 @@ class BlockReport < ApplicationRecord
     User.egotter.api_client.create_direct_message_event(event: event)
   end
 
+  QUICK_REPLY_RECEIVED = {
+      label: I18n.t('quick_replies.block_reports.label1'),
+      description: I18n.t('quick_replies.block_reports.description1')
+  }
+  QUICK_REPLY_RESTART = {
+      label: I18n.t('quick_replies.block_reports.label2'),
+      description: I18n.t('quick_replies.block_reports.description2')
+  }
+  QUICK_REPLY_STOP = {
+      label: I18n.t('quick_replies.block_reports.label3'),
+      description: I18n.t('quick_replies.block_reports.description3')
+  }
+
+
   class << self
-    def build_direct_message_event(uid, message)
+    def build_direct_message_event(uid, message, quick_replies: [QUICK_REPLY_RECEIVED, QUICK_REPLY_RESTART, QUICK_REPLY_STOP])
       {
           type: 'message_create',
           message_create: {
@@ -100,20 +128,7 @@ class BlockReport < ApplicationRecord
                   text: message,
                   quick_reply: {
                       type: 'options',
-                      options: [
-                          {
-                              label: I18n.t('quick_replies.block_reports.label1'),
-                              description: I18n.t('quick_replies.block_reports.description1')
-                          },
-                          {
-                              label: I18n.t('quick_replies.block_reports.label2'),
-                              description: I18n.t('quick_replies.block_reports.description2')
-                          },
-                          {
-                              label: I18n.t('quick_replies.block_reports.label3'),
-                              description: I18n.t('quick_replies.block_reports.description3')
-                          },
-                      ]
+                      options: quick_replies
                   }
               }
           }

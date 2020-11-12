@@ -1,4 +1,4 @@
-class CreateBlockReportNotFollowingMessageWorker
+class CreateBlockReportAccessIntervalTooLongMessageWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
@@ -17,7 +17,7 @@ class CreateBlockReportNotFollowingMessageWorker
 
     BlockReport.new(user: user).send(:send_start_message)
 
-    message = BlockReport.not_following_message(user)
+    message = BlockReport.access_interval_too_long_message(user)
     quick_replies = [BlockReport::QUICK_REPLY_RESTART]
     event = BlockReport.build_direct_message_event(user.uid, message, quick_replies: quick_replies)
     User.egotter.api_client.create_direct_message_event(event: event)
