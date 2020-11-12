@@ -18,8 +18,7 @@ class CreateBlockReportNotFollowingMessageWorker
     BlockReport.new(user: user).send(:send_start_message)
 
     message = BlockReport.not_following_message(user)
-    quick_replies = [BlockReport::QUICK_REPLY_RESTART]
-    event = BlockReport.build_direct_message_event(user.uid, message, quick_replies: quick_replies)
+    event = BlockReport.build_direct_message_event(user.uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)
 
   rescue => e

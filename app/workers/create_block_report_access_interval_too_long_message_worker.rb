@@ -18,8 +18,7 @@ class CreateBlockReportAccessIntervalTooLongMessageWorker
     BlockReport.new(user: user).send(:send_start_message)
 
     message = BlockReport.access_interval_too_long_message(user)
-    quick_replies = [BlockReport::QUICK_REPLY_RESTART]
-    event = BlockReport.build_direct_message_event(user.uid, message, quick_replies: quick_replies)
+    event = BlockReport.build_direct_message_event(user.uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)
 
   rescue => e

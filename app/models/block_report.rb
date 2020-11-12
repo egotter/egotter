@@ -116,10 +116,11 @@ class BlockReport < ApplicationRecord
       label: I18n.t('quick_replies.block_reports.label3'),
       description: I18n.t('quick_replies.block_reports.description3')
   }
+  QUICK_REPLY_DEFAULT = [QUICK_REPLY_RECEIVED, QUICK_REPLY_RESTART, QUICK_REPLY_STOP]
 
 
   class << self
-    def build_direct_message_event(uid, message, quick_replies: [QUICK_REPLY_RECEIVED, QUICK_REPLY_RESTART, QUICK_REPLY_STOP])
+    def build_direct_message_event(uid, message, quick_replies: QUICK_REPLY_DEFAULT)
       {
           type: 'message_create',
           message_create: {
