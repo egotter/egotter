@@ -16,6 +16,19 @@ class SlackBotClient
     @client.chat_postMessage(channel: @channel, text: text)
   end
 
+  # TODO Not used
+  def post_context_message(text, screen_name, icon_url, urls)
+    mrkdwn_text = urls.map.with_index { |url, i| "<#{url}|url#{i + 1}>" }.join(' ') + ' ' + text
+    block = {
+        type: 'context',
+        elements: [
+            {type: 'image', image_url: icon_url, alt_text: "@#{screen_name}"},
+            {type: 'mrkdwn', text: mrkdwn_text}
+        ],
+    }
+    @client.chat_postMessage(channel: @channel, blocks: [block])
+  end
+
   def upload_media(media, initial_comment: '')
     @client.files_upload(
         channels: @channel,
