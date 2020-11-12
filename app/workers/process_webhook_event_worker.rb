@@ -88,8 +88,8 @@ class ProcessWebhookEventWorker
       enqueue_user_requested_periodic_report(dm)
     elsif schedule_tweets_questioned?(dm)
       answer_schedule_tweets_question(dm)
-    elsif delete_tweets_questioned?(dm)
-      answer_delete_tweets_question(dm)
+    elsif delete_tweets_questioned?(dm.text)
+      answer_delete_tweets_question(dm.sender_id)
     else
       logger.info { "#{__method__} dm is ignored #{dm.text}" }
     end
