@@ -101,6 +101,10 @@ class Order < ApplicationRecord
     customer_id.nil? || subscription_id.nil?
   end
 
+  def end_trial!
+    ::Stripe::Subscription.update(subscription_id, trial_end: 'now')
+  end
+
   def cancel!
     update!(canceled_at: Subscription.new(::Stripe::Subscription.delete(subscription_id)).canceled_at)
   end

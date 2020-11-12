@@ -119,7 +119,7 @@ class OrdersController < ApplicationController
   private
 
   def send_message_to_slack
-    SendMessageToSlackWorker.perform_async(:orders, fetch_order.inspect, "#{Rails.env}:#{action_name}")
+    SendMessageToSlackWorker.perform_async(:orders, "order=#{fetch_order.inspect}", "#{Rails.env}:#{action_name}")
   end
 
   def fetch_order
