@@ -31,7 +31,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       let(:user_id) { nil }
       let(:options) { {unregistered: true, uid: 1} }
       it do
-        expect(worker).to receive(:perform_unregistered).with(1)
+        expect(CreatePeriodicReportUnregisteredMessageWorker).to receive(:perform_async).with(1)
         subject
       end
     end

@@ -178,7 +178,7 @@ describe PeriodicReportConcern, type: :controller do
     context 'user is not found' do
       before { allow(User).to receive(:find_by).with(uid: uid).and_return(nil) }
       it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, unregistered: true, uid: uid)
+        expect(CreatePeriodicReportUnregisteredMessageWorker).to receive(:perform_async).with(uid)
         subject
       end
     end

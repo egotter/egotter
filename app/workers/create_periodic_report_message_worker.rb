@@ -53,8 +53,9 @@ class CreatePeriodicReportMessageWorker
   def perform(user_id, options = {})
     options = options.symbolize_keys!
 
+    # TODO Remove later
     if options[:unregistered]
-      perform_unregistered(options[:uid])
+      CreatePeriodicReportUnregisteredMessageWorker.perform_async(options[:uid])
       return
     end
 

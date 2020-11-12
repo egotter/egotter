@@ -115,7 +115,7 @@ module PeriodicReportConcern
 
   def validate_periodic_report_status(uid)
     unless (user = User.find_by(uid: uid))
-      CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: uid)
+      CreatePeriodicReportUnregisteredMessageWorker.perform_async(uid)
       return
     end
 
