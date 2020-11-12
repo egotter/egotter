@@ -145,6 +145,7 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   def fetch_relations(snapshot, context)
     unless @fetcher
+      client = (user || Bot).api_client(cache_store: :null_store)
       fetch_friends = !SearchLimitation.limited?(snapshot, signed_in: user)
       search_for_yourself = snapshot.uid == user&.uid
       reporting = context == :reporting
