@@ -18,13 +18,17 @@ class CreateSearchReportWorker
     return if StopSearchReportRequest.exists?(user_id: searchee.id)
 
     if PeriodicReport.send_report_limited?(searchee.uid)
+      logger.warn "Send search report later searchee_id=#{searchee_id} raised=false"
       CreateSearchReportWorker.perform_in(1.hour + rand(30).minutes, searchee_id, options.merge(delay: true))
       return
     end
 
     SearchReport.you_are_searched(searchee.id, options['searcher_uid']).deliver!
   rescue => e
-    if TwitterApiStatus.unauthorized?(e) ||
+    if DirectMessageStatus.enhance_your_calm?(e)
+      logger.warn "Send search report later searchee_id=#{searchee_id} raised=true"
+      CreateSearchReportWorker.perform_in(1.hour + rand(30).minutes, searchee_id, options.merge(delay: true))
+    elsif TwitterApiStatus.unauthorized?(e) ||
         DirectMessageStatus.protect_out_users_from_spam?(e) ||
         DirectMessageStatus.you_have_blocked?(e) ||
         DirectMessageStatus.not_allowed_to_access_or_delete?(e) ||

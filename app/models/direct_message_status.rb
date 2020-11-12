@@ -37,5 +37,9 @@ class DirectMessageStatus
     def not_allowed_to_access_or_delete?(ex)
       ex.class == Twitter::Error::Forbidden && ex.message == 'This application is not allowed to access or delete your direct messages.'
     end
+
+    def enhance_your_calm?(ex)
+      ex.class == Twitter::Error::EnhanceYourCalm
+    end
   end
 end

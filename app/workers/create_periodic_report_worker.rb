@@ -44,6 +44,7 @@ class CreatePeriodicReportWorker
     return unless request.user.authorized?
 
     if PeriodicReport.send_report_limited?(request.user.uid)
+      logger.warn "Send periodic report later request_id=#{request_id} raised=false"
       CreatePeriodicReportWorker.perform_in(1.hour + rand(30).minutes, request_id, options)
       return
     end

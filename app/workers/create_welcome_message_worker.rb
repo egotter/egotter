@@ -17,7 +17,7 @@ class CreateWelcomeMessageWorker
     return unless user.authorized?
 
     if PeriodicReport.send_report_limited?(user.uid)
-      logger.warn "Send welcome message later user_id=#{user_id}"
+      logger.warn "Send welcome message later user_id=#{user_id} raised=false"
       CreateWelcomeMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
       return
     end
@@ -27,7 +27,12 @@ class CreateWelcomeMessageWorker
       message.set_prefix_message(options['prefix']) if options['prefix']
       message.deliver!
     rescue => e
-      SendMessageToSlackWorker.perform_async(:welcome_messages, "#{e.inspect} screen_name=#{user.screen_name}", user_id)
+      if DirectMessageStatus.enhance_your_calm?(e)
+        logger.warn "Send welcome message later user_id=#{user_id} raised=true"
+        CreateWelcomeMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
+      else
+        SendMessageToSlackWorker.perform_async(:welcome_messages, "#{e.inspect} screen_name=#{user.screen_name}", user_id)
+      end
     end
   rescue => e
     logger.info "#{e.inspect} user_id=#{user_id}"

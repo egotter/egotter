@@ -62,6 +62,7 @@ class CreatePeriodicReportMessageWorker
     user = User.find(user_id)
 
     if PeriodicReport.send_report_limited?(user.uid)
+      logger.warn "Send periodic report later user_id=#{user_id} raised=false"
       CreatePeriodicReportMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
       return
     end
@@ -92,7 +93,10 @@ class CreatePeriodicReportMessageWorker
     end
 
   rescue => e
-    if not_fatal_error?(e)
+    if DirectMessageStatus.enhance_your_calm?(e)
+      logger.warn "Send periodic report later user_id=#{user_id} raised=true"
+      CreatePeriodicReportMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
+    elsif not_fatal_error?(e)
       logger.info "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
     else
       logger.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
