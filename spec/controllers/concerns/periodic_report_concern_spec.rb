@@ -196,7 +196,7 @@ describe PeriodicReportConcern, type: :controller do
         allow(user).to receive_message_chain(:notification_setting, :enough_permission_level?).and_return(false)
       end
       it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, permission_level_not_enough: true)
+        expect(CreatePeriodicReportPermissionLevelNotEnoughMessageWorker).to receive(:perform_async).with(user.id)
         subject
       end
     end

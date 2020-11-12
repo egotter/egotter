@@ -659,6 +659,10 @@ class PeriodicReport < ApplicationRecord
       interval_too_short_quick_reply_options
     end
 
+    def permission_level_not_enough_quick_reply_options
+      interval_too_short_quick_reply_options
+    end
+
     def allotted_messages_not_enough_quick_reply_options
       will_expire_quick_reply_options
     end

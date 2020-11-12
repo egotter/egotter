@@ -125,7 +125,7 @@ module PeriodicReportConcern
     end
 
     unless user.notification_setting.enough_permission_level?
-      CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
+      CreatePeriodicReportPermissionLevelNotEnoughMessageWorker.perform_async(user.id)
       return
     end
 

@@ -66,8 +66,9 @@ class CreatePeriodicReportMessageWorker
       return
     end
 
+    # TODO Remove later
     if options[:permission_level_not_enough] || !user.notification_setting.enough_permission_level?
-      perform_permission_level_not_enough(user)
+      CreatePeriodicReportPermissionLevelNotEnoughMessageWorker.perform_async(user.id)
       return
     end
 
@@ -97,10 +98,6 @@ class CreatePeriodicReportMessageWorker
       logger.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
       logger.info e.backtrace.join("\n")
     end
-  end
-
-  def perform_permission_level_not_enough(user)
-    send_message_from_egotter(user.uid, PeriodicReport.permission_level_not_enough_message.message)
   end
 
   def send_message_from_egotter(uid, message, options = {})

@@ -40,7 +40,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       let(:user_id) { user.id }
       let(:options) { {permission_level_not_enough: true} }
       it do
-        expect(worker).to receive(:perform_permission_level_not_enough).with(user)
+        expect(CreatePeriodicReportPermissionLevelNotEnoughMessageWorker).to receive(:perform_async).with(user.id)
         subject
       end
     end
@@ -85,15 +85,6 @@ RSpec.describe CreatePeriodicReportMessageWorker do
           subject
         end
       end
-    end
-  end
-
-  describe '#perform_permission_level_not_enough' do
-    let(:message) { PeriodicReport.permission_level_not_enough_message.message }
-    subject { worker.perform_permission_level_not_enough(user) }
-    it do
-      expect(worker).to receive(:send_message_from_egotter).with(user.uid, message)
-      subject
     end
   end
 
