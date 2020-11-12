@@ -71,8 +71,9 @@ class CreatePeriodicReportMessageWorker
       return
     end
 
+    # TODO Remove later
     if options[:unauthorized] || !user.authorized?
-      perform_unauthorized(user)
+      CreatePeriodicReportUnauthorizedMessageWorker.perform_async(user.id)
       return
     end
 
@@ -98,16 +99,8 @@ class CreatePeriodicReportMessageWorker
     end
   end
 
-  def perform_unregistered(uid)
-    send_message_from_egotter(uid, PeriodicReport.unregistered_message.message)
-  end
-
   def perform_permission_level_not_enough(user)
     send_message_from_egotter(user.uid, PeriodicReport.permission_level_not_enough_message.message)
-  end
-
-  def perform_unauthorized(user)
-    send_message_from_egotter(user.uid, PeriodicReport.unauthorized_message.message)
   end
 
   def send_message_from_egotter(uid, message, options = {})

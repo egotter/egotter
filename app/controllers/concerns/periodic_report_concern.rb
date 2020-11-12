@@ -120,7 +120,7 @@ module PeriodicReportConcern
     end
 
     unless user.authorized?
-      CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
+      CreatePeriodicReportUnauthorizedMessageWorker.perform_async(user.id)
       return
     end
 

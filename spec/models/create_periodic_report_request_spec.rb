@@ -266,8 +266,7 @@ RSpec.describe CreatePeriodicReportRequest::CredentialsValidator, type: :model d
     subject { instance.deliver! }
     before { allow(instance).to receive(:user_or_egotter_requested_job?).and_return(true) }
     it do
-      expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
-          with(request.user_id, unauthorized: true).and_return('jid')
+      expect(CreatePeriodicReportUnauthorizedMessageWorker).to receive(:perform_async).with(request.user_id).and_return('jid')
       subject
     end
   end

@@ -49,7 +49,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       let(:user_id) { user.id }
       let(:options) { {unauthorized: true} }
       it do
-        expect(worker).to receive(:perform_unauthorized).with(user)
+        expect(CreatePeriodicReportUnauthorizedMessageWorker).to receive(:perform_async).with(user.id)
         subject
       end
     end
@@ -88,27 +88,9 @@ RSpec.describe CreatePeriodicReportMessageWorker do
     end
   end
 
-  describe '#perform_unregistered' do
-    let(:message) { PeriodicReport.unregistered_message.message }
-    subject { worker.perform_unregistered(('uid')) }
-    it do
-      expect(worker).to receive(:send_message_from_egotter).with('uid', message)
-      subject
-    end
-  end
-
   describe '#perform_permission_level_not_enough' do
     let(:message) { PeriodicReport.permission_level_not_enough_message.message }
     subject { worker.perform_permission_level_not_enough(user) }
-    it do
-      expect(worker).to receive(:send_message_from_egotter).with(user.uid, message)
-      subject
-    end
-  end
-
-  describe '#perform_unauthorized' do
-    let(:message) { PeriodicReport.unauthorized_message.message }
-    subject { worker.perform_unauthorized(user) }
     it do
       expect(worker).to receive(:send_message_from_egotter).with(user.uid, message)
       subject

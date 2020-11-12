@@ -186,7 +186,7 @@ describe PeriodicReportConcern, type: :controller do
     context 'user is not authorized' do
       before { user.update(authorized: false) }
       it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, unauthorized: true)
+        expect(CreatePeriodicReportUnauthorizedMessageWorker).to receive(:perform_async).with(user.id)
         subject
       end
     end

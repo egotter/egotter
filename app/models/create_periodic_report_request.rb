@@ -175,7 +175,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
     def deliver!
       if user_or_egotter_requested_job?
-        jid = CreatePeriodicReportMessageWorker.perform_async(user_id, unauthorized: true)
+        jid = CreatePeriodicReportUnauthorizedMessageWorker.perform_async(user_id)
         @request.update(status: 'unauthorized,message_skipped') unless jid
       end
     end
