@@ -22,24 +22,27 @@ class Filter
   # users: [TwitterDB::User, TwitterDB::User, ...]
   def apply!(users)
     if @values.any?
-      users = users.map { |u| TwitterUserDecorator.new(u) }
+      tmp = users.map { |u| TwitterUserDecorator.new(u) }
+
       @values.each do |value|
         case value
-        when VALUES[0][1] then users.select!(&:active?)
-        when VALUES[1][1] then users.select!(&:inactive_2weeks?)
-        when VALUES[2][1] then users.select!(&:inactive_1month?)
-        when VALUES[3][1] then users.select!(&:inactive_3months?)
-        when VALUES[4][1] then users.select!(&:inactive_6months?)
-        when VALUES[5][1] then users.select!(&:inactive_1year?)
-        when VALUES[6][1] then users.select!(&:protected_account?)
-        when VALUES[7][1] then users.select!(&:verified_account?)
-        when VALUES[8][1] then users.select!(&:has_more_friends?)
-        when VALUES[9][1] then users.select!(&:has_more_followers?)
-        when VALUES[10][1] then users.select!(&:has_instagram?)
-        when VALUES[11][1] then users.select!(&:has_secret_account?)
+        when VALUES[0][1] then tmp.select!(&:active?)
+        when VALUES[1][1] then tmp.select!(&:inactive_2weeks?)
+        when VALUES[2][1] then tmp.select!(&:inactive_1month?)
+        when VALUES[3][1] then tmp.select!(&:inactive_3months?)
+        when VALUES[4][1] then tmp.select!(&:inactive_6months?)
+        when VALUES[5][1] then tmp.select!(&:inactive_1year?)
+        when VALUES[6][1] then tmp.select!(&:protected_account?)
+        when VALUES[7][1] then tmp.select!(&:verified_account?)
+        when VALUES[8][1] then tmp.select!(&:has_more_friends?)
+        when VALUES[9][1] then tmp.select!(&:has_more_followers?)
+        when VALUES[10][1] then tmp.select!(&:has_instagram?)
+        when VALUES[11][1] then tmp.select!(&:has_secret_account?)
         else raise "Invalid filter value=#{value}"
         end
       end
+
+      users.select! { |u| tmp.find { |t| u.uid == t.uid } }
     end
   end
 
