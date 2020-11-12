@@ -25,14 +25,23 @@ class BlockReport < ApplicationRecord
 
   belongs_to :user
 
-  # TODO Remove later
-  attr_accessor :blocked_users
-
   class << self
-    # TODO Remove users
-    def you_are_blocked(user_id, users = nil)
+    def you_are_blocked(user_id)
       # Create a message as late as possible
       new(user_id: user_id, token: generate_token)
+    end
+
+    def not_following_message(user)
+      blocked_user = fetch_blocked_users(user, limit: 1)[0]
+      template = Rails.root.join('app/views/block_reports/not_following.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          name: mask_name(blocked_user.screen_name),
+          total_count: blocked_users_count(user),
+          records_count: EgotterFollower.all.size,
+          follow_url: url_helper.sign_in_url(force_login: true, follow: true, via: 'block_report_not_following'),
+          pricing_url: url_helper.pricing_url(campaign_params('block_report_not_following_pricing')),
+          support_url: url_helper.support_url(campaign_params('block_report_not_following_support')),
+      )
     end
 
     def report_stopped_message(user)
@@ -138,6 +147,16 @@ class BlockReport < ApplicationRecord
       end
 
       users
+    end
+
+    def blocked_users_count(user)
+      BlockingRelationship.where(to_uid: user.uid).select('count(distinct from_uid) cnt').first.cnt
+    end
+
+    def mask_name(name)
+      name[1] = '*'
+      name[3] = '*' if name.length >= 4
+      name
     end
 
     private

@@ -318,7 +318,7 @@ class PeriodicReport < ApplicationRecord
       message = ERB.new(template.read).result_with_hash(
           records_count: EgotterFollower.all.size,
           url: sign_in_url(force_login: true, follow: true, via: 'not_following_message'),
-          pricing_url: pricing_url(campaign_params('not_following_support')),
+          pricing_url: pricing_url(campaign_params('not_following_pricing')),
           support_url: support_url(campaign_params('not_following_support')),
       )
 

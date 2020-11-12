@@ -8,7 +8,7 @@ RSpec.describe BlockReport, type: :model do
   end
 
   describe '#you_are_blocked' do
-    subject { described_class.you_are_blocked(user.id, [{uid: 1, screen_name: 'name'}]) }
+    subject { described_class.you_are_blocked(user.id) }
     it { is_expected.to be_truthy }
   end
 
