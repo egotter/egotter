@@ -5,7 +5,7 @@ describe SearchReportConcern, type: :controller do
     include SearchReportConcern
   end
 
-  let(:user) { create(:user) }
+  let(:user) { create(:user, with_settings: true) }
 
   before do
     allow(User).to receive(:find_by).with(uid: user.uid).and_return(user)

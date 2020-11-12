@@ -2,6 +2,7 @@ require 'active_support/concern'
 
 module SearchReportConcern
   extend ActiveSupport::Concern
+  include PeriodicReportConcern
 
   STOP_SEARCH_REPORT_REGEXP = /検索通知(\s|　)*停止/
 
@@ -16,9 +17,8 @@ module SearchReportConcern
   end
 
   def stop_search_report(dm)
-    unless (user = User.where(authorized: true).find_by(uid: dm.sender_id))
-      return
-    end
+    user = validate_periodic_report_status(dm.sender_id)
+    return unless user
 
     StopSearchReportRequest.create(user_id: user.id)
     CreateSearchReportStoppedMessageWorker.perform_async(user.id)
@@ -27,9 +27,8 @@ module SearchReportConcern
   end
 
   def restart_search_report(dm)
-    unless (user = User.where(authorized: true).find_by(uid: dm.sender_id))
-      return
-    end
+    user = validate_periodic_report_status(dm.sender_id)
+    return unless user
 
     StopSearchReportRequest.find_by(user_id: user.id)&.destroy
     CreateSearchReportRestartedMessageWorker.perform_async(user.id)
