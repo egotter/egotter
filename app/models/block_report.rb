@@ -145,7 +145,7 @@ class BlockReport < ApplicationRecord
           timeline_url: url_helper.timeline_url(user, url_options),
           settings_url: url_helper.settings_url(url_options),
           faq_url: url_helper.support_url(url_options),
-          )
+      )
     end
 
     def start_message(user)
@@ -180,7 +180,12 @@ class BlockReport < ApplicationRecord
       users.map.with_index do |user, i|
         screen_name = user[:screen_name]
         url = url_helper.profile_url({screen_name: screen_name}.merge(url_options))
-        "#{'@' if add_atmark || i < 1}#{screen_name} #{url}"
+        if add_atmark || i < 1
+          name = "@#{screen_name}"
+        else
+          name = mask_name(screen_name)
+        end
+        "#{name} #{url}"
       end
     end
 
