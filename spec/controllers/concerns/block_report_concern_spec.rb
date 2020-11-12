@@ -11,6 +11,18 @@ describe BlockReportConcern, type: :controller do
     allow(User).to receive(:find_by).with(uid: user.uid).and_return(user)
   end
 
+  describe '#send_block_report_requested?' do
+    let(:dm) { double('dm', text: text) }
+    subject { controller.send(:send_block_report_requested?, dm.text) }
+
+    ['【ブロック通知】', 'ブロック通知'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
   describe '#stop_block_report_requested?' do
     let(:dm) { double('dm', text: text) }
     subject { controller.send(:stop_block_report_requested?, dm) }
@@ -32,6 +44,16 @@ describe BlockReportConcern, type: :controller do
         let(:text) { word }
         it { is_expected.to be_truthy }
       end
+    end
+  end
+
+  describe '#send_block_report' do
+    let(:dm) { double('dm', sender_id: user.uid) }
+    subject { controller.send(:send_block_report, dm.sender_id) }
+
+    it do
+      expect(CreateBlockReportWorker).to receive(:perform_async).with(user.id)
+      subject
     end
   end
 

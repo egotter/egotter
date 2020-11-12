@@ -4,6 +4,12 @@ module BlockReportConcern
   extend ActiveSupport::Concern
   include PeriodicReportConcern
 
+  SEND_BLOCK_REPORT_REGEXP = /ブロック通知/
+
+  def send_block_report_requested?(text)
+    text.length < 15 && text.match?(SEND_BLOCK_REPORT_REGEXP)
+  end
+
   STOP_BLOCK_REPORT_REGEXP = /ブロック通知(\s|　)*停止/
 
   def stop_block_report_requested?(dm)
@@ -17,6 +23,15 @@ module BlockReportConcern
   end
 
   module_function :restart_block_report_requested?
+
+  def send_block_report(uid)
+    user = validate_periodic_report_status(uid)
+    return unless user
+
+    CreateBlockReportWorker.perform_async(user.id)
+  rescue => e
+    logger.warn "##{__method__} #{e.inspect} uid=#{uid}"
+  end
 
   def stop_block_report(dm)
     user = validate_periodic_report_status(dm.sender_id)
