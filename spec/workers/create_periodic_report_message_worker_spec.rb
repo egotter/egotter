@@ -71,8 +71,8 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       let(:options) { {} }
       before { allow(options).to receive(:symbolize_keys!).and_raise('anything') }
 
-      context "not_fatal_error? returns true" do
-        before { allow(worker).to receive(:not_fatal_error?).with(anything).and_return(true) }
+      context "ignorable_report_error? returns true" do
+        before { allow(worker).to receive(:ignorable_report_error?).with(anything).and_return(true) }
         it do
           expect(worker.logger).to receive(:info).with(instance_of(String))
           subject
@@ -126,29 +126,6 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       expect(DirectMessageStatus).to receive(:cannot_send_messages?).with(error).and_return(true)
       expect(PeriodicReport).to receive(:messages_allotted?).with(user).and_return(true)
       is_expected.to be_truthy
-    end
-  end
-
-  describe '#not_fatal_error?' do
-    let(:error) { RuntimeError.new('error') }
-    subject { worker.not_fatal_error?(error) }
-
-    %i(
-      you_have_blocked?
-      not_following_you?
-      cannot_find_specified_user?
-      protect_out_users_from_spam?
-      your_account_suspended?
-      cannot_send_messages?
-    ).each do |method|
-      context "#{method} returns true" do
-        before { allow(DirectMessageStatus).to receive(method).with(error).and_return(true) }
-        it { is_expected.to be_truthy }
-      end
-    end
-
-    context "unknown exception is raised" do
-      it { is_expected.to be_falsey }
     end
   end
 end

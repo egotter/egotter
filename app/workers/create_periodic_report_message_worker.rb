@@ -2,6 +2,7 @@ require 'digest/md5'
 
 class CreatePeriodicReportMessageWorker
   include Sidekiq::Worker
+  include ReportErrorHandler
   prepend TimeoutableWorker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
@@ -96,7 +97,7 @@ class CreatePeriodicReportMessageWorker
     if DirectMessageStatus.enhance_your_calm?(e)
       logger.warn "Send periodic report later user_id=#{user_id} raised=true"
       CreatePeriodicReportMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
-    elsif not_fatal_error?(e)
+    elsif ignorable_report_error?(e)
       logger.info "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
     else
       logger.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
@@ -122,16 +123,5 @@ class CreatePeriodicReportMessageWorker
 
   def weird_error?(e, user)
     DirectMessageStatus.cannot_send_messages?(e) && PeriodicReport.messages_allotted?(user)
-  end
-
-  def not_fatal_error?(e)
-    DirectMessageStatus.you_have_blocked?(e) ||
-        DirectMessageStatus.not_following_you?(e) ||
-        DirectMessageStatus.cannot_find_specified_user?(e) ||
-        DirectMessageStatus.protect_out_users_from_spam?(e) ||
-        DirectMessageStatus.your_account_suspended?(e) ||
-        DirectMessageStatus.cannot_send_messages?(e) ||
-        DirectMessageStatus.might_be_automated?(e) ||
-        TwitterApiStatus.invalid_or_expired_token?(e)
   end
 end

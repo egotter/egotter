@@ -1,5 +1,6 @@
 class CreateSearchReportStoppedMessageWorker
   include Sidekiq::Worker
+  include ReportErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -20,12 +21,7 @@ class CreateSearchReportStoppedMessageWorker
     User.egotter.api_client.create_direct_message_event(event: event)
 
   rescue => e
-    if TwitterApiStatus.unauthorized?(e) ||
-        DirectMessageStatus.protect_out_users_from_spam?(e) ||
-        DirectMessageStatus.you_have_blocked?(e) ||
-        DirectMessageStatus.not_allowed_to_access_or_delete?(e)
-      # Do nothing
-    else
+    unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
     end
   end

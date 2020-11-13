@@ -1,5 +1,6 @@
 class CreateBlockReportWorker
   include Sidekiq::Worker
+  include ReportErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -40,11 +41,7 @@ class CreateBlockReportWorker
     if DirectMessageStatus.enhance_your_calm?(e)
       logger.warn "Send block report later user_id=#{user_id} raised=true"
       CreateBlockReportWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
-    elsif TwitterApiStatus.unauthorized?(e) ||
-        DirectMessageStatus.protect_out_users_from_spam?(e) ||
-        DirectMessageStatus.you_have_blocked?(e) ||
-        DirectMessageStatus.not_allowed_to_access_or_delete?(e) ||
-        DirectMessageStatus.cannot_send_messages?(e)
+    elsif ignorable_report_error?(e)
       # Do nothing
     else
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"

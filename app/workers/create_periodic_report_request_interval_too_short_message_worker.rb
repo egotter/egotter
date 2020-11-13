@@ -1,5 +1,6 @@
 class CreatePeriodicReportRequestIntervalTooShortMessageWorker
   include Sidekiq::Worker
+  include ReportErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -28,7 +29,9 @@ class CreatePeriodicReportRequestIntervalTooShortMessageWorker
     User.egotter.api_client.create_direct_message_event(event: event)
 
   rescue => e
-    logger.warn "#{e.inspect} user_id=#{user_id} options=#{options}"
-    logger.info e.backtrace.join("\n")
+    unless ignorable_report_error?(e)
+      logger.warn "#{e.inspect} user_id=#{user_id} options=#{options}"
+      logger.info e.backtrace.join("\n")
+    end
   end
 end

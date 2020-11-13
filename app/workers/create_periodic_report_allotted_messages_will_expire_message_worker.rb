@@ -1,5 +1,6 @@
 class CreatePeriodicReportAllottedMessagesWillExpireMessageWorker
   include Sidekiq::Worker
+  include ReportErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -28,9 +29,7 @@ class CreatePeriodicReportAllottedMessagesWillExpireMessageWorker
     User.egotter.api_client.create_direct_message_event(event: event)
 
   rescue => e
-    if DirectMessageStatus.not_following_you?(e) || DirectMessageStatus.cannot_find_specified_user?(e)
-      # Do nothing
-    else
+    unless ignorable_report_error?
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options}"
       logger.info e.backtrace.join("\n")
     end

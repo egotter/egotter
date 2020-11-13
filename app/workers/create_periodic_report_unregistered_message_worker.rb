@@ -1,5 +1,6 @@
 class CreatePeriodicReportUnregisteredMessageWorker
   include Sidekiq::Worker
+  include ReportErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(uid, options = {})
@@ -26,7 +27,9 @@ class CreatePeriodicReportUnregisteredMessageWorker
     User.egotter.api_client.create_direct_message_event(event: event)
 
   rescue => e
-    logger.warn "#{e.inspect} uid=#{uid} options=#{options}"
-    logger.info e.backtrace.join("\n")
+    unless ignorable_report_error?(e)
+      logger.warn "#{e.inspect} uid=#{uid} options=#{options}"
+      logger.info e.backtrace.join("\n")
+    end
   end
 end
