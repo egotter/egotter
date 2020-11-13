@@ -4,7 +4,7 @@ class UpdateTrialEndWorker
 
   # options:
   def perform(order_id, options = {})
-    Order.find(order_id).update_trial_end!
+    Order.find(order_id).sync_trial_end!
   rescue => e
     logger.warn "#{e.inspect} order_id=#{order_id} options=#{options.inspect}"
   end

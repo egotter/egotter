@@ -114,16 +114,18 @@ class Order < ApplicationRecord
     Time.zone.now < trial_end_time
   end
 
-  def update_trial_end!
+  def sync_trial_end!
     update!(trial_end: stripe_subscription.trial_end)
   end
 
   def end_trial!
     ::Stripe::Subscription.update(subscription_id, trial_end: 'now')
+    update!(trial_end: Time.zone.now.to_i)
   end
 
   def cancel!
-    update!(canceled_at: Subscription.new(::Stripe::Subscription.delete(subscription_id)).canceled_at)
+    sub = ::Stripe::Subscription.delete(subscription_id)
+    update!(canceled_at: Subscription.new(sub).canceled_at)
   end
 
   class Customer

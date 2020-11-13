@@ -5,6 +5,11 @@ module Api
       before_action :reject_crawler
       before_action :require_login!
 
+      after_action do
+        message = "`#{Rails.env}:#{action_name}` user_id=#{current_user.id}"
+        SendMessageToSlackWorker.perform_async(:orders, message)
+      end
+
       def end_trial
         current_user.valid_order.end_trial!
         render json: {message: t('.success')}
