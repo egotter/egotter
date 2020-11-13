@@ -44,43 +44,47 @@ class SortButton {
 
 window.SortButton = SortButton;
 
-// TODO Refactoring
 class FilterButton {
   constructor(callback) {
-    var $container = $('.filter-container');
+    this.callback = callback;
+    this.$container = $('.filter-container');
+    var self = this;
 
-    $container.find('.dropdown-item.btn-end-trial').on('click', function () {
+    this.$container.find('.dropdown-item.btn-end-trial').on('click', function () {
       if (window.endTrialModal) {
         window.endTrialModal.show();
         return false;
       }
     });
 
-    $container.find('.dropdown-item').not('.btn-checkout').not('.btn-end-trial').on('click', function () {
-      var $selected = $(this);
-      var $button = $container.find('button');
-      $button.trigger('click');
-
-      $selected.toggleClass('active');
-
-      var selectedValues = [];
-      $container.find(".dropdown-item.active").each(function (_, el) {
-        selectedValues.push($(el).data('filter'));
-      });
-
-      if (selectedValues.length > 0) {
-        $button.find('.filter-count').text('(' + selectedValues.length + ')');
-      } else {
-        $button.find('.filter-count').text('');
-      }
-
-      var value = selectedValues.join(',');
-
-      logger.log('filter', value);
-      callback({filter: value});
-
-      return false;
+    this.$container.find('.dropdown-item').not('.btn-checkout').not('.btn-end-trial').on('click', function () {
+      return self.clickItem($(this));
     });
+  }
+
+  clickItem($selected) {
+    var $button = this.$container.find('button');
+    $button.trigger('click');
+
+    $selected.toggleClass('active');
+
+    var selectedValues = [];
+    this.$container.find(".dropdown-item.active").each(function (_, el) {
+      selectedValues.push($(el).data('filter'));
+    });
+
+    if (selectedValues.length > 0) {
+      $button.find('.filter-count').text('(' + selectedValues.length + ')');
+    } else {
+      $button.find('.filter-count').text('');
+    }
+
+    var value = selectedValues.join(',');
+
+    logger.log('filter', value);
+    this.callback({filter: value});
+
+    return false;
   }
 }
 
