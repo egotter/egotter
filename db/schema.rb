@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_30_161929) do
+ActiveRecord::Schema.define(version: 2020_11_09_175241) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -861,6 +861,7 @@ ActiveRecord::Schema.define(version: 2020_10_30_161929) do
     t.string "name"
     t.integer "price"
     t.decimal "tax_rate", precision: 4, scale: 2
+    t.integer "trial_end"
     t.integer "search_count", default: 0, null: false
     t.integer "follow_requests_count", default: 0, null: false
     t.integer "unfollow_requests_count", default: 0, null: false
@@ -1300,24 +1301,6 @@ ActiveRecord::Schema.define(version: 2020_10_30_161929) do
     t.index ["uid"], name: "index_twitter_db_favorites_on_uid"
   end
 
-  create_table "twitter_db_followerships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "user_uid", null: false
-    t.bigint "follower_uid", null: false
-    t.integer "sequence", null: false
-    t.index ["follower_uid"], name: "index_twitter_db_followerships_on_follower_uid"
-    t.index ["user_uid", "follower_uid"], name: "index_twitter_db_followerships_on_user_uid_and_follower_uid", unique: true
-    t.index ["user_uid"], name: "index_twitter_db_followerships_on_user_uid"
-  end
-
-  create_table "twitter_db_friendships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "user_uid", null: false
-    t.bigint "friend_uid", null: false
-    t.integer "sequence", null: false
-    t.index ["friend_uid"], name: "index_twitter_db_friendships_on_friend_uid"
-    t.index ["user_uid", "friend_uid"], name: "index_twitter_db_friendships_on_user_uid_and_friend_uid", unique: true
-    t.index ["user_uid"], name: "index_twitter_db_friendships_on_user_uid"
-  end
-
   create_table "twitter_db_mentions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "uid", null: false
     t.string "screen_name", null: false
@@ -1393,8 +1376,8 @@ ActiveRecord::Schema.define(version: 2020_10_30_161929) do
     t.string "profile_image_url_https", default: "", null: false
     t.string "profile_banner_url", default: "", null: false
     t.string "profile_link_color", default: "", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_twitter_db_users_on_created_at"
     t.index ["screen_name"], name: "index_twitter_db_users_on_screen_name"
     t.index ["uid"], name: "index_twitter_db_users_on_uid", unique: true
@@ -1820,8 +1803,4 @@ ActiveRecord::Schema.define(version: 2020_10_30_161929) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "tokimeki_friendships", "tokimeki_users", column: "user_uid", primary_key: "uid"
-  add_foreign_key "twitter_db_followerships", "twitter_db_users", column: "follower_uid", primary_key: "uid"
-  add_foreign_key "twitter_db_followerships", "twitter_db_users", column: "user_uid", primary_key: "uid"
-  add_foreign_key "twitter_db_friendships", "twitter_db_users", column: "friend_uid", primary_key: "uid"
-  add_foreign_key "twitter_db_friendships", "twitter_db_users", column: "user_uid", primary_key: "uid"
 end

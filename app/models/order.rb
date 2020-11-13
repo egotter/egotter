@@ -9,6 +9,7 @@
 #  name                    :string(191)
 #  price                   :integer
 #  tax_rate                :decimal(4, 2)
+#  trial_end               :integer
 #  search_count            :integer          default(0), not null
 #  follow_requests_count   :integer          default(0), not null
 #  unfollow_requests_count :integer          default(0), not null
@@ -99,6 +100,10 @@ class Order < ApplicationRecord
 
   def purchase_failed?
     customer_id.nil? || subscription_id.nil?
+  end
+
+  def trial?
+    Time.zone.now < Time.zone.at(trial_end)
   end
 
   def end_trial!
