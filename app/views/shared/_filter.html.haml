@@ -6,7 +6,7 @@
       %i.fas.fa-filter
     .dropdown-menu
       - purchased = current_user.has_valid_subscription?
-      - trial = current_user.admin? && purchased && current_user.has_trial_subscription?
+      - trial = purchased && current_user.has_trial_subscription?
       - Filter::VALUES.each.with_index do |(label, value), i|
         - if i < 2
           %a.filters.dropdown-item{href: "#", data: {filter: value}}
