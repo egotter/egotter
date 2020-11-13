@@ -102,8 +102,12 @@ class Order < ApplicationRecord
     customer_id.nil? || subscription_id.nil?
   end
 
+  def trial_end_time
+    Time.zone.at(trial_end)
+  end
+
   def trial?
-    Time.zone.now < Time.zone.at(trial_end)
+    Time.zone.now < trial_end_time
   end
 
   def end_trial!
@@ -143,6 +147,10 @@ class Order < ApplicationRecord
 
     def tax_rate
       @subscription.default_tax_rates[0].percentage / 100.0
+    end
+
+    def trial_end
+      @subscription.trial_end
     end
 
     def trial?
