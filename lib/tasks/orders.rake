@@ -1,7 +1,7 @@
 namespace :orders do
   desc 'update stripe attributes'
   task update_stripe_attributes: :environment do
-    Order.where(canceled_at: nil).each do |order|
+    Order.where(canceled_at: nil).find_each do |order|
       order.save_stripe_attributes!
     end
   end

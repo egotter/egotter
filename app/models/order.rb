@@ -69,6 +69,10 @@ class Order < ApplicationRecord
       if stripe_subscription.canceled_at
         self.canceled_at = stripe_subscription.canceled_at
       end
+
+      if trial_end.nil?
+        self.trial_end = stripe_subscription.trial_end
+      end
     end
 
     if changed?
