@@ -85,5 +85,7 @@
       = render partial: 'modal/create_unfollow_modal'
       = render partial: 'modal/periodic_tweet_modal'
       = render partial: 'modal/open_twitter_modal'
+      - if current_user.admin? && current_user.has_valid_subscription? && current_user.has_trial_subscription?
+        = render partial: 'modal/end_trial_modal'
 
     = render partial: 'modal/welcome_modal'

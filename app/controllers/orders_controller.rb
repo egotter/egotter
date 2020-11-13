@@ -41,6 +41,7 @@ class OrdersController < ApplicationController
     redirect_to root_path(via: current_via('error')), alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error')) unless performed?
   end
 
+  # TODO Move to Api::V1::OrdersController as #cancel
   def destroy
     order = fetch_order
 

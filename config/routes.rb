@@ -40,6 +40,7 @@ Rails.application.routes.draw do
       post 'users/update_device_token', to: 'users#update_device_token'
       post 'periodic_report_settings', to: 'periodic_report_settings#update'
       post 'create_periodic_tweet_requests', to: 'create_periodic_tweet_requests#update'
+      post 'orders/end_trial', to: 'orders#end_trial'
       resources :share_tweets, only: %i(create)
     end
   end

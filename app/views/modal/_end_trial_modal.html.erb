@@ -1,0 +1,8 @@
+<%= modal_dialog id: 'end-trial-modal', title: t('.title'), button: {positive: t('.yes'), negative: t('.no')} do %>
+  <p><%= t('.message_html') %></p>
+<% end %>
+<script>
+  $(function () {
+    window.endTrialModal = new EndTrialModal('end-trial-modal');
+  });
+</script>

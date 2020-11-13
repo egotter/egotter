@@ -4,7 +4,14 @@ class SortButton {
     this.$container = $('.sort-order-container');
     var self = this;
 
-    this.$container.find('.dropdown-item').not('.btn-checkout').on('click', function () {
+    this.$container.find('.dropdown-item.btn-end-trial').on('click', function () {
+      if (window.endTrialModal) {
+        window.endTrialModal.show();
+        return false;
+      }
+    });
+
+    this.$container.find('.dropdown-item').not('.btn-checkout').not('.btn-end-trial').on('click', function () {
       return self.clickItem($(this));
     });
   }
@@ -37,11 +44,19 @@ class SortButton {
 
 window.SortButton = SortButton;
 
+// TODO Refactoring
 class FilterButton {
   constructor(callback) {
     var $container = $('.filter-container');
 
-    $container.find('.dropdown-item').not('.btn-checkout').on('click', function () {
+    $container.find('.dropdown-item.btn-end-trial').on('click', function () {
+      if (window.endTrialModal) {
+        window.endTrialModal.show();
+        return false;
+      }
+    });
+
+    $container.find('.dropdown-item').not('.btn-checkout').not('.btn-end-trial').on('click', function () {
       var $selected = $(this);
       var $button = $container.find('button');
       $button.trigger('click');

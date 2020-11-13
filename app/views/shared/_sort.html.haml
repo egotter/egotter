@@ -5,8 +5,15 @@
       %i.fas.fa-sort
     .dropdown-menu
       - purchased = current_user.has_valid_subscription?
+      - trial = current_user.admin? && purchased && current_user.has_trial_subscription?
       - SortOrder::VALUES.each.with_index do |(label, value), i|
-        - if i < 2 || purchased
+        - if i < 2
+          %a.sort-orders.dropdown-item{href: "#", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
+            = label
+        - elsif trial
+          %a.sort-orders.dropdown-item.btn-end-trial{href: "#"}
+          = label
+        - elsif purchased
           %a.sort-orders.dropdown-item{href: "#", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
             = label
         - else
@@ -14,10 +21,12 @@
             = label
             %i.fas.fa-unlock
   :javascript
-    $('.sort-order-container .sort-orders').on('click', function () {
-      var page = '#{request.path}';
-      var text = $(this).text().trim();
-      ahoy.track('Sort', {page: page, text: text});
+    $(function () {
+      $('.sort-order-container .sort-orders').on('click', function () {
+        var page = '#{request.path}';
+        var text = $(this).text().trim();
+        ahoy.track('Sort', {page: page, text: text});
+      });
     });
 - else
   = link_to sign_in_path(redirect_path: request.path, via: current_via('sort_button')), class: 'btn btn-outline-secondary btn-sm' do

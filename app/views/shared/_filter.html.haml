@@ -6,8 +6,15 @@
       %i.fas.fa-filter
     .dropdown-menu
       - purchased = current_user.has_valid_subscription?
+      - trial = current_user.admin? && purchased && current_user.has_trial_subscription?
       - Filter::VALUES.each.with_index do |(label, value), i|
-        - if i < 2 || purchased
+        - if i < 2
+          %a.filters.dropdown-item{href: "#", data: {filter: value}}
+            = label
+        - elsif trial
+          %a.filters.dropdown-item.btn-end-trial{href: "#"}
+            = label
+        - elsif purchased
           %a.filters.dropdown-item{href: "#", data: {filter: value}}
             = label
         - else
@@ -15,10 +22,12 @@
             = label
             %i.fas.fa-unlock
   :javascript
-    $('.filter-container .filters').on('click', function () {
-      var page = '#{request.path}';
-      var text = $(this).text().trim();
-      ahoy.track('Filter', {page: page, text: text});
+    $(function () {
+      $('.filter-container .filters').on('click', function () {
+        var page = '#{request.path}';
+        var text = $(this).text().trim();
+        ahoy.track('Filter', {page: page, text: text});
+      });
     });
 - else
   = link_to sign_in_path(redirect_path: request.path, via: current_via('filter_button')), class: 'btn btn-outline-secondary btn-sm' do

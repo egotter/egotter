@@ -2070,6 +2070,10 @@ ja:
           is_follower: '@%{user1} は @%{user2} にフォローされています'
           is_not_follower: '@%{user1} は @%{user2} にフォローされていません'
           error: '検索された @%{user} のデータ取得に失敗しました。ページを更新してみてください。'
+      orders:
+        end_trial:
+          success: 'トライアル期間の更新に成功しました。ページを更新してください'
+          fail: 'トライアル期間の更新に失敗しました'
   modal:
     welcome_modal:
       continuous_sign_in:
@@ -2332,6 +2336,11 @@ ja:
         purchase: '購入する'
         purchased: '購入済み'
         login: 'ログインする'
+    end_trial_modal:
+      title: 'トライアル期間の終了'
+      message_html: 'この機能を使うとトライアル期間が終了しすぐに課金を開始します。よろしいですか？'
+      'yes': 'はい'
+      'no': 'キャンセル'
   application:
     twitter_user_not_found_html: |
       データの取得に失敗しました。大変お手数ですが、トップページから再度検索してみてください。<br>

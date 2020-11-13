@@ -214,12 +214,25 @@ class User < ApplicationRecord
     end
   end
 
+  def has_trial_subscription?
+    if instance_variable_defined?(:@has_trial_subscription)
+      @has_trial_subscription
+    else
+      order = valid_order
+      @has_trial_subscription = !order.trial_end.nil? && order.trial?
+    end
+  end
+
+  def valid_order
+    orders.unexpired.last
+  end
+
   def purchased_plan_name
-    orders.unexpired.last.short_name
+    valid_order.short_name
   end
 
   def purchased_search_count
-    orders.unexpired.last.search_count
+    valid_order.search_count
   end
 
   def persisted_statuses_count
