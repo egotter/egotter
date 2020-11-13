@@ -20,16 +20,33 @@
       <span class="btn btn-danger btn-reset-egotter disabled" disabled="disabled"><%= t('.delete_data.button') %></span>
       <div class="text-muted small mt-1"><%= t('.requested') %></div>
     <% else %>
-      <span class="btn btn-danger btn-reset-egotter" onclick="ahoy.track('ResetEgotterModal opened');" data-toggle="modal" data-target="#reset-egotter-modal"><%= t('.delete_data.button') %></span>
+      <span class="btn btn-danger btn-reset-egotter" onclick="ahoy.track('ResetEgotterModal opened');"><%= t('.delete_data.button') %></span>
       <div class="text-danger small mt-1"><%= t('.delete_data.note') %></div>
 
       <% if current_user.has_valid_subscription? %>
-        <%= modal_dialog(id: 'reset-egotter-modal', title: t('.delete_data.modal.title'), body: t('.delete_data.modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.modal.ok'), category: 'danger'}) %>
-        <script>
-          $(function () {
-            new ResetEgotterButton('reset-egotter-modal', 'btn-reset-egotter', '<%= reset_egotter_path %>');
-          });
-        </script>
+        <% if current_user.has_trial_subscription? %>
+          <script>
+            $(function () {
+              $('.btn-reset-egotter').on('click', function () {
+                if (window.endTrialModal) {
+                  window.endTrialModal.show();
+                  return false;
+                }
+              });
+            });
+          </script>
+        <% else %>
+          <script>
+            $(function () {
+              $('.btn-reset-egotter').on('click', function () {
+                if (window.resetEgotterModal) {
+                  window.resetEgotterModal.show();
+                  return false;
+                }
+              });
+            });
+          </script>
+        <% end %>
       <% else %>
         <%= modal_dialog(id: 'reset-egotter-modal', title: t('.delete_data.purchase_confirmation_modal.title'), body: t('.delete_data.purchase_confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.purchase_confirmation_modal.ok'), positive_class: 'btn-checkout'}) %>
       <% end %>

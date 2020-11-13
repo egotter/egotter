@@ -399,13 +399,6 @@ ja:
         button: 'データを削除する'
         note: 'この操作は取り消しできません'
         history: '履歴'
-        modal:
-          title: 'データを削除する'
-          body_html: |
-            @%{screen_name} のえごったーデータを削除します。本当に削除しますか？<br>
-            <br>
-            <b>※削除完了まで少し時間がかかります</b>
-          ok: '削除します'
         purchase_confirmation_modal:
           title: 'データを削除する'
           body_html: |
@@ -2342,6 +2335,14 @@ ja:
     end_trial_modal:
       title: 'トライアル期間の終了'
       message_html: 'この機能を使うとトライアル期間が終了しすぐに課金を開始します。よろしいですか？'
+      'yes': 'はい'
+      'no': 'キャンセル'
+    reset_egotter_modal:
+      title: 'データを削除する'
+      body_html: |
+        @%{screen_name} のえごったーデータを削除します。よろしいですか？<br>
+        <br>
+        <b>※削除完了まで少し時間がかかります</b>
       'yes': 'はい'
       'no': 'キャンセル'
   application:

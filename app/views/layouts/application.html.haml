@@ -87,5 +87,6 @@
       = render partial: 'modal/open_twitter_modal'
       - if current_user.has_valid_subscription? && current_user.has_trial_subscription?
         = render partial: 'modal/end_trial_modal'
+      = render partial: 'modal/reset_egotter_modal'
 
     = render partial: 'modal/welcome_modal'

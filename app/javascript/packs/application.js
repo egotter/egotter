@@ -30,6 +30,7 @@ import "./async_loader";
 import "./home";
 import "./follow_and_unfollow";
 import "./end_trial_modal";
+import "./reset_egotter_modal";
 import "./sort_and_filter";
 import "./word_cloud";
 import "./tweet_cluster";
