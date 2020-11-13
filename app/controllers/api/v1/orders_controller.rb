@@ -12,6 +12,14 @@ module Api
         logger.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
         render json: {error: true, message: t('.fail')}, status: :unprocessable_entity
       end
+
+      def cancel
+        current_user.orders.find_by(id: params[:id]).cancel!
+        render json: {message: t('.success')}
+      rescue => e
+        logger.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
+        render json: {error: true, message: t('.fail')}, status: :unprocessable_entity
+      end
     end
   end
 end

@@ -377,7 +377,7 @@ ja:
       follow_requests_count: "フォロー %{count}回/日"
       unfollow_requests_count: "フォロー解除 %{count}回/日"
       cancel: 'キャンセルする'
-      cancel_confirmation: '本当に「%{name}」をキャンセルしますか？'
+      cancel_confirmation: '有料プランをキャンセルします。よろしいですか？'
       has_not_purchased: "まだ購入していません"
       see_plans: '料金プランを見る'
     data:
@@ -2073,7 +2073,10 @@ ja:
       orders:
         end_trial:
           success: 'トライアル期間の更新に成功しました。ページを更新してください'
-          fail: 'トライアル期間の更新に失敗しました'
+          fail: 'トライアル期間の更新に失敗しましたお手数ですが、@egotter_cs までご連絡ください'
+        cancel:
+          success: '有料プランをキャンセルしました。ページを更新してください'
+          fail: '有料プランのキャンセルに失敗しました。お手数ですが、@egotter_cs までご連絡ください'
   modal:
     welcome_modal:
       continuous_sign_in:

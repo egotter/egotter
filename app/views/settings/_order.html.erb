@@ -22,13 +22,26 @@
             <div><%= t('.canceled_at', date: l(order.canceled_at.in_time_zone('Tokyo'), format: :order_short)) %></div>
           <% else %>
             <div><%= t('.created_at', date: l(order.created_at.in_time_zone('Tokyo'), format: :order_short)) %></div>
-            <div><%= link_to t('.cancel'), order_path(id: order.id), class: 'btn btn-outline-warning btn-sm', method: :delete, data: {confirm: t('.cancel_confirmation', name: order.name)} %></div>
+            <div><%= link_to t('.cancel'), '#', class: 'btn btn-outline-warning btn-sm btn-cancel-order', data: {id: order.id} %></div>
           <% end %>
         </td>
       </tr>
     <% end %>
     </tbody>
   </table>
+
+  <script>
+    $(function () {
+      $('.btn-cancel-order').on('click', function () {
+        var message = '<%= t('.cancel_confirmation') %>';
+        if (confirm(message)) {
+          var id = $(this).data('id');
+          new Order(id).cancel();
+        }
+        return false;
+      });
+    });
+  </script>
 <% else %>
   <div class="text-center my-5"><%= t('.has_not_purchased') %></div>
 <% end %>
