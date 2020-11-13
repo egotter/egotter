@@ -10,17 +10,25 @@ class SetVisitIdToOrderWorker
 
     if (visit = Ahoy::Visit.find_by(user_id: user.id))
       order.update!(ahoy_visit_id: visit.id)
-      events = visit.events.where(time: 30.minutes.ago..Time.zone.now).order(time: :desc).limit(10).reverse
-      message = "`Visit found` order=#{order.inspect}"
-      message << "\n" + events.map(&:inspect).join("\n")
-    else
-      message = "`Visit not found` order=#{order.inspect}"
     end
 
     unless options.has_key?('send_message') && !options['send_message']
+      message = build_message(order, visit)
       SendMessageToSlackWorker.perform_async(:orders, message)
     end
   rescue => e
     logger.warn "#{e.inspect} order_id=#{order_id} options=#{options.inspect}"
+  end
+
+  private
+
+  def build_message(order, visit)
+    if visit
+      events = visit.events.where(time: 30.minutes.ago..Time.zone.now).order(time: :desc).limit(10).reverse
+      message = "`Visit found` order=#{order.inspect}"
+      message << "\n" + events.map(&:inspect).join("\n")
+    else
+      "`Visit not found` order=#{order.inspect}"
+    end
   end
 end

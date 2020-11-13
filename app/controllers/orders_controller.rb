@@ -96,6 +96,7 @@ class OrdersController < ApplicationController
 
         order = Order.create_by!(checkout_session: checkout_session)
         SetVisitIdToOrderWorker.perform_async(order.id) rescue nil
+        UpdateTrialEndWorker.perform_async(order.id) rescue nil
 
         Stripe::Subscription.update(
             checkout_session.subscription_id,
