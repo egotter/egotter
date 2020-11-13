@@ -114,6 +114,10 @@ class Order < ApplicationRecord
     Time.zone.now < trial_end_time
   end
 
+  def update_trial_end!
+    update!(trial_end: stripe_subscription.trial_end)
+  end
+
   def end_trial!
     ::Stripe::Subscription.update(subscription_id, trial_end: 'now')
   end
