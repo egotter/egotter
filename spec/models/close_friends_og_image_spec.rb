@@ -31,6 +31,10 @@ RSpec.describe CloseFriendsOgImage::Generator, type: :model do
     let(:uid) { 123 }
     let(:users) { [{screen_name: 'name', profile_image_url_https: 'https://example.com/profile.jpg'}] }
     subject { described_class.generate_heart_image(uid, users) }
+    after do
+      path = CloseFriendsOgImage::ImagesLoader.dir_path(uid)
+      FileUtils.rm_rf(path) if File.exist?(path)
+    end
     it do
       is_expected.to satisfy do |result|
         expect(result).not_to match(/screen_name_\d+/)
