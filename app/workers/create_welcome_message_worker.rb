@@ -23,19 +23,16 @@ class CreateWelcomeMessageWorker
       return
     end
 
-    begin
-      message = WelcomeMessage.welcome(user.id)
-      message.set_prefix_message(options['prefix']) if options['prefix']
-      message.deliver!
-    rescue => e
-      if DirectMessageStatus.enhance_your_calm?(e)
-        logger.warn "Send welcome message later user_id=#{user_id} raised=true"
-        CreateWelcomeMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
-      else
-        SendMessageToSlackWorker.perform_async(:welcome_messages, "#{e.inspect} screen_name=#{user.screen_name} options=#{options.inspect}", user_id)
-      end
-    end
+    message = WelcomeMessage.welcome(user.id)
+    message.set_prefix_message(options['prefix']) if options['prefix']
+    message.deliver!
   rescue => e
-    logger.info "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
+    if DirectMessageStatus.enhance_your_calm?(e)
+      logger.warn "Send welcome message later user_id=#{user_id} raised=true"
+      CreateWelcomeMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
+    else
+      message = "#{e.inspect} user_id=#{user_id} screen_name=#{user&.screen_name} options=#{options.inspect}"
+      SendMessageToSlackWorker.perform_async(:welcome_messages, message)
+    end
   end
 end

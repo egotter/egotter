@@ -22,7 +22,7 @@ RSpec.describe CreateWelcomeMessageWorker do
             with(user.id).with(no_args).and_raise('Error')
       end
       it do
-        expect(SendMessageToSlackWorker).to receive(:perform_async).with(:welcome_messages, instance_of(String), user.id)
+        expect(SendMessageToSlackWorker).to receive(:perform_async).with(:welcome_messages, instance_of(String))
         subject
       end
     end
