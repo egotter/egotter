@@ -61,8 +61,22 @@ class SearchReport < ApplicationRecord
     User.egotter.api_client.create_direct_message_event(event: event)
   end
 
+  QUICK_REPLY_RECEIVED = {
+      label: I18n.t('quick_replies.search_reports.label1'),
+      description: I18n.t('quick_replies.search_reports.description1')
+  }
+  QUICK_REPLY_RESTART = {
+      label: I18n.t('quick_replies.search_reports.label3'),
+      description: I18n.t('quick_replies.search_reports.description3')
+  }
+  QUICK_REPLY_STOP = {
+      label: I18n.t('quick_replies.search_reports.label4'),
+      description: I18n.t('quick_replies.search_reports.description4')
+  }
+  QUICK_REPLY_DEFAULT = [QUICK_REPLY_RECEIVED, QUICK_REPLY_RESTART, QUICK_REPLY_STOP]
+
   class << self
-    def build_direct_message_event(uid, message)
+    def build_direct_message_event(uid, message, quick_replies: QUICK_REPLY_DEFAULT)
       {
           type: 'message_create',
           message_create: {
@@ -71,20 +85,7 @@ class SearchReport < ApplicationRecord
                   text: message,
                   quick_reply: {
                       type: 'options',
-                      options: [
-                          {
-                              label: I18n.t('quick_replies.search_reports.label1'),
-                              description: I18n.t('quick_replies.search_reports.description1')
-                          },
-                          {
-                              label: I18n.t('quick_replies.search_reports.label3'),
-                              description: I18n.t('quick_replies.search_reports.description3')
-                          },
-                          {
-                              label: I18n.t('quick_replies.search_reports.label4'),
-                              description: I18n.t('quick_replies.search_reports.description4')
-                          },
-                      ]
+                      options: quick_replies
                   }
               }
           }

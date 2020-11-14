@@ -62,8 +62,22 @@ class WelcomeMessage < ApplicationRecord
     User.egotter.api_client.create_direct_message_event(event: event)
   end
 
+  QUICK_REPLY_RECEIVED = {
+      label: I18n.t('quick_replies.welcome_messages.label1'),
+      description: I18n.t('quick_replies.welcome_messages.description1')
+  }
+  QUICK_REPLY_SEND_BLOCK_REPORT = {
+      label: I18n.t('quick_replies.block_reports.label4'),
+      description: I18n.t('quick_replies.block_reports.description4')
+  }
+  QUICK_REPLY_SEND_PERIODIC_REPORT = {
+      label: I18n.t('quick_replies.prompt_reports.label3'),
+      description: I18n.t('quick_replies.prompt_reports.description3')
+  }
+  QUICK_REPLY_DEFAULT = [QUICK_REPLY_RECEIVED, QUICK_REPLY_SEND_BLOCK_REPORT, QUICK_REPLY_SEND_PERIODIC_REPORT]
+
   class << self
-    def build_direct_message_event(recipient_uid, text)
+    def build_direct_message_event(recipient_uid, text, quick_replies: QUICK_REPLY_DEFAULT)
       {
           type: 'message_create',
           message_create: {
@@ -72,20 +86,7 @@ class WelcomeMessage < ApplicationRecord
                   text: text,
                   quick_reply: {
                       type: 'options',
-                      options: [
-                          {
-                              label: I18n.t('quick_replies.welcome_messages.label1'),
-                              description: I18n.t('quick_replies.welcome_messages.description1')
-                          },
-                          {
-                              label: I18n.t('quick_replies.welcome_messages.label2'),
-                              description: I18n.t('quick_replies.welcome_messages.description2')
-                          },
-                          {
-                              label: I18n.t('quick_replies.prompt_reports.label3'),
-                              description: I18n.t('quick_replies.prompt_reports.description3')
-                          }
-                      ]
+                      options: quick_replies
                   }
               }
           }
