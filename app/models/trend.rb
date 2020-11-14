@@ -18,6 +18,9 @@ class Trend < ApplicationRecord
   WORLD_WOE_ID = 1
   JAPAN_WOE_ID = 23424856
 
+  scope :world, -> { where(woe_id: WORLD_WOE_ID) }
+  scope :japan, -> { where(woe_id: JAPAN_WOE_ID) }
+
   class << self
     def save_current_trends
       time = Time.zone.now.change(min: 0, sec: 0)
