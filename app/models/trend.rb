@@ -21,7 +21,13 @@ class Trend < ApplicationRecord
   scope :world, -> { where(woe_id: WORLD_WOE_ID) }
   scope :japan, -> { where(woe_id: JAPAN_WOE_ID) }
 
+  # TODO Add created_at column
+
   class << self
+    def latest_trends
+      where(time: last.time)
+    end
+
     def save_current_trends
       time = Time.zone.now.change(min: 0, sec: 0)
 
