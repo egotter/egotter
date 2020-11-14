@@ -25,10 +25,10 @@ class SetVisitIdToOrderWorker
   def build_message(order, visit)
     if visit
       events = visit.events.where(time: 30.minutes.ago..Time.zone.now).order(time: :desc).limit(10).reverse
-      message = "`Visit found` order=#{order.inspect}"
+      message = "`Visit found` user_id=#{order.user_id} order_id=#{order.id}"
       message << "\n" + events.map(&:inspect).join("\n")
     else
-      "`Visit not found` order=#{order.inspect}"
+      "`Visit not found` user_id=#{order.user_id} order_id=#{order.id}"
     end
   end
 end

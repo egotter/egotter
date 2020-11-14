@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
   before_action :require_login!, except: :checkout_session_completed
   before_action :has_already_purchased?, only: :create
 
-  after_action :send_message_to_slack, only: %i(create destroy checkout_session_completed)
+  after_action :send_message, only: %i(create destroy checkout_session_completed)
 
   def create
     logger.warn "#{controller_name}##{action_name} is deprecated"
@@ -43,6 +43,8 @@ class OrdersController < ApplicationController
 
   # TODO Remove later
   def destroy
+    logger.warn "#{controller_name}##{action_name} is deprecated"
+
     order = fetch_order
 
     if order.canceled_at
@@ -120,8 +122,10 @@ class OrdersController < ApplicationController
 
   private
 
-  def send_message_to_slack
-    SendMessageToSlackWorker.perform_async(:orders, "order=#{fetch_order.inspect}", "#{Rails.env}:#{action_name}")
+  def send_message
+    order = fetch_order
+    message = "`#{Rails.env}:#{action_name}` user_id=#{order&.user_id} order_id=#{order&.id}"
+    SendMessageToSlackWorker.perform_async(:orders, message)
   end
 
   def fetch_order

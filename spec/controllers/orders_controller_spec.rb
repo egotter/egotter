@@ -57,38 +57,38 @@ RSpec.describe OrdersController, type: :controller do
   #   end
   # end
 
-  describe 'DELETE #destroy' do
-    subject { delete :destroy, params: {id: order.id} }
+  # describe 'DELETE #destroy' do
+  #   subject { delete :destroy, params: {id: order.id} }
+  #
+  #   before do
+  #     allow(controller).to receive(:current_user).and_return(user)
+  #     allow(controller).to receive(:send_message_to_slack)
+  #     allow(controller).to receive(:fetch_order).and_return(order)
+  #   end
+  #
+  #   context 'canceled_at is blank' do
+  #     before { order.update!(canceled_at: Time.zone.now) }
+  #     it do
+  #       expect(order).not_to receive(:cancel!)
+  #       subject
+  #       is_expected.to redirect_to root_path(via: 'orders/destroy/already_canceled')
+  #     end
+  #   end
+  #
+  #   context 'canceled_at is present' do
+  #     it do
+  #       expect(order).to receive(:cancel!)
+  #       subject
+  #       is_expected.to redirect_to root_path(via: 'orders/destroy')
+  #     end
+  #   end
+  # end
 
-    before do
-      allow(controller).to receive(:current_user).and_return(user)
-      allow(controller).to receive(:send_message_to_slack)
-      allow(controller).to receive(:fetch_order).and_return(order)
-    end
-
-    context 'canceled_at is blank' do
-      before { order.update!(canceled_at: Time.zone.now) }
-      it do
-        expect(order).not_to receive(:cancel!)
-        subject
-        is_expected.to redirect_to root_path(via: 'orders/destroy/already_canceled')
-      end
-    end
-
-    context 'canceled_at is present' do
-      it do
-        expect(order).to receive(:cancel!)
-        subject
-        is_expected.to redirect_to root_path(via: 'orders/destroy')
-      end
-    end
-  end
-
-  describe '#send_message_to_slack' do
-    subject { controller.send(:send_message_to_slack) }
+  describe '#send_message' do
+    subject { controller.send(:send_message) }
     before { allow(controller).to receive(:fetch_order).and_return(order) }
     it do
-      expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders, "order=#{order.inspect}", instance_of(String))
+      expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders, instance_of(String))
       subject
     end
   end
