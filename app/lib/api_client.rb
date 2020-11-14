@@ -23,6 +23,15 @@ class ApiClient
     events.map { |e| DirectMessage.from_event(e.to_h) }
   end
 
+  SEARCH_TIME_FORMAT = '%Y-%m-%d_%H:%M:%S_UTC'
+
+  def search(query, options = {})
+    options[:count] = 100 unless options[:count]
+    query += " since:#{options.delete(:since).strftime(SEARCH_TIME_FORMAT)}" if options[:since]
+    query += " until:#{options.delete(:until).strftime(SEARCH_TIME_FORMAT)}" if options[:until]
+    @client.search(query, options)
+  end
+
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
       RequestWithRetryHandler.new(method).perform do
@@ -193,7 +202,7 @@ class ApiClient
         fetch
       ).each do |method_name|
         define_method(method_name) do |*args, &blk|
-          ApplicationRecord.benchmark("#{self.class}##{__method__}", level: :debug) do
+          ApplicationRecord.benchmark("#{self.class}##{__method__} key=#{args[0]}", level: :debug) do
             super(*args, &blk)
           end
         end
