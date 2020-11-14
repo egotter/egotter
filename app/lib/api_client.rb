@@ -23,12 +23,15 @@ class ApiClient
     events.map { |e| DirectMessage.from_event(e.to_h) }
   end
 
-  SEARCH_TIME_FORMAT = '%Y-%m-%d_%H:%M:%S_UTC'
+  CONVERT_TIME_FORMAT = Proc.new do |time|
+    min = time.min - (time.min % 15) # 0, 15, 30, 45
+    time.strftime('%Y-%m-%d_%H:') + min.to_s.rjust(2, '0') + ':00_UTC'
+  end
 
   def search(query, options = {})
     options[:count] = 100 unless options[:count]
-    query += " since:#{options.delete(:since).strftime(SEARCH_TIME_FORMAT)}" if options[:since]
-    query += " until:#{options.delete(:until).strftime(SEARCH_TIME_FORMAT)}" if options[:until]
+    query += " since:#{CONVERT_TIME_FORMAT.call(options.delete(:since))}" if options[:since]
+    query += " until:#{CONVERT_TIME_FORMAT.call(options.delete(:until))}" if options[:until]
     @client.search(query, options)
   end
 
