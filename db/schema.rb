@@ -1274,6 +1274,8 @@ ActiveRecord::Schema.define(version: 2020_11_09_175241) do
     t.string "name"
     t.json "properties"
     t.timestamp "time", null: false
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_trends_on_created_at"
     t.index ["time"], name: "index_trends_on_time"
   end
 

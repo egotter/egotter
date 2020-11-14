@@ -9,10 +9,12 @@
 #  name         :string(191)
 #  properties   :json
 #  time         :datetime         not null
+#  created_at   :datetime         not null
 #
 # Indexes
 #
-#  index_trends_on_time  (time)
+#  index_trends_on_created_at  (created_at)
+#  index_trends_on_time        (time)
 #
 class Trend < ApplicationRecord
   WORLD_WOE_ID = 1
