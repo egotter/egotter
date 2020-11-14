@@ -8,9 +8,12 @@
 
 <script>
   $(function () {
+    var start = new Date().getTime();
+
     function redirectTo(force) {
       var url = '<%= raw @redirect_path %>';
-      window.location.replace(url + '&skip_search_request_check=' + force);
+      var elapsed = new Date().getTime() - start;
+      window.location.replace(url + '&skip_search_request_check=' + force + '&elapsed_time=' + elapsed);
     }
 
     function createChecker() {

@@ -13,8 +13,12 @@ module SearchRequestConcern
     before_action(only: :show) { current_user_has_dm_permission? }
     before_action(only: :show) { valid_screen_name? }
     before_action(only: :show) do
-      if params[:skip_search_request_check] != 'true' &&  %w(timelines close_friends unfriends unfollowers mutual_unfriends replying replied).include?(controller_path)
-        search_request_cache_exists?(params[:screen_name])
+      if skip_search_request_check?
+        logger.info "Maybe too many retries of #search_request_cache_exists? screen_name=#{params[:screen_name]} elapsed_time=#{params[:elapsed_time]}"
+      else
+        if check_search_request_cache_controller?
+          search_request_cache_exists?(params[:screen_name])
+        end
       end
     end
     before_action(only: :show) { @self_search = current_user_search_for_yourself?(params[:screen_name]) }
@@ -34,6 +38,14 @@ module SearchRequestConcern
 
     before_action(only: :show) { set_new_screen_name_if_changed }
     before_action(only: :show) { search_request_concern_bm_finish }
+  end
+
+  def skip_search_request_check?
+    params[:skip_search_request_check] == 'true'
+  end
+
+  def check_search_request_cache_controller?
+    %w(timelines close_friends unfriends unfollowers mutual_unfriends replying replied).include?(controller_path)
   end
 
   def set_new_screen_name_if_changed
