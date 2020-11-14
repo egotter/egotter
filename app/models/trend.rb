@@ -76,7 +76,29 @@ class Trend < ApplicationRecord
         max_id = tweets.last[:id]
       end
 
-      collection
+      collection.map { |c| omit_unnecessary_data(c) }
+    end
+
+    def omit_unnecessary_data(tweet)
+      data = omitted_tweet(tweet)
+
+      if tweet[:retweeted_status]
+        data[:retweeted_status] = omitted_tweet(tweet[:retweeted_status])
+      end
+
+      data
+    end
+
+    def omitted_tweet(tweet)
+      {
+          id: tweet[:id],
+          text: tweet[:text],
+          user: {
+              id: tweet[:user][:id],
+              screen_name: tweet[:user][:screen_name],
+          },
+          created_at: tweet[:created_at],
+      }
     end
 
     GROUP_BY_HOUR_FORMAT = '%Y/%m/%d %H:00:00'
