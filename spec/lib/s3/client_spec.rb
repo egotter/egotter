@@ -17,6 +17,11 @@ RSpec.describe S3::Client do
           with(bucket: 'bucket', key: key.to_s).with(no_args).with(no_args).and_return('output')
       is_expected.to eq('output')
     end
+
+    context 'key is blank' do
+      let(:key) { '' }
+      it { expect { subject }.to raise_error(described_class::BlankKey) }
+    end
   end
 
   describe '#write' do
@@ -26,6 +31,11 @@ RSpec.describe S3::Client do
       expect(WriteToS3Worker).to receive(:perform_async).with(klass: 'klass', bucket: 'bucket', key: key, body: 'input')
       subject
     end
+
+    context 'key is blank' do
+      let(:key) { '' }
+      it { expect { subject }.to raise_error(described_class::BlankKey) }
+    end
   end
 
   describe '#delete' do
@@ -34,6 +44,11 @@ RSpec.describe S3::Client do
     it do
       expect(DeleteFromS3Worker).to receive(:perform_async).with(klass: 'klass', bucket: 'bucket', key: key)
       subject
+    end
+
+    context 'key is blank' do
+      let(:key) { '' }
+      it { expect { subject }.to raise_error(described_class::BlankKey) }
     end
   end
 end
