@@ -2,14 +2,16 @@
 #
 # Table name: trends
 #
-#  id           :bigint(8)        not null, primary key
-#  woe_id       :bigint(8)        not null
-#  rank         :integer
-#  tweet_volume :integer
-#  name         :string(191)
-#  properties   :json
-#  time         :datetime         not null
-#  created_at   :datetime         not null
+#  id                 :bigint(8)        not null, primary key
+#  woe_id             :bigint(8)        not null
+#  rank               :integer
+#  tweet_volume       :integer
+#  tweets_size        :integer
+#  tweets_imported_at :datetime
+#  name               :string(191)
+#  properties         :json
+#  time               :datetime         not null
+#  created_at         :datetime         not null
 #
 # Indexes
 #
@@ -22,6 +24,7 @@ class Trend < ApplicationRecord
 
   scope :world, -> { where(woe_id: WORLD_WOE_ID) }
   scope :japan, -> { where(woe_id: JAPAN_WOE_ID) }
+  scope :top_n, -> (n) { where(rank: 1..n) }
 
   def search_tweets(options = {})
     self.class.search_tweets(name, options)

@@ -4,6 +4,8 @@ class CreateTrends < ActiveRecord::Migration[5.2]
       t.bigint :woe_id, null: false
       t.integer :rank
       t.integer :tweet_volume
+      t.integer :tweets_size, null: true
+      t.timestamp :tweets_imported_at, null: true
       t.string :name
       t.json :properties
       t.timestamp :time, null: false

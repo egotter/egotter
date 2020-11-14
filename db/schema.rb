@@ -1271,6 +1271,8 @@ ActiveRecord::Schema.define(version: 2020_11_09_175241) do
     t.bigint "woe_id", null: false
     t.integer "rank"
     t.integer "tweet_volume"
+    t.integer "tweets_size"
+    t.timestamp "tweets_imported_at"
     t.string "name"
     t.json "properties"
     t.timestamp "time", null: false
