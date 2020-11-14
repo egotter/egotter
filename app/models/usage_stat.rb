@@ -289,6 +289,25 @@ class UsageStat < ApplicationRecord
       end
     end
 
+    HOUR_COLORS = {
+        morning: 'rgba(220, 50, 47, 1.0)',
+        afternoon: 'rgba(220, 50, 47, 1.0)',
+        night: 'rgba(220, 50, 47, 1.0)',
+        else: 'rgba(108, 113, 196, 1.0)',
+    }
+
+    def color_by_hour(hour)
+      if 7 <= hour && hour <= 9
+        HOUR_COLORS[:morning]
+      elsif 11 <= hour && hour <= 13
+        HOUR_COLORS[:afternoon]
+      elsif 20 <= hour && hour <= 22
+        HOUR_COLORS[:night]
+      else
+        HOUR_COLORS[:else]
+      end
+    end
+
     # [
     #   {:name=>"0", :y=>66, :drilldown=>"0"},
     #   {:name=>"1", :y=>47, :drilldown=>"1"},
@@ -297,24 +316,8 @@ class UsageStat < ApplicationRecord
     #   {:name=>"23", :y=>87, :drilldown=>"23"}
     # ]
     def usage_stats_hour_series_data(times)
-      colors = {
-          morning: 'rgba(220, 50, 47, 1.0)',
-          afternoon: 'rgba(220, 50, 47, 1.0)',
-          night: 'rgba(220, 50, 47, 1.0)',
-          else: 'rgba(108, 113, 196, 1.0)',
-      }
       count_hour(times).map do |hour, count|
-        color =
-            if 7 <= hour && hour <= 9
-              colors[:morning]
-            elsif 11 <= hour && hour <= 13
-              colors[:afternoon]
-            elsif 20 <= hour && hour <= 22
-              colors[:night]
-            else
-              colors[:else]
-            end
-        {name: hour.to_s, y: count, color: color, drilldown: hour.to_s}
+        {name: hour.to_s, y: count, color: color_by_hour(hour), drilldown: hour.to_s}
       end
     end
 
