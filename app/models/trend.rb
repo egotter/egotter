@@ -27,6 +27,17 @@ class Trend < ApplicationRecord
     self.class.search_tweets(name, options)
   end
 
+  def import_tweets(tweets)
+    tweets = tweets.map do |t|
+      {uid: t.uid, screen_name: t.screen_name, raw_attrs_text: t.to_json}
+    end
+    S3::TrendTweet.import_from!(id, name, tweets)
+  end
+
+  def tweets
+    @tweets ||= (S3::TrendTweet.find_by(id)&.tweets || [])
+  end
+
   def query
     properties['query'] || URI.encode_www_form_component(name)
   end
@@ -80,25 +91,38 @@ class Trend < ApplicationRecord
     end
 
     def omit_unnecessary_data(tweet)
-      data = omitted_tweet(tweet)
+      data = Tweet.new(tweet)
 
       if tweet[:retweeted_status]
-        data[:retweeted_status] = omitted_tweet(tweet[:retweeted_status])
+        data.retweeted_status = Tweet.new(tweet[:retweeted_status])
       end
 
       data
     end
 
-    def omitted_tweet(tweet)
-      {
-          id: tweet[:id],
-          text: tweet[:text],
-          user: {
-              id: tweet[:user][:id],
-              screen_name: tweet[:user][:screen_name],
-          },
-          created_at: tweet[:created_at],
-      }
+    class Tweet
+      attr_reader :id, :text, :uid, :screen_name, :created_at
+      attr_accessor :retweeted_status
+
+      def initialize(attrs)
+        @id = attrs[:id]
+        @text = attrs[:text]
+        @uid = attrs[:user][:id]
+        @screen_name = attrs[:user][:screen_name]
+        @created_at = attrs[:created_at]
+        @retweeted_status = nil
+      end
+
+      def to_json
+        {
+            id: @id,
+            text: @text,
+            uid: @uid,
+            screen_name: @screen_name,
+            created_at: @created_at,
+            retweeted_status: @retweeted_status,
+        }.to_json
+      end
     end
 
     GROUP_BY_HOUR_FORMAT = '%Y/%m/%d %H:00:00'

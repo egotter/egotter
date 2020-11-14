@@ -18,6 +18,11 @@ module S3
         'not-specified'
       end
 
+      # TODO Implement as a general class
+      # uid -> resource_id
+      # screen_name -> resource_name
+      # tweets -> collection
+
       def find_by(uid)
         obj = client.read(uid)
         obj ? new(decode(obj)['tweets']) : nil
