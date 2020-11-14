@@ -227,28 +227,12 @@ RSpec.describe ApiClient::RequestWithRetryHandler, type: :model do
 end
 
 RSpec.describe ApiClient::CacheStore, type: :model do
-  let(:instance) { described_class.new }
-  let(:redis) { Redis.new }
-
-  before { allow(described_class).to receive(:redis_client).and_return(redis) }
-
-  describe '#read' do
-    subject { instance.read('key') }
-    before { allow(redis).to receive(:get).with(anything).and_raise(Redis::BaseError.new('read error')) }
-
+  describe '.redis_client' do
+    subject { described_class.redis_client }
+    before { described_class.remove_redis_client }
     it do
-      expect(Rails.logger).to receive(:warn).with(instance_of(String))
-      is_expected.to be_nil
-    end
-  end
-
-  describe '#write' do
-    subject { instance.write('key', 'value') }
-    before { allow(redis).to receive(:set).with(any_args).and_raise(Redis::BaseError.new('write error')) }
-
-    it do
-      expect(Rails.logger).to receive(:warn).with(instance_of(String))
-      is_expected.to be_falsey
+      expect(Redis).to receive(:new).with(hash_including(db: 2))
+      subject
     end
   end
 end

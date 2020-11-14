@@ -162,21 +162,27 @@ class ApiClient
   end
 
   class CacheStore < ActiveSupport::Cache::RedisCacheStore
+    ERROR_HANDLER = Proc.new do |method:, returning:, exception:|
+      Rails.logger.warn "ApiClient::CacheStore: #{method} failed, returned #{returning.inspect}: #{exception.class}: #{exception.message}"
+    end
+
     def initialize
       super(
           namespace: "#{Rails.env}:twitter",
           expires_in: 20.minutes,
           race_condition_ttl: 3.minutes,
           redis: self.class.redis_client,
-          error_handler: Proc.new { |method:, returning:, exception:|
-            Rails.logger.warn "ApiClient::CacheStore: #{method} failed, returned #{returning.inspect}: #{exception.class}: #{exception.message}"
-          }
+          error_handler: ERROR_HANDLER
       )
     end
 
     class << self
       def redis_client
-        @redis_client ||= Redis.client(ENV['TWITTER_API_REDIS_HOST'])
+        @redis_client ||= Redis.client(ENV['TWITTER_API_REDIS_HOST'], db: 2)
+      end
+
+      def remove_redis_client
+        @redis_client = nil
       end
     end
 

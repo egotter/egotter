@@ -24,7 +24,7 @@ class Redis
   WRITE_TIMEOUT = 0.5
 
   class << self
-    def client(host = nil)
+    def client(host = nil, options = {})
       options = {
           host: (host || HOST),
           db: (Rails.env.test? ? 1 : 0),
@@ -32,7 +32,7 @@ class Redis
           read_timeout: READ_TIMEOUT,
           write_timeout: WRITE_TIMEOUT,
           driver: :hiredis
-      }
+      }.merge(options)
 
       Rails.logger.debug { "Initialize Redis options=#{options}" }
 
