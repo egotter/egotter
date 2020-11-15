@@ -36,4 +36,12 @@ class SlackBotClient
         initial_comment: initial_comment,
     )
   end
+
+  def upload_snippet(text, initial_comment: '')
+    @client.files_upload(
+        channels: @channel,
+        file: Faraday::UploadIO.new(StringIO.new(text), 'text/plain'),
+        initial_comment: initial_comment,
+    )
+  end
 end

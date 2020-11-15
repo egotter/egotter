@@ -1,5 +1,6 @@
 class UpdateAuthorizedWorker
   include Sidekiq::Worker
+  include WorkerErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -31,8 +32,7 @@ class UpdateAuthorizedWorker
     elsif TwitterApiStatus.not_found?(e) || TwitterApiStatus.suspended?(e) || TwitterApiStatus.too_many_requests?(e)
       # Do nothing
     else
-      logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
-      logger.info e.backtrace.join("\n")
+      handle_worker_error(e, user_id: user_id, **options)
     end
   end
 end
