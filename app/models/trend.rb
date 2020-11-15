@@ -11,6 +11,8 @@
 #  name               :string(191)
 #  properties         :json
 #  time               :datetime         not null
+#  words_count        :json
+#  times_count        :json
 #  created_at         :datetime         not null
 #
 # Indexes
@@ -119,8 +121,12 @@ class Trend < ApplicationRecord
         @text = attrs[:text]
         @uid = attrs[:user][:id]
         @screen_name = attrs[:user][:screen_name]
-        @created_at = attrs[:created_at]
+        @created_at = attrs[:created_at].is_a?(String) ? Time.zone.parse(attrs[:created_at]) : attrs[:created_at]
         @retweeted_status = nil
+      end
+
+      def tweeted_at
+        @created_at
       end
 
       def to_json
@@ -139,6 +145,24 @@ class Trend < ApplicationRecord
 
     def group_by_hour(tweets)
       tweets.map { |t| Time.zone.parse(t[:created_at]) }.sort_by { |t| t.to_i }.group_by { |t| t.strftime(GROUP_BY_HOUR_FORMAT) }.map { |k, v| [k, v.size] }.to_h
+    end
+
+    def words_count(tweets)
+      text = tweets.take(1000).map(&:text).join(' ')
+      WordCloud.new.count_words(text).sort_by { |_, v| -v }.to_h
+    end
+
+    def times_count(tweets)
+      times = tweets.map(&:tweeted_at)
+
+      times_count = times.each_with_object(Hash.new(0)) do |t, memo|
+        time = Time.new(t.year, t.month, t.day, t.hour, t.min, 0, '+00:00')
+        memo[time.to_i] += 1
+      end
+
+      times_count.sort_by { |k, _| k }.map do |timestamp, count|
+        [timestamp * 1000, count]
+      end
     end
   end
 end

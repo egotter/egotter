@@ -9,6 +9,8 @@ class CreateTrends < ActiveRecord::Migration[5.2]
       t.string :name
       t.json :properties
       t.timestamp :time, null: false
+      t.json :words_count
+      t.json :times_count
       t.timestamp :created_at, null: false
 
       t.index :time
