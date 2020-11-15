@@ -7,7 +7,6 @@ namespace :trends do
       if trend.tweets_size.nil?
         tweets = trend.search_tweets(count: 10000)
         trend.import_tweets(tweets)
-        trend.update!(tweets_size: tweets.size, tweets_imported_at: Time.zone.now)
       end
     end
   end

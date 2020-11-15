@@ -35,6 +35,7 @@ class Trend < ApplicationRecord
       {uid: t.uid, screen_name: t.screen_name, raw_attrs_text: t.to_json}
     end
     S3::TrendTweet.import_from!(id, name, tweets)
+    update!(tweets_size: tweets.size, tweets_imported_at: Time.zone.now)
   end
 
   def tweets
