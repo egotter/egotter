@@ -27,7 +27,7 @@ class Trend < ApplicationRecord
   scope :top_n, -> (n) { where(rank: 1..n) }
 
   def search_tweets(options = {})
-    self.class.search_tweets(name, options)
+    self.class.search_tweets(name, options.merge(time: time))
   end
 
   def import_tweets(tweets)
@@ -76,8 +76,14 @@ class Trend < ApplicationRecord
 
     def search_tweets(query, options = {})
       options[:count] = 10000 unless options[:count]
-      options[:since] = 1.day.ago unless options[:since]
-      options[:until] = Time.zone.now unless options[:until]
+      if options[:time]
+        time = options.delete(:time)
+        options[:since] = time - 1.day
+        options[:until] = time
+      else
+        options[:since] = 1.day.ago unless options[:since]
+        options[:until] = Time.zone.now unless options[:until]
+      end
 
       collection = []
       max_id = nil
