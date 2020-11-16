@@ -26,6 +26,8 @@ Rails.application.routes.draw do
       get "follower_insights/profiles_count", to: "follower_insights#profiles_count"
       get "follower_insights/locations_count", to: "follower_insights#locations_count"
       get "follower_insights/tweet_times", to: "follower_insights#tweet_times"
+      get "trends/words_count", to: "trends#words_count"
+      get "trends/times_count", to: "trends#times_count"
 
       get "timelines", to: "timelines#show"
       get "summaries", to: "summaries#show"
@@ -91,6 +93,7 @@ Rails.application.routes.draw do
   ).each do |controller_name|
     resources controller_name, only: %i(show), param: :screen_name
   end
+  resources 'trends', only: %i(index)
 
   get 'blocking_or_blocked/:screen_name', to: redirect("/mutual_unfriends/%{screen_name}?via=routing")
 

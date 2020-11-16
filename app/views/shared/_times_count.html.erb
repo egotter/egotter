@@ -1,4 +1,4 @@
-<% container_id = "word-cloud-container-#{SecureRandom.urlsafe_base64(10)}" %>
+<% container_id = "times-count-container-#{SecureRandom.urlsafe_base64(10)}" %>
 <div><%= description %></div>
 <div id="<%= container_id %>" class="d-flex align-items-center justify-content-center mt-3" style="height: 300px;">
   <div><%= t('.loading_html') %></div>
@@ -8,15 +8,14 @@
   $(function () {
     var url = '<%= raw api_path %>';
     var container = $('#<%= container_id %>');
-    logger.log('word_cloud', container.attr('id'));
+    logger.log('times_count', container.attr('id'));
 
     $.get(url).done(function (res) {
-      if (res.words_count.length === 0) {
+      if (res.times_count.length === 0) {
         container.empty().text('<%= t('.empty') %>');
       } else {
         container.empty();
-        var smartphone = <%= request.device_type == :smartphone %>;
-        new WordCloud(container.attr('id'), res.words_count, container.width(), container.height(), smartphone).draw();
+        new UsageStat().drawStockLineChart(container.attr('id'), res.times_count);
       }
     }).fail(function (xhr) {
       logger.warn(url, xhr.responseText);

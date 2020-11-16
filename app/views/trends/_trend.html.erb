@@ -1,0 +1,7 @@
+<div class="card card-body my-3"><%= render partial: 'shared/word_cloud', locals: {description: trends_word_cloud_description(trend), api_path: api_trend_words_count_path(trend.id)} %></div>
+<div class="card card-body mb-3"><%= render partial: 'shared/times_count', locals: {description: trends_times_count_description(trend), api_path: api_trend_times_count_path(trend.id)} %></div>
+
+<div class="text-muted small">
+  tv=<%= trend.tweet_volume %>
+  ts=<%= trend.tweets_size %>
+</div>

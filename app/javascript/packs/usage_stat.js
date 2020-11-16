@@ -8,6 +8,11 @@ class UsageStat {
     this._drawColumnChart(renderTo, [series], {series: drilldown});
   }
 
+  drawStockLineChart(renderTo, data) {
+    var series = {name: null, data: data};
+    this._drawStockLineChart(renderTo, [series]);
+  }
+
   drawTweetsBarChart(renderTo, breakdown) {
     var categories = [
         this.i18n['mention'],
@@ -112,6 +117,40 @@ class UsageStat {
     };
 
     Highcharts.chart(chartConfig);
+  }
+
+  _drawStockLineChart(renderTo, series) {
+    Highcharts.setOptions({
+      time: {
+        timezone: moment.tz.guess()
+      }
+    });
+
+    var chartConfig = {
+      chart: {
+        renderTo: renderTo,
+        type: 'line',
+        marginTop: 0,
+        marginRight: 0,
+        spacingTop: 0,
+        spacingBottom: 0,
+        spacingLeft: 0
+      },
+      title: {
+        text: null,
+      },
+      subtitle: {
+        text: null,
+      },
+      series: series,
+      rangeSelector: {enabled: false},
+      scrollbar: {enabled: false},
+      navigator: {enabled: false},
+      exporting: {enabled: false},
+      credits: {enabled: false}
+    };
+
+    Highcharts.stockChart(chartConfig);
   }
 
   _drawBarChart(renderTo, categories, series) {
