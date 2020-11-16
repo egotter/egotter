@@ -32,7 +32,7 @@ class Trend < ApplicationRecord
     self.class.search_tweets(name, options.merge(time: time))
   end
 
-  def import_tweets(tweets, update_words_count: false, update_times_count: false)
+  def import_tweets(tweets, update_words_count: true, update_times_count: true)
     hash_tweets = tweets.map do |t|
       {uid: t.uid, screen_name: t.screen_name, raw_attrs_text: t.to_json}
     end
@@ -87,13 +87,20 @@ class Trend < ApplicationRecord
 
     def search_tweets(query, options = {})
       options[:count] = 10000 unless options[:count]
-      if options[:time]
-        time = options.delete(:time)
-        options[:since] = time - 1.day
-        options[:until] = time
+      if options[:without_time]
+        options.delete(:without_time)
+        options.delete(:time)
+        options.delete(:since)
+        options.delete(:until)
       else
-        options[:since] = 1.day.ago unless options[:since]
-        options[:until] = Time.zone.now unless options[:until]
+        if options[:time]
+          time = options.delete(:time)
+          options[:since] = time - 1.day
+          options[:until] = time
+        else
+          options[:since] = 1.day.ago unless options[:since]
+          options[:until] = Time.zone.now unless options[:until]
+        end
       end
 
       client_loader = options.delete(:client_loader) || Proc.new { Bot.api_client }

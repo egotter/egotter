@@ -16,7 +16,10 @@ namespace :trends do
     Trend.japan.latest_trends.top_n(3).where(created_at: 5.minutes.ago..Time.zone.now).each do |trend|
       if trend.tweets_size.nil?
         tweets = trend.search_tweets(count: 30000, client_loader: client_loader)
-        trend.import_tweets(tweets, update_words_count: true, update_times_count: true)
+        if tweets.size < 1000
+          tweets = trend.search_tweets(count: 30000, client_loader: client_loader, without_time: true)
+        end
+        trend.import_tweets(tweets)
 
         logger.info "task=#{task.name} name=#{trend.name} tweets=#{tweets.size}"
       end
