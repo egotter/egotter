@@ -113,7 +113,8 @@ class User < ApplicationRecord
     end
 
     def api_client
-      order(created_at: :desc).find_by(authorized: true, locked: false).api_client
+      ids = where(authorized: true, locked: false).order(created_at: :desc).limit(100).pluck(:id)
+      find(ids.sample).api_client
     end
   end
 
