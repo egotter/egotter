@@ -64,8 +64,7 @@ module StatusAccessor
   end
 
   def tweeted_at
-    # TODO Use user specific time zone
-    ActiveSupport::TimeZone['Tokyo'].parse(raw_attrs.created_at)
+    raw_attrs.created_at.is_a?(String) ? Time.zone.parse(raw_attrs.created_at) : nil
   end
 
   def retweet?
