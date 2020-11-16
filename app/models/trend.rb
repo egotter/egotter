@@ -103,13 +103,24 @@ class Trend < ApplicationRecord
       count = options[:count]
 
       while collection.size < count
-        tweets = client_loader.call.search(query, options.merge(count: 100, max_id: max_id))
+        tweets = internal_fetch_tweets(client_loader, query, options.merge(count: 100, max_id: max_id))
         collection.concat(tweets)
         break if tweets.empty? || max_id == tweets.last[:id]
         max_id = tweets.last[:id]
       end
 
       collection.map { |c| omit_unnecessary_data(c) }
+    end
+
+    def internal_fetch_tweets(client_loader, query, options)
+      retries ||= 3
+      client_loader.call.search(query, options)
+    rescue => e
+      if (retries -= 1) >= 0
+        retry
+      else
+        raise
+      end
     end
 
     def omit_unnecessary_data(tweet)
