@@ -32,12 +32,20 @@ class Trend < ApplicationRecord
     self.class.search_tweets(name, options.merge(time: time))
   end
 
-  def import_tweets(tweets)
-    tweets = tweets.map do |t|
+  def import_tweets(tweets, update_words_count: false, update_times_count: false)
+    hash_tweets = tweets.map do |t|
       {uid: t.uid, screen_name: t.screen_name, raw_attrs_text: t.to_json}
     end
-    S3::TrendTweet.import_from!(id, name, tweets)
+    S3::TrendTweet.import_from!(id, name, hash_tweets)
     update!(tweets_size: tweets.size, tweets_imported_at: Time.zone.now)
+
+    if update_words_count
+      update(words_count: self.class.words_count(tweets))
+    end
+
+    if update_times_count
+      update(times_count: self.class.times_count(tweets))
+    end
   end
 
   def tweets
@@ -89,7 +97,7 @@ class Trend < ApplicationRecord
       end
 
       collection = []
-      max_id = nil
+      max_id = options[:max_id] || nil
       count = options[:count]
 
       while collection.size < count
@@ -123,6 +131,10 @@ class Trend < ApplicationRecord
         @screen_name = attrs[:user][:screen_name]
         @created_at = attrs[:created_at].is_a?(String) ? Time.zone.parse(attrs[:created_at]) : attrs[:created_at]
         @retweeted_status = nil
+      end
+
+      def tweet_id
+        @id
       end
 
       def tweeted_at
@@ -161,7 +173,7 @@ class Trend < ApplicationRecord
       end
 
       times_count.sort_by { |k, _| k }.map do |timestamp, count|
-        [timestamp * 1000, count]
+        [timestamp, count]
       end
     end
   end
