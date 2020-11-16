@@ -96,12 +96,14 @@ class Trend < ApplicationRecord
         options[:until] = Time.zone.now unless options[:until]
       end
 
+      client_loader = options.delete(:client_loader) || Proc.new { Bot.api_client }
+
       collection = []
       max_id = options[:max_id] || nil
       count = options[:count]
 
       while collection.size < count
-        tweets = Bot.api_client.search(query, options.merge(count: 100, max_id: max_id))
+        tweets = client_loader.call.search(query, options.merge(count: 100, max_id: max_id))
         collection.concat(tweets)
         break if tweets.empty? || max_id == tweets.last[:id]
         max_id = tweets.last[:id]
