@@ -12,6 +12,7 @@ class CreateBots < ActiveRecord::Migration[4.2]
 
       t.index :uid, unique: true
       t.index :screen_name
+      t.index [:authorized, :locked]
     end
   end
 end

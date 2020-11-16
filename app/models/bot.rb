@@ -14,8 +14,9 @@
 #
 # Indexes
 #
-#  index_bots_on_screen_name  (screen_name)
-#  index_bots_on_uid          (uid) UNIQUE
+#  index_bots_on_authorized_and_locked  (authorized,locked)
+#  index_bots_on_screen_name            (screen_name)
+#  index_bots_on_uid                    (uid) UNIQUE
 #
 
 class Bot < ApplicationRecord
@@ -27,7 +28,7 @@ class Bot < ApplicationRecord
     end
 
     def api_client(options = {})
-      find(current_ids.sample).api_client(options)
+      select(:token, :secret).find(current_ids.sample).api_client(options)
     end
 
     def load(path)

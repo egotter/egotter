@@ -259,6 +259,7 @@ ActiveRecord::Schema.define(version: 2020_11_09_175241) do
     t.string "token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["authorized", "locked"], name: "index_bots_on_authorized_and_locked"
     t.index ["screen_name"], name: "index_bots_on_screen_name"
     t.index ["uid"], name: "index_bots_on_uid", unique: true
   end
