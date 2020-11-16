@@ -9,6 +9,7 @@ namespace :trends do
     client_loader = Proc.new do
       User.api_client.tap { |c| c.twitter.verify_credentials }
     rescue => e
+      logger.info "Change client exception=#{e.inspect}"
       Bot.api_client
     end
 
