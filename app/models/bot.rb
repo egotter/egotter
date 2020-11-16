@@ -37,8 +37,8 @@ class Bot < ApplicationRecord
       end
     end
 
-    def invalidate_expired_credentials
-      verify_credentials.each do |cred|
+    def invalidate_all_expired_credentials
+      verify_all_credentials.each do |cred|
         bot = find(cred[:id])
         bot.screen_name = cred[:screen_name]
         bot.authorized = cred[:authorized]
@@ -54,7 +54,7 @@ class Bot < ApplicationRecord
       end
     end
 
-    def verify_credentials
+    def verify_all_credentials
       processed = Queue.new
 
       all.each do |bot|
@@ -86,6 +86,8 @@ class Bot < ApplicationRecord
     end
 
     def rate_limit
+      logger.warn 'Bot.rate_limit is deprecated'
+
       processed = Queue.new
       current_ids.each do |id|
         bot = Bot.find(id)
