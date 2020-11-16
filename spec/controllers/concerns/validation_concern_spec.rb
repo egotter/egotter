@@ -79,7 +79,7 @@ describe ValidationConcern, type: :controller do
     end
   end
 
-  describe '#require_admin!' do
+  describe '#authenticate_admin!' do
     shared_context 'user is admin' do
       before { user.update(uid: User::ADMIN_UID) }
     end
@@ -88,7 +88,7 @@ describe ValidationConcern, type: :controller do
       before { user.update(uid: User::ADMIN_UID + 1) }
     end
 
-    subject { controller.require_admin! }
+    subject { controller.authenticate_admin! }
 
     context 'user is not signed in' do
       include_context 'user is not signed in'

@@ -25,7 +25,7 @@ module ValidationConcern
     end
   end
 
-  def require_admin!
+  def authenticate_admin!
     return if user_signed_in? && current_user.admin?
     respond_with_error(:unauthorized, t('before_sign_in.need_login_html', url: kick_out_error_path('need_login')))
   end
