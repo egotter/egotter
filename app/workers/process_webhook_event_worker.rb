@@ -64,33 +64,13 @@ class ProcessWebhookEventWorker
     GlobalDirectMessageReceivedFlag.new.received(dm.sender_id)
     GlobalSendDirectMessageCountByUser.new.clear(dm.sender_id)
 
-    if stop_block_report_requested?(dm)
-      stop_block_report(dm)
-    elsif restart_block_report_requested?(dm.text)
-      restart_block_report(dm)
-    elsif block_report_received?(dm.text)
-      # Do nothing
-    elsif send_block_report_requested?(dm.text)
-      send_block_report(dm.sender_id)
-    elsif stop_search_report_requested?(dm)
-      stop_search_report(dm)
-    elsif restart_search_report_requested?(dm)
-      restart_search_report(dm)
-    elsif restart_periodic_report_requested?(dm)
-      restart_periodic_report(dm.sender_id)
-    elsif stop_periodic_report_requested?(dm)
-      stop_periodic_report(dm.sender_id)
-    elsif periodic_report_received?(dm)
-      # Do nothing
-    elsif continue_periodic_report_requested?(dm.text)
-      continue_periodic_report(dm.sender_id)
-    elsif send_periodic_report_requested?(dm.text)
-      enqueue_user_requested_periodic_report(dm)
-    elsif schedule_tweets_questioned?(dm)
-      answer_schedule_tweets_question(dm)
-    elsif delete_tweets_questioned?(dm.text)
-      answer_delete_tweets_question(dm.sender_id)
-    else
+    processed = process_block_report(dm)
+    processed = process_search_report(dm) unless processed
+    processed = process_periodic_report(dm) unless processed
+    processed = process_schedule_tweets(dm) unless processed
+    processed = process_delete_tweets(dm) unless processed
+
+    unless processed
       logger.info { "#{__method__} dm is ignored #{dm.text}" }
     end
 
@@ -101,13 +81,7 @@ class ProcessWebhookEventWorker
   def process_message_from_egotter(dm)
     GlobalDirectMessageSentFlag.new.received(dm.recipient_id)
 
-    if send_periodic_report_requested?(dm.text)
-      enqueue_egotter_requested_periodic_report(dm)
-    elsif stop_periodic_report_requested?(dm)
-      stop_periodic_report(dm.recipient_id)
-    elsif restart_periodic_report_requested?(dm)
-      restart_periodic_report(dm.recipient_id)
-    end
+    process_egotter_requested_periodic_report(dm)
 
     SendSentMessageWorker.perform_async(dm.recipient_id, dm_id: dm.id, text: dm.text)
   end

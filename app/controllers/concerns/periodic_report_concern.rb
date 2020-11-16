@@ -1,134 +1,143 @@
-require 'active_support/concern'
-
 module PeriodicReportConcern
-  extend ActiveSupport::Concern
+  include ReportStatusValidator
 
-  SEND_PERIODIC_REPORT_REGEXP = /((リム|りむ)(られた?)?通知)|今すぐ(送信)?/
+  def process_periodic_report(dm)
+    processor = PeriodicReportProcessor.new(dm.sender_id, dm.text)
 
-  def send_periodic_report_requested?(text)
-    text.length <= 15 && text.match?(SEND_PERIODIC_REPORT_REGEXP)
+    if processor.stop_requested?
+      processor.stop_report
+      return true
+    end
+
+    if processor.restart_requested?
+      processor.restart_report
+      return true
+    end
+
+    if processor.continue_requested?
+      processor.continue_report
+      return true
+    end
+
+    if processor.received?
+      # Do nothing
+      return true
+    end
+
+    if processor.send_requested?
+      processor.send_report
+      return true
+    end
+
+    false
   end
 
-  module_function :send_periodic_report_requested?
+  def process_egotter_requested_periodic_report(dm)
+    processor = PeriodicReportProcessor.new(dm.recipient_id, dm.text)
 
-  CONTINUE_PERIODIC_REPORT_REGEXP = /継続|断続|けいぞく|復活|再会/
+    if processor.stop_requested?
+      processor.stop_report
+      return true
+    end
 
-  def continue_periodic_report_requested?(text)
-    text.length < 15 && text.match?(CONTINUE_PERIODIC_REPORT_REGEXP)
+    if processor.restart_requested?
+      processor.restart_report
+      return true
+    end
+
+    if processor.send_requested?
+      processor.send_egotter_requested_report
+      return true
+    end
+
+    false
   end
 
-  module_function :continue_periodic_report_requested?
+  class PeriodicReportProcessor
+    include AbstractReportProcessor
 
-  STOP_PERIODIC_REPORT_REGEXP = /【?リム(られ)?通知(\s|　)*(停止|ていし)】?/
+    def stop_regexp
+      /【?リム(られ)?通知(\s|　)*(停止|ていし)】?/
+    end
 
-  def stop_periodic_report_requested?(dm)
-    dm.text.length < 15 && dm.text.match?(STOP_PERIODIC_REPORT_REGEXP)
-  end
+    def restart_regexp
+      /リム(られ)?通知(\s|　)*(再開|さいかい|再会|復活|ふっかつ)/
+    end
 
-  RESTART_PERIODIC_REPORT_REGEXP = /リム(られ)?通知(\s|　)*(再開|さいかい|再会|復活|ふっかつ)/
+    def continue_regexp
+      /継続|断続|けいぞく|復活|再会/
+    end
 
-  def restart_periodic_report_requested?(dm)
-    dm.text.length < 15 && dm.text.match?(RESTART_PERIODIC_REPORT_REGEXP)
-  end
+    def received_regexp
+      /リム(られ)?通知(\s|　)*届きました/
+    end
 
-  RECEIVED_REGEXP = /リム(られ)?通知(\s|　)*届きました/
+    def send_regexp
+      /((リム|りむ)(られた?)?通知)|今すぐ(送信)?/
+    end
 
-  def periodic_report_received?(dm)
-    dm.text.length < 15 && dm.text.match?(RECEIVED_REGEXP)
-  end
+    def stop_report
+      user = validate_report_status(@uid)
+      return unless user
 
-  def enqueue_user_requested_periodic_report(dm)
-    user = validate_periodic_report_status(dm.sender_id)
-    return unless user
+      DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
 
-    DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
+      StopPeriodicReportRequest.create(user_id: user.id)
+      CreatePeriodicReportStopRequestedMessageWorker.perform_async(user.id)
+    end
 
-    unless user.has_valid_subscription?
-      unless EgotterFollower.exists?(uid: user.uid)
-        CreatePeriodicReportNotFollowingMessageWorker.perform_async(user.id)
-        return
+    def restart_report
+      user = validate_report_status(@uid)
+      return unless user
+
+      DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
+
+      StopPeriodicReportRequest.find_by(user_id: user.id)&.destroy
+      CreatePeriodicReportRestartRequestedMessageWorker.perform_async(user.id)
+    end
+
+    def continue_report
+      user = validate_report_status(@uid)
+      return unless user
+
+      DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
+
+      CreatePeriodicReportContinueRequestedMessageWorker.perform_async(user.id)
+    end
+
+    def send_report
+      user = validate_report_status(@uid)
+      return unless user
+
+      DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
+
+      unless user.has_valid_subscription?
+        unless EgotterFollower.exists?(uid: user.uid)
+          CreatePeriodicReportNotFollowingMessageWorker.perform_async(user.id)
+          return
+        end
+
+        if PeriodicReport.interval_too_short?(user)
+          CreatePeriodicReportIntervalTooShortMessageWorker.perform_async(user.id)
+          return
+        end
+
+        if PeriodicReport.access_interval_too_long?(user)
+          CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
+          return
+        end
       end
 
-      if PeriodicReport.interval_too_short?(user)
-        CreatePeriodicReportIntervalTooShortMessageWorker.perform_async(user.id)
-        return
-      end
-
-      if PeriodicReport.access_interval_too_long?(user)
-        CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
-        return
-      end
+      request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'user')
+      CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
     end
 
-    request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'user')
-    CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
-  rescue => e
-    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
-  end
+    def send_egotter_requested_report
+      user = validate_report_status(@uid)
+      return unless user
 
-  def enqueue_egotter_requested_periodic_report(dm)
-    user = validate_periodic_report_status(dm.recipient_id)
-    return unless user
-
-    request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'egotter')
-    CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
-  rescue => e
-    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
-  end
-
-  def stop_periodic_report(uid)
-    user = validate_periodic_report_status(uid)
-    return unless user
-
-    DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
-
-    StopPeriodicReportRequest.create(user_id: user.id)
-    CreatePeriodicReportStopRequestedMessageWorker.perform_async(user.id)
-  rescue => e
-    logger.warn "##{__method__} #{e.inspect} uid=#{uid}"
-  end
-
-  def restart_periodic_report(uid)
-    user = validate_periodic_report_status(uid)
-    return unless user
-
-    DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
-
-    StopPeriodicReportRequest.find_by(user_id: user.id)&.destroy
-    CreatePeriodicReportRestartRequestedMessageWorker.perform_async(user.id)
-  rescue => e
-    logger.warn "##{__method__} #{e.inspect} uid=#{uid}"
-  end
-
-  def continue_periodic_report(uid)
-    user = validate_periodic_report_status(uid)
-    return unless user
-
-    DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
-
-    CreatePeriodicReportContinueRequestedMessageWorker.perform_async(user.id)
-  rescue => e
-    logger.warn "##{__method__} #{e.inspect} uid=#{uid}"
-  end
-
-  private
-
-  def validate_periodic_report_status(uid)
-    unless (user = User.find_by(uid: uid))
-      CreatePeriodicReportUnregisteredMessageWorker.perform_async(uid)
-      return
+      request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'egotter')
+      CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
     end
-
-    unless user.authorized?
-      CreatePeriodicReportUnauthorizedMessageWorker.perform_async(user.id)
-      return
-    end
-
-    unless user.notification_setting.enough_permission_level?
-      CreatePeriodicReportPermissionLevelNotEnoughMessageWorker.perform_async(user.id)
-      return
-    end
-
-    user
   end
 end

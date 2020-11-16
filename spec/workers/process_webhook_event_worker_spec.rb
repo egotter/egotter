@@ -113,32 +113,14 @@ RSpec.describe ProcessWebhookEventWorker do
     it do
       expect(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received).with(dm.sender_id)
       expect(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :clear).with(dm.sender_id)
+      expect(worker).to receive(:process_block_report).with(dm)
+      expect(worker).to receive(:process_search_report).with(dm)
+      expect(worker).to receive(:process_periodic_report).with(dm)
+      expect(worker).to receive(:process_schedule_tweets).with(dm)
+      expect(worker).to receive(:process_delete_tweets).with(dm)
       expect(SendReceivedMessageWorker).to receive(:perform_async).with(dm.sender_id, dm_id: dm.id, text: dm.text)
+      expect(SendReceivedMediaToSlackWorker).to receive(:perform_async).with(dm.to_json)
       subject
-    end
-
-    context 'restart_periodic_report_requested? returns true' do
-      before { allow(worker).to receive(:restart_periodic_report_requested?).with(dm).and_return(true) }
-      it do
-        expect(worker).to receive(:restart_periodic_report).with(dm.sender_id)
-        subject
-      end
-    end
-
-    context 'send_periodic_report_requested? returns true' do
-      before { allow(worker).to receive(:send_periodic_report_requested?).with(dm.text).and_return(true) }
-      it do
-        expect(worker).to receive(:enqueue_user_requested_periodic_report).with(dm)
-        subject
-      end
-    end
-
-    context 'stop_periodic_report_requested? returns true' do
-      before { allow(worker).to receive(:stop_periodic_report_requested?).with(dm).and_return(true) }
-      it do
-        expect(worker).to receive(:stop_periodic_report).with(dm.sender_id)
-        subject
-      end
     end
   end
 
@@ -148,32 +130,9 @@ RSpec.describe ProcessWebhookEventWorker do
 
     it do
       expect(GlobalDirectMessageSentFlag).to receive_message_chain(:new, :received).with(dm.recipient_id)
+      expect(worker).to receive(:process_egotter_requested_periodic_report).with(dm)
       expect(SendSentMessageWorker).to receive(:perform_async).with(dm.recipient_id, dm_id: dm.id, text: dm.text)
       subject
-    end
-
-    context 'send_periodic_report_requested? returns true' do
-      before { allow(worker).to receive(:send_periodic_report_requested?).with(dm.text).and_return(true) }
-      it do
-        expect(worker).to receive(:enqueue_egotter_requested_periodic_report).with(dm)
-        subject
-      end
-    end
-
-    context 'stop_periodic_report_requested? returns true' do
-      before { allow(worker).to receive(:stop_periodic_report_requested?).with(dm).and_return(true) }
-      it do
-        expect(worker).to receive(:stop_periodic_report).with(dm.recipient_id)
-        subject
-      end
-    end
-
-    context 'restart_periodic_report_requested? returns true' do
-      before { allow(worker).to receive(:restart_periodic_report_requested?).with(dm).and_return(true) }
-      it do
-        expect(worker).to receive(:restart_periodic_report).with(dm.recipient_id)
-        subject
-      end
     end
   end
 

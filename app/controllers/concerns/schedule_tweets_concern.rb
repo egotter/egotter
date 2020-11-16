@@ -1,17 +1,20 @@
-require 'active_support/concern'
-
 module ScheduleTweetsConcern
-  extend ActiveSupport::Concern
+  def process_schedule_tweets(dm)
+    if schedule_tweets_questioned?(dm.text)
+      answer_schedule_tweets_question(dm.sender_id)
+      return true
+    end
 
-  QUESTION_SCHEDULE_TWEETS_REGEXP = /(ツイート(\s|　)*予約)|予約投稿/
-
-  def schedule_tweets_questioned?(dm)
-    dm.text.length < 15 && dm.text.match?(QUESTION_SCHEDULE_TWEETS_REGEXP)
+    false
   end
 
-  def answer_schedule_tweets_question(dm)
-    CreateScheduleTweetsQuestionedMessageWorker.perform_async(dm.sender_id)
-  rescue => e
-    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
+  QUESTION_SCHEDULE_TWEETS_REGEXP = /予約/
+
+  def schedule_tweets_questioned?(text)
+    text.length < 15 && text.match?(QUESTION_SCHEDULE_TWEETS_REGEXP)
+  end
+
+  def answer_schedule_tweets_question(uid)
+    CreateScheduleTweetsQuestionedMessageWorker.perform_async(uid)
   end
 end

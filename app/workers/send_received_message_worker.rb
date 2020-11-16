@@ -37,12 +37,12 @@ class SendReceivedMessageWorker
         text == I18n.t('quick_replies.prompt_reports.label3') ||
         text == I18n.t('quick_replies.prompt_reports.label4') ||
         text == I18n.t('quick_replies.prompt_reports.label5') ||
-        PeriodicReportConcern.send_periodic_report_requested?(text) ||
-        PeriodicReportConcern.continue_periodic_report_requested?(text) ||
-        BlockReportConcern.restart_block_report_requested?(text) ||
-        text.match?(PeriodicReportConcern::STOP_PERIODIC_REPORT_REGEXP) ||
-        text.match?(PeriodicReportConcern::RESTART_PERIODIC_REPORT_REGEXP) ||
-        text.match?(PeriodicReportConcern::RECEIVED_REGEXP) ||
+        PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).stop_requested? ||
+        PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).restart_requested? ||
+        PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).continue_requested? ||
+        PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).received? ||
+        PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).send_requested? ||
+        BlockReportConcern::BlockReportProcessor.new(nil, text).restart_requested? ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
         text.match?(/\Aリムられ通知(\s|　)*(送信|受信|継続|今すぐ)?\z/) ||
         text == 'リムられ' ||

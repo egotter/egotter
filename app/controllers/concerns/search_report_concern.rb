@@ -1,38 +1,63 @@
-require 'active_support/concern'
-
 module SearchReportConcern
-  extend ActiveSupport::Concern
-  include PeriodicReportConcern
+  def process_search_report(dm)
+    processor = SearchReportProcessor.new(dm.sender_id, dm.text)
 
-  STOP_SEARCH_REPORT_REGEXP = /検索通知(\s|　)*停止/
+    if processor.stop_requested?
+      processor.stop_report
+      return true
+    end
 
-  def stop_search_report_requested?(dm)
-    dm.text.length < 15 && dm.text.match?(STOP_SEARCH_REPORT_REGEXP)
+    if processor.restart_requested?
+      processor.restart_report
+      return true
+    end
+
+    if processor.received?
+      # Do nothing
+      return true
+    end
+
+    if processor.send_requested?
+      # Do nothing
+      return true
+    end
+
+    false
   end
 
-  RESTART_SEARCH_REPORT_REGEXP = /検索通知(\s|　)*(再開|開始)/
+  class SearchReportProcessor
+    include AbstractReportProcessor
 
-  def restart_search_report_requested?(dm)
-    dm.text.length < 15 && dm.text.match?(RESTART_SEARCH_REPORT_REGEXP)
-  end
+    def stop_regexp
+      /検索通知(\s|　)*停止/
+    end
 
-  def stop_search_report(dm)
-    user = validate_periodic_report_status(dm.sender_id)
-    return unless user
+    def restart_regexp
+      /検索通知(\s|　)*(再開|開始|送信)/
+    end
 
-    StopSearchReportRequest.create(user_id: user.id)
-    CreateSearchReportStoppedMessageWorker.perform_async(user.id)
-  rescue => e
-    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
-  end
+    def received_regexp
+      /検索通知(\s|　)*届きました/
+    end
 
-  def restart_search_report(dm)
-    user = validate_periodic_report_status(dm.sender_id)
-    return unless user
+    def send_regexp
+      /検索通知/
+    end
 
-    StopSearchReportRequest.find_by(user_id: user.id)&.destroy
-    CreateSearchReportRestartedMessageWorker.perform_async(user.id)
-  rescue => e
-    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
+    def stop_report
+      user = validate_report_status(@uid)
+      return unless user
+
+      StopSearchReportRequest.create(user_id: user.id)
+      CreateSearchReportStoppedMessageWorker.perform_async(user.id)
+    end
+
+    def restart_report
+      user = validate_report_status(@uid)
+      return unless user
+
+      StopSearchReportRequest.find_by(user_id: user.id)&.destroy
+      CreateSearchReportRestartedMessageWorker.perform_async(user.id)
+    end
   end
 end
