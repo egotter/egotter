@@ -71,12 +71,17 @@ module CredentialsApi
       extract_remaining_and_reset_in(resources[:users][:'/users/lookup'])
     end
 
+    def search
+      extract_remaining_and_reset_in(resources[:search][:'/search/tweets'])
+    end
+
     def to_h
       {
           verify_credentials: verify_credentials,
           friend_ids: friend_ids,
           follower_ids: follower_ids,
-          users: users
+          users: users,
+          search: search,
       }
     end
 
@@ -84,7 +89,8 @@ module CredentialsApi
       'verify_credentials ' + verify_credentials.inspect +
           ' friend_ids ' + friend_ids.inspect +
           ' follower_ids ' + follower_ids.inspect +
-          ' users ' + users.inspect
+          ' users ' + users.inspect +
+          ' search ' + search.inspect
     end
 
     private

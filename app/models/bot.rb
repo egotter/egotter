@@ -85,9 +85,7 @@ class Bot < ApplicationRecord
       processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }
     end
 
-    def rate_limit
-      logger.warn 'Bot.rate_limit is deprecated'
-
+    def all_rate_limit
       processed = Queue.new
       current_ids.each do |id|
         bot = Bot.find(id)
@@ -100,7 +98,8 @@ class Bot < ApplicationRecord
             verify_credentials: p[:rate_limit].verify_credentials,
             users: p[:rate_limit].users,
             friend_ids: p[:rate_limit].friend_ids,
-            follower_ids: p[:rate_limit].follower_ids
+            follower_ids: p[:rate_limit].follower_ids,
+            search: p[:rate_limit].search,
         }
       end
     end

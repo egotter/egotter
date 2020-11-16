@@ -95,14 +95,14 @@ class SendMetricsToSlackWorker
   end
 
   def send_rate_limit_metrics
-    stats =
-        Bot.rate_limit.map do |limit|
-          id = limit.delete(:id).to_s
-          values = limit.map {|key, value| [key, value[:remaining]]}.to_h
-          [id, values]
-        end.to_h
+    messages = []
+    Bot.all_rate_limit.each do |limit|
+      id = limit.delete(:id).to_s
+      values = limit.map { |key, value| [key, value[:remaining]] }.to_h
+      messages << "#{id} #{values.inspect}"
+    end
 
-    SlackClient.rate_limit_monitoring.send_message(stats)
+    SlackBotClient.channel('monit_rate_limit').upload_snippet(messages.join("\n"))
   end
 
   def send_search_error_metrics
