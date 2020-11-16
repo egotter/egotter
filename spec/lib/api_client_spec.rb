@@ -137,7 +137,7 @@ RSpec.describe ApiClient, type: :model do
   end
 
   describe '.instance' do
-    subject { ApiClient.instance }
+    subject { described_class.instance }
 
     it 'returns ApiClient' do
       is_expected.to be_a_kind_of(ApiClient)

@@ -95,18 +95,17 @@ class ApiClient
     end
 
     def instance(options = {})
-      client =
-          if options.blank?
-            TwitterWithAutoPagination::Client.new
-          else
-            if options[:cache_store] == :null_store
-              options[:cache_store] = ActiveSupport::Cache::NullStore.new
-            else
-              options[:cache_store] = CacheStore.new
-            end
-            Rails.logger.debug { "#{self}##{__method__} options=#{options.inspect}" }
-            TwitterWithAutoPagination::Client.new(config(options))
-          end
+      if options.blank?
+        client = TwitterWithAutoPagination::Client.new
+      else
+        if options[:cache_store] == :null_store
+          options[:cache_store] = ActiveSupport::Cache::NullStore.new
+        else
+          options[:cache_store] = CacheStore.new
+        end
+        client = TwitterWithAutoPagination::Client.new(config(options))
+      end
+
       new(client)
     end
   end
