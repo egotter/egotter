@@ -111,6 +111,10 @@ class User < ApplicationRecord
     def find_by_token(token, secret)
       find_by(token: token, secret: secret)
     end
+
+    def api_client
+      order(created_at: :desc).find_by(authorized: true, locked: false).api_client
+    end
   end
 
   def to_param
