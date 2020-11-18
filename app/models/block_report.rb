@@ -170,7 +170,8 @@ class BlockReport < ApplicationRecord
     end
 
     def mask_name(name)
-      4.times do |i|
+      name = name.dup
+      (name.size - 2).times do |i|
         at = i + 2
         name[at] = '*' if name.length >= at + 1
       end

@@ -402,7 +402,8 @@ class PeriodicReport < ApplicationRecord
       screen_names.map.with_index do |screen_name, i|
         status = account_statuses.find { |s| s['screen_name'] == screen_name }&.fetch('account_status', nil)
         status = " #{translate_account_status(status)}" if status
-        "#{'@' if add_atmark || i < 1}#{screen_name}#{status} #{profile_url(screen_name, {names: encrypted_names}.merge(url_options))}"
+        name_label = (add_atmark || i < 1) ? "@#{screen_name}" : BlockReport.mask_name(screen_name)
+        "#{name_label}#{status} #{profile_url(screen_name, {names: encrypted_names}.merge(url_options))}"
       end
     end
 
