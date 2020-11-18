@@ -1,8 +1,14 @@
 <hr>
 
-<div class="text-muted small"><%= t('.trend_rank', count: trend.rank) %></div>
-<div><%= trend.name %></div>
-<div class="text-muted small"><%= t('.tweets_count', count: trend.tweets_count) %></div>
+<div class="text-center">
+  <div class="d-inline-block">
+    <div class="text-left text-muted small">
+      <%= t('.trend_rank', count: trend.rank) %>
+      <%= t('.tweets_count', count: trend.tweets_count) %>
+    </div>
+    <h3 class="h4 text-left"><%= trend.name %></h3>
+  </div>
+</div>
 
 <h4 class="text-center mt-5 mb-3">
   <%= t('.download_tweets_title') %>
@@ -36,6 +42,6 @@
 </h4>
 <%= render(partial: 'twitter/oembed_tweet', collection: [trend.latest_tweet], as: :tweet, cached: true, formats: %i(html)) %>
 
-<div class="text-center mb-3">
+<div class="text-center my-5">
   <%= link_to t('.see_more'), trend_tweets_path(trend) %>
 </div>

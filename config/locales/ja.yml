@@ -373,7 +373,7 @@ ja:
       <<: *trends_index
     trend:
       tweets_count: '%{count}件のツイート'
-      trend_rank: '%{count}. トレンド'
+      trend_rank: 'トレンド%{count}位'
       chart_title: 'ツイート数'
       download_tweets_title: 'ツイートのダウンロード'
       word_cloud_title: 'ワードクラウド'
