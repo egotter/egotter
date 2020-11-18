@@ -24,7 +24,11 @@ module S3
       end
 
       def user
-        TwitterDB::User.find_by(uid: @uid) || Hashie::Mash.new
+        if instance_variable_defined?(:@user)
+          @user
+        else
+          @user = TwitterDB::User.find_by(uid: @uid)
+        end
       end
 
       def text

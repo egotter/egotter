@@ -28,8 +28,8 @@
   <%= t('trends.trend.tweet_title', name: @trend.name) %>
 </h4>
 
-<%= render(partial: 'twitter/oembed_tweet', collection: @tweets.slice(0..9), as: :tweet, cached: true, formats: %i(html)) %>
-<%= render(partial: 'twitter/tweet', collection: @tweets.slice(10..-1), as: :tweet, cached: true, formats: %i(html)) %>
+<%= render(partial: 'twitter/oembed_tweet', collection: @tweets.slice(0..9).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
+<%= render(partial: 'twitter/tweet', collection: @tweets.slice(10..-1).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
 
 <h4 class="text-center mt-5 mb-3">
   <%= t('trends.trend.download_tweets_title') %>
