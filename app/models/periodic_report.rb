@@ -116,6 +116,8 @@ class PeriodicReport < ApplicationRecord
           timeline_url: timeline_url(user, url_options),
           settings_url: settings_url(url_options),
           faq_url: support_url(url_options),
+          pricing_url: pricing_url(url_options),
+          add_atmark: add_atmark,
       )
 
       # selected_unfollowers = unfollowers.empty? ? total_unfollowers : unfollowers
