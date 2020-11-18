@@ -1,6 +1,7 @@
 namespace :trends do
   task save_latest_trends: :environment do |task|
     logger = TaskLogger.logger
+    logger.info "task=#{task.name} start"
 
     trends = Trend.fetch_trends
     Trend.import trends
@@ -13,11 +14,15 @@ namespace :trends do
       Bot.api_client
     end
 
-    Trend.japan.latest_trends.top_n(3).where(created_at: 5.minutes.ago..Time.zone.now).each do |trend|
+    num = 10
+    min_tweets = 1000
+    max_tweets = 50000
+
+    Trend.japan.latest_trends.top_n(num).where(created_at: 5.minutes.ago..Time.zone.now).each do |trend|
       if trend.tweets_size.nil?
-        tweets = trend.search_tweets(count: 30000, client_loader: client_loader)
-        if tweets.size < 1000
-          tweets = trend.search_tweets(count: 30000, client_loader: client_loader, without_time: true)
+        tweets = trend.search_tweets(count: max_tweets, client_loader: client_loader)
+        if tweets.size < min_tweets
+          tweets = trend.search_tweets(count: max_tweets, client_loader: client_loader, without_time: true)
         end
         trend.import_tweets(tweets)
 
@@ -28,5 +33,7 @@ namespace :trends do
         logger.info "task=#{task.name} name=#{trend.name} tweets=#{tweets.size}"
       end
     end
+
+    logger.info "task=#{task.name} finish"
   end
 end
