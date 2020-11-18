@@ -54,12 +54,6 @@
     <div class="mb-3"><%= render template: 'messages/explanation_of_data_inconsistency' %></div>
   <% end %>
 
-  <div class="text-right mb-4">
-    <%= render partial: 'shared/sort' %>
-    <%= render partial: 'shared/filter' %>
-    <%= render partial: 'shared/download', locals: {twitter_user: @twitter_user} %>
-  </div>
-
   <%= render partial: 'shared/users_section', locals: {twitter_user: @twitter_user} %>
 <% else %>
   <div class="alert alert-info small">

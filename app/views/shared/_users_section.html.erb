@@ -1,3 +1,9 @@
+<div class="text-right mb-4">
+  <%= render partial: 'shared/sort' %>
+  <%= render partial: 'shared/filter' %>
+  <%= render partial: 'shared/download', locals: {twitter_user: twitter_user} %>
+</div>
+
 <div class="empty-placeholders-wrapper" style="display: none;">
   <%= t('.not_found') %>
 </div>
@@ -30,7 +36,7 @@
     var signedIn = <%= user_signed_in? %>;
 
     var url = '<%= raw api_path %>';
-    var uid = '<%= @twitter_user.uid %>';
+    var uid = '<%= twitter_user.uid %>';
     var sortOrder = $('.sort-order-dropdown').data('sort-order');
     var filter = $('.filter-dropdown').data('filter');
     var params = {limit: 10, maxLimit: 10, sortOrder: sortOrder, filter: filter};
