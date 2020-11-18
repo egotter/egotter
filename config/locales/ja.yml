@@ -375,13 +375,15 @@ ja:
       tweets_count: '%{count}件のツイート'
       trend_rank: '%{count}. トレンド'
       chart_title: 'ツイート数'
+      download_tweets_title: 'ツイートのダウンロード'
       word_cloud_title: 'ワードクラウド'
       tweet_title: 'ツイート'
-      tweet_description: 'このページでは、先頭の%{count}件のツイートを表示しています。有料プランのユーザーは全てのツイートをダウンロードできます。'
-      tweet_description_premium: 'このページでは、先頭の%{count}件のツイートを表示しています。有料プランを購入済みです。全てのツイートをダウンロードできます。'
-      download_tweets_btn: 'ツイートをダウンロード'
-      see_details: 'もっと詳しく'
       see_more: 'もっと見る'
+    download_tweets:
+      description: '「%{name}」の先頭 100件のツイートをダウンロードできます。有料プランのユーザーは全てのツイートをダウンロードできます。'
+      description_premium: '有料プランを購入済みです。「%{name}」の全てのツイートをダウンロードできます。'
+      button_label: 'ツイートをダウンロード'
+      see_details: 'もっと詳しく'
   settings:
     title: "設定"
     index:

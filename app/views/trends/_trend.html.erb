@@ -4,7 +4,15 @@
 <div><%= trend.name %></div>
 <div class="text-muted small"><%= t('.tweets_count', count: trend.tweets_count) %></div>
 
-<h4 class="text-center mb-3">
+<h4 class="text-center mt-5 mb-3">
+  <%= t('.download_tweets_title') %>
+</h4>
+
+<div class="card card-body my-3">
+  <%= render partial: 'download_tweets', locals: {trend: trend, tweets: trend.tweets.take(100)} %>
+</div>
+
+<h4 class="text-center mt-5 mb-3">
   <%= t('.chart_title') %>
 </h4>
 
@@ -14,7 +22,7 @@
   ts=<%= trend.tweets_size %>
 </div>
 
-<h4 class="text-center mb-3">
+<h4 class="text-center mt-5 mb-3">
   <%= t('.word_cloud_title') %>
 </h4>
 
@@ -23,7 +31,7 @@
   ws=<%= trend.words_count.size %>
 </div>
 
-<h4 class="text-center mb-3">
+<h4 class="text-center mt-5 mb-3">
   <%= t('.tweet_title') %>
 </h4>
 <%= render(partial: 'twitter/oembed_tweet', collection: [trend.latest_tweet], as: :tweet, cached: true, formats: %i(html)) %>

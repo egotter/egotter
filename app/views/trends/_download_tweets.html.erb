@@ -1,0 +1,10 @@
+<% if user_signed_in? && current_user.has_valid_subscription? %>
+  <div class="mb-3"><%= t('.description_premium', name: trend.name, count: tweets.size) %></div>
+<% else %>
+  <div class="mb-3">
+    <%= t('.description', name: trend.name, count: tweets.size) %>
+    <%= link_to t('.see_details'), '#', class: 'btn btn-primary btn-sm btn-checkout' %>
+  </div>
+<% end %>
+
+<div><%= link_to t('.button_label'), trend_download_tweets_path(trend), class: 'btn btn-primary' %></div>
