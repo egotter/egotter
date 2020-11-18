@@ -78,6 +78,7 @@ class PeriodicReport < ApplicationRecord
       start_date = extract_date(:start_date, options)
       end_date = extract_date(:end_date, options)
       account_statuses = options[:account_statuses] || []
+      add_atmark = user.add_atmark_to_periodic_report?
 
       unfollowers = options[:unfollowers]
       total_unfollowers = options[:total_unfollowers]
@@ -106,10 +107,10 @@ class PeriodicReport < ApplicationRecord
           unfollowers_count: options[:unfollowers_count],
           unfriends: options[:unfriends],
           unfollowers: unfollowers,
-          unfollower_urls: generate_profile_urls(unfollowers, url_options, user.add_atmark_to_periodic_report?, account_statuses),
+          unfollower_urls: generate_profile_urls(unfollowers, url_options, add_atmark, true, account_statuses),
           total_unfollowers: total_unfollowers,
-          total_unfollower_urls: generate_profile_urls(total_unfollowers, url_options, user.add_atmark_to_periodic_report?, account_statuses),
-          new_follower_urls: generate_profile_urls(new_followers, new_followers_url_options, user.add_atmark_to_periodic_report?, []),
+          total_unfollower_urls: generate_profile_urls(total_unfollowers, url_options, add_atmark, true, account_statuses),
+          new_follower_urls: generate_profile_urls(new_followers, new_followers_url_options, add_atmark, false, []),
           regular_subscription: !StopPeriodicReportRequest.exists?(user_id: user.id),
           request_id_text: request_id_text(user, options[:request_id], options[:worker_context]),
           timeline_url: timeline_url(user, url_options),
@@ -396,13 +397,21 @@ class PeriodicReport < ApplicationRecord
       first_count && last_count && first_count > last_count
     end
 
-    def generate_profile_urls(screen_names, url_options, add_atmark = false, account_statuses = [])
+    def generate_profile_urls(screen_names, url_options, add_atmark = false, hide_name = true, account_statuses = [])
       encrypted_names = encrypt_indicator_names(screen_names)
 
       screen_names.map.with_index do |screen_name, i|
         status = account_statuses.find { |s| s['screen_name'] == screen_name }&.fetch('account_status', nil)
         status = " #{translate_account_status(status)}" if status
-        name_label = (add_atmark || i < 1) ? "@#{screen_name}" : BlockReport.mask_name(screen_name)
+        if add_atmark || i < 1
+          name_label = "@#{screen_name}"
+        else
+          if hide_name
+            name_label = BlockReport.mask_name(screen_name)
+          else
+            name_label = screen_name
+          end
+        end
         "#{name_label}#{status} #{profile_url(screen_name, {names: encrypted_names}.merge(url_options))}"
       end
     end
