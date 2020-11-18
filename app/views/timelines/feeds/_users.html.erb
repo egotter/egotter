@@ -14,6 +14,11 @@
     <% end %>
   </div>
 
+  <div class="empty-result-and-message" style="display: none;">
+    <div class="message my-5"></div>
+    <button class="btn btn-primary btn-block disabled" disabled="disabled"><%= t('timelines.feeds.view_more') %></button>
+  </div>
+
   <div class="show-result" style="display: none;">
     <div class="users d-flex justify-content-center flex-wrap my-5"></div>
 
@@ -93,6 +98,12 @@
       }
     }
 
+    function updateErrorView(message) {
+      $(placeholderSelector).hide();
+      var box = $(boxSelector);
+      box.find('.empty-result-and-message').find('.message').text(message).end().show();
+    }
+
     function renderUser(template, user) {
       var rendered = $(Mustache.render(template, user));
 
@@ -123,7 +134,7 @@
       new FeedItem(url, updateView);
     } else {
       $(boxSelector).lazyload().one('appear', function () {
-        new FeedItem(url, updateView);
+        new FeedItem(url, updateView, updateErrorView);
       });
     }
   });

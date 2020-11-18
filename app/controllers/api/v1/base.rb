@@ -7,6 +7,12 @@ module Api
 
       before_action { self.access_log_disabled = true }
 
+      class OnlyForLoginUserError < StandardError; end
+
+      rescue_from OnlyForLoginUserError do |e|
+        render json: {name: controller_name, message: t('before_sign_in.only_for_login_user')}, status: :forbidden
+      end
+
       SUMMARY_LIMIT = 20
 
       def summary
@@ -82,9 +88,24 @@ module Api
         end
       end
 
-      def limit_for_api
-        user_signed_in? && current_user.has_valid_subscription? ? Order::BASIC_PLAN_USERS_LIMIT : Order::FREE_PLAN_USERS_LIMIT
+      def api_list_users_limit
+        case controller_name
+        when 'blockers'
+          if user_signed_in? && current_user.has_valid_subscription?
+            Order::BASIC_PLAN_BLOCKERS_LIMIT
+          else
+            Order::FREE_PLAN_BLOCKERS_LIMIT
+          end
+        else
+          if user_signed_in? && current_user.has_valid_subscription?
+            Order::BASIC_PLAN_USERS_LIMIT
+          else
+            Order::FREE_PLAN_USERS_LIMIT
+          end
+        end
       end
+
+      helper_method :api_list_users_limit
 
       def unfriend_related_page?
         %w(unfriends mutual_unfriends).include?(controller_name)

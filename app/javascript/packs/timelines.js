@@ -1,19 +1,35 @@
 class FeedItem {
-  constructor(url, callback) {
+  constructor(url, successCallback, errorCallback) {
     this.url = url;
-    this.callback = callback;
+    this.successCallback = successCallback;
+    this.errorCallback = errorCallback;
     this.fetch();
   }
 
   fetch() {
     var url = this.url;
-    var callback = this.callback;
+    var successCallback = this.successCallback;
+    var errorCallback = this.errorCallback;
 
     $.get(url).done(function (res) {
       logger.log(url, res);
-      callback(res);
-    }).fail(function (xhr) {
+      successCallback(res);
+    }).fail(function (xhr, textStatus, errorThrown) {
       logger.warn(url, xhr.responseText);
+
+      var message;
+      try {
+        message = JSON.parse(xhr.responseText)['message'];
+      } catch (e) {
+        logger.error(e);
+      }
+      if (!message) {
+        message = xhr.status + ' (' + errorThrown + ')';
+      }
+
+      if (errorCallback) {
+        errorCallback(message);
+      }
     });
   }
 }

@@ -11,7 +11,7 @@ module Api
       end
 
       def list_users
-        @twitter_user.one_sided_friends(limit: limit_for_api)
+        @twitter_user.one_sided_friends(limit: api_list_users_limit)
       end
     end
   end

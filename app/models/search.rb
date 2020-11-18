@@ -9,6 +9,7 @@ class Search
     unfollowers
     mutual_unfriends
     mutual_friends
+    blockers
     one_sided_friends
     one_sided_followers
     replying
