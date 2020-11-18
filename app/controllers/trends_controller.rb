@@ -1,6 +1,10 @@
 class TrendsController < ApplicationController
   include DownloadTrendTweetsRequestConcern
 
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    redirect_to trends_path(via: current_via('record_not_found'))
+  end
+
   def index
     @trends = Trend.japan.latest_trends.top_n(3).map { |t| TrendDecorator.new(t) }
   end

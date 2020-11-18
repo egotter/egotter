@@ -24,7 +24,7 @@ module S3
       end
 
       def user
-        TwitterDB::User.find_by(uid: @uid)
+        TwitterDB::User.find_by(uid: @uid) || Hashie::Mash.new
       end
 
       def text
