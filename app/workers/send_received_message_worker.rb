@@ -6,7 +6,7 @@ class SendReceivedMessageWorker
   #   text
   #   dm_id
   def perform(sender_uid, options = {})
-    return if static_message?(options['text'])
+    return if dont_send_message?(options['text'])
     send_message(sender_uid, options['text'])
   rescue => e
     logger.warn "sender_uid=#{sender_uid} options=#{options.inspect}"
@@ -31,7 +31,7 @@ class SendReceivedMessageWorker
       /\A【?#{I18n.t('quick_replies.shared.label1')}】?\z/,
   ]
 
-  def static_message?(text)
+  def dont_send_message?(text)
     text == I18n.t('quick_replies.prompt_reports.label1') ||
         text == I18n.t('quick_replies.prompt_reports.label2') ||
         text == I18n.t('quick_replies.prompt_reports.label3') ||
@@ -42,7 +42,10 @@ class SendReceivedMessageWorker
         PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).continue_requested? ||
         PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).received? ||
         PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).send_requested? ||
+        BlockReportConcern::BlockReportProcessor.new(nil, text).stop_requested? ||
         BlockReportConcern::BlockReportProcessor.new(nil, text).restart_requested? ||
+        BlockReportConcern::BlockReportProcessor.new(nil, text).received? ||
+        BlockReportConcern::BlockReportProcessor.new(nil, text).send_requested? ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
         text.match?(/\Aリムられ通知(\s|　)*(送信|受信|継続|今すぐ)?\z/) ||
         text == 'リムられ' ||
