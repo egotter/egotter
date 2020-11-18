@@ -15,6 +15,7 @@ module InternalServerErrorHandler
 
   def handle_general_error(ex)
     logger.warn "##{__method__}: #{ex.class} #{ex.message.truncate(100)} #{request_details}"
+    logger.info ex.backtrace.join("\n")
 
     message = internal_server_error_message
     create_error_log(__method__, message, ex)
