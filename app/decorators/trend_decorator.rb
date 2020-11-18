@@ -14,11 +14,7 @@ class TrendDecorator < ApplicationDecorator
     object.tweet_volume || object.tweets_size
   end
 
-  def elapsed_time
-    if object.time < 1.day.ago
-      I18n.l(object.time.in_time_zone('Tokyo'), format: :trend_short)
-    else
-      h.distance_of_time_in_words_ja(Time.zone.now - object.time)
-    end
+  def latest_tweet
+    object.tweets.last
   end
 end

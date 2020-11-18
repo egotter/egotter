@@ -1,5 +1,6 @@
 - user = TwitterUserDecorator.new(tweet.user)
-.card.mb-3
+- margin_class ||= 'mb-3'
+.card{class: margin_class}
   .row.no-gutters
     .col-auto.p-1
       = link_to timeline_path(user, via: current_via('icon')) do

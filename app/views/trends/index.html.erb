@@ -1,2 +1,11 @@
-<div><%= t('.trend_place') %> <%= t('.trend_time', time: l(@time.in_time_zone('Tokyo'), format: :trend_short)) %></div>
+<%= content_for :navbar_title, t(".navbar_title") %>
+
+<h3 class="text-center my-3"><%= t('.page_title') %></span></h3>
+
+<div class="mb-3">
+  <% @trends.each do |trend| %>
+    <div><%= t('.rank_html', rank: trend.rank, link: link_to(trend.name, trend_tweets_path(trend)), tweets: trend.tweets_count) %></div>
+  <% end %>
+</div>
+
 <%= render @trends %>

@@ -8,6 +8,8 @@ module PathsHelper
       delete_tweets_path(via: via)
     when 'tokimeki_unfollow' then
       tokimeki_unfollow_cleanup_path(via: via)
+    when 'trends' then
+      trends_path
     else
       root_path(via: via)
     end

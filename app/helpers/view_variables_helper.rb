@@ -321,16 +321,6 @@ module ViewVariablesHelper
     end
   end
 
-  def trends_word_cloud_description(trend)
-    trend = TrendDecorator.new(trend)
-    t('word_cloud_descriptions.trends_html', url: trend.search_url, time: trend.elapsed_time, name: trend.name, rank: trend.rank)
-  end
-
-  def trends_times_count_description(trend)
-    trend = TrendDecorator.new(trend)
-    t('times_count_descriptions.trends_html', url: trend.search_url, time: trend.elapsed_time, name: trend.name, count: trend.tweets_count)
-  end
-
   def profiles_word_cloud_description(twitter_user)
     case controller_name
     when 'friends'

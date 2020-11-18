@@ -1,0 +1,36 @@
+<%= content_for :navbar_title, t(".navbar_title") %>
+
+<h3 class="text-center my-3"><%= t('.page_title') %></span></h3>
+
+<div class="mb-3">
+  <div><%= t('.rank_html', rank: @trend.rank, link: link_to(@trend.name, trend_tweets_path(@trend)), tweets: @trend.tweets_count) %></div>
+</div>
+
+<h4 class="text-center mb-3">
+  <%= t('trends.trend.chart_title', name: @trend.name) %>
+</h4>
+
+<div class="card card-body"><%= render partial: 'shared/times_count', locals: {description: '', api_path: api_trend_times_count_path(@trend.id)} %></div>
+<div class="text-muted small mb-3">
+  tv=<%= @trend.tweet_volume %>
+  ts=<%= @trend.tweets_size %>
+</div>
+
+<h4 class="text-center mb-3">
+  <%= t('trends.trend.tweet_title', name: @trend.name) %>
+</h4>
+
+<div class="mb-3">
+  <% if user_signed_in? && current_user.has_valid_subscription? %>
+    <div class="mb-3"><%= t('trends.trend.tweet_description_premium', count: @tweets.size) %></div>
+  <% else %>
+    <div class="mb-3">
+      <%= t('trends.trend.tweet_description', count: @tweets.size) %>
+      <%= link_to t('trends.trend.see_details'), '#', class: 'btn btn-primary btn-sm btn-checkout' %>
+    </div>
+  <% end %>
+  <div><%= link_to t('trends.trend.download_tweets_btn'), trend_download_tweets_path(@trend), class: 'btn btn-primary' %></div>
+</div>
+
+<%= render(partial: 'twitter/oembed_tweet', collection: @tweets.slice(0..9), as: :tweet, cached: true, formats: %i(html)) %>
+<%= render(partial: 'twitter/tweet', collection: @tweets.slice(10..-1), as: :tweet, cached: true, formats: %i(html)) %>

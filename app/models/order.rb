@@ -34,6 +34,8 @@ class Order < ApplicationRecord
   TRIAL_DAYS = 14
   FREE_PLAN_USERS_LIMIT = 100
   BASIC_PLAN_USERS_LIMIT = 10000
+  FREE_PLAN_TREND_TWEETS_LIMIT = 100
+  BASIC_PLAN_TREND_TWEETS_LIMIT = 100000
 
   scope :unexpired, -> do
     where('customer_id is not null AND subscription_id is not null AND canceled_at is null')
