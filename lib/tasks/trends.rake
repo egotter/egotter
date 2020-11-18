@@ -21,6 +21,10 @@ namespace :trends do
         end
         trend.import_tweets(tweets)
 
+        tweets.map(&:uid).uniq.each_slice(100) do |uids|
+          CreateTwitterDBUserWorker.compress_and_perform_async(uids, enqueued_by: task.name)
+        end
+
         logger.info "task=#{task.name} name=#{trend.name} tweets=#{tweets.size}"
       end
     end
