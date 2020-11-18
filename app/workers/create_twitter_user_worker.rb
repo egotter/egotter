@@ -1,6 +1,7 @@
 class CreateTwitterUserWorker
   include Sidekiq::Worker
   prepend TimeoutableWorker
+  include WorkerErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
@@ -48,19 +49,12 @@ class CreateTwitterUserWorker
 
     notify(request.user, request.uid)
 
-    # Saved values and relations At this point:
-    #   friends_size, followers_size
-    #   friendships(efs+s3), followerships(efs+s3)
-    #   statuses, mentions, favorites
-
     assemble_request = AssembleTwitterUserRequest.create!(twitter_user: task.twitter_user)
     AssembleTwitterUserWorker.new.perform(assemble_request.id)
   rescue CreateTwitterUserRequest::Error => e
     # Do nothing
   rescue => e
-    logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
-    logger.info "Caused by #{e.cause.inspect}" if e.cause
-    logger.info e.backtrace.join("\n")
+    handle_worker_error(e, request_id: request_id, options: options)
   end
 
   private
