@@ -14,8 +14,7 @@ module InternalServerErrorHandler
   private
 
   def handle_general_error(ex)
-    logger.warn "rescue_from Exception: #{ex.class} #{ex.message.truncate(100)} #{request_details}"
-    notify_airbrake(ex, request_details_json)
+    logger.warn "##{__method__}: #{ex.class} #{ex.message.truncate(100)} #{request_details}"
 
     message = internal_server_error_message
     create_error_log(__method__, message, ex)
@@ -28,8 +27,7 @@ module InternalServerErrorHandler
   end
 
   def handle_request_timeout(ex)
-    logger.warn "#{ex.class} #{ex.message.truncate(100)} #{request_details}"
-    notify_airbrake(ex, request_details_json)
+    logger.warn "##{__method__}: #{ex.class} #{ex.message.truncate(100)} #{request_details}"
 
     if request.xhr?
       render json: {error: ex.message.truncate(100)}, status: :request_timeout
@@ -39,8 +37,7 @@ module InternalServerErrorHandler
   end
 
   def handle_csrf_error(ex)
-    logger.info "#{ex.class} #{request_details}"
-    notify_airbrake(ex, request_details_json)
+    logger.info "##{__method__}: #{ex.class} #{request_details}"
 
     if request.xhr?
       render json: {error: ex.message.truncate(100)}, status: :bad_request

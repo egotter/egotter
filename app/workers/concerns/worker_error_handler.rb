@@ -1,5 +1,3 @@
-require 'active_support/concern'
-
 module WorkerErrorHandler
   def handle_worker_error(exception, **params)
     _print_exception(exception, params)
