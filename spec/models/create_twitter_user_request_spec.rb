@@ -6,7 +6,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     described_class.create(
         requested_by: 'test',
         session_id: 'session_id',
-        user_id: user.id,
+        user: user,
         uid: 1,
         ahoy_visit_id: 1)
   end
@@ -192,16 +192,27 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe '#fetch_relations' do
     let(:snapshot) { create(:twitter_user) }
-    let(:client) { double('client') }
+    let(:client) { 'client' }
     let(:context) { 'context' }
+    let(:fetcher) { double('fetcher') }
     subject { request.send(:fetch_relations, snapshot, context) }
-    before do
-      allow(request).to receive(:client).and_return(client)
-    end
+    before { allow(user).to receive(:api_client).with(cache_store: :null_store).and_return(client) }
+
     it do
-      expect(TwitterUserFetcher).to receive_message_chain(:new, :fetch_in_threads).
-          with(client, snapshot.uid, snapshot.screen_name, true, false, false).with(no_args).and_return('result')
+      expect(TwitterUserFetcher).to receive(:new).
+          with(client, snapshot.uid, snapshot.screen_name, true, false, false).and_return(fetcher)
+      expect(fetcher).to receive(:fetch_in_threads).and_return('result')
       is_expected.to eq('result')
+    end
+
+    context 'user is nil' do
+      before { allow(request).to receive(:user).and_return(nil) }
+      it do
+        expect(Bot).to receive(:api_client).with(cache_store: :null_store).and_return(client)
+        expect(TwitterUserFetcher).to receive(:new).with(any_args).and_return(fetcher)
+        expect(fetcher).to receive(:fetch_in_threads).and_return('result')
+        is_expected.to eq('result')
+      end
     end
   end
 

@@ -144,15 +144,13 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   def fetch_relations(snapshot, context)
-    unless @fetcher
-      client = (user || Bot).api_client(cache_store: :null_store)
-      fetch_friends = !SearchLimitation.limited?(snapshot, signed_in: user)
-      search_for_yourself = snapshot.uid == user&.uid
-      reporting = context == :reporting
-      # TODO Try disabling the cache for speed
-      @fetcher = TwitterUserFetcher.new(client, snapshot.uid, snapshot.screen_name, fetch_friends, search_for_yourself, reporting)
-    end
-    @fetcher.fetch_in_threads
+    client = (user || Bot).api_client(cache_store: :null_store)
+    fetch_friends = !SearchLimitation.limited?(snapshot, signed_in: user)
+    search_for_yourself = snapshot.uid == user&.uid
+    reporting = context == :reporting
+
+    fetcher = TwitterUserFetcher.new(client, snapshot.uid, snapshot.screen_name, fetch_friends, search_for_yourself, reporting)
+    fetcher.fetch_in_threads
   end
 
   def diff_values_empty?(twitter_user)

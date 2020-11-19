@@ -14,4 +14,14 @@ RSpec.describe Bot, type: :model do
       it { is_expected.to be_empty }
     end
   end
+
+  describe '.api_client' do
+    subject { described_class.api_client('options') }
+    before { allow(described_class).to receive(:current_ids).and_return([1]) }
+    it do
+      expect(described_class).to receive_message_chain(:select, :find, :api_client).
+          with(:token, :secret).with(1).with('options')
+      subject
+    end
+  end
 end
