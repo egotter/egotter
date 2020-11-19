@@ -32,13 +32,13 @@ class LoginController < ApplicationController
 
   # This action is created for conversion tracking.
   def after_sign_up
-    @redirect_path = params[:redirect_path]
+    @redirect_path = params[:redirect_path] || root_path(via: current_via('unknown'))
     set_bypassed_notice_message('after_sign_up')
   end
 
   # This action is created for conversion tracking.
   def after_sign_in
-    @redirect_path = params[:redirect_path]
+    @redirect_path = params[:redirect_path] || root_path(via: current_via('unknown'))
     set_bypassed_notice_message('after_sign_in')
   end
 

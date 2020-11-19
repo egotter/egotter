@@ -1,28 +1,12 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href='//d3i5r3jvad5gk5.cloudfront.net/favicon-192.png' rel='icon' sizes='192x192'>
+<script>
+  function pageViewCallback() {
+    window.location.href = '<%= @redirect_path.html_safe %>';
+  }
 
-  <link crossorigin='anonymous' href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' integrity='sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh' rel='stylesheet'>
-  <script src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
-  <script crossorigin='anonymous' integrity='sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6' src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js'></script>
-
-  <script>
-    function pageViewCallback() {
-      window.location.href = '<%= @redirect_path.html_safe %>';
-    }
-
-    setTimeout(pageViewCallback, 3000);
-  </script>
-  <%= render partial: 'shared/google' %>
-</head>
-<body>
+  setTimeout(pageViewCallback, 3000);
+</script>
 <div class="container" style="min-height: 300px;">
   <div class="my-5">
     <%= image_tag '/ajax-loader.gif' %>&nbsp;<span style="font-size: 24px;"><%= t('.loading') %></span>
   </div>
 </div>
-</body>
-</html>
