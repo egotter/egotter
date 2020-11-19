@@ -90,15 +90,15 @@ module Api
       end
 
       def unfriend_related_page?
-        %w(unfriends mutual_unfriends).include?(controller_name)
+        %w(unfriends mutual_unfriends blockers).include?(controller_name)
       end
 
       def unfollower_related_page?
-        %w(unfollowers mutual_unfriends).include?(controller_name)
+        %w(unfollowers mutual_unfriends blockers).include?(controller_name)
       end
 
       def remove_related_page?
-        %w(unfriends unfollowers mutual_unfriends).include?(controller_name)
+        %w(unfriends unfollowers mutual_unfriends blockers).include?(controller_name)
       end
     end
   end
