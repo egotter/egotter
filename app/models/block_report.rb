@@ -67,6 +67,7 @@ class BlockReport < ApplicationRecord
           screen_name: user.screen_name,
           profile_urls: generate_profile_urls(users, url_options, user.add_atmark_to_periodic_report?),
           timeline_url: url_helper.timeline_url(user, url_options),
+          blockers_url: url_helper.blockers_url(url_options),
       )
     end
 
@@ -79,6 +80,7 @@ class BlockReport < ApplicationRecord
           screen_name: user.screen_name,
           profile_urls: generate_profile_urls(users, url_options, user.add_atmark_to_periodic_report?),
           timeline_url: url_helper.timeline_url(user, url_options),
+          blockers_url: url_helper.blockers_url(url_options),
       )
     end
   end
@@ -144,6 +146,7 @@ class BlockReport < ApplicationRecord
           user: user,
           block_urls: generate_profile_urls(users, url_options, user.add_atmark_to_periodic_report?),
           timeline_url: url_helper.timeline_url(user, url_options),
+          blockers_url: url_helper.blockers_url(url_options),
           settings_url: url_helper.settings_url(url_options),
           faq_url: url_helper.support_url(url_options),
       )
