@@ -4,6 +4,7 @@ module Api
       include ApiRequestConcern
       include AccountStatusesHelper
       include UsersHelper
+      include ApiLimitationHelper
 
       before_action { self.access_log_disabled = true }
 
@@ -87,25 +88,6 @@ module Api
           }
         end
       end
-
-      def api_list_users_limit
-        case controller_name
-        when 'blockers'
-          if user_signed_in? && current_user.has_valid_subscription?
-            Order::BASIC_PLAN_BLOCKERS_LIMIT
-          else
-            Order::FREE_PLAN_BLOCKERS_LIMIT
-          end
-        else
-          if user_signed_in? && current_user.has_valid_subscription?
-            Order::BASIC_PLAN_USERS_LIMIT
-          else
-            Order::FREE_PLAN_USERS_LIMIT
-          end
-        end
-      end
-
-      helper_method :api_list_users_limit
 
       def unfriend_related_page?
         %w(unfriends mutual_unfriends).include?(controller_name)
