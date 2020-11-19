@@ -92,12 +92,13 @@ class TwitterUserFetcher
     end
 
     module RescueNegligibleError
-      %i(user_timeline mentions_timeline favorites).each do |method_name|
+      %i(user_timeline mentions_timeline favorites search).each do |method_name|
         define_method(method_name) do |*args, &blk|
           super(*args, &blk)
         rescue => e
           if TwitterApiStatus.too_many_requests?(e) ||
-              ServiceStatus.internal_server_error?(e)
+              ServiceStatus.internal_server_error?(e) ||
+              (e.cause && ServiceStatus.internal_server_error?(e.cause))
             []
           else
             raise

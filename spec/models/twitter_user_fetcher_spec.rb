@@ -136,6 +136,15 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
       expect(client).to receive(:search).with('word')
       subject
     end
+
+    context 'An exception is raised' do
+      let(:error) { RuntimeError.new }
+      before do
+        allow(client).to receive(:search).and_raise(error)
+        allow(TwitterApiStatus).to receive(:too_many_requests?).with(error).and_return(true)
+      end
+      it { expect { subject }.not_to raise_error }
+    end
   end
 
   describe 'favorites' do
