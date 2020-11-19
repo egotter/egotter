@@ -200,7 +200,8 @@ ja:
         mutual_friends: '両思いフォロー'
         unfriends: 'リムーブした'
         unfollowers: 'リムーブされた'
-        mutual_unfriends: 'ブロックされた'
+        mutual_unfriends: 'ブロックされたかも'
+        blockers: 'ブロックされている（高精度）'
         notice: 'データはこれから保存されていきます'
         word_description: '説明'
         detailed_description_html: 'えごったーのデータは、最初に使った時から保存されていきます。そのため、最初は少ないデータが表示されます。<br><br>また、たくさん使うユーザーほどたくさんデータが更新されます。'
@@ -215,6 +216,7 @@ ja:
           unfriends: '「あなたは相手のフォローを外した」関係のことです。'
           unfollowers: '「あなたは相手からフォローを外された」関係のことです。'
           mutual_unfriends: '「あなたは相手からブロックされた」関係のことです。'
+          blockers: 'ブロックされているユーザーをより高精度に集計しています。'
       statuses:
         title: 'ツイート'
       friends:
@@ -250,16 +252,16 @@ ja:
         loading_error: '@%{user} のトップフォロワーの読み込みに失敗しました'
       unfriends:
         title: 'リムーブした'
-        description: '@%{user} がフォローを解除したユーザーです。'
+        description: '@%{user} がフォローを外したユーザーです。「リムーブ」と「フォロー解除」も同じ意味です。'
       unfollowers:
         title: 'リムーブされた'
-        description: '@%{user} がフォローを解除されたユーザーです。'
+        description: '@%{user} がフォローを外されたユーザーです。「リムられ」も同じ意味です。'
       mutual_unfriends:
         title: 'ブロックされたかも'
-        description: '@%{user} がブロックされたかもしれないユーザーです。'
+        description: '@%{user} がブロックされたかもしれないユーザーです。相互フォローが外れた数を集計しています。'
       blockers:
-        title: 'ブロックされている'
-        description: '@%{user} がブロックされたユーザーを高精度に集計しています。'
+        title: 'ブロックされている（高精度）'
+        description: '@%{user} がブロックされたユーザーをできる限り高精度に集計しています。'
       mutual_friends:
         title: '相互フォロー'
         description: '@%{user} が相互フォローしているユーザーです。'
@@ -793,8 +795,8 @@ ja:
   mutual_unfriends:
   blockers:
     index:
-      crumb_title: 'ブロックされている'
-      meta_title: 'ブロックされている'
+      crumb_title: 'ブロックされている（高精度）'
+      meta_title: 'ブロックされている（高精度）'
   common_friends:
   common_followers:
   common_mutual_friends:
@@ -827,7 +829,7 @@ ja:
     unfriends: "@%{user} のリムーブ"
     unfollowers: "@%{user} のリムられチェック - @%{user} のリムられを見るなら、保存ユーザー数 1億2000万人突破のリムられチェック！"
     mutual_unfriends: "@%{user} がブロックされたかも"
-    blockers: "@%{user} のブロックされている"
+    blockers: "@%{user} のブロックされている（高精度）"
     close_friends: "@%{user} の仲良しランキング"
     favorite_friends: "@%{user} のいいねランキング"
     one_sided_friends: "@%{user} の片思いフォロー"
@@ -890,7 +892,7 @@ ja:
     statuses_html: "%{user} のツイート一覧です。"
     friends_html: "%{user} がフォローしているユーザーの一覧です。"
     followers_html: "%{user} がフォローされているユーザーの一覧です。"
-    blockers_html: "%{user} がブロックされているユーザーの一覧です。このページのデータはログインしている本人のみ見ることができます。"
+    blockers_html: "%{user} がブロックされているユーザーの一覧です。できる限り高精度に集計しています。このページのデータはログインしている本人のみ見ることができます。"
     close_friends_html: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
     favorite_friends_html: "%{user} がよくいいねするユーザーの一覧です。いいねの分析には、お気に入り登録を使っています。"
     one_sided_friends_html: |
@@ -1116,7 +1118,8 @@ ja:
     followers: 'フォロワー'
     unfriends: 'リムーブ'
     unfollowers: 'リムられた'
-    mutual_unfriends: 'ブロられた'
+    mutual_unfriends: 'ブロックされたかも'
+    blockers: 'ブロックされている（高精度）'
     close_friends: '仲良しランキング'
     favorite_friends: 'いいねランキング'
     one_sided_friends: '片思いフォロー'

@@ -241,12 +241,13 @@ module TwitterUserAssociations
     unfollowerships.pluck(:follower_uid)
   end
 
+  # TODO Remove later
   def blocking_uids
     BlockingRelationship.where(from_uid: uid).limit(1000).pluck(:to_uid)
   end
 
   def blocker_uids
-    BlockingRelationship.where(to_uid: uid).limit(1000).pluck(:from_uid)
+    BlockingRelationship.where(to_uid: uid).limit(FETCH_USERS_LIMIT).pluck(:from_uid)
   end
 
   # TODO Remove later

@@ -5,10 +5,12 @@
 
 <%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false} %>
 
-<h2 class="h4 text-center my-5"><%= current_content_title(@twitter_user) %></h2>
+<h2 class="h4 text-center my-5"><%= current_page_title(@twitter_user) %></h2>
 <div class="mb-5"><%= render partial: 'shared/page_description', locals: {twitter_user: @twitter_user} %></div>
 
 <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :middle}) %>
+
+<div class="my-3"><%= render partial: 'result_pages/tabs', locals: {tabs: current_tabs(@twitter_user), active_tab: 0} %></div>
 
 <%= render partial: 'shared/users_section', locals: {twitter_user: @twitter_user} %>
 

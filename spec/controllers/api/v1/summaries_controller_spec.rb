@@ -21,6 +21,7 @@ RSpec.describe Api::V1::SummariesController, type: :controller do
           unfriends: 4,
           unfollowers: 5,
           mutual_unfriends: 6,
+          blockers: 7,
       }
     end
     before { allow(twitter_user).to receive(:to_summary).and_return(summary_hash) }

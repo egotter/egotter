@@ -6,6 +6,6 @@ class BlockersController < ApplicationController
   before_action { current_user_has_dm_permission? }
 
   def index
-    @twitter_user = TwitterDB::User.find_by(uid: current_user.uid)
+    @twitter_user = TwitterUser.latest_by(uid: current_user.uid)
   end
 end

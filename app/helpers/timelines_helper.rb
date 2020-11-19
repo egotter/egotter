@@ -13,6 +13,8 @@ module TimelinesHelper
       t('timelines.feeds.summary.description.unfollowers')
     when 'mutual_unfriends'
       t('timelines.feeds.summary.description.mutual_unfriends')
+    when 'blockers'
+      t('timelines.feeds.summary.description.blockers')
     else
       raise "Invalid name value=#{name}"
     end

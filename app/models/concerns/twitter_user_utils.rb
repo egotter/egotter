@@ -59,6 +59,7 @@ module TwitterUserUtils
         unfriends: unfriends_size,
         unfollowers: unfollowers_size,
         mutual_unfriends: mutual_unfriends_size || mutual_unfriendships.size,
+        blockers: blocker_uids.size,
     }
   end
 

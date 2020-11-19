@@ -5,6 +5,8 @@ module TabsHelper
       friends_tabs(twitter_user)
     when 'unfriends', 'unfollowers', 'mutual_unfriends'
       unfriends_tabs(twitter_user)
+    when 'blockers'
+      blockers_tabs(twitter_user)
     when 'close_friends', 'favorite_friends'
       close_friends_tabs(twitter_user)
     when 'one_sided_friends', 'one_sided_followers', 'mutual_friends'
@@ -32,6 +34,12 @@ module TabsHelper
         Tab.new(t('tabs.unfriends'), user.unfriends_size, unfriend_path(user, via: current_via('tab'))),
         Tab.new(t('tabs.unfollowers'), user.unfollowers_size, unfollower_path(user, via: current_via('tab'))),
         Tab.new(t('tabs.mutual_unfriends'), user.mutual_unfriendships.size, mutual_unfriend_path(user, via: current_via('tab')))
+    ]
+  end
+
+  def blockers_tabs(user)
+    [
+        Tab.new(t('tabs.blockers'), user.blocker_uids.size, blockers_path(via: current_via('tab'))),
     ]
   end
 
