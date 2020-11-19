@@ -45,6 +45,43 @@ module PathsHelper
     end.html_safe
   end
 
+  def feed_page_path(name, twitter_user)
+    via = current_via("feed_#{name}")
+
+    case name
+    when 'close_friends'
+      close_friend_path(twitter_user, via: via)
+    when 'common_friends'
+      common_friend_path(twitter_user, via: via)
+    when 'common_followers'
+      common_follower_path(twitter_user, via: via)
+    when 'unfriends'
+      unfriend_path(twitter_user, via: via)
+    when 'unfollowers'
+      unfollower_path(twitter_user, via: via)
+    when 'mutual_unfriends'
+      mutual_unfriend_path(twitter_user, via: via)
+    when 'mutual_friends'
+      mutual_friend_path(twitter_user, via: via)
+    when 'one_sided_friends'
+      one_sided_friend_path(twitter_user, via: via)
+    when 'one_sided_followers'
+      one_sided_follower_path(twitter_user, via: via)
+    when 'replying'
+      replying_path(twitter_user, via: via)
+    when 'replied'
+      replied_path(twitter_user, via: via)
+    when 'favorite_friends'
+      favorite_friend_path(twitter_user, via: via)
+    when 'inactive_friends'
+      inactive_friend_path(twitter_user, via: via)
+    when 'inactive_followers'
+      inactive_follower_path(twitter_user, via: via)
+    else
+      raise "#{__method__} Invalid name value=#{name}"
+    end
+  end
+
   def api_path
     send("api_v1_#{controller_name}_list_path", via: current_via).html_safe
   end
