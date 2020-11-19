@@ -4,13 +4,6 @@ class SortButton {
     this.$container = $('.sort-order-container');
     var self = this;
 
-    this.$container.find('.dropdown-item.btn-end-trial').on('click', function () {
-      if (window.endTrialModal) {
-        window.endTrialModal.show();
-        return false;
-      }
-    });
-
     this.$container.find('.dropdown-item').not('.btn-checkout').not('.btn-end-trial').on('click', function () {
       return self.clickItem($(this));
     });
@@ -49,13 +42,6 @@ class FilterButton {
     this.callback = callback;
     this.$container = $('.filter-container');
     var self = this;
-
-    this.$container.find('.dropdown-item.btn-end-trial').on('click', function () {
-      if (window.endTrialModal) {
-        window.endTrialModal.show();
-        return false;
-      }
-    });
 
     this.$container.find('.dropdown-item').not('.btn-checkout').not('.btn-end-trial').on('click', function () {
       return self.clickItem($(this));

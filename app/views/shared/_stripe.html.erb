@@ -31,6 +31,13 @@
       $(document).on('click', '.btn-checkout', function () {
         return disableCheckoutButton($(this));
       });
+
+      $(document).on('click', '.btn-end-trial', function () {
+        if (window.endTrialModal) {
+          window.endTrialModal.show();
+          return false;
+        }
+      });
     });
   </script>
 <% elsif user_signed_in? %>

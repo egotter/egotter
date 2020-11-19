@@ -1912,7 +1912,9 @@ ja:
       loading_error_html: '@%{user} のプロフィール読み込みに失敗しました'
     users_section:
       not_found: "指定された条件での検索結果は0件でした。"
-      need_purchase_html: '%{count}人 以上の結果を見るには有料プランの購入が必要です。<a href="#" class="btn btn-primary btn-checkout btn-sm">もっと詳しく</a>'
+      need_click: '続きを読み込むには「もっと見る」をクリックしてください。'
+      need_purchase: '%{count}人 以上の結果を見るには有料プランの購入が必要です。'
+      see_details: 'もっと見る'
       see_more: "もっと見る"
     announcement:
       title: "お知らせ"

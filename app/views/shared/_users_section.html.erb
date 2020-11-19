@@ -20,9 +20,18 @@
   <div id="bottom-reached" class="text-center my-3">
     <%= image_tag '/ajax-loader.gif' %>
   </div>
-  <% unless current_user.has_valid_subscription? %>
+
+  <% if current_user.has_valid_subscription? %>
+    <% if current_user.has_trial_subscription? %>
+      <%= t('.need_click') %>
+      <%= link_to t('.see_details'), '#', class: 'btn btn-primary btn-end-trial btn-sm' %>
+    <% else %>
+      <%# Render nothing %>
+    <% end %>
+  <% else %>
     <div id="need-purchase-description" class="mb-3" style="display: none;">
-      <%= t('.need_purchase_html', count: Order::FREE_PLAN_USERS_LIMIT) %>
+      <%= t('.need_purchase', count: Order::FREE_PLAN_USERS_LIMIT) %>
+      <%= link_to t('.see_details'), '#', class: 'btn btn-primary btn-checkout btn-sm' %>
     </div>
   <% end %>
 <% else %>
