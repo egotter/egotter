@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include RequestErrorHandler
   include AirbrakeConcern
   include NewrelicConcern
   include SearchCountLimitationConcern

@@ -14,8 +14,7 @@ module InternalServerErrorHandler
   private
 
   def handle_general_error(ex)
-    logger.warn "##{__method__}: #{ex.class} #{ex.message.truncate(100)} #{request_details}"
-    logger.info ex.backtrace.join("\n")
+    handle_request_error(ex)
 
     message = internal_server_error_message
     create_error_log(__method__, message, ex)
@@ -28,7 +27,7 @@ module InternalServerErrorHandler
   end
 
   def handle_request_timeout(ex)
-    logger.warn "##{__method__}: #{ex.class} #{ex.message.truncate(100)} #{request_details}"
+    handle_request_error(ex)
 
     if request.xhr?
       render json: {error: ex.message.truncate(100)}, status: :request_timeout

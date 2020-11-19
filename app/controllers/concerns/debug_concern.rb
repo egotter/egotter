@@ -17,9 +17,7 @@ module DebugConcern
         full_path: request.fullpath,
         referer: request.referer,
         params: request.query_parameters,
-        '@twitter_user': @twitter_user&.attributes,
-        '@search_request_start_time': @search_request_start_time,
-        '@search_request_benchmark': @search_request_benchmark,
+        twitter_user_id: @twitter_user&.id,
     }
   end
 end
