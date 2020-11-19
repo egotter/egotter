@@ -1,0 +1,15 @@
+<% breadcrumb :blocker, @twitter_user.screen_name %>
+<% title t('.meta_title') %>
+
+<%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
+
+<%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false} %>
+
+<h2 class="h4 text-center my-5"><%= current_content_title(@twitter_user) %></h2>
+<div class="mb-5"><%= render partial: 'shared/page_description', locals: {twitter_user: @twitter_user} %></div>
+
+<%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :middle}) %>
+
+<%= render partial: 'shared/users_section', locals: {twitter_user: @twitter_user} %>
+
+<%= render(partial: 'adsense/ad', locals: {vertical: :bottom}) %>

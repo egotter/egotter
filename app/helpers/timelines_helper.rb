@@ -40,6 +40,11 @@ module TimelinesHelper
           feed_title: t('timelines.feeds.mutual_unfriends.title'),
           feed_description: t('timelines.feeds.mutual_unfriends.description', user: twitter_user.screen_name),
       }
+    when 'blockers'
+      attrs = {
+          feed_title: t('timelines.feeds.blockers.title'),
+          feed_description: t('timelines.feeds.blockers.description', user: twitter_user.screen_name),
+      }
     when 'mutual_friends'
       attrs = {
           feed_title: t('timelines.feeds.mutual_friends.title'),

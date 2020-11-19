@@ -39,10 +39,16 @@ end
   common_followers
   common_mutual_friends
 ).each do |name|
+  # TODO Don't use #send
   crumb name.singularize.to_sym do |screen_name|
     link current_crumb_title, send("#{name.singularize}_path", screen_name: screen_name, via: current_via("breadcrumb_#{name}"))
     parent :timeline, screen_name
   end
+end
+
+crumb :blocker do |screen_name|
+  link t('blockers.index.crumb_title'), blockers_path(via: current_via("breadcrumb_blocker"))
+  parent :timeline, screen_name
 end
 
 crumb :profile do |screen_name|

@@ -185,6 +185,10 @@ module TwitterUserAssociations
     TwitterDB::User.where_and_order_by_field(uids: unfollower_uids.take(limit))
   end
 
+  def blockers(limit: FETCH_USERS_LIMIT)
+    TwitterDB::User.where_and_order_by_field(uids: blocker_uids.take(limit))
+  end
+
   def top_follower
     if instance_variable_defined?(:@top_follower)
       @top_follower
@@ -241,7 +245,12 @@ module TwitterUserAssociations
     BlockingRelationship.where(from_uid: uid).limit(1000).pluck(:to_uid)
   end
 
-  def blocked_uids
+  def blocker_uids
     BlockingRelationship.where(to_uid: uid).limit(1000).pluck(:from_uid)
+  end
+
+  # TODO Remove later
+  def blocked_uids
+    blocker_uids
   end
 end

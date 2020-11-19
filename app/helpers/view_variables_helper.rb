@@ -15,6 +15,8 @@ module ViewVariablesHelper
       t('page_titles.unfollowers', user: name)
     when 'mutual_unfriends'
       t('page_titles.mutual_unfriends', user: name)
+    when 'blockers'
+      t('page_titles.blockers', user: name)
     when 'close_friends'
       t('page_titles.close_friends', user: name)
     when 'favorite_friends'
@@ -48,6 +50,7 @@ module ViewVariablesHelper
     end
   end
 
+  # TODO Remove later
   def current_content_title(twitter_user)
     case controller_name
     when 'unfollowers'
@@ -132,6 +135,8 @@ module ViewVariablesHelper
       render template: 'page_descriptions/unfollowers', locals: {twitter_user: twitter_user}
     when 'mutual_unfriends'
       render template: 'page_descriptions/mutual_unfriends', locals: {twitter_user: twitter_user}
+    when 'blockers'
+      t('page_descriptions.blockers_html', values)
     when 'close_friends'
       t('page_descriptions.close_friends_html', values)
     when 'favorite_friends'

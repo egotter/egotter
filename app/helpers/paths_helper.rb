@@ -61,6 +61,8 @@ module PathsHelper
       unfollower_path(twitter_user, via: via)
     when 'mutual_unfriends'
       mutual_unfriend_path(twitter_user, via: via)
+    when 'blockers'
+      blockers_path(via: via)
     when 'mutual_friends'
       mutual_friend_path(twitter_user, via: via)
     when 'one_sided_friends'
@@ -82,8 +84,13 @@ module PathsHelper
     end
   end
 
+  # TODO Don't use #send
   def api_path
-    send("api_v1_#{controller_name}_list_path", via: current_via).html_safe
+    if controller_name == 'blockers'
+      api_v1_blockers_list_path(via: current_via)
+    else
+      send("api_v1_#{controller_name}_list_path", via: current_via)
+    end.html_safe
   end
 
   def api_summary_path(name, twitter_user)
@@ -102,6 +109,8 @@ module PathsHelper
       api_v1_unfollowers_summary_path(uid: twitter_user.uid, via: via)
     when 'mutual_unfriends'
       api_v1_mutual_unfriends_summary_path(uid: twitter_user.uid, via: via)
+    when 'blockers'
+      api_v1_blockers_summary_path(uid: twitter_user.uid, via: via)
     when 'mutual_friends'
       api_v1_mutual_friends_summary_path(uid: twitter_user.uid, via: via)
     when 'one_sided_friends'

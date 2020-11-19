@@ -257,6 +257,9 @@ ja:
       mutual_unfriends:
         title: 'ブロックされたかも'
         description: '@%{user} がブロックされたかもしれないユーザーです。'
+      blockers:
+        title: 'ブロックされている'
+        description: '@%{user} がブロックされたユーザーを高精度に集計しています。'
       mutual_friends:
         title: '相互フォロー'
         description: '@%{user} が相互フォローしているユーザーです。'
@@ -788,6 +791,10 @@ ja:
       tweet: '%{text} #egotter %{url}'
   unfollowers:
   mutual_unfriends:
+  blockers:
+    index:
+      crumb_title: 'ブロックされている'
+      meta_title: 'ブロックされている'
   common_friends:
   common_followers:
   common_mutual_friends:
@@ -820,6 +827,7 @@ ja:
     unfriends: "@%{user} のリムーブ"
     unfollowers: "@%{user} のリムられチェック - @%{user} のリムられを見るなら、保存ユーザー数 1億2000万人突破のリムられチェック！"
     mutual_unfriends: "@%{user} がブロックされたかも"
+    blockers: "@%{user} のブロックされている"
     close_friends: "@%{user} の仲良しランキング"
     favorite_friends: "@%{user} のいいねランキング"
     one_sided_friends: "@%{user} の片思いフォロー"
@@ -882,6 +890,7 @@ ja:
     statuses_html: "%{user} のツイート一覧です。"
     friends_html: "%{user} がフォローしているユーザーの一覧です。"
     followers_html: "%{user} がフォローされているユーザーの一覧です。"
+    blockers_html: "%{user} がブロックされているユーザーの一覧です。このページのデータはログインしている本人のみ見ることができます。"
     close_friends_html: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
     favorite_friends_html: "%{user} がよくいいねするユーザーの一覧です。いいねの分析には、お気に入り登録を使っています。"
     one_sided_friends_html: |
@@ -2472,6 +2481,7 @@ ja:
     secret_mode_detected_with_count: 'えごったーはシークレットモードではご利用いただけません。%{count}秒後にトップページへ移動します。'
     ad_blocker_detected: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。広告ブロッカーを無効にしてご利用ください。'
     ad_blocker_detected_with_count: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。%{seconds}秒後にトップページへ移動します。'
+    only_for_login_user: 'このページはログインしている本人のみ見ることができます。'
   after_sign_in:
     too_many_requests_with_reset_in: >
       一時的なエラーが起きました。ツイッターAPIが回復するまで %{seconds}秒 ほど待ってください。<br>
