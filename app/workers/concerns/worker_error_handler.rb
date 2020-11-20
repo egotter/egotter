@@ -2,9 +2,9 @@ module WorkerErrorHandler
   def handle_worker_error(exception, **params)
     _print_exception(exception, params)
 
-    message = "#{exception.inspect.truncate(200)} #{_extract_params(params)}"
-    backtrace = exception.backtrace.join("\n")
-    SendErrorMessageToSlackWorker.perform_async(message, backtrace)
+    # message = "#{exception.inspect.truncate(200)} #{_extract_params(params)}"
+    # backtrace = exception.backtrace.join("\n")
+    # SendErrorMessageToSlackWorker.perform_async(message, backtrace)
   rescue => e
     logger.warn "#{e.inspect} exception=#{exception} params=#{params}"
     logger.info e.backtrace.join("\n")

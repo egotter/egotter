@@ -39,7 +39,7 @@ RSpec.describe WorkerErrorHandler do
     subject { instance.handle_worker_error(nested_error, a: 1) }
     it do
       expect(instance).to receive(:_print_exception).with(nested_error, a: 1)
-      expect(SendErrorMessageToSlackWorker).to receive(:perform_async).with(any_args)
+      # expect(SendErrorMessageToSlackWorker).to receive(:perform_async).with(any_args)
       subject
     end
   end
