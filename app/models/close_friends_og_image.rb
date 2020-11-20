@@ -118,7 +118,9 @@ class CloseFriendsOgImage < ApplicationRecord
           end
         end
 
-        image_files = ImagesLoader.new(uid, image_urls).load
+        images_loader = ImagesLoader.new(uid, image_urls)
+        image_files = ApplicationRecord.benchmark("Benchmark CloseFriendsOgImage::Generator uid=#{uid}") { images_loader.load }
+
         hash = hash.map do |key, value|
           if key.match?(/^image_url/)
             url, file = image_files.find { |url, _| url == value }
@@ -175,8 +177,9 @@ class CloseFriendsOgImage < ApplicationRecord
         basename = File.basename(url)
         filename = "#{self.class.dir_path(@uid)}/profile_image_#{@uid}_#{basename}"
         unless File.exist?(filename)
+          image = ApplicationRecord.benchmark("Benchmark CloseFriendsOgImage::ImagesLoader uid=#{@uid} url=#{url}") { open(url) }
           File.open(filename, 'wb') do |f|
-            f.write(open(url))
+            f.write(image)
           end
         end
         @queue << [url, filename]
