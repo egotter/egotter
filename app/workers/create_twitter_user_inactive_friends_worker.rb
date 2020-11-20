@@ -11,8 +11,9 @@ class CreateTwitterUserInactiveFriendsWorker
     10.minutes
   end
 
-  def after_skip(*args)
-    logger.warn "The job of #{self.class} is skipped args=#{args.inspect}"
+  def after_skip(twitter_user_id, options = {})
+    twitter_user = TwitterUser.find(twitter_user_id)
+    logger.warn "The job of #{self.class} is skipped twitter_user_id=#{twitter_user_id} created_at=#{twitter_user.created_at}"
   end
 
   def expire_in
