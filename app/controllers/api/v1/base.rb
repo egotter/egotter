@@ -18,7 +18,7 @@ module Api
 
       def summary
         uids, size = summary_uids
-        CreateTwitterDBUserWorker.perform_async(uids, user_id: current_user.id, enqueued_by: current_via) if user_signed_in?
+        CreateTwitterDBUserWorker.perform_async(uids, user_id: current_user.id, enqueued_by: current_via) if user_signed_in? && uids.any?
 
         # This method makes the users unique.
         users = TwitterDB::User.where_and_order_by_field(uids: uids)
@@ -37,7 +37,7 @@ module Api
 
         candidate_uids = paginator.users.map(&:uid)
         users = TwitterDB::User.where_and_order_by_field(uids: candidate_uids)
-        CreateTwitterDBUserWorker.perform_async(candidate_uids, user_id: current_user.id, enqueued_by: current_via) if user_signed_in?
+        CreateTwitterDBUserWorker.perform_async(candidate_uids, user_id: current_user.id, enqueued_by: current_via) if user_signed_in? && candidate_uids.any?
 
         options = {}
         options[:suspended_uids] = collect_suspended_uids(request_context_client, paginator.users.map(&:uid)) if remove_related_page?
