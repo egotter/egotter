@@ -2,7 +2,7 @@ require 'digest/md5'
 
 class CreateTwitterDBUserWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
+  include WorkerErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(uids, options = {})
@@ -23,23 +23,23 @@ class CreateTwitterDBUserWorker
   #   user_id
   #   enqueued_by
   def perform(uids, options = {})
-    if options['compressed'] && uids.is_a?(String)
-      uids = decompress(uids)
+    target_uids = uids.is_a?(String) ? decompress(uids) : uids
+
+    if target_uids.empty?
+      logger.warn "the size of uids is 0 options=#{options.inspect}"
+      return
     end
 
-    if uids.size > 100
+    if target_uids.size > 100
       logger.warn "the size of uids is greater than 100 options=#{options.inspect}"
     end
 
     user = User.find_by(id: options['user_id']) if options['user_id'] && options['user_id'] != -1
     user = Bot unless user
-    do_perform(user.api_client, uids, options)
 
+    do_perform(user.api_client, target_uids, options)
   rescue => e
-    # Errno::EEXIST File exists @ dir_s_mkdir
-    # Errno::ENOENT No such file or directory @ rb_sysopen
-    logger.warn "#{e.inspect.truncate(150)} options=#{options.inspect.truncate(150)}"
-    logger.info e.backtrace.join("\n")
+    handle_worker_error(e, uids: uids, options: options)
     FailedCreateTwitterDBUserWorker.perform_async(uids, options.merge(klass: self.class))
   end
 

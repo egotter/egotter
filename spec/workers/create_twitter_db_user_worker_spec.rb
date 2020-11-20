@@ -1,7 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe CreateTwitterDBUserWorker do
+  let(:user) { create(:user) }
   let(:worker) { described_class.new }
+
+  before do
+    allow(User).to receive(:find_by).with(id: user.id).and_return(user)
+  end
 
   describe '.compress_and_perform_async' do
     let(:options) { {} }
@@ -31,18 +36,46 @@ RSpec.describe CreateTwitterDBUserWorker do
   end
 
   describe '#perform' do
-    let(:user) { create(:user) }
+    let(:uids) { [1] }
     let(:options) { {'user_id' => user.id} }
-    let(:client) { double('client') }
-    subject { worker.perform('uids', options) }
+    let(:client) { 'client' }
+    subject { worker.perform(uids, options) }
+
     before do
-      allow(User).to receive(:find_by).with(id: user.id).and_return(user)
       allow(user).to receive(:api_client).and_return(client)
     end
 
     it do
-      expect(worker).to receive(:do_perform).with(client, 'uids', options)
+      expect(worker).to receive(:do_perform).with(client, uids, options)
       subject
+    end
+
+    context 'user_id is not set' do
+      let(:options) { {} }
+      it do
+        expect(Bot).to receive(:api_client).and_return(client)
+        expect(worker).to receive(:do_perform).with(client, uids, options)
+        subject
+      end
+    end
+
+    context 'uids is compressed' do
+      let(:raw_uids) { [1] }
+      let(:uids) { described_class.compress(raw_uids) }
+      it do
+        expect(worker).to receive(:do_perform).with(client, raw_uids, options)
+        subject
+      end
+    end
+
+    context 'error is raised' do
+      let(:error) { RuntimeError.new }
+      before { allow(worker).to receive(:do_perform).with(any_args).and_raise(error) }
+      it do
+        expect(worker).to receive(:handle_worker_error).with(error, uids: uids, options: options)
+        expect(FailedCreateTwitterDBUserWorker).to receive(:perform_async).with(uids, options.merge(klass: described_class))
+        subject
+      end
     end
   end
 
