@@ -34,7 +34,6 @@ class CreateTwitterUserCloseFriendsWorker
 
     import_close_friends(twitter_user, user)
     import_favorite_friends(twitter_user, user)
-
     CloseFriendship.delete_by_uid(twitter_user.uid)
     FavoriteFriendship.delete_by_uid(twitter_user.uid)
   rescue => e
@@ -47,13 +46,17 @@ class CreateTwitterUserCloseFriendsWorker
   def import_close_friends(twitter_user, user)
     uids = twitter_user.calc_uids_for(S3::CloseFriendship, login_user: user)
     S3::CloseFriendship.import_from!(twitter_user.uid, uids)
-    CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: twitter_user.user_id, enqueued_by: "#{self.class} > CloseFriends")
-    CreateCloseFriendsOgImageWorker.perform_async(twitter_user.uid, uids: uids, force: true)
+    if uids.any?
+      CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: twitter_user.user_id, enqueued_by: 'CloseFriends')
+      CreateCloseFriendsOgImageWorker.perform_async(twitter_user.uid, uids: uids, force: true)
+    end
   end
 
   def import_favorite_friends(twitter_user, user)
     uids = twitter_user.calc_uids_for(S3::FavoriteFriendship, login_user: user)
     S3::FavoriteFriendship.import_from!(twitter_user.uid, uids)
-    CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: twitter_user.user_id, enqueued_by: "#{self.class} > FavoriteFriends")
+    if uids.any?
+      CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: twitter_user.user_id, enqueued_by: 'FavoriteFriends')
+    end
   end
 end

@@ -33,6 +33,15 @@ RSpec.describe CreateTwitterUserCloseFriendsWorker do
       expect(CreateCloseFriendsOgImageWorker).to receive(:perform_async).with(twitter_user.uid, uids: uids, force: true)
       subject
     end
+
+    context 'uids is empty' do
+      let(:uids) { [] }
+      it do
+        expect(CreateHighPriorityTwitterDBUserWorker).not_to receive(:compress_and_perform_async)
+        expect(CreateCloseFriendsOgImageWorker).not_to receive(:perform_async)
+        subject
+      end
+    end
   end
 
   describe '#import_favorite_friends' do
@@ -45,6 +54,14 @@ RSpec.describe CreateTwitterUserCloseFriendsWorker do
       expect(S3::FavoriteFriendship).to receive(:import_from!).with(twitter_user.uid, uids)
       expect(CreateHighPriorityTwitterDBUserWorker).to receive(:compress_and_perform_async).with(uids, user_id: twitter_user.user_id, enqueued_by: instance_of(String))
       subject
+    end
+
+    context 'uids is empty' do
+      let(:uids) { [] }
+      it do
+        expect(CreateHighPriorityTwitterDBUserWorker).not_to receive(:compress_and_perform_async)
+        subject
+      end
     end
   end
 end
