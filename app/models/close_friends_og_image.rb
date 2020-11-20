@@ -57,7 +57,9 @@ class CloseFriendsOgImage < ApplicationRecord
       heart = self.class.generate_heart_image(@twitter_user.uid, friends)
 
       begin
-        self.class.generate_image(text, heart, @outfile)
+        benchmark("generate image binary uid=#{@twitter_user.uid}") do
+          self.class.generate_image(text, heart, @outfile)
+        end
 
         image = CloseFriendsOgImage.find_or_initialize_by(uid: @twitter_user.uid)
         image.image.purge if image.image.attached?
@@ -86,6 +88,10 @@ class CloseFriendsOgImage < ApplicationRecord
     end
 
     private
+
+    def benchmark(message, &block)
+      self.class.benchmark(message, &block)
+    end
 
     class << self
 
@@ -119,7 +125,7 @@ class CloseFriendsOgImage < ApplicationRecord
         end
 
         images_loader = ImagesLoader.new(uid, image_urls)
-        image_files = ApplicationRecord.benchmark("Benchmark CloseFriendsOgImage::Generator uid=#{uid}") { images_loader.load }
+        image_files = benchmark("all images loaded uid=#{uid}") { images_loader.load }
 
         hash = hash.map do |key, value|
           if key.match?(/^image_url/)
@@ -149,6 +155,10 @@ class CloseFriendsOgImage < ApplicationRecord
           end
         end
       end
+
+      def benchmark(message, &block)
+        ApplicationRecord.benchmark("Benchmark #{self} #{message}", &block)
+      end
     end
   end
 
@@ -177,7 +187,7 @@ class CloseFriendsOgImage < ApplicationRecord
         basename = File.basename(url)
         filename = "#{self.class.dir_path(@uid)}/profile_image_#{@uid}_#{basename}"
         unless File.exist?(filename)
-          image = ApplicationRecord.benchmark("Benchmark CloseFriendsOgImage::ImagesLoader uid=#{@uid} url=#{url}") { open(url) }
+          image = benchmark("load each image uid=#{@uid} url=#{url}") { open(url) }
           File.open(filename, 'wb') do |f|
             f.write(image)
           end
@@ -190,6 +200,8 @@ class CloseFriendsOgImage < ApplicationRecord
 
       @queue.size.times.map { @queue.pop }.to_h
     end
+
+    private
 
     def open(url, retries: 3)
       uri = URI.parse(url)
@@ -206,6 +218,10 @@ class CloseFriendsOgImage < ApplicationRecord
       else
         raise RetryExhausted.new("#{e.inspect}")
       end
+    end
+
+    def benchmark(message, &block)
+      ApplicationRecord.benchmark("Benchmark #{self.class} #{message}", &block)
     end
 
     class RetryExhausted < StandardError; end
