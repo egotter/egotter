@@ -23,7 +23,7 @@ class CreateTwitterDBUserWorker
   #   user_id
   #   enqueued_by
   def perform(uids, options = {})
-    if options['compressed']
+    if options['compressed'] && uids.is_a?(String)
       uids = decompress(uids)
     end
 
