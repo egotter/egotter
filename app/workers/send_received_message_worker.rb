@@ -46,6 +46,7 @@ class SendReceivedMessageWorker
         BlockReportConcern::BlockReportProcessor.new(nil, text).restart_requested? ||
         BlockReportConcern::BlockReportProcessor.new(nil, text).received? ||
         BlockReportConcern::BlockReportProcessor.new(nil, text).send_requested? ||
+        SpamMessageConcern::SpamMessageProcessor.new(nil, text).received? ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
         text.match?(/\Aリムられ通知(\s|　)*(送信|受信|継続|今すぐ)?\z/) ||
         text == 'リムられ' ||
