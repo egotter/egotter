@@ -61,7 +61,7 @@ describe BlockReportConcern::BlockReportProcessor do
   describe '#stop_requested?' do
     subject { instance.stop_requested? }
 
-    ['【ブロック通知 停止】', 'ブロック通知 停止', 'ブロック通知停止'].each do |word|
+    ['【ブロック通知 停止】', 'ブロック通知 停止', 'ブロック通知停止', 'ブロられ通知 停止'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
@@ -72,7 +72,7 @@ describe BlockReportConcern::BlockReportProcessor do
   describe '#restart_requested?' do
     subject { instance.restart_requested? }
 
-    ['【ブロック通知 再開】', 'ブロック通知 再開', 'ブロック通知再開'].each do |word|
+    ['【ブロック通知 再開】', 'ブロック通知 再開', 'ブロック通知再開', 'ブロられ通知 再開'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
@@ -94,7 +94,7 @@ describe BlockReportConcern::BlockReportProcessor do
   describe '#send_requested?' do
     subject { instance.send_requested? }
 
-    ['【ブロック通知】', 'ブロック通知'].each do |word|
+    ['【ブロック通知】', 'ブロック通知', 'ブロられ通知', 'ブロック'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }

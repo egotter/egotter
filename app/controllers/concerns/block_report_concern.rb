@@ -29,19 +29,19 @@ module BlockReportConcern
     include AbstractReportProcessor
 
     def stop_regexp
-      /ブロック通知(\s|　)*停止/
+      /ブロ(ック|られ)通知(\s|　)*停止/
     end
 
     def restart_regexp
-      /ブロック通知(\s|　)*(再開|開始|送信)/
+      /ブロ(ック|られ)通知(\s|　)*(再開|開始|送信)/
     end
 
     def received_regexp
-      /ブロック通知(\s|　)*届きました/
+      /ブロ(ック|られ)通知(\s|　)*届きました/
     end
 
     def send_regexp
-      /ブロック通知/
+      /ブロ(ック|られ)/
     end
 
     def stop_report
