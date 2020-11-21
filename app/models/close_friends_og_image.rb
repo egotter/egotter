@@ -40,7 +40,7 @@ class CloseFriendsOgImage < ApplicationRecord
 
   class Generator
 
-    OG_IMAGE_IMAGEMAGICK = "env OMP_NUM_THREADS=1 #{ENV['OG_IMAGE_IMAGEMAGICK']}" # or MAGICK_THREAD_LIMIT=1
+    OG_IMAGE_IMAGEMAGICK = "env OMP_NUM_THREADS=1 MAGICK_THREAD_LIMIT=1 #{ENV['OG_IMAGE_IMAGEMAGICK']}"
     OG_IMAGE_OUTLINE = Rails.root.join('app/views/og_images/egotter_og_outline_840x450.png')
     OG_IMAGE_HEART = Rails.root.join('app/views/og_images/heart_300x350.svg.erb').read
     OG_IMAGE_RECT = Rails.root.join('app/views/pink_48x48.gif')
