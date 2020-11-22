@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       get "blocking_or_blocked/list", to: "mutual_unfriends#list"
 
       get "close_friends", to: "close_friends#show"
+      get "close_friends/og_image", to: "close_friends#og_image"
       get "word_clouds", to: "word_clouds#show"
       get "friend_insights/profiles_count", to: "friend_insights#profiles_count"
       get "friend_insights/locations_count", to: "friend_insights#locations_count"

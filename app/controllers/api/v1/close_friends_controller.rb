@@ -7,6 +7,12 @@ module Api
         summary
       end
 
+      def og_image
+        users = @twitter_user.close_friends(limit: CLOSE_FRIENDS_SUMMARY_LIMIT).map { |u| u.slice(:screen_name, :profile_image_url_https) }
+        text = I18n.t('og_image_text.close_friends', user: @twitter_user.screen_name, friend1: users[0][:screen_name], friend2: users[1][:screen_name], friend3: users[2][:screen_name])
+        render json: {text: text, users: users}
+      end
+
       private
 
       # The heart shape is made up of 65 squares
