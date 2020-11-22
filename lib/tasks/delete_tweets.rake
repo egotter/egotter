@@ -10,6 +10,10 @@ namespace :delete_tweets do
       raise "The user doesn't has valid subscription user_id=#{user.id}"
     end
 
+    if user.has_trial_subscription?
+      user.valid_order.end_trial!
+    end
+
     tweets = JSON.load(File.read(ENV['FILE']).remove(/\Awindow\.YTD\.tweet\.part\d+ =/))
     if tweets.empty?
       raise "There are no tweets user_id=#{user.id}"
