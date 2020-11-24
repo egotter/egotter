@@ -487,32 +487,34 @@ class PeriodicReport < ApplicationRecord
   extend CampaignsHelper
 
   module UrlHelpers
+    include Rails.application.routes.url_helpers
+
     def root_url(options)
-      Rails.application.routes.url_helpers.root_url(default_url_options.merge(options))
+      super(default_url_options.merge(options))
     end
 
     def sign_in_url(options)
-      Rails.application.routes.url_helpers.sign_in_url({share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false}.merge(options))
+      super({share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false}.merge(options))
     end
 
     def timeline_url(user, options)
-      Rails.application.routes.url_helpers.timeline_url(user, default_url_options.merge(options))
+      super(user, default_url_options.merge(options))
     end
 
     def profile_url(*args)
-      Rails.application.routes.url_helpers.profile_url(*args)
+      super(*args)
     end
 
     def pricing_url(options)
-      Rails.application.routes.url_helpers.pricing_url(default_url_options.merge(options))
+      super(default_url_options.merge(options))
     end
 
     def support_url(options)
-      Rails.application.routes.url_helpers.support_url(default_url_options.merge(options))
+      super(default_url_options.merge(options))
     end
 
     def settings_url(*args)
-      Rails.application.routes.url_helpers.settings_url(*args)
+      super(*args)
     end
 
     def default_url_options

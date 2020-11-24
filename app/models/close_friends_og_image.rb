@@ -227,7 +227,7 @@ class CloseFriendsOgImage < ApplicationRecord
         sleep(rand(2) + 1)
         retry
       else
-        Rails.logger.warn "#{self.class}##{__method__}: #{e.inspect} url=#{url}"
+        Rails.logger.info "#{self.class}##{__method__}: #{e.inspect} url=#{url}"
         ''
       end
     rescue => e
