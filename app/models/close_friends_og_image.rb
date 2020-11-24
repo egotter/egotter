@@ -57,8 +57,11 @@ class CloseFriendsOgImage < ApplicationRecord
       heart = self.class.generate_heart_image(@twitter_user.uid, friends)
 
       begin
-        benchmark("generate image binary uid=#{@twitter_user.uid}") do
-          self.class.generate_image(text, heart, @outfile)
+        benchmark("Write text uid=#{@twitter_user.uid}") do
+          write_text_to_image(text, @outfile)
+        end
+        benchmark("Composite images uid=#{@twitter_user.uid}") do
+          composite_images(heart, @outfile)
         end
 
         image = CloseFriendsOgImage.find_or_initialize_by(uid: @twitter_user.uid)
@@ -85,6 +88,17 @@ class CloseFriendsOgImage < ApplicationRecord
     end
 
     private
+
+    def write_text_to_image(text, outfile)
+      system(%Q(#{OG_IMAGE_IMAGEMAGICK} #{OG_IMAGE_OUTLINE} -font "#{OG_IMAGE_FONT}" -fill black -pointsize 24 -interline-spacing 20 -annotate +50+120 "#{text}" #{outfile}))
+    end
+
+    def composite_images(heart, outfile)
+      Tempfile.open(['heart', '.svg']) do |f|
+        f.write heart
+        system(%Q(#{OG_IMAGE_IMAGEMAGICK} #{outfile} #{f.path} -gravity center -geometry +200+0 -composite #{outfile}))
+      end
+    end
 
     def benchmark(message, &block)
       self.class.benchmark(message, &block)
@@ -141,18 +155,6 @@ class CloseFriendsOgImage < ApplicationRecord
         ERB.new(OG_IMAGE_HEART).result_with_hash(hash)
       end
 
-      MX_CONVERT = Mutex.new
-
-      def generate_image(text, heart, outfile)
-        MX_CONVERT.synchronize do
-          system(%Q(#{OG_IMAGE_IMAGEMAGICK} #{OG_IMAGE_OUTLINE} -font "#{OG_IMAGE_FONT}" -fill black -pointsize 24 -interline-spacing 20 -annotate +50+120 "#{text}" #{outfile}))
-          Tempfile.open(['heart', '.svg']) do |f|
-            f.write heart
-            system(%Q(#{OG_IMAGE_IMAGEMAGICK} #{outfile} #{f.path} -gravity center -geometry +200+0 -composite #{outfile}))
-          end
-        end
-      end
-
       def benchmark(message, &block)
         ApplicationRecord.benchmark("Benchmark #{self} #{message}", &block)
       end
@@ -173,7 +175,7 @@ class CloseFriendsOgImage < ApplicationRecord
       queue = Queue.new
 
       Parallel.each(@urls, in_threads: @concurrency) do |url|
-        filepath = benchmark("load each image uid=#{@uid} url=#{url}") { url2file(url) }
+        filepath = benchmark("load image uid=#{@uid} url=#{url}") { url2file(url) }
         queue << [url, filepath]
       rescue => e
         Rails.logger.debug { "#{self.class}##{__method__}: open url failed url=#{url} exception=#{e.inspect}" }
