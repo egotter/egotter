@@ -43,7 +43,7 @@ class CloseFriendsOgImage < ApplicationRecord
     OG_IMAGE_IMAGEMAGICK = "env OMP_NUM_THREADS=1 MAGICK_THREAD_LIMIT=1 #{ENV['OG_IMAGE_IMAGEMAGICK']}"
     OG_IMAGE_OUTLINE = Rails.root.join('app/views/og_images/egotter_og_outline_840x450.png')
     OG_IMAGE_HEART = Rails.root.join('app/views/og_images/heart_300x350.svg.erb').read
-    OG_IMAGE_RECT = Rails.root.join('app/views/pink_48x48.gif')
+    OG_IMAGE_RECT = Rails.root.join('app/views/og_images/pink_48x48.gif')
     OG_IMAGE_FONT = Rails.root.join('app/views/og_images/azukiP.ttf')
     OG_IMAGE_TMP_DIR = Rails.root.join('public/og_image')
 
@@ -77,10 +77,7 @@ class CloseFriendsOgImage < ApplicationRecord
     MX_RMFILE = Mutex.new
 
     def cleanup
-      path = ImagesLoader.dir_path(@twitter_user.uid)
-      MX_RMFILE.synchronize do
-        FileUtils.rm_rf(path) if File.exist?(path)
-      end
+      ImagesLoader.cleanup(@twitter_user.uid)
 
       MX_RMFILE.synchronize do
         File.delete(@outfile) if @outfile && File.exist?(@outfile)
@@ -128,7 +125,7 @@ class CloseFriendsOgImage < ApplicationRecord
         image_files = benchmark("all images loaded uid=#{uid}") { images_loader.load }
 
         hash = hash.map do |key, value|
-          if key.match?(/^image_url/)
+          if key.match?(/^image_url/) && value.to_s.match?(/^http/)
             url, file = image_files.find { |url, _| url == value }
             if url && file
               [key, file]
@@ -162,48 +159,60 @@ class CloseFriendsOgImage < ApplicationRecord
     end
   end
 
+  require 'parallel'
+
   class ImagesLoader
     def initialize(uid, urls)
       @uid = uid
       @urls = urls
-      @queue = Queue.new
       @concurrency = 10
     end
 
-    MX_MKDIR = Mutex.new
-
-    class << self
-      def dir_path(uid)
-        path = Rails.root.join("public/og_image/profile_images_#{uid}")
-        MX_MKDIR.synchronize do
-          Dir.mkdir(path) unless File.exist?(path)
-        end
-        path
-      end
-    end
-
     def load
+      dir_path # Create a dir
+      queue = Queue.new
+
       Parallel.each(@urls, in_threads: @concurrency) do |url|
-        basename = File.basename(url)
-        filename = "#{self.class.dir_path(@uid)}/profile_image_#{@uid}_#{basename}"
-        unless File.exist?(filename)
-          image = benchmark("load each image uid=#{@uid} url=#{url}") { open(url) }
-          File.open(filename, 'wb') do |f|
-            f.write(image)
-          end
-        end
-        @queue << [url, filename]
+        filepath = benchmark("load each image uid=#{@uid} url=#{url}") { url2file(url) }
+        queue << [url, filepath]
       rescue => e
         Rails.logger.debug { "#{self.class}##{__method__}: open url failed url=#{url} exception=#{e.inspect}" }
-        @queue << [url, nil]
+        queue << [url, nil]
       end
 
-      @queue.size.times.map { @queue.pop }.to_h
+      queue.size.times.map { queue.pop }.to_h
+    end
+
+    class << self
+      def cleanup(uid)
+        path = new(uid, nil).send(:dir_path)
+        File.delete(*Dir.glob("#{path}/*"))
+      end
     end
 
     private
 
-    def open(url, retries: 3)
+    def url2file(url)
+      path = file_path(url)
+      unless File.exist?(path)
+        binary = open_url(url)
+        binary = File.binread(CloseFriendsOgImage::Generator::OG_IMAGE_RECT) if binary.empty?
+        File.binwrite(path, binary)
+      end
+      path
+    end
+
+    def file_path(url)
+      "#{dir_path}/profile_image_#{@uid}_#{File.basename(url)}"
+    end
+
+    def dir_path
+      path = Rails.root.join("public/og_image/profile_images_#{@uid}")
+      Dir.mkdir(path) unless File.exist?(path)
+      path
+    end
+
+    def open_url(url, retries: 3)
       uri = URI.parse(url)
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = true
@@ -216,14 +225,16 @@ class CloseFriendsOgImage < ApplicationRecord
         sleep(rand(2) + 1)
         retry
       else
-        raise RetryExhausted.new("#{e.inspect}")
+        Rails.logger.warn "#{self.class}##{__method__}: #{e.inspect} url=#{url}"
+        ''
       end
+    rescue => e
+      Rails.logger.warn "#{self.class}##{__method__}: #{e.inspect} url=#{url}"
+      ''
     end
 
     def benchmark(message, &block)
       ApplicationRecord.benchmark("Benchmark #{self.class} #{message}", &block)
     end
-
-    class RetryExhausted < StandardError; end
   end
 end

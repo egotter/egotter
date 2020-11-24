@@ -38,13 +38,13 @@ class CreateCloseFriendsOgImageWorker
 
     return if friends.size < 3
 
-    @image_generator = CloseFriendsOgImage::Generator.new(twitter_user)
-    @image_generator.generate(friends)
+    @generator = CloseFriendsOgImage::Generator.new(twitter_user)
+    @generator.generate(friends)
 
   rescue => e
     logger.warn "#{e.inspect.truncate(100)} uid=#{uid} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
   ensure
-    @image_generator&.cleanup
+    @generator&.cleanup
   end
 end

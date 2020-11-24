@@ -32,8 +32,7 @@ RSpec.describe CloseFriendsOgImage::Generator, type: :model do
     let(:users) { [{screen_name: 'name', profile_image_url_https: 'https://example.com/profile.jpg'}] }
     subject { described_class.generate_heart_image(uid, users) }
     after do
-      path = CloseFriendsOgImage::ImagesLoader.dir_path(uid)
-      FileUtils.rm_rf(path) if File.exist?(path)
+      CloseFriendsOgImage::ImagesLoader.cleanup(uid)
     end
     it do
       is_expected.to satisfy do |result|
@@ -45,5 +44,47 @@ RSpec.describe CloseFriendsOgImage::Generator, type: :model do
 
   describe '.generate_image' do
 
+  end
+end
+
+RSpec.describe CloseFriendsOgImage::ImagesLoader, type: :model do
+  let(:uid) { 1 }
+  let(:urls) { ['url1', 'url2'] }
+  let(:instance) { described_class.new(uid, urls) }
+
+  describe '#load' do
+    subject { instance.load }
+    it do
+      urls.each.with_index do |url, i|
+        expect(instance).to receive(:url2file).with(url).and_return("path#{i}")
+      end
+      subject
+    end
+  end
+
+  describe '.cleanup' do
+    subject { described_class.cleanup(uid) }
+    before do
+      path = "#{described_class.new(uid, nil).send(:dir_path)}/empty_file"
+      system("touch #{path}")
+    end
+    it { is_expected.to be_truthy }
+  end
+
+  describe '#url2file' do
+    let(:url) { 'url' }
+    let(:filepath) { Rails.root.join('tmp/file') }
+    subject { instance.send(:url2file, url) }
+    before do
+      allow(instance).to receive(:file_path).with(url).and_return(filepath)
+    end
+    after do
+      File.delete(filepath) if File.exist?(filepath)
+    end
+    it do
+      expect(instance).to receive(:open_url).with(url).and_return('image')
+      is_expected.to eq(filepath)
+      expect(File.read(filepath)).to eq('image')
+    end
   end
 end
