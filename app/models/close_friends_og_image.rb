@@ -231,7 +231,7 @@ class CloseFriendsOgImage < ApplicationRecord
         ''
       end
     rescue => e
-      Rails.logger.warn "#{self.class}##{__method__}: #{e.inspect} url=#{url}"
+      Rails.logger.info "#{self.class}##{__method__}: #{e.inspect} url=#{url}"
       ''
     end
 
