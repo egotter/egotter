@@ -1,4 +1,4 @@
-module DeployRuby
+module Deploy
   module Aws
     module Logging
       def success(str)
@@ -18,7 +18,7 @@ module DeployRuby
       end
 
       def logger
-        DeployRuby.logger
+        Deploy.logger
       end
     end
   end

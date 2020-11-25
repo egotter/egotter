@@ -65,7 +65,7 @@ module Tasks
       end
 
       def logger
-        DeployRuby.logger
+        Deploy.logger
       end
     end
 
@@ -74,7 +74,7 @@ module Tasks
         super()
         @role = params['role']
 
-        @target_group = ::DeployRuby::Aws::TargetGroup.new(params['target-group'])
+        @target_group = ::Deploy::Aws::TargetGroup.new(params['target-group'])
       end
 
       def run
@@ -98,9 +98,9 @@ module Tasks
 
       def run
         if @params['instance-id'] || @params['instance-name'] || @params['instance-name-regexp']
-          instance = ::DeployRuby::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'], name_regexp: @params['instance-name-regexp'])
+          instance = ::Deploy::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'], name_regexp: @params['instance-name-regexp'])
         else
-          instance = ::DeployRuby::Aws::Instance.retrieve_by(id: nil, name: nil, name_regexp: 'egotter_sidekiq\\d{8}')
+          instance = ::Deploy::Aws::Instance.retrieve_by(id: nil, name: nil, name_regexp: 'egotter_sidekiq\\d{8}')
         end
         if instance
           Tasks::UninstallTask::Sidekiq.new(instance.id).uninstall
@@ -120,7 +120,7 @@ module Tasks
       end
 
       def run
-        instance = ::DeployRuby::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'])
+        instance = ::Deploy::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'])
         if instance
           instance.terminate
           @instance = @terminated = instance

@@ -1,5 +1,5 @@
-require_relative '../lib/deploy_ruby/aws/ec2'
-require_relative '../lib/deploy_ruby/aws/instance'
+require_relative '../lib/deploy/aws/ec2'
+require_relative '../lib/deploy/aws/instance'
 
 module Tasks
   module LaunchInstanceTask
@@ -11,8 +11,8 @@ module Tasks
       end
 
       def launch
-        id = ::DeployRuby::Aws::EC2.new.launch_instance(name, @launch_params, @params)
-        ::DeployRuby::Aws::Instance.retrieve(id)
+        id = ::Deploy::Aws::EC2.new.launch_instance(name, @launch_params, @params)
+        ::Deploy::Aws::Instance.retrieve(id)
       end
 
       private

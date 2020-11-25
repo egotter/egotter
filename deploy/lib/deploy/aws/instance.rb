@@ -1,6 +1,6 @@
 require_relative './ec2'
 
-module DeployRuby
+module Deploy
   module Aws
     class Instance
       attr_reader :id, :name, :public_ip, :availability_zone, :launched_at

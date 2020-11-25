@@ -11,14 +11,14 @@ module Tasks
 
       def initialize(host)
         @action = :release
-        @instance = ::DeployRuby::Aws::Instance.retrieve_by(name: host)
+        @instance = ::Deploy::Aws::Instance.retrieve_by(name: host)
       end
     end
 
     class Web < Base
       def initialize(host)
         super
-        @target_group = ::DeployRuby::Aws::TargetGroup.new(ENV['AWS_TARGET_GROUP'])
+        @target_group = ::Deploy::Aws::TargetGroup.new(ENV['AWS_TARGET_GROUP'])
       end
 
       def run

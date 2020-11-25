@@ -2,7 +2,7 @@ require 'aws-sdk-elasticloadbalancingv2'
 
 require_relative './instance'
 
-module DeployRuby
+module Deploy
   module Aws
     class TargetGroup
       include Logging

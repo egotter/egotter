@@ -1,7 +1,7 @@
 require 'active_support'
 require 'active_support/logger'
 
-module DeployRuby
+module Deploy
   class Logger
     class << self
       def logger(file = nil)

@@ -30,7 +30,7 @@ module Tasks
       end
 
       def logger
-        DeployRuby.logger
+        Deploy.logger
       end
     end
 
@@ -38,7 +38,7 @@ module Tasks
       def initialize(params)
         super
         @state = params['state'].to_s.empty? ? 'healthy' : params['state']
-        @target_group = ::DeployRuby::Aws::TargetGroup.new(params['target-group'])
+        @target_group = ::Deploy::Aws::TargetGroup.new(params['target-group'])
       end
 
       def instance_names
@@ -52,8 +52,8 @@ module Tasks
       end
 
       def instance_names
-        ::DeployRuby::Aws::EC2.new.retrieve_instances.map do |i|
-          ::DeployRuby::Aws::Instance.new(i)
+        ::Deploy::Aws::EC2.new.retrieve_instances.map do |i|
+          ::Deploy::Aws::Instance.new(i)
         end.select do |i|
           i.name&.match?(/^egotter_sidekiq[^5]/)
         end.map(&:name).sort
@@ -66,8 +66,8 @@ module Tasks
       end
 
       def instance_names
-        ::DeployRuby::Aws::EC2.new.retrieve_instances.map do |i|
-          ::DeployRuby::Aws::Instance.new(i)
+        ::Deploy::Aws::EC2.new.retrieve_instances.map do |i|
+          ::Deploy::Aws::Instance.new(i)
         end.select do |i|
           i.name&.start_with?('egotter_plain')
         end.map(&:name).sort

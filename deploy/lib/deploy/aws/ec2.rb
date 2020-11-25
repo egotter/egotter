@@ -2,7 +2,7 @@ require 'aws-sdk-ec2'
 
 require_relative './logging'
 
-module DeployRuby
+module Deploy
   module Aws
     class EC2
       include Logging

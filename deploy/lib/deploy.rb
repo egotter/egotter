@@ -1,7 +1,7 @@
-require_relative './deploy_ruby/logger'
-require_relative './deploy_ruby/aws'
+require_relative './deploy/logger'
+require_relative './deploy/aws'
 
-module DeployRuby
+module Deploy
   def logger(file = 'log/deploy.log')
     Logger.logger(file)
   end

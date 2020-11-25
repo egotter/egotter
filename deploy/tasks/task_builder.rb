@@ -120,7 +120,7 @@ module Tasks
     end
 
     def logger
-      DeployRuby.logger
+      Deploy.logger
     end
   end
 end

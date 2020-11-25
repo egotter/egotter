@@ -4,7 +4,7 @@ require 'dotenv/load'
 
 require 'optparse'
 
-require_relative '../lib/deploy_ruby'
+require_relative '../lib/deploy'
 require_relative '../tasks/task_builder'
 
 STDOUT.sync = true
@@ -71,10 +71,10 @@ def main(params)
     return
   end
 
-  DeployRuby.logger.info "deploy started params=#{params.inspect}" unless params['list']
+  Deploy.logger.info "deploy started params=#{params.inspect}" unless params['list']
   task = Tasks::TaskBuilder.build(params)
   task.run
-  DeployRuby.logger.info "deploy finished params=#{params.inspect}" unless params['list']
+  Deploy.logger.info "deploy finished params=#{params.inspect}" unless params['list']
 
   unless params['list']
     system("git tag #{task.action}-#{params['role']}-#{Time.now.to_i}")

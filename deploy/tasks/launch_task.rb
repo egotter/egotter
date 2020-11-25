@@ -2,7 +2,7 @@ require 'date'
 
 require_relative '../../app/models/cloud_watch_client'
 
-require_relative '../lib/deploy_ruby/logger'
+require_relative '../lib/deploy/logger'
 require_relative './launch_instance_task'
 require_relative './install_task'
 require_relative './uninstall_task'
@@ -80,7 +80,7 @@ module Tasks
       end
 
       def logger
-        DeployRuby.logger
+        Deploy.logger
       end
     end
 
@@ -90,7 +90,7 @@ module Tasks
         @params = params
         @role = params['role']
 
-        @target_group = ::DeployRuby::Aws::TargetGroup.new(params['target-group'])
+        @target_group = ::Deploy::Aws::TargetGroup.new(params['target-group'])
       end
 
       def launch_instance(index = nil)

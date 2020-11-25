@@ -1,7 +1,7 @@
 module Tasks
   module Util
     def logger
-      DeployRuby.logger
+      Deploy.logger
     end
 
     def red(str)

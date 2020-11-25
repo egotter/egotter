@@ -1,4 +1,4 @@
-require_relative '../lib/deploy_ruby/aws/instance'
+require_relative '../lib/deploy/aws/instance'
 
 require_relative './util'
 
@@ -24,7 +24,7 @@ module Tasks
     class Web < Task
       def initialize(id)
         @id = id
-        instance = ::DeployRuby::Aws::Instance.retrieve(id)
+        instance = ::Deploy::Aws::Instance.retrieve(id)
         super(instance.name, instance.public_ip)
       end
 
@@ -47,7 +47,7 @@ module Tasks
     class Sidekiq < Task
       def initialize(id)
         @id = id
-        instance = ::DeployRuby::Aws::Instance.retrieve(id)
+        instance = ::Deploy::Aws::Instance.retrieve(id)
         super(instance.name, instance.public_ip)
       end
 
