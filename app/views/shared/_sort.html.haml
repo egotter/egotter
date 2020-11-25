@@ -12,7 +12,7 @@
             = label
         - elsif trial
           %a.sort-orders.dropdown-item.btn-end-trial{href: "#"}
-          = label
+            = label
         - elsif purchased
           %a.sort-orders.dropdown-item{href: "#", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
             = label

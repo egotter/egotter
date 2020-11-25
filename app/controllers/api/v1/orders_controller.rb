@@ -7,7 +7,9 @@ module Api
 
       def end_trial
         order = current_user.valid_order
-        order.end_trial!
+        if order.trial?
+          order.end_trial!
+        end
         send_message(order)
         render json: {message: t('.success')}
       rescue => e
@@ -17,7 +19,9 @@ module Api
 
       def cancel
         order = current_user.orders.find_by(id: params[:id])
-        order.cancel!
+        unless order.canceled?
+          order.cancel!
+        end
         send_message(order)
         render json: {message: t('.success')}
       rescue => e

@@ -127,6 +127,10 @@ class Order < ApplicationRecord
     update!(trial_end: Time.zone.now.to_i)
   end
 
+  def canceled?
+    canceled_at.present?
+  end
+
   def cancel!
     sub = ::Stripe::Subscription.delete(subscription_id)
     update!(canceled_at: Subscription.new(sub).canceled_at)

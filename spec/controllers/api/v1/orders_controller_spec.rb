@@ -10,7 +10,10 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
 
   describe 'POST #end_trial' do
     subject { post :end_trial, params: {} }
-    before { allow(user).to receive(:valid_order).and_return(order) }
+    before do
+      allow(user).to receive(:valid_order).and_return(order)
+      allow(order).to receive(:trial?).and_return(true)
+    end
     it do
       expect(order).to receive(:end_trial!)
       expect(controller).to receive(:send_message).with(order)
@@ -24,6 +27,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
     before do
       allow(user).to receive(:orders).and_return(orders)
       allow(orders).to receive(:find_by).with(id: order.id.to_s).and_return(order)
+      allow(order).to receive(:canceled?).and_return(false)
     end
     it do
       expect(order).to receive(:cancel!)
