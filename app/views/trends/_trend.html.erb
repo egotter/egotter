@@ -37,10 +37,12 @@
   ws=<%= trend.words_count&.size %>
 </div>
 
-<h4 class="text-center mt-5 mb-3">
-  <%= t('.tweet_title') %>
-</h4>
-<%= render(partial: 'twitter/oembed_tweet', collection: [trend.latest_tweet], as: :tweet, cached: true, formats: %i(html)) %>
+<% if trend.latest_tweet %>
+  <h4 class="text-center mt-5 mb-3">
+    <%= t('.tweet_title') %>
+  </h4>
+  <%= render(partial: 'twitter/oembed_tweet', collection: [trend.latest_tweet], as: :tweet, cached: true, formats: %i(html)) %>
+<% end %>
 
 <div class="text-center my-5">
   <%= link_to t('.see_more'), trend_tweets_path(trend) %>
