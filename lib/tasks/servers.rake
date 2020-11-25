@@ -2,7 +2,7 @@ namespace :servers do
   desc 'Launch'
   task launch: :environment do |task|
 
-    require_relative '../../deploy/bin/egotter'
+    require_relative '../../bin/deploy'
     logger = SlackLogger.new(:deploy, DeployRuby.logger)
 
     logger.info "#{task.name} started"
@@ -39,7 +39,7 @@ namespace :servers do
   desc 'Terminate'
   task terminate: :environment do |task|
 
-    require_relative '../../deploy/bin/egotter'
+    require_relative '../../bin/deploy'
     logger = SlackLogger.new(:deploy, DeployRuby.logger)
 
     logger.info "#{task.name} started"
