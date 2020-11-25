@@ -40,7 +40,7 @@ module Api
       end
 
       def set_trend
-        @trend = Trend.japan.latest_trends.top_n(3).find_by(id: params[:id])
+        @trend = Trend.japan.latest_trends.top_10.find_by(id: params[:id])
       end
     end
   end

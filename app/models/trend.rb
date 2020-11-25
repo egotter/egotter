@@ -27,6 +27,7 @@ class Trend < ApplicationRecord
   scope :world, -> { where(woe_id: WORLD_WOE_ID) }
   scope :japan, -> { where(woe_id: JAPAN_WOE_ID) }
   scope :top_n, -> (n) { where(rank: 1..n) }
+  scope :top_10, -> { top_n(10) }
 
   def search_tweets(options = {})
     self.class.search_tweets(name, options.merge(time: time))
