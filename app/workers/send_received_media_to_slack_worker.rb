@@ -10,7 +10,8 @@ class SendReceivedMediaToSlackWorker
     if dm.media_url
       client = User.egotter.api_client.twitter
       media = dm.retrieve_media(client)
-      text = "sender=#{dm.sender_id} text=#{dm.text}"
+      user = TwitterDB::User.find_by(uid: dm.sender_id)
+      text = "uid=#{dm.sender_id} screen_name=#{user&.screen_name} text=#{dm.text}"
       SlackBotClient.channel('general').upload_media(media, initial_comment: text)
     end
   rescue => e
