@@ -4,8 +4,8 @@ require 'dotenv/load'
 
 require 'optparse'
 
-require_relative '../lib/deploy'
-require_relative '../tasks/task_builder'
+require_relative '../deploy/lib/deploy'
+require_relative '../deploy/tasks/task_builder'
 
 STDOUT.sync = true
 
