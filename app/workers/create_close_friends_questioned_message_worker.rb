@@ -1,4 +1,4 @@
-class CreateDeleteTweetsQuestionedMessageWorker
+class CreateCloseFriendsQuestionedMessageWorker
   include Sidekiq::Worker
   include ReportErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
@@ -14,9 +14,9 @@ class CreateDeleteTweetsQuestionedMessageWorker
   # options:
   def perform(uid, options = {})
 
-    template = Rails.root.join('app/views/delete_tweets/questioned.ja.text.erb')
+    template = Rails.root.join('app/views/close_friends/questioned.ja.text.erb')
     message = ERB.new(template.read).result_with_hash({})
-    event = DeleteTweetsReport.build_direct_message_event(uid, message)
+    event = CloseFriendsReport.build_direct_message_event(uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)
 
   rescue => e
