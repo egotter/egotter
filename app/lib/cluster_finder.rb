@@ -86,6 +86,7 @@ class ClusterFinder
         return candidates
       end
     end
+    []
   end
 
   def filter_lists_by_member_count(lists, min: MIN_LIST_MEMBERS, max: MAX_LIST_MEMBERS)
@@ -107,6 +108,7 @@ class ClusterFinder
         return candidates
       end
     end
+    []
   end
 
   def filter_lists_by_total_lists(lists, max_total_lists: 50)
@@ -120,7 +122,10 @@ class ClusterFinder
   end
 
   def filter_members_by_content_rate(members_count, lists_size, min_members: 10, rate: 0.3)
-    while (result = members_count.select { |_, count| count > lists_size * rate }).size < min_members do
+    result = nil
+    10.times do
+      result = members_count.select { |_, count| count > lists_size * rate }
+      break if result.size > min_members
       rate -= 0.05
     end
     result
