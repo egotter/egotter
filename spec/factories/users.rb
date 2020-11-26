@@ -31,7 +31,7 @@ FactoryBot.define do
       end
 
       if evaluator.with_orders
-        user.orders.create!(customer_id: 'cus', subscription_id: 'sub', canceled_at: nil)
+        user.orders.create!(name: 'name', customer_id: 'cus', subscription_id: 'sub', canceled_at: nil)
       end
     end
   end

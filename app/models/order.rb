@@ -29,6 +29,13 @@ class Order < ApplicationRecord
   belongs_to :user
   visitable :ahoy_visit
 
+  validates :user_id, presence: true
+  validates :name, presence: true
+  validates :customer_id, presence: true
+  validates :subscription_id, presence: true
+
+  # TODO Other validations
+
   BASIC_PLAN_ID = ENV['STRIPE_BASIC_PLAN_ID']
   PRICE = 300
   TRIAL_DAYS = 14
