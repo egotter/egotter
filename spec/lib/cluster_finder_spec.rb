@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ClusterFinder, type: :model do
-  let(:instance) { described_class.new }
+  let(:client) { 'client' }
+  let(:instance) { described_class.new(client) }
   let(:lists) do
     [
         double('List', id: 'id1', full_name: 'user1/name1-flower', member_count: 3),

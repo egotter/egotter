@@ -6,9 +6,13 @@ class ClusterFinder
   MAX_MEMBERS = 3000
   MAX_LISTS = 50
   CONTENT_RATE = 0.3
-  LIMIT = 100
+  LIMIT = 10
 
-  def list_clusters(user: nil, lists: nil, min_word_length: MIN_WORD_LENGTH, min_list_members: MIN_LIST_MEMBERS, max_list_members: MAX_LIST_MEMBERS, max_members: MAX_MEMBERS, max_lists: MAX_LISTS, content_rate: CONTENT_RATE, limit: LIMIT)
+  def initialize(client)
+    @client = client
+  end
+
+  def list_clusters(user, lists: nil, min_word_length: MIN_WORD_LENGTH, min_list_members: MIN_LIST_MEMBERS, max_list_members: MAX_LIST_MEMBERS, max_members: MAX_MEMBERS, max_lists: MAX_LISTS, content_rate: CONTENT_RATE, limit: LIMIT)
     lists = fetch_lists(user) unless lists
     lists = lists.sort_by(&:member_count)
     logger.debug { "#{__method__}: lists=#{inspect_lists(lists)}" }
@@ -48,11 +52,11 @@ class ClusterFinder
   private
 
   def fetch_lists(user, count: 500)
-    Bot.api_client.twitter.memberships(user, count: count).attrs[:lists].map { |l| Hashie::Mash.new(l) }
+    @client.twitter.memberships(user, count: count).attrs[:lists].map { |l| Hashie::Mash.new(l) }
   end
 
   def fetch_list_members(list)
-    Bot.api_client.twitter.list_members(list.id).attrs[:users].map { |u| Hashie::Mash.new(u) }
+    @client.twitter.list_members(list.id).attrs[:users].map { |u| Hashie::Mash.new(u) }
   rescue Twitter::Error::NotFound => e
     logger.debug "#{__method__}: #{e.inspect} list_id=#{list.id} full_name=#{list.full_name}"
     nil
