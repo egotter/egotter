@@ -122,7 +122,7 @@ class Order < ApplicationRecord
   end
 
   def trial?
-    Time.zone.now < trial_end_time
+    !trial_end.nil? && Time.zone.now < trial_end_time
   end
 
   def sync_trial_end!

@@ -7,6 +7,7 @@ class OrdersController < ApplicationController
 
   after_action :send_message, only: %i(create destroy checkout_session_completed)
 
+  # TODO Remove later
   def create
     logger.warn "#{controller_name}##{action_name} is deprecated"
 

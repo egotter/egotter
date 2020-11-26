@@ -223,8 +223,7 @@ class User < ApplicationRecord
     if instance_variable_defined?(:@has_trial_subscription)
       @has_trial_subscription
     else
-      order = valid_order
-      @has_trial_subscription = !order.trial_end.nil? && order.trial?
+      @has_trial_subscription = valid_order.trial?
     end
   end
 

@@ -9,12 +9,16 @@ class Order {
 
     $.post(url, {id: id}).done(function (res) {
       ToastMessage.info(res.message);
+      setTimeout(function () {
+        window.location.reload();
+      }, 5000);
     }).fail(function (xhr) {
-      var message = 'error';
+      var message;
       try {
         message = JSON.parse(xhr.responseText)['message'];
       } catch (e) {
         logger.error(e);
+        message = 'error';
       }
       ToastMessage.warn(message);
     });

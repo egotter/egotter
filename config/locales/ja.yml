@@ -2106,10 +2106,10 @@ ja:
           error: '検索された @%{user} のデータ取得に失敗しました。ページを更新してみてください。'
       orders:
         end_trial:
-          success: 'トライアル期間の更新に成功しました。ページを更新してください'
+          success_html: 'トライアル期間の更新に成功しました。ページを更新してください。<span class="text-info">%{count}秒後に自動的に移動します</span>'
           fail: 'トライアル期間の更新に失敗しましたお手数ですが、@egotter_cs までご連絡ください'
         cancel:
-          success: '有料プランをキャンセルしました。ページを更新してください'
+          success_html: '有料プランをキャンセルしました。ページを更新してください。<span class="text-info">%{count}秒後に自動的に移動します</span>'
           fail: '有料プランのキャンセルに失敗しました。お手数ですが、@egotter_cs までご連絡ください'
   modal:
     welcome_modal:

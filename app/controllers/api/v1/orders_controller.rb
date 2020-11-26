@@ -11,7 +11,7 @@ module Api
           order.end_trial!
         end
         send_message(order)
-        render json: {message: t('.success')}
+        render json: {message: t('.success_html', count: 5)}
       rescue => e
         logger.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
         render json: {error: true, message: t('.fail')}, status: :unprocessable_entity
@@ -23,7 +23,7 @@ module Api
           order.cancel!
         end
         send_message(order)
-        render json: {message: t('.success')}
+        render json: {message: t('.success_html', count: 5)}
       rescue => e
         logger.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
         render json: {error: true, message: t('.fail')}, status: :unprocessable_entity
@@ -32,7 +32,7 @@ module Api
       private
 
       def send_message(order)
-        message = "`#{Rails.env}:#{action_name}` user_id=#{current_user.id} order_id=#{order.id}"
+        message = "`#{Rails.env}:#{action_name}` user_id=#{current_user.id} order_id=#{order.id} device_type=#{request.device_type}"
         SendMessageToSlackWorker.perform_async(:orders, message)
       end
     end
