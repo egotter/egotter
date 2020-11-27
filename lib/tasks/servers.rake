@@ -23,7 +23,7 @@ namespace :servers do
     params = {
         'adjust' => true,
         'role' => 'sidekiq',
-        'instance-type' => 'm5.large',
+        'instance-type' => ENV['SIDEKIQ_INSTANCE_TYPE'] || 'm5.large',
         'count' => ENV['SIDEKIQ_INSTANCES_MAX'] || 4,
     }
     begin
@@ -60,8 +60,8 @@ namespace :servers do
     params = {
         'adjust' => true,
         'role' => 'sidekiq',
-        'instance-type' => 'm5.large',
-        'count' => ENV['SIDEKIQ_INSTANCES_MIN'] || 0,
+        'instance-type' => ENV['SIDEKIQ_INSTANCE_TYPE'] || 'm5.large',
+        'count' => ENV['SIDEKIQ_INSTANCES_MIN'] || 1,
     }
     begin
       Tasks::TaskBuilder.build(params).run
