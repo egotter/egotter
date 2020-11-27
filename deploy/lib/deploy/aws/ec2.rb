@@ -19,11 +19,11 @@ module Deploy
         instance = retrieve_instance(instance.id)
         test_ssh_connection(instance.public_ip_address)
 
-        instance.create_tags(tags: [{key: 'Name', value: name}, {key: 'Role', value: params['role']}])
-        instance.volumes.first.create_tags(tags: [{key: 'Name', value: name}])
+        instance.create_tags(tags: [{key: 'App', value: 'egotter'}, {key: 'Name', value: name}, {key: 'Role', value: params['role']}])
+        instance.volumes.first.create_tags(tags: [{key: 'App', value: 'egotter'}, {key: 'Name', value: name}])
         instance.id
-      rescue ::Aws::EC2::Errors::InvalidParameterCombination => e
-        red "Invalid launch_params values=#{launch_params.inspect}"
+      rescue ::Aws::EC2::Errors::InvalidParameterCombination, ::Aws::EC2::Errors::InvalidParameterValue => e
+        red "#{e.inspect} values=#{launch_params.inspect}"
         exit
       rescue Interrupt, StandardError => e
         red "#{e.class} is raised and terminates already started instance."

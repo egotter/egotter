@@ -43,6 +43,7 @@ def parse_params
       'hosts:',
       'git-tag',
       'launch-template:',
+      'market-type:',
       'name-tag:',
       'security-group:',
       'subnet:',

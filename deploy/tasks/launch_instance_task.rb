@@ -43,6 +43,9 @@ module Tasks
     class LaunchParams < ::Hash
       def initialize(params)
         self[:launch_template] = {launch_template_id: params['launch-template'] || ENV['AWS_LAUNCH_TEMPLATE']}
+        if params['market-type'].nil? || params['market-type'] == 'spot'
+          self[:instance_market_options] = {market_type: 'spot'}
+        end
         self[:min_count] = 1
         self[:max_count] = 1
         self[:security_group_ids] = [params['security-group'] || ENV['AWS_SECURITY_GROUP']]
