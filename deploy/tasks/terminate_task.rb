@@ -1,5 +1,3 @@
-require_relative '../../app/models/cloud_watch_client'
-
 require_relative './uninstall_task'
 
 module Tasks
@@ -56,7 +54,7 @@ module Tasks
       end
 
       def after_terminate
-        CloudWatchClient::Dashboard.new('egotter-linux-system').
+        Dashboard.new('egotter-linux-system').
             remove_cpu_utilization(@role, @terminated.id).
             remove_memory_utilization(@role, @terminated.id).
             remove_cpu_credit_balance(@role, @terminated.id).

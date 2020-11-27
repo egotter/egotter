@@ -89,6 +89,7 @@ class CloudWatchClient
     @client.put_dashboard(dashboard_name: name, dashboard_body: body.to_json)
   end
 
+  # TODO Remove later
   class Dashboard
     include Logging
 

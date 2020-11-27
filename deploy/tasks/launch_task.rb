@@ -1,7 +1,5 @@
 require 'date'
 
-require_relative '../../app/models/cloud_watch_client'
-
 require_relative '../lib/deploy/logger'
 require_relative './launch_instance_task'
 require_relative './install_task'
@@ -49,7 +47,7 @@ module Tasks
       def after_launch
         return if @role == 'plain'
 
-        CloudWatchClient::Dashboard.new('egotter-linux-system').
+        Dashboard.new('egotter-linux-system').
             append_cpu_utilization(@role, @launched.id).
             append_memory_utilization(@role, @launched.id).
             append_cpu_credit_balance(@role, @launched.id).
@@ -58,7 +56,7 @@ module Tasks
       end
 
       def after_terminate
-        CloudWatchClient::Dashboard.new('egotter-linux-system').
+        Dashboard.new('egotter-linux-system').
             remove_cpu_utilization(@role, @terminated.id).
             remove_memory_utilization(@role, @terminated.id).
             remove_cpu_credit_balance(@role, @terminated.id).
@@ -143,34 +141,6 @@ module Tasks
 
         append_to_ssh_config(@server.id, @server.host, @server.public_ip)
         Tasks::InstallTask::Sidekiq.new(@server.id).install
-
-        @instance = @launched = @server
-
-        super
-      end
-    end
-
-    # TODO Remove later
-    class SidekiqPromptReports < Base
-      def initialize(params)
-        super()
-        @params = params
-        @role = params['role']
-      end
-
-      def launch_instance(index = nil)
-        az = 'ap-northeast-1b'
-        params = @params.merge('availability-zone' => az, 'instance-index' => index)
-        @server = Tasks::LaunchInstanceTask::Sidekiq.new(params).launch
-      end
-
-      def run
-        if @server.nil?
-          launch_instance
-        end
-
-        append_to_ssh_config(@server.id, @server.host, @server.public_ip)
-        Tasks::InstallTask::SidekiqPromptReports.new(@server.id).install
 
         @instance = @launched = @server
 

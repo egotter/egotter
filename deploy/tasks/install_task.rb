@@ -300,30 +300,6 @@ module Tasks
       end
     end
 
-    # TODO Remover later
-    class SidekiqPromptReports < Sidekiq
-      attr_reader :instance
-
-      def update_env
-        upload_env('env/sidekiq.env.enc')
-      end
-
-      def restart_processes
-        [
-            'sudo service td-agent restart',
-            'sudo service nginx stop || :',
-            'sudo stop puma || :',
-            'sudo start sidekiq_misc || :',
-            'sudo start sidekiq || :',
-            'sudo restart datadog-agent',
-        ].each do |cmd|
-          backend(cmd)
-        end
-
-        self
-      end
-    end
-
     class Plain < Task
       attr_reader :instance
 

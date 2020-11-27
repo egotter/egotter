@@ -5,7 +5,6 @@ require 'dotenv/load'
 require 'optparse'
 
 require_relative '../deploy/lib/deploy'
-require_relative '../deploy/tasks/task_builder'
 
 STDOUT.sync = true
 
@@ -66,6 +65,10 @@ def parse_params
   )
 end
 
+def git_tag?(params)
+  !params['list'] && !(params['launch'] && params['role'] == 'plain') && !(params['terminate'] && params['role'] == 'plain')
+end
+
 def main(params)
   if params['h'] || params['help']
     print_help
@@ -77,8 +80,8 @@ def main(params)
   task.run
   Deploy.logger.info "deploy finished params=#{params.inspect}" unless params['list']
 
-  unless params['list']
-    system("git tag #{task.action}-#{params['role']}-#{Time.now.to_i}")
+  if git_tag?(params)
+    system("git tag #{task.action}-#{params['role']}-#{Time.now.strftime("%Y%m%d%H%M%S")}")
     system('git push origin --tags')
   end
 end

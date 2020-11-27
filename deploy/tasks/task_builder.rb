@@ -45,15 +45,15 @@ module Tasks
 
       if role == 'web'
         if hosts.size > 1
-          Tasks::EnumerableTask.new(hosts.map { |host| Tasks::ReleaseTask::Web.new(host) })
+          EnumerableTask.new(hosts.map { |host| ReleaseTask::Web.new(host) })
         else
-          Tasks::ReleaseTask::Web.new(hosts[0])
+          ReleaseTask::Web.new(hosts[0])
         end
       elsif role == 'sidekiq'
         if hosts.size > 1
-          Tasks::EnumerableTask.new(hosts.map { |host| Tasks::ReleaseTask::Sidekiq.new(host) })
+          EnumerableTask.new(hosts.map { |host| ReleaseTask::Sidekiq.new(host) })
         else
-          Tasks::ReleaseTask::Sidekiq.new(hosts[0])
+          ReleaseTask::Sidekiq.new(hosts[0])
         end
       else
         raise UnknownRoleError, "params=#{@params.inspect}"
@@ -62,7 +62,7 @@ module Tasks
 
     def launch_task
       if multiple_task?
-        tasks = tasks_count.times.map { Tasks::LaunchTask.build(@params) }
+        tasks = tasks_count.times.map { LaunchTask.build(@params) }
 
         logger.info "Launch #{tasks_count} instances in parallel"
 
@@ -70,9 +70,9 @@ module Tasks
           Thread.new { task.launch_instance(i) }
         end.each(&:join)
 
-        Tasks::EnumerableTask.new(tasks)
+        EnumerableTask.new(tasks)
       else
-        Tasks::LaunchTask.build(@params)
+        LaunchTask.build(@params)
       end
     end
 
@@ -97,18 +97,18 @@ module Tasks
 
     def terminate_task
       if multiple_task?
-        Tasks::EnumerableTask.new(tasks_count.times.map { Tasks::TerminateTask.build(@params) })
+        EnumerableTask.new(tasks_count.times.map { TerminateTask.build(@params) })
       else
-        Tasks::TerminateTask.build(@params)
+        TerminateTask.build(@params)
       end
     end
 
     def sync_task
-      Tasks::SyncTask.build(@params)
+      SyncTask.build(@params)
     end
 
     def list_task
-      Tasks::ListTask.build(@params)
+      ListTask.build(@params)
     end
 
     def multiple_task?
