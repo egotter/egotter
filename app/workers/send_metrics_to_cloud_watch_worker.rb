@@ -1,6 +1,5 @@
 class SendMetricsToCloudWatchWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(*args)
@@ -8,7 +7,11 @@ class SendMetricsToCloudWatchWorker
   end
 
   def unique_in
-    30.seconds
+    50.seconds
+  end
+
+  def expire_in
+    50.seconds
   end
 
   def _timeout_in
@@ -30,7 +33,6 @@ class SendMetricsToCloudWatchWorker
       end
     rescue => e
       logger.warn "#{e.inspect} method_name=#{method_name}"
-      notify_airbrake(e, method_name: method_name)
     end
 
     client.update
@@ -259,7 +261,7 @@ class SendMetricsToCloudWatchWorker
   private
 
   def client
-    @client ||= CloudWatchClient::Metrics.new
+    @client ||= Metrics.new
   end
 
   def put_metric_data(*args)
@@ -275,5 +277,48 @@ class SendMetricsToCloudWatchWorker
         universal_newline: true
     }
     str.encode(Encoding.find('ASCII'), options)
+  end
+
+  class Metrics
+    def initialize
+      @metrics = Hash.new { |hash, key| hash[key] = [] }
+      @appended = false
+    end
+
+    def append(name, value, namespace:, dimensions: nil)
+      @metrics[namespace] << {
+          metric_name: name,
+          dimensions: dimensions,
+          timestamp: Time.zone.now,
+          value: value,
+          unit: 'Count'
+      }
+      @appended = true
+
+      self
+    end
+
+    def update
+      if @appended
+        client = CloudWatchClient.new.instance_variable_get(:@client)
+
+        @metrics.each do |namespace, metric_data|
+          logger.info "Send #{metric_data.size} metrics to #{namespace}"
+          # logger.info metric_data.inspect
+
+          metric_data.each_slice(20).each do |data|
+            params = {
+                namespace: namespace,
+                metric_data: data,
+            }
+            client.put_metric_data(params)
+          end
+        end
+      end
+    end
+
+    def logger
+      Rails.logger
+    end
   end
 end

@@ -21,6 +21,7 @@ class CloudWatchClient
     @client = Aws::CloudWatch::Client.new(region: REGION)
   end
 
+  # TODO Remove later
   class Metrics
     include Logging
 
