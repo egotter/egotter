@@ -6,7 +6,7 @@ module InternalServerErrorHandler
   include DebugConcern
 
   included do
-    rescue_from Exception, with: :handle_general_error
+    rescue_from StandardError, with: :handle_general_error
     rescue_from Rack::Timeout::RequestTimeoutException, with: :handle_request_timeout
     rescue_from ActionController::InvalidAuthenticityToken, with: :handle_csrf_error
   end
@@ -14,20 +14,20 @@ module InternalServerErrorHandler
   private
 
   def handle_general_error(ex)
-    handle_request_error(ex)
+    handle_request_error(ex) if Rails.env.production?
 
     message = internal_server_error_message
     create_error_log(__method__, message, ex)
 
     if request.xhr?
-      render json: {error: message}, status: :internal_server_error
+      render json: {message: message}, status: :internal_server_error
     else
       render file: "#{Rails.root}/public/500.html", status: :internal_server_error, layout: false unless performed?
     end
   end
 
   def handle_request_timeout(ex)
-    handle_request_error(ex)
+    handle_request_error(ex) if Rails.env.production?
 
     if request.xhr?
       render json: {error: ex.message.truncate(100)}, status: :request_timeout

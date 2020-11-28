@@ -3,7 +3,7 @@ class TokimekiUnfollowController < ApplicationController
 
   before_action :require_login!, only: %i(cleanup unfollow keep)
 
-  rescue_from Exception do |ex|
+  rescue_from StandardError do |ex|
     if TwitterApiStatus.unauthorized?(ex)
       redirect_to tokimeki_unfollow_top_path(via: current_via('unauthorized')), alert: signed_in_user_not_authorized_message
     else
