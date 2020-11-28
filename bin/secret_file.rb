@@ -4,4 +4,6 @@
 require 'bundler/setup'
 require File.expand_path('../../app/lib/secret_file.rb', __FILE__)
 
-puts SecretFile.read("#{ARGV[0]}")
+if __FILE__ == $0
+  puts SecretFile.read(ARGV[0])
+end

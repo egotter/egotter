@@ -11,10 +11,7 @@ namespace :secret_file do
 
   desc 'Edit secret file'
   task edit: :environment do
-    if ENV["EDITOR"].to_s.empty?
-      puts('$EDITOR not found')
-      next
-    end
+    editor = ENV['EDITOR'] || 'vi'
 
     if ENV["FILE"].to_s.empty?
       puts('$FILE not found')
@@ -22,7 +19,7 @@ namespace :secret_file do
     end
 
     SecretFile.edit(ENV['FILE']) do |tmp_path|
-      system("#{ENV["EDITOR"]} #{tmp_path}")
+      system("#{editor} #{tmp_path}")
     end
   end
 end
