@@ -11,7 +11,6 @@ class Twitter {
       return;
     }
 
-    var self = this;
     var url = this.follow_url;
 
     $.post(url, {uid: uid}).done(function (res) {
@@ -21,7 +20,7 @@ class Twitter {
       if (xhr.status === 429) { // Too many requests
         $('#follow-limitation-warning-modal').modal();
       } else {
-        var message = self.parseMessage(xhr, textStatus, errorThrown);
+        var message = extractErrorMessage(xhr, textStatus, errorThrown);
         ToastMessage.warn(message);
       }
     });
@@ -34,7 +33,6 @@ class Twitter {
       return;
     }
 
-    var self = this;
     var url = this.unfollow_url;
 
     $.post(url, {uid: uid}).done(function (res) {
@@ -44,26 +42,10 @@ class Twitter {
       if (xhr.status === 429) { // Too many requests
         $('#unfollow-limitation-warning-modal').modal();
       } else {
-        var message = self.parseMessage(xhr, textStatus, errorThrown);
+        var message = extractErrorMessage(xhr, textStatus, errorThrown);
         ToastMessage.warn(message);
       }
     });
-  }
-
-  parseMessage(xhr, textStatus, errorThrown) {
-    var message;
-
-    try {
-      message = JSON.parse(xhr.responseText)['message'];
-    } catch (e) {
-      logger.error(e);
-    }
-
-    if (!message) {
-      message = xhr.status + ' (' + errorThrown + ')';
-    }
-
-    return message;
   }
 }
 

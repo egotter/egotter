@@ -22,15 +22,7 @@ class Fetcher {
         logger.log(self.constructor.name, 'done', res);
         resolve(res);
       }).fail(function (xhr, textStatus, errorThrown) {
-        var message;
-        try {
-          message = JSON.parse(xhr.responseText)['error'];
-        } catch (e) {
-          logger.error(e);
-        }
-        if (!message) {
-          message = xhr.status + ' (' + errorThrown + ')';
-        }
+        var message = extractErrorMessage(xhr, textStatus, errorThrown);
         logger.warn(self.constructor.name, message);
         ToastMessage.warn(message);
         reject(xhr);

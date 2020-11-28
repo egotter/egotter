@@ -15,17 +15,8 @@ class FeedItem {
       logger.log(url, res);
       successCallback(res);
     }).fail(function (xhr, textStatus, errorThrown) {
-      logger.warn(url, xhr.responseText);
-
-      var message;
-      try {
-        message = JSON.parse(xhr.responseText)['message'];
-      } catch (e) {
-        logger.error(e);
-      }
-      if (!message) {
-        message = xhr.status + ' (' + errorThrown + ')';
-      }
+      var message = extractErrorMessage(xhr, textStatus, errorThrown);
+      logger.warn(url, message);
 
       if (errorCallback) {
         errorCallback(message);

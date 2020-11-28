@@ -10,13 +10,8 @@ class ResetEgotterModal {
     this.$el.find('.positive').on('click', function () {
       $.ajax({url: url, type: 'DELETE'}).done(function (res) {
         ToastMessage.info(res.message);
-      }).fail(function (xhr) {
-        var message = 'error';
-        try {
-          message = JSON.parse(xhr.responseText)['message'];
-        } catch (e) {
-          logger.error(e);
-        }
+      }).fail(function (xhr, textStatus, errorThrown) {
+        var message = extractErrorMessage(xhr, textStatus, errorThrown);
         ToastMessage.warn(message);
       });
     });

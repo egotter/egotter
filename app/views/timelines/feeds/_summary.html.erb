@@ -72,19 +72,7 @@
       parent.find('.analyzing').hide();
       parent.find('.error').show();
 
-      var message;
-
-      try {
-        message = JSON.parse(xhr.responseText)['message'];
-      } catch (e) {
-        logger.error(e);
-        res['error'] = true;
-      }
-
-      if (!message) {
-        message = xhr.status + ' (' + errorThrown + ')';
-      }
-
+      var message = extractErrorMessage(xhr, textStatus, errorThrown);
       ToastMessage.info(message);
     }
 
