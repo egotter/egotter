@@ -44,7 +44,7 @@
   $(function () {
     var signedIn = <%= user_signed_in? %>;
 
-    var url = '<%= raw api_path %>';
+    var url = '<%= raw api_users_path %>';
     var uid = '<%= twitter_user.uid %>';
     var sortOrder = $('.sort-order-dropdown').data('sort-order');
     var filter = $('.filter-dropdown').data('filter');

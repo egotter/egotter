@@ -85,7 +85,7 @@ module PathsHelper
   end
 
   # TODO Don't use #send
-  def api_path
+  def api_users_path
     if controller_name == 'blockers'
       api_v1_blockers_list_path(via: current_via)
     else
