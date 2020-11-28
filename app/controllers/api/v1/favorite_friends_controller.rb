@@ -11,7 +11,7 @@ module Api
       end
 
       def list_users
-        @twitter_user.favorite_friends
+        @twitter_user.favorite_friends(limit: api_list_users_limit)
       end
     end
   end

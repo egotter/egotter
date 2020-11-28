@@ -10,7 +10,7 @@ module Api
       end
 
       def list_users
-        @twitter_user.mutual_unfriends
+        @twitter_user.mutual_unfriends(limit: api_list_users_limit)
       end
     end
   end

@@ -11,7 +11,7 @@ module Api
       end
 
       def list_users
-        @twitter_user.followers
+        @twitter_user.followers(limit: api_list_users_limit)
       end
     end
   end
