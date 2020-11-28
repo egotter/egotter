@@ -22,9 +22,7 @@ class Fetcher {
         logger.log(self.constructor.name, 'done', res);
         resolve(res);
       }).fail(function (xhr, textStatus, errorThrown) {
-        var message = extractErrorMessage(xhr, textStatus, errorThrown);
-        logger.warn(self.constructor.name, message);
-        ToastMessage.warn(message);
+        showErrorMessage(xhr, textStatus, errorThrown);
         reject(xhr);
       });
     });

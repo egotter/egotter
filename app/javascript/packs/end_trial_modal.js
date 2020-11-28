@@ -13,10 +13,7 @@ class EndTrialModal {
         setTimeout(function () {
           window.location.reload();
         }, 5000);
-      }).fail(function (xhr, textStatus, errorThrown) {
-        var message = extractErrorMessage(xhr, textStatus, errorThrown);
-        ToastMessage.warn(message);
-      });
+      }).fail(showErrorMessage);
     });
   }
 

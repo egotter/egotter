@@ -20,8 +20,7 @@ class Twitter {
       if (xhr.status === 429) { // Too many requests
         $('#follow-limitation-warning-modal').modal();
       } else {
-        var message = extractErrorMessage(xhr, textStatus, errorThrown);
-        ToastMessage.warn(message);
+        showErrorMessage(xhr, textStatus, errorThrown);
       }
     });
   }
@@ -42,8 +41,7 @@ class Twitter {
       if (xhr.status === 429) { // Too many requests
         $('#unfollow-limitation-warning-modal').modal();
       } else {
-        var message = extractErrorMessage(xhr, textStatus, errorThrown);
-        ToastMessage.warn(message);
+        showErrorMessage(xhr, textStatus, errorThrown);
       }
     });
   }

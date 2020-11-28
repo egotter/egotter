@@ -15,11 +15,8 @@ class FeedItem {
       logger.log(url, res);
       successCallback(res);
     }).fail(function (xhr, textStatus, errorThrown) {
-      var message = extractErrorMessage(xhr, textStatus, errorThrown);
-      logger.warn(url, message);
-
       if (errorCallback) {
-        errorCallback(message);
+        errorCallback(showErrorMessage(xhr, textStatus, errorThrown));
       }
     });
   }

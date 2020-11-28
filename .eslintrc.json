@@ -19,6 +19,7 @@
     "ga": true,
     "logger": true,
     "extractErrorMessage": true,
+    "showErrorMessage": true,
     "Highcharts": true,
     "moment": true,
     "d3": true,

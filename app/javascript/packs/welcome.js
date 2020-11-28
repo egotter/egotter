@@ -45,12 +45,8 @@ class ShareDialog extends ModalDialog {
         logger.log(url, res);
         ToastMessage.info($el.data('success-message'));
 
-      }).fail(function (xhr) {
-        var reason = $el.data('error-message');
-        if (xhr.status === 400 && xhr.responseText && JSON.parse(xhr.responseText)['reason']) {
-          reason = JSON.parse(xhr.responseText)['reason'];
-        }
-        ToastMessage.warn(reason);
+      }).fail(function () {
+        ToastMessage.warn($el.data('error-message'));
       });
 
       $el.modal('hide');

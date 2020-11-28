@@ -14,3 +14,11 @@ function extractErrorMessage(xhr, textStatus, errorThrown) {
 }
 
 window.extractErrorMessage = extractErrorMessage;
+
+function showErrorMessage(xhr, textStatus, errorThrown) {
+  var message = extractErrorMessage(xhr, textStatus, errorThrown);
+  ToastMessage.warn(message);
+  return message;
+}
+
+window.showErrorMessage = showErrorMessage;

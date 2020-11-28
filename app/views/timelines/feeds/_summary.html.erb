@@ -71,9 +71,7 @@
     function updateErrorView(xhr, textStatus, errorThrown) {
       parent.find('.analyzing').hide();
       parent.find('.error').show();
-
-      var message = extractErrorMessage(xhr, textStatus, errorThrown);
-      ToastMessage.info(message);
+      showErrorMessage(xhr, textStatus, errorThrown);
     }
 
     function createFetcher() {
