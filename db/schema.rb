@@ -1408,6 +1408,8 @@ ActiveRecord::Schema.define(version: 2020_11_09_175241) do
     t.integer "one_sided_friends_size"
     t.integer "one_sided_followers_size"
     t.integer "mutual_friends_size"
+    t.integer "inactive_friends_size"
+    t.integer "inactive_followers_size"
     t.bigint "top_follower_uid"
     t.string "created_by", default: "", null: false
     t.datetime "assembled_at"
