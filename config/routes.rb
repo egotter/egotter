@@ -42,6 +42,7 @@ Rails.application.routes.draw do
       post 'users/update_instance_id', to: 'users#update_instance_id'
       post 'users/update_device_token', to: 'users#update_device_token'
       post 'bots/invalidate_expired_credentials', to: 'bots#invalidate_expired_credentials'
+      post 'metrics/send_to_cloudwatch', to: 'metrics#send_to_cloudwatch'
       post 'periodic_report_settings', to: 'periodic_report_settings#update'
       post 'create_periodic_tweet_requests', to: 'create_periodic_tweet_requests#update'
       post 'orders/end_trial', to: 'orders#end_trial'

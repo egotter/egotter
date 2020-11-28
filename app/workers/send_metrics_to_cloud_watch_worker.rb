@@ -7,15 +7,15 @@ class SendMetricsToCloudWatchWorker
   end
 
   def unique_in
-    50.seconds
+    55.seconds
   end
 
   def expire_in
-    50.seconds
+    55.seconds
   end
 
   def _timeout_in
-    50.seconds
+    55.seconds
   end
 
   # Run every minute

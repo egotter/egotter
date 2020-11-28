@@ -9,7 +9,7 @@ RUBY='/var/egotter/bin/cron/ruby.sh'
 # 25 * * * *      /bin/sh -c "$RUNNER 'UpdateEgotterFollowersWorker.perform_async'"
 # 1  * * * *      /bin/sh -c "$RUNNER 'SendMetricsToSlackWorker.perform_async'"
 # 6-56/10 * * * * /bin/sh -c "$RUNNER 'CalculateMetricsWorker.perform_async'"
-# * * * * *       /bin/sh -c "$RUNNER 'SendMetricsToCloudWatchWorker.perform_async'"
+# * * * * *       /bin/sh -c "$RUBY bin/send_metrics_to_cloudwatch.rb"
 
 # PeriodicReport(morning)
 # 20 22 * * * /bin/sh -c "$RAKE servers:launch"
