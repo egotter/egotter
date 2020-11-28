@@ -11,7 +11,7 @@ module Api
       class OnlyForLoginUserError < StandardError; end
 
       rescue_from OnlyForLoginUserError do |e|
-        render json: {name: controller_name, message: t('before_sign_in.only_for_login_user')}, status: :forbidden
+        render json: {name: controller_name, message: t('before_sign_in.only_for_login_user', name: t('timelines.feeds.summary.blockers'))}, status: :forbidden
       end
 
       SUMMARY_LIMIT = 20

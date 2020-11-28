@@ -2488,7 +2488,7 @@ ja:
     secret_mode_detected_with_count: 'えごったーはシークレットモードではご利用いただけません。%{count}秒後にトップページへ移動します。'
     ad_blocker_detected: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。広告ブロッカーを無効にしてご利用ください。'
     ad_blocker_detected_with_count: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。%{seconds}秒後にトップページへ移動します。'
-    only_for_login_user: 'このページはログインしている本人のみ見ることができます。'
+    only_for_login_user: '%{name}はログインしている本人のみ見ることができます。'
   after_sign_in:
     too_many_requests_with_reset_in: >
       一時的なエラーが起きました。ツイッターAPIが回復するまで %{seconds}秒 ほど待ってください。<br>
