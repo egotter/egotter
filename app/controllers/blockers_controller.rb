@@ -6,6 +6,8 @@ class BlockersController < ApplicationController
   before_action { current_user_has_dm_permission? }
 
   def index
-    @twitter_user = TwitterUser.latest_by(uid: current_user.uid)
+    unless (@twitter_user = TwitterUser.latest_by(uid: current_user.uid))
+      redirect_to timeline_path(current_user, via: current_via)
+    end
   end
 end
