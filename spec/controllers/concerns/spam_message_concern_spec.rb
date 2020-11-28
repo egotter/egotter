@@ -33,7 +33,7 @@ describe SpamMessageConcern::SpamMessageProcessor do
   describe '#received?' do
     subject { instance.received? }
 
-    ['くず'].each do |word|
+    ['くず', 'うるせえ', 'うるせぇ'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
