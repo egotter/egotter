@@ -44,6 +44,10 @@ module TwitterUserCalculator
       update(one_sided_followers_size: count)
     elsif klass == S3::MutualFriendship
       update(mutual_friends_size: count)
+    elsif klass == S3::InactiveFriendship
+      update(inactive_friends_size: count)
+    elsif klass == S3::InactiveFollowership
+      update(inactive_followers_size: count)
     elsif klass == S3::Unfriendship
       update(unfriends_size: count)
     elsif klass == S3::Unfollowership

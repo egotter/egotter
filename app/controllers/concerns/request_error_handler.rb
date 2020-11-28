@@ -2,10 +2,12 @@ module RequestErrorHandler
   def handle_request_error(exception, **params)
     _print_exception(exception, params)
 
-    message = "#{exception.inspect.truncate(200)} #{_extract_params(params)}"
-    request_details_json.each { |key, value| message << "\n#{key}=#{value}" }
-    backtrace = exception.backtrace.join("\n")
-    SendErrorMessageToSlackWorker.perform_async(message, backtrace, channel: 'rails_web')
+    if Rails.env.production?
+      message = "#{exception.inspect.truncate(200)} #{_extract_params(params)}"
+      request_details_json.each { |key, value| message << "\n#{key}=#{value}" }
+      backtrace = exception.backtrace.join("\n")
+      SendErrorMessageToSlackWorker.perform_async(message, backtrace, channel: 'rails_web')
+    end
   rescue => e
     logger.warn "#{e.inspect} exception=#{exception} params=#{params}"
     logger.info e.backtrace.join("\n")

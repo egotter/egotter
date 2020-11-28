@@ -1,17 +1,19 @@
 <% via = current_via('summary_on_timeline') %>
 <% items = [
-    ['one_sided_friends', one_sided_friend_path(twitter_user, via: via), t('.one_sided_friends')],
-    ['one_sided_followers', one_sided_follower_path(twitter_user, via: via), t('.one_sided_followers')],
-    ['mutual_friends', mutual_friend_path(twitter_user, via: via), t('.mutual_friends')],
-    ['unfriends', unfriend_path(twitter_user, via: via), t('.unfriends')],
-    ['unfollowers', unfollower_path(twitter_user, via: via), t('.unfollowers')],
-    ['mutual_unfriends', mutual_unfriend_path(twitter_user, via: via), t('.mutual_unfriends')],
-    ['blockers', blockers_path(via: via), t('.blockers')],
+    ['one_sided_friends', t('.one_sided_friends')],
+    ['one_sided_followers', t('.one_sided_followers')],
+    ['mutual_friends', t('.mutual_friends')],
+    ['inactive_friends', t('.inactive_friends')],
+    ['inactive_followers', t('.inactive_followers')],
+    ['unfriends', t('.unfriends')],
+    ['unfollowers', t('.unfollowers')],
+    ['mutual_unfriends', t('.mutual_unfriends')],
+    ['blockers', t('.blockers')],
 ] %>
 
 <div class="summary-on-timeline">
   <div class="list-group">
-    <% items.each do |name, url, title| %>
+    <% items.each do |name, title| %>
       <%= link_to "#feed-#{name}", class: 'list-group-item', onclick: "itemOnSummaryClicked(this, '#{name}')" do %>
         <div class="d-flex justify-content-between align-items-center">
           <div><%= title %></div>

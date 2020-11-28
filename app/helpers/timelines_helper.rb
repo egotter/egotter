@@ -7,6 +7,10 @@ module TimelinesHelper
       t('timelines.feeds.summary.description.one_sided_followers')
     when 'mutual_friends'
       t('timelines.feeds.summary.description.mutual_friends')
+    when 'inactive_friends'
+      t('timelines.feeds.summary.description.inactive_friends')
+    when 'inactive_followers'
+      t('timelines.feeds.summary.description.inactive_followers')
     when 'unfriends'
       t('timelines.feeds.summary.description.unfriends')
     when 'unfollowers'
