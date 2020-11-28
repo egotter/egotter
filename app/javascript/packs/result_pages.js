@@ -37,8 +37,6 @@ class FetchTask {
     this.limit = options['limit'];
     this.minLimit = options['limit'];
     this.maxLimit = options['maxLimit'];
-    this.sortOrder = options['sortOrder'];
-    this.filter = options['filter'];
     this.loading = false;
     this.template = window.templates['userRectangle'];
 

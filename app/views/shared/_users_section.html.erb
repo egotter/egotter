@@ -46,9 +46,7 @@
 
     var url = '<%= raw api_users_path %>';
     var uid = '<%= twitter_user.uid %>';
-    var sortOrder = $('.sort-order-dropdown').data('sort-order');
-    var filter = $('.filter-dropdown').data('filter');
-    var params = {limit: 10, maxLimit: 10, sortOrder: sortOrder, filter: filter};
+    var params = {limit: 10, maxLimit: 10};
     var task = new FetchTask(url, uid, params);
     var via = '<%= current_via('users_section') %>';
 
