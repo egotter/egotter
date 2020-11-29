@@ -6,6 +6,8 @@ module PathsHelper
       send("#{controller_name}_top_path", via: via)
     when 'delete_tweets' then
       delete_tweets_path(via: via)
+    when 'delete_favorites' then
+      delete_favorites_path(via: via)
     when 'tokimeki_unfollow' then
       tokimeki_unfollow_cleanup_path(via: via)
     when 'trends' then

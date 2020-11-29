@@ -181,6 +181,28 @@ module FunctionsSectionHelper
     }
   end
 
+  def function_delete_favorites_values
+    if user_signed_in?
+      url = delete_favorites_path(via: current_via('functions_button'))
+      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary btn-block'
+    else
+      url = delete_favorites_path(via: current_via('functions_button'))
+      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary btn-block')
+    end
+
+    {
+        path: delete_favorites_path(via: current_via('functions_icon')),
+        title: t('shared.functions.delete_favorites.title'),
+        what_is_this: t('shared.functions.delete_favorites.what_is_this_html'),
+        description: t('shared.functions.delete_favorites.text_html',
+                       title: strip_tags(t('shared.functions.delete_favorites.title')),
+                       url: delete_favorites_path(via: current_via('functions_description'))
+        ),
+        button: button,
+        image: '/egotter_delete_favorites_with_text_400x453.png',
+        url: url
+    }
+  end
 
   def function_schedule_tweets_values
     url = scheduled_tweets_url(via: 'egotter_functions', utm_source: 'egotter-functions', utm_medium: 'web', utm_campaign: 'egotter')

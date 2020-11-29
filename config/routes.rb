@@ -48,6 +48,8 @@ Rails.application.routes.draw do
       post 'orders/end_trial', to: 'orders#end_trial'
       post 'orders/cancel', to: 'orders#cancel'
       resources :share_tweets, only: %i(create)
+
+      post "delete_favorites", to: "delete_favorites#destroy"
     end
   end
 
@@ -56,6 +58,9 @@ Rails.application.routes.draw do
   get 'delete_tweets', to: 'delete_tweets#new'
   get 'delete_tweets/mypage', to: 'delete_tweets#show', as: :delete_tweets_mypage
   post "delete_tweets", to: "delete_tweets#delete"
+
+  get 'delete_favorites', to: 'delete_favorites#new'
+  get 'delete_favorites/mypage', to: 'delete_favorites#show', as: :delete_favorites_mypage
 
   delete "reset_egotter", to: "reset_egotter#reset"
   post "reset_cache", to: "reset_cache#reset"

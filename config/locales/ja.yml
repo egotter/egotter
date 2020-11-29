@@ -298,6 +298,10 @@ ja:
         title: 'ツイートを一括削除'
         description_html: 'ツイートクリーナーで @%{user} のツイートを<br>一括で削除することができます。'
         open: 'ツイートクリーナーを開く'
+      delete_favorites:
+        title: 'いいねを一括削除'
+        description_html: 'いいねクリーナーで @%{user} のツイートを<br>一括で削除することができます。'
+        open: 'いいねクリーナーを開く'
       scheduled_tweets:
         title: 'ツイートを予約投稿'
         description_html: 'ツイート予約投稿で @%{user} のツイートを<br>時間指定で作成することができます。'
@@ -438,6 +442,10 @@ ja:
         title: "ツイート削除"
         name: 'ツイートクリーナー'
         note: '全ツイートの削除はこちら'
+      delete_favorites:
+        title: "いいね削除"
+        name: 'いいねクリーナー'
+        note: '全いいねの削除はこちら'
     general:
       title: "基本情報"
       screen_name:
@@ -1377,6 +1385,63 @@ ja:
         %{count}件のツイートを削除中にエラーが起きました。一定時間後に再度お試しください。<br>
         <br>
         何度も失敗する場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+  delete_favorites:
+    new: &delete_favorites_new
+      navbar_title: 'いいねクリーナー'
+      footer_title: 'いいねを一括削除'
+      meta_title: 'いいねクリーナー - ワンクリックでいいねを一括削除'
+      meta_description: '黒歴史よさようなら！ ワンクリックでいいねを一括削除。350万回以上利用されたえごったーに新機能が登場！ 100件/秒の速さでいいねを高速削除します。10年以上利用されているえごったーだからプライバシーも安心です。'
+      right_side:
+        header: 'いいねクリーナー'
+        subheader: 'ワンクリックでいいねを一括削除'
+        lead_html: '100件/秒の速さで高速削除！<br><span class="egotter-pink">350万回</span>以上利用された安心のツールです。<br>'
+      text001_html: >
+        ワンクリックでいいねを一括削除<br>
+        <span class="egotter-pink">350万回</span>以上利用されたえごったーに新機能が登場！
+      redirection_modal:
+        title: '@%{user} でログイン中です'
+        body_html: |
+          <img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のいいね削除マイページへ移動しますか？<br>
+          <br>
+          アカウント切り替えは <a href="%{url}">こちら</a>
+    show:
+      <<: *delete_favorites_new
+      crumb_title: 'いいねクリーナー'
+      modal_button_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のいいねを削除する'
+      see_progress: 'いいね削除ステータスを見る'
+      status:
+        title: 'いいね削除ステータス'
+        description: '@%{user} のいいね削除状況です。'
+        no_request_description: '削除中の場合は、ここに進行状況が表示されます。'
+        empty_date: '○月○日'
+      requested: '削除リクエスト済み'
+      warnings:
+        - 'いいね削除は取り消しできません'
+        - '3200件までは無料で削除できます'
+        - '削除後もいいね総数は変化しません'
+      word_description: '説明'
+      word_procedure: '手順'
+      description_for_free: '@%{user} は無料プランのユーザーです。最新の%{count}件まで削除することができます。'
+      description_for_premium: '@%{user} は有料プランのユーザーです。全てのいいねを削除するにはTwitterデータのアーカイブが必要です。'
+      modal:
+        title: '@%{user} のいいね削除'
+        confirmation_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のいいねをすべて削除します。本当に削除しますか？'
+        dm_after_finishing: "削除の完了後に自分へDMする"
+        tweet_after_finishing: "削除の完了後にツイートする"
+        please_enter_confirmation_text: '確認のために「%{text}」と入力してください'
+        confirmation_text: 'いいねを全て削除'
+        ok: "削除します"
+        cancel: "いいえ"
+    message:
+      finished: '%{count}件のいいねを削除しました。削除は完了しています。'
+      processing_html: |
+        %{count}件のいいねを削除しました。削除は継続中です。通常、いいね削除は5分以内に完了します。<br>
+        <br>
+        終わるのが遅い場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。
+      failed_html: |
+        %{count}件のいいねを削除中にエラーが起きました。一定時間後に再度お試しください。<br>
+        <br>
+        何度も失敗する場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
   personality_insights:
     new: &personality_insights_new
       page_title: 'ツイッター性格診断'
@@ -1913,6 +1978,9 @@ ja:
     delete_tweets_tweets_section:
       check1: '安心の実績'
       check2: '満足率95%'
+    delete_favorites_tweets_section:
+      check1: '安心の実績'
+      check2: '満足率95%'
     profile_section:
       loading_html: '@%{user} のプロフィールを読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
       loading_error_html: '@%{user} のプロフィール読み込みに失敗しました'
@@ -1939,6 +2007,9 @@ ja:
       title1_html: '<span class="egotter-pink">安全に</span>ツイートを削除'
       title2_html: '<span class="egotter-pink">完全に</span>ツイートを削除'
       title3_html: 'ツイート削除の<span class="egotter-pink">進捗</span>をお知らせ'
+      title1_2_html: '<span class="egotter-pink">安全に</span>いいねを削除'
+      title2_2_html: '<span class="egotter-pink">完全に</span>いいねを削除'
+      title3_2_html: 'いいね削除の<span class="egotter-pink">進捗</span>をお知らせ'
       title4_html: 'えごったーって何？'
       title5_html: '公式アカウント'
       title6_html: '<span class="egotter-pink">安全に</span>リムられをチェック'
@@ -1946,6 +2017,9 @@ ja:
       text1_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、安全にツイートを削除することができます。'
       text2_html: '可能な限り完全にツイートを削除します。'
       text3_html: 'どこまで進んでいるのかを簡単に確認できます。'
+      text1_2_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、安全にいいねを削除することができます。'
+      text2_2_html: '可能な限り完全にいいねを削除します。'
+      text3_2_html: 'どこまで進んでいるのかを簡単に確認できます。'
       text4_html: 'フォローを外されたときにDMが届きます。'
       text5_html: |
         ツイッターの一括削除にはえごったーを利用しています。もし、ツイートの一括削除ができない場合は、
@@ -2058,6 +2132,16 @@ ja:
           <a title="%{title}" href="%{url}">%{title}</a>を使うと、これまでのツイートをワンクリックで一括削除することができます。<br>
           <br>
           <a title="%{title}" href="%{url}">%{title}</a>でツイートを一括削除した後は、作業の完了をDMでお知らせします。
+      delete_favorites:
+        title: 'いいねクリーナー'
+        what_is_this_html: >
+          いいねクリーナーとは、ワンクリックで<span class="egotter-pink">いいねを一括削除する</span>機能のことです。<br>
+          <br>
+          アカウントを消すときは、いいねも消したくなると思います。そんなときは、えごったーでいいねを<span class="egotter-pink">ワンクリック削除</span>してしまいましょう。
+        text_html: >
+          <a title="%{title}" href="%{url}">%{title}</a>を使うと、これまでのいいねをワンクリックで一括削除することができます。<br>
+          <br>
+          <a title="%{title}" href="%{url}">%{title}</a>でいいねを一括削除した後は、作業の完了をDMでお知らせします。
       schedule_tweets:
         title: 'ツイート予約投稿'
         button: 'ツイート予約投稿を見てみる'
@@ -2451,6 +2535,7 @@ ja:
   dictionary:
     honorific: "さん"
   before_sign_in:
+    coming_soon: 'この機能は近日公開予定です。公開までもう少々お待ちください。'
     need_login_html: 'このページを見るためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
@@ -2882,6 +2967,8 @@ ja:
       periodic_report_short: "%-m月%-d日 %-H時%-M分"
       delete_tweets_short: "%-H時%-M分"
       delete_tweets_long: "%-m月%-d日 %-H時%-M分"
+      delete_favorites_short: "%-H時%-M分"
+      delete_favorites_long: "%-m月%-d日 %-H時%-M分"
       order_short: "%-m月%-d日 %-H時"
       coupon_short: "%-m月%-d日 %-H時%-M分"
       profile_short: "%-m月%-d日 %-H時"

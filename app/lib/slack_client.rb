@@ -24,6 +24,7 @@ class SlackClient
       reset_egotter:               ENV['SLACK_RESET_EGOTTER_URL'],
       reset_cache:                 ENV['SLACK_RESET_CACHE_URL'],
       delete_tweets:               ENV['SLACK_DELETE_TWEETS_URL'],
+      delete_favorites:            ENV['SLACK_DELETE_FAVORITES_URL'],
       orders:                      ENV['SLACK_ORDERS_URL'],
       deploy:                      ENV['SLACK_DEPLOY_URL'],
   }

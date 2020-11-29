@@ -1,0 +1,111 @@
+<% destroy_limit = DeleteFavoritesRequest::DESTROY_LIMIT %>
+
+<h2 id="delete-favorites-faq" class="h4 text-center mt-5 mb-4">いいね削除のよくある質問</h2>
+
+<% questions = [
+    {id: 'delete-favorites-q-01', text: 'いいねクリーナーとは何ですか？'},
+    {id: 'delete-favorites-q-02', text: '試しに少し使ってみることはできますか？'},
+    {id: 'delete-favorites-q-03_2', text: '日付、画像の有無、リプライ等の条件指定で削除できますか？'},
+    {id: 'delete-favorites-q-04', text: 'いいね削除に失敗した場合の返金はありますか？'},
+    {id: 'delete-favorites-q-05', text: '最大で何件までいいねを削除することができますか？'},
+    {id: 'download-full-archive', text: '有料プランを購入しました。全てのいいねを削除する手順を教えてください'},
+    {id: 'delete-favorites-q-07_1', text: 'トライアル期間中でも全てのいいねの削除は可能ですか？'},
+    {id: 'delete-favorites-q-07_2', text: 'いいね削除は取り消しできますか？'},
+    {id: 'delete-favorites-q-08', text: 'いいねの削除後もいいね総数が変化しないのはなぜですか？'},
+    {id: 'delete-favorites-q-09', text: '削除されたいいねが表示され続けるのはなぜですか？'},
+    {id: 'delete-favorites-q-10', text: '古いいいねが削除されないのはなぜですか？'},
+    {id: 'delete-favorites-q-11', text: '画像付きいいねが削除されないのはなぜですか？'},
+    {id: 'delete-favorites-q-12', text: '1回で全てのいいねが削除されないことがあるのはなぜですか？'},
+    {id: 'delete-favorites-q-13', text: 'いいねクリーナーを複数回使えば無料で全て削除できますか？'},
+    {id: 'delete-favorites-q-14', text: 'ここに書いていないことを質問することはできますか？'},
+] %>
+
+<ul class="list-group list-group-flush">
+  <% questions.each do |q| %>
+    <%= link_to q[:text], "##{q[:id]}", class: 'list-group-item' %>
+  <% end %>
+</ul>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">いいねを一括削除するためのツールです。<%= destroy_limit %>件までのいいねは無料で削除できます。<br>
+  <br>
+  <%= destroy_limit %>件を超えるいいねは、えごったー有料プランのユーザーであれば全て削除できます。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">もっと詳しく</a></div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">できます。<%= destroy_limit %>件までのいいねは無料プランで削除できます。<br>
+  <br>
+  試してみたい方はページ上部の「○○のいいねを削除する」と書かれた<span class="text-danger">赤いボタン</span>を押してみてください。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">有料プランを購入済みであれば、単純な日付指定はお引き受けいたします。可能かどうか事前にご確認ください。この場合、失敗した場合の補償はありませんのでご注意ください。<br>
+  <br>
+  複雑な条件指定には追加の料金をいただいております。こちらも事前にご相談ください。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">記載の手順通りに試して失敗した場合は、有料プラン1ヶ月分を返金いたします。<br>
+  <br>
+  その際は「いいね削除に失敗したため返金希望」の旨を <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">有料プランの場合、過去事例では30万件のいいねを約1時間で削除できました。<br>
+  <br>
+  記録更新のため、30万件を超えるいいね数の方は無料で全てのいいねを削除します。<br>
+  <br>
+  希望される方は「30万件以上のいいね削除」の旨を <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">
+  「Twitterデータのアーカイブ」を用意し、アップロードしてください。それで手順は完了です。<br>
+  <br>
+  1. 「Twitterデータのアーカイブ」を<strong>ダウンロード</strong>する<br>
+  <a href="https://twitter.com/settings/your_twitter_data" target="_blank">ツイッター設定 > アーカイブをダウンロード</a> からダウンロードする<br>
+  <br>
+  2. 「Twitterデータのアーカイブ」を<strong>アップロード</strong>する<br>
+  一般のファイルアップロードツールをご利用ください。例：<a href="https://gigafile.nu/" target="_blank">ギガファイル便</a><br>
+  <br>
+  「Twitterデータのアーカイブ」のアップロード後に、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までDMにてご連絡ください。<br>
+  <br>
+  手順中で分からないことがありましたら、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。
+</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">可能です。この場合、トライアル期間は終了しすぐに支払いが始まります。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">取り消しできません。一度削除されたいいねを元に戻すことはできませんのでご注意ください。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">ツイッターの仕組み上、いいね削除後もいいね総数が変化しないことがあるようです。<br>
+  <br>
+  例えば、100件のいいねがあるユーザーが全てのいいねを削除しても、いいね数は100件と表示されたままになることがあります。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">ツイッターの仕組み上、削除済みのいいねがしばらく表示され続けることがあります。<br>
+  <br>
+  ページを更新したり、ツイッターにログインし直すと削除済みのいいねは画面から消えます。</div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">ツイッターの仕組み上、自動で削除できるのは<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。<br>
+  <br>
+  えごったーでは、<%= destroy_limit %>件を超えるいいねを安全に削除する方法を確立しています。<br>
+  <br>
+  全てのいいねの削除を希望される方は、有料プランの購入後、<a href="#download-full-archive"><%= destroy_limit %>件よりも多いいいねを削除する方法</a> の手順をお試しください。
+  <a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">ツイッターの仕組み上、いいね数の多い/少ないに関わらず、画像付きいいねが削除されずに残ることがあります。これは世界中の全てのツールで共通の制限です。<br>
+  <br>
+  この条件に該当する方は、全てのいいねを削除できるえごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">ツイッターの仕組み上、自動で削除できるのは最新の<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。<br>
+  <br>
+  <%= destroy_limit %>件を超える全てのいいねの削除を希望される方は、えごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">できません。最新の<%= destroy_limit %>件を削除後は、自動で削除できなくなります。これは世界中の全てのツールで共通の制限です。<br>
+  <br>
+  <%= destroy_limit %>件を超える全てのいいねの削除を希望される方は、えごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></div>
+
+<%= render partial: 'misc/q', locals: questions.shift %>
+<div class="mb-5">サポートアカウント <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。</div>

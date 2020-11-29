@@ -37,6 +37,7 @@ import "./tweet_cluster";
 import "./audience_insight";
 import "./usage_stat";
 import "./delete_tweets_modal";
+import "./delete_favorites_modal";
 import "./result_pages";
 import "./settings";
 import "./orders";

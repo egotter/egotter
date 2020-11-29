@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_09_175241) do
+ActiveRecord::Schema.define(version: 2020_11_29_015717) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -509,6 +509,19 @@ ActiveRecord::Schema.define(version: 2020_11_09_175241) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_credential_tokens_on_created_at"
     t.index ["user_id"], name: "index_credential_tokens_on_user_id", unique: true
+  end
+
+  create_table "delete_favorites_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.boolean "tweet", default: false, null: false
+    t.integer "destroy_count", default: 0, null: false
+    t.datetime "finished_at"
+    t.string "error_class", default: "", null: false
+    t.string "error_message", default: "", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_delete_favorites_requests_on_created_at"
+    t.index ["user_id"], name: "index_delete_favorites_requests_on_user_id"
   end
 
   create_table "delete_tweets_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
