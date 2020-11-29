@@ -85,3 +85,8 @@ crumb :delete_tweets do |screen_name|
   link t('delete_tweets.show.crumb_title'), delete_tweets_mypage_path(screen_name: screen_name, via: current_via("breadcrumb_delete_tweets"))
   parent :timeline, screen_name
 end
+
+crumb :delete_favorites do |screen_name|
+  link t('delete_favorites.show.crumb_title'), delete_favorites_mypage_path(screen_name: screen_name, via: current_via("breadcrumb_delete_favorites"))
+  parent :timeline, screen_name
+end

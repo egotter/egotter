@@ -12,6 +12,7 @@ module ApplicationHelper
         (controller_name == 'inactive_friends' && action_name == 'new') ||
         (controller_name == 'clusters' && action_name == 'new') ||
         (controller_name == 'delete_tweets' && action_name == 'new') ||
+        (controller_name == 'delete_favorites' && action_name == 'new') ||
         (controller_name == 'personality_insights' && action_name == 'new') ||
         (controller_name == 'tokimeki_unfollow' && action_name == 'new')
   end

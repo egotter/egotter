@@ -64,6 +64,16 @@
   </div>
 </div>
 
+<hr>
+
+<div class="row">
+  <div class="col-4"><%= t('.delete_favorites.title') %></div>
+  <div class="col-8">
+    <%= link_to t('.delete_favorites.name'), delete_favorites_path(via: current_via), class: 'btn btn-outline-primary', target: '_blank' %>
+    <div class="text-muted small mt-1"><%= t('.delete_favorites.note') %></div>
+  </div>
+</div>
+
 <%= modal_dialog(id: 'reset-cache-modal', title: t('.reset_cache.title'), body: t('.reset_cache.modal.warning_html', screen_name: current_user.screen_name), button: {positive: t('.reset_cache.modal.ok'), category: 'warning'}) %>
 
 <script>

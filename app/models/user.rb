@@ -42,14 +42,15 @@ class User < ApplicationRecord
   with_options dependent: :destroy, validate: false, autosave: false do |obj|
     order_by_desc = -> { order(created_at: :desc) }
 
-    obj.has_many :search_reports,         order_by_desc
-    obj.has_many :welcome_messages,       order_by_desc
-    obj.has_many :follow_requests,        order_by_desc
-    obj.has_many :unfollow_requests,      order_by_desc
-    obj.has_many :reset_egotter_requests, order_by_desc
-    obj.has_many :delete_tweets_requests, order_by_desc
-    obj.has_many :reset_cache_requests,   order_by_desc
-    obj.has_many :tweet_requests,         order_by_desc
+    obj.has_many :search_reports,            order_by_desc
+    obj.has_many :welcome_messages,          order_by_desc
+    obj.has_many :follow_requests,           order_by_desc
+    obj.has_many :unfollow_requests,         order_by_desc
+    obj.has_many :reset_egotter_requests,    order_by_desc
+    obj.has_many :delete_tweets_requests,    order_by_desc
+    obj.has_many :delete_favorites_requests, order_by_desc
+    obj.has_many :reset_cache_requests,      order_by_desc
+    obj.has_many :tweet_requests,            order_by_desc
 
     obj.has_one :notification_setting
     obj.has_one :periodic_report_setting
@@ -241,5 +242,9 @@ class User < ApplicationRecord
 
   def persisted_statuses_count
     TwitterDB::User.find_by(uid: uid)&.statuses_count
+  end
+
+  def persisted_favorites_count
+    TwitterDB::User.find_by(uid: uid)&.favourites_count
   end
 end

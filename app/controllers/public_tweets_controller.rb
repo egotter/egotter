@@ -1,3 +1,4 @@
+# TODO Move to Api::V1
 class PublicTweetsController < ApplicationController
 
   before_action { self.access_log_disabled = true }
@@ -9,6 +10,8 @@ class PublicTweetsController < ApplicationController
       keyword = '#egotter #ツイッター性格診断'
     elsif params[:kind] == 'delete_tweets'
       keyword = '#egotter #ツイートクリーナー'
+    elsif params[:kind] == 'delete_favorites'
+      keyword = '#egotter #ツイートクリーナー' # TODO Set #いいねクリーナー
     else
       keyword = 'えごったー 便利' # 'egotter OR えごったー OR #egotter'
     end
