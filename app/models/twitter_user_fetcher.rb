@@ -97,8 +97,8 @@ class TwitterUserFetcher
           super(*args, &blk)
         rescue => e
           if TwitterApiStatus.too_many_requests?(e) ||
-              ServiceStatus.internal_server_error?(e) ||
-              (e.cause && ServiceStatus.internal_server_error?(e.cause))
+              ServiceStatus.retryable_error?(e) ||
+              (e.cause && ServiceStatus.retryable_error?(e.cause))
             []
           else
             raise
