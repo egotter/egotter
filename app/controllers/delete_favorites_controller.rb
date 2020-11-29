@@ -7,7 +7,7 @@ class DeleteFavoritesController < ApplicationController
     end
   end
 
-  before_action do
+  before_action only: :show do
     unless current_user.admin?
       redirect_to root_path(via: current_via), alert: t('before_sign_in.coming_soon')
     end
