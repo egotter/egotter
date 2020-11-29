@@ -4,26 +4,30 @@ class DeleteTweetsRequestDecorator < ApplicationDecorator
   def message
     if object.error_class.blank?
       if object.finished?
-        text = I18n.t('delete_tweets.message.finished', count: object.destroy_count)
+        I18n.t('delete_tweets.message.finished', count: object.destroy_count)
       else
-        text = I18n.t('delete_tweets.message.processing_html', count: object.destroy_count)
+        I18n.t('delete_tweets.message.processing_html', count: object.destroy_count)
       end
     else
-      text = I18n.t('delete_tweets.message.failed_html', count: object.destroy_count)
+      I18n.t('delete_tweets.message.failed_html', count: object.destroy_count)
     end
-
-    text.html_safe
+  rescue => e
+    I18n.t('delete_tweets.message.failed_html', count: object.destroy_count)
   end
 
-  def time
-    if object.updated_at.today?
-      if object.updated_at < 1.hour.ago
-        I18n.l(object.updated_at.in_time_zone('Tokyo'), format: :delete_tweets_short)
+  def display_time
+    time = object.updated_at
+
+    if time.today?
+      if time < 1.hour.ago
+        I18n.l(time.in_time_zone('Tokyo'), format: :delete_tweets_short)
       else
-        h.time_ago_in_words_ja(object.updated_at)
+        h.time_ago_in_words_ja(time)
       end
     else
-      I18n.l(object.updated_at.in_time_zone('Tokyo'), format: :delete_tweets_long)
+      I18n.l(time.in_time_zone('Tokyo'), format: :delete_tweets_long)
     end
+  rescue => e
+    I18n.l(object.updated_at.in_time_zone('Tokyo'), format: :delete_tweets_long)
   end
 end

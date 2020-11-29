@@ -30,8 +30,8 @@
   %tr
     - if @request
       - req = DeleteTweetsRequestDecorator.new(@request)
-      %td.small= req.time
-      %td.small= req.message
+      %td.small= req.display_time
+      %td.small= req.message.html_safe
     - else
       %td.small.text-muted= t('.status.empty_date')
       %td.small.text-muted= t('.status.no_request_description', user: current_user.screen_name)
