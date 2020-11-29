@@ -1,5 +1,6 @@
 class DeleteTweetWorker
   include Sidekiq::Worker
+  include WorkerErrorHandler
   sidekiq_options queue: 'deleting_low', retry: 0, backtrace: false
 
   # options:
@@ -17,12 +18,8 @@ class DeleteTweetWorker
       DeleteTweetsWorker.perform_async(options['request_id'])
     end
   rescue => e
-    logger.warn "#{e.inspect} user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
-
-    if options['request_id']
-      DeleteTweetsRequest.find(options['request_id']).update(error_class: e.class, error_message: e.message)
-    end
+    set_error_to_request(e, options['request_id']) if options['request_id']
+    handle_worker_error(e, user_id: user_id, tweet_id: tweet_id, options: options)
   end
 
   private
@@ -46,6 +43,10 @@ class DeleteTweetWorker
     else
       raise
     end
+  end
+
+  def set_error_to_request(e, request_id)
+    DeleteTweetsRequest.find(request_id).update(error_class: e.class, error_message: e.message)
   end
 
   class RetryExhausted < StandardError; end

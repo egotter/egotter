@@ -1377,16 +1377,6 @@ ja:
         %{count}件のツイートを削除中にエラーが起きました。一定時間後に再度お試しください。<br>
         <br>
         何度も失敗する場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
-    log:
-      errors:
-        default_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
-        Unauthorized_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
-        InvalidToken_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
-        Unknown_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
-        TweetsNotFound_html: '完了しました。削除対象のツイートは 0 です。'
-        Continue_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
-        TooManyRequests_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
-        Timeout_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
   personality_insights:
     new: &personality_insights_new
       page_title: 'ツイッター性格診断'

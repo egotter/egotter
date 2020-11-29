@@ -17,7 +17,11 @@ class DeleteTweetsRequestDecorator < ApplicationDecorator
 
   def time
     if object.updated_at.today?
-      I18n.l(object.updated_at.in_time_zone('Tokyo'), format: :delete_tweets_short)
+      if object.updated_at < 1.hour.ago
+        I18n.l(object.updated_at.in_time_zone('Tokyo'), format: :delete_tweets_short)
+      else
+        h.time_ago_in_words_ja(object.updated_at)
+      end
     else
       I18n.l(object.updated_at.in_time_zone('Tokyo'), format: :delete_tweets_long)
     end

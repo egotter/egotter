@@ -37,4 +37,15 @@ RSpec.describe DeleteTweetWorker do
       it { expect { subject }.to raise_error(described_class::RetryExhausted) }
     end
   end
+
+  describe '#set_error_to_request' do
+    let(:error) { RuntimeError.new }
+    subject { worker.send(:set_error_to_request, error, request.id) }
+    it do
+      subject
+      request.reload
+      expect(request.error_class).to eq(error.class.to_s)
+      expect(request.error_class).to eq(error.message)
+    end
+  end
 end

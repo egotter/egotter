@@ -131,7 +131,7 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def tweet_finished_message
-    message = Report.finished_tweet(user, self).message
+    message = DeleteTweetsReport.finished_tweet(user, self).message
     api_client.update(message)
     SendMessageToSlackWorker.perform_async(:delete_tweets, "request_id=#{id} tweet=#{message}")
   rescue => e
@@ -139,10 +139,10 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def send_finished_message
-    report = Report.finished_message_from_user(user)
+    report = DeleteTweetsReport.finished_message_from_user(user)
     report.deliver!
 
-    report = Report.finished_message(user, self)
+    report = DeleteTweetsReport.finished_message(user, self)
     report.deliver!
   rescue => e
     if !DirectMessageStatus.not_following_you?(e) &&
@@ -153,10 +153,10 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def send_error_message
-    report = Report.finished_message_from_user(user)
+    report = DeleteTweetsReport.finished_message_from_user(user)
     report.deliver!
 
-    report = Report.error_message(user)
+    report = DeleteTweetsReport.error_message(user)
     report.deliver!
   rescue => e
     raise ErrorMessageNotSent.new("#{e.inspect} sender_uid=#{report.sender.uid}")
@@ -175,76 +175,6 @@ class DeleteTweetsRequest < ApplicationRecord
         statuses_count: user.persisted_statuses_count,
         valid_subscription: user.has_valid_subscription? ? '`true`' : 'false',
     }.map { |k, v| "#{k}=#{v}" }.join(' ')
-  end
-
-  class Report
-    attr_reader :message, :sender
-
-    def initialize(sender, recipient, message)
-      @sender = sender
-      @recipient = recipient
-      @message = message
-    end
-
-    def deliver!
-      @sender.api_client.create_direct_message_event(@recipient.uid, @message)
-    end
-
-    class << self
-      def finished_tweet(user, request)
-        template = Rails.root.join('app/views/delete_tweets/finished_tweet.ja.text.erb')
-        message = ERB.new(template.read).result_with_hash(
-            destroy_count: request.destroy_count,
-            url: delete_tweets_url('delete_tweets_finished_tweet', true),
-            seconds: (request.updated_at - request.created_at).to_i.to_s(:delimited),
-            kaomoji: 'Σ(-᷅_-᷄๑)'
-        )
-        new(nil, nil, message)
-      end
-
-      def finished_message(user, request)
-        if request.destroy_count > 0
-          template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
-        else
-          template = Rails.root.join('app/views/delete_tweets/not_deleted.ja.text.erb')
-        end
-        message = ERB.new(template.read).result_with_hash(
-            destroy_count: request.destroy_count,
-            destroy_limit: DESTROY_LIMIT,
-            mypage_url: delete_tweets_mypage_url('delete_tweets_finished_dm')
-        )
-        new(User.egotter, user, message)
-      end
-
-      def finished_message_from_user(user)
-        template = Rails.root.join('app/views/delete_tweets/finished_from_user.ja.text.erb')
-        message = ERB.new(template.read).result
-        new(user, User.egotter, message)
-      end
-
-      def error_message(user)
-        template = Rails.root.join('app/views/delete_tweets/not_finished.ja.text.erb')
-        message = ERB.new(template.read).result_with_hash(url: delete_tweets_url('delete_tweets_error_dm'))
-        new(User.egotter, user, message)
-      end
-    end
-
-    module UrlHelpers
-      include Rails.application.routes.url_helpers
-
-      def delete_tweets_url(via, og_tag = false)
-        super(default_url_options.merge(via: via, og_tag: og_tag))
-      end
-
-      def delete_tweets_mypage_url(via)
-        super(default_url_options.merge(via: via))
-      end
-
-      def default_url_options
-        {og_tag: false}
-      end
-    end
-    extend UrlHelpers
   end
 
   class Error < StandardError

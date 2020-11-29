@@ -2,7 +2,7 @@
 <%= modal_dialog(id: modal_id, title: title, body: body, button: {positive: t('.yes'), negative: t('.no')}) %>
 <script>
   $(function () {
-    var url = '<%= url %>';
+    var url = '<%= raw url %>';
     var modal_id = '#<%= modal_id %>';
     $(modal_id).modal('show');
     $(modal_id).find('.positive').on('click', function () {
