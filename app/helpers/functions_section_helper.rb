@@ -190,10 +190,7 @@ module FunctionsSectionHelper
         path: url,
         title: t('shared.functions.schedule_tweets.title'),
         what_is_this: t('shared.functions.schedule_tweets.what_is_this_html'),
-        description: t('shared.functions.schedule_tweets.text_html',
-                       title: strip_tags(t('shared.functions.schedule_tweets.title')),
-                       url: delete_tweets_path(via: current_via('functions_description'))
-        ),
+        description: t('shared.functions.schedule_tweets.text_html', title: strip_tags(t('shared.functions.schedule_tweets.title')), url: url),
         button: button,
         image: '/egotter_schedule_tweets.jpg',
         url: url

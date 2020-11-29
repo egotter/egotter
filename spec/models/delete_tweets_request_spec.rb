@@ -176,4 +176,14 @@ RSpec.describe DeleteTweetsRequest::Report, type: :model do
     subject { described_class.delete_tweets_url('via') }
     it { is_expected.to be_truthy }
   end
+
+  describe '#delete_tweets_url' do
+    subject { described_class.delete_tweets_url('via') }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '#delete_tweets_mypage_url' do
+    subject { described_class.delete_tweets_mypage_url('via') }
+    it { is_expected.to be_truthy }
+  end
 end

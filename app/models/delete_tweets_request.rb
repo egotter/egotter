@@ -73,8 +73,7 @@ class DeleteTweetsRequest < ApplicationRecord
   rescue => e
     unless TwitterApiStatus.too_many_requests?(e)
       exception_handler(e, __method__)
-      @retries -= 1
-      retry if @retries > 0
+      retry if (@retries -= 1) > 0
     end
   end
 
@@ -84,8 +83,7 @@ class DeleteTweetsRequest < ApplicationRecord
     end
   rescue => e
     exception_handler(e, __method__)
-    @retries -= 1
-    retry if @retries > 0
+    retry if (@retries -= 1) > 0
   end
 
   def fetch_statuses!
@@ -232,12 +230,18 @@ class DeleteTweetsRequest < ApplicationRecord
     end
 
     module UrlHelpers
+      include Rails.application.routes.url_helpers
+
       def delete_tweets_url(via, og_tag = false)
-        Rails.application.routes.url_helpers.delete_tweets_url(via: via, og_tag: og_tag)
+        super(default_url_options.merge(via: via, og_tag: og_tag))
       end
 
       def delete_tweets_mypage_url(via)
-        Rails.application.routes.url_helpers.delete_tweets_mypage_url(via: via, og_tag: 'false')
+        super(default_url_options.merge(via: via))
+      end
+
+      def default_url_options
+        {og_tag: false}
       end
     end
     extend UrlHelpers

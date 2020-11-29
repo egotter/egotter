@@ -1,6 +1,7 @@
 class DeleteTweetsController < ApplicationController
   before_action :require_login!, only: [:show, :delete]
 
+  # TODO Rename to #index
   def new
   end
 
@@ -13,6 +14,7 @@ class DeleteTweetsController < ApplicationController
     end
   end
 
+  # TODO Move to Api::V1::DeleteTweetsController
   def delete
     if current_user.authorized?
       request = DeleteTweetsRequest.create!(user_id: current_user.id, tweet: params[:tweet] == 'true')
