@@ -60,6 +60,11 @@ class ImportBlockingRelationshipsWorker
       options[:cursor] = response.attrs[:next_cursor]
     end
 
+    if collection.size != collection.uniq.size
+      logger.warn "#{__method__}: uids is not unique"
+      collection.uniq!
+    end
+
     collection
   end
 end

@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe ImportBlockingRelationshipsWorker do
+  let(:user) { create(:user) }
+  let(:client) { double('client') }
   let(:worker) { described_class.new }
 
   describe '#perform' do
-    let(:user) { create(:user) }
-    let(:client) { double('client') }
     let(:user2) { create(:user) }
     let(:blocked_ids) { [user2.uid] }
     subject { worker.perform(user.id) }
@@ -21,5 +21,12 @@ RSpec.describe ImportBlockingRelationshipsWorker do
       expect(CreateBlockReportWorker).to receive(:perform_async).with(user2.id)
       subject
     end
+  end
+
+  describe '#fetch_blocked_uids' do
+    let(:response) { double('response', attrs: {ids: [1, 2, 2, 3], next_cursor: 0}) }
+    subject { worker.send(:fetch_blocked_uids, client) }
+    before { allow(client).to receive(:blocked_ids).with(anything).and_return(response) }
+    it { is_expected.to eq([1, 2, 3]) }
   end
 end
