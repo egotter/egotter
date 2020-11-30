@@ -161,9 +161,10 @@ class BlockReport < ApplicationRecord
       blocked_uids = BlockingRelationship.where(to_uid: user.uid).order(created_at: :desc).limit(limit).pluck(:from_uid).uniq
       users = TwitterDB::User.where_and_order_by_field(uids: blocked_uids)
 
-      if users.blank?
-        raise BlockedUsersNotFound.new("user_id=#{user.id} blocked_uids=#{blocked_uids}")
-      end
+      # TODO Fix
+      # if users.blank?
+      #   raise BlockedUsersNotFound.new("user_id=#{user.id} blocked_uids=#{blocked_uids}")
+      # end
 
       if (missing_uids = blocked_uids - users.map(&:uid)).any?
         CreateTwitterDBUserWorker.perform_async(missing_uids, user_id: user.id, enqueued_by: self.class)
