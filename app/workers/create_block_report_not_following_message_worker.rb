@@ -1,6 +1,7 @@
 class CreateBlockReportNotFollowingMessageWorker
   include Sidekiq::Worker
   include ReportErrorHandler
+  include WorkerErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -24,7 +25,7 @@ class CreateBlockReportNotFollowingMessageWorker
 
   rescue => e
     unless ignorable_report_error?(e)
-      logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
+      handle_worker_error(e, user_id: user_id, options: options)
     end
   end
 end

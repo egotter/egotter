@@ -12,13 +12,27 @@ RSpec.describe BlockReport, type: :model do
     it { is_expected.to be_truthy }
   end
 
+  describe '#not_following_message' do
+    subject { described_class.not_following_message(user) }
+    before { allow(described_class).to receive(:fetch_blocked_users).and_return([create(:twitter_db_user)]) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '#access_interval_too_long_message' do
+    subject { described_class.access_interval_too_long_message(user) }
+    before { allow(described_class).to receive(:fetch_blocked_users).and_return([create(:twitter_db_user)]) }
+    it { is_expected.to be_truthy }
+  end
+
   describe '#report_stopped_message' do
     subject { described_class.report_stopped_message(user) }
+    before { allow(described_class).to receive(:fetch_blocked_users).and_return([create(:twitter_db_user)]) }
     it { is_expected.to be_truthy }
   end
 
   describe '#report_restarted_message' do
     subject { described_class.report_restarted_message(user) }
+    before { allow(described_class).to receive(:fetch_blocked_users).and_return([create(:twitter_db_user)]) }
     it { is_expected.to be_truthy }
   end
 
@@ -54,5 +68,14 @@ RSpec.describe BlockReport, type: :model do
       expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(event: 'event')
       subject
     end
+  end
+
+  describe '#fetch_blocked_users' do
+    subject { described_class.fetch_blocked_users(user) }
+    before do
+      BlockingRelationship.create!(from_uid: 1, to_uid: user.uid)
+      create(:twitter_db_user, uid: 1)
+    end
+    it { is_expected.to be_truthy }
   end
 end
