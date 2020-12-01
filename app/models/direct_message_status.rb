@@ -39,7 +39,7 @@ class DirectMessageStatus
     end
 
     def enhance_your_calm?(ex)
-      ex.class == Twitter::Error::EnhanceYourCalm
+      ex.class == Twitter::Error::EnhanceYourCalm || ex.class == Twitter::Error::TooManyRequests
     end
   end
 end

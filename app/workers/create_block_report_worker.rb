@@ -19,7 +19,7 @@ class CreateBlockReportWorker
     return unless BlockingRelationship.where(to_uid: user.uid).exists?
 
     if PeriodicReport.send_report_limited?(user.uid)
-      logger.warn "Send block report later user_id=#{user_id} raised=false"
+      logger.info "Send block report later user_id=#{user_id} raised=false"
       CreateBlockReportWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
       return
     end
