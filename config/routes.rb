@@ -170,6 +170,8 @@ Rails.application.routes.draw do
   resources :timelines, only: %i(show), param: :screen_name
   get 'timelines/:screen_name/waiting', to: 'timelines#waiting', as: :timeline_waiting
 
+  resources :og_images, only: %i(show), param: :uid
+
   get 'not_found/:screen_name', to: redirect("/profiles/%{screen_name}?via=routing_not_found"), as: 'not_found'
   get 'not_found/:screen_name/latest', to: redirect("/profiles/%{screen_name}?via=routing_not_found")
   get 'forbidden/:screen_name', to: redirect("/profiles/%{screen_name}?via=routing_forbidden"), as: 'forbidden'
