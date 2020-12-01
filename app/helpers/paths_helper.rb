@@ -211,11 +211,11 @@ module PathsHelper
     "https://scheduled-tweets.egotter.com?#{params}"
   end
 
-  def og_image_url
+  def meta_og_image_url
     if controller_name == 'personality_insights'
       image_url('/egotter_personality_insight_840x450.jpg?loc=og_image')
-    elsif controller_name == 'close_friends' && @twitter_user&.close_friends_og_image
-      @twitter_user.close_friends_og_image.cdn_url
+    elsif controller_name == 'close_friends'
+      og_image_url(uid: @twitter_user&.uid)
     else
       image_url('/egotter_usagi_840x450.jpg?loc=og_image')
     end
