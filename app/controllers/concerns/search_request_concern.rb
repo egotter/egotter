@@ -41,7 +41,7 @@ module SearchRequestConcern
   end
 
   def skip_search_request_check?
-    params[:skip_search_request_check] == 'true'
+    params[:skip_search_request_check] == 'true' || (controller_name == 'close_friends' && twitter_crawler?)
   end
 
   def check_search_request_cache_controller?
