@@ -149,6 +149,7 @@ class ApiClient
     rescue => e
       @retries += 1
       handle_retryable_error(e)
+      Rails.logger.info "ApiClient::RequestWithRetryHandler: retry #{@method}"
       retry
     end
 
