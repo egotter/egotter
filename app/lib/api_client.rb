@@ -204,7 +204,7 @@ class ApiClient
         fetch
       ).each do |method_name|
         define_method(method_name) do |*args, &blk|
-          ApplicationRecord.benchmark("#{self.class}##{__method__} key=#{args[0]}", level: :debug) do
+          ApplicationRecord.benchmark("#{self.class}##{__method__} key=#{args[0]}", level: :info) do
             super(*args, &blk)
           end
         end
