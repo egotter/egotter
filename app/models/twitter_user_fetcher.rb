@@ -8,6 +8,7 @@ class TwitterUserFetcher
     @fetch_friends = fetch_friends
     @search_for_yourself = search_for_yourself
     @reporting = reporting
+    @mutex = Mutex.new
   end
 
   # Not using uniq for mentions, search_results and favorites intentionally
@@ -39,21 +40,21 @@ class TwitterUserFetcher
     result = Queue.new
 
     if @fetch_friends
-      threads << Thread.new { result << [:friend_ids, @client.friend_ids(@uid)] }
-      threads << Thread.new { result << [:follower_ids, @client.follower_ids(@uid)] }
+      threads << Thread.new { result << [:friend_ids, bm(:friend_ids) { @client.friend_ids(@uid) }] }
+      threads << Thread.new { result << [:follower_ids, bm(:follower_ids) { @client.follower_ids(@uid) }] }
     end
 
     if @search_for_yourself
-      threads << Thread.new { result << [:mentions_timeline, @client.mentions_timeline] }
+      threads << Thread.new { result << [:mentions_timeline, bm(:mentions_timeline) { @client.mentions_timeline }] }
     else
-      threads << Thread.new { result << [:search, @client.search(@search_query)] }
+      threads << Thread.new { result << [:search, bm(:search) { @client.search(@search_query) }] }
     end
 
     unless @reporting
-      threads << Thread.new { result << [:user_timeline, @client.user_timeline(@uid)] }
+      threads << Thread.new { result << [:user_timeline, bm(:user_timeline) { @client.user_timeline(@uid) }] }
     end
 
-    threads << Thread.new { result << [:favorites, @client.favorites(@uid)] }
+    threads << Thread.new { result << [:favorites, bm(:favorites) { @client.favorites(@uid) }] }
 
     threads.each(&:join)
 
@@ -92,7 +93,12 @@ class TwitterUserFetcher
     end
 
     module RescueNegligibleError
-      %i(user_timeline mentions_timeline favorites search).each do |method_name|
+      %i(
+        user_timeline
+        mentions_timeline
+        search
+        favorites
+      ).each do |method_name|
         define_method(method_name) do |*args, &blk|
           super(*args, &blk)
         rescue => e
@@ -108,4 +114,32 @@ class TwitterUserFetcher
     end
     prepend RescueNegligibleError
   end
+
+  module Instrumentation
+    def bm(message, &block)
+      start = Time.zone.now
+      result = yield
+      @mutex.synchronize do
+        @bm[message] = Time.zone.now - start if @bm
+      end
+      result
+    end
+
+    def fetch_in_threads(*args, &blk)
+      @bm = {}
+      start = Time.zone.now
+
+      result = super
+
+      elapsed = Time.zone.now - start
+      @bm['sum'] = @bm.values.sum
+      @bm['elapsed'] = elapsed
+      @bm.transform_values! { |v| sprintf("%.3f", v) }
+
+      Rails.logger.info "Benchmark TwitterUserFetcher uid=#{@uid} #{@bm.inspect}"
+
+      result
+    end
+  end
+  prepend Instrumentation
 end
