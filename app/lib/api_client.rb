@@ -145,11 +145,13 @@ class ApiClient
     end
 
     def perform(&block)
-      yield
+      ApplicationRecord.benchmark("Benchmark RequestWithRetryHandler#perform method=#{@method}", level: :info) do
+        yield
+      end
     rescue => e
       @retries += 1
       handle_retryable_error(e)
-      Rails.logger.info "ApiClient::RequestWithRetryHandler: retry #{@method}"
+      Rails.logger.info "RequestWithRetryHandler#perform: retry #{@method}"
       retry
     end
 
@@ -205,7 +207,7 @@ class ApiClient
         fetch
       ).each do |method_name|
         define_method(method_name) do |*args, &blk|
-          ApplicationRecord.benchmark("#{self.class}##{__method__} key=#{args[0]}", level: :info) do
+          ApplicationRecord.benchmark("Benchmark CacheStore##{__method__} key=#{args[0]}", level: :info) do
             super(*args, &blk)
           end
         end
