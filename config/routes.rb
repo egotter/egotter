@@ -50,6 +50,8 @@ Rails.application.routes.draw do
       resources :share_tweets, only: %i(create)
 
       post "delete_favorites", to: "delete_favorites#destroy"
+
+      delete 'user_data', to: 'user_data#destroy'
     end
   end
 
@@ -62,6 +64,7 @@ Rails.application.routes.draw do
   get 'delete_favorites', to: 'delete_favorites#new'
   get 'delete_favorites/mypage', to: 'delete_favorites#show', as: :delete_favorites_mypage
 
+  # TODO Remove later
   delete "reset_egotter", to: "reset_egotter#reset"
   post "reset_cache", to: "reset_cache#reset"
 

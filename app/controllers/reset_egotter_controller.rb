@@ -1,4 +1,4 @@
-# TODO Move to Api::V1 module
+# TODO Remove later
 class ResetEgotterController < ApplicationController
   before_action :require_login!
 

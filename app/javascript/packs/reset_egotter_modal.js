@@ -5,7 +5,7 @@ class ResetEgotterModal {
   }
 
   init() {
-    var url = '/reset_egotter'; // reset_egotter_path
+    var url = '/api/v1/user_data'; // api_v1_user_data_path
 
     this.$el.find('.positive').on('click', function () {
       $.ajax({url: url, type: 'DELETE'}).done(function (res) {
