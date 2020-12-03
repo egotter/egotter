@@ -8,7 +8,7 @@ module DeleteTweetsConcern
     false
   end
 
-  QUESTION_DELETE_TWEETS_REGEXP = /削除|全消し|ツイ消し|クリーナー/
+  QUESTION_DELETE_TWEETS_REGEXP = /削除|消去|全消し|ツイ消し|クリーナー/
 
   def delete_tweets_questioned?(text)
     text.length < 15 && text.match?(QUESTION_DELETE_TWEETS_REGEXP)

@@ -8,7 +8,7 @@ module CloseFriendsConcern
     false
   end
 
-  QUESTION_CLOSE_FRIENDS_REGEXP = /仲良しランキング/
+  QUESTION_CLOSE_FRIENDS_REGEXP = /仲良しランキング|(^(仲良し|ランキング)$)/
 
   def close_friends_questioned?(text)
     text.length < 15 && text.match?(QUESTION_CLOSE_FRIENDS_REGEXP)

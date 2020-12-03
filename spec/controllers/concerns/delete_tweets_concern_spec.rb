@@ -27,6 +27,7 @@ describe DeleteTweetsConcern, type: :controller do
 
     [
         '削除',
+        '消去',
         '全消し',
         'ツイ消し',
         'クリーナー',

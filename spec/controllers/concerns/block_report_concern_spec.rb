@@ -34,7 +34,7 @@ describe BlockReportConcern do
       end
     end
 
-    context '#breceived? returns true' do
+    context '#received? returns true' do
       before { allow(processor).to receive(:received?).and_return(true) }
       it { is_expected.to be_truthy }
     end
