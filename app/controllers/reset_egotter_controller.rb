@@ -15,6 +15,6 @@ class ResetEgotterController < ApplicationController
     )
     ResetEgotterWorker.perform_async(request.id)
     SendResetEgotterStartedWorker.perform_async(request.id)
-    render json: {message: 'Requested'}
+    render json: {message: 'Reset is requested'}
   end
 end

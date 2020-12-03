@@ -48,7 +48,14 @@
           </script>
         <% end %>
       <% else %>
-        <%= modal_dialog(id: 'reset-egotter-modal', title: t('.delete_data.purchase_confirmation_modal.title'), body: t('.delete_data.purchase_confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.purchase_confirmation_modal.ok'), positive_class: 'btn-checkout'}) %>
+        <%= modal_dialog(id: 'checkout-confirmation-modal', title: t('.delete_data.purchase_confirmation_modal.title'), body: t('.delete_data.purchase_confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.purchase_confirmation_modal.ok'), positive_class: 'btn-checkout'}) %>
+        <script>
+          $(function () {
+            $('.btn-reset-egotter').on('click', function () {
+              $('#checkout-confirmation-modal').modal();
+            });
+          });
+        </script>
       <% end %>
     <% end %>
   </div>
