@@ -51,6 +51,7 @@ Rails.application.routes.draw do
 
       post "delete_favorites", to: "delete_favorites#destroy"
 
+      delete 'user_caches', to: 'user_caches#destroy'
       delete 'user_data', to: 'user_data#destroy'
     end
   end

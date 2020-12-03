@@ -2171,6 +2171,10 @@ ja:
       login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
   api:
     v1:
+      user_caches:
+        destroy:
+          success: 'キャッシュのリセットがリクエストされました。'
+          fail: 'キャッシュのリセットに失敗しました。既にリクエスト済みです。'
       user_data:
         destroy:
           success: 'データのリセットがリクエストされました。'

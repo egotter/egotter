@@ -6,11 +6,9 @@ class ResetCacheButton {
       $modal.modal('hide');
       $('.' + buttonClass).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
 
-      $.post(url).done(function (res) {
-        logger.log(res);
-      }).fail(function (xhr) {
-        logger.warn(xhr.responseText);
-      });
+      $.ajax({url: url, type: 'DELETE'}).done(function (res) {
+        ToastMessage.info(res.message);
+      }).fail(showErrorMessage);
     });
   }
 }

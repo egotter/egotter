@@ -1,3 +1,4 @@
+# TODO Remove later
 class ResetCacheController < ApplicationController
   before_action :require_login!
 
