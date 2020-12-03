@@ -65,10 +65,6 @@ Rails.application.routes.draw do
   get 'delete_favorites', to: 'delete_favorites#new'
   get 'delete_favorites/mypage', to: 'delete_favorites#show', as: :delete_favorites_mypage
 
-  # TODO Remove later
-  delete "reset_egotter", to: "reset_egotter#reset"
-  post "reset_cache", to: "reset_cache#reset"
-
   namespace :directory do
     get "profiles(/:id1(/:id2))", to: "profiles#show", as: :profile
     get "timelines(/:id1(/:id2))", to: "timelines#show", as: :timeline
