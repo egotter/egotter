@@ -1,12 +1,47 @@
 <div class="row">
-  <div class="col-4"><%= t('.reset_cache.title') %></div>
+  <div class="col-4"><%= t('.delete_caches.title') %></div>
   <div class="col-8">
     <% if @reset_cache_request %>
-      <span class="btn btn-warning btn-reset-cache disabled" disabled="disabled"><%= t('.reset_cache.do') %></span>
+      <span class="btn btn-warning btn-reset-cache disabled" disabled="disabled"><%= t('.delete_caches.button') %></span>
       <div class="text-muted small mt-1"><%= t('.requested') %></div>
     <% else %>
-      <span class="btn btn-warning btn-reset-cache" data-toggle="modal" data-target="#reset-cache-modal"><%= t('.reset_cache.do') %></span>
-      <div class="text-muted small mt-1"><%= t('.reset_cache.note_html') %></div>
+      <span class="btn btn-warning btn-reset-cache"><%= t('.delete_caches.button') %></span>
+      <div class="text-muted small mt-1"><%= t('.delete_caches.note_html') %></div>
+
+      <% if current_user.has_valid_subscription? %>
+        <% if current_user.has_trial_subscription? %>
+          <script>
+            $(function () {
+              $('.btn-reset-cache').on('click', function () {
+                if (window.endTrialModal) {
+                  window.endTrialModal.show();
+                  return false;
+                }
+              });
+            });
+          </script>
+        <% else %>
+          <script>
+            $(function () {
+              $('.btn-reset-cache').on('click', function () {
+                if (window.resetCacheModal) {
+                  window.resetCacheModal.show();
+                  return false;
+                }
+              });
+            });
+          </script>
+        <% end %>
+      <% else %>
+        <%= modal_dialog(id: 'checkout-for-reset-cache-confirmation-modal', title: t('.delete_caches.confirmation_modal.title'), body: t('.delete_caches.confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_caches.confirmation_modal.ok'), positive_class: 'btn-checkout'}) %>
+        <script>
+          $(function () {
+            $('.btn-reset-cache').on('click', function () {
+              $('#checkout-for-reset-cache-confirmation-modal').modal();
+            });
+          });
+        </script>
+      <% end %>
     <% end %>
   </div>
 </div>
@@ -48,11 +83,11 @@
           </script>
         <% end %>
       <% else %>
-        <%= modal_dialog(id: 'checkout-confirmation-modal', title: t('.delete_data.purchase_confirmation_modal.title'), body: t('.delete_data.purchase_confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.purchase_confirmation_modal.ok'), positive_class: 'btn-checkout'}) %>
+        <%= modal_dialog(id: 'checkout-for-reset-data-confirmation-modal', title: t('.delete_data.confirmation_modal.title'), body: t('.delete_data.confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.confirmation_modal.ok'), positive_class: 'btn-checkout'}) %>
         <script>
           $(function () {
             $('.btn-reset-egotter').on('click', function () {
-              $('#checkout-confirmation-modal').modal();
+              $('#checkout-for-reset-data-confirmation-modal').modal();
             });
           });
         </script>
@@ -80,11 +115,3 @@
     <div class="text-muted small mt-1"><%= t('.delete_favorites.note') %></div>
   </div>
 </div>
-
-<%= modal_dialog(id: 'reset-cache-modal', title: t('.reset_cache.title'), body: t('.reset_cache.modal.warning_html', screen_name: current_user.screen_name), button: {positive: t('.reset_cache.modal.ok'), category: 'warning'}) %>
-
-<script>
-  $(function () {
-    new ResetCacheButton('reset-cache-modal', 'btn-reset-cache', '<%= api_v1_user_caches_path %>');
-  });
-</script>

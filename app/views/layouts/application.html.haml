@@ -90,6 +90,7 @@
         - if current_user.has_trial_subscription?
           = render partial: 'modal/end_trial_modal'
         - else
+          = render partial: 'modal/reset_cache_modal'
           = render partial: 'modal/reset_egotter_modal'
 
     = render partial: 'modal/welcome_modal'

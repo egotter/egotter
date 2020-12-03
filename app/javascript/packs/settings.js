@@ -1,20 +1,3 @@
-class ResetCacheButton {
-  constructor(id, buttonClass, url) {
-    var $modal = $('#' + id);
-
-    $modal.find('.positive').on('click', function () {
-      $modal.modal('hide');
-      $('.' + buttonClass).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
-
-      $.ajax({url: url, type: 'DELETE'}).done(function (res) {
-        ToastMessage.info(res.message);
-      }).fail(showErrorMessage);
-    });
-  }
-}
-
-window.ResetCacheButton = ResetCacheButton;
-
 class PeriodicReportSetting {
   constructor(url, confirmMessage) {
     this.url = url;

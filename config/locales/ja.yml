@@ -417,23 +417,20 @@ ja:
     data:
       title: 'データ設定'
       requested: 'リクエスト済み'
-      reset_cache:
+      delete_caches:
         title: 'キャッシュのリセット'
-        do: 'リセットする'
+        button: 'リセットする'
         note_html: '表示データのリセット<br>データ自体は消えません'
-        modal:
-          warning_html: >
-            キャッシュ（表示の高速化のためのデータ）をリセットします。<br>
-            本当にリセットしますか？<br>
-            <br>
-            <b>※保存されたデータは残ります</b>
-          ok: 'リセットします'
+        confirmation_modal:
+          title: 'キャッシュをリセットする'
+          body_html: |
+            キャッシュのリセットは有料プランのユーザーのみ行うことができます。
+          ok: 'もっと詳しく'
       delete_data:
         title: 'データの削除'
         button: 'データを削除する'
         note: 'この操作は取り消しできません'
-        history: '履歴'
-        purchase_confirmation_modal:
+        confirmation_modal:
           title: 'データを削除する'
           body_html: |
             データの削除は有料プランのユーザーのみ行うことができます。
@@ -2462,6 +2459,14 @@ ja:
     end_trial_modal:
       title: 'トライアル期間の終了'
       message_html: 'この機能を使うとトライアル期間が終了しすぐに課金を開始します。よろしいですか？'
+      'yes': 'はい'
+      'no': 'キャンセル'
+    reset_cache_modal:
+      title: 'キャッシュをリセットする'
+      body_html: |
+        @%{screen_name} のキャッシュをリセットします。よろしいですか？<br>
+        <br>
+        <b>※リセット完了まで少し時間がかかります</b>
       'yes': 'はい'
       'no': 'キャンセル'
     reset_egotter_modal:
