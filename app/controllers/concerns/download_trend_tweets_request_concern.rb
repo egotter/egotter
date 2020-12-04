@@ -22,4 +22,12 @@ module DownloadTrendTweetsRequestConcern
   def data_for_download(trend, tweets)
     TrendTweetsCsvBuilder.new(trend, tweets, with_description: user_signed_in? && current_user.has_valid_subscription?).build
   end
+
+  def render_for_download(trend, data)
+    if request.device_type == :smartphone
+      render plain: data
+    else
+      send_data data, filename: filename_for_download(trend), type: 'text/csv; charset=utf-8'
+    end
+  end
 end

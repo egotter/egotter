@@ -11,6 +11,6 @@ class MutualUnfriendsController < ApplicationController
 
   def download
     data = data_for_download(@twitter_user.mutual_unfriends(limit: limit_for_download))
-    send_data data, filename: filename_for_download(@twitter_user), type: 'text/csv; charset=utf-8'
+    render_for_download(data)
   end
 end

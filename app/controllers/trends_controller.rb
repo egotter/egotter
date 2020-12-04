@@ -17,6 +17,6 @@ class TrendsController < ApplicationController
   def download_tweets
     trend = Trend.japan.latest_trends.top_10.find(params[:id])
     data = data_for_download(trend, trend.tweets.take(limit_for_download))
-    send_data data, filename: filename_for_download(trend), type: 'text/csv; charset=utf-8'
+    render_for_download(trend, data)
   end
 end

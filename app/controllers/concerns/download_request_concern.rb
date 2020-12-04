@@ -22,8 +22,8 @@ module DownloadRequestConcern
 
   private
 
-  def filename_for_download(twitter_user)
-    "#{twitter_user.screen_name}-#{controller_name}.csv"
+  def filename_for_download
+    "#{@twitter_user.screen_name}-#{controller_name}.csv"
   end
 
   def limit_for_download
@@ -32,5 +32,13 @@ module DownloadRequestConcern
 
   def data_for_download(users)
     CsvBuilder.new(users, with_description: user_signed_in? && current_user.has_valid_subscription?).build
+  end
+
+  def render_for_download(data)
+    if request.device_type == :smartphone
+      render plain: data
+    else
+      send_data data, filename: filename_for_download, type: 'text/csv; charset=utf-8'
+    end
   end
 end
