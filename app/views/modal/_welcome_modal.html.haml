@@ -1,7 +1,7 @@
 - if user_signed_in?
   -# This modal is always embedded because it is used in settings page.
   - tweets = t('.share.tweets').shuffle
-  - data = {url: api_v1_share_tweets_path(via: current_via('share_egotter_modal')), success_message: t('.share.success'), error_message: t('.share.error')}
+  - data = {url: api_v1_share_tweets_path(via: current_via('share_egotter_modal'))}
   = modal_dialog id: 'share-modal', title: t('.share.title_html'), button: {positive: t('.share.ok'), negative: t('.share.cancel')}, data: data do
     .d-flex.align-items-center.mb-3
       %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}

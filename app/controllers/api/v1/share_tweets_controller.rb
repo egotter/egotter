@@ -13,14 +13,13 @@ module Api
           request = TweetRequest.create!(user_id: current_user.id, text: "#{params[:text]}")
           CreateTweetWorker.perform_async(request.id, requested_by: via)
           SendCreateTweetStartedWorker.perform_async(request.id, via: via)
-          render json: {count: current_user.sharing_count}
+          render json: {message: t('.success')}
         else
-          head :bad_request
+          render json: {message: t('.fail')}, status: :bad_request
         end
-
       rescue => e
         logger.warn "#{controller_name}##{action_name} #{e.inspect} user_id=#{current_user.id}"
-        head :bad_request
+        render json: {message: t('.fail')}, status: :bad_request
       end
     end
   end

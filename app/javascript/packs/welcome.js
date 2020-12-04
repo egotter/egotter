@@ -43,11 +43,8 @@ class ShareDialog extends ModalDialog {
 
       $.post(url, {text: tweet}).done(function (res) {
         logger.log(url, res);
-        ToastMessage.info($el.data('success-message'));
-
-      }).fail(function () {
-        ToastMessage.warn($el.data('error-message'));
-      });
+        ToastMessage.info(res.message);
+      }).fail(showErrorMessage);
 
       $el.modal('hide');
     });
