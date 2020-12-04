@@ -161,8 +161,8 @@ ja:
       heading: "@%{user} の分析結果"
       meta_description: "えごったーなら全部無料！ @%{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
-      now_loading_html: '@%{user} のデータを読み込んでいます'
-      loading_error_html: '@%{user} のプロフィール読み込みに失敗しました。お手数ですが再度お試しください。'
+      now_loading: '@%{user} のデータを読み込んでいます'
+      loading_error_html: '@%{user} の分析結果の読み込みに失敗しました。お手数ですが再度お試しください。何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
       reload: "ページを更新する"
       sign_in_and_reload: "ログインして自動更新を有効にする"
       reinvestigate: "再度チェックする"
@@ -2488,10 +2488,13 @@ ja:
       <br>
       ログインしてから検索するとこのエラーは起きづらくなります。
       <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> エラー：TUNF404
-    internal_server_error: "一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。エラー：ISE500"
+    internal_server_error_html: |
+      一時的なエラーが起きました。トップページから再度検索してみてください。
+      何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     internal_server_error_with_recovery_html: |
-      一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。
-      <a href="%{url}" class="btn btn-outline-primary btn-sm">@%{user} で検索</a> エラー：ISEWR500
+      一時的なエラーが起きました。トップページから再度検索してみてください。
+      何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      <a href="%{url}" class="btn btn-outline-primary btn-sm">@%{user} で検索</a>
     invalid_token:
       session_expired_html: |
         一定時間操作がなかったため、セッションの有効期限が切れました。

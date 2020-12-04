@@ -158,7 +158,7 @@ module AlertMessagesConcern
       url = timeline_path(screen_name: screen_name, via: current_via('internal_server_error'))
       t('application.internal_server_error_with_recovery_html', user: screen_name, url: url)
     else
-      t('application.internal_server_error')
+      t('application.internal_server_error_html')
     end
   end
 
