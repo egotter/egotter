@@ -9,7 +9,7 @@ module RoutingErrorHandler
     logger.info "Not found: #{request_details}"
 
     if request.xhr?
-      render json: {error: 'not found'}, status: :not_found
+      render json: {message: nil}, status: :not_found
 
     elsif from_crawler? || request.method != 'GET'
       render file: "#{Rails.root}/public/404.html", status: :not_found, layout: false

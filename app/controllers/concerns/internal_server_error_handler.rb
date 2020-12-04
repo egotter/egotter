@@ -30,7 +30,7 @@ module InternalServerErrorHandler
     handle_request_error(ex)
 
     if request.xhr?
-      render json: {error: ex.message.truncate(100)}, status: :request_timeout
+      render json: {message: nil}, status: :request_timeout
     else
       render file: "#{Rails.root}/public/408.html", status: :request_timeout, layout: false unless performed?
     end
@@ -40,7 +40,7 @@ module InternalServerErrorHandler
     logger.info "##{__method__}: #{ex.class} #{request_details}"
 
     if request.xhr?
-      render json: {error: ex.message.truncate(100)}, status: :bad_request
+      render json: {message: nil}, status: :bad_request
     else
       screen_name = params[:screen_name].to_s.strip.remove /^@/
       if screen_name.match? Validations::ScreenNameValidator::REGEXP

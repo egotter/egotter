@@ -13,13 +13,11 @@ module TwitterErrorHandler
   private
 
   def handle_twitter_error_unauthorized(ex)
-    truncated_message = ex.message.truncate(100)
-
-    logger.warn "#{__method__} #{ex.class} #{truncated_message} #{request_details}"
+    logger.warn "#{__method__} #{ex.class} #{ex.message.truncate(100)} #{request_details}"
     logger.info ex.backtrace.join("\n")
 
     if request.xhr?
-      render json: {error: truncated_message}, status: :internal_server_error
+      render json: {message: nil}, status: :internal_server_error
     else
       self.sidebar_disabled = true
       if user_signed_in?
