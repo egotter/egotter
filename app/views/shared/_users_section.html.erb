@@ -4,17 +4,17 @@
   <%= render partial: 'shared/download', locals: {twitter_user: twitter_user} %>
 </div>
 
-<div class="empty-placeholders-wrapper" style="display: none;">
+<div id="description-for-empty" style="display: none;">
   <%= t('.not_found') %>
 </div>
 
-<div class="placeholders-wrapper">
+<div id="loading-placeholders">
   <% 3.times do %>
     <%= render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'} %>
   <% end %>
 </div>
 
-<div id="result-users-container"></div>
+<div id="fetched-users"></div>
 
 <% if user_signed_in? %>
   <div id="bottom-reached" class="text-center my-3">
@@ -41,46 +41,68 @@
 <% end %>
 
 <script>
-  $(function () {
-    var signedIn = <%= user_signed_in? %>;
+  var signedIn = <%= user_signed_in? %>;
+  var url = '<%= raw api_users_path %>';
+  var uid = '<%= twitter_user.uid %>';
+  var params = <%= {limit: Paginator::DEFAULT_LIMIT, maxLimit: Paginator::MAX_LIMIT}.to_json.html_safe %>;
+  var via = '<%= current_via('users_section') %>';
 
-    var url = '<%= raw api_users_path %>';
-    var uid = '<%= twitter_user.uid %>';
-    var params = {limit: 10, maxLimit: 10};
-    var task = new FetchTask(url, uid, params);
-    var via = '<%= current_via('users_section') %>';
+  var resetView = function () {
+    $('#fetched-users').empty();
+    $('#loading-placeholders').show();
+  }
 
-    var callback = function (state) {
-      logger.log('task.fetch', state);
+  var updateView = function (users, state) {
+    logger.log('task.fetch', state);
 
-      if (state.completed) {
-        $('#bottom-reached').off('appear').remove();
-        $('#need-purchase-description').show();
-      } else if (state.loaded) {
-        $('#bottom-reached').find('img').hide();
-      }
+    $('#loading-placeholders').hide();
+    var $users = $('#fetched-users');
+    var $empty = $('#description-for-empty');
+
+    if (users.length > 0) {
+      users.forEach(function (user) {
+        $users.append(user);
+      });
+      $empty.hide();
     }
 
-    task.fetch(callback);
+    if ($users.is(':empty')) {
+      $empty.show();
+    }
+
+    if (state.completed) {
+      $('#bottom-reached').off('appear').remove();
+      $('#need-purchase-description').show();
+    } else if (state.loaded) {
+      $('#bottom-reached').find('img').hide();
+    }
+  }
+
+  $(function () {
+    var task = new FetchTask(url, uid, params, updateView);
+    task.fetch();
 
     if (signedIn) {
-      $('#bottom-reached').lazyload()
-          .on('appear', function () {
-            var $elem = $(this);
-            logger.log('appear', $elem.attr('id'));
-            $elem.find('img').show();
-            task.fetch(callback);
-          });
+      $('#bottom-reached').lazyload().on('appear', function () {
+        var $elem = $(this);
+        logger.log('appear', $elem.attr('id'));
+        $elem.find('img').show();
+        task.fetch();
+      });
 
       new SortButton(function (options) {
-        task.reset(options, callback)
+        resetView();
+        task.reset(options)
+        task.fetch();
       });
       new FilterButton(function (options) {
-        task.reset(options, callback)
+        resetView();
+        task.reset(options)
+        task.fetch();
       });
 
-      new FollowButton('#result-users-container', via);
-      new UnfollowButton('#result-users-container', via);
+      new FollowButton('#fetched-users', via);
+      new UnfollowButton('#fetched-users', via);
     }
   });
 </script>

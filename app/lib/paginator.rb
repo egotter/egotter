@@ -31,9 +31,12 @@ class Paginator
     self
   end
 
+  DEFAULT_LIMIT = 10
+  MAX_LIMIT = 10
+
   def limit(value)
     value = value.to_i
-    @limit = (0..100).include?(value) ? value : 10
+    @limit = (0..MAX_LIMIT).include?(value) ? value : MAX_LIMIT
     self
   end
 

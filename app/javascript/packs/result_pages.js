@@ -30,7 +30,7 @@ class Fetcher {
 }
 
 class FetchTask {
-  constructor(url, uid, options) {
+  constructor(url, uid, options, callback) {
     this.url = url;
     this.uid = uid;
     this.maxSequence = 0;
@@ -39,15 +39,11 @@ class FetchTask {
     this.maxLimit = options['maxLimit'];
     this.loading = false;
     this.template = window.templates['userRectangle'];
-
-    this.$placeholders = $('.placeholders-wrapper');
-    this.$emptyPlaceholders = $('.empty-placeholders-wrapper');
-    this.$usersContainer = $('#result-users-container');
-
+    this.callback = callback;
     this.cache = new Cache();
   }
 
-  reset(options, callback) {
+  reset(options) {
     this.maxSequence = 0;
     this.limit = this.minLimit;
     if ('sortOrder' in options) {
@@ -56,12 +52,9 @@ class FetchTask {
     if ('filter' in options) {
       this.filter = options['filter'];
     }
-    this.$placeholders.show();
-    this.$usersContainer.empty();
-    this.fetch(callback);
   }
 
-  fetch(callback) {
+  fetch() {
     if (this.maxSequence === -1) {
       return;
     }
@@ -83,50 +76,54 @@ class FetchTask {
 
     var self = this;
 
-    var update = function (res) {
-      if (res.max_sequence && res.max_sequence >= 0) {
-        self.maxSequence = res.max_sequence + 1;
-        self.limit = self.maxLimit;
-      } else {
-        self.maxSequence = -1;
-        // $seeMoreBtn.remove();
-        // $seeAtOnceBtn.remove();
-      }
+    var responseReceived = function (res) {
+      self.updateState(res);
+      var users = self.renderUsers(res);
 
-      self.$placeholders.hide();
-
-      res.users.forEach(function (user) {
-        var rendered = self.renderUser(user);
-        self.$usersContainer.append(rendered);
-      });
-
-      if (res.users.length > 0) {
-        self.$emptyPlaceholders.hide();
-      } else {
-        if (self.$usersContainer.is(':empty')) {
-          self.$emptyPlaceholders.show();
-        }
-      }
-
-      self.loading = false;
-
-      if (callback) {
+      if (self.callback) {
         var state = {loaded: true, completed: self.maxSequence === -1};
-        callback(state);
+        self.callback(users, state);
       }
     };
 
     var res = this.cache.read(params);
     if (res) {
       logger.log('response[CACHE]', res);
-      update(res);
+      responseReceived(res);
     } else {
       new Fetcher().fetch(this.url, params).then(function (res) {
         logger.log('response', res);
         self.cache.write(params, res);
-        update(res);
+        responseReceived(res);
       });
     }
+  }
+
+  updateState(res) {
+    if (res.max_sequence && res.max_sequence >= 0) {
+      this.maxSequence = res.max_sequence + 1;
+      this.limit = this.maxLimit;
+    } else {
+      this.maxSequence = -1;
+    }
+
+    this.loading = false;
+  }
+
+  renderUsers(res) {
+    if (!res.users || res.users.length <= 0) {
+      return [];
+    }
+
+    var self = this;
+    var users = [];
+
+    res.users.forEach(function (user) {
+      var rendered = self.renderUser(user);
+      users.push(rendered);
+    });
+
+    return users;
   }
 
   renderUser(user) {
