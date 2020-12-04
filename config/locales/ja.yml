@@ -2150,15 +2150,10 @@ ja:
           <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後に、予約したツイートをキャンセルすることもできます。
     word_cloud:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
-      updating: '更新中です。数分後に再度お試しください。'
-      empty: '単語数が少ないためワードクラウドを表示できませんでした。'
     tweet_times:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
-      updating: '更新中です。数分後に再度お試しください。'
     times_count:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
-      updating: '更新中です。数分後に再度お試しください。'
-      empty: 'ツイート数が少ないためグラフを表示できませんでした。'
     stripe:
       already_purchased: '購入済み'
   breadcrumb:
@@ -2168,6 +2163,10 @@ ja:
       login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
   api:
     v1:
+      friend_insights:
+        fail: '更新中です。数分後に再度お試しください。'
+      follower_insights:
+        fail: '更新中です。数分後に再度お試しください。'
       share_tweets:
         create:
           success: 'ツイートに成功しました。'

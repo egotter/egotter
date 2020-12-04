@@ -8,18 +8,14 @@
   $(function () {
     var url = '<%= raw api_path %>';
     var container = $('#<%= container_id %>');
-    logger.log('times_count', container.attr('id'));
 
     $.get(url).done(function (res) {
-      if (res.times_count.length === 0) {
-        container.empty().text('<%= t('.empty') %>');
-      } else {
-        container.empty();
-        new UsageStat().drawStockLineChart(container.attr('id'), res.times_count);
-      }
-    }).fail(function (xhr) {
+      container.empty();
+      new UsageStat().drawStockLineChart(container.attr('id'), res.times_count);
+    }).fail(function (xhr, textStatus, errorThrown) {
       logger.warn(url, xhr.responseText);
-      container.empty().text('<%= t('.updating') %>');
+      var message = extractErrorMessage(xhr, textStatus, errorThrown)
+      container.empty().text(message);
     });
   });
 </script>
