@@ -90,7 +90,8 @@ class ApiClient
           consumer_key: ENV['TWITTER_CONSUMER_KEY'],
           consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
           access_token: nil,
-          access_token_secret: nil
+          access_token_secret: nil,
+          timeouts: {connect: 1, read: 2, write: 4}
       }.merge(options)
     end
 

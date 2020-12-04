@@ -25,6 +25,12 @@ RSpec.describe ServiceStatus, type: :model do
     it { is_expected.to be_truthy }
   end
 
+  describe '.http_timeout?' do
+    let(:ex) { HTTP::TimeoutError.new }
+    subject { described_class.http_timeout?(ex) }
+    it { is_expected.to be_truthy }
+  end
+
   describe '.retryable_error?' do
     let(:ex) { RuntimeError.new('Anything') }
     subject { described_class.retryable_error?(ex) }
@@ -34,6 +40,7 @@ RSpec.describe ServiceStatus, type: :model do
       expect(described_class).to receive(:internal_server_error?).with(ex)
       expect(described_class).to receive(:service_unavailable?).with(ex)
       expect(described_class).to receive(:execution_expired?).with(ex)
+      expect(described_class).to receive(:http_timeout?).with(ex)
       subject
     end
   end

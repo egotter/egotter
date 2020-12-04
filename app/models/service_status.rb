@@ -19,8 +19,16 @@ class ServiceStatus
       ex && ex.class == Twitter::Error && ex.message == 'execution expired'
     end
 
+    def http_timeout?(ex)
+      ex && ex.class.to_s.downcase.include?('timeout')
+    end
+
     def retryable_error?(ex)
-      connection_reset_by_peer?(ex) || internal_server_error?(ex) || service_unavailable?(ex) || execution_expired?(ex)
+      connection_reset_by_peer?(ex) ||
+          internal_server_error?(ex) ||
+          service_unavailable?(ex) ||
+          execution_expired?(ex) ||
+          http_timeout?(ex)
     end
   end
 end
