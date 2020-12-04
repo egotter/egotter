@@ -41,17 +41,8 @@ class TwitterUsersController < ApplicationController
         return I18n.t('twitter_users.show.new_record_created', user: screen_name)
       end
 
-      new_unfollower_uids = []
-      begin
-        seconds = 2.seconds
-        Timeout.timeout(seconds) do
-          # To save time, only the latest differences are calculated.
-          new_unfollower_uids = UnfriendsBuilder::Util.unfollowers(previous_twitter_user, current_twitter_user)
-        end
-      rescue Timeout::Error => e
-        Rails.logger.warn "#{self.class}##{__method__} The request has timed out. (#{seconds.inspect}) #{e.class} #{e.message} #{previous_twitter_user.id} #{current_twitter_user.id}"
-        return I18n.t('twitter_users.show.update_is_coming_with_timeout', user: screen_name)
-      end
+      # To save time, only the latest differences are calculated.
+      new_unfollower_uids = UnfriendsBuilder::Util.unfollowers(previous_twitter_user, current_twitter_user)
 
       # TODO At this point, the import batch may not be finished yet.
 

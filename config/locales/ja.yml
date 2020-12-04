@@ -1237,7 +1237,6 @@ ja:
       friends_count_increased: '@%{user} のフォローが、%{before} から %{after} に増えました。'
       friends_count_decreased: '@%{user} のフォローが、%{before} から %{after} に減りました。'
       update_is_coming: '@%{user} のフォロー・フォロワーに変化がありました。'
-      update_is_coming_with_timeout: '@%{user} のフォロー・フォロワーに変化がありました。（WTO）'
       update_is_coming_with_error: '@%{user} のフォロー・フォロワーに変化がありました。（WE）'
       new_record_created: '@%{user} のデータが新しく作成されました。'
       reload_page_html: '<a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>'
