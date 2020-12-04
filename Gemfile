@@ -53,8 +53,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'jquery-rails'
 gem 'hashie'
-gem 'devise'
-gem 'omniauth-twitter'
 gem 'twitter', github: 'egotter/twitter'
 gem 'parallel'
 gem 'activerecord-import'
@@ -76,6 +74,10 @@ gem 'gretel'
 gem 'stripe'
 gem 'webpacker', '~> 5.0'
 gem 'sitemap_generator'
+
+# Authentication
+gem 'devise'
+gem 'omniauth-twitter'
 
 # Sidekiq
 gem 'sidekiq', '< 7'
