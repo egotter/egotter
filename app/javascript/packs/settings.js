@@ -30,9 +30,7 @@ class PeriodicReportSetting {
 
     $.post(this.url, params).done(function (res) {
       logger.log('res', res);
-    }).fail(function (xhr) {
-      logger.warn(xhr.responseText);
-    });
+    }).fail(showErrorMessage);
   }
 }
 
@@ -55,9 +53,7 @@ class PeriodicTweetSetting {
   update(val) {
     $.post(this.url, {value: val}).done(function (res) {
       logger.log('res', res);
-    }).fail(function (xhr) {
-      logger.warn(xhr.responseText);
-    });
+    }).fail(showErrorMessage);
   }
 }
 

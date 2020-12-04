@@ -47,9 +47,7 @@ class AsyncLoader {
         self.update(res);
       }
 
-    }).fail(function (xhr) {
-      logger.warn(url, xhr.responseText);
-    });
+    }).fail(showErrorMessage);
   }
 
   update(res) {

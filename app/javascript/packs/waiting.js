@@ -28,9 +28,7 @@ class Waiting {
           self.stopped(res);
         }
       }
-    }).fail(function (xhr) {
-      self.failed(xhr);
-    });
+    }).fail(showErrorMessage);
   }
 
   nextOptions() {
