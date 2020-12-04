@@ -6,20 +6,40 @@
     </button>
 
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-      <a id="download-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'friends') %>"><%= t('download.friends') %></a>
-      <a id="download-followers" class="dropdown-item" href="<%= download_path(twitter_user, 'followers') %>"><%= t('download.followers') %></a>
-      <div class="dropdown-divider"></div>
-      <a id="download-mutual-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'mutual_friends') %>"><%= t('download.mutual_friends') %></a>
-      <a id="download-one-sided-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'one_sided_friends') %>"><%= t('download.one_sided_friends') %></a>
-      <a id="download-one-sided-followers" class="dropdown-item" href="<%= download_path(twitter_user, 'one_sided_followers') %>"><%= t('download.one_sided_followers') %></a>
-      <div class="dropdown-divider"></div>
-      <a id="download-inactive-mutual-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'inactive_mutual_friends') %>"><%= t('download.inactive_mutual_friends') %></a>
-      <a id="download-inactive-friends" class="dropdown-item" href="<%= download_path(twitter_user, 'inactive_friends') %>"><%= t('download.inactive_friends') %></a>
-      <a id="download-inactive-followers" class="dropdown-item" href="<%= download_path(twitter_user, 'inactive_followers') %>"><%= t('download.inactive_followers') %></a>
-      <div class="dropdown-divider"></div>
-      <a id="download-unfriends" class="dropdown-item" href="<%= download_path(twitter_user, 'unfriends') %>"><%= t('download.unfriends') %></a>
-      <a id="download-unfollowers" class="dropdown-item" href="<%= download_path(twitter_user, 'unfollowers') %>"><%= t('download.unfollowers') %></a>
-      <a id="download-mutual-unfriends" class="dropdown-item" href="<%= download_path(twitter_user, 'mutual_unfriends') %>"><%= t('download.mutual_unfriends') %></a>
+      <% purchased = current_user.has_valid_subscription? %>
+      <% trial = purchased && current_user.has_trial_subscription? %>
+      <%
+        [
+          ['download-friends', download_path(twitter_user, 'friends'), t('download.friends')],
+          ['download-followers', download_path(twitter_user, 'followers'), t('download.followers')],
+          ['download-mutual-friends', download_path(twitter_user, 'mutual_friends'), t('download.mutual_friends')],
+          ['download-one-sided-friends', download_path(twitter_user, 'one_sided_friends'), t('download.one_sided_friends')],
+          ['download-one-sided-followers', download_path(twitter_user, 'one_sided_followers'), t('download.one_sided_followers')],
+          ['download-inactive-mutual-friends', download_path(twitter_user, 'inactive_mutual_friends'), t('download.inactive_mutual_friends')],
+          ['download-inactive-friends', download_path(twitter_user, 'inactive_friends'), t('download.inactive_friends')],
+          ['download-inactive-followers', download_path(twitter_user, 'inactive_followers'), t('download.inactive_followers')],
+          ['download-unfriends', download_path(twitter_user, 'unfriends'), t('download.unfriends')],
+          ['download-unfollowers', download_path(twitter_user, 'unfollowers'), t('download.unfollowers')],
+          ['download-mutual-unfriends', download_path(twitter_user, 'mutual_unfriends'), t('download.mutual_unfriends')],
+        ].each.with_index do |(id, url, label), i|
+      %>
+        <% if [2, 5, 8].include?(i) %>
+          <div class="dropdown-divider"></div>
+        <% end %>
+
+        <% if i < 2 %>
+          <%= link_to label, url, {id: id, class: 'dropdown-item'} %>
+        <% elsif trial %>
+          <%= link_to label, '#', {id: id, class: 'dropdown-item btn-end-trial'} %>
+        <% elsif purchased %>
+          <%= link_to label, url, {id: id, class: 'dropdown-item'} %>
+        <% else %>
+          <%= link_to '#', {id: id, class: 'dropdown-item btn-checkout text-muted'} do %>
+            <%= label %>
+            <i class="fas fa-unlock"></i>
+          <% end %>
+        <% end %>
+      <% end %>
     </div>
   </div>
 <% else %>
@@ -38,6 +58,10 @@
         eventAction: 'clicked',
         eventLabel: '<%= twitter_user.screen_name %>'
       });
+
+      var page = '<%= request.path %>';
+      var text = $(this).text().trim();
+      ahoy.track('Download', {page: page, text: text});
     })
   });
 </script>

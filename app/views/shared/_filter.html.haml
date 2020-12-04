@@ -8,6 +8,9 @@
       - purchased = current_user.has_valid_subscription?
       - trial = purchased && current_user.has_trial_subscription?
       - Filter::VALUES.each.with_index do |(label, value), i|
+        - if [2, 6, 8, 10].include?(i)
+          .dropdown-divider
+
         - if i < 2
           %a.filters.dropdown-item{href: "#", data: {filter: value}}
             = label
