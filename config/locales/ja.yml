@@ -2172,6 +2172,11 @@ ja:
         create:
           success: 'ツイートに成功しました。'
           fail: 'ツイートに失敗しました。テキストが長すぎたり、特殊な文字が入ったりしていませんか？'
+      create_periodic_tweet_requests:
+        update:
+          success_on_html: '定期ツイートの設定を <span class="text-success">有効</span> にしました。'
+          success_off_html: '定期ツイートの設定を <span class="text-danger">無効</span> にしました。'
+          fail: '定期ツイートの設定に失敗しました。'
       user_caches:
         destroy:
           success: 'キャッシュのリセットがリクエストされました。'
@@ -2393,8 +2398,6 @@ ja:
         定期的なツイートの設定をオンにすると、<br>検索回数が <span class="egotter-pink">%{count}回/日</span> 増えます。<br>
         <br>
         <span class="small text-muted">※えごったーのことを 1回/日 自動的にツイートします</span>
-      success: '定期ツイートの設定をオンにしました。'
-      error: '定期ツイートの設定に失敗しました。'
       ok: "定期ツイートオン"
       cancel: "やめておく"
     search_modal:

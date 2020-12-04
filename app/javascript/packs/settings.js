@@ -52,7 +52,7 @@ class PeriodicTweetSetting {
 
   update(val) {
     $.post(this.url, {value: val}).done(function (res) {
-      logger.log('res', res);
+      ToastMessage.info(res.message);
     }).fail(showErrorMessage);
   }
 }

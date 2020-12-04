@@ -1,5 +1,5 @@
 -# This modal is always embedded.
-- data = {url: api_v1_create_periodic_tweet_requests_path(via: current_via('periodic_tweet_modal')), success_message: t('.success'), error_message: t('.error')}
+- data = {url: api_v1_create_periodic_tweet_requests_path(via: current_via('periodic_tweet_modal'))}
 = modal_dialog id: 'periodic-tweet-modal', title: t('.title_html'), button: {positive: t('.ok'), negative: t('.cancel')}, data: data do
   .d-flex.align-items-center.mb-3
     %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}

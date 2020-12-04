@@ -88,13 +88,8 @@ class PeriodicTweetDialog extends ModalDialog {
       var url = $el.data('url');
 
       $.post(url, {value: true}).done(function (res) {
-        logger.log(url, res);
-        ToastMessage.info($el.data('success-message'));
-
-      }).fail(function (xhr) {
-        logger.warn(url, xhr.responseText);
-        ToastMessage.warn($el.data('error-message'));
-      });
+        ToastMessage.info(res.message);
+      }).fail(showErrorMessage);
 
       $el.modal('hide');
     });

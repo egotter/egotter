@@ -4,39 +4,38 @@ module Api
 
       before_action :reject_crawler
       before_action :require_login!
-
-      before_action do
-        if !params.has_key?('value') || !%w(true false).include?(params['value'])
-          render json: {message: 'invalid value'}, status: :bad_request
-        end
-      end
+      before_action :value_must_be_true_or_false
 
       def update
         if params['value'] == 'true'
-          create_record(current_user)
+          if create_record(current_user)
+            render json: {message: t('.update.success_on_html')}
+          else
+            render json: {message: t('.update.fail')}, status: :bad_request
+          end
         elsif params['value'] == 'false'
-          destroy_record(current_user)
+          if destroy_record(current_user)
+            render json: {message: t('.update.success_off_html')}
+          else
+            render json: {message: t('.update.fail')}, status: :bad_request
+          end
         end
       end
 
       private
 
-      def create_record(user)
-        if (request = CreatePeriodicTweetRequest.find_by(user_id: user.id))
-          render json: {message: 'record already created'}, status: :bad_request
-        else
-          CreatePeriodicTweetRequest.create!(user_id: user.id)
-          render json: {message: 'ok(created)'}
+      def value_must_be_true_or_false
+        if !params.has_key?('value') || !%w(true false).include?(params['value'])
+          render json: {message: t('.update.fail')}, status: :bad_request
         end
       end
 
+      def create_record(user)
+        !CreatePeriodicTweetRequest.exists?(user_id: user.id) && CreatePeriodicTweetRequest.create(user_id: user.id)
+      end
+
       def destroy_record(user)
-        if (request = CreatePeriodicTweetRequest.find_by(user_id: user.id))
-          request.destroy!
-          render json: {message: 'ok(deleted)'}
-        else
-          render json: {message: 'record not found'}, status: :bad_request
-        end
+        (request = CreatePeriodicTweetRequest.find_by(user_id: user.id)) && request.destroy
       end
     end
   end
