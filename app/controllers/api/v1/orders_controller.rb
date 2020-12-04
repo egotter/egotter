@@ -7,9 +7,7 @@ module Api
 
       def end_trial
         order = current_user.valid_order
-        if order.trial?
-          order.end_trial!
-        end
+        order.end_trial! if order.trial?
         send_message(order)
         render json: {message: t('.success_html', count: 5)}
       rescue => e
@@ -19,9 +17,7 @@ module Api
 
       def cancel
         order = current_user.orders.find_by(id: params[:id])
-        unless order.canceled?
-          order.cancel!
-        end
+        order.cancel! unless order.canceled?
         send_message(order)
         render json: {message: t('.success_html', count: 5)}
       rescue => e
@@ -32,7 +28,7 @@ module Api
       private
 
       def send_message(order)
-        message = "`#{Rails.env}:#{action_name}` user_id=#{current_user.id} order_id=#{order.id} device_type=#{request.device_type}"
+        message = "`#{Rails.env}:#{action_name}` user_id=#{current_user.id} order_id=#{order.id} device_type=#{request.device_type} referer=#{request.referer}"
         SendMessageToSlackWorker.perform_async(:orders, message)
       end
     end

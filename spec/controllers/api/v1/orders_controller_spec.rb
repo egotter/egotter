@@ -35,4 +35,9 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       is_expected.to have_http_status(:ok)
     end
   end
+
+  describe '#send_message' do
+    subject { controller.send(:send_message, order) }
+    it { is_expected.to be_truthy }
+  end
 end
