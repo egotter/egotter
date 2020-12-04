@@ -19,9 +19,22 @@ module BypassFlashMessagesConcern
     end
   end
 
+  BYPASSED_MESSAGE_KEYS = %w(
+    after_sign_in
+    after_sign_up
+    search_limitation_soft_limited
+    too_many_searches
+    permission_level_not_enough
+    omniauth_failure
+  )
+
   def set_bypassed_notice_message(key, params = nil)
-    session[:bypassed_notice_message] = key
-    session[:bypassed_notice_message_params] = params if params
+    if BYPASSED_MESSAGE_KEYS.include?(key)
+      session[:bypassed_notice_message] = key
+      session[:bypassed_notice_message_params] = params if params
+    else
+      logger.warn "#{__method__}: invalid key value=#{key}"
+    end
   end
 
   def bypassed_notice_message_found?
@@ -29,26 +42,38 @@ module BypassFlashMessagesConcern
   end
 
   def bypassed_notice_message
-    if session[:bypassed_notice_message] == 'after_sign_in'
+    if session[:bypassed_notice_message] == BYPASSED_MESSAGE_KEYS[0]
       @without_alert_container = true
       after_sign_in_message('sign_in')
-    elsif session[:bypassed_notice_message] == 'after_sign_up'
+    elsif session[:bypassed_notice_message] == BYPASSED_MESSAGE_KEYS[1]
       @without_alert_container = true
       after_sign_in_message('sign_up')
-    elsif session[:bypassed_notice_message] == 'search_limitation_soft_limited'
+    elsif session[:bypassed_notice_message] == BYPASSED_MESSAGE_KEYS[2]
       @without_alert_container = true
       screen_name = session[:bypassed_notice_message_params]&.fetch('screen_name', nil)
       search_limitation_soft_limited_message(screen_name || 'user')
-    elsif session[:bypassed_notice_message] == 'too_many_searches'
+    elsif session[:bypassed_notice_message] == BYPASSED_MESSAGE_KEYS[3]
       @without_alert_container = true
       too_many_searches_message
-    elsif session[:bypassed_notice_message] == 'permission_level_not_enough'
+    elsif session[:bypassed_notice_message] == BYPASSED_MESSAGE_KEYS[4]
       @without_alert_container = true
       permission_level_not_enough_message
+    elsif session[:bypassed_notice_message] == BYPASSED_MESSAGE_KEYS[5]
+      @without_alert_container = true
+      omniauth_failure_message
     elsif start_page? && user_signed_in?
       @without_alert_container = true
       after_sign_in_message(nil)
     end
+  end
+
+  def omniauth_failure_message
+    values = {
+        user_signed_in: user_signed_in?,
+        user: current_user,
+        sign_in_url: sign_in_url(via: 'omniauth_failure_message'),
+    }
+    render_to_string(template: 'messages/omniauth_failure', layout: false, locals: values)
   end
 
   def after_sign_in_message(context)
@@ -57,9 +82,6 @@ module BypassFlashMessagesConcern
         user: current_user,
         timeline_url: user_signed_in? ? timeline_path(current_user, via: current_via(context)) : '',
         settings_url: settings_path(via: current_via(context)),
-        sample_image1_url: view_context.image_path('/egotter_screenshot_prompt_report_828x739.png'),
-        sample_image2_url: view_context.image_path('/egotter_screenshot_prompt_report_1165x318.png'),
-        sample_image3_url: view_context.image_path('/egotter_screenshot_prompt_report_1156x422.png'),
     }
     render_to_string(template: 'messages/current_periodic_report', layout: false, locals: values)
   end

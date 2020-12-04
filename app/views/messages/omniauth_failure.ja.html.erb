@@ -3,44 +3,39 @@
 <div class="card">
   <div class="card-body">
     <div class="mb-4">
-      <% if user_signed_in %>
-        えごったーに <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28"> @<%= user.screen_name %> としてログイン中です。
-        <a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の分析を見る</a><br>
-        <br>
-        仲良しランキングはこちらです。<a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の仲良しランキング見る</a><br>
-        <br>
-        <% if StopPeriodicReportRequest.exists?(user_id: user.id) %>
-          リムられ通知は<span class="egotter-pink"> 停止中 </span>です。再開するには「<span class="egotter-pink">リムられ通知 再開</span>」と @ego_tter にDMしてください。<a href="#" class="small" target="_blank">DM作成画面を開く</a>
+      <div class="mb-3">
+        <% if user_signed_in %>
+          ツイッターのエラーにより再ログインできませんでしたが、以前にログイン済みのため、ログイン状態は継続中です。
         <% else %>
-          リムられ通知はDMで<span class="egotter-pink"> 配信中 </span>です。<a href="https://twitter.com/direct_messages/create/<%= user.screen_name %>" class="btn btn-outline-primary btn-sm" target="_blank">リムられ通知DMを見る</a>
+          えごったーへのログインに失敗しました。
         <% end %>
-      <% end %>
+      </div>
+
+      <div class="mb-3">えごったーは <span class="egotter-pink">350万回</span> 以上利用されている安心のサービスです。ログインして便利に使いましょう！</div>
+      <a class="btn btn-primary btn-sm" href="<%= sign_in_url %>">ログインする</a> または <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">公式アカウントに質問</a>
     </div>
 
     <div class="text-right">
-      <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#current-periodic-report-details-<%= id_hash %>">詳しく見る
+      <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#omniauth-failure-details-<%= id_hash %>">詳しく見る
         <i class="far fa-question-circle"></i></a>
     </div>
 
-    <div id="current-periodic-report-details-<%= id_hash %>" class="collapse">
+    <div id="omniauth-failure-details-<%= id_hash %>" class="collapse">
       <hr>
       <div>1. えごったーとは何ですか？</div>
       <div class="mb-4">これまでに<span class="egotter-pink">350万回</span>以上利用されたツイッター分析アプリです。<br>
         仲良しランキング、片思いチェック、リムられチェックなどの機能があります。</div>
 
-      <div>2. リムられ通知とは何ですか？</div>
+      <div>2. ログインするとどうなりますか？</div>
+      <div class="mb-4">Webサイトでの分析が早くなり、リムられ通知が届くようになります。</div>
+
+      <div>3. リムられ通知とは何ですか？</div>
       <div class="mb-4">誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。</div>
 
-      <div>3. リムられ通知はどのように届きますか？</div>
+      <div>4. リムられ通知はどのように届きますか？</div>
       <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> からDMで届きます。
         <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image1">サンプル画像を見る</a>
         <div id="sample_image1" class="collapse"><img src="<%= image_path('/egotter_screenshot_prompt_report_828x739.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像1" loading="lazy"></div>
-      </div>
-
-      <div>4. リムられ通知をすぐに受け取ることはできますか？</div>
-      <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に「<span class="egotter-pink">リムられ通知 今すぐ送信</span>」とDMすればすぐに届きます。
-        <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image2">サンプル画像を見る</a>
-        <div id="sample_image2" class="collapse"><img src="<%= image_path('/egotter_screenshot_prompt_report_1165x318.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像2" loading="lazy"></div>
       </div>
 
       <div>5. リムられ通知を停止することはできますか？</div>

@@ -15,6 +15,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     CreateTwitterDBUserWorker.perform_async([@user.uid], user_id: @user.id, force_update: true, enqueued_by: 'twitter callback after signing in')
 
     enqueue_create_twitter_user_job_if_needed(@user.uid, user_id: @user.id)
+  rescue => e
+    logger.warn "after_action: #{e.inspect}"
   end
 
   def twitter
@@ -58,8 +60,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       force_login
     ).each { |key| session.delete(key) }
 
-    message = after_failure_message(request.env['omniauth.error.type'].to_s)
-    redirect_to root_path(via: current_via("signed_in_#{user_signed_in?}")), alert: message
+    after_failure_message(request.env['omniauth.error.type'].to_s)
+    redirect_to root_path(via: current_via("signed_in_#{user_signed_in?}"))
   end
 
   private
@@ -91,20 +93,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       logger.warn "#{self.class}##{__method__}: Unknown reason #{reason}"
     end
 
-    if user_signed_in?
-      t('devise.omniauth_callbacks.failure_with_already_signed_in_html')
-    else
-      if %w(invalid_credentials session_expired).include?(reason)
-        url = sign_in_path(via: "#{controller_name}/#{action_name}/retry_invalid_or_expired")
-        t('devise.omniauth_callbacks.failure_with_retry_message_html', kind: 'Twitter', url: url)
-      elsif %w(service_unavailable timeout).include?(reason)
-        url = sign_in_path(via: "#{controller_name}/#{action_name}/retry_service_unavailable")
-        t('devise.omniauth_callbacks.service_unavailable_html', kind: 'Twitter', url: url)
-      else
-        url = sign_in_path(via: "#{controller_name}/#{action_name}/retry_something_error")
-        t('devise.omniauth_callbacks.failure_with_retry_message_html', kind: 'Twitter', url: url)
-      end
-    end
+    set_bypassed_notice_message('omniauth_failure')
   end
 
   def user_params
