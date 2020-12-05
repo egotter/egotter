@@ -18,7 +18,6 @@
 class ResetEgotterRequest < ApplicationRecord
   include RequestRunnable
   belongs_to :user
-  has_many :logs, -> { order(created_at: :asc) }, foreign_key: :request_id, class_name: 'ResetEgotterLog'
 
   validates :session_id, presence: true
   validates :user_id, presence: true
