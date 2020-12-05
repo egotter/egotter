@@ -47,3 +47,51 @@ RSpec.describe SendMetricsToCloudWatchWorker do
     end
   end
 end
+
+RSpec.describe SendMetricsToCloudWatchWorker::Metrics, type: :model do
+  describe '#append' do
+    let(:instance) { described_class.new }
+    let(:namespace) { 'namespace' }
+    let(:name) { 'name' }
+    let(:dimensions) { 'dimensions' }
+    let(:value) { 'value' }
+    let(:send_data) do
+      {
+          metric_name: name,
+          dimensions: dimensions,
+          timestamp: Time.zone.now,
+          value: value,
+          unit: 'Count'
+      }
+    end
+    subject { instance.append(name, value, namespace: namespace, dimensions: dimensions) }
+
+    it do
+      freeze_time do
+        subject
+        expect(instance.instance_variable_get(:@metrics)).to match({namespace => [send_data]})
+        expect(instance.instance_variable_get(:@appended)).to be_truthy
+      end
+    end
+  end
+
+  describe '#update' do
+    let(:instance) { described_class.new }
+    let(:cw_client) { Aws::CloudWatch::Client.new(region: CloudWatchClient::REGION) }
+
+    before do
+      allow(Aws::CloudWatch::Client).to receive(:new).with(region: CloudWatchClient::REGION)
+      instance.instance_variable_set(:@appended, true)
+      instance.instance_variable_set(:@metrics, {'namespace' => [{'key' => 'value'}]})
+    end
+
+    it do
+      expect(cw_client).to receive(:put_metric_data).with({namespace: 'namespace', metric_data: [{'key' => 'value'}]})
+      instance.update
+    end
+  end
+
+  describe '#logger' do
+    it { expect(described_class.new.respond_to?(:logger)).to be_truthy }
+  end
+end

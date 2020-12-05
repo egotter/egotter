@@ -300,7 +300,7 @@ class SendMetricsToCloudWatchWorker
 
     def update
       if @appended
-        client = CloudWatchClient.new.instance_variable_get(:@client)
+        client = Aws::CloudWatch::Client.new(region: CloudWatchClient::REGION)
 
         @metrics.each do |namespace, metric_data|
           logger.info "Send #{metric_data.size} metrics to #{namespace}"

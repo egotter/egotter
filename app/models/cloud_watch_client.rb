@@ -21,47 +21,6 @@ class CloudWatchClient
     @client = Aws::CloudWatch::Client.new(region: REGION)
   end
 
-  # TODO Remove later
-  class Metrics
-    include Logging
-
-    def initialize
-      @client = CloudWatchClient.new
-      @metrics = Hash.new { |hash, key| hash[key] = [] }
-      @appended = false
-    end
-
-    def append(name, value, namespace:, dimensions: nil)
-      @metrics[namespace] << {
-          metric_name: name,
-          dimensions: dimensions,
-          timestamp: Time.zone.now,
-          value: value,
-          unit: 'Count'
-      }
-      @appended = true
-
-      self
-    end
-
-    def update
-      if @appended
-        @metrics.each do |namespace, metric_data|
-          logger.info "Send #{metric_data.size} metrics to #{namespace}"
-          # logger.info metric_data.inspect
-
-          metric_data.each_slice(20).each do |data|
-            params = {
-                namespace: namespace,
-                metric_data: data,
-            }
-            @client.instance_variable_get(:@client).put_metric_data(params)
-          end
-        end
-      end
-    end
-  end
-
   def put_metric_data(metric_name, value, namespace:, dimensions: nil)
     values = {
         namespace: namespace,
