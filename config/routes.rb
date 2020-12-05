@@ -49,6 +49,8 @@ Rails.application.routes.draw do
       post 'orders/cancel', to: 'orders#cancel'
       resources :share_tweets, only: %i(create)
 
+      resources :delete_tweets_notifications, only: %i(create)
+      resources :delete_tweets_presigned_urls, only: %i(create)
       post "delete_favorites", to: "delete_favorites#destroy"
 
       delete 'user_caches', to: 'user_caches#destroy'

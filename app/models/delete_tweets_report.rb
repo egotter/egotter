@@ -67,6 +67,11 @@ class DeleteTweetsReport
       new(User.egotter, user, message)
     end
 
+    def upload_completed_message
+      template = Rails.root.join('app/views/delete_tweets/upload_completed.ja.text.erb')
+      ERB.new(template.read).result_with_hash(url: delete_tweets_url('upload_completed'))
+    end
+
     def build_direct_message_event(uid, message)
       {
           type: 'message_create',

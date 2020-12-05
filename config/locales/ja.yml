@@ -1322,6 +1322,7 @@ ja:
       finish: 'お片付けはこれで終わりです！ お疲れ様でした。'
   delete_tweets:
     new: &delete_tweets_new
+      crumb_title: 'ツイートクリーナー'
       navbar_title: 'ツイートクリーナー🧹'
       footer_title: 'ツイートを一括削除'
       meta_title: 'ツイートクリーナー🧹 - ワンクリックでツイートを一括削除'
@@ -1341,8 +1342,12 @@ ja:
           アカウント切り替えは <a href="%{url}">こちら</a>
     show:
       <<: *delete_tweets_new
-      crumb_title: 'ツイートクリーナー'
-      modal_button_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートを削除する'
+      crumb_title: 'マイページ'
+      page_title: 'ツイートクリーナー'
+      page_description: |
+        ツイートクリーナーは、ツイートを簡単に素早く削除するためのツールです。
+        無料プランの場合は、最新の%{count}件まで無料で削除することができます。
+        有料プランの場合は、最大で200万件以上のツイートを削除することができます。
       see_progress: 'ツイート削除ステータスを見る'
       status:
         title: 'ツイート削除ステータス'
@@ -1350,23 +1355,15 @@ ja:
         no_request_description: '削除中の場合は、ここに進行状況が表示されます。'
         empty_date: '○月○日'
       requested: '削除リクエスト済み'
-      warnings:
-        - 'ツイート削除は取り消しできません'
-        - '3200件までは無料で削除できます'
-        - '削除後もツイート総数は変化しません'
       word_description: '説明'
       word_procedure: '手順'
-      description_for_free: '@%{user} は無料プランのユーザーです。最新の%{count}件まで削除することができます。'
-      description_for_premium: '@%{user} は有料プランのユーザーです。全てのツイートを削除するには全ツイート履歴が必要です。'
-      modal:
-        title: '@%{user} のツイート削除'
-        confirmation_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートをすべて削除します。本当に削除しますか？'
-        dm_after_finishing: "削除の完了後に自分へDMする"
-        tweet_after_finishing: "削除の完了後にツイートする"
-        please_enter_confirmation_text: '確認のために「%{text}」と入力してください'
-        confirmation_text: 'ツイートを全て削除'
-        ok: "削除します"
-        cancel: "いいえ"
+      free:
+        title: '無料でツイートを削除する'
+        description: '無料プランの場合は、最新の%{count}件までをワンクリックで削除することができます。'
+      premium:
+        title: '有料で完全にツイートを削除する'
+        description: '有料プランの場合は、アーカイブデータ（全ツイート履歴）をアップロードすれば全てのツイートを削除できます。'
+        button_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> アーカイブデータをアップロードする'
     message:
       finished: '%{count}件のツイートを削除しました。削除は完了しています。'
       processing_html: |
@@ -1377,6 +1374,28 @@ ja:
         %{count}件のツイートを削除中にエラーが起きました。一定時間後に再度お試しください。<br>
         <br>
         何度も失敗する場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    uploader:
+      archive_data_only: 'twitter-0000-00-00-abcedf.zip を選択'
+      invalid_filename: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをそのまま指定してください。'
+      invalid_content_type: 'ファイルの形式が違います。Twitterから取得したアーカイブデータをそのまま指定してください。'
+      filesizeTooLarge: '特殊なファイル形式です。個別に対応しますので @egotter_cs にご連絡ください。'
+      preparing: 'ファイルのアップロードを準備中です。ページを閉じないでそのままお待ちください。'
+      uploading: 'ファイルをアップロード中です。ページを閉じないでそのままお待ちください。'
+      success_html: 'ファイルのアップロードに成功しました。<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> から届くDMをお待ちください。'
+      fail_html: 'ファイルのアップロードに失敗しました。何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
+    confirmation_modal:
+      title: '@%{user} のツイート削除'
+      body_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートをすべて削除します。本当に削除しますか？'
+      button_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> 無料で直近のツイートを削除する'
+      check_boxes:
+        dm: '削除の完了後に自分へDMする'
+        tweet: '削除の完了後にツイートする'
+      confirmation_text: '確認のために「%{text}」と入力してください'
+      ok: "削除します"
+      cancel: "いいえ"
+      warnings:
+        - 'ツイート削除は取り消しできません'
+        - '3200件までは無料で削除できます'
   delete_favorites:
     new: &delete_favorites_new
       navbar_title: 'いいねクリーナー'
@@ -2158,6 +2177,9 @@ ja:
       login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
   api:
     v1:
+      delete_tweets_presigned_urls:
+        create:
+          fail: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをそのまま指定してください。'
       friend_insights:
         fail: '更新中です。数分後に再度お試しください。'
       follower_insights:

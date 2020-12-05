@@ -1,80 +1,55 @@
-- modal_id = 'delete-tweets-modal'
-
 - content_for :navbar_title, t('.navbar_title')
 
-- breadcrumb :delete_tweets, current_user.screen_name
+- breadcrumb :delete_tweets_mypage
 
-.card.my-1
+%h2.h4.text-center.my-5= t('.page_title')
+.mb-5= t('.page_description', count: DeleteTweetsRequest::DESTROY_LIMIT)
+
+%h3.h5.card-title.text-center.mt-5.mb-3= t('.free.title')
+.card.my-3
   .card-body
     .card-text
-    - if current_user.has_valid_subscription?
-      = t('.description_for_premium', user: current_user.screen_name)
-      = link_to '#download-full-archive', class: 'btn btn-outline-primary btn-sm' do
-        %i.far.fa-question-circle
-        = t('.word_procedure')
-    - else
-      = t('.description_for_free', user: current_user.screen_name, count: DeleteTweetsRequest::DESTROY_LIMIT)
+      = t('.free.description', user: current_user.screen_name, count: DeleteTweetsRequest::DESTROY_LIMIT)
       = link_to '#delete-tweets-faq', class: 'btn btn-outline-primary btn-sm' do
         %i.far.fa-question-circle
         = t('.word_description')
 
-.text-center.mt-4.mb-5
-  - if @processing
-    .btn.btn-danger.disabled= t('.requested')
-  - else
-    .btn.btn-danger{"data-target" => "##{modal_id}", "data-toggle" => "modal"}= t('.modal_button_html', user: current_user.screen_name, icon: current_user_icon)
+      - if @processing
+        .text-center.mt-3
+          .btn.btn-danger.disabled= t('.requested')
+      - else
+        .mt-3
+        = render partial: 'confirmation_modal'
 
-%h2.h4.text-center.mt-5.mb-4= t('.status.title')
+%h3#delete-tweets-uploader.h5.card-title.text-center.mt-5.mb-3= t('.premium.title')
+.card.my-3
+  .card-body
+    .card-text
+      = t('.premium.description', user: current_user.screen_name)
+      = link_to '#download-full-archive', class: 'btn btn-outline-primary btn-sm' do
+        %i.far.fa-question-circle
+        = t('.word_procedure')
+
+      .text-center.mt-3
+        - button_label = t('.premium.button_html', icon: current_user_icon)
+        - if current_user.has_valid_subscription?
+          - if current_user.has_trial_subscription?
+            = link_to button_label, '#', class: 'btn btn-outline-primary btn-end-trial'
+          - else
+            = render partial: 'uploader', locals: {button_label: button_label}
+        - else
+          = link_to button_label, '#', class: 'btn btn-outline-primary btn-checkout'
+
+
+%h3.h5.text-center.mt-5.mb-3= t('.status.title')
 .text-center.mb-3= t('.status.description', user: current_user.screen_name)
 %table.table.table-bordered.table-condensed
   %tr
     - if @request
-      - req = DeleteTweetsRequestDecorator.new(@request)
-      %td.small= req.display_time
-      %td.small= req.message.html_safe
+      %td.small= @request.display_time
+      %td.small= @request.message.html_safe
     - else
       %td.small.text-muted= t('.status.empty_date')
       %td.small.text-muted= t('.status.no_request_description', user: current_user.screen_name)
 
 = render partial: 'delete_tweets/faq'
-
-- confirmation_text = current_user.screen_name
-
-= modal_dialog(id: modal_id, title: t('.modal.title', user: current_user.screen_name), button: {positive: t('.modal.ok'), category: 'danger'}) do
-  .mb-3= t('.modal.confirmation_html', user: current_user.screen_name, icon: current_user_icon)
-
-  - if current_user.has_valid_subscription?
-    .card.mb-3
-      .card-body
-        .card-text
-          = t('.description_for_premium', user: current_user.screen_name)
-          = link_to '#download-full-archive', class: 'btn btn-outline-primary btn-sm', onclick: 'closeConfirmationModal();' do
-            %i.far.fa-question-circle
-            = t('.word_procedure')
-
-  %strong.d-block.my-1= t('.warnings')[0]
-  %strong.d-block.mt-1.mb-3= t('.warnings')[1]
-  %div
-    = check_box_tag('', '1', true, disabled: true)
-    %label= t('.modal.dm_after_finishing')
-  %div
-    = check_box_tag('tweet-after-finishing', '1', true)
-    %label{for: 'tweet-after-finishing'}= t('.modal.tweet_after_finishing')
-  .my-3
-    %small.form-text.text-muted= t('.modal.please_enter_confirmation_text', text: confirmation_text)
-    = text_field_tag '', '', class: 'form-control confirm-input', placeholder: ''
-
-:javascript
-  function closeConfirmationModal() {
-    $('##{modal_id}').modal('hide');
-  }
-
-  $(function () {
-    var id = '#{modal_id}';
-    var url = '#{delete_tweets_path}';
-    var i18n = {
-      pleaseEnterConfirmationText: '#{t('.modal.please_enter_confirmation_text', text: confirmation_text)}',
-      confirmationText: '#{confirmation_text}'
-    };
-    new DeleteTweetsModal(id, url, i18n);
-  });
