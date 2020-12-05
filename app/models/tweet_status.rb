@@ -12,5 +12,9 @@ class TweetStatus
     def not_authorized?(ex)
       ex.class == Twitter::Error::Forbidden && ex.message == 'Sorry, you are not authorized to see this status.'
     end
+
+    def already_favorited?(ex)
+      ex.class == Twitter::Error::AlreadyFavorited
+    end
   end
 end

@@ -12,4 +12,10 @@ RSpec.describe TweetStatus, type: :model do
     subject { described_class.not_authorized?(ex) }
     it { is_expected.to be_truthy }
   end
+
+  describe '.already_favorited?' do
+    let(:ex) { Twitter::Error::AlreadyFavorited.new }
+    subject { described_class.already_favorited?(ex) }
+    it { is_expected.to be_truthy }
+  end
 end
