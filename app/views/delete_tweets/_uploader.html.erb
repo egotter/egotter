@@ -1,4 +1,4 @@
-<%= link_to button_label, '#', id: 'delete-tweets-uploader', class: 'btn btn-outline-primary' %>
+<%= link_to button_label, '#', id: 'delete-tweets-button', class: 'btn btn-outline-primary' %>
 <div class="text-muted small mt-1"><%= t('.archive_data_only') %></div>
 <input type="file" id="delete-tweets-file" accept=".zip,application/zip" style="display: none;">
 
@@ -13,6 +13,6 @@
       success: '<%= t('.success_html') %>',
       fail: '<%= t('.fail_html') %>'
     };
-    new DeleteTweetsUploader('delete-tweets-uploader', 'delete-tweets-file', i18n);
+    new DeleteTweetsUploader('delete-tweets-button', 'delete-tweets-file', i18n);
   });
 </script>

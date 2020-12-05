@@ -1363,7 +1363,7 @@ ja:
       premium:
         title: '有料で完全にツイートを削除する'
         description: '有料プランの場合は、アーカイブデータ（全ツイート履歴）をアップロードすれば全てのツイートを削除できます。'
-        button_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> アーカイブデータをアップロードする'
+        button_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> アーカイブデータをアップロード'
     message:
       finished: '%{count}件のツイートを削除しました。削除は完了しています。'
       processing_html: |
