@@ -21,7 +21,6 @@
 
 class DeleteTweetsRequest < ApplicationRecord
   belongs_to :user
-  has_many :logs, -> { order(created_at: :desc) }, primary_key: :id, foreign_key: :request_id, class_name: 'DeleteTweetsLog'
 
   validates :user_id, presence: true
 
