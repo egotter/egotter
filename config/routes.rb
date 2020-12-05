@@ -63,8 +63,6 @@ Rails.application.routes.draw do
 
   get 'delete_tweets', to: 'delete_tweets#new'
   get 'delete_tweets/mypage', to: 'delete_tweets#show', as: :delete_tweets_mypage
-  # TODO Remove later
-  post "delete_tweets", to: "delete_tweets#delete"
 
   get 'delete_favorites', to: 'delete_favorites#new'
   get 'delete_favorites/mypage', to: 'delete_favorites#show', as: :delete_favorites_mypage
