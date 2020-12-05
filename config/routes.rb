@@ -49,6 +49,7 @@ Rails.application.routes.draw do
       post 'orders/cancel', to: 'orders#cancel'
       resources :share_tweets, only: %i(create)
 
+      resources :delete_tweets_requests, only: %i(create)
       resources :delete_tweets_notifications, only: %i(create)
       resources :delete_tweets_presigned_urls, only: %i(create)
       post "delete_favorites", to: "delete_favorites#destroy"
@@ -62,6 +63,7 @@ Rails.application.routes.draw do
 
   get 'delete_tweets', to: 'delete_tweets#new'
   get 'delete_tweets/mypage', to: 'delete_tweets#show', as: :delete_tweets_mypage
+  # TODO Remove later
   post "delete_tweets", to: "delete_tweets#delete"
 
   get 'delete_favorites', to: 'delete_favorites#new'

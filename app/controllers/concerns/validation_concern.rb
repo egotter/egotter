@@ -11,7 +11,7 @@ module ValidationConcern
   end
 
   def require_login!
-    return if user_signed_in?
+    return if user_signed_in? && current_user.authorized?
 
     if request.xhr?
       message = t('before_sign_in.ajax.need_login_html', url: kick_out_error_path('need_login'))

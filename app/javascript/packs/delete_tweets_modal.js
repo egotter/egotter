@@ -23,7 +23,7 @@ class DeleteTweetsModal {
       var tweet = $modal.find('#tweet-after-finishing').prop('checked');
 
       $.post(url, {tweet: tweet}).done(function (res) {
-        logger.log(res);
+        ToastMessage.info(res.message);
 
         setTimeout(function () {
           window.location.reload();

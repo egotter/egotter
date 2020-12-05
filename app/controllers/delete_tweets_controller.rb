@@ -16,7 +16,7 @@ class DeleteTweetsController < ApplicationController
     end
   end
 
-  # TODO Move to Api::V1::DeleteTweetsController
+  # TODO Remove later
   def delete
     if current_user.authorized?
       request = DeleteTweetsRequest.create!(user_id: current_user.id, tweet: params[:tweet] == 'true')

@@ -2177,6 +2177,9 @@ ja:
       login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
   api:
     v1:
+      delete_tweets_requests:
+        create:
+          success: 'ツイート削除のリクエストに成功しました。ページを更新します。'
       delete_tweets_presigned_urls:
         create:
           fail: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをそのまま指定してください。'
