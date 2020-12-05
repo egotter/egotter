@@ -1,3 +1,5 @@
+require 'aws-sdk-cloudwatch'
+
 class SendMetricsToCloudWatchWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
