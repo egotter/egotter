@@ -195,7 +195,7 @@ Rails.application.routes.draw do
   get 'settings/unfollow_requests', to: "settings#unfollow_requests"
 
   get 'pricing', to: "pricing#new"
-  resources :orders, only: %i(create destroy)
+  resources :orders, only: %i(create)
   get 'orders/success', to: "orders#success"
   get 'orders/cancel', to: "orders#cancel"
   post 'orders/checkout_session_completed', to: "orders#checkout_session_completed"

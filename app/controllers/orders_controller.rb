@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
   before_action :require_login!, except: :checkout_session_completed
   before_action :has_already_purchased?, only: :create
 
-  after_action :send_message, only: %i(create destroy checkout_session_completed)
+  after_action :send_message, only: %i(create checkout_session_completed)
 
   # TODO Remove later
   def create
@@ -40,24 +40,6 @@ class OrdersController < ApplicationController
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{current_user_id}"
     redirect_to root_path(via: current_via('error')), alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error')) unless performed?
-  end
-
-  # TODO Remove later
-  def destroy
-    logger.warn "#{controller_name}##{action_name} is deprecated"
-
-    order = fetch_order
-
-    if order.canceled_at
-      redirect_to root_path(via: current_via('already_canceled')), notice: t('.already_canceled_html', url: after_purchase_path('after_canceling'))
-    else
-      order.cancel!
-      redirect_to root_path(via: current_via), notice: t('.success_html', url: after_purchase_path('after_canceling'))
-    end
-
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{current_user_id}"
-    redirect_to root_path(via: current_via('error')), alert: t('.failed_html', url: after_purchase_path('after_canceling_with_error')) unless performed?
   end
 
   # Not used: Callback URL for a successful payment
@@ -133,8 +115,6 @@ class OrdersController < ApplicationController
     case action_name
     when 'create'
       current_user.orders.last
-    when 'destroy'
-      current_user.orders.find_by(id: params[:id])
     when 'checkout_session_completed'
       Order.where(created_at: 3.seconds.ago..Time.zone.now).last
     else

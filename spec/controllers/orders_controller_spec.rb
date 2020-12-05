@@ -57,33 +57,6 @@ RSpec.describe OrdersController, type: :controller do
   #   end
   # end
 
-  # describe 'DELETE #destroy' do
-  #   subject { delete :destroy, params: {id: order.id} }
-  #
-  #   before do
-  #     allow(controller).to receive(:current_user).and_return(user)
-  #     allow(controller).to receive(:send_message_to_slack)
-  #     allow(controller).to receive(:fetch_order).and_return(order)
-  #   end
-  #
-  #   context 'canceled_at is blank' do
-  #     before { order.update!(canceled_at: Time.zone.now) }
-  #     it do
-  #       expect(order).not_to receive(:cancel!)
-  #       subject
-  #       is_expected.to redirect_to root_path(via: 'orders/destroy/already_canceled')
-  #     end
-  #   end
-  #
-  #   context 'canceled_at is present' do
-  #     it do
-  #       expect(order).to receive(:cancel!)
-  #       subject
-  #       is_expected.to redirect_to root_path(via: 'orders/destroy')
-  #     end
-  #   end
-  # end
-
   describe '#send_message' do
     subject { controller.send(:send_message) }
     before { allow(controller).to receive(:fetch_order).and_return(order) }
@@ -101,15 +74,6 @@ RSpec.describe OrdersController, type: :controller do
       let(:action) { 'create' }
       it do
         expect(controller).to receive_message_chain(:current_user, :orders, :last).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-
-    context 'action is #destroy' do
-      let(:action) { 'destroy' }
-      before { allow(controller).to receive_message_chain(:params, :[]).with(:id).and_return(1) }
-      it do
-        expect(controller).to receive_message_chain(:current_user, :orders, :find_by).with(id: 1).and_return('result')
         is_expected.to eq('result')
       end
     end
