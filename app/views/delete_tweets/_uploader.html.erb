@@ -1,0 +1,18 @@
+<%= link_to button_label, '#', id: 'delete-tweets-uploader', class: 'btn btn-outline-primary' %>
+<div class="text-muted small mt-1"><%= t('.archive_data_only') %></div>
+<input type="file" id="delete-tweets-file" accept=".zip,application/zip" style="display: none;">
+
+<script>
+  $(function () {
+    var i18n = {
+      invalidFilename: '<%= t('.invalid_filename') %>',
+      invalidContentType: '<%= t('.invalid_content_type') %>',
+      filesizeTooLarge: '<%= t('.filesizeTooLarge') %>',
+      preparing: '<%= t('.preparing') %>',
+      uploading: '<%= t('.uploading') %>',
+      success: '<%= t('.success_html') %>',
+      fail: '<%= t('.fail_html') %>'
+    };
+    new DeleteTweetsUploader('delete-tweets-uploader', 'delete-tweets-file', i18n);
+  });
+</script>

@@ -1,0 +1,32 @@
+- confirmation_text = current_user.screen_name
+- modal_id = 'delete-tweets-modal'
+
+.text-center
+  .btn.btn-danger{"data-target" => "##{modal_id}", "data-toggle" => 'modal'}= t('.button_html', icon: current_user_icon)
+
+= modal_dialog(id: modal_id, title: t('.title', user: current_user.screen_name), button: {positive: t('.ok'), category: 'danger'}) do
+  .mb-3= t('.body_html', user: current_user.screen_name, icon: current_user_icon)
+
+  %strong.d-block.my-1= t('.warnings')[0]
+  %strong.d-block.mt-1.mb-3= t('.warnings')[1]
+  %div
+    = check_box_tag('', '1', true, disabled: true)
+    %label= t('.check_boxes.dm')
+  %div
+    = check_box_tag('tweet-after-finishing', '1', true)
+    %label{for: 'tweet-after-finishing'}= t('.check_boxes.tweet')
+  .my-3
+    %small.form-text.text-muted= t('.confirmation_text', text: confirmation_text)
+    = text_field_tag '', '', class: 'form-control confirm-input', placeholder: ''
+
+:javascript
+  $(function () {
+    var id = '#{modal_id}';
+    var url = '#{delete_tweets_path}';
+
+    var i18n = {
+      pleaseEnterConfirmationText: '#{t('.confirmation_text', text: confirmation_text)}',
+      confirmationText: '#{confirmation_text}'
+    };
+    new DeleteTweetsModal(id, url, i18n);
+  });

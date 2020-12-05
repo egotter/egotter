@@ -82,6 +82,10 @@ class User < ApplicationRecord
       find_by(uid: EGOTTER_UID)
     end
 
+    def egotter_cs
+      find_by(uid: EGOTTER_CS_UID)
+    end
+
     def admin
       find_by(uid: ADMIN_UID)
     end

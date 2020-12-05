@@ -81,9 +81,14 @@ crumb :personality_insight do |screen_name|
   parent :timeline, screen_name
 end
 
-crumb :delete_tweets do |screen_name|
-  link t('delete_tweets.show.crumb_title'), delete_tweets_mypage_path(screen_name: screen_name, via: current_via("breadcrumb_delete_tweets"))
-  parent :timeline, screen_name
+crumb :delete_tweets do
+  link t('delete_tweets.new.crumb_title'), delete_tweets_path(via: current_via("breadcrumb_delete_tweets"))
+  parent :root
+end
+
+crumb :delete_tweets_mypage do
+  link t('delete_tweets.show.crumb_title'), delete_tweets_mypage_path(via: current_via("breadcrumb_delete_tweets_mypage"))
+  parent :delete_tweets
 end
 
 crumb :delete_favorites do |screen_name|
