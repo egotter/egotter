@@ -2177,6 +2177,11 @@ ja:
       login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
   api:
     v1:
+      follow_requests:
+        create:
+          cannot_follow_yourself: '自分をフォローすることはできません。'
+          success: '@%{user} のフォローに成功しました。残りのフォロー回数は %{count}回 です。'
+          success_with_delay: '@%{user} のフォローをリクエストしました。凍結を防ぐために一定時間後にフォローします。'
       delete_tweets_requests:
         create:
           success: 'ツイート削除のリクエストに成功しました。ページを更新します。'

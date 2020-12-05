@@ -23,7 +23,10 @@ class FollowsController < ApplicationController
     end
   end
 
+  # TODO Remove later
   def create
+    logger.warn "#{controller_name}##{action_name} is deprecated"
+
     request = FollowRequest.create!(user_id: current_user.id, uid: params[:uid], requested_by: "follows#create via=#{params[:via]}")
     screen_name = fetch_target_screen_name(params[:uid])
     rate_limit = RateLimit.new(current_user)
@@ -45,6 +48,8 @@ class FollowsController < ApplicationController
   end
 
   def show
+    logger.warn "#{controller_name}##{action_name} is deprecated"
+
     if EgotterFollower.exists?(uid: current_user.uid, updated_at: 5.minutes.ago..Time.zone.now)
       return render json: {follow: true, record_found: true}
     end

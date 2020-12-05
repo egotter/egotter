@@ -17,6 +17,7 @@ class UnfollowsController < ApplicationController
     end
   end
 
+  # TODO Move to Api::V1::UnfollowRequestsController#create
   def create
     request = UnfollowRequest.create!(user_id: current_user.id, uid: params[:uid], requested_by: "unfollows#create via=#{params[:via]}")
     screen_name = fetch_target_screen_name(params[:uid])

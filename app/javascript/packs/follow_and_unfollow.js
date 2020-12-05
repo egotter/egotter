@@ -1,6 +1,6 @@
 class Twitter {
   constructor(via) {
-    this.follow_url = '/follows?via=' + via; // follows_path
+    this.follow_url = '/api/v1/follow_requests?via=' + via; // api_v1_follow_requests_path
     this.unfollow_url = '/unfollows?via=' + via; // unfollows_path
   }
 

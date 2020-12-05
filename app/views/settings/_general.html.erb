@@ -33,10 +33,10 @@
       <div><%= link_to t('.following_egotter.following'), '#', class: 'update-following btn btn-primary btn-sm disabled', disabled: true %></div>
       <div class="text-muted small mt-1"><%= t('.following_egotter.fast_mode') %></div>
     <% elsif current_user.has_valid_subscription? %>
-      <div><%= link_to t('.following_egotter.follow'), '#', data: {url: follows_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %></div>
+      <div><%= link_to t('.following_egotter.follow'), '#', data: {url: api_v1_follow_requests_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %></div>
       <div class="text-muted small mt-1"><%= t('.following_egotter.paid_mode') %></div>
     <% else %>
-      <div><%= link_to t('.following_egotter.follow'), '#', data: {url: follows_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %></div>
+      <div><%= link_to t('.following_egotter.follow'), '#', data: {url: api_v1_follow_requests_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %></div>
       <div class="text-muted small mt-1"><%= t('.following_egotter.note_html') %></div>
     <% end %>
   </div>

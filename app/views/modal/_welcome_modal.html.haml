@@ -32,7 +32,7 @@
         .ml-3= t('.continuous_sign_in.text_html', count: SearchCountLimitation::CONTINUOUS_SIGN_IN_BONUS)
 
   - if params[:follow_dialog] == '1'
-    - data = {url: follows_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')}
+    - data = {url: api_v1_follow_requests_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')}
     = modal_dialog id: 'follow-modal', title: t('.follow.title_html'), button: {positive: t('.follow.ok'), negative: t('.follow.cancel')}, data: data do
       .d-flex.align-items-center.mb-3
         %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}

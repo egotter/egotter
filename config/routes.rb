@@ -49,6 +49,8 @@ Rails.application.routes.draw do
       post 'orders/cancel', to: 'orders#cancel'
       resources :share_tweets, only: %i(create)
 
+      resources :follow_requests, only: %i(create)
+
       resources :delete_tweets_requests, only: %i(create)
       resources :delete_tweets_notifications, only: %i(create)
       resources :delete_tweets_presigned_urls, only: %i(create)
@@ -184,6 +186,7 @@ Rails.application.routes.draw do
   get 'protected/:screen_name/latest', to: redirect("/profiles/%{screen_name}?via=routing_protected")
 
   get 'follow', to: 'follows#show'
+  # TODO Remove later
   resources :follows, only: %i(create)
   resources :unfollows, only: %i(create)
 
