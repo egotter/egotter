@@ -46,7 +46,7 @@ class CalculateMetricsWorker
             [ForbiddenUser, NotFoundUser],
             [ResetEgotterRequest],
             [DeleteTweetsRequest],
-            [ResetCacheRequest, ResetCacheLog],
+            [ResetCacheRequest],
             [SearchReport, WelcomeMessage],
             Tokimeki::User,
         ].flatten
