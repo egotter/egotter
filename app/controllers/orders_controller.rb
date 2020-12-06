@@ -84,6 +84,8 @@ class OrdersController < ApplicationController
     case event.type
     when 'checkout.session.completed'
       process_checkout_session_completed(event.data)
+    when 'charge.succeeded'
+      process_charge_succeeded(event.data)
     when 'charge.failed'
       process_charge_failed(event.data)
     else
@@ -114,8 +116,18 @@ class OrdersController < ApplicationController
     end
   end
 
+  def process_charge_succeeded(event_data)
+    order = Order.find_by(customer_id: event_data['object']['customer'])
+
+    message = "`#{Rails.env}:charge_succeeded` user_id=#{order.user_id} order_id=#{order.id}"
+    SendMessageToSlackWorker.perform_async(:orders, message)
+  end
+
   def process_charge_failed(event_data)
     order = Order.find_by(customer_id: event_data['object']['customer'])
+
+    message = "`#{Rails.env}:charge_failed` user_id=#{order.user_id} order_id=#{order.id}"
+    SendMessageToSlackWorker.perform_async(:orders, message)
   end
 
   def set_tax_rate_to_subscription(subscription_id, tax_rate_id = ENV['STRIPE_TAX_RATE_ID'])
