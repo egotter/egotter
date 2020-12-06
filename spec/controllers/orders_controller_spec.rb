@@ -88,35 +88,4 @@ RSpec.describe OrdersController, type: :controller do
       subject
     end
   end
-
-  describe '#send_message' do
-    subject { controller.send(:send_message) }
-    before { allow(controller).to receive(:fetch_order).and_return(order) }
-    it do
-      expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders, instance_of(String))
-      subject
-    end
-  end
-
-  describe 'fetch_order' do
-    subject { controller.send(:fetch_order) }
-    before { allow(controller).to receive(:action_name).and_return(action) }
-
-    context 'action is #create' do
-      let(:action) { 'create' }
-      it do
-        expect(controller).to receive_message_chain(:current_user, :orders, :last).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-
-    context 'action is #checkout_session_completed' do
-      let(:action) { 'checkout_session_completed' }
-      before { order }
-      it do
-        expect(Order).to receive(:where).with(any_args).and_call_original
-        is_expected.to eq(order)
-      end
-    end
-  end
 end

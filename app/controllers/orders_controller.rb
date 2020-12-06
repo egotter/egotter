@@ -5,8 +5,6 @@ class OrdersController < ApplicationController
   before_action :require_login!, except: :checkout_session_completed
   before_action :has_already_purchased?, only: :create
 
-  after_action :send_message, only: %i(create checkout_session_completed)
-
   # TODO Remove later
   def create
     logger.warn "#{controller_name}##{action_name} is deprecated"
@@ -95,9 +93,14 @@ class OrdersController < ApplicationController
 
   def process_checkout_session_completed(event_data)
     checkout_session = Order::CheckoutSession.new(event_data['object'])
+    user_id = checkout_session.client_reference_id
+    user = User.find(user_id)
 
-    if User.find(checkout_session.client_reference_id).has_valid_subscription?
+    if user.has_valid_subscription?
       Stripe::Subscription.delete(checkout_session.subscription_id)
+
+      message = "`#{Rails.env}:checkout_session_completed` failed user_id=#{user.id}"
+      SendMessageToSlackWorker.perform_async(:orders, message)
     else
       set_tax_rate_to_subscription(checkout_session.subscription_id)
       order = Order.create_by!(checkout_session: checkout_session)
@@ -105,6 +108,9 @@ class OrdersController < ApplicationController
 
       SetVisitIdToOrderWorker.perform_async(order.id) rescue nil
       UpdateTrialEndWorker.perform_async(order.id) rescue nil
+
+      message = "`#{Rails.env}:checkout_session_completed` success user_id=#{user.id} order_id=#{order.id}"
+      SendMessageToSlackWorker.perform_async(:orders, message)
     end
   end
 
@@ -118,23 +124,6 @@ class OrdersController < ApplicationController
 
   def set_metadata_to_subscription(subscription_id, order_id:)
     Stripe::Subscription.update(subscription_id, {metadata: {order_id: order_id}})
-  end
-
-  def send_message
-    order = fetch_order
-    message = "`#{Rails.env}:#{action_name}` user_id=#{order&.user_id} order_id=#{order&.id}"
-    SendMessageToSlackWorker.perform_async(:orders, message)
-  end
-
-  def fetch_order
-    case action_name
-    when 'create'
-      current_user.orders.last
-    when 'checkout_session_completed'
-      Order.where(created_at: 3.seconds.ago..Time.zone.now).last
-    else
-      nil
-    end
   end
 
   def after_purchase_path(via)
