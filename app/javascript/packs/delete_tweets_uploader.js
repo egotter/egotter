@@ -41,6 +41,12 @@ class DeleteTweetsUploader {
     var completed = false;
     var self = this;
 
+    window.onbeforeunload = function () {
+      if (!completed) {
+        return i18n['alertOnBeforeunload'];
+      }
+    };
+
     var updateProgress = (function () {
       var value = 0;
       return function (e) {

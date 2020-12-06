@@ -1381,6 +1381,7 @@ ja:
       filesizeTooLarge: '特殊なファイル形式です。個別に対応しますので @egotter_cs にご連絡ください。'
       preparing: 'ファイルのアップロードを準備中です。ページを閉じないでそのままお待ちください。'
       uploading: 'ファイルをアップロード中です。ページを閉じないでそのままお待ちください。'
+      alert_on_beforeunload: '編集中です。本当に他のページに移動しますか？'
       success_html: 'ファイルのアップロードに成功しました。<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> から届くDMをお待ちください。'
       fail_html: 'ファイルのアップロードに失敗しました。何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
     confirmation_modal:
