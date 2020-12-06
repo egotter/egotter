@@ -185,9 +185,6 @@ Rails.application.routes.draw do
   get 'protected/:screen_name', to: redirect("/profiles/%{screen_name}?via=routing_protected"), as: 'protected'
   get 'protected/:screen_name/latest', to: redirect("/profiles/%{screen_name}?via=routing_protected")
 
-  get 'follow', to: 'follows#show'
-  # TODO Remove later
-  resources :follows, only: %i(create)
   resources :unfollows, only: %i(create)
 
   get 'tokimeki_unfollow', to: 'tokimeki_unfollow#new', as: :tokimeki_unfollow_top
