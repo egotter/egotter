@@ -70,13 +70,23 @@ module Tasks
     class WebTask < Task
       def initialize(params)
         super()
+        @params = params
         @role = params['role']
 
         @target_group = ::Deploy::Aws::TargetGroup.new(params['target-group'])
       end
 
       def run
-        instance = @target_group.oldest_instance
+        if @params['instance-id'] || @params['instance-name'] || @params['instance-name-regexp']
+          instance = ::Deploy::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'], name_regexp: @params['instance-name-regexp'])
+        else
+          instance = @target_group.oldest_instance
+        end
+
+        if instance.api_termination_disabled?
+          raise "Cannot terminate an instance with :disable_api_termination set to true instance_id=#{instance.id}"
+        end
+
         if instance && @target_group.deregister(instance.id)
           Tasks::UninstallTask::Web.new(instance.id).uninstall
           instance.terminate
@@ -100,6 +110,11 @@ module Tasks
         else
           instance = ::Deploy::Aws::Instance.retrieve_by(id: nil, name: nil, name_regexp: 'egotter_sidekiq\\d{8}')
         end
+
+        if instance.api_termination_disabled?
+          raise "Cannot terminate an instance with :disable_api_termination set to true instance_id=#{instance.id}"
+        end
+
         if instance
           Tasks::UninstallTask::Sidekiq.new(instance.id).uninstall
           instance.terminate
@@ -119,6 +134,7 @@ module Tasks
 
       def run
         instance = ::Deploy::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'])
+
         if instance
           instance.terminate
           @instance = @terminated = instance

@@ -6,6 +6,7 @@ module Deploy
       attr_reader :id, :name, :public_ip, :availability_zone, :launched_at
 
       def initialize(instance)
+        @instance = instance
         @id = instance.id
         @name = instance.tags.find { |t| t.key == 'Name' }&.value
         @public_ip = instance.public_ip_address
@@ -19,6 +20,10 @@ module Deploy
 
       def terminate
         EC2.new.terminate_instance(@id)
+      end
+
+      def api_termination_disabled?
+        @instance.describe_attribute(attribute: 'disableApiTermination').to_h[:disable_api_termination][:value]
       end
 
       class << self
