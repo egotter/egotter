@@ -413,6 +413,7 @@ ja:
       cancel: 'キャンセルする'
       cancel_confirmation: '有料プランをキャンセルします。よろしいですか？'
       has_not_purchased: "まだ購入していません"
+      purchase: '購入する'
       see_plans: '料金プランを見る'
     data:
       title: 'データ設定'

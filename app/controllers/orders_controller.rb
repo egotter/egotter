@@ -60,50 +60,65 @@ class OrdersController < ApplicationController
   end
 
   def checkout_session_completed
-    payload = request.body.read
-    sig_header = request.headers['HTTP_STRIPE_SIGNATURE']
-
-    event = Stripe::Webhook.construct_event(
-        payload,
-        sig_header,
-        ENV['STRIPE_ENDPOINT_SECRET']
-    )
-
-    if event['type'] == 'checkout.session.completed'
-      checkout_session = Order::CheckoutSession.new(event['data']['object'])
-      if User.find(checkout_session.client_reference_id).has_valid_subscription?
-        Stripe::Subscription.delete(checkout_session.subscription_id)
-      else
-        Stripe::Subscription.update(
-            checkout_session.subscription_id,
-            {default_tax_rates: [ENV['STRIPE_TAX_RATE_ID']]}
-        )
-
-        order = Order.create_by!(checkout_session: checkout_session)
-        SetVisitIdToOrderWorker.perform_async(order.id) rescue nil
-        UpdateTrialEndWorker.perform_async(order.id) rescue nil
-
-        Stripe::Subscription.update(
-            checkout_session.subscription_id,
-            {metadata: {order_id: order.id}}
-        )
-      end
-    end
-
+    event = construct_webhook_event
+    process_webhook_event(event)
     head :ok
-
   rescue JSON::ParserError => e
-    logger.warn "#{controller_name}##{action_name} Invalid payload #{payload.inspect}"
+    logger.warn "#{controller_name}##{action_name} Invalid payload exception=#{e.inspect}"
     head :bad_request
   rescue Stripe::SignatureVerificationError => e
-    logger.warn "#{controller_name}##{action_name} Invalid signature #{sig_header.inspect}"
+    logger.warn "#{controller_name}##{action_name} Invalid signature exception=#{e.inspect}"
     head :bad_request
   rescue => e
-    logger.warn "#{controller_name}##{action_name} #{e.class} #{e.message}"
+    logger.warn "#{controller_name}##{action_name} Unknown error exception=#{e.inspect}"
     head :bad_request
   end
 
   private
+
+  def construct_webhook_event
+    payload = request.body.read
+    sig_header = request.headers['HTTP_STRIPE_SIGNATURE']
+    Stripe::Webhook.construct_event(payload, sig_header, ENV['STRIPE_ENDPOINT_SECRET'])
+  end
+
+  def process_webhook_event(event)
+    case event.type
+    when 'checkout.session.completed'
+      process_checkout_session_completed(event.data)
+    when 'charge.failed'
+      process_charge_failed(event.data)
+    else
+      logger.info "Unhandled stripe webhook event type=#{event.type} value=#{event.inspect}"
+    end
+  end
+
+  def process_checkout_session_completed(event_data)
+    checkout_session = Order::CheckoutSession.new(event_data['object'])
+
+    if User.find(checkout_session.client_reference_id).has_valid_subscription?
+      Stripe::Subscription.delete(checkout_session.subscription_id)
+    else
+      set_tax_rate_to_subscription(checkout_session.subscription_id)
+      order = Order.create_by!(checkout_session: checkout_session)
+      set_metadata_to_subscription(checkout_session.subscription_id, order_id: order.id)
+
+      SetVisitIdToOrderWorker.perform_async(order.id) rescue nil
+      UpdateTrialEndWorker.perform_async(order.id) rescue nil
+    end
+  end
+
+  def process_charge_failed(event_data)
+    order = Order.find_by(customer_id: event_data['object']['customer'])
+  end
+
+  def set_tax_rate_to_subscription(subscription_id, tax_rate_id = ENV['STRIPE_TAX_RATE_ID'])
+    Stripe::Subscription.update(subscription_id, {default_tax_rates: [tax_rate_id]})
+  end
+
+  def set_metadata_to_subscription(subscription_id, order_id:)
+    Stripe::Subscription.update(subscription_id, {metadata: {order_id: order_id}})
+  end
 
   def send_message
     order = fetch_order
