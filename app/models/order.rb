@@ -125,6 +125,10 @@ class Order < ApplicationRecord
     !trial_end.nil? && Time.zone.now < trial_end_time
   end
 
+  def sync_email!
+    update!(email: stripe_customer.email)
+  end
+
   def sync_trial_end!
     update!(trial_end: stripe_subscription.trial_end)
   end
