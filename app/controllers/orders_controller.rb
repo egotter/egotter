@@ -102,8 +102,7 @@ class OrdersController < ApplicationController
     if user.has_valid_subscription?
       Stripe::Subscription.delete(checkout_session.subscription_id)
 
-      message = "`#{Rails.env}:checkout_session_completed` already purchased user_id=#{user.id}"
-      SendMessageToSlackWorker.perform_async(:orders, message)
+      send_message("`#{Rails.env}:checkout_session_completed` already purchased user_id=#{user.id}")
     else
       set_tax_rate_to_subscription(checkout_session.subscription_id)
       order = Order.create_by!(checkout_session: checkout_session)
@@ -112,13 +111,11 @@ class OrdersController < ApplicationController
       SetVisitIdToOrderWorker.perform_async(order.id)
       UpdateTrialEndWorker.perform_async(order.id)
 
-      message = "`#{Rails.env}:checkout_session_completed` success user_id=#{user.id} order_id=#{order.id}"
-      SendMessageToSlackWorker.perform_async(:orders, message)
+      send_message("`#{Rails.env}:checkout_session_completed` success user_id=#{user.id} order_id=#{order.id}")
     end
   rescue => e
     if order
-      message = "`#{Rails.env}:checkout_session_completed` order may be insufficient order=#{order.inspect} exception=#{e.inspect}"
-      SendMessageToSlackWorker.perform_async(:orders, message)
+      send_message("`#{Rails.env}:checkout_session_completed` order may be insufficient order=#{order.inspect} exception=#{e.inspect}")
     end
     raise
   end
@@ -128,15 +125,12 @@ class OrdersController < ApplicationController
 
     if (order = Order.find_by(customer_id: customer_id))
       order.charge_succeeded!
-      message = "`#{Rails.env}:charge_succeeded` success user_id=#{order.user_id} order_id=#{order.id}"
-      SendMessageToSlackWorker.perform_async(:orders, message)
+      send_message("`#{Rails.env}:charge_succeeded` success user_id=#{order.user_id} order_id=#{order.id}")
     else
-      message = "`#{Rails.env}:charge_succeeded` order not found customer_id=#{customer_id}"
-      SendMessageToSlackWorker.perform_async(:orders, message)
+      send_message("`#{Rails.env}:charge_succeeded` order not found customer_id=#{customer_id}")
     end
   rescue => e
-    message = "`#{Rails.env}:charge_succeeded` exception=#{e.inspect}"
-    SendMessageToSlackWorker.perform_async(:orders, message)
+    send_message("`#{Rails.env}:charge_succeeded` exception=#{e.inspect}")
     raise
   end
 
@@ -145,15 +139,12 @@ class OrdersController < ApplicationController
 
     if (order = Order.find_by(customer_id: customer_id))
       order.charge_failed!
-      message = "`#{Rails.env}:charge_failed` success user_id=#{order.user_id} order_id=#{order.id}"
-      SendMessageToSlackWorker.perform_async(:orders, message)
+      send_message("`#{Rails.env}:charge_failed` success user_id=#{order.user_id} order_id=#{order.id}")
     else
-      message = "`#{Rails.env}:charge_failed` order not found customer_id=#{customer_id}"
-      SendMessageToSlackWorker.perform_async(:orders, message)
+      send_message("`#{Rails.env}:charge_failed` order not found customer_id=#{customer_id}")
     end
   rescue => e
-    message = "`#{Rails.env}:charge_failed` exception=#{e.inspect}"
-    SendMessageToSlackWorker.perform_async(:orders, message)
+    send_message("`#{Rails.env}:charge_failed` exception=#{e.inspect}")
     raise
   end
 
@@ -167,5 +158,11 @@ class OrdersController < ApplicationController
 
   def after_purchase_path(via)
     settings_path(anchor: 'orders-table', via: current_via(via))
+  end
+
+  def send_message(message)
+    SendMessageToSlackWorker.perform_async(:orders, message)
+  rescue => e
+    logger.warn "#{controller_name}##{action_name}: #send_message is failed exception=#{e.inspect} caller=#{caller[0][/`([^']*)'/, 1] rescue ''} message=#{message}"
   end
 end
