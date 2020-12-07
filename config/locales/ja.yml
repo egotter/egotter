@@ -2660,6 +2660,7 @@ ja:
     egotter_is_blocked_html: '@%{user} は @ego_tter をブロックしています。えごったーを利用するには、ブロックを解除してください。'
     unauthorized_detected_with_count: 'ツイッター連携が無効になっています。%{seconds}秒後にトップページへ移動します。'
     blocked_detected_with_count: '@ego_tter がブロックされています。%{seconds}秒後にトップページへ移動します。'
+    must_have_valid_subscription: 'まだ有料プランを購入していません。有料プランを購入後にお試しください。'
   dm:
     searchNotification:
       relationship:

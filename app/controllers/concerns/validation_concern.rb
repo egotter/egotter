@@ -25,6 +25,13 @@ module ValidationConcern
     end
   end
 
+  def has_valid_subscription!
+    return if !user_signed_in? || current_user.has_valid_subscription?
+
+    message = t('after_sign_in.must_have_valid_subscription')
+    respond_with_error(:bad_request, message)
+  end
+
   def authenticate_admin!
     return if user_signed_in? && current_user.admin?
     respond_with_error(:unauthorized, t('before_sign_in.need_login_html', url: kick_out_error_path('need_login')))

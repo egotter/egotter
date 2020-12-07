@@ -4,6 +4,7 @@ module Api
 
       before_action :reject_crawler
       before_action :require_login!
+      before_action :has_valid_subscription!
       before_action :validate_filename
       before_action :validate_filesize
 

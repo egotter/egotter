@@ -60,7 +60,7 @@ class ApplicationController < ActionController::Base
     location = (caller[0][/`([^']*)'/, 1] rescue '')
 
     if request.xhr?
-      render json: {error: location.remove(/\?/), message: message}, status: code
+      render json: {message: message}, status: code
     else
       redirect_to subroot_path, alert: message
     end
