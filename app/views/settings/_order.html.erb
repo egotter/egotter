@@ -38,8 +38,10 @@
     function clickCancelButton() {
       var message = '<%= t('.cancel_confirmation') %>';
       if (confirm(message)) {
+        $(this).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
         var id = $(this).data('id');
-        new Order(id).cancel();
+        var i18n = {processing: '<%= t('.canceling_html') %>'};
+        new Order(id, i18n).cancel();
       }
       return false;
     }

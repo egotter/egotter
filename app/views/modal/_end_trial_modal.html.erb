@@ -3,6 +3,7 @@
 <% end %>
 <script>
   $(function () {
-    window.endTrialModal = new EndTrialModal('end-trial-modal');
+    var i18n = {processing: '<%= t('.processing_html') %>'};
+    window.endTrialModal = new EndTrialModal('end-trial-modal', i18n);
   });
 </script>

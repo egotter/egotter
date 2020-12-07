@@ -413,6 +413,7 @@ ja:
       cancel: 'キャンセルする'
       update_subscription: '定期購読を更新する'
       cancel_confirmation: '有料プランをキャンセルします。よろしいですか？'
+      canceling_html: 'キャンセル処理中です。<img src="/ajax-loader.gif?a=1">'
       has_not_purchased: "まだ購入していません"
       purchase: '購入する'
       see_plans: '料金プランを見る'
@@ -2226,10 +2227,10 @@ ja:
           error: '検索された @%{user} のデータ取得に失敗しました。ページを更新してみてください。'
       orders:
         end_trial:
-          success_html: 'トライアル期間の更新に成功しました。ページを更新してください。<span class="text-info">%{count}秒後に自動的に移動します</span>'
+          success_html: 'トライアル期間の更新に成功しました。ページを更新してください。<span class="text-info">%{count}秒後に自動的に移動します</span> <img src="/ajax-loader.gif?a=1">'
           fail: 'トライアル期間の更新に失敗しましたお手数ですが、@egotter_cs までご連絡ください'
         cancel:
-          success_html: '有料プランをキャンセルしました。ページを更新してください。<span class="text-info">%{count}秒後に自動的に移動します</span>'
+          success_html: '有料プランをキャンセルしました。ページを更新してください。<span class="text-info">%{count}秒後に自動的に移動します</span> <img src="/ajax-loader.gif?a=1">'
           fail: '有料プランのキャンセルに失敗しました。お手数ですが、@egotter_cs までご連絡ください'
   modal:
     welcome_modal:
@@ -2492,6 +2493,7 @@ ja:
     end_trial_modal:
       title: 'トライアル期間の終了'
       message_html: 'この機能を使うとトライアル期間が終了しすぐに課金を開始します。よろしいですか？'
+      processing_html: '購入処理中です。<img src="/ajax-loader.gif?a=1">'
       'yes': 'はい'
       'no': 'キャンセル'
     reset_cache_modal:
