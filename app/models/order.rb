@@ -38,6 +38,7 @@ class Order < ApplicationRecord
   # TODO Other validations
 
   BASIC_PLAN_ID = ENV['STRIPE_BASIC_PLAN_ID']
+  BASIC_PLAN_PRICE_ID = ENV['STRIPE_BASIC_PLAN_PRICE_ID']
   PRICE = 300
   TRIAL_DAYS = 14
   FREE_PLAN_USERS_LIMIT = 100
@@ -52,13 +53,22 @@ class Order < ApplicationRecord
   end
 
   class << self
-    def create_by!(checkout_session:)
+    def create_by!(checkout_session)
+      # price_obj = checkout_session.subscription.items.data[0].price
+      # name = price_obj.nickname
+      # amount = price_obj.unit_amount
+      # tax_rate = checkout_session.subscription.tax_percent / 100.0
+      # Temporary code
+      name = 'えごったー ベーシック'
+      amount = 300
+      tax_rate = 0.1
+
       create!(
           user_id: checkout_session.client_reference_id,
           email: checkout_session.customer_email,
-          name: checkout_session.plan_name,
-          price: checkout_session.plan_price,
-          tax_rate: checkout_session.tax_rate,
+          name: name,
+          price: amount,
+          tax_rate: tax_rate,
           search_count: SearchCountLimitation::BASIC_PLAN,
           follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
           unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,

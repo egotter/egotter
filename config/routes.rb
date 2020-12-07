@@ -56,6 +56,7 @@ Rails.application.routes.draw do
       resources :delete_tweets_presigned_urls, only: %i(create)
       post "delete_favorites", to: "delete_favorites#destroy"
 
+      resources :checkout_sessions, only: %i(create)
       resources :customer_portal_urls, only: %i(create)
       delete 'user_caches', to: 'user_caches#destroy'
       delete 'user_data', to: 'user_data#destroy'

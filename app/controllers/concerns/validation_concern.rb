@@ -31,10 +31,18 @@ module ValidationConcern
     message = t('after_sign_in.must_have_order')
     respond_with_error(:bad_request, message)
   end
+
   def has_valid_subscription!
     return if !user_signed_in? || current_user.has_valid_subscription?
 
     message = t('after_sign_in.must_have_valid_subscription')
+    respond_with_error(:bad_request, message)
+  end
+
+  def doesnt_have_valid_subscription!
+    return if !user_signed_in? || !current_user.has_valid_subscription?
+
+    message = t('after_sign_in.already_have_valid_subscription')
     respond_with_error(:bad_request, message)
   end
 

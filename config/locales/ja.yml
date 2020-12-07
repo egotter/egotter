@@ -2666,6 +2666,7 @@ ja:
     blocked_detected_with_count: '@ego_tter がブロックされています。%{seconds}秒後にトップページへ移動します。'
     must_have_order: 'まだ有料プランを購入していません。有料プランを購入後にお試しください。'
     must_have_valid_subscription: 'まだ有料プランを購入していません。有料プランを購入後にお試しください。'
+    already_have_valid_subscription: '有料プランを購入済みです。'
   dm:
     searchNotification:
       relationship:
