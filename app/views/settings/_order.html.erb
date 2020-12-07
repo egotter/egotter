@@ -18,6 +18,10 @@
           <% end %>
         </td>
         <td>
+          <% if order.charge_failed_at %>
+            <div class="text-danger"><%= t('.charge_failed_description') %></div>
+          <% end %>
+
           <% if order.canceled_at %>
             <div><%= t('.canceled_at', date: l(order.canceled_at.in_time_zone('Tokyo'), format: :order_short)) %></div>
           <% else %>
@@ -26,7 +30,7 @@
           <% end %>
 
           <% if current_user.admin? %>
-            <div><%= link_to t('.update_subscription'), '#', class: 'btn btn-outline-primary btn-sm btn-customer-portal', data: {id: order.id} %></div>
+            <div><%= link_to t('.update_payment_method'), '#', class: 'btn btn-outline-primary btn-sm btn-customer-portal', data: {id: order.id} %></div>
           <% end %>
         </td>
       </tr>

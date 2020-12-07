@@ -139,6 +139,7 @@ class OrdersController < ApplicationController
 
     if (order = Order.find_by(customer_id: customer_id))
       order.charge_failed!
+      order.cancel!
       send_message("`#{Rails.env}:charge_failed` success user_id=#{order.user_id} order_id=#{order.id}")
     else
       send_message("`#{Rails.env}:charge_failed` order not found customer_id=#{customer_id}")

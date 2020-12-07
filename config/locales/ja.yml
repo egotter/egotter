@@ -411,7 +411,8 @@ ja:
       follow_requests_count: "フォロー %{count}回/日"
       unfollow_requests_count: "フォロー解除 %{count}回/日"
       cancel: 'キャンセルする'
-      update_subscription: '定期購読を更新する'
+      charge_failed_description: '支払いに失敗したため定期購読はキャンセルされました。'
+      update_payment_method: '支払い方法を更新する'
       cancel_confirmation: '有料プランをキャンセルします。よろしいですか？'
       canceling_html: 'キャンセル処理中です。<img src="/ajax-loader.gif?a=1">'
       has_not_purchased: "まだ購入していません"
