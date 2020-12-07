@@ -94,6 +94,7 @@ class OrdersController < ApplicationController
   end
 
   def process_checkout_session_completed(event_data)
+    order = nil
     checkout_session = Order::CheckoutSession.new(event_data['object'])
     user_id = checkout_session.client_reference_id
     user = User.find(user_id)
@@ -101,19 +102,25 @@ class OrdersController < ApplicationController
     if user.has_valid_subscription?
       Stripe::Subscription.delete(checkout_session.subscription_id)
 
-      message = "`#{Rails.env}:checkout_session_completed` failed user_id=#{user.id}"
+      message = "`#{Rails.env}:checkout_session_completed` already purchased user_id=#{user.id}"
       SendMessageToSlackWorker.perform_async(:orders, message)
     else
       set_tax_rate_to_subscription(checkout_session.subscription_id)
       order = Order.create_by!(checkout_session: checkout_session)
       set_metadata_to_subscription(checkout_session.subscription_id, order_id: order.id)
 
-      SetVisitIdToOrderWorker.perform_async(order.id) rescue nil
-      UpdateTrialEndWorker.perform_async(order.id) rescue nil
+      SetVisitIdToOrderWorker.perform_async(order.id)
+      UpdateTrialEndWorker.perform_async(order.id)
 
       message = "`#{Rails.env}:checkout_session_completed` success user_id=#{user.id} order_id=#{order.id}"
       SendMessageToSlackWorker.perform_async(:orders, message)
     end
+  rescue => e
+    if order
+      message = "`#{Rails.env}:checkout_session_completed` order may be insufficient order=#{order.inspect} exception=#{e.inspect}"
+      SendMessageToSlackWorker.perform_async(:orders, message)
+    end
+    raise
   end
 
   def process_charge_succeeded(event_data)
