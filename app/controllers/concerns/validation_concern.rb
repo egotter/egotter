@@ -25,6 +25,12 @@ module ValidationConcern
     end
   end
 
+  def current_user_has_order!
+    return if !user_signed_in? || current_user.orders.any?
+
+    message = t('after_sign_in.must_have_order')
+    respond_with_error(:bad_request, message)
+  end
   def has_valid_subscription!
     return if !user_signed_in? || current_user.has_valid_subscription?
 

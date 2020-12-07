@@ -24,6 +24,10 @@
             <div><%= t('.created_at', date: l(order.created_at.in_time_zone('Tokyo'), format: :order_short)) %></div>
             <div><%= link_to t('.cancel'), '#', class: 'btn btn-outline-warning btn-sm btn-cancel-order', data: {id: order.id} %></div>
           <% end %>
+
+          <% if current_user.admin? %>
+            <div><%= link_to t('.update_subscription'), '#', class: 'btn btn-outline-primary btn-sm btn-customer-portal', data: {id: order.id} %></div>
+          <% end %>
         </td>
       </tr>
     <% end %>
@@ -31,15 +35,29 @@
   </table>
 
   <script>
+    function clickCancelButton() {
+      var message = '<%= t('.cancel_confirmation') %>';
+      if (confirm(message)) {
+        var id = $(this).data('id');
+        new Order(id).cancel();
+      }
+      return false;
+    }
+
+    function clickCustomerPortalButton() {
+      var url = '<%= api_v1_customer_portal_urls_path %>';
+      var id = $(this).data('id');
+
+      $.post(url, {order_id: id}).done(function (res) {
+        window.location.href = res.url;
+      }).fail(showErrorMessage);
+
+      return false;
+    }
+
     $(function () {
-      $('.btn-cancel-order').on('click', function () {
-        var message = '<%= t('.cancel_confirmation') %>';
-        if (confirm(message)) {
-          var id = $(this).data('id');
-          new Order(id).cancel();
-        }
-        return false;
-      });
+      $('.btn-cancel-order').on('click', clickCancelButton);
+      $('.btn-customer-portal').on('click', clickCustomerPortalButton);
     });
   </script>
 <% else %>
