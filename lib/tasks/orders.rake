@@ -15,4 +15,13 @@ namespace :orders do
       end
     end
   end
+
+  desc 'Invalidate insufficient subscriptions'
+  task invalidate_insufficient_subscriptions: :environment do
+    Order.unexpired.find_each do |order|
+      unless order.stripe_customer.invoices[0].paid
+        order.cancel!
+      end
+    end
+  end
 end
