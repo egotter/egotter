@@ -1,8 +1,8 @@
 namespace :orders do
-  desc 'update stripe attributes'
+  desc 'Update stripe attributes'
   task update_stripe_attributes: :environment do
     Order.where(canceled_at: nil).find_each do |order|
-      order.save_stripe_attributes!
+      SyncStripeAttributesWorker.perform_async(order.id)
     end
   end
 

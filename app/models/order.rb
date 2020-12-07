@@ -69,6 +69,10 @@ class Order < ApplicationRecord
   end
 
   def save_stripe_attributes!
+    logger.warn '#save_stripe_attributes! is deprecated'
+  end
+
+  def sync_stripe_attributes!
     if stripe_customer
       self.email = stripe_customer.email
     end
@@ -88,9 +92,10 @@ class Order < ApplicationRecord
 
     if changed?
       save!
-      SlackClient.orders.send_message("#{id} #{saved_changes.inspect}", title: '`Updated`')
-      puts "Updated order_id=#{id} saved_changes=#{saved_changes.inspect}"
+      SlackClient.channel('orders').send_message("`Updated` #{id} #{saved_changes.except('updated_at').inspect}")
     end
+  rescue => e
+    logger.warn "#{__method__}: #{e.inspect} order_id=#{id}"
   end
 
   def short_name
