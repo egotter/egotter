@@ -153,6 +153,14 @@ class Order < ApplicationRecord
     update!(canceled_at: Subscription.new(sub).canceled_at)
   end
 
+  def charge_succeeded!
+    update!(charge_failed_at: nil)
+  end
+
+  def charge_failed!
+    update!(charge_failed_at: Time.zone.now)
+  end
+
   class Customer
     def initialize(customer)
       @customer = customer

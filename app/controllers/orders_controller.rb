@@ -124,17 +124,37 @@ class OrdersController < ApplicationController
   end
 
   def process_charge_succeeded(event_data)
-    order = Order.find_by(customer_id: event_data['object']['customer'])
+    customer_id = event_data['object']['customer']
 
-    message = "`#{Rails.env}:charge_succeeded` user_id=#{order.user_id} order_id=#{order.id}"
+    if (order = Order.find_by(customer_id: customer_id))
+      order.charge_succeeded!
+      message = "`#{Rails.env}:charge_succeeded` success user_id=#{order.user_id} order_id=#{order.id}"
+      SendMessageToSlackWorker.perform_async(:orders, message)
+    else
+      message = "`#{Rails.env}:charge_succeeded` order not found customer_id=#{customer_id}"
+      SendMessageToSlackWorker.perform_async(:orders, message)
+    end
+  rescue => e
+    message = "`#{Rails.env}:charge_succeeded` exception=#{e.inspect}"
     SendMessageToSlackWorker.perform_async(:orders, message)
+    raise
   end
 
   def process_charge_failed(event_data)
-    order = Order.find_by(customer_id: event_data['object']['customer'])
+    customer_id = event_data['object']['customer']
 
-    message = "`#{Rails.env}:charge_failed` user_id=#{order.user_id} order_id=#{order.id}"
+    if (order = Order.find_by(customer_id: customer_id))
+      order.charge_failed!
+      message = "`#{Rails.env}:charge_failed` success user_id=#{order.user_id} order_id=#{order.id}"
+      SendMessageToSlackWorker.perform_async(:orders, message)
+    else
+      message = "`#{Rails.env}:charge_failed` order not found customer_id=#{customer_id}"
+      SendMessageToSlackWorker.perform_async(:orders, message)
+    end
+  rescue => e
+    message = "`#{Rails.env}:charge_failed` exception=#{e.inspect}"
     SendMessageToSlackWorker.perform_async(:orders, message)
+    raise
   end
 
   def set_tax_rate_to_subscription(subscription_id, tax_rate_id = ENV['STRIPE_TAX_RATE_ID'])
