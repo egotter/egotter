@@ -883,6 +883,7 @@ ActiveRecord::Schema.define(version: 2020_11_29_015717) do
     t.string "customer_id"
     t.string "subscription_id"
     t.datetime "canceled_at"
+    t.datetime "charge_failed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_orders_on_user_id"

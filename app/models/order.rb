@@ -17,6 +17,7 @@
 #  customer_id             :string(191)
 #  subscription_id         :string(191)
 #  canceled_at             :datetime
+#  charge_failed_at        :datetime
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #

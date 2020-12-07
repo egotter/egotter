@@ -15,6 +15,7 @@ class CreateOrders < ActiveRecord::Migration[5.1]
       t.string  :customer_id,             null: true
       t.string  :subscription_id,         null: true
       t.datetime :canceled_at,            null: true,  default: nil
+      t.datetime :charge_failed_at,       null: true,  default: nil
 
       t.timestamps null: false
 
