@@ -30,47 +30,54 @@ namespace :delete_tweets do
     end
 
     processed = 0
-    skipped = 0
+    skipped_tweets = []
     candidates = []
     dry_run = ENV['DRY_RUN']
     since = ENV['SINCE'] ? Time.zone.parse(ENV['SINCE']) : nil
     _until = ENV['UNTIL'] ? Time.zone.parse(ENV['UNTIL']) : nil
     sigint = Sigint.new.trap
 
-    tweets.reverse.each do |tweet|
+    tweets.each do |t|
+      t['tweet']['id'] = t['tweet']['id'].to_i
+      t['tweet']['created_at'] = Time.zone.parse(t['tweet']['created_at'])
+    end
+    tweets.sort_by! { |t| t['tweet']['created_at'].to_i }
+
+    tweets.each do |tweet|
       break if sigint.trapped?
 
-      tweeted_at = Time.zone.parse(tweet['tweet']['created_at'])
+      tweeted_at = tweet['tweet']['created_at']
 
       if since && tweeted_at < since
-        skipped += 1
+        skipped_tweets << tweet
+        print 's'
         next
       end
 
       if _until && _until < tweeted_at
-        skipped += 1
+        skipped_tweets << tweet
+        print 's'
         next
       end
 
       candidates << tweet
       processed += 1
-      print '.'
+      print 'p'
     end
 
     if dry_run
-      candidates.each do |tweet|
-        tweet_id = tweet['tweet']['id']
-        tweeted_at = Time.zone.parse(tweet['tweet']['created_at'])
-        puts "tweet_id=#{tweet_id} tweeted_at=#{tweeted_at.to_s}"
+      skipped_tweets = skipped_tweets.map { |t| ['skipped', t] }
+      candidates = candidates.map { |t| ['candidate', t] }
+      (skipped_tweets + candidates).sort_by { |_, t| t['tweet']['created_at'].to_i }.each do |type, tweet|
+        puts "#{type} tweet_id=#{tweet['tweet']['id']} tweeted_at=#{tweet['tweet']['created_at']}"
       end
     else
       request = DeleteTweetsRequest.create!(user_id: user.id, finished_at: Time.zone.now)
       candidates.each do |tweet|
-        tweet_id = tweet['tweet']['id'].to_i
-        DeleteTweetWorker.perform_async(user.id, tweet_id, request_id: request.id)
+        DeleteTweetWorker.perform_async(user.id, tweet['tweet']['id'], request_id: request.id)
       end
     end
 
-    puts "\nprocessed #{processed} skipped #{skipped}"
+    puts "\nprocessed #{processed} skipped #{skipped_tweets.size}"
   end
 end
