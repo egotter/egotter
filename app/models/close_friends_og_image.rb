@@ -171,12 +171,12 @@ class CloseFriendsOgImage < ApplicationRecord
     end
 
     def load
-      dir_path # Create a dir
+      # dir_path # Create a dir
       queue = Queue.new
 
       Parallel.each(@urls, in_threads: @concurrency) do |url|
-        filepath = benchmark("load image uid=#{@uid} url=#{url}") { url2file(url) }
-        queue << [url, filepath]
+        data = benchmark("load image uid=#{@uid} url=#{url}") { url2base64(url) }
+        queue << [url, data]
       rescue => e
         Rails.logger.debug { "#{self.class}##{__method__}: open url failed url=#{url} exception=#{e.inspect}" }
         queue << [url, nil]
@@ -186,13 +186,45 @@ class CloseFriendsOgImage < ApplicationRecord
     end
 
     class << self
+      def default_rect_base64
+        if instance_variable_defined?(:@default_rect_base64)
+          @default_rect_base64
+        else
+          binary = File.binread(CloseFriendsOgImage::Generator::OG_IMAGE_RECT)
+          @default_rect_base64 = "data:image/gif;base64,#{Base64.strict_encode(binary)}"
+        end
+      end
+
       def cleanup(uid)
-        path = new(uid, nil).send(:dir_path)
-        File.delete(*Dir.glob("#{path}/*"))
+        # path = new(uid, nil).send(:dir_path)
+        # File.delete(*Dir.glob("#{path}/*"))
       end
     end
 
     private
+
+    require 'base64'
+
+    def url2base64(url)
+      ext = extract_ext(url)
+      if !ext || (binary = open_url(url)).empty?
+        self.class.default_rect_base64
+      else
+        "data:image/#{ext};base64,#{Base64.strict_encode(binary)}"
+      end
+    end
+
+    def extract_ext(url)
+      ext = File.extname(url)
+      case ext
+      when 'png', 'gif'
+        ext
+      when 'jpeg', 'jpg'
+        'jpeg'
+      else
+        nil
+      end
+    end
 
     def url2file(url)
       path = file_path(url)

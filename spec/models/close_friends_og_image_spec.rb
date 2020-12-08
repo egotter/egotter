@@ -56,20 +56,20 @@ RSpec.describe CloseFriendsOgImage::ImagesLoader, type: :model do
     subject { instance.load }
     it do
       urls.each.with_index do |url, i|
-        expect(instance).to receive(:url2file).with(url).and_return("path#{i}")
+        expect(instance).to receive(:url2base64).with(url).and_return("path#{i}")
       end
       subject
     end
   end
 
-  describe '.cleanup' do
-    subject { described_class.cleanup(uid) }
-    before do
-      path = "#{described_class.new(uid, nil).send(:dir_path)}/empty_file"
-      system("touch #{path}")
-    end
-    it { is_expected.to be_truthy }
-  end
+  # describe '.cleanup' do
+  #   subject { described_class.cleanup(uid) }
+  #   before do
+  #     path = "#{described_class.new(uid, nil).send(:dir_path)}/empty_file"
+  #     system("touch #{path}")
+  #   end
+  #   it { is_expected.to be_truthy }
+  # end
 
   describe '#url2file' do
     let(:url) { 'url' }
