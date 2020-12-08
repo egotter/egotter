@@ -29,23 +29,48 @@ namespace :delete_tweets do
       raise unless TweetStatus.no_status_found?(e)
     end
 
-    request = DeleteTweetsRequest.create!(user_id: user.id, finished_at: Time.zone.now)
-
     processed = 0
-    start_id = ENV['START_ID']
-    last_id = nil
+    skipped = 0
+    candidates = []
+    dry_run = ENV['DRY_RUN']
+    since = ENV['SINCE'] ? Time.zone.parse(ENV['SINCE']) : nil
+    _until = ENV['UNTIL'] ? Time.zone.parse(ENV['UNTIL']) : nil
     sigint = Sigint.new.trap
 
-    tweet_ids.reverse.each do |tweet_id|
+    tweets.reverse.each do |tweet|
       break if sigint.trapped?
-      next if start_id && tweet_id.to_i < start_id
 
-      DeleteTweetWorker.perform_async(user.id, tweet_id.to_i, request_id: request.id)
+      tweeted_at = Time.zone.parse(tweet['tweet']['created_at'])
+
+      if since && tweeted_at < since
+        skipped += 1
+        next
+      end
+
+      if _until && _until < tweeted_at
+        skipped += 1
+        next
+      end
+
+      candidates << tweet
       processed += 1
-      last_id = tweet_id
       print '.'
     end
 
-    puts "processed #{processed} start_id #{start_id} last_id #{last_id}"
+    if dry_run
+      candidates.each do |tweet|
+        tweet_id = tweet['tweet']['id']
+        tweeted_at = Time.zone.parse(tweet['tweet']['created_at'])
+        puts "tweet_id=#{tweet_id} tweeted_at=#{tweeted_at.to_s}"
+      end
+    else
+      request = DeleteTweetsRequest.create!(user_id: user.id, finished_at: Time.zone.now)
+      candidates.each do |tweet|
+        tweet_id = tweet['tweet']['id'].to_i
+        DeleteTweetWorker.perform_async(user.id, tweet_id, request_id: request.id)
+      end
+    end
+
+    puts "\nprocessed #{processed} skipped #{skipped}"
   end
 end
