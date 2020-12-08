@@ -3,42 +3,6 @@ class OrdersController < ApplicationController
   skip_before_action :verify_authenticity_token, only: :checkout_session_completed
 
   before_action :require_login!, except: :checkout_session_completed
-  before_action :has_already_purchased?, only: :create
-
-  # TODO Remove later
-  def create
-    logger.warn "#{controller_name}##{action_name} is deprecated"
-
-    order = current_user.orders.create!(email: params[:stripeEmail])
-
-    customer = Stripe::Customer.create(
-        email: params[:stripeEmail],
-        source: params[:stripeToken],
-        metadata: {order_id: order.id}
-    )
-
-    order.update!(customer_id: customer.id)
-
-    subscription = Stripe::Subscription.create(
-        customer: customer.id,
-        items: [{plan: Order::BASIC_PLAN_ID}],
-        metadata: {order_id: order.id}
-    )
-
-    order.update!(
-        subscription_id: subscription.id,
-        name: subscription.items.data[0].plan.nickname,
-        price: subscription.items.data[0].plan.amount,
-        search_count: SearchCountLimitation::BASIC_PLAN,
-        follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
-        unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,
-    )
-
-    redirect_to root_path(via: current_via), notice: t('.success_html', url: after_purchase_path('after_purchasing'))
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{current_user_id}"
-    redirect_to root_path(via: current_via('error')), alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error')) unless performed?
-  end
 
   # Not used: Callback URL for a successful payment
   def success
