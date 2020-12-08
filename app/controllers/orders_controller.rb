@@ -105,7 +105,7 @@ class OrdersController < ApplicationController
       send_message("`#{Rails.env}:checkout_session_completed` already purchased user_id=#{user.id}")
     else
       set_tax_rate_to_subscription(checkout_session.subscription_id)
-      order = Order.create_by!(checkout_session: checkout_session)
+      order = Order.create_by!(checkout_session)
       set_metadata_to_subscription(checkout_session.subscription_id, order_id: order.id)
 
       SetVisitIdToOrderWorker.perform_async(order.id)
