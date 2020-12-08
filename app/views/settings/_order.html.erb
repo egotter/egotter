@@ -1,42 +1,40 @@
 <div class="text-center my-5"><%= link_to t('.see_plans'), pricing_path(via: current_via('orders_table')) %></div>
 
 <% if current_user.orders.any? %>
-  <table class="table">
-    <tbody>
-    <% current_user.orders.order(created_at: :desc).limit(5).select { |o| !o.purchase_failed? }.each do |order| %>
-      <tr class="<%= 'text-muted' if order.canceled_at %>">
-        <td>
-          <div><%= order.short_name %></div>
-        </td>
-        <td>
-          <div><%= t('.price', price: order.price) %></div>
-          <% if order.canceled_at %>
-          <% else %>
-            <div class="small mt-1"><%= t('.search_count', count: order.search_count) %></div>
-            <div class="small"><%= t('.follow_requests_count', count: order.follow_requests_count) %></div>
-            <div class="small"><%= t('.unfollow_requests_count', count: order.unfollow_requests_count) %></div>
-          <% end %>
-        </td>
-        <td>
-          <% if order.charge_failed_at %>
-            <div class="text-danger"><%= t('.charge_failed_description') %></div>
-          <% end %>
+  <% current_user.orders.order(created_at: :desc).limit(3).select { |o| !o.purchase_failed? }.each do |order| %>
+    <div class="<%= 'text-muted' if order.canceled_at %>">
+      <h5><%= order.short_name %></h5>
+      <div>
+        <%= t('.price', price: order.price) %>
 
-          <% if order.canceled_at %>
-            <div><%= t('.canceled_at', date: l(order.canceled_at.in_time_zone('Tokyo'), format: :order_short)) %></div>
-          <% else %>
-            <div><%= t('.created_at', date: l(order.created_at.in_time_zone('Tokyo'), format: :order_short)) %></div>
-            <div><%= link_to t('.cancel'), '#', class: 'btn btn-outline-warning btn-sm btn-cancel-order', data: {id: order.id} %></div>
-          <% end %>
+        <% if order.trial? && !order.charge_failed_at && !order.canceled_at %>
+          <span class="badge badge-primary"><%= t('.during_trial_period') %></span>
+        <% end %>
 
-          <% if current_user.admin? %>
-            <div><%= link_to t('.update_payment_method'), '#', class: 'btn btn-outline-primary btn-sm btn-customer-portal', data: {id: order.id} %></div>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-    </tbody>
-  </table>
+        <% if order.charge_failed_at %>
+          <div class="text-danger"><%= t('.charge_failed_description') %></div>
+        <% elsif order.canceled_at %>
+          <div><%= t('.already_canceled') %></div>
+        <% else %>
+          <% details_html = t('.details_html', amount: order.price, search_count: order.search_count, follow_count: order.follow_requests_count, unfollow_count: order.unfollow_requests_count, created: l(order.created_at.in_time_zone('Tokyo'), format: :order_short)) %>
+          <div>
+            <%= link_to t('.see_details'), '#', class: 'btn-order-details', data: {toggle: 'modal', target: '#order-details-modal', details: details_html} %>
+            <%= link_to t('.cancel'), '#', class: 'text-warning btn-cancel-order', data: {id: order.id} %>
+          </div>
+        <% end %>
+      </div>
+
+      <% if current_user.admin? %>
+        <div><%= link_to t('.update_payment_method'), '#', class: 'btn btn-outline-primary btn-sm btn-customer-portal', data: {id: order.id} %></div>
+      <% end %>
+    </div>
+
+    <hr>
+  <% end %>
+
+  <% if current_user.has_valid_subscription? %>
+    <%= render partial: 'modal/order_details_modal', locals: {modal_id: 'order-details-modal'} %>
+  <% end %>
 
   <script>
     function clickCancelButton() {

@@ -404,14 +404,19 @@ ja:
         title: "通知設定"
     order:
       order_histories: "購入履歴"
-      created_at: "%{date} に購入済み"
-      canceled_at: "%{date} にキャンセル済み"
+      during_trial_period: "トライアル期間中"
+      already_canceled: "キャンセル済み"
+      see_details: '詳細を見る'
+      details_html: |
+        %{created}に購入<br>
+        <br>
+        %{amount}円/月（税別）<br>
+        検索回数 %{search_count}回/日<br>
+        フォロー %{follow_count}回/日<br>
+        フォロー解除%{unfollow_count}回/日
       price: "%{price}円/月（税別）"
-      search_count: "検索回数 %{count}回/日"
-      follow_requests_count: "フォロー %{count}回/日"
-      unfollow_requests_count: "フォロー解除 %{count}回/日"
       cancel: 'キャンセルする'
-      charge_failed_description: '支払いに失敗したため定期購読はキャンセルされました。'
+      charge_failed_description: '支払いに失敗したため自動でキャンセルされました。'
       update_payment_method: '支払い方法を更新する'
       cancel_confirmation: '有料プランをキャンセルします。よろしいですか？'
       canceling_html: 'キャンセル処理中です。<img src="/ajax-loader.gif?a=1">'
@@ -2488,6 +2493,9 @@ ja:
         purchase: '購入する'
         purchased: '購入済み'
         login: 'ログインする'
+    order_details_modal:
+      title: '購入の詳細'
+      'yes': 'OK'
     end_trial_modal:
       title: 'トライアル期間の終了'
       message_html: 'この機能を使うとトライアル期間が終了しすぐに課金を開始します。よろしいですか？'

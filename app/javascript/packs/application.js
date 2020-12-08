@@ -29,6 +29,7 @@ import "./welcome";
 import "./async_loader";
 import "./home";
 import "./follow_and_unfollow";
+import "./order_details_modal";
 import "./end_trial_modal";
 import "./reset_cache_modal";
 import "./reset_egotter_modal";

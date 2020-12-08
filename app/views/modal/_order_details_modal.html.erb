@@ -1,0 +1,8 @@
+<%= modal_dialog id: modal_id, title: t('.title'), button: {positive: t('.yes')} do %>
+  <p class="order-details"></p>
+<% end %>
+<script>
+  $(function () {
+    new OrderDetailsModal('<%= modal_id %>');
+  });
+</script>
