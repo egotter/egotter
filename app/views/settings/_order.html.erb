@@ -1,4 +1,8 @@
-<div class="text-center my-5"><%= link_to t('.see_plans'), pricing_path(via: current_via('orders_table')) %></div>
+<div class="text-center mt-5 mb-3"><%= link_to t('.see_plans'), pricing_path(via: current_via('orders_table')) %></div>
+
+<% unless current_user.has_valid_subscription? %>
+  <div class="text-center mb-5"><a href="#" class="btn btn-primary btn-checkout"><%= t('.purchase') %></a></div>
+<% end %>
 
 <% if current_user.orders.any? %>
   <% current_user.orders.order(created_at: :desc).limit(3).select { |o| !o.purchase_failed? }.each do |order| %>
@@ -66,5 +70,4 @@
   </script>
 <% else %>
   <div class="text-center my-3"><%= t('.has_not_purchased') %></div>
-  <div class="text-center"><a href="#" class="btn btn-primary btn-checkout"><%= t('.purchase') %></a></div>
 <% end %>

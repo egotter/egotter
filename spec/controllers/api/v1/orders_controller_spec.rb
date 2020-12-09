@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::OrdersController, type: :controller do
-  let(:user) { create(:user) }
-  let(:order) { create(:order, user_id: user.id) }
+  let(:user) { create(:user, with_orders: true) }
+  let(:order) { user.orders.last }
 
   before do
     allow(controller).to receive(:current_user).and_return(user)
@@ -22,11 +22,9 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
   end
 
   describe 'POST #cancel' do
-    let(:orders) { double('orders') }
     subject { post :cancel, params: {id: order.id} }
     before do
-      allow(user).to receive(:orders).and_return(orders)
-      allow(orders).to receive(:find_by).with(id: order.id.to_s).and_return(order)
+      allow(user.orders).to receive(:find_by).with(id: order.id.to_s).and_return(order)
       allow(order).to receive(:canceled?).and_return(false)
     end
     it do

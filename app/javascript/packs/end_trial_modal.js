@@ -23,9 +23,11 @@ class EndTrialModal {
 
       $.post(url).done(function (res) {
         ToastMessage.info(res.message);
+        var interval = (res.interval || 10) * 1000;
+
         setTimeout(function () {
           window.location.reload();
-        }, 5000);
+        }, interval);
       }).fail(showErrorMessage);
     });
   }
