@@ -1,11 +1,5 @@
 ja:
   layouts:
-    application:
-      sign_in_modal:
-        title: 'ログインする'
-        body: 'この機能を使うにはえごったーへのログインが必要です。ログインしますか？'
-        'yes': 'ログインします'
-        'no': 'キャンセル'
     header:
       title: 'えごったー'
       sign_in: 'ログイン'
