@@ -215,7 +215,7 @@ module PathsHelper
     if controller_name == 'personality_insights'
       image_url('/egotter_personality_insight_840x450.jpg?loc=og_image')
     elsif controller_name == 'close_friends' && @twitter_user&.close_friends_og_image
-      @twitter_user.close_friends_og_image.cdn_url
+      @twitter_user.close_friends_og_image.lambda_url
     else
       image_url('/egotter_usagi_840x450.jpg?loc=og_image')
     end
