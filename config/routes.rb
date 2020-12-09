@@ -19,7 +19,6 @@ Rails.application.routes.draw do
       get "blocking_or_blocked/list", to: "mutual_unfriends#list"
 
       get "close_friends", to: "close_friends#show"
-      get "close_friends/og_image", to: "close_friends#og_image"
       get "word_clouds", to: "word_clouds#show"
       get "friend_insights/profiles_count", to: "friend_insights#profiles_count"
       get "friend_insights/locations_count", to: "friend_insights#locations_count"
@@ -50,6 +49,8 @@ Rails.application.routes.draw do
       resources :share_tweets, only: %i(create)
 
       resources :follow_requests, only: %i(create)
+
+      resources :close_friends_og_images, only: %i(show), param: :uid
 
       resources :delete_tweets_requests, only: %i(create)
       resources :delete_tweets_notifications, only: %i(create)
