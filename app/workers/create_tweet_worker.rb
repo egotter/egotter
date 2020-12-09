@@ -1,5 +1,6 @@
 class CreateTweetWorker
   include Sidekiq::Worker
+  include WorkerErrorHandler
   sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
@@ -7,7 +8,7 @@ class CreateTweetWorker
   end
 
   def unique_in
-    3.minutes
+    60.seconds
   end
 
   # options:
@@ -18,6 +19,6 @@ class CreateTweetWorker
     request.finished!
     ConfirmTweetWorker.perform_async(request_id, confirm_count: 0)
   rescue => e
-    logger.warn "#{e.inspect} request=#{request.inspect} options=#{options}"
+    handle_worker_error(e, request_id: request_id, options: options)
   end
 end

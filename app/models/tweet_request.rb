@@ -30,7 +30,10 @@ class TweetRequest < ApplicationRecord
   end
 
   def perform!
-    tweet = self.class.send(:create_status!, client, text + ' ' + self.class.share_suffix)
+    fulltext = text
+    fulltext += " #{self.class.share_suffix}" unless fulltext.include?('egotter.com')
+
+    tweet = self.class.send(:create_status!, client, fulltext)
     update(tweet_id: tweet.id)
     tweet
   end

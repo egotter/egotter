@@ -19,10 +19,32 @@
 
 <script>
   $(function () {
+    var signedIn = <%= user_signed_in? %>;
+    var via = '<%= current_via %>';
+
+    function removeTags(html) {
+      return html.replace(/<br>/gm, "\n").replace(/<[^>]*>?/gm, '').replace(/\n$/, '');
+    }
+
     function openWindow(html, via) {
-      var text = html.replace(/<br>/gm, "\n").replace(/<[^>]*>?/gm, '').replace(/\n$/, '') + '&via=' + via;
+      var text = removeTags(html) + '&via=' + via;
       var url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text);
       window.open(url, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');
+    }
+
+    function createTweet(html, via) {
+      if (!signedIn) {
+        openWindow(html, via);
+        return;
+      }
+
+      var url = '<%= raw api_v1_share_tweets_path(via: current_via('tweet_box')) %>';
+      var text = removeTags(html) + '&via=' + via;
+      $.post(url, {text: text}).done(function (res) {
+        ToastMessage.info(res.message);
+      }).fail(function () {
+        openWindow(html, via);
+      });
     }
 
     var controller = '<%= controller_name %>';
@@ -31,7 +53,6 @@
       uid: '<%= twitter_user.uid %>',
       screenName: "<%= twitter_user.screen_name %>"
     };
-    var via = '<%= current_via %>';
     var container = $('#<%= container_id %>');
     var textarea = container.find('.textarea');
 
@@ -65,7 +86,7 @@
     });
 
     container.find('.btn-tweet').on('click', function () {
-      openWindow(textarea.val() || textarea.html(), via + '/tweet_button');
+      createTweet(textarea.val() || textarea.html(), via + '/tweet_button')
       sendEvent('TweetButton');
       trackEvent('TweetButton clicked', this);
       return false;

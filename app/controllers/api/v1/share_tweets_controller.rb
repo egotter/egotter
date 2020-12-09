@@ -6,11 +6,13 @@ module Api
       before_action :require_login!
 
       def create
-        validator = TweetRequest::TextValidator.new("#{params[:text]} #{TweetRequest.share_suffix}")
+        text = params[:text]
+        text += " #{TweetRequest.share_suffix}" unless text.include?('egotter.com')
+        validator = TweetRequest::TextValidator.new(text)
 
         if validator.valid?
           via = params[:via]&.truncate(100)
-          request = TweetRequest.create!(user_id: current_user.id, text: "#{params[:text]}")
+          request = TweetRequest.create!(user_id: current_user.id, text: text)
           CreateTweetWorker.perform_async(request.id, requested_by: via)
           SendCreateTweetStartedWorker.perform_async(request.id, via: via)
           render json: {message: t('.success')}
