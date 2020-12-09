@@ -15,7 +15,7 @@ class ResetCacheModal {
 
       var page = window.location.href;
       var text = $(self.button).text().trim();
-      ahoy.track('Modal', {name: 'reset_cache', page: page, text: text});
+      ahoy.track('ResetCacheModal opened', {page: page, text: text});
     });
 
     this.$el.find('.positive').on('click', function () {

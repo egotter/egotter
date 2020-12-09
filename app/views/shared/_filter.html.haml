@@ -27,9 +27,10 @@
   :javascript
     $(function () {
       $('.filter-container .filters').on('click', function () {
+        var name = $(this).data('filter');
         var page = '#{request.path}';
         var text = $(this).text().trim();
-        ahoy.track('Filter', {page: page, text: text});
+        ahoy.track('Filter ' + name, {page: page, text: text});
       });
     });
 - else

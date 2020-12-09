@@ -26,9 +26,10 @@
   :javascript
     $(function () {
       $('.sort-order-container .sort-orders').on('click', function () {
+        var name = $(this).data('sort-order');
         var page = '#{request.path}';
         var text = $(this).text().trim();
-        ahoy.track('Sort', {page: page, text: text});
+        ahoy.track('Sort ' + name, {page: page, text: text});
       });
     });
 - else

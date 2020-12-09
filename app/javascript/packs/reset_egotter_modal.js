@@ -15,7 +15,7 @@ class ResetEgotterModal {
 
       var page = window.location.href;
       var text = $(self.button).text().trim();
-      ahoy.track('Modal', {name: 'reset_egotter', page: page, text: text});
+      ahoy.track('ResetEgotterModal opened', {page: page, text: text});
     });
 
     this.$el.find('.positive').on('click', function () {
