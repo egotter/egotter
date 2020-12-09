@@ -24,14 +24,21 @@ class CloseFriendsOgImage < ApplicationRecord
     updated_at && updated_at > 12.hours.ago
   end
 
+  def s3_url
+    image.attached? ? "s3://#{storage_config['bucket']}/#{image.blob.key}" : nil
+  end
+
   def cdn_url
     image.attached? ? "https://#{ENV['OG_IMAGE_ASSET_HOST']}/#{image.blob.key}" : nil
   end
 
   def update_acl(value = 'public-read')
-    config = YAML.load(ERB.new(Rails.root.join('config/storage.yml').read).result)['amazon']
-    client = Aws::S3::Client.new(region: config['region'], retry_limit: 4, http_open_timeout: 3, http_read_timeout: 3)
-    client.put_object_acl(acl: value, bucket: config['bucket'], key: image.blob.key)
+    client = Aws::S3::Client.new(region: storage_config['region'], retry_limit: 4, http_open_timeout: 3, http_read_timeout: 3)
+    client.put_object_acl(acl: value, bucket: storage_config['bucket'], key: image.blob.key)
+  end
+
+  def storage_config
+    @storage_config ||= YAML.load(ERB.new(Rails.root.join('config/storage.yml').read).result)['amazon']
   end
 
   def update_acl_async
