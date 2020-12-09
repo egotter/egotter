@@ -2196,7 +2196,7 @@ ja:
         fail: '更新中です。数分後に再度お試しください。'
       share_tweets:
         create:
-          success: 'ツイートに成功しました。検索回数にボーナスが付与されました。'
+          success_html: 'ツイートに成功しました。検索回数にボーナスが付与されました。<a href="https://twitter.com/%{user}" target="_blank">ツイートを見る</a>'
           fail: 'ツイートに失敗しました。テキストが長すぎたり、特殊な文字が入ったりしていませんか？'
       create_periodic_tweet_requests:
         update:

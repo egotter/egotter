@@ -25,7 +25,7 @@ module Api
         end
 
         SendCreateTweetStartedWorker.perform_async(request.id, via: via)
-        render json: {message: t('.success')}
+        render json: {message: t('.success_html', user: current_user.screen_name)}
       rescue => e
         logger.warn "#{controller_name}##{action_name} #{e.inspect} user_id=#{current_user.id}"
         render json: {message: t('.fail')}, status: :bad_request
