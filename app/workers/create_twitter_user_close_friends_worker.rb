@@ -49,7 +49,7 @@ class CreateTwitterUserCloseFriendsWorker
     S3::CloseFriendship.import_from!(twitter_user.uid, uids)
     if uids.any?
       CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: twitter_user.user_id, enqueued_by: 'CloseFriends')
-      CreateCloseFriendsOgImageWorker.perform_async(twitter_user.uid, uids: uids, force: true)
+      # CreateCloseFriendsOgImageWorker.perform_async(twitter_user.uid, uids: uids, force: true)
     end
   end
 
