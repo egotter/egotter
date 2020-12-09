@@ -35,7 +35,7 @@
     var container = $('#<%= container_id %>');
     var textarea = container.find('.textarea');
 
-    function clickElement(name) {
+    function sendEvent(name) {
       var event = {
         hitType: 'event',
         eventCategory: name + ' clicked',
@@ -45,20 +45,29 @@
       ga('send', event);
     }
 
+    function trackEvent(name, button) {
+      var page = window.location.href;
+      var text = $(button).text().trim();
+      ahoy.track('TweetBox', {name: name, page: page, text: text});
+    }
+
     textarea.on('click', function () {
       openWindow(textarea.val() || textarea.html(), via + '/textarea');
-      clickElement('Textarea');
+      sendEvent('Textarea');
+      trackEvent('textarea', this);
     });
 
     container.find('.btn-copy').on('click', function () {
       openWindow(textarea.val() || textarea.html(), via + '/copy_button');
-      clickElement('CopyButton');
+      sendEvent('CopyButton');
+      trackEvent('copy', this);
       return false;
     });
 
     container.find('.btn-tweet').on('click', function () {
       openWindow(textarea.val() || textarea.html(), via + '/tweet_button');
-      clickElement('TweetButton');
+      sendEvent('TweetButton');
+      trackEvent('tweet', this);
       return false;
     });
   });
