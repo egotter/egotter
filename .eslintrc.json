@@ -18,6 +18,7 @@
     "$": true,
     "ga": true,
     "logger": true,
+    "ahoy": true,
     "extractErrorMessage": true,
     "showErrorMessage": true,
     "Highcharts": true,

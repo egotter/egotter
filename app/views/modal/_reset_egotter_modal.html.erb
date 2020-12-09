@@ -1,8 +1,8 @@
-<%= modal_dialog(id: 'reset-egotter-modal', title: t('.title'), button: {positive: t('.yes'), negative: t('.no'), category: 'danger'}) do %>
+<%= modal_dialog(id: modal_id, title: t('.title'), button: {positive: t('.yes'), negative: t('.no'), category: 'danger'}) do %>
   <%= t('.body_html', screen_name: current_user.screen_name) %>
 <% end %>
 <script>
   $(function () {
-    window.resetEgotterModal = new ResetEgotterModal('reset-egotter-modal');
+    new ResetEgotterModal('<%= modal_id %>');
   });
 </script>

@@ -1,8 +1,8 @@
-<%= modal_dialog(id: 'reset-cache-modal', title: t('.title'), button: {positive: t('.yes'), negative: t('.no'), category: 'warning'}) do %>
+<%= modal_dialog(id: modal_id, title: t('.title'), button: {positive: t('.yes'), negative: t('.no'), category: 'warning'}) do %>
   <%= t('.body_html', screen_name: current_user.screen_name) %>
 <% end %>
 <script>
   $(function () {
-    window.resetCacheModal = new ResetCacheModal('reset-cache-modal');
+    new ResetCacheModal('<%= modal_id %>');
   });
 </script>

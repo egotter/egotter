@@ -7,16 +7,22 @@ class EndTrialModal {
 
   init() {
     var url = '/api/v1/orders/end_trial'; // api_v1_orders_end_trial_path
-    var button = null;
     var i18n = this.i18n;
+    var self = this;
 
     this.$el.on('show.bs.modal', function (e) {
-      button = e.relatedTarget;
+      if (e.relatedTarget) {
+        self.button = e.relatedTarget;
+      }
+
+      var page = window.location.href;
+      var text = $(self.button).text().trim();
+      ahoy.track('Modal', {name: 'end_trial', page: page, text: text});
     });
 
     this.$el.find('.positive').on('click', function () {
-      if (button) {
-        $(button).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
+      if (self.button) {
+        $(self.button).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
       }
 
       ToastMessage.info(i18n['processing']);
@@ -32,7 +38,8 @@ class EndTrialModal {
     });
   }
 
-  show() {
+  show(button) {
+    this.button = button;
     this.$el.modal();
   }
 }

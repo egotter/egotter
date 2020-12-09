@@ -2,45 +2,20 @@
   <div class="col-4"><%= t('.delete_caches.title') %></div>
   <div class="col-8">
     <% if @reset_cache_request %>
-      <span class="btn btn-warning btn-reset-cache disabled" disabled="disabled"><%= t('.delete_caches.button') %></span>
+      <span class="btn btn-warning disabled" disabled="disabled"><%= t('.delete_caches.button') %></span>
       <div class="text-muted small mt-1"><%= t('.requested') %></div>
     <% else %>
-      <span class="btn btn-warning btn-reset-cache"><%= t('.delete_caches.button') %></span>
-      <div class="text-muted small mt-1"><%= t('.delete_caches.note_html') %></div>
-
       <% if current_user.has_valid_subscription? %>
         <% if current_user.has_trial_subscription? %>
-          <script>
-            $(function () {
-              $('.btn-reset-cache').on('click', function () {
-                if (window.endTrialModal) {
-                  window.endTrialModal.show();
-                  return false;
-                }
-              });
-            });
-          </script>
+          <span class="btn btn-warning btn-end-trial"><%= t('.delete_caches.button') %></span>
         <% else %>
-          <script>
-            $(function () {
-              $('.btn-reset-cache').on('click', function () {
-                if (window.resetCacheModal) {
-                  window.resetCacheModal.show();
-                  return false;
-                }
-              });
-            });
-          </script>
+          <%= link_to t('.delete_caches.button'), '#', class: 'btn btn-warning', data: {target: '#reset-cache-modal', toggle: 'modal'} %>
+          <%= render partial: 'modal/reset_cache_modal', locals: {modal_id: 'reset-cache-modal'} %>
         <% end %>
+        <div class="text-muted small mt-1"><%= t('.delete_caches.note_html') %></div>
       <% else %>
+        <%= link_to t('.delete_caches.button'), '#', class: 'btn btn-warning', data: {target: '#checkout-for-reset-cache-confirmation-modal', toggle: 'modal'} %>
         <%= modal_dialog(id: 'checkout-for-reset-cache-confirmation-modal', title: t('.delete_caches.confirmation_modal.title'), body: t('.delete_caches.confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_caches.confirmation_modal.ok'), positive_class: 'btn-checkout'}) %>
-        <script>
-          $(function () {
-            $('.btn-reset-cache').on('click', function () {
-              $('#checkout-for-reset-cache-confirmation-modal').modal();
-            });
-          });
-        </script>
       <% end %>
     <% end %>
   </div>
@@ -52,45 +27,20 @@
   <div class="col-4"><%= t('.delete_data.title') %></div>
   <div class="col-8">
     <% if @reset_egotter_request %>
-      <span class="btn btn-danger btn-reset-egotter disabled" disabled="disabled"><%= t('.delete_data.button') %></span>
+      <span class="btn btn-danger disabled" disabled="disabled"><%= t('.delete_data.button') %></span>
       <div class="text-muted small mt-1"><%= t('.requested') %></div>
     <% else %>
-      <span class="btn btn-danger btn-reset-egotter" onclick="ahoy.track('ResetEgotterModal opened');"><%= t('.delete_data.button') %></span>
-      <div class="text-danger small mt-1"><%= t('.delete_data.note') %></div>
-
       <% if current_user.has_valid_subscription? %>
         <% if current_user.has_trial_subscription? %>
-          <script>
-            $(function () {
-              $('.btn-reset-egotter').on('click', function () {
-                if (window.endTrialModal) {
-                  window.endTrialModal.show();
-                  return false;
-                }
-              });
-            });
-          </script>
+          <span class="btn btn-danger btn-end-trial"><%= t('.delete_data.button') %></span>
         <% else %>
-          <script>
-            $(function () {
-              $('.btn-reset-egotter').on('click', function () {
-                if (window.resetEgotterModal) {
-                  window.resetEgotterModal.show();
-                  return false;
-                }
-              });
-            });
-          </script>
+          <%= link_to t('.delete_data.button'), '#', class: 'btn btn-danger', data: {target: '#reset-egotter-modal', toggle: 'modal'} %>
+          <%= render partial: 'modal/reset_egotter_modal', locals: {modal_id: 'reset-egotter-modal'} %>
         <% end %>
+        <div class="text-danger small mt-1"><%= t('.delete_data.note') %></div>
       <% else %>
+        <%= link_to t('.delete_data.button'), '#', class: 'btn btn-danger', data: {target: '#checkout-for-reset-data-confirmation-modal', toggle: 'modal'} %>
         <%= modal_dialog(id: 'checkout-for-reset-data-confirmation-modal', title: t('.delete_data.confirmation_modal.title'), body: t('.delete_data.confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.confirmation_modal.ok'), positive_class: 'btn-checkout'}) %>
-        <script>
-          $(function () {
-            $('.btn-reset-egotter').on('click', function () {
-              $('#checkout-for-reset-data-confirmation-modal').modal();
-            });
-          });
-        </script>
       <% end %>
     <% end %>
   </div>

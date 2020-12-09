@@ -34,7 +34,7 @@
 
       $(document).on('click', '.btn-end-trial', function () {
         if (window.endTrialModal) {
-          window.endTrialModal.show();
+          window.endTrialModal.show(this);
           return false;
         }
       });
