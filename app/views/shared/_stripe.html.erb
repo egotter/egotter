@@ -73,11 +73,15 @@
       $(document).on('click', '.btn-checkout', function () {
         ga('send', {
           hitType: 'event',
-          eventCategory: eventCategory,
-          eventAction: 'CheckoutButton clicked',
+          eventCategory: 'CheckoutButton clicked',
+          eventAction: eventCategory,
           eventLabel: JSON.stringify(user),
           transport: 'beacon'
         });
+
+        var page = window.location.href;
+        var text = $(this).text().trim();
+        ahoy.track('CheckoutButton clicked', {page: page, text: text});
 
         redirectToCheckout();
 

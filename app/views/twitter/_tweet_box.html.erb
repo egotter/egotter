@@ -48,26 +48,26 @@
     function trackEvent(name, button) {
       var page = window.location.href;
       var text = $(button).text().trim();
-      ahoy.track('TweetBox', {name: name, page: page, text: text});
+      ahoy.track(name, {page: page, text: text});
     }
 
     textarea.on('click', function () {
       openWindow(textarea.val() || textarea.html(), via + '/textarea');
       sendEvent('Textarea');
-      trackEvent('textarea', this);
+      trackEvent('Textarea clicked', this);
     });
 
     container.find('.btn-copy').on('click', function () {
       openWindow(textarea.val() || textarea.html(), via + '/copy_button');
       sendEvent('CopyButton');
-      trackEvent('copy', this);
+      trackEvent('CopyButton clicked', this);
       return false;
     });
 
     container.find('.btn-tweet').on('click', function () {
       openWindow(textarea.val() || textarea.html(), via + '/tweet_button');
       sendEvent('TweetButton');
-      trackEvent('tweet', this);
+      trackEvent('TweetButton clicked', this);
       return false;
     });
   });
