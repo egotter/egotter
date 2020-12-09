@@ -31,7 +31,7 @@ class TweetRequest < ApplicationRecord
 
   def perform!
     fulltext = text
-    fulltext += " #{self.class.share_suffix}" unless fulltext.include?('egotter.com')
+    fulltext += " #{self.class.share_suffix}" unless fulltext.include?('http')
 
     tweet = self.class.send(:create_status!, client, fulltext)
     update(tweet_id: tweet.id)

@@ -7,18 +7,25 @@ module Api
 
       def create
         text = params[:text]
-        text += " #{TweetRequest.share_suffix}" unless text.include?('egotter.com')
+        text += " #{TweetRequest.share_suffix}" unless text.include?('http')
         validator = TweetRequest::TextValidator.new(text)
 
-        if validator.valid?
-          via = params[:via]&.truncate(100)
-          request = TweetRequest.create!(user_id: current_user.id, text: text)
-          CreateTweetWorker.perform_async(request.id, requested_by: via)
-          SendCreateTweetStartedWorker.perform_async(request.id, via: via)
-          render json: {message: t('.success')}
-        else
+        unless validator.valid?
           render json: {message: t('.fail')}, status: :bad_request
+          return
         end
+
+        via = params[:via]&.truncate(100)
+        request = TweetRequest.create!(user_id: current_user.id, text: text)
+
+        unless CreateTweetWorker.perform_async(request.id, requested_by: via)
+          request.update(deleted_at: Time.zone.now)
+          render json: {message: t('.fail')}, status: :bad_request
+          return
+        end
+
+        SendCreateTweetStartedWorker.perform_async(request.id, via: via)
+        render json: {message: t('.success')}
       rescue => e
         logger.warn "#{controller_name}##{action_name} #{e.inspect} user_id=#{current_user.id}"
         render json: {message: t('.fail')}, status: :bad_request
