@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe TweetRequest, type: :model do
   let(:user) { create(:user) }
+  let(:instance) { described_class.new(user: user) }
 
   describe '.share_suffix' do
     subject { described_class.share_suffix }
@@ -9,12 +10,11 @@ RSpec.describe TweetRequest, type: :model do
   end
 
   describe '.create_status!' do
-    let(:client) { double('client') }
     let(:text) { 'text' }
-    subject { described_class.send(:create_status!, client, text) }
+    subject { instance.create_status!(text) }
 
     it do
-      expect(client).to receive(:update).with(text)
+      expect(client).to receive(:update!).with(text)
       subject
     end
   end

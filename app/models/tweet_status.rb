@@ -16,5 +16,9 @@ class TweetStatus
     def already_favorited?(ex)
       ex.class == Twitter::Error::AlreadyFavorited
     end
+
+    def duplicate_status?(ex)
+      ex.class == Twitter::Error::DuplicateStatus
+    end
   end
 end

@@ -33,9 +33,28 @@ class TweetRequest < ApplicationRecord
     fulltext = text
     fulltext += " #{self.class.share_suffix}" unless fulltext.include?('http')
 
-    tweet = self.class.send(:create_status!, client, fulltext)
-    update(tweet_id: tweet.id)
+    tweet = create_status!(fulltext)
+    update(tweet_id: tweet.id) if tweet
     tweet
+  end
+
+  def create_status!(text)
+    retries ||= 1
+    client.update!(text)
+  rescue => e
+    if TwitterApiStatus.could_not_authenticate_you?(e)
+      if (retries -= 1) >= 0
+        retry
+      else
+        raise RetryExhausted.new(e.inspect)
+      end
+    elsif TweetStatus.duplicate_status?(e)
+      update(deleted_at: Time.zone.now)
+      nil
+    else
+      update(deleted_at: Time.zone.now)
+      raise
+    end
   end
 
   def client
@@ -64,24 +83,6 @@ class TweetRequest < ApplicationRecord
       }
       '#egotter ' + Rails.application.routes.url_helpers.root_url(params)
     end
-
-    private
-
-    def create_status!(client, text)
-      retries ||= 1
-      client.update(text)
-    rescue => e
-      if TwitterApiStatus.could_not_authenticate_you?(e)
-        if (retries -= 1) >= 0
-          retry
-        else
-          raise RetryExhausted.new(e.inspect)
-        end
-      else
-        raise
-      end
-    end
-
   end
 
   class RetryExhausted < StandardError; end
