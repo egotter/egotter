@@ -32,6 +32,10 @@ class CloseFriendsOgImage < ApplicationRecord
     image.attached? ? "https://#{ENV['OG_IMAGE_ASSET_HOST']}/#{image.blob.key}" : nil
   end
 
+  def lambda_url
+    image.attached? ? "https://#{ENV['OG_IMAGE_LAMBDA_HOST']}?uid=#{uid}" : nil
+  end
+
   def update_acl(value = 'public-read')
     client = Aws::S3::Client.new(region: storage_config['region'], retry_limit: 4, http_open_timeout: 3, http_read_timeout: 3)
     client.put_object_acl(acl: value, bucket: storage_config['bucket'], key: image.blob.key)
