@@ -5,7 +5,8 @@
 <script>
   $(function () {
     var url = '<%= raw search_histories_path(via: current_via) %>';
-    var message = '<%= t('.failed') %>';
-    new SearchModal(url, 'search-modal', message);
+    var i18n = {failed: '<%= t('.failed') %>'};
+    var eventAction = '<%= "#{controller_name}##{action_name}" %>';
+    new SearchModal(url, 'search-modal', i18n, eventAction);
   });
 </script>

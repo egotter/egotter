@@ -1,6 +1,7 @@
 <script>
   (function () {
     var userId = <%= current_user&.id %>;
+    var eventAction = '<%= "#{controller_name}##{action_name}" %>';
     var deviceType = '<%= request.device_type %>';
     var os = '<%= request.os + ' ' + request.os_version %>';
     var browser = '<%= request.browser + ' ' + request.browser_version %>';
@@ -18,8 +19,8 @@
         if (ga) {
           ga('send', {
             hitType: 'event',
-            eventCategory: 'JS Exception',
-            eventAction: kind,
+            eventCategory: 'JS Exception (' + kind + ')',
+            eventAction: eventAction,
             eventLabel: message
           });
           console.warn('Sent JS Exception to GA', kind, message);

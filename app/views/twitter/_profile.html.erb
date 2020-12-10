@@ -37,13 +37,13 @@
   <div class="profile-buttons mt-1 mr-0 mr-sm-3">
     <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
 
-    <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary btn-sm btn-tracked d-none d-md-inline-block', target: '_blank', data: {category: 'See on twitter', 'action': request.device_type} do %>
+    <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary btn-sm btn-tracked d-none d-md-inline-block', target: '_blank', data: {category: 'See on twitter'} do %>
       <i class="fab fa-twitter no-follow"></i>
       <%= t('.twitter') %>
     <% end %>
 
     <div class="dropdown d-none d-md-inline-block">
-      <button type="button" class="btn btn-outline-primary btn-sm btn-tracked" data-category="Dropdown menu" data-action="<%= request.device_type %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button type="button" class="btn btn-outline-primary btn-sm btn-tracked" data-category="Dropdown menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-ellipsis-h"></i>
       </button>
 
@@ -69,11 +69,11 @@
 
     <%# Display on extra small and small %>
     <div class="d-inline-block d-md-none">
-      <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary btn-sm btn-tracked', target: '_blank', data: {category: 'See on twitter', 'action': request.device_type} do %>
+      <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary btn-sm btn-tracked', target: '_blank', data: {category: 'See on twitter'} do %>
         <i class="fab fa-twitter no-follow"></i>
       <% end %>
 
-      <button type="button" class="btn btn-outline-primary btn-sm <%= profilemenu_id %> btn-tracked" data-category="Dropdown menu" data-action="<%= request.device_type %>">
+      <button type="button" class="btn btn-outline-primary btn-sm <%= profilemenu_id %> btn-tracked" data-category="Dropdown menu">
         <i class="fas fa-ellipsis-h"></i>
       </button>
     </div>
@@ -113,6 +113,7 @@
 <script>
   $(function () {
     var containerId = '<%= container_id %>';
+    var eventAction = '<%= "#{controller_name}##{action_name}" %>';
 
     <% if user_signed_in? %>
     var via = '<%= current_via('profile') %>';
@@ -124,7 +125,7 @@
       var event = {
         hitType: 'event',
         eventCategory: $(this).data('category'),
-        eventAction: $(this).data('action'),
+        eventAction: eventAction,
         eventLabel: "<%= user.screen_name %>"
       };
       ga('send', event);
