@@ -37,17 +37,20 @@ module Deploy
           elsif name
             new(EC2.new.retrieve_instance_by(name: name))
           elsif name_regexp
-            regexp = Regexp.new(name_regexp)
-            found = EC2.new.retrieve_instances.find do |instance|
-              name_tag = instance.tags.find { |t| t.key == 'Name' }.value
-              regexp.match?(name_tag)
+            instances = EC2.new.retrieve_instances.map do |instance|
+              new(instance)
             end
 
-            unless found
+            regexp = Regexp.new(name_regexp)
+            instance = instances.select do |instance|
+              instance.name && instance.name.match?(regexp) && !instance.api_termination_disabled?
+            end.sort_by(&:launched_at)[0]
+
+            unless instance
               raise "Instance not found regexp=#{regexp}"
             end
 
-            new(found)
+            instance
           else
             raise 'There are no search conditions'
           end

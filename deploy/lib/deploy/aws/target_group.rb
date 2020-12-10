@@ -59,8 +59,11 @@ module Deploy
       end
 
       def oldest_instance
-        id = registered_instances.sort_by(&:launched_at).first.id
-        Instance.retrieve(id)
+        instances = registered_instances.select do |instance|
+          !instance.api_termination_disabled?
+        end
+
+        instances.sort_by(&:launched_at)[0]
       end
 
       def availability_zone_with_fewest_instances

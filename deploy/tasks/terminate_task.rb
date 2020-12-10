@@ -108,7 +108,7 @@ module Tasks
         if @params['instance-id'] || @params['instance-name'] || @params['instance-name-regexp']
           instance = ::Deploy::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'], name_regexp: @params['instance-name-regexp'])
         else
-          instance = ::Deploy::Aws::Instance.retrieve_by(id: nil, name: nil, name_regexp: 'egotter_sidekiq\\d{8}')
+          instance = ::Deploy::Aws::Instance.retrieve_by(name_regexp: 'egotter_sidekiq\\d{8}')
         end
 
         if instance.api_termination_disabled?
