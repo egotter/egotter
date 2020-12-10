@@ -10,8 +10,10 @@ RSpec.describe TweetRequest, type: :model do
   end
 
   describe '.create_status!' do
+    let(:client) { double('client') }
     let(:text) { 'text' }
     subject { instance.create_status!(text) }
+    before { allow(instance).to receive(:client).and_return(client) }
 
     it do
       expect(client).to receive(:update!).with(text)
