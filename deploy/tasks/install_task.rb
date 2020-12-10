@@ -134,8 +134,13 @@ module Tasks
       def update_crontab
         backend('crontab -r || :')
         backend('sudo crontab -r || :')
+
         upload_file('./setup/etc/crontab', '/etc/crontab')
         backend('sudo chown root:root /etc/crontab')
+
+        upload_file('./setup/var/spool/cron/ec2-user', '/var/spool/cron/ec2-user')
+        backend('sudo chown ec2-user:ec2-user /var/spool/cron/ec2-user')
+
         self
       end
 
