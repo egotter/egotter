@@ -1,13 +1,16 @@
-<% ad_id = left_slot_ad_id(controller, action, vertical) %>
-
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- Responsive -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-3146843071247817"
-     data-ad-slot="<%= ad_id %>"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-  (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
+<% user ||= nil %>
+<% if ad_ng_user?(user) %>
+  <div class="mb-3"></div>
+<% else %>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- Responsive -->
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-3146843071247817"
+       data-ad-slot="<%= left_slot_ad_id(controller, action, vertical) %>"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+<% end %>

@@ -34,12 +34,6 @@
     %script{:crossorigin => "anonymous", :integrity => "sha512-olGfMMGjbQdqsUibuBu1j8DJsQCpraWnNnmv5lRqQyJo5Xdd7CmHbk0dJSi5MSz+FbBcdO3BvHr+UiPVIszGXw==", src: 'https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js', type: 'text/javascript'}
     = csrf_meta_tags
 
-    - if Rails.env.development?
-      :css
-        .adsbygoogle {
-          border: 1px dashed black;
-        }
-
     = yield(:canonical_url) if content_for?(:canonical_url)
 
     = render partial: 'shared/google'

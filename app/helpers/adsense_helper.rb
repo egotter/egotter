@@ -1,12 +1,20 @@
 module AdsenseHelper
-  AD_NG_UIDS = [740700661939994624, 2412435452]
+  AD_NG_UIDS = [740700661939994624, 2412435452, 739670367212445697]
+  AD_NG_WORDS = ['オナニー', 'クンニ']
 
-  def ad_ng_twitter_user?(twitter_user)
-    if twitter_user.nil?
-      false
-    else
-      AD_NG_UIDS.include? twitter_user.uid
-    end
+  def ad_ng_user?(user)
+    user && (ad_ng_uid?(user.uid) || ad_ng_profile?(user.description))
+  rescue => e
+    logger.warn "#{__method__}: Unhandled exception #{e.inspect}"
+    false
+  end
+
+  def ad_ng_uid?(uid)
+    uid && AD_NG_UIDS.include?(uid)
+  end
+
+  def ad_ng_profile?(text)
+    text && AD_NG_WORDS.any? { |word| text.include?(word) }
   end
 
   USER_TOP            = 1499207213
