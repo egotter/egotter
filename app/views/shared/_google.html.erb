@@ -62,12 +62,13 @@ goog_report_conversion = function(url) {
 src="//www.googleadservices.com/pagead/conversion_async.js">
 </script>
 
-<script async='' src='//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'></script>
-
-<script>
+<% unless controller_name == 'login' %>
+  <script data-ad-client="ca-pub-3146843071247817" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
     (adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-3146843071247817",
-        enable_page_level_ads: true,
-        overlays: {bottom: true}
+      google_ad_client: "ca-pub-3146843071247817",
+      enable_page_level_ads: true,
+      overlays: {bottom: true}
     });
-</script>
+  </script>
+<% end %>
