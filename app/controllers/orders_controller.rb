@@ -87,7 +87,7 @@ class OrdersController < ApplicationController
   def process_charge_succeeded(event_data)
     customer_id = event_data['object']['customer']
 
-    if (order = Order.find_by(customer_id: customer_id))
+    if (order = Order.order(created_at: :desc).find_by(customer_id: customer_id))
       order.charge_succeeded!
       send_message("`#{Rails.env}:charge_succeeded` success user_id=#{order.user_id} order_id=#{order.id}")
     else
@@ -101,7 +101,7 @@ class OrdersController < ApplicationController
   def process_charge_failed(event_data)
     customer_id = event_data['object']['customer']
 
-    if (order = Order.find_by(customer_id: customer_id))
+    if (order = Order.order(created_at: :desc).find_by(customer_id: customer_id))
       order.charge_failed!
       order.cancel!
       send_message("`#{Rails.env}:charge_failed` success user_id=#{order.user_id} order_id=#{order.id}")
