@@ -94,6 +94,7 @@ gem 'blazer'
 
 # Google
 gem 'google-api-client', require: false
+gem 'google_drive', require: false
 
 # AWS
 gem 'aws-sdk-cloudwatch', require: false
