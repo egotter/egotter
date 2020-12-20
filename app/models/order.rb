@@ -161,6 +161,13 @@ class Order < ApplicationRecord
   def cancel!
     sub = ::Stripe::Subscription.delete(subscription_id)
     update!(canceled_at: Subscription.new(sub).canceled_at)
+  rescue Stripe::InvalidRequestError => e
+    if e.message&.include?('No such subscription')
+      logger.warn "Subscription not found but OK: exception=#{e.inspect}"
+      update!(canceled_at: Time.zone.now)
+    else
+      raise
+    end
   end
 
   def charge_succeeded!
