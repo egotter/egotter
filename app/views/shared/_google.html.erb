@@ -62,7 +62,7 @@ goog_report_conversion = function(url) {
 src="//www.googleadservices.com/pagead/conversion_async.js">
 </script>
 
-<% unless controller_name == 'login' %>
+<% if !%w(login settings).include?(controller_name) && !ad_ng_user?(@twitter_user || @user) %>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
   <script>
     (adsbygoogle = window.adsbygoogle || []).push({
