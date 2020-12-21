@@ -18,7 +18,7 @@ class DeleteTweetsUploader {
       if (!file.name.match(/^twitter-20\d{2}-\d{2}-\d{2}-[a-z0-9-]+.zip$/i)) {
         ToastMessage.warn(self.i18n['invalidFilename']);
         valid = false;
-      } else if (file.type !== 'application/zip') {
+      } else if (file.type.indexOf('zip') === -1 && file.type.indexOf('octet-stream' === -1)) {
         ToastMessage.warn(self.i18n['invalidContentType']);
         valid = false;
       } else if (file.size > 30000000000) { // 30GB
