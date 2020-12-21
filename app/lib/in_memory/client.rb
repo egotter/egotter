@@ -36,7 +36,8 @@ module InMemory
         define_method(method_name) do |*args, &blk|
           super(*args, &blk)
         rescue Redis::BaseError => e
-          Rails.logger.warn "Rescue all errors in #{@klass}.client##{method_name} #{e.inspect} args=#{args.inspect.truncate(100)}"
+          Rails.logger.warn "Rescue all errors klass=#{@klass} method=#{method_name} exception=#{e.inspect} args=#{args.inspect.truncate(100)}"
+          Rails.logger.info e.backtrace.join("\n")
           nil
         end
       end
