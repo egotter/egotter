@@ -638,7 +638,7 @@ ja:
       block: "ブロックする"
       mute: "ミュートする"
       report_spam: "スパム報告する"
-      updated_at: '最終更新：%{text}'
+      updated_at: 'データの最終更新：%{text}'
       profile_details: 'プロフィール詳細'
       counting: '集計中'
       labels:
