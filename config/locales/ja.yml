@@ -489,8 +489,9 @@ ja:
         on_note: '1日に1回 自動的にツイートします'
         off_note_html: 'オンにすると <span class="egotter-pink">%{count}回/日</span> の検索ボーナス'
       sneak_search_request:
-        title: 'こっそり検索'
-        on_note: 'オンにすると 誰かを検索したときに検索相手に通知が届かなくなります'
+        title_html: 'こっそり検索 <span class="egotter-pink">New</span>'
+        note1: 'オンにすると 誰かを検索したときに検索相手に通知が届かなくなります'
+        note2: '有料プラン限定機能です'
       search_count:
         title: '検索回数'
         count: '合計 %{count} 回'
