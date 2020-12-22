@@ -488,6 +488,9 @@ ja:
         title: '定期ツイート'
         on_note: '1日に1回 自動的にツイートします'
         off_note_html: 'オンにすると <span class="egotter-pink">%{count}回/日</span> の検索ボーナス'
+      sneak_search_request:
+        title: 'こっそり検索'
+        on_note: 'オンにすると 誰かを検索したときに検索相手に通知が届かなくなります'
       search_count:
         title: '検索回数'
         count: '合計 %{count} 回'
@@ -2203,6 +2206,11 @@ ja:
           success_on_html: '定期ツイートの設定を <span class="text-success">有効</span> にしました。'
           success_off_html: '定期ツイートの設定を <span class="text-danger">無効</span> にしました。'
           fail: '定期ツイートの設定に失敗しました。'
+      sneak_search_requests:
+        create:
+          success_html: 'こっそり検索の設定を <span class="text-success">有効</span> にしました。'
+        destroy:
+          success_html: 'こっそり検索の設定を <span class="text-danger">無効</span> にしました。'
       user_caches:
         destroy:
           success: 'キャッシュのリセットがリクエストされました。'

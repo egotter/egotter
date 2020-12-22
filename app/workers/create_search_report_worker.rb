@@ -17,6 +17,7 @@ class CreateSearchReportWorker
     searchee = User.find(searchee_id)
     return unless searchee.authorized?
     return if StopSearchReportRequest.exists?(user_id: searchee.id)
+    return if (searcher = User.find_by(uid: options['searcher_uid'])) && SneakSearchRequest.exists?(user_id: searcher.id)
 
     if PeriodicReport.send_report_limited?(searchee.uid)
       logger.info "Send search report later searchee_id=#{searchee_id} raised=false"

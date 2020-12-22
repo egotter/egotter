@@ -35,6 +35,41 @@
 <hr>
 
 <div class="row">
+  <div class="col-4">
+    <%= check_box_tag :sneak_search_request, true, @sneak_search_request, {id: 'sneak_search_request', class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="sneak_search_request"></label>
+  </div>
+
+  <div class="col-8">
+    <h6><%= t('.sneak_search_request.title') %></h6>
+    <div class="text-muted small"><%= t('.sneak_search_request.on_note') %></div>
+  </div>
+</div>
+<% if current_user.has_valid_subscription? %>
+  <% if current_user.has_trial_subscription? %>
+    <script>
+      $(function () {
+        $('#sneak_search_request').addClass('btn-end-trial')
+      });
+    </script>
+  <% else %>
+    <script>
+      $(function () {
+        new SneakSearchRequest('sneak_search_request');
+      });
+    </script>
+  <% end %>
+<% else %>
+  <script>
+    $(function () {
+      $('#sneak_search_request').addClass('btn-checkout')
+    });
+  </script>
+<% end %>
+
+<hr>
+
+<div class="row">
   <div class="col-4"><%= t('.search_count.title') %></div>
   <div class="col-8">
     <div>
