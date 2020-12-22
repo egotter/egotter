@@ -32,12 +32,12 @@
       }
     };
 
-    window.onerror = function (message) {
-      sendError('onerror', message);
+    window.onerror = function (message, filePath, rowNumber, columnNumber) {
+      sendError('onerror', 'message=' + message + '&filePath=' + filePath + '&rowNumber=' + rowNumber + '&columnNumber=' + columnNumber);
     };
 
     window.addEventListener('unhandledrejection', function (e) {
-      sendError('unhandledrejection', e);
+      sendError('unhandledrejection', e.message);
     });
   })();
 </script>
