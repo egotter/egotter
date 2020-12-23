@@ -1957,7 +1957,10 @@ ja:
       invalid_input: "%{min} 文字以上 %{max} 文字以内の半角英数字を入力してください。"
       visitor_search_modal:
         title_html: '@<span class="user">user</span> を分析する'
-        body: 'ログインしてから分析することで、結果がより正確になります。'
+        body_html: |
+          ログインしないと、分析が遅くなり結果が不正確になります。<br>
+          <br>
+          えごったーにログインすれば、人気の<span class="egotter-pink">仲良しランキング</span>やリムられチェックをすぐに使うことができます。
         button:
           ok: 'ログインして検索'
           cancel: '検索のみ'

@@ -28,7 +28,7 @@
 <% if top_page? && !user_signed_in? %>
   <%= modal_dialog id: 'visitor-search-modal', title: t('.visitor_search_modal.title_html'), button: {positive: t('.visitor_search_modal.button.ok'), negative: t('.visitor_search_modal.button.cancel')} do %>
     <div class="d-flex align-items-center mb-3">
-      <div class="ml-3"><%= t('.visitor_search_modal.body') %></div>
+      <div class="text-left ml-3"><%= t('.visitor_search_modal.body_html') %></div>
     </div>
   <% end %>
 
@@ -56,6 +56,10 @@
       $form.on('submit', function () {
         $modal.find('.modal-title .user').text($input.val());
         $modal.modal();
+
+        var page = window.location.href;
+        ahoy.track('VisitorSearchModal opened', {page: page});
+
         return false;
       });
     });
