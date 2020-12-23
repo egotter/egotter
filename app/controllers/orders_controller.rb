@@ -18,7 +18,7 @@ class OrdersController < ApplicationController
 
   # Callback URL for a canceled payment
   def cancel
-    redirect_to root_path(via: current_via), notice: t('.canceled_html')
+    redirect_to root_path(via: current_via), notice: t('.canceled_html', count: Rails.configuration.x.constants[:usage_count] / 10000)
   end
 
   def checkout_session_completed

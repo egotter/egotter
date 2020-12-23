@@ -13,7 +13,7 @@
     <i class="fas fa-user"></i>
   </div>
 
-  <div class="mb-5"><%= t('.description_top_html') %></div>
+  <div class="mb-5"><%= t('.description_top_html', count: Rails.configuration.x.constants[:usage_count] / 10000) %></div>
 
   <div id="searched-tweets" class="text-left mx-auto" style="min-height: 200px;"></div>
   <div class="my-5"><%= t('.description_bottom_html') %></div>

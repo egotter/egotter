@@ -94,7 +94,7 @@ ja:
       text002_html: '<span class="egotter-pink">フォロワーが減った</span>り<span class="egotter-pink">ブロックされた</span>時に相手がすぐに分かります。'
       text007: 'リムられ通知ですぐに確認'
       text008_html: '<span class="egotter-pink">リムられ通知</span>が即座にお知らせ。減ったフォロワーを見逃しません。'
-      text009_html: '<span class="egotter-pink">350万回以上</span>の利用実績'
+      text009_html: '<span class="egotter-pink">%{count}万回以上</span>の利用実績'
       text010_html: '便利で面白い。実は<span class="egotter-pink">みんな</span>使ってます。'
       text012_html: '公式アカウント'
       text013_html: '何か分からないことがありますか？ <span class="egotter-pink">リプライ</span>でいつでもお聞きください。'
@@ -612,7 +612,7 @@ ja:
       failed_html: '購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。<br><br>これまでの購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'
     cancel:
       canceled_html: |
-        えごったーは、350万回以上利用されている安心の実績があります。何か気になることがありますか？<br>
+        えごったーは、%{count}万回以上利用されている安心の実績があります。何か気になることがありますか？<br>
         <br>
         分からないこと、気になることは、@ego_tter にいつでもご質問ください。
         <a href="https://twitter.com/ego_tter" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">@ego_tter に質問する</a>
@@ -790,14 +790,6 @@ ja:
           そのため、<a href="%{url}">リムられチェックへのログイン</a>は先にしておきましょう。<br>
           リムられた後にログインしても、もう誰にリムられたのか<span class="egotter-pink">分からない</span>ままになってしまいます。
         check: 'すぐに登録'
-      text001_html: >
-        ワンクリックでリムられチェック<br>
-        <span class="egotter-pink">350万回</span>以上利用されたえごったーに新機能が登場！
-      text002_html: >
-        リムられチェックの決定版<br>
-        <br>
-        スマホから使える<span class="egotter-pink">無料</span>の<br>
-        リムられチェックアプリです。
     show:
       tweet: '%{text} #egotter %{url}'
   unfollowers:
@@ -1294,11 +1286,11 @@ ja:
       plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
       simple_title: 'ときめきアンフォロー✨'
       footer_title: 'ときめきアンフォロー✨'
-      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。350万人以上が利用するえごったーに新機能が登場！"
+      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。%{count}万人以上が利用するえごったーに新機能が登場！"
       right_side:
         header: 'ときめきアンフォロー'
         subheader: 'あなたは今のタイムラインにときめきますか？'
-        lead_html: 'ときめきアンフォローでタイムラインを整理しましょう。<br><span class="egotter-pink">350万人</span>以上が利用するえごったーに新機能が登場！'
+        lead_html: 'ときめきアンフォローでタイムラインを整理しましょう。<br><span class="egotter-pink">%{count}万人</span>以上が利用するえごったーに新機能が登場！'
       redirection_modal:
         title: '@%{user} でログイン中です'
         body: 'ときめきアンフォローを続きから再開しますか？'
@@ -1311,7 +1303,7 @@ ja:
       navbar_title: 'ときめきアンフォロー✨'
       plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
       simple_title: 'ときめきアンフォロー✨'
-      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。350万人以上が利用するえごったーに新機能が登場！"
+      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。%{count}万人以上が利用するえごったーに新機能が登場！"
       text001_html: 'あなたは今も、<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんに心がときめいていますか？✨'
       next_is_html: '次は%{number}人目、<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんです。🙂'
       how_to_continue_html: '途中から再開する場合は、再度同じURL <a href="%{url}" class="btn btn-primary">ときめきアンフォロー</a> にアクセスしてください。'
@@ -1330,14 +1322,11 @@ ja:
       navbar_title: 'ツイートクリーナー🧹'
       footer_title: 'ツイートを一括削除'
       meta_title: 'ツイートクリーナー🧹 - ワンクリックでツイートを一括削除'
-      meta_description: '黒歴史よさようなら！ ワンクリックでツイートを一括削除。350万回以上利用されたえごったーに新機能が登場！ 100件/秒の速さでツイートを高速削除します。10年以上利用されているえごったーだからプライバシーも安心です。'
+      meta_description: '黒歴史よさようなら！ ワンクリックでツイートを一括削除。%{count}万回以上利用されたえごったーに新機能が登場！ 100件/秒の速さでツイートを高速削除します。10年以上利用されているえごったーだからプライバシーも安心です。'
       right_side:
         header: 'ツイートクリーナー'
         subheader: 'ワンクリックでツイートを一括削除'
-        lead_html: '100ツイート/秒の速さで高速削除！<br><span class="egotter-pink">350万回</span>以上利用された安心のツールです。<br>'
-      text001_html: >
-        ワンクリックでツイートを一括削除<br>
-        <span class="egotter-pink">350万回</span>以上利用されたえごったーに新機能が登場！
+        lead_html: '100ツイート/秒の速さで高速削除！<br><span class="egotter-pink">%{count}万回</span>以上利用された安心のツールです。<br>'
       redirection_modal:
         title: '@%{user} でログイン中です'
         body_html: |
@@ -1406,14 +1395,11 @@ ja:
       navbar_title: 'いいねクリーナー'
       footer_title: 'いいねを一括削除'
       meta_title: 'いいねクリーナー - ワンクリックでいいねを一括削除'
-      meta_description: '黒歴史よさようなら！ ワンクリックでいいねを一括削除。350万回以上利用されたえごったーに新機能が登場！ 100件/秒の速さでいいねを高速削除します。10年以上利用されているえごったーだからプライバシーも安心です。'
+      meta_description: '黒歴史よさようなら！ ワンクリックでいいねを一括削除。%{count}万回以上利用されたえごったーに新機能が登場！ 100件/秒の速さでいいねを高速削除します。10年以上利用されているえごったーだからプライバシーも安心です。'
       right_side:
         header: 'いいねクリーナー'
         subheader: 'ワンクリックでいいねを一括削除'
-        lead_html: '100件/秒の速さで高速削除！<br><span class="egotter-pink">350万回</span>以上利用された安心のツールです。<br>'
-      text001_html: >
-        ワンクリックでいいねを一括削除<br>
-        <span class="egotter-pink">350万回</span>以上利用されたえごったーに新機能が登場！
+        lead_html: '100件/秒の速さで高速削除！<br><span class="egotter-pink">%{count}万回</span>以上利用された安心のツールです。<br>'
       redirection_modal:
         title: '@%{user} でログイン中です'
         body_html: |
@@ -1965,7 +1951,7 @@ ja:
           ok: 'ログインして検索'
           cancel: '検索のみ'
     side_by_side_section:
-      text021_html: '<span style="font-size: 28px;">350万回</span> 以上の利用実績'
+      text021_html: '<span style="font-size: 28px;">%{count}万回</span> 以上の利用実績'
       text022_html: '<span style="font-size: 28px;">フォロワーが減ったら</span> 通知でお知らせ'
       text023_html: '<span style="font-size: 28px;">無料</span> で使えます'
     right_side:
@@ -1977,11 +1963,11 @@ ja:
       check_006: "人気ランキング分析"
       or: " または "
       lead_003_html: '高度な分析が<span class="egotter-pink">今なら無料</span>です'
-      text003_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーを、<br>今すぐあなたも使ってみよう！'
+      text003_html: '<span class="egotter-pink">%{count}万回</span>以上利用されたえごったーを、<br>今すぐあなたも使ってみよう！'
     review_section:
       title: 'レビュー'
       description_top_html: |
-        えごったーはこれまでに<span class="egotter-pink">350万回</span>以上利用されてきました。
+        えごったーはこれまでに<span class="egotter-pink">%{count}万回</span>以上利用されてきました。
         たくさんの人がえごったーは便利だとツイートしています。
       description_bottom_html: |
         えごったーはたくさんの人に利用されている安心のツールです。
@@ -2017,7 +2003,7 @@ ja:
         えごったーにログインすると、<span class="egotter-pink">検索が早く</span>なり、<br>
         <span class="egotter-pink">リム通知</span>が届くようになります。<br>
         <br>
-        <span class="egotter-pink">350万回</span>以上利用されたえごったーを、<br>
+        <span class="egotter-pink">%{count}万回</span>以上利用されたえごったーを、<br>
         今すぐあなたも使ってみよう！
       check1: '無料で登録'
       check2: '高速モード'
@@ -2033,17 +2019,17 @@ ja:
       title5_html: '公式アカウント'
       title6_html: '<span class="egotter-pink">安全に</span>リムられをチェック'
       title7_html: '公式アカウント'
-      text1_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、安全にツイートを削除することができます。'
+      text1_html: '<span class="egotter-pink">%{count}万回</span>以上利用されたえごったーなら、安全にツイートを削除することができます。'
       text2_html: '可能な限り完全にツイートを削除します。'
       text3_html: 'どこまで進んでいるのかを簡単に確認できます。'
-      text1_2_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、安全にいいねを削除することができます。'
+      text1_2_html: '<span class="egotter-pink">%{count}万回</span>以上利用されたえごったーなら、安全にいいねを削除することができます。'
       text2_2_html: '可能な限り完全にいいねを削除します。'
       text3_2_html: 'どこまで進んでいるのかを簡単に確認できます。'
       text4_html: 'フォローを外されたときにDMが届きます。'
       text5_html: |
         ツイッターの一括削除にはえごったーを利用しています。もし、ツイートの一括削除ができない場合は、
         <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
-      text6_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、安全にリムられをチェックできます。'
+      text6_html: '<span class="egotter-pink">%{count}万回</span>以上利用されたえごったーなら、安全にリムられをチェックできます。'
       text7_html: |
         ユーザーのフォロー解除、リムられは、えごったーが分析したデータから集計しています。<br>
         <br>
@@ -2625,7 +2611,7 @@ ja:
     ajax:
       need_login_html: 'この操作を行うためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
     back_from_twitter_html: >
-      えごったーは <span class="egotter-pink">350万回</span> 以上利用されている安心のサービスです。<br>
+      えごったーは <span class="egotter-pink">%{count}万回</span> 以上利用されている安心のサービスです。<br>
       <br>
       <span class="egotter-pink">ログインすることでデータが貯まります</span>。<br>
       ログインして使い始めよう。<br>

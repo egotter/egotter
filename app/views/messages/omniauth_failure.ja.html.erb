@@ -11,7 +11,7 @@
         <% end %>
       </div>
 
-      <div class="mb-3">えごったーは <span class="egotter-pink">350万回</span> 以上利用されている安心のサービスです。ログインして便利に使いましょう！</div>
+      <div class="mb-3">えごったーは <span class="egotter-pink"><%= Rails.configuration.x.constants[:usage_count] / 10000 %>万回</span> 以上利用されている安心のサービスです。ログインして便利に使いましょう！</div>
       <a class="btn btn-primary btn-sm" href="<%= sign_in_url %>">ログインする</a> または <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">公式アカウントに質問</a>
     </div>
 
@@ -23,7 +23,7 @@
     <div id="omniauth-failure-details-<%= id_hash %>" class="collapse">
       <hr>
       <div>1. えごったーとは何ですか？</div>
-      <div class="mb-4">これまでに<span class="egotter-pink">350万回</span>以上利用されたツイッター分析アプリです。<br>
+      <div class="mb-4">これまでに<span class="egotter-pink"><%= Rails.configuration.x.constants[:usage_count] / 10000 %>万回</span>以上利用されたツイッター分析アプリです。<br>
         仲良しランキング、片思いチェック、リムられチェックなどの機能があります。</div>
 
       <div>2. ログインするとどうなりますか？</div>

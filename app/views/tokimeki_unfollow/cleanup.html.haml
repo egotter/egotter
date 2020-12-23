@@ -1,5 +1,5 @@
 - title t('.plain_title')
-- set_meta_tags description: t('.description')
+- set_meta_tags description: t('.description', count: Rails.configuration.x.constants[:usage_count] / 10000)
 
 .text-center.my-5= t('.next_is_html', number: @user.processed_count + 1, screen_name: @friend.screen_name)
 

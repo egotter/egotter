@@ -32,7 +32,7 @@
     = link_to sign_in_path(via: current_via('screenshots')) do
       %img{alt: '', src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
 
-  %div.my-4= t('.text003_html')
+  %div.my-4= t('.text003_html', count: Rails.configuration.x.constants[:usage_count] / 10000)
 
   = sign_in_with_twitter_link(redirect_path, 'screenshots_button', class: 'btn btn-primary btn-block')
   = render partial: 'shared/check_and_note', locals: {text: t('.check_005')}

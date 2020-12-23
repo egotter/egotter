@@ -18,7 +18,7 @@
 <%= render partial: 'shared/feature_section', locals: options %>
 
 <% options = {
-    title: t('home.new.text009_html'),
+    title: t('home.new.text009_html', count: Rails.configuration.x.constants[:usage_count] / 10000),
     image: '/egotter_chart_346x430.png',
     description: t('home.new.text010_html'),
     note: nil,
@@ -38,7 +38,7 @@
 <% options = {
     title: t('shared.sign_in_button_at_bottom.title_html'),
     image: '/egotter_useful_with_text_400x448.png',
-    description: t('shared.sign_in_button_at_bottom.description_html'),
+    description: t('shared.sign_in_button_at_bottom.description_html', count: Rails.configuration.x.constants[:usage_count] / 10000),
     note: nil,
     link: sign_in_with_twitter_link(nil, 'sign_in_button_at_bottom', class: 'btn btn-primary btn-block'),
     check: [t('shared.sign_in_button_at_bottom.check1'), t('shared.sign_in_button_at_bottom.check2'), t('shared.sign_in_button_at_bottom.check3')]} %>

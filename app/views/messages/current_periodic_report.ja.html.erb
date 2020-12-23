@@ -25,7 +25,7 @@
     <div id="current-periodic-report-details-<%= id_hash %>" class="collapse">
       <hr>
       <div>1. えごったーとは何ですか？</div>
-      <div class="mb-4">これまでに<span class="egotter-pink">350万回</span>以上利用されたツイッター分析アプリです。<br>
+      <div class="mb-4">これまでに<span class="egotter-pink"><%= Rails.configuration.x.constants[:usage_count] / 10000 %>万回</span>以上利用されたツイッター分析アプリです。<br>
         仲良しランキング、片思いチェック、リムられチェックなどの機能があります。</div>
 
       <div>2. リムられ通知とは何ですか？</div>

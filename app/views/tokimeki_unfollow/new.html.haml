@@ -1,8 +1,8 @@
 - title t('.plain_title')
-- set_meta_tags description: t('.description')
+- set_meta_tags description: t('.description', count: Rails.configuration.x.constants[:usage_count] / 10000)
 - set_meta_tags og: {image: 'https://egotter.com/egotter_tokimeki_icon_840x450.png'}
 
-- right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html'), redirect_path: tokimeki_unfollow_cleanup_path(via: current_via), show_search_form: false}
+- right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html', count: Rails.configuration.x.constants[:usage_count] / 10000), redirect_path: tokimeki_unfollow_cleanup_path(via: current_via), show_search_form: false}
 = render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options}
 
 - if show_redirection_modal?

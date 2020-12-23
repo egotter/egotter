@@ -31,7 +31,7 @@ class HomeController < ApplicationController
     via = params[:via].to_s
 
     if params[:back_from_twitter] == 'true'
-      flash.now[:notice] = t('before_sign_in.back_from_twitter_html', url: sign_in_path(via: current_via('back_from_twitter')))
+      flash.now[:notice] = t('before_sign_in.back_from_twitter_html', count: Rails.configuration.x.constants[:usage_count] / 10000, url: sign_in_path(via: current_via('back_from_twitter')))
 
     elsif via.end_with?('secret_mode_detected')
       @without_alert_container = true

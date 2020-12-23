@@ -39,7 +39,7 @@
   <div class="left-side" style="background-image: url(<%= image_path('/egotter_big_background_840x800.png') %>); background-position: center;">
     <div class="w-100 h-100" style="position: relative;">
       <div style="color:white; font-size: 18px; position: absolute; top: 40%; left: 50%; transform: translateX(-50%);">
-        <div><%= t('.text021_html') %></div>
+        <div><%= t('.text021_html', count: Rails.configuration.x.constants[:usage_count] / 10000) %></div>
         <div><%= t('.text022_html') %></div>
         <div><%= t('.text023_html') %></div>
       </div>
