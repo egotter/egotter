@@ -8,7 +8,7 @@
       - purchased = current_user.has_valid_subscription?
       - trial = purchased && current_user.has_trial_subscription?
       - Filter::VALUES.each.with_index do |(label, value), i|
-        - if [2, 6, 8, 10, 16].include?(i)
+        - if [2, 6, 8, 10, 17].include?(i)
           .dropdown-divider
 
         - if i < 2

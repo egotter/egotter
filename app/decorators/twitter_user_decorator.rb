@@ -77,6 +77,10 @@ class TwitterUserDecorator < ApplicationDecorator
     description&.match?(/モデル/)
   end
 
+  def too_emotional?
+    description&.match?(/精神疾患|自傷行為|障害年金\d級|精神\d級|発達障害|人格障害|双極|統失|セルフネグレクト|病み垢/)
+  end
+
   def pop_idol?
     description&.match?(/アイドル/)
   end
