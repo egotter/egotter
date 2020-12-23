@@ -1,4 +1,4 @@
-<div class="container text-center mt-5">
+<div class="container text-center mt-5" style="min-height: 200px;">
   <h2 class="h4 my-5"><%= t('.title') %></h2>
 
   <div class="mb-5">
@@ -31,13 +31,16 @@
     var url = '<%= load_public_tweets_path %>';
     var selector = '#searched-tweets';
     new PublicTweets(url, selector, function () {
+      var userId = <%= current_user&.id %>;
+      var deviceType = '<%= request.device_type %>';
+      var controllerAction = '<%= controller_name %>#<%= action_name %>';
       ga('send', {
         hitType: 'event',
-        eventCategory: 'PublicTweets',
-        eventAction: 'loaded',
-        eventLabel: 'PublicTweets loaded'
+        eventCategory: 'PublicTweets loaded',
+        eventAction: controllerAction,
+        eventLabel: JSON.stringify({user_id: userId, deviceType: deviceType})
       });
-      ahoy.track("PublicTweets loaded");
+      ahoy.track("PublicTweets loaded", {userId: userId, deviceType: deviceType, controllerAction: controllerAction});
     });
   });
 </script>

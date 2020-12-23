@@ -4,13 +4,16 @@
   $(function () {
     var url = '<%= raw api_v1_features_list_path(via: current_via) %>';
     new Features(url, 'features-container', function () {
+      var userId = <%= current_user&.id %>;
+      var deviceType = '<%= request.device_type %>';
+      var controllerAction = '<%= controller_name %>#<%= action_name %>';
       ga('send', {
         hitType: 'event',
-        eventCategory: 'Features',
-        eventAction: 'loaded',
-        eventLabel: 'Features loaded'
+        eventCategory: 'Features loaded',
+        eventAction: controllerAction,
+        eventLabel: JSON.stringify({user_id: userId, deviceType: deviceType})
       });
-      ahoy.track("Features loaded");
+      ahoy.track("Features loaded", {userId: userId, deviceType: deviceType, controllerAction: controllerAction});
     });
   });
 </script>

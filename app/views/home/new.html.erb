@@ -14,3 +14,18 @@
   <% modal_body = t('.redirection_modal.body_html', user: current_user.screen_name, icon: current_user_icon, url: url, url2: url2) %>
   <%= render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: modal_body, url: timeline_path(current_user, via: current_via('redirection_modal'))} %>
 <% end %>
+
+<script>
+  (function () {
+    var userId = <%= current_user&.id %>;
+    var deviceType = '<%= request.device_type %>';
+    var controllerAction = '<%= controller_name %>#<%= action_name %>';
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'TopPage loaded',
+      eventAction: controllerAction,
+      eventLabel: JSON.stringify({user_id: userId, deviceType: deviceType})
+    });
+    ahoy.track("TopPage loaded", {userId: userId, deviceType: deviceType, controllerAction: controllerAction});
+  })();
+</script>
