@@ -69,6 +69,10 @@ class TwitterUserDecorator < ApplicationDecorator
     description&.match?(/(裏|サブ)(垢|アカ)/)
   end
 
+  def adult_account?
+    description&.match?(/処女|オナニー|クンニ|エッチ/)
+  end
+
   def profile_icon_url?
     profile_image_url_https.present?
   end

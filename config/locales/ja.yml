@@ -2572,7 +2572,8 @@ ja:
     followers_>_friends: "フォロワー数 > フォロー数"
     has_instagram: "インスタを持っている"
     has_tiktok: "TikTokを持っている"
-    has_secret_account: "裏アカあり"
+    has_secret_account: "裏アカを持っている"
+    adult_account: "アダルトなアカウント"
   download:
     title: "ダウンロード"
     alert: "この機能は準備中です。"

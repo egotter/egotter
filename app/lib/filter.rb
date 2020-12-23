@@ -13,6 +13,7 @@ class Filter
       [I18n.t('filter.has_instagram'), 'has_instagram'],
       [I18n.t('filter.has_tiktok'), 'has_tiktok'],
       [I18n.t('filter.has_secret_account'), 'has_secret_account'],
+      [I18n.t('filter.adult_account'), 'adult_account'],
   ]
 
   def initialize(value)
@@ -40,6 +41,7 @@ class Filter
         when VALUES[10][1] then tmp.select!(&:has_instagram?)
         when VALUES[11][1] then tmp.select!(&:has_tiktok?)
         when VALUES[12][1] then tmp.select!(&:has_secret_account?)
+        when VALUES[13][1] then tmp.select!(&:adult_account?)
         else raise "Invalid filter value=#{value}"
         end
       end
