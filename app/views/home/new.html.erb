@@ -17,7 +17,7 @@
 
 <script>
   (function () {
-    var userId = <%= current_user&.id %>;
+    var userId = '<%= current_user&.id %>';
     var deviceType = '<%= request.device_type %>';
     var controllerAction = '<%= controller_name %>#<%= action_name %>';
     ga('send', {
@@ -26,6 +26,6 @@
       eventAction: controllerAction,
       eventLabel: JSON.stringify({user_id: userId, deviceType: deviceType})
     });
-    ahoy.track("TopPage loaded", {userId: userId, deviceType: deviceType, controllerAction: controllerAction});
+    ahoy.track("TopPage loaded", {deviceType: deviceType, controllerAction: controllerAction});
   })();
 </script>

@@ -1,6 +1,6 @@
 <script>
   (function () {
-    var userId = <%= current_user&.id %>;
+    var userId = '<%= current_user&.id %>';
     var eventAction = '<%= "#{controller_name}##{action_name}" %>';
     var deviceType = '<%= request.device_type %>';
     var os = '<%= request.os + ' ' + request.os_version %>';
