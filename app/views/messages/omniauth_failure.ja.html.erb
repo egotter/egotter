@@ -49,3 +49,11 @@
     </div>
   </div>
 </div>
+
+<script>
+  $(function () {
+    var deviceType = '<%= request.device_type %>';
+    var controllerAction = '<%= controller_name %>#<%= action_name %>';
+    ahoy.track("OmniauthFailureMessage shown", {deviceType: deviceType, controllerAction: controllerAction});
+  });
+</script>
