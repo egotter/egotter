@@ -13,6 +13,9 @@ class Filter
       [I18n.t('filter.investor'), 'investor'],
       [I18n.t('filter.engineer'), 'engineer'],
       [I18n.t('filter.designer'), 'designer'],
+      [I18n.t('filter.bikini_model'), 'bikini_model'],
+      [I18n.t('filter.fashion_model'), 'fashion_model'],
+      [I18n.t('filter.pop_idol'), 'pop_idol'],
       [I18n.t('filter.has_instagram'), 'has_instagram'],
       [I18n.t('filter.has_tiktok'), 'has_tiktok'],
       [I18n.t('filter.has_secret_account'), 'has_secret_account'],
@@ -44,10 +47,13 @@ class Filter
         when VALUES[10][1] then tmp.select!(&:investor?)
         when VALUES[11][1] then tmp.select!(&:engineer?)
         when VALUES[12][1] then tmp.select!(&:designer?)
-        when VALUES[13][1] then tmp.select!(&:has_instagram?)
-        when VALUES[14][1] then tmp.select!(&:has_tiktok?)
-        when VALUES[15][1] then tmp.select!(&:has_secret_account?)
-        when VALUES[16][1] then tmp.select!(&:adult_account?)
+        when VALUES[13][1] then tmp.select!(&:bikini_model?)
+        when VALUES[14][1] then tmp.select!(&:fashion_model?)
+        when VALUES[15][1] then tmp.select!(&:pop_idol?)
+        when VALUES[16][1] then tmp.select!(&:has_instagram?)
+        when VALUES[17][1] then tmp.select!(&:has_tiktok?)
+        when VALUES[18][1] then tmp.select!(&:has_secret_account?)
+        when VALUES[19][1] then tmp.select!(&:adult_account?)
         else raise "Invalid filter value=#{value}"
         end
       end

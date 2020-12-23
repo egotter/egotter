@@ -69,6 +69,18 @@ class TwitterUserDecorator < ApplicationDecorator
     description&.match?(/([Dd])esigner|デザイナ|イラストレータ/)
   end
 
+  def bikini_model?
+    description&.match?(/グラビア/)
+  end
+
+  def fashion_model?
+    description&.match?(/モデル/)
+  end
+
+  def pop_idol?
+    description&.match?(/アイドル/)
+  end
+
   def has_instagram?
     description&.include?('instagram.com') || url&.include?('instagram.com')
   end
