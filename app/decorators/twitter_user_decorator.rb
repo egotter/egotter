@@ -57,6 +57,18 @@ class TwitterUserDecorator < ApplicationDecorator
     description.present?
   end
 
+  def investor?
+    description&.match?(/投資|Founder|ベンチャーキャピタル|VC|アーリーステージ|インキュベータ|インキュベーション/)
+  end
+
+  def engineer?
+    description&.match?(/([Ee])ngineer|エンジニア|開発者|Python|Ruby|Golang|Java/)
+  end
+
+  def designer?
+    description&.match?(/([Dd])esigner|デザイナ|イラストレータ/)
+  end
+
   def has_instagram?
     description&.include?('instagram.com') || url&.include?('instagram.com')
   end
