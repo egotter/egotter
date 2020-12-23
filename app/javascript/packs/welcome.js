@@ -147,6 +147,9 @@ class SignInDialog {
       window.location.href = url;
     });
 
+    var page = window.location.href;
+    ahoy.track('SignInModal opened', {page: page});
+
     $el.modal();
   }
 }
