@@ -1,7 +1,7 @@
 <% right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html')} %>
 <%= render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options} %>
 
-<%= render partial: 'adsense/ad', locals: {vertical: :top} %>
+<%= render partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top} %>
 
 <%= render partial: 'shared/review_section' %>
 <%= render partial: 'shared/features_section' %>
