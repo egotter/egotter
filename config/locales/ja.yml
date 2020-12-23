@@ -98,7 +98,7 @@ ja:
       text010_html: '便利で面白い。実は<span class="egotter-pink">みんな</span>使ってます。'
       text012_html: '公式アカウント'
       text013_html: '何か分からないことがありますか？ <span class="egotter-pink">リプライ</span>でいつでもお聞きください。'
-      text014_html: '@ego_tter に質問してみる'
+      text014_html: '@egotter_cs に質問してみる'
       redirection_modal:
         title: '@%{user} でログイン中です'
         body_html: |
@@ -2050,8 +2050,8 @@ ja:
         フォロー解除やリムられに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
       note2: '※ツイッターの仕組み上、最大で3200件まで削除できます。'
       note4: '※設定でオフにすることができます。'
-      button5: '@ego_tter に質問してみる'
-      button7: '@ego_tter に質問してみる'
+      button5: '@egotter_cs に質問してみる'
+      button7: '@egotter_cs に質問してみる'
       check1: '安全で安心'
       check2: '完全に削除'
       check3: '進捗がすぐ分かる'
