@@ -345,7 +345,7 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     rbtree3 (0.6.0)
-    redis (4.2.1)
+    redis (4.2.5)
     regexp_parser (1.7.1)
     representable (3.0.4)
       declarative (< 0.1.0)
