@@ -88,7 +88,7 @@ GEM
       zeitwerk (~> 2.2, >= 2.2.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    ahoy_matey (3.0.4)
+    ahoy_matey (3.1.0)
       activesupport (>= 5)
       device_detector
       geocoder (>= 1.4.5)
@@ -144,7 +144,7 @@ GEM
     crass (1.0.6)
     declarative (0.0.20)
     declarative-option (0.1.0)
-    device_detector (1.0.4)
+    device_detector (1.0.5)
     devise (4.7.3)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -185,7 +185,7 @@ GEM
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
-    geocoder (1.6.3)
+    geocoder (1.6.4)
     gli (2.19.2)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
