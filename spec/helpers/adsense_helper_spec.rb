@@ -7,7 +7,7 @@ RSpec.describe AdsenseHelper, type: :helper do
 
     it do
       expect(helper).to receive(:ad_ng_uid?).with(user.uid)
-      expect(helper).to receive(:ad_ng_profile?).with(user.description)
+      expect(helper).to receive(:ad_ng_description?).with(user.description)
       is_expected.to be_falsey
     end
   end
@@ -30,8 +30,8 @@ RSpec.describe AdsenseHelper, type: :helper do
     end
   end
 
-  describe '#ad_ng_profile?' do
-    subject { helper.ad_ng_profile?(text) }
+  describe '#ad_ng_description?' do
+    subject { helper.ad_ng_description?(text) }
 
     [nil, '', 'Hello'].each do |value|
       context "text is #{value.inspect}" do

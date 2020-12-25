@@ -1,9 +1,9 @@
 module AdsenseHelper
   AD_NG_UIDS = [740700661939994624, 2412435452, 739670367212445697]
-  AD_NG_WORDS = ['オナニー', 'クンニ']
+  AD_NG_WORDS = ['オナニー', 'おなにー', 'アナル', 'あなる', 'クンニ', 'ソープ']
 
   def ad_ng_user?(user)
-    user && (ad_ng_uid?(user.uid) || ad_ng_profile?(user.description))
+    user && (ad_ng_uid?(user.uid) || ad_ng_description?(user.description))
   rescue => e
     logger.warn "#{__method__}: Unhandled exception #{e.inspect}"
     false
@@ -13,7 +13,7 @@ module AdsenseHelper
     uid && AD_NG_UIDS.include?(uid)
   end
 
-  def ad_ng_profile?(text)
+  def ad_ng_description?(text)
     text && AD_NG_WORDS.any? { |word| text.include?(word) }
   end
 
