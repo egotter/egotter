@@ -19,7 +19,8 @@ class DeleteTweetsUploader {
         ToastMessage.warn(self.i18n['invalidFilename']);
         valid = false;
       } else if (file.type.indexOf('zip') === -1 && file.type.indexOf('octet-stream' === -1)) {
-        ToastMessage.warn(self.i18n['invalidContentType']);
+        var message = self.i18n['invalidContentType'];
+        ToastMessage.info(message.replace('{type}', self.escapeFileType(file.type)));
         valid = false;
       } else if (file.size > 30000000000) { // 30GB
         ToastMessage.warn(self.i18n['filesizeTooLarge']);
@@ -105,6 +106,19 @@ class DeleteTweetsUploader {
     var url = '/api/v1/delete_tweets_notifications'; //  api_v1_delete_tweets_notifications_path
     $.post(url).done(function () {
     }).fail(showErrorMessage);
+  }
+
+  escapeFileType(str) {
+    var type = '';
+    try {
+      type = str.replace(/<\/?[^>]+(>|$)/g, '');
+      if (!type) {
+        type = 'empty';
+      }
+    } catch (e) {
+      type = 'error';
+    }
+    return type;
   }
 }
 

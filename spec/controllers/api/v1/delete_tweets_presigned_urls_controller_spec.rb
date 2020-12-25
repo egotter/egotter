@@ -12,7 +12,7 @@ RSpec.describe Api::V1::DeleteTweetsPresignedUrlsController, type: :controller d
     let(:filename) { 'twitter-2000-00-00-abcde.zip' }
     let(:filesize) { 1.gigabytes }
     subject { post :create, params: {filename: filename, filesize: filesize} }
-    before { allow(S3::ArchiveData).to receive(:presigned_url).with(user.uid, filename, filesize.to_s) }
+    before { allow(S3::ArchiveData).to receive(:presigned_url).with("#{user.uid}-#{user.screen_name}", filename, filesize.to_s) }
     it { is_expected.to have_http_status(:ok) }
   end
 end

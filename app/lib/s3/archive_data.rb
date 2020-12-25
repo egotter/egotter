@@ -11,9 +11,9 @@ module S3
         client.object(uid.to_s).exists?
       end
 
-      def presigned_url(uid, filename, filesize)
-        object = client.object(uid.to_s)
-        meta = {filename: filename, filesize: filesize}
+      def presigned_url(key, raw_filename, raw_filesize)
+        object = client.object(key)
+        meta = {filename: raw_filename, filesize: raw_filesize}
         object.presigned_url(:put, expires_in: 300, acl: 'private', metadata: meta)
       end
 

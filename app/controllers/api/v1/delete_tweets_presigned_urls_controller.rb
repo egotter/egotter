@@ -9,7 +9,8 @@ module Api
       before_action :validate_filesize
 
       def create
-        render json: {url: S3::ArchiveData.presigned_url(current_user.uid, params[:filename], params[:filesize])}
+        key = "#{current_user.uid}-#{current_user.screen_name}"
+        render json: {url: S3::ArchiveData.presigned_url(key, params[:filename], params[:filesize])}
       end
 
       private

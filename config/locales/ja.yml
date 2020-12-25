@@ -1370,7 +1370,15 @@ ja:
     uploader:
       archive_data_only: 'twitter-0000-00-00-abcedf.zip を選択'
       invalid_filename: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをそのまま指定してください。'
-      invalid_content_type: 'ファイルの形式が違います。Twitterから取得したアーカイブデータをそのまま指定してください。'
+      invalid_content_type_html:
+        <span class="text-danger">ファイルの形式が違います。Twitterから取得したアーカイブデータをそのまま指定してください。</span><br>
+        <br>
+        何度も起きる場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
+        <br>
+        type={type}<br>
+        device_type=%{device_type}<br>
+        os=%{os}<br>
+        browser=%{browser}
       filesizeTooLarge: '特殊なファイル形式です。個別に対応しますので @egotter_cs にご連絡ください。'
       preparing: 'ファイルのアップロードを準備中です。ページを閉じないでそのままお待ちください。'
       uploading: 'ファイルをアップロード中です。ページを閉じないでそのままお待ちください。'
