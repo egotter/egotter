@@ -1,6 +1,5 @@
 module AdsenseHelper
   AD_NG_UIDS = [740700661939994624, 2412435452, 739670367212445697]
-  AD_NG_WORDS = ['オナニー', 'おなにー', 'アナル', 'あなる', 'クンニ', 'ソープ']
 
   def ad_ng_user?(user)
     user && (ad_ng_uid?(user.uid) || ad_ng_text?(user.name) || ad_ng_text?(user.description))
@@ -14,7 +13,7 @@ module AdsenseHelper
   end
 
   def ad_ng_text?(text)
-    text && AD_NG_WORDS.any? { |word| text.include?(word) }
+    text && text.match?(TwitterUserDecorator::ADULT_ACCOUNT_REGEXP)
   end
 
   USER_TOP            = 1499207213

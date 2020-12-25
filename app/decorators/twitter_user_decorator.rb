@@ -53,6 +53,17 @@ class TwitterUserDecorator < ApplicationDecorator
     url.present?
   end
 
+  def censored_description
+    if description? && description.match?(ADULT_ACCOUNT_REGEXP)
+      I18n.t('twitter.censored_description')
+    else
+      description
+    end
+  rescue => e
+    logger.warn "#{__method__}: Unhandled exception #{e.inspect} description=#{description}"
+    description
+  end
+
   def description?
     description.present?
   end
@@ -97,8 +108,10 @@ class TwitterUserDecorator < ApplicationDecorator
     description&.match?(/(裏|サブ)(垢|アカ)/)
   end
 
+  ADULT_ACCOUNT_REGEXP = /オナニー|おなにー|アナル|あなる|エッチ|えっち|チンポ|ちんぽ|クンニ|ソープ|肉便器|巨乳|おしっこ|精子|パンツ|パンティ|下着|アダルトグッズ|SMグッズ|童貞|処女|射精|股間|洋炉|炉利|ハメ撮り|エロ動画|性奴隷|雌豚|エロ垢|オフパコ|セフレ|セックス/
+
   def adult_account?
-    description&.match?(/処女|オナニー|クンニ|エッチ/)
+    description&.match?(ADULT_ACCOUNT_REGEXP)
   end
 
   def profile_icon_url?
@@ -214,9 +227,20 @@ class TwitterUserDecorator < ApplicationDecorator
     end
   end
 
+  def censored_name
+    if name.present? && name.match?(ADULT_ACCOUNT_REGEXP)
+      I18n.t('twitter.censored_name')
+    else
+      name
+    end
+  rescue => e
+    logger.warn "#{__method__}: Unhandled exception #{e.inspect} name=#{name}"
+    name
+  end
+
   def name_with_icon
     [
-        name,
+        censored_name,
         protected_icon,
         verified_icon
     ].compact.join('&nbsp;').html_safe

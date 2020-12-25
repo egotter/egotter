@@ -75,7 +75,7 @@ module Api
               name_with_icon: user.name_with_icon,
               status_labels: user.status_labels,
               followed_label: follower_uids.include?(user.uid) ? user.single_followed_label : nil,
-              description: vc.linkify(user.description),
+              description: vc.linkify(user.censored_description),
               statuses_count: user.delimited_statuses_count,
               friends_count: user.delimited_friends_count,
               followers_count: user.delimited_followers_count,

@@ -670,6 +670,8 @@ ja:
     tweet_box:
       copy: 'コピーする'
       tweet: 'ツイートする'
+    censored_name: '[名前に性的な単語が含まれています]'
+    censored_description: '[プロフィールに性的な単語が含まれています]'
   welcome:
     new:
       sign_in_with_twitter_html: '%{icon} Twitter でログイン'
