@@ -2,6 +2,8 @@
 <div class="text-muted small mt-1"><%= t('.archive_data_only') %></div>
 <input type="file" id="delete-tweets-file" accept=".zip,application/zip" style="display: none;">
 
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.820.0.min.js"></script>
+
 <script>
   $(function () {
     var i18n = {
@@ -14,6 +16,11 @@
       success: '<%= t('.success_html') %>',
       fail: '<%= t('.fail_html') %>'
     };
-    new DeleteTweetsUploader('delete-tweets-button', 'delete-tweets-file', i18n);
+    var options = {
+      IdentityPoolId: '<%= ENV['DELETE_TWEETS_IDENTITY_POOL_ID'] %>',
+      bucket: '<%= S3::ArchiveData.bucket_name %>',
+      key: '<%= current_user.uid %>' + '-' + '<%= current_user.screen_name %>' + '-' + new Date().getTime() + '-' + Math.random().toString(36).substring(7)
+    };
+    new DeleteTweetsUploader('delete-tweets-button', 'delete-tweets-file', options, i18n);
   });
 </script>

@@ -1,7 +1,8 @@
 class DeleteTweetsUploader {
-  constructor(btnId, inputId, i18n) {
+  constructor(btnId, inputId, options, i18n) {
     this.$btn = $('#' + btnId);
     this.$input = $('#' + inputId);
+    this.options = options;
     this.i18n = i18n;
     var self = this;
 
@@ -55,19 +56,87 @@ class DeleteTweetsUploader {
 
     ToastMessage.info(i18n['preparing'], {autohide: false});
 
-    this.createPresignedUrl(file, function (url) {
-      self.readFile(file, function (data) {
-        self.uploadChunk(url, data);
-      });
+    this.uploadFile(file);
+
+    // this.createPresignedUrl(file, function (url) {
+    //   self.readFile(file, function (data) {
+    //     self.uploadChunk(url, data);
+    //   });
+    // });
+  }
+
+  uploadFile(file) {
+    var i18n = this.i18n;
+    var self = this;
+
+    var onProgress = (function () {
+      var value = 0;
+      return function (event) {
+        if (self.completed) {
+          return;
+        }
+
+        var curValue = parseInt((event.loaded * 100) / event.total);
+        if (curValue > value) {
+          value = curValue;
+          ToastMessage.info(i18n['uploading'].replace('{value}', value + '%'), {autohide: false});
+        }
+      };
+    })();
+
+    AWS.config.region = 'ap-northeast-1';
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId: this.options.IdentityPoolId,
     });
+
+    var upload = new AWS.S3.ManagedUpload({
+      params: {
+        Bucket: this.options.bucket,
+        Key: this.options.key,
+        Body: file,
+        ACL: 'private',
+        Metadata: {
+          filename: file.name,
+          filesize: '' + file.size,
+          filetype: file.type
+        }
+      }
+    });
+
+    var promise = upload.on('httpUploadProgress', onProgress).promise();
+
+    promise.then(
+        function () {
+          self.completed = true;
+          self.notifyUploadCompleted();
+          ToastMessage.info(i18n['success'], {autohide: false});
+        },
+        function (err) {
+          logger.error(err.message);
+          ToastMessage.warn(i18n['fail'], {autohide: false});
+        }
+    );
   }
 
   readFile(file, callback) {
     var i18n = this.i18n;
+    var offset = 0;
+    var size = 10_000_000_000; // 10GB
     var reader = new FileReader();
+
+    var readChunk = function () {
+      var slice = file.slice(offset, offset + size, file.type);
+      offset += size;
+      reader.readAsArrayBuffer(slice);
+    };
 
     reader.onload = function (e) {
       callback(e.target.result);
+      if (offset >= file.size) {
+        logger.log('#readFile completed');
+      } else {
+        readChunk();
+      }
     };
 
     reader.onerror = function (e) {
@@ -75,7 +144,7 @@ class DeleteTweetsUploader {
       ToastMessage.warn(i18n['fail'], {autohide: false});
     };
 
-    reader.readAsArrayBuffer(file);
+    readChunk();
   }
 
   uploadChunk(url, data) {

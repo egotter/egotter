@@ -28,7 +28,8 @@
     "Snackbar": true,
     "ToastMessage": true,
     "Mustache": true,
-    "AsyncLoader": true
+    "AsyncLoader": true,
+    "AWS": true
   },
   "rules": {
     "semi": "error"
