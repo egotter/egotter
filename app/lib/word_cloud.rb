@@ -1,7 +1,7 @@
 require 'natto'
 
 class WordCloud
-
+  # TODO This regexp matches to general English word
   URL_REGEXP = %r{(https?://)?[\w/.\-]+}
 
   def count_words(text, parser: :natto, min_word_length: 2, min_count: 2)

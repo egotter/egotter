@@ -5,7 +5,7 @@
 <script>
   $(function () {
     var i18n = {
-      invalidFilename: '<%= t('.invalid_filename') %>',
+      invalidFilename: '<%= t('.invalid_filename_html', device_type: request.device_type, os: request.os, browser: request.browser) %>',
       invalidContentType: '<%= t('.invalid_content_type_html', device_type: request.device_type, os: request.os, browser: request.browser) %>',
       filesizeTooLarge: '<%= t('.filesizeTooLarge') %>',
       preparing: '<%= t('.preparing') %>',

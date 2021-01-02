@@ -14,12 +14,14 @@ class DeleteTweetsUploader {
       self.$btn.prop('disabled', true).addClass('disabled');
       var file = self.$input[0].files[0];
       var valid = true;
+      var message;
 
       if (!file.name.match(/^twitter-20\d{2}-\d{2}-\d{2}-[a-z0-9-]+.zip$/i)) {
-        ToastMessage.warn(self.i18n['invalidFilename']);
+        message = self.i18n['invalidFilename'];
+        ToastMessage.info(message.replace('{type}', self.escapeFileType(file.type)));
         valid = false;
       } else if (file.type.indexOf('zip') === -1 && file.type.indexOf('octet-stream' === -1)) {
-        var message = self.i18n['invalidContentType'];
+        message = self.i18n['invalidContentType'];
         ToastMessage.info(message.replace('{type}', self.escapeFileType(file.type)));
         valid = false;
       } else if (file.size > 30000000000) { // 30GB
