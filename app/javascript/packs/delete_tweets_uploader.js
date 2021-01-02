@@ -12,48 +12,80 @@ class DeleteTweetsUploader {
 
     this.$input.on('change', function () {
       self.$btn.prop('disabled', true).addClass('disabled');
-      var file = self.$input[0].files[0];
-      var valid = true;
-      var message;
-
-      if (!file.name.match(/^twitter-20\d{2}-\d{2}-\d{2}-[a-z0-9-]+.zip$/i)) {
-        message = self.i18n['invalidFilename'];
-        ToastMessage.info(message.replace('{type}', self.escapeFileType(file.type)));
-        valid = false;
-      } else if (file.type.indexOf('zip') === -1 && file.type.indexOf('octet-stream' === -1)) {
-        message = self.i18n['invalidContentType'];
-        ToastMessage.info(message.replace('{type}', self.escapeFileType(file.type)));
-        valid = false;
-      } else if (file.size > 30000000000) { // 30GB
-        ToastMessage.warn(self.i18n['filesizeTooLarge']);
-        valid = false;
-      }
-
-      if (valid) {
-        self.upload(file);
-      } else {
-        self.$input[0].value = '';
-        self.$btn.prop('disabled', false).removeClass('disabled');
-      }
+      self.validate(self.$input[0].files[0]);
     });
   }
 
+  validate(file) {
+    var self = this;
+    var valid = true;
+    var message;
+
+    if (!file.name.match(/^twitter-20\d{2}-\d{2}-\d{2}-[a-z0-9-]+.zip$/i)) {
+      message = self.i18n['invalidFilename'];
+      ToastMessage.info(message.replace('{type}', self.escapeFileType(file.type)), {autohide: false});
+      valid = false;
+    } else if (file.type.indexOf('zip') === -1 && file.type.indexOf('octet-stream' === -1)) {
+      message = self.i18n['invalidContentType'];
+      ToastMessage.info(message.replace('{type}', self.escapeFileType(file.type)), {autohide: false});
+      valid = false;
+    } else if (file.size > 30000000000) { // 30GB
+      ToastMessage.warn(self.i18n['filesizeTooLarge'], {autohide: false});
+      valid = false;
+    }
+
+    if (valid) {
+      self.upload(file);
+    } else {
+      self.$input[0].value = '';
+      self.$btn.prop('disabled', false).removeClass('disabled');
+    }
+  }
+
   upload(file) {
-    var reader = new FileReader();
     var i18n = this.i18n;
-    var completed = false;
+    this.completed = false;
     var self = this;
 
     window.onbeforeunload = function () {
-      if (!completed) {
+      if (!self.completed) {
         return i18n['alertOnBeforeunload'];
       }
     };
 
-    var updateProgress = (function () {
+    ToastMessage.info(i18n['preparing'], {autohide: false});
+
+    this.createPresignedUrl(file, function (url) {
+      self.readFile(file, function (data) {
+        self.uploadChunk(url, data);
+      });
+    });
+  }
+
+  readFile(file, callback) {
+    var i18n = this.i18n;
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      callback(e.target.result);
+    };
+
+    reader.onerror = function (e) {
+      logger.error(e.target.error.name);
+      ToastMessage.warn(i18n['fail'], {autohide: false});
+    };
+
+    reader.readAsArrayBuffer(file);
+  }
+
+  uploadChunk(url, data) {
+    var i18n = this.i18n;
+    var self = this;
+
+    var onProgress = (function () {
       var value = 0;
       return function (e) {
-        if (completed) {
+        if (self.completed) {
           return;
         }
 
@@ -65,36 +97,28 @@ class DeleteTweetsUploader {
             value = 99;
           }
         }
-        ToastMessage.info(i18n['uploading'] + value + '%');
+        ToastMessage.info(i18n['uploading'].replace('{value}', value + '%'), {autohide: false});
       };
     })();
 
-    ToastMessage.info(i18n['preparing']);
-
-    reader.onload = function (e) {
-      self.createPresignedUrl(file, function (url) {
-        $.ajax({
-          url: url,
-          data: e.target.result,
-          type: 'PUT',
-          xhr: function () {
-            var xhr = new window.XMLHttpRequest();
-            xhr.upload.addEventListener('progress', updateProgress, false);
-            return xhr;
-          },
-          processData: false,
-          contentType: false
-        }).done(function () {
-          completed = true;
-          self.notifyUploadCompleted();
-          ToastMessage.info(i18n['success']);
-        }).fail(function () {
-          ToastMessage.warn(i18n['fail']);
-        });
-      });
-    };
-
-    reader.readAsArrayBuffer(file);
+    $.ajax({
+      url: url,
+      data: data,
+      type: 'PUT',
+      xhr: function () {
+        var xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener('progress', onProgress, false);
+        return xhr;
+      },
+      processData: false,
+      contentType: false
+    }).done(function () {
+      self.completed = true;
+      self.notifyUploadCompleted();
+      ToastMessage.info(i18n['success'], {autohide: false});
+    }).fail(function () {
+      ToastMessage.warn(i18n['fail'], {autohide: false});
+    });
   }
 
   createPresignedUrl(file, callback) {

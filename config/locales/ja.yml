@@ -1390,8 +1390,14 @@ ja:
         os=%{os}<br>
         browser=%{browser}
       filesizeTooLarge: 'ファイルサイズが上限を超えています。個別に対応しますので @egotter_cs にご連絡ください。'
-      preparing: 'ファイルのアップロードを準備中です。ページを閉じないでそのままお待ちください。'
-      uploading: 'ファイルをアップロード中です。ページを閉じないでそのままお待ちください。'
+      preparing_html:
+        ファイルのアップロードを準備中です。ページを閉じないでそのままお待ちください。<br>
+        <br>
+        通常、「アップロードの準備」は1分以内に完了します。しばらく待ってもこのメッセージが表示され続ける場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。
+      uploading_html:
+        ファイルをアップロード中です。ページを閉じないでそのままお待ちください。{value}<br>
+        <br>
+        ファイルのアップロードが途中で止まってしまう場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。
       alert_on_beforeunload: '編集中です。本当に他のページに移動しますか？'
       success_html: 'ファイルのアップロードに成功しました。<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> から届くDMをお待ちください。'
       fail_html: 'ファイルのアップロードに失敗しました。何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
