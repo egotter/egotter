@@ -1,5 +1,5 @@
 <% user ||= nil %>
-<% if ad_ng_user?(user) %>
+<% if ad_ng_page? ||  ad_ng_user?(user) %>
   <div class="mb-3"><!-- No ads tag will be inserted. --></div>
 <% else %>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

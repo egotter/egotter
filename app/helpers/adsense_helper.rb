@@ -1,6 +1,10 @@
 module AdsenseHelper
   AD_NG_UIDS = [740700661939994624, 2412435452, 739670367212445697]
 
+  def ad_ng_page?
+    %w(login blockers settings).include?(controller_name) || %w(mypage).include?(action_name)
+  end
+
   def ad_ng_user?(user)
     user && (ad_ng_uid?(user.uid) || ad_ng_text?(user.name) || ad_ng_text?(user.description))
   rescue => e

@@ -1,4 +1,6 @@
-<% unless ad_ng_user?(@twitter_user) %>
+<% if ad_ng_page? || ad_ng_user?(@twitter_user) %>
+  <div class="mb-3"><!-- No ads tag will be inserted. --></div>
+<% else %>
   <% wrapper_id ||= async_adsense_wrapper_id(vertical) %>
   <div id="<%= wrapper_id %>" style="min-height: 290px;"></div>
   <script>
