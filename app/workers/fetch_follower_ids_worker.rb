@@ -69,7 +69,7 @@ class FetchFollowerIdsWorker
     end
 
     def self.redis
-      @redis ||= Redis.new(db: 3)
+      @redis ||= Redis.client(ENV['REDIS_HOST'], db: 3)
     end
   end
 end
