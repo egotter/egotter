@@ -7,11 +7,11 @@ module Api
       before_action :require_key
 
       def create
-        cache = FetchFollowerIdsWorker::Cache.new
+        cache = IdsFetcherCache.new(FetchFollowerIdsWorker)
         if (uids = cache.read(params[:uid].to_i))
           render json: {uids: uids}
         else
-          jid = FetchFollowerIdsWorker.perform_async(params[:uid].to_i)
+          jid = FetchFollowerIdsWorker.perform_async(params[:uid].to_i, params[:loop_limit].to_i)
           message = jid ? 'Start fetching' : 'Already running'
           render json: {message: message}, status: :accepted
         end
