@@ -2,6 +2,7 @@ module Api
   module V1
     class FollowerIdsController < ApplicationController
 
+      skip_before_action :verify_authenticity_token
       before_action :require_uid
       before_action :require_key
 
