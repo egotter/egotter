@@ -62,6 +62,9 @@ Rails.application.routes.draw do
       resources :customer_portal_urls, only: %i(create)
       delete 'user_caches', to: 'user_caches#destroy'
       delete 'user_data', to: 'user_data#destroy'
+
+      resources :friend_ids, only: %i(create)
+      resources :follower_ids, only: %i(create)
     end
   end
 
