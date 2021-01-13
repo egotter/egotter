@@ -4,23 +4,11 @@ class FetchFollowerIdsWorker
   include WorkerErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
-  def unique_key(uid, options = {})
-    uid
-  end
-
-  def unique_in
-    10.minutes
-  end
-
-  def expire_in
-    10.minutes
-  end
-
   # options:
-  def perform(uid, loop_limit, options = {})
-    ids = fetch_ids(:follower_ids, uid, loop_limit)
-    IdsFetcherCache.new(self.class).write(uid, ids)
+  def perform(uid, cursor, options = {})
+    res = fetch_follower_ids(uid, cursor)
+    IdsFetcherCache.new(self.class).write(uid, cursor, res)
   rescue => e
-    handle_worker_error(e, uid: uid, **options)
+    handle_worker_error(e, uid: uid, cursor: cursor, **options)
   end
 end

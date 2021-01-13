@@ -1,20 +1,31 @@
 module WorkerIdsFetcher
-  def fetch_ids(method_name, uid, loop_limit = 10)
-    options = {count: 5000, cursor: -1}
-    collection = []
+  def unique_key(uid, cursor, options = {})
+    "#{uid}:#{cursor}"
+  end
 
-    loop_limit.times do
-      client = Bot.api_client.twitter
-      response = client.send(method_name, uid, options)&.attrs
-      break if response.nil?
+  def unique_in
+    10.minutes
+  end
 
-      collection << response[:ids]
+  def expire_in
+    10.minutes
+  end
 
-      break if response[:next_cursor] == 0
+  def fetch_friend_ids(uid, cursor)
+    fetch_ids(:friend_ids, uid, cursor)
+  end
 
-      options[:cursor] = response[:next_cursor]
+  def fetch_follower_ids(uid, cursor)
+    fetch_ids(:follower_ids, uid, cursor)
+  end
+
+  def fetch_ids(api_name, uid, cursor)
+    client = Bot.api_client.twitter
+    response = client.send(api_name, uid, count: 5000, cursor: cursor)&.attrs
+    if response.nil?
+      {}
+    else
+      {ids: response[:ids], next_cursor: response[:next_cursor]}
     end
-
-    collection.flatten
   end
 end

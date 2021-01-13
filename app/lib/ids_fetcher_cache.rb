@@ -7,18 +7,18 @@ class IdsFetcherCache
     )
   end
 
-  def read(uid)
-    if (data = @store.read(cache_key(uid)))
+  def read(uid, cursor)
+    if (data = @store.read(cache_key(uid, cursor)))
       JSON.parse(data)
     end
   end
 
-  def write(uid, data)
-    @store.write(cache_key(uid), data.to_json)
+  def write(uid, cursor, data)
+    @store.write(cache_key(uid, cursor), data.to_json)
   end
 
-  def cache_key(uid)
-    "uid:#{uid}"
+  def cache_key(uid, cursor)
+    "uid:#{uid}:cursor:#{cursor}"
   end
 
   def self.redis
