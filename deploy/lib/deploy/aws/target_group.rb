@@ -70,6 +70,8 @@ module Deploy
         count = Hash.new(0)
         registered_instances.each { |i| count[i.availability_zone] += 1 }
         count.sort_by { |k, v| v }[0][0]
+      rescue => e
+        'ap-northeast-1b'
       end
 
       private
