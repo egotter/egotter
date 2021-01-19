@@ -31,12 +31,19 @@ class SearchRequestValidator
   end
 
   def blocked_user?(screen_name)
-    if user_signed_in?
-      @client.user_timeline(screen_name, count: 1)
-      false
-    else
-      false
+    return false unless user_signed_in?
+
+    ApplicationRecord.benchmark("Benchmark SearchRequestValidator#blocked_user? screen_name=#{screen_name}", level: :info) do
+      begin
+        Timeout.timeout(5.seconds) do
+          @client.user_timeline(screen_name, count: 1)
+        end
+      rescue Timeout::Error => e
+        logger.info { "#{self.class}##{__method__} timeout screen_name=#{screen_name}" }
+      end
     end
+
+    false
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     TwitterApiStatus.blocked?(e)
