@@ -71,7 +71,7 @@ module Api
           user = TwitterUserDecorator.new(user, context: options)
           {
               screen_name: user.screen_name,
-              profile_image_url: vc.bigger_icon_url(user),
+              profile_image_url: user.censored_profile_icon_url('bigger'),
               name_with_icon: user.name_with_icon,
               status_labels: user.status_labels,
               followed_label: follower_uids.include?(user.uid) ? user.single_followed_label : nil,

@@ -24,12 +24,8 @@
 
   <%#= Profile icon %>
   <div class="profile-icon-wrapper">
-    <% if user.profile_icon_url? && !user.adult_account? %>
-      <%= link_to user.profile_icon_url_for(request) do %>
-        <%= image_tag user.profile_icon_url_for(request), class: 'profile-icon-image rounded-circle ml-1', alt: user.screen_name %>
-      <% end %>
-    <% else %>
-      <div style="background-color: #868e96;" class="profile-icon-image rounded-circle ml-1"></div>
+    <%= link_to user.censored_profile_icon_url do %>
+      <%= image_tag user.censored_profile_icon_url, class: 'profile-icon-image rounded-circle ml-1', alt: user.screen_name %>
     <% end %>
   </div>
 

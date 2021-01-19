@@ -126,8 +126,22 @@ class TwitterUserDecorator < ApplicationDecorator
     profile_image_url_https.present?
   end
 
-  def profile_icon_url_for(request)
-    profile_image_url_https.remove('_normal')
+  GRAY_100 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAIAAAD/gAIDAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAy5pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQwIDc5LjE2MDMwMiwgMjAxNy8wMy8wMi0xNjo1OTozOCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIEVsZW1lbnRzIDE2LjAgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MzczODMxNkM1MDQyMTFFQkEwMUVBNzBERkMwMUQ5QjEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RTM3QkUwMzY1MTM3MTFFQkEwMUVBNzBERkMwMUQ5QjEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDozNzM4MzE2QTUwNDIxMUVCQTAxRUE3MERGQzAxRDlCMSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDozNzM4MzE2QjUwNDIxMUVCQTAxRUE3MERGQzAxRDlCMSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlRKEtUAAACiSURBVHja7NAxAQAACAMgtX+0hbKCnw9EoJMUN6NAlixZsmTJUiBLlixZsmQpkCVLlixZshTIkiVLlixZCmTJkiVLliwFsmTJkiVLlgJZsmTJkiVLgSxZsmTJkqVAlixZsmTJUiBLlixZsmQpkCVLlixZshTIkiVLlixZCmTJkiVLliwFsmTJkiVLlgJZsmTJkiVLgSxZsmTJkqVAlqxvK8AAh5UDLHJQma8AAAAASUVORK5CYII='
+
+  def censored_profile_icon_url(size = nil)
+    if !profile_icon_url? || adult_account?
+      GRAY_100
+    else
+      profile_icon_url(size)
+    end
+  end
+
+  def profile_icon_url(size = nil)
+    if size == 'bigger'
+      profile_image_url_https.to_s.gsub(/_normal(\.jpe?g|\.png|\.gif)$/, '_bigger\1')
+    else
+      profile_image_url_https.remove('_normal')
+    end
   end
 
   def url_label
