@@ -57,7 +57,17 @@ class SearchRequestValidator
   end
 
   def timeline_readable?(screen_name)
-    @client.user_timeline(screen_name, count: 1)
+    ApplicationRecord.benchmark("Benchmark SearchRequestValidator#timeline_readable? screen_name=#{screen_name}", level: :info) do
+      begin
+        Timeout.timeout(5.seconds) do
+          @client.user_timeline(screen_name, count: 1)
+        end
+      rescue Timeout::Error => e
+        logger.info { "#{self.class}##{__method__} timeout screen_name=#{screen_name}" }
+      end
+    end
+
+    true
   rescue => e
     logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     !TwitterApiStatus.protected?(e)
