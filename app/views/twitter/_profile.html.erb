@@ -13,7 +13,7 @@
 <div id="<%= container_id %>" class="profile-header mt-3">
   <%#= Profile banner %>
   <div class="profile-banner">
-    <% if user.profile_banner_url? %>
+    <% if user.profile_banner_url? && !user.adult_account? %>
       <%= link_to user.profile_banner_url_for(request) do %>
         <img src="<%= user.profile_banner_url_for(request) %>">
       <% end %>
@@ -24,7 +24,7 @@
 
   <%#= Profile icon %>
   <div class="profile-icon-wrapper">
-    <% if user.profile_icon_url? %>
+    <% if user.profile_icon_url? && !user.adult_account? %>
       <%= link_to user.profile_icon_url_for(request) do %>
         <%= image_tag user.profile_icon_url_for(request), class: 'profile-icon-image rounded-circle ml-1', alt: user.screen_name %>
       <% end %>
