@@ -6,7 +6,7 @@ require 'json'
 require 'dotenv/load'
 
 def post(text)
-  uri = URI.parse(ENV['SLACK_DEPLOY_URL'])
+  uri = URI.parse(ENV['SLACK_NOTIFY_INTERRUPTION_URL'])
   Net::HTTP.post_form(uri, payload: {text: text}.to_json).body
 end
 
