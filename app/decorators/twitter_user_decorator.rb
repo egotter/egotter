@@ -49,8 +49,16 @@ class TwitterUserDecorator < ApplicationDecorator
     location.present?
   end
 
-  def url?
+  def profile_url?
     url.present?
+  end
+
+  def profile_url
+    url
+  end
+
+  def censored_profile_url
+    I18n.t('twitter.censored_profile_url')
   end
 
   def censored_description

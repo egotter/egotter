@@ -2,9 +2,13 @@
   <div class="small my-1"><i class="fas fa-map-marker text-muted"></i>&nbsp;<%= user.location %></div>
 <% end %>
 
-<% if user.url? %>
+<% if user.profile_url? %>
   <div class="small my-1">
-    <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url_label, user.url, style: 'word-break: break-all;', target: '_blank', rel: 'nofollow') %>
+    <% if user.adult_account? %>
+      <i class="fas fa-link text-muted"></i>&nbsp;<span style="word-break: break-all;"><%= user.censored_profile_url %></span>
+    <% else %>
+      <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url_label, user.profile_url, style: 'word-break: break-all;', target: '_blank', rel: 'nofollow') %>
+    <% end %>
   </div>
 <% end %>
 
