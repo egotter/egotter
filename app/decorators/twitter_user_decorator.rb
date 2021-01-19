@@ -111,7 +111,7 @@ class TwitterUserDecorator < ApplicationDecorator
   ADULT_ACCOUNT_REGEXP = /オナニー|おなにー|アナル|あなる|エッチ|えっち|えち絵|チンポ|ちんぽ|クンニ|ソープ|そーぷらんど|オナホ|肉便器|巨乳|おしっこ|精子|パンツ|パンティ|下着|アダルトグッズ|SMグッズ|童貞|処女|射精|包茎|股間|洋炉|炉利|ハメ撮り|エロ動画|性奴隷|雌豚|メンエス嬢|風俗嬢|風俗店| #風俗 |泡姫|エロ垢|#裏垢男子|#裏垢女子|騎乗位|オフパコ|セフレ|ホテヘル|箱ヘル|デリヘル|パパ活|ママ活|性感エステ|性感ヘルス|性感マッサージ|性感|セックス/
 
   def adult_account?
-    description&.match?(ADULT_ACCOUNT_REGEXP)
+    name&.match?(ADULT_ACCOUNT_REGEXP) || description&.match?(ADULT_ACCOUNT_REGEXP)
   end
 
   def profile_icon_url?

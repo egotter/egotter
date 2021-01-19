@@ -1147,6 +1147,7 @@ ja:
       next: '@%{user} >'
       see: '@%{user} を見る'
       seeing: '@%{user} を見ています'
+      sensitive_tweets_by: '@%{user} のツイート（性的な単語が含まれています）'
       tweets_by: '@%{user} のツイート'
       retry_exhausted: 'プロフィールの取得に失敗しました。数分後に再度お試しください'
       sign_in_html: 'ログインすれば @%{user} の正確なステータスを取得できます。<a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>'
