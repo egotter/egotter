@@ -7,16 +7,16 @@ require 'dotenv/load'
 
 SETTINGS = [
     [2, 2], # 09
-    [2, 2], # 10
+    [2, 1], # 10
     [3, 3], # 11
     [3, 3], # 12
     [3, 3], # 13
-    [2, 2], # 14
-    [2, 2], # 15
-    [2, 2], # 16
-    [2, 2], # 17
-    [2, 2], # 18
-    [2, 2], # 19
+    [2, 1], # 14
+    [2, 1], # 15
+    [2, 1], # 16
+    [2, 1], # 17
+    [2, 1], # 18
+    [2, 1], # 19
     [3, 3], # 20
     [3, 3], # 21
     [3, 3], # 22
@@ -43,11 +43,13 @@ def adjust_server(role, instance_type, num, dry_run)
 end
 
 def adjust_web(dry_run)
-  adjust_server('web', 't3.medium', SETTINGS[now.hour][0], dry_run)
+  result = adjust_server('web', 't3.medium', SETTINGS[now.hour][0], dry_run)
+  post result
 end
 
 def adjust_sidekiq(dry_run)
-  adjust_server('sidekiq', 'm5.large', SETTINGS[now.hour][1], dry_run)
+  result = adjust_server('sidekiq', 'm5.large', SETTINGS[now.hour][1], dry_run)
+  post result
 end
 
 def post(text)
@@ -57,8 +59,15 @@ end
 
 def main
   dry_run = ENV['DRY_RUN'] == 'true'
-  adjust_web(dry_run)
-  adjust_sidekiq(dry_run)
+
+  case ENV['ROLE']
+  when 'web'
+    adjust_web(dry_run)
+  when 'sidekiq'
+    adjust_sidekiq(dry_run)
+  else
+    raise "Invalid role value=#{ENV['ROLE']}"
+  end
 end
 
 main
