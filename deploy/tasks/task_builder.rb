@@ -83,15 +83,14 @@ module Tasks
         @params['count'] = tasks_count - instance_names.size
         logger.info "Launch #{@params['count']} #{@params['role']} instances"
         launch_task
-
       elsif tasks_count < instance_names.size
         @params['count'] = instance_names.size - tasks_count
         logger.info "Terminate #{@params['count']} #{@params['role']} instances"
         terminate_task
-
       else
         # TODO Return task object
         logger.info "Don't launch/terminate any instances"
+        Struct.new(:run).new.run
       end
     end
 
