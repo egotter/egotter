@@ -90,7 +90,7 @@ module Tasks
       else
         # TODO Return task object
         logger.info "Don't launch/terminate any instances"
-        Struct.new(:run).new.run
+        Struct.new(:run).new
       end
     end
 
