@@ -61,12 +61,14 @@ def parse_params
       'sync',
       'rotate',
       'list',
+      'without-tag',
       'debug',
   )
 end
 
 def git_tag?(params)
-  !params['list'] && !(params['launch'] && params['role'] == 'plain') && !(params['terminate'] && params['role'] == 'plain')
+  !params['without-tag'] &&
+      !params['list'] && !(params['launch'] && params['role'] == 'plain') && !(params['terminate'] && params['role'] == 'plain')
 end
 
 def main(params)
