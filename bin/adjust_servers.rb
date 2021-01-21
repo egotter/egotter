@@ -24,9 +24,9 @@ SETTINGS = [
     [2, 1], # 00
     [2, 1], # 01
     [2, 1], # 02
-    [2, 1], # 03
-    [2, 1], # 04
-    [2, 1], # 05
+    [1, 0], # 03
+    [1, 0], # 04
+    [1, 0], # 05
     [2, 1], # 06
     [3, 2], # 07
     [3, 2], # 08
@@ -45,7 +45,7 @@ end
 
 def list_server(role)
   cmd = "cd /var/egotter && /usr/local/bin/bundle exec bin/deploy.rb --list --role #{role}"
-  `#{cmd}`
+  `#{cmd}`.chomp
 end
 
 def adjust_web(dry_run)
@@ -80,4 +80,8 @@ def main
   end
 end
 
-main
+begin
+  main
+rescue => e
+  post("adjust_servers: #{e.inspect}")
+end
