@@ -88,9 +88,8 @@ module Tasks
         logger.info "Terminate #{@params['count']} #{@params['role']} instances"
         terminate_task
       else
-        # TODO Return task object
         logger.info "Don't launch/terminate any instances"
-        Struct.new(:run).new
+        Struct.new(:run, :action).new(nil, 'noop')
       end
     end
 
