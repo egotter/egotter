@@ -3,10 +3,13 @@
 module InMemory
   class Client
     def initialize(klass, hostname)
-      @ttl = ::InMemory::TTL
       @klass = klass
       @key_prefix = "#{Rails.env}:#{self.class}:#{@klass}"
       @redis = Redis.client(hostname)
+    end
+
+    def ttl
+      ::InMemory::TTL.send([:+, :-].shuffle[0], rand(60))
     end
 
     def read(key)
@@ -14,7 +17,7 @@ module InMemory
     end
 
     def write(key, item)
-      @redis.setex(db_key(key), @ttl, item)
+      @redis.setex(db_key(key), ttl, item)
     end
 
     def delete(key)
