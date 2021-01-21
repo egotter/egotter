@@ -37,19 +37,25 @@ def now
 end
 
 def adjust_server(role, instance_type, num, dry_run)
-  cmd = "cd /var/egotter && /usr/local/bin/bundle exec bin/deploy.rb --adjust --role #{role} --instance-type #{instance_type} --count #{num}"
+  params = "--adjust --role #{role} --instance-type #{instance_type} --count #{num}"
+  cmd = "cd /var/egotter && /usr/local/bin/bundle exec bin/deploy.rb #{params}"
   dry_run ? (puts cmd) : system(cmd)
-  cmd
+  params
+end
+
+def list_server(role)
+  cmd = "cd /var/egotter && /usr/local/bin/bundle exec bin/deploy.rb --list --role #{role}"
+  `#{cmd}`
 end
 
 def adjust_web(dry_run)
-  result = adjust_server('web', 't3.medium', SETTINGS[now.hour][0], dry_run)
-  post result
+  post adjust_server('web', 't3.medium', SETTINGS[now.hour][0], dry_run)
+  post list_server('web')
 end
 
 def adjust_sidekiq(dry_run)
-  result = adjust_server('sidekiq', 'm5.large', SETTINGS[now.hour][1], dry_run)
-  post result
+  post adjust_server('sidekiq', 'm5.large', SETTINGS[now.hour][1], dry_run)
+  post list_server('sidekiq')
 end
 
 def post(text)
