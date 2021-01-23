@@ -1,8 +1,14 @@
 namespace :periodic_tweets do
   desc 'Retweet'
   task retweet: :environment do
-    tweet_id = ENV['TWEET_ID']
+    tweet_id = ENV['TWEET_ID']&.to_i
     raise 'Specify tweet_id' if tweet_id.blank?
+
+    tweet = Bot.api_client.twitter.status(tweet_id)
+    if tweet.user.id != User::EGOTTER_UID
+      raise "The user who posted this tweet is not ego_tter tweet_id=#{tweet_id}"
+    end
+
     limit = ENV['LIMIT']&.to_i || 10
     puts "limit=#{limit} tweet_id=#{tweet_id}"
 
