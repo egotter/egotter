@@ -12,7 +12,7 @@ class UpdateEgotterFollowersWorker
   end
 
   def _timeout_in
-    1.minute
+    3.minute
   end
 
   def expire_in
@@ -21,52 +21,70 @@ class UpdateEgotterFollowersWorker
 
   # options:
   def perform(options = {})
-    follower_uids = fetch_follower_uids(User::EGOTTER_UID)
-    followers = build_followers(follower_uids)
-    import_followers(followers)
+    uids = collect_follower_uids
+    import_follower_uids(uids)
+    uids = filter_missing_uids(uids)
+    delete_missing_uids(uids)
   rescue => e
     logger.warn "#{e.class}: #{e.message.truncate(200)} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
   end
 
-  def fetch_follower_uids(uid)
+  private
+
+  def collect_follower_uids(uid = User::EGOTTER_UID)
     options = {count: 5000, cursor: -1}
     collection = []
 
-    while true do
+    50.times do
       client = Bot.api_client.twitter
       response = client.follower_ids(uid, options)
       break if response.nil?
 
-      collection << response.attrs[:ids]
+      attrs = response.attrs
+      collection.concat(attrs[:ids])
 
-      break if response.attrs[:next_cursor] == 0
+      break if attrs[:next_cursor] == 0
 
-      options[:cursor] = response.attrs[:next_cursor]
+      options[:cursor] = attrs[:next_cursor]
     end
 
-    collection.flatten
+    collection
   end
 
-  def build_followers(uids)
-    uids.map.with_index { |uid, i| EgotterFollower.new(uid: uid, screen_name: "sn#{i}") }
-  end
-
-  def import_followers(users)
-    ActiveRecord::Base.connection.execute('TRUNCATE TABLE egotter_followers')
-    retry_count = 0
-    begin
-      Rails.logger.silence do
+  def import_follower_uids(uids)
+    uids.each_slice(1000).with_index do |uids_array, i|
+      users = uids_array.map.with_index { |uid, i| EgotterFollower.new(uid: uid, screen_name: "sn#{i}") }
+      benchmark("import uids chunk=#{i}") do
         EgotterFollower.import users, on_duplicate_key_update: %i(uid), validate: false
       end
-    rescue => e
-      if (retry_count += 1) <= 3
-        retry
-      else
-        raise RetryExhausted.new(e.inspect.truncate(150))
+    end
+  end
+
+  def filter_missing_uids(uids)
+    not_found_uids = []
+
+    uids.each_slice(5000).with_index do |uids_array, i|
+      benchmark("filter uids chunk=#{i}") do
+        found_uids = EgotterFollower.where(uid: uids_array).pluck(:uid)
+        not_found_uids.concat(uids_array - found_uids)
+      end
+    end
+
+    not_found_uids
+  end
+
+  def delete_missing_uids(uids)
+    uids.each_slice(1000).with_index do |uids_array, i|
+      benchmark("delete uids chunk=#{i}") do
+        EgotterFollower.where(uid: uids_array).delete_all
       end
     end
   end
 
-  class RetryExhausted < StandardError; end
+  def benchmark(message, &block)
+    ApplicationRecord.benchmark(message, level: :info) do
+      Rails.logger.silence(&block)
+    end
+  end
 end
