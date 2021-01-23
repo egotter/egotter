@@ -23,6 +23,6 @@ class InvalidateExpiredCredentialsWorker
   def perform(options = {})
     Bot.invalidate_all_expired_credentials
   rescue => e
-    handle_worker_error(e, user_id: user_id, **options)
+    handle_worker_error(e, **options)
   end
 end
