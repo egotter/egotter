@@ -229,6 +229,10 @@ module PathsHelper
     'https://play.google.com/store/apps/details?id=com.egotter&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'
   end
 
+  def allysocial_url(via)
+    "https://searchfollowers.com/?via=egotter_#{via}"
+  end
+
   def current_via(suffix = nil)
     via = "#{controller_name}/#{action_name}"
     via += "/#{suffix}" if suffix

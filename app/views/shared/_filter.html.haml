@@ -5,6 +5,11 @@
       %span.filter-count
       %i.fas.fa-filter
     .dropdown-menu
+      %a.filters.dropdown-item.btn-allysocial{href: allysocial_url('filter'), target: '_blank'}
+        = t('filter.allysocial')
+        %i.fas.fa-external-link-alt.text-muted
+      .dropdown-divider
+
       - purchased = current_user.has_valid_subscription?
       - trial = purchased && current_user.has_trial_subscription?
       - Filter::VALUES.each.with_index do |(label, value), i|

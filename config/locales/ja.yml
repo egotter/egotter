@@ -2575,6 +2575,7 @@ ja:
       asc: "ツイート 少ない順"
   filter:
     title: "絞り込み"
+    allysocial: "検索特化アプリを開く"
     active: "アクティブ"
     inactive_2weeks: "2週間以上 ツイート無し"
     inactive_1month: "1ヶ月以上 ツイート無し"
