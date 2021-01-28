@@ -30,6 +30,9 @@ class DeleteTweetsUploader {
       message = self.i18n['invalidContentType'];
       ToastMessage.info(message.replace('{type}', self.escapeFileType(file.type)), {autohide: false});
       valid = false;
+    } else if (file.size < 1000000) { // 1MB
+      ToastMessage.warn(self.i18n['filesizeTooSmall'], {autohide: false});
+      valid = false;
     } else if (file.size > 30000000000) { // 30GB
       ToastMessage.warn(self.i18n['filesizeTooLarge'], {autohide: false});
       valid = false;

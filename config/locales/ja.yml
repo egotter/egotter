@@ -1391,6 +1391,7 @@ ja:
         device_type=%{device_type}<br>
         os=%{os}<br>
         browser=%{browser}
+      filesizeTooSmall: 'ファイルサイズが小さすぎます。アーカイブデータのダウンロードに失敗していませんか？ 分からない場合は @egotter_cs にご連絡ください。'
       filesizeTooLarge: 'ファイルサイズが上限を超えています。個別に対応しますので @egotter_cs にご連絡ください。'
       preparing_html:
         ファイルのアップロードを準備中です。ページを閉じないでそのままお待ちください。<br>
