@@ -20,13 +20,9 @@ namespace :delete_tweets do
     end
 
     tweet_ids = tweets.map { |tweet| tweet['tweet']['id'] }
-    begin
-      tweet = user.api_client.twitter.status(tweet_ids[0])
-      if tweet.user.id != user.uid
-        raise "The uid of the user doesn't match the uid of a tweet user_id=#{user.id} tweet_id=#{tweet_ids[0]}"
-      end
-    rescue => e
-      raise unless TweetStatus.no_status_found?(e)
+    tweet = user.api_client.twitter.status(tweet_ids[0])
+    if tweet.user.id != user.uid
+      raise "The uid of the user doesn't match the uid of a tweet user_id=#{user.id} tweet_id=#{tweet_ids[0]}"
     end
 
     processed = 0
