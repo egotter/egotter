@@ -9,6 +9,7 @@ class ProcessWebhookEventWorker
   include ScheduleTweetsConcern
   include DeleteTweetsConcern
   include CloseFriendsConcern
+  include ThankYouMessageConcern
   include SpamMessageConcern
   sidekiq_options queue: 'webhook', retry: 0, backtrace: false
 
@@ -72,6 +73,7 @@ class ProcessWebhookEventWorker
     processed = process_schedule_tweets(dm) unless processed
     processed = process_delete_tweets(dm) unless processed
     processed = process_close_friends(dm) unless processed
+    processed = process_thank_you_message(dm) unless processed
     processed = process_spam_message(dm) unless processed
 
     unless processed
