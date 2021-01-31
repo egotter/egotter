@@ -227,6 +227,12 @@ Rails.application.routes.draw do
     get '_sign_out' => 'users/sessions#destroy', :as => :destroy_user_session
   end
 
+  namespace :api, {format: 'json'} do
+    namespace :v1 do
+      get 'report_stats', to: 'report_stats#index'
+    end
+  end
+
   authenticate :user, lambda { |u| [User::ADMIN_UID, User::EGOTTER_UID].include?(u.uid) } do
     match 'app_stats' => proc {
       [200, {'Content-Type' => 'text/plain'}, [AppStat.new.to_s]]
