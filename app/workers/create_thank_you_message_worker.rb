@@ -17,6 +17,7 @@ class CreateThankYouMessageWorker
       '( ´•ᴗ•ก)',
       'ᕱ⑅ᕱ',
       '(๑•ᴗ•๑)',
+      '❀.(*´▽`*)❀',
   ]
 
   # options:

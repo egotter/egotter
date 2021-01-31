@@ -18,7 +18,7 @@ module ThankYouMessageConcern
     end
 
     def received_regexp
-      /ありがとう|有難う/
+      /ありがとう?|有難う|あざす/
     end
 
     def send_message
