@@ -57,7 +57,9 @@ end
 
 def adjust_sidekiq(dry_run)
   prev = list_server('sidekiq')
-  adjust_server('sidekiq', 'm5.large', SETTINGS[now.hour][1], dry_run)
+  count = SETTINGS[now.hour][1]
+  count += 1 if remaining_reports > 0
+  adjust_server('sidekiq', 'm5.large', count, dry_run)
   cur = list_server('sidekiq')
   post("prev=#{prev} cur=#{cur}") if prev != cur
 end
@@ -65,6 +67,13 @@ end
 def post(text)
   uri = URI.parse(ENV['SLACK_DEPLOY_URL'])
   Net::HTTP.post_form(uri, payload: {text: text}.to_json).body
+end
+
+def remaining_reports
+  uri = URI.parse('https://egotter.com/api/v1/report_stats?key=' + ENV['REPORT_STATS_KEY'])
+  JSON.parse(Net::HTTP.get(uri))['report_low']
+rescue => e
+  0
 end
 
 def main
@@ -80,8 +89,10 @@ def main
   end
 end
 
-begin
-  main
-rescue => e
-  post("adjust_servers: #{e.inspect}")
+if __FILE__ == $0
+  begin
+    main
+  rescue => e
+    post("adjust_servers: #{e.inspect}")
+  end
 end
