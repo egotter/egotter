@@ -39,6 +39,13 @@ describe ThankYouMessageConcern::ThankYouMessageProcessor do
         it { is_expected.to be_truthy }
       end
     end
+
+    ['おつかれんこん'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_falsey }
+      end
+    end
   end
 
   describe '#send_message' do
