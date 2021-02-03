@@ -83,7 +83,7 @@ class UpdateEgotterFollowersWorker
   end
 
   def benchmark(message, &block)
-    ApplicationRecord.benchmark(message, level: :info) do
+    ApplicationRecord.benchmark("Benchmark UpdateEgotterFollowersWorker #{message}", level: :info) do
       Rails.logger.silence(&block)
     end
   end
