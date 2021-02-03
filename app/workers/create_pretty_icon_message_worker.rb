@@ -1,12 +1,11 @@
-class CreateThankYouMessageWorker
+class CreatePrettyIconMessageWorker
   include Sidekiq::Worker
   include ReportErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   TEXT = [
-      'お役に立てて光栄です！',
-      'どういたしまして！',
-      'いえいえ、また何かあったら何でも言ってください！',
+      'ありがとう！',
+      '嬉しいです！',
   ]
 
   KAOMOJI = [
