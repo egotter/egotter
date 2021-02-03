@@ -1,31 +1,16 @@
 require 'rails_helper'
 
-describe PrettyIconMessageConcern do
-  let(:instance) { Object.new }
+describe PrettyIconMessageResponder do
+  let(:dm) { double('dm', sender_id: 1, text: 'text') }
+  let(:instance) { described_class.new(dm) }
 
-  before do
-    instance.extend PrettyIconMessageConcern
-  end
-
-  describe '#process_pretty_icon_message' do
-    let(:dm) { double('dm', sender_id: 1, text: 'text') }
-    let(:processor) { described_class::PrettyIconMessageProcessor.new(dm.sender_id, dm.text) }
-    subject { instance.process_pretty_icon_message(dm) }
-
-    before do
-      allow(described_class::PrettyIconMessageProcessor).to receive(:new).with(dm.sender_id, dm.text).and_return(processor)
-    end
-
+  describe '#respond' do
+    subject { instance.respond }
     it { is_expected.to be_falsey }
-
-    context '#received? returns true' do
-      before { allow(processor).to receive(:received?).and_return(true) }
-      it { is_expected.to be_truthy }
-    end
   end
 end
 
-describe PrettyIconMessageConcern::PrettyIconMessageProcessor do
+describe PrettyIconMessageResponder::Processor do
   let(:uid) { 1 }
   let(:text) { 'text' }
   let(:instance) { described_class.new(uid, text) }

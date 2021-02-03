@@ -1,16 +1,21 @@
-module PrettyIconMessageConcern
-  def process_pretty_icon_message(dm)
-    processor = PrettyIconMessageProcessor.new(dm.sender_id, dm.text)
+class PrettyIconMessageResponder
+  def initialize(dm)
+    @processor = Processor.new(dm.sender_id, dm.text)
+  end
 
-    if processor.received?
-      processor.send_message
+  def respond
+    if @processor.received?
+      @processor.send_message
       return true
     end
 
     false
+  rescue => e
+    Rails.logger.warn e.inspect
+    false
   end
 
-  class PrettyIconMessageProcessor
+  class Processor
     include AbstractReportProcessor
 
     def message_length
