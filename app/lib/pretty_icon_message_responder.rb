@@ -1,24 +1,7 @@
-class PrettyIconMessageResponder
-  def initialize(uid, text)
-    @processor = Processor.new(uid, text)
-  end
+class PrettyIconMessageResponder < AbstractMessageResponder
 
-  def respond
-    if @processor.received?
-      @processor.send_message
-      return true
-    end
-
-    false
-  rescue => e
-    Rails.logger.warn e.inspect
-    false
-  end
-
-  class << self
-    def from_dm(dm)
-      new(dm.sender_id, dm.text)
-    end
+  def processor_class
+    Processor
   end
 
   class Processor
