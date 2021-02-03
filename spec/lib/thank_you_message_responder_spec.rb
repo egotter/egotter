@@ -1,31 +1,16 @@
 require 'rails_helper'
 
-describe ThankYouMessageConcern do
-  let(:instance) { Object.new }
+describe ThankYouMessageResponder do
+  let(:dm) { double('dm', sender_id: 1, text: 'text') }
+  let(:instance) { described_class.new(dm) }
 
-  before do
-    instance.extend ThankYouMessageConcern
-  end
-
-  describe '#process_thank_you_message' do
-    let(:dm) { double('dm', sender_id: 1, text: 'text') }
-    let(:processor) { described_class::ThankYouMessageProcessor.new(dm.sender_id, dm.text) }
-    subject { instance.process_thank_you_message(dm) }
-
-    before do
-      allow(described_class::ThankYouMessageProcessor).to receive(:new).with(dm.sender_id, dm.text).and_return(processor)
-    end
-
+  describe '#respond' do
+    subject { instance.respond }
     it { is_expected.to be_falsey }
-
-    context '#received? returns true' do
-      before { allow(processor).to receive(:received?).and_return(true) }
-      it { is_expected.to be_truthy }
-    end
   end
 end
 
-describe ThankYouMessageConcern::ThankYouMessageProcessor do
+describe ThankYouMessageResponder::Processor do
   let(:uid) { 1 }
   let(:text) { 'text' }
   let(:instance) { described_class.new(uid, text) }

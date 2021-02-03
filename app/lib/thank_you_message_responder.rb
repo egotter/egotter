@@ -1,16 +1,21 @@
-module ThankYouMessageConcern
-  def process_thank_you_message(dm)
-    processor = ThankYouMessageProcessor.new(dm.sender_id, dm.text)
+class ThankYouMessageResponder
+  def initialize(dm)
+    @processor = Processor.new(dm.sender_id, dm.text)
+  end
 
-    if processor.received?
-      processor.send_message
+  def respond
+    if @processor.received?
+      @processor.send_message
       return true
     end
 
     false
+  rescue => e
+    Rails.logger.warn e.inspect
+    false
   end
 
-  class ThankYouMessageProcessor
+  class Processor
     include AbstractReportProcessor
 
     def message_length
