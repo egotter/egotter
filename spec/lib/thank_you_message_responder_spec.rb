@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe ThankYouMessageResponder do
   let(:dm) { double('dm', sender_id: 1, text: 'text') }
-  let(:instance) { described_class.new(dm) }
+  let(:instance) { described_class.from_dm(dm) }
 
   describe '#respond' do
     subject { instance.respond }

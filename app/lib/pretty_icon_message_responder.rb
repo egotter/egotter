@@ -1,6 +1,6 @@
 class PrettyIconMessageResponder
-  def initialize(dm)
-    @processor = Processor.new(dm.sender_id, dm.text)
+  def initialize(uid, text)
+    @processor = Processor.new(uid, text)
   end
 
   def respond
@@ -13,6 +13,12 @@ class PrettyIconMessageResponder
   rescue => e
     Rails.logger.warn e.inspect
     false
+  end
+
+  class << self
+    def from_dm(dm)
+      new(dm.sender_id, dm.text)
+    end
   end
 
   class Processor

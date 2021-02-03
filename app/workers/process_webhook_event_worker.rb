@@ -72,8 +72,8 @@ class ProcessWebhookEventWorker
     processed = process_schedule_tweets(dm) unless processed
     processed = process_delete_tweets(dm) unless processed
     processed = process_close_friends(dm) unless processed
-    processed = ThankYouMessageResponder.new(dm).respond unless processed
-    processed = PrettyIconMessageResponder.new(dm).respond unless processed
+    processed = ThankYouMessageResponder.from_dm(dm).respond unless processed
+    processed = PrettyIconMessageResponder.from_dm(dm).respond unless processed
     processed = process_spam_message(dm) unless processed
 
     unless processed
