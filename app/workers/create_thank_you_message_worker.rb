@@ -20,6 +20,10 @@ class CreateThankYouMessageWorker
       '❀.(*´▽`*)❀',
   ]
 
+  def unique_key(uid, options = {})
+    uid
+  end
+
   def unique_in
     30.seconds
   end
