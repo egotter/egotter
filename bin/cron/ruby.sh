@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 exec >>/var/egotter/log/cron.log 2>&1
-cmd="/usr/local/bin/bundle exec ruby $1"
+cmd="/usr/local/bin/bundle exec /usr/local/bin/ruby $1"
 
 SECONDS=0
 
