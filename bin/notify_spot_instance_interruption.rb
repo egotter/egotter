@@ -14,7 +14,9 @@ token = `curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-
 resp = `curl -s -H "X-aws-ec2-metadata-token: #{token}" http://169.254.169.254/latest/meta-data/spot/instance-action`
 
 unless resp.include?('Not Found')
-  instance_id = `curl -s -H "X-aws-ec2-metadata-token: #{token}" http://169.254.169.254/latest/meta-data/instance-id`
-  message = "This instance is marked to be stopped or terminated id=#{instance_id}"
+  instance_id = `curl -s -H "X-aws-ec2-metadata-token: #{token}" http://169.254.169.254/latest/meta-data/instance-id` rescue 'id-error'
+  name = `aws ec2 describe-tags --filters "Name=resource-id,Values=#{instance_id}" "Name=key,Values=Name" --region ap-northeast-1 --query="Tags[0].Value"` rescue 'name-error'
+
+  message = "This instance is marked to be stopped or terminated id=#{instance_id} name=#{name.gsub(/["\n]/, '')}"
   puts post(message)
 end
