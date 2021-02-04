@@ -200,6 +200,7 @@ Rails.application.routes.draw do
   resources :settings, only: :index
   get 'settings/follow_requests', to: "settings#follow_requests"
   get 'settings/unfollow_requests', to: "settings#unfollow_requests"
+  resources :diagnosis, only: :index
 
   get 'pricing', to: "pricing#new"
   resources :orders, only: %i(create)

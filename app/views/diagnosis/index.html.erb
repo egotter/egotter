@@ -1,0 +1,23 @@
+<div style="min-height:  600px;">
+  <div class="mb-3">
+    <div>User: <%= user_signed_in? ? current_user.screen_name : 'n/a' %></div>
+    <div>Subscription: <%= user_signed_in? && current_user.has_valid_subscription? ? 'yes' : 'no' %></div>
+  </div>
+
+  <div>Useragent: <%= request.user_agent %></div>
+  <div>OS: <%= request.os %></div>
+  <div>OS version: <%= request.os_version %></div>
+  <div>Device type: <%= request.device_type %></div>
+  <div>Browser: <%= request.browser %></div>
+  <div>Browser version<%= request.browser_version %></div>
+  <div>JavaScript: <span id="check-js">disabled</span></div>
+  <div>jQuery: <span id="check-jquery">disabled</span></div>
+</div>
+
+<script>
+  document.getElementById('check-js').textContent = 'enabled';
+
+  $(function () {
+    $('#check-jquery').text('enabled');
+  })
+</script>
