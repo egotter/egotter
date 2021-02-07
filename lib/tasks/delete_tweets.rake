@@ -76,4 +76,10 @@ namespace :delete_tweets do
 
     puts "\nprocessed #{processed} skipped #{skipped_tweets.size}"
   end
+
+  desc 'Download archive'
+  task download_archive: :environment do
+    require_relative '../../bin/download_archive'
+    main
+  end
 end
