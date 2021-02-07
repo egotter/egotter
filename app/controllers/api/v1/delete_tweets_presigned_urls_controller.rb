@@ -15,10 +15,8 @@ module Api
 
       private
 
-      FILENAME_REGEXP = /\Atwitter-20\d{2}-\d{2}-\d{2}-[a-z0-9-]+.zip\z/
-
       def validate_filename
-        unless params[:filename].to_s.match?(FILENAME_REGEXP)
+        unless params[:filename].to_s.match?(S3::ArchiveData::FILENAME_REGEXP)
           render json: {message: t('.create.fail')}, status: :bad_request
         end
       end

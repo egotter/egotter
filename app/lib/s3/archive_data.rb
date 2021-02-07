@@ -2,6 +2,9 @@
 
 module S3
   class ArchiveData
+
+    FILENAME_REGEXP = /\Atwitter-20\d{2}-\d{2}-\d{2}-[a-z0-9-]+.zip\z/
+
     class << self
       def bucket_name
         "egotter.#{Rails.env}.archive-data"
