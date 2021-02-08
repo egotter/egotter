@@ -14,7 +14,7 @@ namespace :trends do
       Bot.api_client
     end
 
-    num = 10
+    num = ENV['NUM']&.to_i || 10
     min_tweets = 1000
     max_tweets = 50000
 
