@@ -13,10 +13,4 @@ RSpec.describe Trend, type: :model do
     end
     it { is_expected.to be_truthy }
   end
-
-  describe '.words_count' do
-    let(:tweets) { [double('tweet', text: 'りんご ばなな ばなな ばなな')] }
-    subject { described_class.words_count(tweets) }
-    it { is_expected.to eq({'ばなな' => 3}) }
-  end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_22_090610) do
+ActiveRecord::Schema.define(version: 2021_02_09_110237) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1288,6 +1288,16 @@ ActiveRecord::Schema.define(version: 2020_12_22_090610) do
     t.string "medium", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_tracks_on_created_at"
+  end
+
+  create_table "trend_insights", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "trend_id", null: false
+    t.json "words_count"
+    t.json "times_count"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_trend_insights_on_created_at"
+    t.index ["trend_id"], name: "index_trend_insights_on_trend_id", unique: true
   end
 
   create_table "trends", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

@@ -21,6 +21,11 @@
 #  index_trends_on_time        (time)
 #
 class Trend < ApplicationRecord
+  has_one :trend_insight
+
+  # TODO Drop words_count
+  # TODO Drop times_count
+
   WORLD_WOE_ID = 1
   JAPAN_WOE_ID = 23424856
 
@@ -33,19 +38,26 @@ class Trend < ApplicationRecord
     self.class.search_tweets(name, options.merge(time: time))
   end
 
-  def import_tweets(tweets, update_words_count: true, update_times_count: true)
+  def import_tweets(tweets)
     hash_tweets = tweets.map do |t|
       {uid: t.uid, screen_name: t.screen_name, raw_attrs_text: t.to_json}
     end
+
     S3::TrendTweet.import_from!(id, name, hash_tweets)
     update!(tweets_size: tweets.size, tweets_imported_at: Time.zone.now)
+  end
+
+  def update_trend_insight(tweets, update_words_count: true, update_times_count: true)
+    unless (insight = trend_insight)
+      insight = create_trend_insight
+    end
 
     if update_words_count
-      update(words_count: self.class.words_count(tweets))
+      insight.update_words_count(tweets)
     end
 
     if update_times_count
-      update(times_count: self.class.times_count(tweets))
+      insight.update_times_count(tweets)
     end
   end
 
@@ -178,24 +190,6 @@ class Trend < ApplicationRecord
 
     def group_by_hour(tweets)
       tweets.map { |t| Time.zone.parse(t[:created_at]) }.sort_by { |t| t.to_i }.group_by { |t| t.strftime(GROUP_BY_HOUR_FORMAT) }.map { |k, v| [k, v.size] }.to_h
-    end
-
-    def words_count(tweets)
-      text = tweets.take(1000).map(&:text).join(' ')
-      WordCloud.new.count_words(text).sort_by { |_, v| -v }.to_h
-    end
-
-    def times_count(tweets)
-      times = tweets.map(&:tweeted_at)
-
-      times_count = times.each_with_object(Hash.new(0)) do |t, memo|
-        time = Time.new(t.year, t.month, t.day, t.hour, t.min, 0, '+00:00')
-        memo[time.to_i] += 1
-      end
-
-      times_count.sort_by { |k, _| k }.map do |timestamp, count|
-        [timestamp, count]
-      end
     end
   end
 end
