@@ -142,6 +142,10 @@ module PathsHelper
     api_v1_trends_times_count_path(id: trend_id)
   end
 
+  def api_trend_users_count_path(trend_id)
+    api_v1_trends_users_count_path(id: trend_id)
+  end
+
   def api_profiles_count_path(twitter_user)
     case controller_name
     when 'friends'

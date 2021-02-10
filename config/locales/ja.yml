@@ -381,7 +381,13 @@ ja:
     trend:
       tweets_count: '%{count}件のツイート'
       trend_rank: 'トレンド%{count}位'
+      trend_details_html: |
+        %{time} の日本ツイッタートレンド %{rank}位<br>
+        %{users} 人のユーザーが %{tweets} 件ツイートしています。
       chart_title: 'ツイート数'
+      words_chart_title: '一緒にツイートされている単語'
+      times_chart_title: 'ツイート数の時系列推移'
+      users_chart_title: 'ツイート数が多いユーザー'
       download_tweets_title: 'ツイートのダウンロード'
       word_cloud_title: 'ワードクラウド'
       tweet_title: 'ツイート'
@@ -2188,6 +2194,8 @@ ja:
     tweet_times:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
     times_count:
+      loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
+    users_count:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
     stripe:
       already_purchased: '購入済み'

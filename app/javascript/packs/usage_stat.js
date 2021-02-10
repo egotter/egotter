@@ -8,6 +8,11 @@ class UsageStat {
     this._drawColumnChart(renderTo, [series], {series: drilldown});
   }
 
+  drawColorlessColumnChart(renderTo, data) {
+    var series = {name: null, colorByPoint: false, data: data};
+    this._drawColumnChart(renderTo, [series], {});
+  }
+
   drawStockLineChart(renderTo, data) {
     var series = {name: null, data: data};
     this._drawStockLineChart(renderTo, [series]);
@@ -15,11 +20,11 @@ class UsageStat {
 
   drawTweetsBarChart(renderTo, breakdown) {
     var categories = [
-        this.i18n['mention'],
-        this.i18n['media'],
-        this.i18n['link'],
-        this.i18n['hashtag'],
-        this.i18n['location']
+      this.i18n['mention'],
+      this.i18n['media'],
+      this.i18n['link'],
+      this.i18n['hashtag'],
+      this.i18n['location']
     ];
 
     var series = [{

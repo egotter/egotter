@@ -1,0 +1,21 @@
+<% container_id = "users-count-container-#{SecureRandom.urlsafe_base64(10)}" %>
+<div><%= description %></div>
+<div id="<%= container_id %>" class="d-flex align-items-center justify-content-center mt-3" style="height: 300px;">
+  <div><%= t('.loading_html') %></div>
+</div>
+
+<script>
+  $(function () {
+    var url = '<%= raw api_path %>';
+    var container = $('#<%= container_id %>');
+
+    $.get(url).done(function (res) {
+      container.empty();
+      new UsageStat().drawColorlessColumnChart(container.attr('id'), res.users_count);
+    }).fail(function (xhr, textStatus, errorThrown) {
+      logger.warn(url, xhr.responseText);
+      var message = extractErrorMessage(xhr, textStatus, errorThrown)
+      container.empty().text(message);
+    });
+  });
+</script>

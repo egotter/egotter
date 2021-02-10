@@ -15,14 +15,21 @@ class TrendDecorator < ApplicationDecorator
   end
 
   def latest_tweet
-    object.tweets.last
+    object.imported_tweets.last
+  end
+
+  def tweet_users_count
+    object.trend_insight.users_count.map(&:first).uniq.size
   end
 
   def words_count_chart
-    (words_count || []).map { |w, c| {word: w, count: c} }
+    (object.trend_insight.words_count || []).map { |w, c| {word: w, count: c} }
   end
 
   def times_count_chart(padding: true)
+    insight = object.trend_insight
+    times_count = insight.times_count
+
     return [] if times_count.blank?
 
     trend_time = object.time
@@ -40,5 +47,20 @@ class TrendDecorator < ApplicationDecorator
     end
 
     times_count.sort_by { |t, _| t }.map { |t, c| [t * 1000, c] }
+  end
+
+  def users_count_chart
+    insight = object.trend_insight
+    aggregated_values = insight.users_count
+
+    return [] if aggregated_values.blank?
+
+    result = aggregated_values.sort_by { |_, c| -c }.map { |v, c| [v, c] }.take(50).reverse
+    users = TwitterDB::User.where(uid: result.map(&:first)).select(:uid, :screen_name).index_by(&:uid)
+
+    result.map do |v, c|
+      user = users[v]
+      user ? [user.screen_name, c] : nil
+    end.compact
   end
 end

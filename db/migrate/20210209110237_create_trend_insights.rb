@@ -4,6 +4,7 @@ class CreateTrendInsights < ActiveRecord::Migration[6.0]
       t.bigint :trend_id, null: false
       t.json :words_count
       t.json :times_count
+      t.json :users_count
 
       t.timestamps null: false
 

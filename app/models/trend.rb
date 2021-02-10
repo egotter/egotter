@@ -47,21 +47,21 @@ class Trend < ApplicationRecord
     update!(tweets_size: tweets.size, tweets_imported_at: Time.zone.now)
   end
 
-  def update_trend_insight(tweets, update_words_count: true, update_times_count: true)
+  def update_trend_insight(tweets)
     unless (insight = trend_insight)
       insight = create_trend_insight
     end
 
-    if update_words_count
-      insight.update_words_count(tweets)
-    end
-
-    if update_times_count
-      insight.update_times_count(tweets)
-    end
+    insight.update_words_count(tweets)
+    insight.update_times_count(tweets)
+    insight.update_users_count(tweets)
   end
 
   def tweets
+    raise 'Trend#tweets is deprecated'
+  end
+
+  def imported_tweets
     @tweets ||= (S3::TrendTweet.find_by(id)&.tweets || [])
   end
 

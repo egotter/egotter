@@ -15,6 +15,10 @@ module Api
         render json: {times_count: @trend.times_count_chart}
       end
 
+      def users_count
+        render json: {users_count: @trend.users_count_chart}
+      end
+
       private
 
       def set_trend

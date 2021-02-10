@@ -6,6 +6,7 @@
 #  trend_id    :bigint(8)        not null
 #  words_count :json
 #  times_count :json
+#  users_count :json
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
@@ -37,6 +38,18 @@ class TrendInsight < ApplicationRecord
         [timestamp, count]
       end
     end
+
+    def calc_users_count(tweets)
+      values = tweets.map(&:uid)
+
+      values_count = values.each_with_object(Hash.new(0)) do |value, memo|
+        memo[value] += 1
+      end
+
+      values_count.sort_by { |_, v| -v }.map do |value, count|
+        [value, count]
+      end
+    end
   end
 
   def update_words_count(tweets)
@@ -47,5 +60,10 @@ class TrendInsight < ApplicationRecord
   def update_times_count(tweets)
     result = self.class.calc_times_count(tweets)
     update(times_count: result)
+  end
+
+  def update_users_count(tweets)
+    result = self.class.calc_users_count(tweets)
+    update(users_count: result)
   end
 end

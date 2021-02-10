@@ -12,7 +12,7 @@ module DownloadTrendTweetsRequestConcern
   private
 
   def filename_for_download(trend)
-    "#{trend.name}-tweets-#{trend.tweets.size}.csv"
+    "#{trend.name}-tweets-#{trend.imported_tweets.size}.csv"
   end
 
   def limit_for_download

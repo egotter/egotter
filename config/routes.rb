@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       get "follower_insights/tweet_times", to: "follower_insights#tweet_times"
       get "trends/words_count", to: "trends#words_count"
       get "trends/times_count", to: "trends#times_count"
+      get "trends/users_count", to: "trends#users_count"
 
       get "timelines", to: "timelines#show"
       get "summaries", to: "summaries#show"

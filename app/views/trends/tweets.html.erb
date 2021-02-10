@@ -1,19 +1,13 @@
 <%= content_for :navbar_title, t(".navbar_title") %>
 
-<h3 class="text-center my-5"><%= t('.page_title') %></span></h3>
+<h3 class="text-center my-5"><%= @trend.name %></span></h3>
 
 <div class="text-center">
-  <div class="d-inline-block">
-    <div class="text-left text-muted small">
-      <%= t('trends.trend.trend_rank', count: @trend.rank) %>
-      <%= t('trends.trend.tweets_count', count: @trend.tweets_count) %>
-    </div>
-    <h3 class="h4 text-left"><%= @trend.name %></h3>
-  </div>
+  <%= t('trends.trend.trend_details_html', time: @trend.time, rank: @trend.rank, users: @trend.tweet_users_count, tweets: @trend.tweets_count) %>
 </div>
 
 <h4 class="text-center mt-5 mb-3">
-  <%= t('trends.trend.chart_title', name: @trend.name) %>
+  <%= t('trends.trend.times_chart_title', name: @trend.name) %>
 </h4>
 
 <div class="card card-body"><%= render partial: 'shared/times_count', locals: {description: '', api_path: api_trend_times_count_path(@trend.id)} %></div>
@@ -23,24 +17,28 @@
 </div>
 
 <h4 class="text-center mt-5 mb-3">
+  <%= t('trends.trend.words_chart_title', name: @trend.name) %>
+</h4>
+
+<div class="card card-body"><%= render partial: 'shared/word_cloud', locals: {description: '', api_path: api_trend_words_count_path(@trend.id)} %></div>
+
+<h4 class="text-center mt-5 mb-3">
+  <%= t('trends.trend.users_chart_title', name: @trend.name) %>
+</h4>
+
+<div class="card card-body"><%= render partial: 'shared/users_count', locals: {description: '', api_path: api_trend_users_count_path(@trend.id)} %></div>
+
+<h4 class="text-center mt-5 mb-3">
   <%= t('trends.trend.download_tweets_title') %>
 </h4>
 
 <div class="card card-body mb-3">
-  <%= render partial: 'download_tweets', locals: {trend: @trend, tweets: @tweets} %>
+  <%= render partial: 'download_tweets', locals: {trend: @trend} %>
 </div>
 
 <h4 class="text-center mt-5 mb-3">
   <%= t('trends.trend.tweet_title', name: @trend.name) %>
 </h4>
 
-<%= render(partial: 'twitter/oembed_tweet', collection: @tweets.slice(0..9).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
-<%= render(partial: 'twitter/tweet', collection: @tweets.slice(10..-1).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
-
-<h4 class="text-center mt-5 mb-3">
-  <%= t('trends.trend.download_tweets_title') %>
-</h4>
-
-<div class="card card-body mb-3">
-  <%= render partial: 'download_tweets', locals: {trend: @trend, tweets: @tweets} %>
-</div>
+<%= render(partial: 'twitter/oembed_tweet', collection: @tweets.slice(0..2).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
+<%= render(partial: 'twitter/tweet', collection: @tweets.slice(3..-1).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
