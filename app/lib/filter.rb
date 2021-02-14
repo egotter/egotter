@@ -60,7 +60,8 @@ class Filter
         end
       end
 
-      users.select! { |u| tmp.find { |t| u.uid == t.uid } }
+      uids_map = tmp.index_by(&:uid)
+      users.select! { |u| uids_map[u.uid] }
     end
   end
 
