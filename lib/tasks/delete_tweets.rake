@@ -5,25 +5,30 @@ namespace :delete_tweets do
     unless user
       raise "The user doesn't exist screen_name=#{ENV['SCREEN_NAME']}"
     end
+    puts "user=#{user.screen_name}"
 
     unless user.has_valid_subscription?
       raise "The user doesn't has valid subscription user_id=#{user.id}"
     end
+    puts "has_valid_subscription=#{user.has_valid_subscription?}"
 
     if user.has_trial_subscription?
       user.valid_order.end_trial!
     end
+    puts "has_trial_subscription=#{user.has_trial_subscription?}"
 
     tweets = JSON.load(File.read(ENV['FILE']).remove(/\Awindow\.YTD\.tweet\.part\d+ =/))
     if tweets.empty?
       raise "There are no tweets user_id=#{user.id}"
     end
+    puts "tweets_size=#{tweets.size}"
 
     tweet_ids = tweets.map { |tweet| tweet['tweet']['id'] }
     tweet = user.api_client.twitter.status(tweet_ids[0])
     if tweet.user.id != user.uid
       raise "The uid of the user doesn't match the uid of a tweet user_id=#{user.id} tweet_id=#{tweet_ids[0]}"
     end
+    puts "tweet_author=#{tweet.user.screen_name}"
 
     processed = 0
     skipped_tweets = []
