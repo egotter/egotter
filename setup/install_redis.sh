@@ -45,3 +45,6 @@ swapon /swapfile
 echo '/swapfile swap swap defaults 0 0' >>/etc/fstab
 
 # Install datadog
+
+# Disable updating motd
+/usr/sbin/update-motd --disable
