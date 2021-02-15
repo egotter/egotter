@@ -90,7 +90,10 @@ class UsageStat {
         text: null
       },
       xAxis: {
-        type: 'category'
+        type: 'category',
+        labels: {
+          rotation: 90
+        }
       },
       yAxis: {
         title: {

@@ -385,12 +385,12 @@ ja:
         %{time} の日本ツイッタートレンド %{rank}位<br>
         %{users} 人のユーザーが %{tweets} 件ツイートしています。
       chart_title: 'ツイート数'
-      words_chart_title: '一緒にツイートされている単語'
-      times_chart_title: 'ツイート数の時系列推移'
+      words_chart_title: '「%{name}」のワードクラウド'
+      times_chart_title: '「%{name}」のツイート数'
       users_chart_title: 'ツイート数が多いユーザー'
-      download_tweets_title: 'ツイートのダウンロード'
-      word_cloud_title: 'ワードクラウド'
-      tweet_title: 'ツイート'
+      download_tweets_title: '「%{name}」ツイートのダウンロード'
+      word_cloud_title: '「%{name}」のワードクラウド'
+      tweet_title: '「%{name}」を含むツイート'
       see_more: 'もっと見る'
     download_tweets:
       description: '「%{name}」の先頭 100件のツイートをダウンロードできます。有料プランのユーザーは全てのツイートをダウンロードできます。'

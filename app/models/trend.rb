@@ -34,8 +34,15 @@ class Trend < ApplicationRecord
   scope :top_n, -> (n) { where(rank: 1..n) }
   scope :top_10, -> { top_n(10) }
 
-  def search_tweets(options = {})
-    self.class.search_tweets(name, options.merge(time: time))
+  def search_tweets(count:, max_id: nil, client_loader: nil, with_time: true)
+    options = {
+        client_loader: client_loader,
+        count: count,
+        max_id: max_id,
+        since: with_time ? time - 1.day : nil,
+        until: with_time ? time : nil,
+    }
+    TrendSearcher.new(name, options).search_tweets
   end
 
   def import_tweets(tweets)
@@ -96,94 +103,6 @@ class Trend < ApplicationRecord
           build_from_response(trend, woe_id, i + 1, time)
         end
       end.flatten
-    end
-
-    def search_tweets(query, options = {})
-      options[:count] = 10000 unless options[:count]
-      if options[:without_time]
-        options.delete(:without_time)
-        options.delete(:time)
-        options.delete(:since)
-        options.delete(:until)
-      else
-        if options[:time]
-          time = options.delete(:time)
-          options[:since] = time - 1.day
-          options[:until] = time
-        else
-          options[:since] = 1.day.ago unless options[:since]
-          options[:until] = Time.zone.now unless options[:until]
-        end
-      end
-
-      client_loader = options.delete(:client_loader) || Proc.new { Bot.api_client }
-
-      collection = []
-      max_id = options[:max_id] || nil
-      count = options[:count]
-
-      while collection.size < count
-        tweets = internal_fetch_tweets(client_loader, query, options.merge(count: 100, max_id: max_id))
-        collection.concat(tweets)
-        break if tweets.empty? || max_id == tweets.last[:id]
-        max_id = tweets.last[:id]
-      end
-
-      collection.map { |c| omit_unnecessary_data(c) }
-    end
-
-    def internal_fetch_tweets(client_loader, query, options)
-      retries ||= 3
-      client_loader.call.search(query, options)
-    rescue => e
-      if (retries -= 1) >= 0
-        retry
-      else
-        raise
-      end
-    end
-
-    def omit_unnecessary_data(tweet)
-      data = Tweet.new(tweet)
-
-      if tweet[:retweeted_status]
-        data.retweeted_status = Tweet.new(tweet[:retweeted_status])
-      end
-
-      data
-    end
-
-    class Tweet
-      attr_reader :id, :text, :uid, :screen_name, :created_at
-      attr_accessor :retweeted_status
-
-      def initialize(attrs)
-        @id = attrs[:id]
-        @text = attrs[:text]
-        @uid = attrs[:user][:id]
-        @screen_name = attrs[:user][:screen_name]
-        @created_at = attrs[:created_at].is_a?(String) ? Time.zone.parse(attrs[:created_at]) : attrs[:created_at]
-        @retweeted_status = nil
-      end
-
-      def tweet_id
-        @id
-      end
-
-      def tweeted_at
-        @created_at
-      end
-
-      def to_json
-        {
-            id: @id,
-            text: @text,
-            uid: @uid,
-            screen_name: @screen_name,
-            created_at: @created_at,
-            retweeted_status: @retweeted_status,
-        }.to_json
-      end
     end
 
     GROUP_BY_HOUR_FORMAT = '%Y/%m/%d %H:00:00'
