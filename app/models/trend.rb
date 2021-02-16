@@ -62,6 +62,17 @@ class Trend < ApplicationRecord
     update!(tweets_size: tweets.size, tweets_imported_at: Time.zone.now)
   end
 
+  def replace_tweets(count:)
+    tweets = search_tweets(count: count)
+    import_tweets(tweets)
+    update_trend_insight(tweets)
+
+    uids = tweets.map(&:uid).uniq
+    CreateTwitterDBUserWorker.compress_and_perform_async(uids)
+
+    tweets.size
+  end
+
   def update_trend_insight(tweets)
     unless (insight = trend_insight)
       insight = create_trend_insight
