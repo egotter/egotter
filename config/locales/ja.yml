@@ -2198,6 +2198,7 @@ ja:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
     users_count:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
+      users_list: 'ユーザーリストを見る'
     stripe:
       already_purchased: '購入済み'
   breadcrumb:
