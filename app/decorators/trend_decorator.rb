@@ -32,16 +32,14 @@ class TrendDecorator < ApplicationDecorator
 
     return [] if times_count.blank?
 
-    trend_time = object.time
-
     if padding
-      time = trend_time - 1.day
+      times_count.sort_by! { |t, _| t }
+      oldest_time = Time.zone.at(times_count[0][0])
+      time = oldest_time - 1.hour
 
-      while time < trend_time do
+      while time < oldest_time do
         label_time = time.change(second: 0)
-        if times_count.none? { |t, _| t == label_time.to_i }
-          times_count << [label_time.to_i, 0]
-        end
+        times_count << [label_time.to_i, 0]
         time += 1.minute
       end
     end
