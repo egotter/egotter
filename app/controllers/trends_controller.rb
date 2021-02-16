@@ -1,6 +1,8 @@
 class TrendsController < ApplicationController
   include DownloadTrendTweetsRequestConcern
 
+  before_action :set_trend, only: %i(tweets download_tweets)
+
   rescue_from ActiveRecord::RecordNotFound do |e|
     redirect_to trends_path(via: current_via('record_not_found'))
   end
@@ -10,13 +12,23 @@ class TrendsController < ApplicationController
   end
 
   def tweets
-    @trend = TrendDecorator.new(Trend.japan.latest_trends.top_10.find(params[:id]))
+    @trend = TrendDecorator.new(@trend)
     @tweets = @trend.imported_tweets.take(10)
   end
 
+  # TODO Download from S3 directly
   def download_tweets
-    trend = Trend.japan.latest_trends.top_10.find(params[:id])
-    data = data_for_download(trend, trend.imported_tweets.take(limit_for_download))
-    render_for_download(trend, data)
+    data = data_for_download(@trend, @trend.imported_tweets.take(limit_for_download))
+    render_for_download(@trend, data)
+  end
+
+  private
+
+  def set_trend
+    if user_signed_in? && current_user.admin?
+      @trend = Trend.find(params[:id])
+    else
+      @trend = Trend.japan.latest_trends.top_10.find(params[:id])
+    end
   end
 end

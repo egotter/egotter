@@ -77,7 +77,7 @@ class Trend < ApplicationRecord
   end
 
   def imported_tweets
-    @tweets ||= (S3::TrendTweet.find_by(id)&.tweets || [])
+    @imported_tweets ||= (S3::TrendTweet.find_by(id)&.tweets || [])
   end
 
   def query

@@ -3,7 +3,7 @@
 <h3 class="text-center my-5"><%= @trend.name %></span></h3>
 
 <div class="text-center">
-  <%= t('trends.trend.trend_details_html', time: @trend.time, rank: @trend.rank, users: @trend.tweet_users_count, tweets: @trend.tweets_count) %>
+  <%= t('trends.trend.trend_details_html', time: @trend.display_time_jst, rank: @trend.rank, users: @trend.delimited_tweet_users_count, tweets: @trend.delimited_tweets_count) %>
 </div>
 
 <h4 class="text-center mt-5 mb-3">
