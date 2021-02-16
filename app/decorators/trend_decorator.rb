@@ -12,7 +12,7 @@ class TrendDecorator < ApplicationDecorator
   end
 
   def tweets_count
-    object.tweet_volume || object.tweets_size
+    [object.tweet_volume || -1, object.tweets_size || -1].max
   end
 
   def delimited_tweet_users_count
@@ -51,7 +51,7 @@ class TrendDecorator < ApplicationDecorator
       oldest_time = Time.zone.at(times_count[0][0]).tap { |t| t.change(second: 0) }
       latest_time = Time.zone.at(times_count[-1][0]).tap { |t| t.change(second: 0) }
 
-      10.times do # x minutes
+      10.times do
         times_count << [(oldest_time -= 1.minute).to_i, 0]
         times_count << [(latest_time += 1.minute).to_i, 0]
       end

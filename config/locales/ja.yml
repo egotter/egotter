@@ -387,6 +387,7 @@ ja:
       chart_title: 'ツイート数'
       words_chart_title: '「%{name}」のワードクラウド'
       times_chart_title: '「%{name}」のツイート数'
+      times_chart_notice: '検索して見付かったツイートを集計しています。ツイッター公式のトレンド数とは一致しないことがあります。'
       users_chart_title: 'ツイート数が多いユーザー'
       download_tweets_title: '「%{name}」ツイートのダウンロード'
       word_cloud_title: '「%{name}」のワードクラウド'

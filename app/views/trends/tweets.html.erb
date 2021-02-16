@@ -13,7 +13,8 @@
 <div class="card card-body"><%= render partial: 'shared/times_count', locals: {description: '', api_path: api_trend_times_count_path(@trend.id)} %></div>
 <div class="text-muted small mb-3">
   tv=<%= @trend.tweet_volume %>
-  ts=<%= @trend.tweets_size %>
+  ts=<%= @trend.tweets_size %><br>
+  <%= t('trends.trend.times_chart_notice') %>
 </div>
 
 <h4 class="text-center mt-5 mb-3">
