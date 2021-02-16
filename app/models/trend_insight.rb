@@ -22,8 +22,8 @@ class TrendInsight < ApplicationRecord
 
   class << self
     def calc_words_count(tweets)
-      text = tweets.take(1000).map(&:text).join(' ')
-      WordCloud.new.count_words(text).sort_by { |_, v| -v }.to_h
+      text = tweets.take(10000).map(&:text).join(' ')
+      WordCloud.new.count_words(text).sort_by { |_, v| -v }
     end
 
     def calc_times_count(tweets)
