@@ -30,9 +30,9 @@ namespace :trends do
       options = {count: max_tweets, client_loader: client_loader}
       tweets = trend.search_tweets(options)
 
-      if tweets.size < min_tweets
-        tweets = trend.search_tweets(options.merge(with_time: false))
-      end
+      # if tweets.size < min_tweets
+      #   tweets = trend.search_tweets(options.merge(since: nil, _until: nil))
+      # end
 
       trend.import_tweets(tweets)
       trend.update_trend_insight(tweets)

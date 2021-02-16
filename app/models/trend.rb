@@ -34,13 +34,19 @@ class Trend < ApplicationRecord
   scope :top_n, -> (n) { where(rank: 1..n) }
   scope :top_10, -> { top_n(10) }
 
-  def search_tweets(count:, max_id: nil, client_loader: nil, with_time: true)
+  #
+  # tweet1 <- :since_id is tweet1.id
+  # tweet2
+  # tweet3 <- :max_id is tweet3.id - 1
+  def search_tweets(count:, max_id: nil, since_id: nil, since: nil, _until: nil, client_loader: nil)
+    time_format = '%Y-%m-%d_%H:%M:%S_UTC'
     options = {
-        client_loader: client_loader,
         count: count,
         max_id: max_id,
-        since: with_time ? time - 1.day : nil,
-        until: with_time ? time : nil,
+        since_id: since_id,
+        # since: (since || time - 1.day).strftime(time_format),
+        # until: (_until || time).strftime(time_format),
+        client_loader: client_loader,
     }
     TrendSearcher.new(name, options).search_tweets
   end

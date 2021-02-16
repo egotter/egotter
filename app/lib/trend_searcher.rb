@@ -8,7 +8,7 @@ class TrendSearcher
     collection = []
 
     while collection.size < @count
-      options = {count: 100, since: @since, until: @until, max_id: @max_id}
+      options = {count: 100, since: @since, until: @until, since_id: @since_id, max_id: @max_id}
       tweets = internal_fetch_tweets(@client_loader, @query, options)
       collection.concat(tweets)
 
@@ -24,14 +24,16 @@ class TrendSearcher
   def extract_options(options)
     @client_loader = options[:client_loader] || Proc.new { Bot.api_client }
     @count = options[:count] || 10000
-    @max_id = options[:max_id] || nil
-    @since = options[:since] || 1.day.ago
-    @until = options[:until] || Time.zone.now
+    @since_id = options[:since_id]
+    @max_id = options[:max_id]
+    @since = options[:since]
+    @until = options[:until]
   end
 
   def internal_fetch_tweets(client_loader, query, options)
     retries ||= 3
-    client_loader.call.search(query, options)
+    Rails.logger.debug "TrendSearcher#internal_fetch_tweets: query=#{query} options=#{options}"
+    client_loader.call.twitter.search(query, options).attrs[:statuses]
   rescue => e
     if (retries -= 1) >= 0
       retry

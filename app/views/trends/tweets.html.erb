@@ -29,7 +29,7 @@
 <div class="card card-body"><%= render partial: 'shared/users_count', locals: {description: '', api_path: api_trend_users_count_path(@trend.id)} %></div>
 
 <h4 class="text-center mt-5 mb-3">
-  <%= t('trends.trend.download_tweets_title') %>
+  <%= t('trends.trend.download_tweets_title', name: @trend.name) %>
 </h4>
 
 <div class="card card-body mb-3">
