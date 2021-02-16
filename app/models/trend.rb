@@ -38,6 +38,8 @@ class Trend < ApplicationRecord
   # tweet1 <- :since_id is tweet1.id
   # tweet2
   # tweet3 <- :max_id is tweet3.id - 1
+  #
+  # more_recent_tweets = search_tweets(since_id: tweets[0].tweet_id)
   def search_tweets(count:, max_id: nil, since_id: nil, since: nil, _until: nil, client_loader: nil)
     time_format = '%Y-%m-%d_%H:%M:%S_UTC'
     options = {

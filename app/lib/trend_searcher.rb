@@ -21,8 +21,15 @@ class TrendSearcher
 
   private
 
+  CLIENT_LOADER = Proc.new do
+    User.api_client.tap { |c| c.twitter.verify_credentials }
+  rescue => e
+    logger.info "Change client exception=#{e.inspect}"
+    Bot.api_client
+  end
+
   def extract_options(options)
-    @client_loader = options[:client_loader] || Proc.new { Bot.api_client }
+    @client_loader = options[:client_loader] || CLIENT_LOADER
     @count = options[:count] || 10000
     @since_id = options[:since_id]
     @max_id = options[:max_id]
