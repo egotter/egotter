@@ -23,6 +23,7 @@ class TrendDecorator < ApplicationDecorator
     tweets_count&.to_s(:delimited)
   end
 
+  # TODO Remove later
   def search_url
     query = object.query
     query += " since:#{ApiClient::CONVERT_TIME_FORMAT.call(object.time - 1.day)}"
@@ -50,7 +51,7 @@ class TrendDecorator < ApplicationDecorator
       oldest_time = Time.zone.at(times_count[0][0]).tap { |t| t.change(second: 0) }
       latest_time = Time.zone.at(times_count[-1][0]).tap { |t| t.change(second: 0) }
 
-      10.times do
+      10.times do # x minutes
         times_count << [(oldest_time -= 1.minute).to_i, 0]
         times_count << [(latest_time += 1.minute).to_i, 0]
       end

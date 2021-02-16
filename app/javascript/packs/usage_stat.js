@@ -150,6 +150,16 @@ class UsageStat {
       subtitle: {
         text: null,
       },
+      xAxis: {
+        dateTimeLabelFormats: {
+          minute: '%H時%M分',
+          hour: '%H時%M分',
+          day: '%m月%d日',
+          week: '%m月%d日',
+          month: '%Y年%m月',
+          year: '%Y年'
+        }
+      },
       series: series,
       rangeSelector: {enabled: false},
       scrollbar: {enabled: false},
