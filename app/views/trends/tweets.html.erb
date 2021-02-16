@@ -41,5 +41,7 @@
   <%= t('trends.trend.tweet_title', name: @trend.name) %>
 </h4>
 
-<%= render(partial: 'twitter/oembed_tweet', collection: @tweets.slice(0..2).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
-<%= render(partial: 'twitter/tweet', collection: @tweets.slice(3..-1).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
+<% if @tweets.any? %>
+  <%= render(partial: 'twitter/oembed_tweet', collection: @tweets.slice(0..2).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
+  <%= render(partial: 'twitter/tweet', collection: @tweets.slice(3..-1).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
+<% end %>

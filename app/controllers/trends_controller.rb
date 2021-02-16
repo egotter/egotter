@@ -13,7 +13,7 @@ class TrendsController < ApplicationController
 
   def tweets
     @trend = TrendDecorator.new(@trend)
-    @tweets = @trend.imported_tweets.take(10)
+    @tweets = @trend.imported_tweets.take(10) || []
   end
 
   # TODO Download from S3 directly

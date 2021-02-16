@@ -9,6 +9,8 @@ class TrendDecorator < ApplicationDecorator
 
   def tweet_users_count
     object.trend_insight.users_count.map(&:first).uniq.size
+  rescue => e
+    -1
   end
 
   def tweets_count
