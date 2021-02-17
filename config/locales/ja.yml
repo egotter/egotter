@@ -392,6 +392,8 @@ ja:
       download_tweets_title: '「%{name}」ツイートのダウンロード'
       word_cloud_title: '「%{name}」のワードクラウド'
       tweet_title: '「%{name}」を含むツイート'
+      latest_tweets_title: '「%{name}」を含む最新のツイート'
+      oldest_tweets_title: '「%{name}」を含むもっとも古いツイート'
       see_more: 'もっと見る'
     download_tweets:
       description: '「%{name}」の先頭 100件のツイートをダウンロードできます。有料プランのユーザーは全てのツイートをダウンロードできます。'

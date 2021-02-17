@@ -38,10 +38,19 @@
 </div>
 
 <h4 class="text-center mt-5 mb-3">
-  <%= t('trends.trend.tweet_title', name: @trend.name) %>
+  <%= t('trends.trend.latest_tweets_title', name: @trend.name) %>
 </h4>
 
-<% if @tweets.any? %>
-  <%= render(partial: 'twitter/oembed_tweet', collection: @tweets.slice(0..2).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
-  <%= render(partial: 'twitter/tweet', collection: @tweets.slice(3..-1).select(&:user), as: :tweet, cached: true, formats: %i(html)) %>
+<% if @latest_tweets.any? %>
+  <%= render(partial: 'twitter/oembed_tweet', collection: @latest_tweets, as: :tweet, cached: true, formats: %i(html)) %>
+  <%# render(partial: 'twitter/tweet', collection: @tweets, as: :tweet, cached: true, formats: %i(html)) %>
+<% end %>
+
+<h4 class="text-center mt-5 mb-3">
+  <%= t('trends.trend.oldest_tweets_title', name: @trend.name) %>
+</h4>
+
+<% if @oldest_tweets.any? %>
+  <%= render(partial: 'twitter/oembed_tweet', collection: @oldest_tweets, as: :tweet, cached: true, formats: %i(html)) %>
+  <%# render(partial: 'twitter/tweet', collection: @tweets, as: :tweet, cached: true, formats: %i(html)) %>
 <% end %>
