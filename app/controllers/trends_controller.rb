@@ -14,9 +14,9 @@ class TrendsController < ApplicationController
   def tweets
     @trend = TrendDecorator.new(@trend)
 
-    tweets =  @trend.imported_tweets
-    @latest_tweets = tweets.slice(0..2).select(&:user)
-    @oldest_tweets = tweets.slice(-3..-1).select(&:user)
+    @tweets =  @trend.imported_tweets
+    @latest_tweets = @tweets.slice(0..2).select(&:user)
+    @oldest_tweets = @tweets.slice(-3..-1).select(&:user)
   end
 
   # TODO Download from S3 directly

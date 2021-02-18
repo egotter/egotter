@@ -12,8 +12,9 @@
 
 <div class="card card-body"><%= render partial: 'shared/times_count', locals: {description: '', api_path: api_trend_times_count_path(@trend.id)} %></div>
 <div class="text-muted small mb-3">
-  tv=<%= @trend.tweet_volume %>
-  ts=<%= @trend.tweets_size %><br>
+  volume=<%= @trend.tweet_volume %>
+  search=<%= @trend.tweets_size %>
+  unique=<%= @tweets.uniq { |t| t.retweeted_status ? t.retweeted_status.tweet_id : t.tweet_id }.size %><br>
   <%= t('trends.trend.times_chart_notice') %>
 </div>
 
@@ -28,6 +29,10 @@
 </h4>
 
 <div class="card card-body"><%= render partial: 'shared/users_count', locals: {description: '', api_path: api_trend_users_count_path(@trend.id), trend: @trend} %></div>
+<div class="text-muted small mb-3">
+  search=<%= @tweets.map(&:uid).uniq.size %>
+  unique=<%= @tweets.uniq { |t| t.retweeted_status ? t.retweeted_status.uid : t.uid }.size %>
+</div>
 
 <h4 class="text-center mt-5 mb-3">
   <%= t('trends.trend.download_tweets_title', name: @trend.name) %>

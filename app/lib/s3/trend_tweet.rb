@@ -42,6 +42,15 @@ module S3
       def tweeted_at
         Time.zone.parse(@properties['created_at'])
       end
+
+      def retweeted_status
+        if (tweet = @properties['retweeted_status'])
+          properties = {'id' => tweet['id'], 'text' => tweet['text'], 'created_at' => tweet['created_at']}
+          TweetWrapper.new(uid: tweet['uid'], screen_name: tweet['screen_name'], properties: properties)
+        else
+          nil
+        end
+      end
     end
   end
 end
