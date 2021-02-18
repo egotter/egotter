@@ -36,12 +36,13 @@ namespace :trends do
     logger = TaskLogger.logger
     logger.info "task=#{task.name} start"
 
-    trend = Trend.find(ENV['TREND_ID'])
     max_tweets = ENV['MAX_TWEETS']&.to_i || 50000
 
-    size = trend.replace_tweets(count: max_tweets)
-
-    logger.info "task=#{task.name} name=#{trend.name} tweets=#{size}"
+    ids = ENV['TREND_ID'].split(',')
+    Trend.where(id: ids).each do |trend|
+      size = trend.replace_tweets(count: max_tweets)
+      logger.info "task=#{task.name} name=#{trend.name} tweets=#{size}"
+    end
     logger.info "task=#{task.name} finish"
   end
 end
