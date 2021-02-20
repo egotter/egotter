@@ -24,7 +24,7 @@ class TrendSearcher
   CLIENT_LOADER = Proc.new do
     User.api_client.tap { |c| c.twitter.verify_credentials }
   rescue => e
-    logger.info "Change client exception=#{e.inspect}"
+    Rails.logger.info "Change client exception=#{e.inspect}"
     Bot.api_client
   end
 
@@ -39,7 +39,7 @@ class TrendSearcher
 
   def internal_fetch_tweets(client_loader, query, options)
     retries ||= 3
-    Rails.logger.debug "TrendSearcher#internal_fetch_tweets: query=#{query} options=#{options}"
+    Rails.logger.debug { "TrendSearcher#internal_fetch_tweets: query=#{query} options=#{options}" }
     client_loader.call.twitter.search(query, options).attrs[:statuses]
   rescue => e
     if (retries -= 1) >= 0

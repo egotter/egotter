@@ -11,7 +11,10 @@ module S3
     def tweets
       @tweets.map do |tweet|
         TrendSearcher::Tweet.from_hash(tweet['raw_attrs_text'])
-      end
+      rescue NoMethodError => e
+        # Incompatible data is stored to S3
+        nil
+      end.compact
     end
   end
 end

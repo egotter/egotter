@@ -4,7 +4,7 @@
 
 <div class="mb-3">
   <% @trends.each do |trend| %>
-    <div><%= t('.rank_html', rank: trend.rank, link: link_to(trend.name, trend_tweets_path(trend)), tweets: trend.tweets_count) %></div>
+    <div><%= t('.rank_html', rank: trend.rank, link: link_to(trend.name, trend_path(trend)), tweets: trend.tweets_count) %></div>
   <% end %>
 </div>
 

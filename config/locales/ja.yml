@@ -376,6 +376,8 @@ ja:
       crumb_title: 'Twitterトレンド'
       page_title: '日本のTwitterトレンド'
       rank_html: '%{rank}. %{link} <span class="text-muted small">%{tweets}ツイート</span>'
+    show:
+      <<: *trends_index
     tweets:
       <<: *trends_index
     trend:

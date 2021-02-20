@@ -13,6 +13,10 @@ module S3
       end
     end
 
+    def tweets_bytesize
+      @tweets.map { |tweet| tweet.inspect.size }.sum
+    end
+
     class << self
       def bucket_name
         'not-specified'
