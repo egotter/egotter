@@ -43,7 +43,8 @@ module ApplicationHelper
 
   def wrap_in_container?
     settings = controller_name == 'settings' && action_name == 'index'
-    !@has_error && !top_page? && !waiting_page? && !settings
+    trend_media = controller_name == 'trends' && action_name == 'media'
+    !@has_error && !top_page? && !waiting_page? && !settings && !trend_media
   end
 
   def show_common_friends?(twitter_user)

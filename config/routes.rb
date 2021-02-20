@@ -117,6 +117,7 @@ Rails.application.routes.draw do
   resources 'blockers', only: %i(index)
   resources 'trends', only: %i(index)
   get 'trends/:id/tweets', to: 'trends#tweets', as:  'trend_tweets'
+  get 'trends/:id/media', to: 'trends#media', as:  'trend_media'
   get 'trends/:id', to: 'trends#show', as: 'trend'
   get 'trends/:id/download_tweets', to: 'trends#download_tweets', as:  'trend_download_tweets'
 

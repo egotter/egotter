@@ -380,6 +380,9 @@ ja:
       <<: *trends_index
     tweets:
       <<: *trends_index
+    media:
+      <<: *trends_index
+      page_title: '%{name}で投稿されたイラスト'
     trend:
       tweets_count: '%{count}件のツイート'
       trend_rank: 'トレンド%{count}位'

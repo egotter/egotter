@@ -92,6 +92,16 @@ class TrendSearcher
       end
     end
 
+    def tweet_url
+      "https://twitter.com/#{screen_name}/status/#{tweet_id}"
+    end
+
+    def media_url
+      properties[:entities][:media][0][:media_url]
+    rescue => e
+      nil
+    end
+
     def to_json
       @properties
     end

@@ -26,11 +26,7 @@ module Api
       private
 
       def set_trend
-        if user_signed_in? && current_user.admin?
-          trend = Trend.find(params[:id])
-        else
-          trend = Trend.japan.latest_trends.top_10.find(params[:id])
-        end
+        trend = Trend.find(params[:id])
         @trend = TrendDecorator.new(trend)
       end
     end
