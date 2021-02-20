@@ -1,0 +1,10 @@
+<%= content_for :navbar_title, t(".navbar_title") %>
+
+<h4 class="text-center mt-5 mb-3">
+  <%= t('.page_title', name: @trend.name) %>
+</h4>
+
+<% @tweets.each do |tweet| %>
+  <a href="<%= tweet.tweet_url %>" target="_blank">
+    <img src="<%= tweet.media_url %>" width="75" height="75"></a>
+<% end %>
