@@ -10,29 +10,37 @@ class TrendMediaCache
   end
 
   def read(trend_id)
-    if (data = @store.read(trend_id))
-      JSON.parse(data).map do |attrs|
-        Tweet.new(attrs['tweet_url'], attrs['media_url'])
+    benchmark("Benchmark TrendMediaCache#read trend_id=#{trend_id}") do
+      if (data = @store.read(trend_id))
+        JSON.parse(data).map do |attrs|
+          Tweet.new(attrs['tweet_url'], attrs['media_url'])
+        end
       end
     end
   end
 
   def write(trend_id, tweets)
-    data = tweets.map do |tweet|
-      {tweet_ur: tweet.tweet_url, media_url: tweet.media_url}
-    end.to_json
-    @store.write(trend_id, data)
+    benchmark("Benchmark TrendMediaCache#write trend_id=#{trend_id}") do
+      data = tweets.map do |tweet|
+        {tweet_ur: tweet.tweet_url, media_url: tweet.media_url}
+      end.to_json
+      @store.write(trend_id, data)
+    end
   end
 
   def fetch(trend_id, &block)
     if (result = read(trend_id))
-      Rails.logger.debug { "TrendMediaCache: Read from cache trend_id=#{trend_id}" }
       result
     else
       result = yield
       write(trend_id, result)
-      Rails.logger.debug { "TrendMediaCache: Write to cache trend_id=#{trend_id}" }
       result
+    end
+  end
+
+  def benchmark(message, &block)
+    ApplicationRecord.benchmark(message, level: :info) do
+      yield
     end
   end
 
