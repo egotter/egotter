@@ -16,7 +16,7 @@ class TrendSearcher
       @max_id = tweets.last[:id] - 1
     end
 
-    collection.map { |c| omit_unnecessary_data(c) }
+    collection.map { |c| Tweet.from_hash(c) }
   end
 
   private
@@ -49,46 +49,51 @@ class TrendSearcher
     end
   end
 
-  def omit_unnecessary_data(tweet)
-    data = Tweet.new(tweet)
-
-    if tweet[:retweeted_status]
-      data.retweeted_status = Tweet.new(tweet[:retweeted_status])
-    end
-
-    data
-  end
-
   class Tweet
-    attr_reader :id, :text, :uid, :screen_name, :created_at
+    attr_reader :tweet_id, :text, :uid, :screen_name, :tweeted_at, :properties
     attr_accessor :retweeted_status
 
     def initialize(attrs)
-      @id = attrs[:id]
+      attrs.deep_symbolize_keys!
+      @tweet_id = attrs[:id]
       @text = attrs[:text]
       @uid = attrs[:user][:id]
       @screen_name = attrs[:user][:screen_name]
-      @created_at = attrs[:created_at].is_a?(String) ? Time.zone.parse(attrs[:created_at]) : attrs[:created_at]
+      @tweeted_at = attrs[:created_at].is_a?(String) ? Time.zone.parse(attrs[:created_at]) : attrs[:created_at]
+      @properties = attrs
       @retweeted_status = nil
     end
 
-    def tweet_id
-      @id
+    class << self
+      def from_hash(hash)
+        instance = new(hash)
+        if hash[:retweeted_status]
+          instance.retweeted_status = new(hash[:retweeted_status])
+        end
+        instance
+      end
     end
 
-    def tweeted_at
-      @created_at
+    def id
+      Rails.logger.warn '#id is deprecated'
+      tweet_id
+    end
+
+    def created_at
+      Rails.logger.warn '#created_at is deprecated'
+      tweeted_at
+    end
+
+    def user
+      if instance_variable_defined?(:@user)
+        @user
+      else
+        @user = TwitterDB::User.find_by(uid: @uid)
+      end
     end
 
     def to_json
-      {
-          id: @id,
-          text: @text,
-          uid: @uid,
-          screen_name: @screen_name,
-          created_at: @created_at,
-          retweeted_status: @retweeted_status,
-      }.to_json
+      @properties
     end
   end
 end
