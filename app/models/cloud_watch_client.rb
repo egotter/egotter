@@ -2,6 +2,7 @@ require 'aws-sdk-cloudwatch'
 
 class CloudWatchClient
   REGION = 'ap-northeast-1'
+  DB_INSTANCE_ID = ENV['DB_INSTANCE_ID']
 
   def initialize
     @client = Aws::CloudWatch::Client.new(region: REGION)
@@ -21,6 +22,29 @@ class CloudWatchClient
         ]
     }
     @client.put_metric_data(values)
+  end
+
+  def get_metric_statistics(metric_name, namespace:, dimensions:)
+    @client.get_metric_statistics(
+        namespace: namespace,
+        metric_name: metric_name,
+        dimensions: dimensions,
+        start_time: 5.minutes.ago.iso8601,
+        end_time: Time.zone.now.utc.iso8601,
+        period: 300,
+        statistics: ['Average'],
+    )
+  end
+
+  def get_rds_burst_balance
+    dimensions = [
+        {
+            name: 'DBInstanceIdentifier',
+            value: DB_INSTANCE_ID,
+        },
+    ]
+    resp = get_metric_statistics('BurstBalance', namespace: 'AWS/RDS', dimensions: dimensions)
+    resp.datapoints[0].average
   end
 
   def list_dashboards

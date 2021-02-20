@@ -6,7 +6,6 @@ class TrendMediaCache
         race_condition_ttl: 5.minutes,
         redis: self.class.redis
     )
-
   end
 
   def read(trend_id)

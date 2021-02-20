@@ -10,6 +10,7 @@ RUBY='/var/egotter/bin/cron/ruby.sh'
 # 1  * * * *      /bin/sh -c "$RUNNER 'SendMetricsToSlackWorker.perform_async'"
 # 6-56/10 * * * * /bin/sh -c "$RUNNER 'CalculateMetricsWorker.perform_async'"
 # * * * * *       /bin/sh -c "$RUBY bin/send_metrics_to_cloudwatch.rb"
+# */10 * * * *    /bin/sh -c "$RUBY bin/update_rds_burst_balance.rb"
 
 # PeriodicReport(morning)
 # 20 22 * * * /bin/sh -c "$RAKE servers:launch"
