@@ -12,9 +12,13 @@ class RdsBurstBalanceCache
     @store.read('burst_balance') || 100.0
   end
 
-  def update
-    value = CloudWatchClient.new.get_rds_burst_balance
+  # For debugging
+  def set(value)
     @store.write('burst_balance', value)
+  end
+
+  def update
+    set(CloudWatchClient.new.get_rds_burst_balance)
   end
 
   def self.redis
