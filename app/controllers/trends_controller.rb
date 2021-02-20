@@ -33,6 +33,8 @@ class TrendsController < ApplicationController
           select(&:media_url).
           uniq!(&:tweet_id)
     end
+
+    @image_size = (50..100).include?(params[:size]&.to_i) ? params[:size] : 75
   end
 
   # TODO Download from S3 directly
