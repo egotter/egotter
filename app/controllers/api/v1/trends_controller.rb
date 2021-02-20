@@ -11,6 +11,10 @@ module Api
         render json: {words_count: @trend.words_count_chart}
       end
 
+      def profile_words_count
+        render json: {words_count: @trend.profile_words_count_chart}
+      end
+
       def times_count
         render json: {times_count: @trend.times_count_chart}
       end

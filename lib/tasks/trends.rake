@@ -45,4 +45,17 @@ namespace :trends do
     end
     logger.info "task=#{task.name} finish"
   end
+
+  task update_profile_words_count: :environment do |task|
+    logger = TaskLogger.logger
+    logger.info "task=#{task.name} start"
+
+    ids = ENV['TREND_ID'].split(',')
+    Trend.where(id: ids).each do |trend|
+      tweets = trend.imported_tweets
+      trend.trend_insight.update_profile_words_count(tweets)
+      logger.info "task=#{task.name} name=#{trend.name}"
+    end
+    logger.info "task=#{task.name} finish"
+  end
 end

@@ -1293,7 +1293,9 @@ ActiveRecord::Schema.define(version: 2021_02_09_110237) do
   create_table "trend_insights", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "trend_id", null: false
     t.json "words_count"
+    t.json "profile_words_count"
     t.json "times_count"
+    t.json "users_count"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_trend_insights_on_created_at"

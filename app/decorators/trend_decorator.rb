@@ -41,6 +41,10 @@ class TrendDecorator < ApplicationDecorator
     (object.trend_insight&.words_count || []).map { |w, c| {word: w, count: c} }
   end
 
+  def profile_words_count_chart
+    (object.trend_insight&.profile_words_count || []).map { |w, c| {word: w, count: c} }
+  end
+
   def times_count_chart(padding: true)
     insight = object.trend_insight
     times_count = insight&.times_count

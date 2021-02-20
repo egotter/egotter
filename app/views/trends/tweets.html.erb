@@ -25,6 +25,12 @@
 <div class="card card-body"><%= render partial: 'shared/word_cloud', locals: {description: '', api_path: api_trend_words_count_path(@trend.id)} %></div>
 
 <h4 class="text-center mt-5 mb-3">
+  <%= t('trends.trend.profile_words_chart_title', name: @trend.name) %>
+</h4>
+
+<div class="card card-body"><%= render partial: 'shared/word_cloud', locals: {description: '', api_path: api_trend_profile_words_count_path(@trend.id)} %></div>
+
+<h4 class="text-center mt-5 mb-3">
   <%= t('trends.trend.users_chart_title', name: @trend.name) %>
 </h4>
 

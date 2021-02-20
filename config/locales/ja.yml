@@ -386,6 +386,7 @@ ja:
         %{users} 人のユーザーが %{tweets} 件ツイートしています。
       chart_title: 'ツイート数'
       words_chart_title: '「%{name}」のワードクラウド'
+      profile_words_chart_title: '「%{name}」のプロフィールワードクラウド'
       times_chart_title: '「%{name}」のツイート数'
       times_chart_notice: '検索して見付かったツイートを集計しています。ツイッター公式のトレンド数とは一致しないことがあります。'
       users_chart_title: 'ツイート数が多いユーザー'

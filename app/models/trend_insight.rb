@@ -2,13 +2,14 @@
 #
 # Table name: trend_insights
 #
-#  id          :bigint(8)        not null, primary key
-#  trend_id    :bigint(8)        not null
-#  words_count :json
-#  times_count :json
-#  users_count :json
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id                  :bigint(8)        not null, primary key
+#  trend_id            :bigint(8)        not null
+#  words_count         :json
+#  profile_words_count :json
+#  times_count         :json
+#  users_count         :json
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #
 # Indexes
 #
@@ -24,6 +25,15 @@ class TrendInsight < ApplicationRecord
     def calc_words_count(tweets)
       text = tweets.take(15000).map(&:text).join(' ')
       WordCloud.new.count_words(text).sort_by { |_, v| -v }
+    end
+
+    def calc_profile_words_count(tweets)
+      uids = tweets.take(15000).map(&:uid).uniq
+      descriptions = []
+      uids.each_slice(1000) do |uids_array|
+        descriptions << TwitterDB::User.where(uid: uids_array).pluck(:description)
+      end
+      WordCloud.new.count_words(descriptions.join(' ')).sort_by { |_, v| -v }
     end
 
     def calc_times_count(tweets)
@@ -55,6 +65,11 @@ class TrendInsight < ApplicationRecord
   def update_words_count(tweets)
     result = self.class.calc_words_count(tweets)
     update(words_count: result)
+  end
+
+  def update_profile_words_count(tweets)
+    result = self.class.calc_profile_words_count(tweets)
+    update(profile_words_count: result)
   end
 
   def update_times_count(tweets)
