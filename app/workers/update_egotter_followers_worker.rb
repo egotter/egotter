@@ -1,5 +1,6 @@
 class UpdateEgotterFollowersWorker
   include Sidekiq::Worker
+  include WorkerErrorHandler
   prepend TimeoutableWorker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
@@ -26,7 +27,6 @@ class UpdateEgotterFollowersWorker
     uids = EgotterFollower.filter_unnecessary_uids(uids)
     EgotterFollower.delete_uids(uids)
   rescue => e
-    logger.warn "#{e.class}: #{e.message.truncate(200)} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    handle_worker_error(e, **options)
   end
 end
