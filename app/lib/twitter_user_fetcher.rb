@@ -1,6 +1,7 @@
 class TwitterUserFetcher
   attr_reader :api_name
 
+  # client: An instance of ApiClient with :null_store
   def initialize(client, uid, screen_name, fetch_friends, search_for_yourself, reporting)
     @client = ClientWrapper.new(client)
     @uid = uid
@@ -78,41 +79,37 @@ class TwitterUserFetcher
 
     def user_timeline(uid)
       @client.user_timeline(uid, include_rts: false)
+    rescue => e
+      handle_exception(e)
     end
 
     def mentions_timeline
       @client.mentions_timeline
+    rescue => e
+      handle_exception(e)
     end
 
     def search(word)
       @client.search(word)
+    rescue => e
+      handle_exception(e)
     end
 
     def favorites(uid)
       @client.favorites(uid)
+    rescue => e
+      handle_exception(e)
     end
 
-    module RescueNegligibleError
-      %i(
-        user_timeline
-        mentions_timeline
-        search
-        favorites
-      ).each do |method_name|
-        define_method(method_name) do |*args, &blk|
-          super(*args, &blk)
-        rescue => e
-          if TwitterApiStatus.too_many_requests?(e) ||
-              ServiceStatus.retryable_error?(e) ||
-              (e.cause && ServiceStatus.retryable_error?(e.cause))
-            []
-          else
-            raise
-          end
-        end
+    def handle_exception(e)
+      if TwitterApiStatus.too_many_requests?(e) ||
+          ServiceStatus.retryable_error?(e) ||
+          (e.cause && ServiceStatus.retryable_error?(e.cause))
+        []
+      else
+        raise
       end
     end
-    prepend RescueNegligibleError
   end
 
   module Instrumentation
