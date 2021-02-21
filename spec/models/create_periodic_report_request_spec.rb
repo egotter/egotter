@@ -155,13 +155,6 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
     end
   end
 
-  describe '#twitter_user_records_count_changed?' do
-    let(:request) { build(:create_periodic_report_request, user_id: user.id) }
-    let(:block) { Proc.new { create(:twitter_user, uid: user.uid, with_relations: false) } }
-    subject { request.twitter_user_records_count_changed?(&block) }
-    it { is_expected.to be_truthy }
-  end
-
   describe '.next_creation_time' do
     let(:request) { build(:create_periodic_report_request, user_id: user.id) }
 

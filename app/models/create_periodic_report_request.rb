@@ -331,12 +331,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
     logger.warn "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
   end
 
-  def twitter_user_records_count_changed?(&block)
-    records_count = TwitterUser.where(uid: user.uid).size
-    yield
-    TwitterUser.where(uid: user.uid).size != records_count
-  end
-
   def report_options_builder
     @report_options_builder ||= ReportOptionsBuilder.new(self, true)
   end
