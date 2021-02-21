@@ -34,7 +34,7 @@ class CreateTwitterDBUserWorker
       logger.warn "the size of uids is greater than 100 options=#{options.inspect}"
     end
 
-    if self.class == CreateTwitterDBUserWorker && RdsBurstBalanceCache.new.get < 50
+    if self.class == CreateTwitterDBUserWorker && RdsBurstBalanceCache.new.get < 10
       CreateTwitterDBUserWorker.perform_in(20.minutes + rand(600), uids, options.merge(reason: 'BurstBalance is low'))
       return
     end
