@@ -13,14 +13,14 @@ RSpec.describe CreateTwitterUserTask, type: :model do
     it do
       expect(request).to receive(:perform!).with(context).and_return(twitter_user)
       expect(request).to receive(:finished!)
-      expect(task).to receive(:update_friends_and_followers).with(twitter_user)
+      expect(task).to receive(:update_friends_and_followers).with(twitter_user, request)
       subject
     end
   end
 
   describe '#update_friends_and_followers' do
-    let(:twitter_user) { instance_double(TwitterUser) }
-    subject { task.send(:update_friends_and_followers, twitter_user) }
+    let(:twitter_user) { instance_double(TwitterUser, created_at: Time.zone.now) }
+    subject { task.send(:update_friends_and_followers, twitter_user, request) }
 
     before do
       allow(twitter_user).to receive(:uid).and_return(1)
@@ -29,9 +29,9 @@ RSpec.describe CreateTwitterUserTask, type: :model do
     end
 
     it do
-      expect(CreateTwitterDBUserWorker).to receive(:compress).with([1, 2, 3, 4, 5]).and_return('compressed')
+      expect(CreateTwitterDBUserWorker).to receive(:compress).with([1, 2, 3, 4, 5]).and_return('compressed_uids')
       expect(CreateTwitterDBUserWorker).to receive(:perform_async).
-          with('compressed', user_id: request.user_id, request_id: request.id, compressed: true, enqueued_by: instance_of(String))
+          with('compressed_uids', user_id: request.user_id, request_id: request.id, compressed: true, enqueued_by: instance_of(String))
       subject
     end
   end
