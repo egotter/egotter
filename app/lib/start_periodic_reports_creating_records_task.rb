@@ -1,6 +1,10 @@
 class StartPeriodicReportsCreatingRecordsTask
   attr_reader :user_ids
 
+  def initialize(user_ids: nil)
+    @user_ids = user_ids
+  end
+
   def start!
     user_ids = initialize_user_ids
     return if user_ids.empty?
@@ -10,7 +14,7 @@ class StartPeriodicReportsCreatingRecordsTask
   end
 
   def initialize_user_ids
-    @user_ids = StartPeriodicReportsTask.morning_user_ids
+    @user_ids ||= StartPeriodicReportsTask.morning_user_ids
   end
 
   def create_requests(user_ids)
