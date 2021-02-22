@@ -6,13 +6,6 @@ namespace :periodic_reports do
     puts "user_ids=#{user_ids.size}"
   end
 
-  desc 'Send messages only if changed'
-  task send_messages_only_if_changed: :environment do
-    user_ids = StartPeriodicReportsTask.morning_user_ids
-    StartPeriodicReportsTask.new(user_ids: user_ids, send_only_if_changed: true).start!
-    puts "user_ids=#{user_ids.size}"
-  end
-
   desc 'Send remind messages'
   task send_remind_messages: :environment do
     task = StartPeriodicReportsRemindersTask.new

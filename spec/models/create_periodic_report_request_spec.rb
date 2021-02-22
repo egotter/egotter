@@ -38,31 +38,6 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
     end
   end
 
-  describe '#send_report?' do
-    subject { request.send_report? }
-
-    it { is_expected.to be_truthy }
-
-    context 'send_only_if_changed is false' do
-      before { request.send_only_if_changed = false }
-      it { is_expected.to be_truthy }
-    end
-
-    context 'send_only_if_changed is true' do
-      before { request.send_only_if_changed = true }
-
-      context 'report_options_builder.unfollowers_increased? is false' do
-        before { allow(request).to receive_message_chain(:report_options_builder, :unfollowers_increased?).and_return(false) }
-        it { is_expected.to be_falsey }
-      end
-
-      context 'report_options_builder.unfollowers_increased? is true' do
-        before { allow(request).to receive_message_chain(:report_options_builder, :unfollowers_increased?).and_return(true) }
-        it { is_expected.to be_truthy }
-      end
-    end
-  end
-
   describe '#send_report!' do
     subject { request.send_report! }
     before { allow(request).to receive_message_chain(:report_options_builder, :build).and_return('options') }

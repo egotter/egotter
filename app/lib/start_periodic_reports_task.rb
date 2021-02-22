@@ -1,6 +1,6 @@
 class StartPeriodicReportsTask
 
-  def initialize(user_ids: nil, start_date: nil, end_date: nil, limit: 5000, send_only_if_changed: false)
+  def initialize(user_ids: nil, start_date: nil, end_date: nil, limit: 5000)
     if user_ids.present?
       @user_ids = self.class.reject_stop_requested_user_ids(user_ids)
     end
@@ -64,7 +64,7 @@ class StartPeriodicReportsTask
 
   def create_jobs(requests)
     requests.each.with_index do |request, i|
-      CreatePeriodicReportWorker.perform_in(i.seconds, request.id, user_id: request.user_id, create_twitter_user: true, send_only_if_changed: false)
+      CreatePeriodicReportWorker.perform_in(i.seconds, request.id, user_id: request.user_id, create_twitter_user: true)
     end
   end
 

@@ -22,7 +22,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
-  attr_accessor :send_only_if_changed, :check_web_access, :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials, :check_twitter_user
+  attr_accessor :check_web_access, :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials, :check_twitter_user
   attr_accessor :worker_context
 
   def append_status(text)
@@ -42,11 +42,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       create_new_twitter_user_record
     end
 
-    if send_report?
-      send_report!
-    else
-      logger.info "#{self.class}##{__method__} Don't send a report as records are not changed request_id=#{id} user_id=#{user_id}"
-    end
+    send_report!
   end
 
   def validate_report!
@@ -57,10 +53,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
     return if check_web_access && !validate_web_access!
 
     true
-  end
-
-  def send_report?
-    !send_only_if_changed || (send_only_if_changed && report_options_builder.unfollowers_increased?)
   end
 
   def send_report!
@@ -393,14 +385,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
       else
         properties
       end
-    end
-
-    def unfollowers_increased?
-      users = @unfriends_builder.twitter_users
-      users.size >= 2 && users.last.created_at > TwitterUser::CREATE_RECORD_INTERVAL.ago && UnfriendsBuilder::Util.unfollowers_increased?(users[-2], users[-1])
-    rescue => e
-      Rails.logger.warn "#{self.class}##{__method__} #{e.inspect} request=#{@request.inspect}"
-      false
     end
 
     private

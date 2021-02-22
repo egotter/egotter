@@ -38,7 +38,6 @@ class CreatePeriodicReportWorker
   #   user_id
   #   create_twitter_user
   #   scheduled_request
-  #   send_only_if_changed
   def perform(request_id, options = {})
     request = CreatePeriodicReportRequest.find(request_id)
     return unless request.user.authorized?
@@ -71,8 +70,6 @@ class CreatePeriodicReportWorker
       request.check_following_status = !request.user.has_valid_subscription? && user_requested_job?
       request.check_allotted_messages_count = batch_requested_job?
     end
-
-    request.send_only_if_changed = options['send_only_if_changed']
 
     options['create_twitter_user'] = true unless options.has_key?('create_twitter_user')
     request.check_twitter_user = options['create_twitter_user']

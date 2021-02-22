@@ -76,7 +76,6 @@ RSpec.describe CreatePeriodicReportWorker do
       expect(request.check_following_status).to be_falsey
       expect(request.check_allotted_messages_count).to be_truthy
       expect(request.check_web_access).to be_truthy
-      expect(request.send_only_if_changed).to be_falsey
       expect(request.check_twitter_user).to be_truthy
     end
 
@@ -98,18 +97,6 @@ RSpec.describe CreatePeriodicReportWorker do
       it do
         subject
         expect(request.check_allotted_messages_count).to be_truthy
-      end
-    end
-
-    context 'send_only_if_changed is specified' do
-      [true, false].each do |value|
-        context "#{value} is passed" do
-          subject { worker.perform(request.id, 'send_only_if_changed' => value) }
-          it do
-            subject
-            expect(request.send_only_if_changed).to eq(value)
-          end
-        end
       end
     end
 
