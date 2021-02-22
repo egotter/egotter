@@ -20,40 +20,12 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
   end
 
   describe '#start!' do
-    let(:instance) { described_class.new }
-    subject { instance.start! }
-
-    context '@remind_only is set' do
-      before { instance.instance_variable_set(:@remind_only, true) }
-      it do
-        expect(instance).to receive(:start_reminding!)
-        subject
-      end
-    end
-
-    context '@remind_only is not set' do
-      it do
-        expect(instance).to receive(:start_sending!)
-        subject
-      end
-    end
-  end
-
-  describe '#start_sending!' do
     let(:user) { create(:user) }
-    subject { described_class.new(user_ids: [user.id]).start_sending! }
+    subject { described_class.new(user_ids: [user.id]).start! }
     it do
       expect(CreatePeriodicReportWorker).to receive(:perform_in).with(any_args)
       expect { subject }.to change { CreatePeriodicReportRequest.all.size }.by(1)
     end
-  end
-
-  describe '#start_reminding!' do
-
-  end
-
-  describe '#initialize_remind_only_user_ids' do
-
   end
 
   describe '#initialize_user_ids' do

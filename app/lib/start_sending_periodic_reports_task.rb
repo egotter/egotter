@@ -1,7 +1,6 @@
-# Perform a request and log an error
 class StartSendingPeriodicReportsTask
 
-  def initialize(user_ids: nil, start_date: nil, end_date: nil, delay: nil, limit: 5000, remind_only: false, send_only_if_changed: false)
+  def initialize(user_ids: nil, start_date: nil, end_date: nil, delay: nil, limit: 5000, send_only_if_changed: false)
     if user_ids.present?
       @user_ids = self.class.reject_stop_requested_user_ids(user_ids)
     end
@@ -9,7 +8,6 @@ class StartSendingPeriodicReportsTask
     @start_date = start_date
     @end_date = end_date
     @limit = limit
-    @remind_only = remind_only
     @send_only_if_changed = send_only_if_changed
 
     if delay
@@ -20,14 +18,6 @@ class StartSendingPeriodicReportsTask
   end
 
   def start!
-    if @remind_only
-      start_reminding!
-    else
-      start_sending!
-    end
-  end
-
-  def start_sending!
     user_ids = initialize_user_ids
     return if user_ids.empty?
 
@@ -61,28 +51,6 @@ class StartSendingPeriodicReportsTask
         CreateReportTwitterUserWorker.perform_async(request.id, context: :reporting)
       end
     end
-  end
-
-  def start_reminding!
-    user_ids = initialize_remind_only_user_ids
-    return if user_ids.empty?
-
-    requests = user_ids.map { |user_id| RemindPeriodicReportRequest.new(user_id: user_id) }
-    RemindPeriodicReportRequest.import requests, validate: false
-
-    user_ids.each.with_index do |user_id, i|
-      CreatePeriodicReportAllottedMessagesWillExpireMessageWorker.perform_in(@delay.call(i), user_id)
-    end
-  end
-
-  def initialize_remind_only_user_ids
-    if @user_ids.nil?
-      user_ids = self.class.allotted_messages_will_expire_user_ids
-      @user_ids = user_ids.uniq
-      Rails.logger.debug { "#{self.class}##{__method__} user_ids.size=#{@user_ids.size}" }
-    end
-
-    @user_ids
   end
 
   def initialize_user_ids

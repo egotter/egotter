@@ -15,9 +15,9 @@ namespace :periodic_reports do
 
   desc 'Send remind messages'
   task send_remind_messages: :environment do
-    user_ids = StartSendingPeriodicReportsTask.allotted_messages_will_expire_user_ids
-    StartSendingPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start_reminding!
-    puts "user_ids=#{user_ids.size}"
+    task = StartSendingPeriodicReportsRemindersTask.new
+    task.start!
+    puts "user_ids=#{task.user_ids.size}"
   end
 
   desc 'Send re-engage messages'
