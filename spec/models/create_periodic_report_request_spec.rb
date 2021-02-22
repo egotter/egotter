@@ -130,35 +130,6 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
     end
   end
 
-  describe '.next_creation_time' do
-    let(:request) { build(:create_periodic_report_request, user_id: user.id) }
-
-    shared_context 'record exists' do
-      before do
-        request.save!
-        allow(described_class).to receive(:fetch_last_request).
-            with(include_user_id: user.id, reject_id: nil).and_return(request)
-      end
-    end
-
-    subject { described_class.next_creation_time(user.id) }
-
-    context 'first request' do
-      it do
-        freeze_time do
-          is_expected.to eq(Time.zone.now + described_class::SHORT_INTERVAL + 1.second)
-        end
-      end
-    end
-
-    context 'record exists' do
-      include_context 'record exists'
-      let(:time) { 1.day.ago }
-      before { request.update!(finished_at: time) }
-      it { is_expected.to be_within(3).of(time + described_class::SHORT_INTERVAL + 1.second) }
-    end
-  end
-
   describe '.fetch_last_request' do
     let(:request) { build(:create_periodic_report_request, user_id: user.id) }
     let(:include_user_id) { user.id }
@@ -345,29 +316,6 @@ RSpec.describe CreatePeriodicReportRequest::AllottedMessagesCountValidator, type
       expect(CreatePeriodicReportAllottedMessagesNotEnoughMessageWorker).to receive(:perform_async).with(request.user_id).and_return('jid')
       subject
     end
-  end
-end
-
-RSpec.describe CreatePeriodicReportRequest::ScheduledJob, type: :model do
-  let(:user) { create(:user) }
-  let(:request) { CreatePeriodicReportRequest.create(user_id: user.id) }
-
-  describe '.exists?' do
-    # It's difficult to test Sidekiq::ScheduledSet because Sidekiq's API does not have a testing mode
-  end
-
-  describe '.create' do
-    subject { described_class.create(user_id: user.id) }
-    before { allow(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: described_class).and_return(request) }
-    it do
-      expect(described_class::WORKER_CLASS).to receive(:perform_at).
-          with(anything, request.id, user_id: user.id, scheduled_request: true).and_return('jid')
-      expect(subject.jid).to eq('jid')
-    end
-  end
-
-  describe '.find_by' do
-    # It's difficult to test Sidekiq::ScheduledSet because Sidekiq's API does not have a testing mode
   end
 end
 

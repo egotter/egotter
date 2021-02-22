@@ -154,11 +154,6 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
-  describe '.scheduled_job_created_message' do
-    subject { described_class.scheduled_job_created_message(user.id, 'jid') }
-    it { is_expected.to be_truthy }
-  end
-
   describe '.request_interval_too_short_message' do
     subject { described_class.request_interval_too_short_message(user.id) }
     it { is_expected.to be_truthy }

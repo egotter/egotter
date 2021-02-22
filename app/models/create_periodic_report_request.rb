@@ -191,60 +191,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
   end
 
-  # TODO Remove later
-  class ScheduledJob
-    attr_reader :jid, :perform_at
-
-    def initialize(jid, perform_at)
-      @jid = jid
-      @perform_at = perform_at
-    end
-
-    WORKER_CLASS = CreateUserRequestedPeriodicReportWorker
-
-    class << self
-      def exists?(user_id:)
-        fetch_scheduled_jobs(WORKER_CLASS).any? do |job|
-          options = job.args.last
-          options.is_a?(Hash) && options['user_id'] == user_id && options['scheduled_request']
-        end
-      end
-
-      def create(user_id:)
-        request = CreatePeriodicReportRequest.create(user_id: user_id, requested_by: self)
-        time = CreatePeriodicReportRequest.next_creation_time(user_id)
-        jid = WORKER_CLASS.perform_at(time, request.id, user_id: user_id, scheduled_request: true)
-
-        unless jid
-          Rails.logger.warn "job skipped user_id=#{user_id} time=#{time} request=#{request}"
-        end
-
-        new(jid, time)
-      end
-
-      def find_by(user_id: nil, jid: nil)
-        job = fetch_scheduled_jobs(WORKER_CLASS).find do |job|
-          if user_id
-            options = job.args.last
-            options.is_a?(Hash) && options['user_id'] == user_id && options['scheduled_request']
-          else
-            job.jid == jid
-          end
-        end
-
-        job ? new(job.jid, Time.zone.at(job.score)) : nil
-      end
-
-      private
-
-      def fetch_scheduled_jobs(worker_class)
-        Sidekiq::ScheduledSet.new.scan(worker_class.name).select do |job|
-          job.klass == worker_class.name
-        end
-      end
-    end
-  end
-
   class FollowingStatusValidator < Validator
     def validate!
       user = @request.user
@@ -458,12 +404,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
   SHORT_INTERVAL = 3.hours
 
   class << self
-    def next_creation_time(user_id)
-      last_request = fetch_last_request(include_user_id: user_id, reject_id: nil)
-      previous_time = last_request ? last_request.finished_at : Time.zone.now
-      previous_time + SHORT_INTERVAL + 1.second
-    end
-
     def fetch_last_request(include_user_id:, reject_id:)
       query = correctly_completed
       query = query.where(user_id: include_user_id) if include_user_id

@@ -256,25 +256,6 @@ class PeriodicReport < ApplicationRecord
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
     end
 
-    def scheduled_job_created_message(user_id, jid)
-      scheduled_job = CreatePeriodicReportRequest::ScheduledJob.find_by(jid: jid)
-
-      if scheduled_job
-        template = Rails.root.join('app/views/periodic_reports/scheduled_job_created.ja.text.erb')
-        message = ERB.new(template.read).result_with_hash(
-            interval: DateHelper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
-            sent_at: DateHelper.time_ago_in_words(scheduled_job.perform_at),
-            support_url: support_url(campaign_params('scheduled_job_created_support')),
-            pricing_url: pricing_url(campaign_params('scheduled_job_created_pricing')),
-        )
-
-        new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
-      else
-        logger.warn "#{self}##{__method__} scheduled job not found user_id=#{user_id} jid=#{jid}"
-        interval_too_short_message(user_id)
-      end
-    end
-
     def request_interval_too_short_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/request_interval_too_short.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
