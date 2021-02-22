@@ -48,43 +48,47 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
   end
 
   describe '#validate_report!' do
-    shared_examples 'request is validated' do
+    let(:validator) { PeriodicReportValidator.new(request) }
+    subject { request.validate_report!(validator) }
+
+    context 'check_credentials == true' do
+      before { request.check_credentials = true }
       it do
-        expect(validator_class).to receive_message_chain(:new, :validate_and_deliver!).with(request).with(no_args)
+        expect(validator).to receive(:validate_credentials!)
         subject
       end
     end
 
-    subject { request.validate_report! }
-
-    context 'check_credentials == true' do
-      let(:validator_class) { described_class::CredentialsValidator }
-      before { request.check_credentials = true }
-      include_examples 'request is validated'
-    end
-
     context 'check_interval == true' do
-      let(:validator_class) { described_class::IntervalValidator }
       before { request.check_interval = true }
-      include_examples 'request is validated'
+      it do
+        expect(validator).to receive(:validate_interval!)
+        subject
+      end
     end
 
     context 'check_following_status == true' do
-      let(:validator_class) { described_class::FollowingStatusValidator }
       before { request.check_following_status = true }
-      include_examples 'request is validated'
+      it do
+        expect(validator).to receive(:validate_following_status!)
+        subject
+      end
     end
 
     context 'check_allotted_messages_count == true' do
-      let(:validator_class) { described_class::AllottedMessagesCountValidator }
       before { request.check_allotted_messages_count = true }
-      include_examples 'request is validated'
+      it do
+        expect(validator).to receive(:validate_messages_count!)
+        subject
+      end
     end
 
     context 'check_web_access == true' do
-      let(:validator_class) { described_class::WebAccessValidator }
       before { request.check_web_access = true }
-      include_examples 'request is validated'
+      it do
+        expect(validator).to receive(:validate_web_access!)
+        subject
+      end
     end
   end
 
@@ -185,166 +189,6 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
       include_context 'record exists'
       before { request.update!(finished_at: 3.hours.ago) }
       it { is_expected.to be_falsey }
-    end
-  end
-end
-
-RSpec.describe CreatePeriodicReportRequest::CredentialsValidator, type: :model do
-  let(:request) { CreatePeriodicReportRequest.create(user_id: 1) }
-  let(:instance) { described_class.new(request) }
-
-  describe '#validate!' do
-    subject { instance.validate! }
-    it do
-      expect(request).to receive_message_chain(:user, :api_client, :verify_credentials)
-      is_expected.to be_truthy
-    end
-  end
-
-  describe '#deliver!' do
-    subject { instance.deliver! }
-    before { allow(instance).to receive(:user_or_egotter_requested_job?).and_return(true) }
-    it do
-      expect(CreatePeriodicReportUnauthorizedMessageWorker).to receive(:perform_async).with(request.user_id).and_return('jid')
-      subject
-    end
-  end
-end
-
-RSpec.describe CreatePeriodicReportRequest::IntervalValidator, type: :model do
-  let(:user) { create(:user) }
-  let(:request) { CreatePeriodicReportRequest.create(user_id: user.id) }
-  let(:instance) { described_class.new(request) }
-
-  describe '#validate!' do
-    subject { instance.validate! }
-    before do
-      allow(CreatePeriodicReportRequest).to receive(:interval_too_short?).
-          with(include_user_id: request.user_id, reject_id: request.id).and_return(true)
-    end
-    it { is_expected.to be_falsey }
-  end
-
-  describe '#deliver!' do
-    subject { instance.deliver! }
-    before { allow(instance).to receive(:user_or_egotter_requested_job?).and_return(true) }
-
-    it do
-      expect(CreatePeriodicReportIntervalTooShortMessageWorker).to receive(:perform_async).with(user.id)
-      subject
-    end
-  end
-end
-
-RSpec.describe CreatePeriodicReportRequest::FollowingStatusValidator, type: :model do
-  let(:user) { create(:user) }
-  let(:request) { CreatePeriodicReportRequest.create(user_id: user.id) }
-  let(:instance) { described_class.new(request) }
-
-  before { allow(request).to receive(:user).and_return(user) }
-
-  describe '#validate!' do
-    subject { instance.validate! }
-
-    context 'EgotterFollower is persisted' do
-      before { allow(EgotterFollower).to receive(:exists?).with(uid: user.uid).and_return(true) }
-      it { is_expected.to be_truthy }
-    end
-
-    context 'friendship? returns true' do
-      before do
-        allow(user).to receive_message_chain(:api_client, :twitter, :friendship?).
-            with(user.uid, User::EGOTTER_UID).and_return(true)
-      end
-      it { is_expected.to be_truthy }
-    end
-
-    context 'else' do
-      before do
-        allow(EgotterFollower).to receive(:exists?).with(uid: user.uid).and_return(false)
-        allow(user).to receive_message_chain(:api_client, :twitter, :friendship?).
-            with(user.uid, User::EGOTTER_UID).and_return(false)
-      end
-      it { is_expected.to be_falsey }
-    end
-  end
-
-  describe '#deliver!' do
-    subject { instance.deliver! }
-    before { allow(instance).to receive(:user_or_egotter_requested_job?).and_return(true) }
-    it do
-      expect(CreatePeriodicReportNotFollowingMessageWorker).to receive(:perform_async).
-          with(request.user_id).and_return('jid')
-      subject
-    end
-  end
-end
-
-RSpec.describe CreatePeriodicReportRequest::AllottedMessagesCountValidator, type: :model do
-  let(:user) { create(:user) }
-  let(:request) { CreatePeriodicReportRequest.create(user_id: user.id) }
-  let(:instance) { described_class.new(request) }
-
-  before { allow(request).to receive(:user).and_return(user) }
-
-  describe '#validate!' do
-    subject { instance.validate! }
-
-    context 'messages are not allotted' do
-      before { allow(PeriodicReport).to receive(:messages_allotted?).with(user).and_return(false) }
-      it { is_expected.to be_truthy }
-    end
-
-    context 'messages are allotted' do
-      before { allow(PeriodicReport).to receive(:messages_allotted?).with(user).and_return(true) }
-
-      context 'allotted_messages_left? returns true' do
-        before { allow(PeriodicReport).to receive(:allotted_messages_left?).with(user, count: 3).and_return(true) }
-        it { is_expected.to be_truthy }
-      end
-
-      context 'allotted_messages_left? returns false' do
-        before { allow(PeriodicReport).to receive(:allotted_messages_left?).with(user, count: 3).and_return(false) }
-        it { is_expected.to be_falsey }
-      end
-    end
-  end
-
-  describe '#deliver!' do
-    subject { instance.deliver! }
-    it do
-      expect(CreatePeriodicReportAllottedMessagesNotEnoughMessageWorker).to receive(:perform_async).with(request.user_id).and_return('jid')
-      subject
-    end
-  end
-end
-
-RSpec.describe CreatePeriodicReportRequest::WebAccessValidator, type: :model do
-  let(:user) { create(:user) }
-  let(:request) { CreatePeriodicReportRequest.create(user_id: user.id) }
-  let(:instance) { described_class.new(request) }
-
-  before { allow(request).to receive(:user).and_return(user) }
-
-  describe '#validate!' do
-    subject { instance.validate! }
-
-    context 'web_access is limited' do
-      before { allow(PeriodicReport).to receive(:access_interval_too_long?).with(user).and_return(true) }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'web_access is not limited' do
-      before { allow(PeriodicReport).to receive(:access_interval_too_long?).with(user).and_return(false) }
-      it { is_expected.to be_truthy }
-    end
-  end
-
-  describe '#deliver!' do
-    subject { instance.deliver! }
-    it do
-      expect(CreatePeriodicReportAccessIntervalTooLongMessageWorker).to receive(:perform_async).with(request.user_id).and_return('jid')
-      subject
     end
   end
 end
