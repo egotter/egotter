@@ -35,8 +35,8 @@ class StartPeriodicReportsCreatingRecordsTask
   end
 
   def create_jobs(requests)
-    requests.each.with_index do |request, i|
-      CreateReportTwitterUserWorker.perform_in(i.seconds, request.id)
+    requests.each do |request|
+      CreateReportTwitterUserWorker.perform_in(rand(3600), request.id)
     end
   end
 end

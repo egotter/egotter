@@ -38,8 +38,8 @@ RSpec.describe StartPeriodicReportsCreatingRecordsTask, type: :model do
     let(:requests) { [create(:create_twitter_user_request, user_id: create(:user).id)] }
     subject { described_class.new.create_jobs(requests) }
     it do
-      requests.each.with_index do |request, i|
-        expect(CreateReportTwitterUserWorker).to receive(:perform_in).with(i.seconds, request.id)
+      requests.each do |request|
+        expect(CreateReportTwitterUserWorker).to receive(:perform_in).with(instance_of(Integer), request.id)
       end
       subject
     end

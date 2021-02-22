@@ -42,8 +42,8 @@ class StartPeriodicReportsTask
   end
 
   def create_jobs(requests)
-    requests.each.with_index do |request, i|
-      CreatePeriodicReportWorker.perform_in(i.seconds, request.id, user_id: request.user_id)
+    requests.each do |request|
+      CreatePeriodicReportWorker.perform_async(request.id, user_id: request.user_id)
     end
   end
 

@@ -21,8 +21,8 @@ class StartPeriodicReportsRemindersTask
   end
 
   def create_jobs(user_ids)
-    user_ids.each.with_index do |user_id, i|
-      CreatePeriodicReportAllottedMessagesWillExpireMessageWorker.perform_in(i.seconds, user_id)
+    user_ids.each do |user_id|
+      CreatePeriodicReportAllottedMessagesWillExpireMessageWorker.perform_async(user_id)
     end
   end
 end

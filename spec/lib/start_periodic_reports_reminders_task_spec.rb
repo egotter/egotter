@@ -33,8 +33,8 @@ RSpec.describe StartPeriodicReportsRemindersTask, type: :model do
     let(:user_ids) { [1, 2] }
     subject { instance.create_jobs(user_ids) }
     it do
-      user_ids.each.with_index do |user_id, i|
-        expect(CreatePeriodicReportAllottedMessagesWillExpireMessageWorker).to receive(:perform_in).with(i.seconds, user_id)
+      user_ids.each do |user_id|
+        expect(CreatePeriodicReportAllottedMessagesWillExpireMessageWorker).to receive(:perform_async).with(user_id)
       end
       subject
     end
