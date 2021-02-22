@@ -17,16 +17,9 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
 
     it do
       expect(request).to receive(:validate_report!).and_return(true)
+      expect(request).to receive(:create_new_twitter_user_record)
       expect(request).to receive(:send_report!)
       subject
-    end
-
-    context 'check_twitter_user == true' do
-      before { request.check_twitter_user = true }
-      it do
-        expect(request).to receive(:create_new_twitter_user_record)
-        subject
-      end
     end
 
     context 'validation is failed' do

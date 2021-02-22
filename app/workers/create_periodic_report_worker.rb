@@ -72,7 +72,6 @@ class CreatePeriodicReportWorker
     end
 
     options['create_twitter_user'] = true unless options.has_key?('create_twitter_user')
-    request.check_twitter_user = options['create_twitter_user']
 
     CreatePeriodicReportTask.new(request).start!
   end

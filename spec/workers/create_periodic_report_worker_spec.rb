@@ -76,7 +76,6 @@ RSpec.describe CreatePeriodicReportWorker do
       expect(request.check_following_status).to be_falsey
       expect(request.check_allotted_messages_count).to be_truthy
       expect(request.check_web_access).to be_truthy
-      expect(request.check_twitter_user).to be_truthy
     end
 
     context 'user_requested_job? returns true' do
@@ -99,18 +98,5 @@ RSpec.describe CreatePeriodicReportWorker do
         expect(request.check_allotted_messages_count).to be_truthy
       end
     end
-
-    context 'create_twitter_user is specified' do
-      [true, false].each do |value|
-        context "#{value} is passed" do
-          subject { worker.perform(request.id, 'create_twitter_user' => value) }
-          it do
-            subject
-            expect(request.check_twitter_user).to eq(value)
-          end
-        end
-      end
-    end
-
   end
 end

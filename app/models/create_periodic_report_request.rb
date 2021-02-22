@@ -22,7 +22,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
-  attr_accessor :check_web_access, :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials, :check_twitter_user
+  attr_accessor :check_web_access, :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials
   attr_accessor :worker_context
 
   def append_status(text)
@@ -38,10 +38,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
   def perform!
     return unless validate_report!
 
-    if check_twitter_user
-      create_new_twitter_user_record
-    end
-
+    create_new_twitter_user_record
     send_report!
   end
 
