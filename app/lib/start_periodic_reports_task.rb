@@ -18,27 +18,6 @@ class StartPeriodicReportsTask
     create_jobs(requests)
   end
 
-  # TODO Remove later
-  def start_creating!
-    user_ids = initialize_user_ids
-    return if user_ids.empty?
-
-    user_ids.each_slice(1000) do |ids_array|
-      requests = User.where(id: ids_array).select(:id, :uid).map do |user|
-        CreateTwitterUserRequest.create(
-            requested_by: self.class,
-            user_id: user.id,
-            uid: user.uid)
-      end
-
-      CreateTwitterUserRequest.import requests, validate: false
-
-      requests.each do |request|
-        CreateReportTwitterUserWorker.perform_async(request.id, context: :reporting)
-      end
-    end
-  end
-
   def initialize_user_ids
     if @user_ids.nil?
       user_ids = self.class.dm_received_user_ids
@@ -59,7 +38,7 @@ class StartPeriodicReportsTask
       CreatePeriodicReportRequest.import data, validate: false
     end
 
-    CreatePeriodicReportRequest.where('id > ?', max_id).select(:id, :user_id)
+    CreatePeriodicReportRequest.where('id > ?', max_id).where(requested_by: 'batch').select(:id, :user_id)
   end
 
   def create_jobs(requests)

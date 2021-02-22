@@ -38,7 +38,10 @@ class CreatePeriodicReportRequest < ApplicationRecord
   def perform!
     return unless validate_report!
 
-    create_new_twitter_user_record
+    unless TwitterUser.where(uid: user.uid).where('created_at > ?', 3.hours.ago).exists?
+      create_new_twitter_user_record
+    end
+
     send_report!
   end
 

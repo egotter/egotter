@@ -42,7 +42,7 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     subject { described_class.new.create_requests(user_ids) }
     before { create(:create_periodic_report_request, user_id: create(:user).id) }
     it do
-      records = 0
+      records = []
       expect { records = subject }.to change { CreatePeriodicReportRequest.all.size }.by(2)
       expect(records.size).to eq(2)
     end
