@@ -1,6 +1,6 @@
 class StartPeriodicReportsTask
 
-  def initialize(user_ids: nil, start_date: nil, end_date: nil, delay: nil, limit: 5000, send_only_if_changed: false)
+  def initialize(user_ids: nil, start_date: nil, end_date: nil, limit: 5000, send_only_if_changed: false)
     if user_ids.present?
       @user_ids = self.class.reject_stop_requested_user_ids(user_ids)
     end
@@ -8,31 +8,17 @@ class StartPeriodicReportsTask
     @start_date = start_date
     @end_date = end_date
     @limit = limit
-    @send_only_if_changed = send_only_if_changed
-
-    if delay
-      @delay = delay.respond_to?(:call) ? delay : Proc.new { delay }
-    else
-      @delay = Proc.new { |i| i }
-    end
   end
 
   def start!
     user_ids = initialize_user_ids
     return if user_ids.empty?
 
-    max_id = CreatePeriodicReportRequest.maximum(:id) || 0
-
-    requests = user_ids.map { |user_id| CreatePeriodicReportRequest.new(user_id: user_id, requested_by: 'batch') }
-    CreatePeriodicReportRequest.import requests, validate: false
-
-    CreatePeriodicReportRequest.where('id > ?', max_id).find_each.with_index do |request, i|
-      next if request.status.present? || request.finished_at.present?
-
-      CreatePeriodicReportWorker.perform_in(@delay.call(i), request.id, user_id: request.user_id, create_twitter_user: true, send_only_if_changed: @send_only_if_changed)
-    end
+    requests = create_requests(user_ids)
+    create_jobs(requests)
   end
 
+  # TODO Remove later
   def start_creating!
     user_ids = initialize_user_ids
     return if user_ids.empty?
@@ -63,6 +49,23 @@ class StartPeriodicReportsTask
     end
 
     @user_ids
+  end
+
+  def create_requests(user_ids)
+    max_id = CreatePeriodicReportRequest.maximum(:id) || 0
+
+    requests = user_ids.map { |user_id| CreatePeriodicReportRequest.new(user_id: user_id, requested_by: 'batch') }
+    requests.each_slice(1000) do |data|
+      CreatePeriodicReportRequest.import data, validate: false
+    end
+
+    CreatePeriodicReportRequest.where('id > ?', max_id).select(:id, :user_id)
+  end
+
+  def create_jobs(requests)
+    requests.each.with_index do |request, i|
+      CreatePeriodicReportWorker.perform_in(i.seconds, request.id, user_id: request.user_id, create_twitter_user: true, send_only_if_changed: false)
+    end
   end
 
   class << self

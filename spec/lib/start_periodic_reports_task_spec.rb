@@ -9,22 +9,18 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
         subject
       end
     end
-
-    context 'delay is not passed' do
-      subject { described_class.new }
-      it do
-        delay = subject.instance_variable_get(:@delay)
-        expect(delay.call(123)).to eq(123)
-      end
-    end
   end
 
   describe '#start!' do
-    let(:user) { create(:user) }
-    subject { described_class.new(user_ids: [user.id]).start! }
+    let(:user_ids) { [1, 2] }
+    let(:instance) { described_class.new }
+    subject { instance.start! }
+    before { allow(instance).to receive(:initialize_user_ids).and_return(user_ids) }
+
     it do
-      expect(CreatePeriodicReportWorker).to receive(:perform_in).with(any_args)
-      expect { subject }.to change { CreatePeriodicReportRequest.all.size }.by(1)
+      expect(instance).to receive(:create_requests).with(user_ids).and_return('requests')
+      expect(instance).to receive(:create_jobs).with('requests')
+      subject
     end
   end
 
@@ -38,6 +34,28 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
       expect(described_class).to receive(:recent_access_user_ids).with(start_date, end_date).and_return([2, 3])
       expect(described_class).to receive(:new_user_ids).with(start_date, end_date).and_return([3, 4])
       is_expected.to match_array([1, 2, 3, 4])
+    end
+  end
+
+  describe '#create_requests' do
+    let(:user_ids) { [1, 2] }
+    subject { described_class.new.create_requests(user_ids) }
+    before { create(:create_periodic_report_request, user_id: create(:user).id) }
+    it do
+      records = 0
+      expect { records = subject }.to change { CreatePeriodicReportRequest.all.size }.by(2)
+      expect(records.size).to eq(2)
+    end
+  end
+
+  describe '#create_jobs' do
+    let(:requests) { [create(:create_periodic_report_request, user_id: create(:user).id)] }
+    subject { described_class.new.create_jobs(requests) }
+    it do
+      requests.each.with_index do |request, i|
+        expect(CreatePeriodicReportWorker).to receive(:perform_in).with(i.seconds, request.id, user_id: request.user_id, create_twitter_user: true, send_only_if_changed: false)
+      end
+      subject
     end
   end
 

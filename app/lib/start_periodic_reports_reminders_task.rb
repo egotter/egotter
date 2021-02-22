@@ -15,7 +15,9 @@ class StartPeriodicReportsRemindersTask
 
   def create_requests(user_ids)
     requests = user_ids.map { |user_id| RemindPeriodicReportRequest.new(user_id: user_id) }
-    RemindPeriodicReportRequest.import requests, validate: false
+    requests.each_slice(1000) do |data|
+      RemindPeriodicReportRequest.import data, validate: false
+    end
   end
 
   def create_jobs(user_ids)
