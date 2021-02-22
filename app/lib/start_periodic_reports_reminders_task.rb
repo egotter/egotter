@@ -10,7 +10,7 @@ class StartPeriodicReportsRemindersTask
   end
 
   def initialize_user_ids
-    @user_ids = StartPeriodicReportsTask.allotted_messages_will_expire_user_ids.uniq.sort
+    @user_ids ||= StartPeriodicReportsTask.allotted_messages_will_expire_user_ids.uniq.sort
   end
 
   def create_requests(user_ids)

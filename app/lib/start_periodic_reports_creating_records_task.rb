@@ -36,7 +36,7 @@ class StartPeriodicReportsCreatingRecordsTask
 
   def create_jobs(requests)
     requests.each.with_index do |request, i|
-      CreateReportTwitterUserWorker.perform_in(i.seconds, request.id, context: :reporting)
+      CreateReportTwitterUserWorker.perform_in(i.seconds, request.id)
     end
   end
 end
