@@ -1,4 +1,4 @@
-class StartSendingPeriodicReportsTask
+class StartPeriodicReportsTask
 
   def initialize(user_ids: nil, start_date: nil, end_date: nil, delay: nil, limit: 5000, send_only_if_changed: false)
     if user_ids.present?

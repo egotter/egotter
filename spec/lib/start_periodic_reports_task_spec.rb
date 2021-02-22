@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe StartSendingPeriodicReportsTask, type: :model do
+RSpec.describe StartPeriodicReportsTask, type: :model do
   describe '#initialize' do
     context 'user_ids is passed' do
       subject { described_class.new(user_ids: 'user_ids') }

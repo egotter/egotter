@@ -1,15 +1,15 @@
 namespace :periodic_reports do
   desc 'Send messages'
   task send_messages: :environment do
-    user_ids = StartSendingPeriodicReportsTask.morning_user_ids
-    StartSendingPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start!
+    user_ids = StartPeriodicReportsTask.morning_user_ids
+    StartPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start!
     puts "user_ids=#{user_ids.size}"
   end
 
   desc 'Send messages only if changed'
   task send_messages_only_if_changed: :environment do
-    user_ids = StartSendingPeriodicReportsTask.morning_user_ids
-    StartSendingPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second, send_only_if_changed: true).start!
+    user_ids = StartPeriodicReportsTask.morning_user_ids
+    StartPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second, send_only_if_changed: true).start!
     puts "user_ids=#{user_ids.size}"
   end
 
@@ -55,29 +55,29 @@ namespace :periodic_reports do
     puts "users=#{users.size} (limited)"
 
     if users.any?
-      StartSendingPeriodicReportsTask.new(user_ids: users.map(&:id), delay: 1.second).start!
+      StartPeriodicReportsTask.new(user_ids: users.map(&:id), delay: 1.second).start!
     end
   end
 
   namespace :send_messages do
     desc 'Send morning messages'
     task morning: :environment do |task|
-      user_ids = StartSendingPeriodicReportsTask.morning_user_ids
-      StartSendingPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start!
+      user_ids = StartPeriodicReportsTask.morning_user_ids
+      StartPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start!
       puts "user_ids=#{user_ids.size} task_name=#{task.name}"
     end
 
     desc 'Send afternoon messages'
     task afternoon: :environment do |task|
-      user_ids = StartSendingPeriodicReportsTask.afternoon_user_ids
-      StartSendingPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start!
+      user_ids = StartPeriodicReportsTask.afternoon_user_ids
+      StartPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start!
       puts "user_ids=#{user_ids.size} task_name=#{task.name}"
     end
 
     desc 'Send night messages'
     task night: :environment do |task|
-      user_ids = StartSendingPeriodicReportsTask.night_user_ids
-      StartSendingPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start!
+      user_ids = StartPeriodicReportsTask.night_user_ids
+      StartPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start!
       puts "user_ids=#{user_ids.size} task_name=#{task.name}"
     end
   end

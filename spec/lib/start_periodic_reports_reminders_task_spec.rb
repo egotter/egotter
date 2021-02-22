@@ -18,7 +18,7 @@ RSpec.describe StartPeriodicReportsRemindersTask, type: :model do
   describe '#initialize_user_ids' do
     subject { instance.initialize_user_ids }
     it do
-      expect(StartSendingPeriodicReportsTask).to receive(:allotted_messages_will_expire_user_ids).and_return([1, 2, 2])
+      expect(StartPeriodicReportsTask).to receive(:allotted_messages_will_expire_user_ids).and_return([1, 2, 2])
       is_expected.to eq([1, 2])
     end
   end
