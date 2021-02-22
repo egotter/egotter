@@ -1,4 +1,4 @@
-class StartSendingPeriodicReportsRemindersTask
+class StartPeriodicReportsRemindersTask
   attr_reader :user_ids
 
   def start!

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe StartSendingPeriodicReportsRemindersTask, type: :model do
+RSpec.describe StartPeriodicReportsRemindersTask, type: :model do
   let(:instance) { described_class.new }
 
   describe '#start!' do
