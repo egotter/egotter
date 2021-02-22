@@ -3,8 +3,9 @@
 module S3
   class Tweet
 
-    def initialize(tweets)
+    def initialize(tweets, time = nil)
       @tweets = tweets
+      @time = time
     end
 
     def tweets
@@ -15,6 +16,11 @@ module S3
 
     def tweets_bytesize
       @tweets.map { |tweet| tweet.inspect.size }.sum
+    end
+
+    # For debugging
+    def created_at
+      Time.zone.parse(@time)
     end
 
     class << self
@@ -28,8 +34,10 @@ module S3
       # tweets -> collection
 
       def find_by(uid)
-        obj = client.read(uid)
-        obj ? new(decode(obj)['tweets']) : nil
+        if (obj = client.read(uid))
+          obj = decode(obj)
+          new(obj['tweets'], obj['time'])
+        end
       rescue Aws::S3::Errors::NoSuchKey => e
         nil
       end

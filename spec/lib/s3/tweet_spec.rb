@@ -31,7 +31,7 @@ RSpec.describe S3::Tweet do
     it do
       expect(client).to receive(:read).with(uid).and_return(obj)
       expect(described_class).to receive(:decode).with(obj).and_call_original
-      expect(described_class).to receive(:new).with(anything).and_call_original
+      expect(described_class).to receive(:new).with(any_args).and_call_original
       is_expected.to be_truthy
     end
   end
