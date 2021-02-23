@@ -24,7 +24,9 @@ class CreatePeriodicReportReceivedNotFollowingMessageWorker
   def perform(uid, options = {})
     if (user = User.select(:id, :uid).find_by(uid: uid))
       if EgotterFollower.exists?(uid: user.uid)
-        User.egotter.api_client.create_direct_message_event(uid, MESSAGE)
+        quick_reply_buttons = PeriodicReport.default_quick_reply_options
+        event = PeriodicReport.build_direct_message_event(uid, MESSAGE, quick_reply_buttons: quick_reply_buttons)
+        User.egotter.api_client.create_direct_message_event(event: event)
       else
         CreatePeriodicReportNotFollowingMessageWorker.perform_async(user.id)
       end

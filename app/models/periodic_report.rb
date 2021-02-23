@@ -628,6 +628,10 @@ class PeriodicReport < ApplicationRecord
       ]
     end
 
+    def default_quick_reply_options
+      interval_too_short_quick_reply_options
+    end
+
     def request_interval_too_short_quick_reply_options
       interval_too_short_quick_reply_options
     end
