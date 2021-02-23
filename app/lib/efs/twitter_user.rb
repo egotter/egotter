@@ -39,6 +39,10 @@ module Efs
         cache_client.delete(cache_key(twitter_user_id))
       end
 
+      def exists?(twitter_user_id)
+        cache_client.exist?(cache_key(twitter_user_id))
+      end
+
       def import_from!(twitter_user_id, uid, screen_name, profile, friend_uids, follower_uids)
         profile = parse_json(profile) if profile.class == String
         payload = {
