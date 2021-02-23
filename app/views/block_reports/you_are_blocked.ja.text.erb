@@ -1,7 +1,7 @@
 ブロックされているユーザーが新しく見つかりました。
 
 最新の「ブロックされている」：
-<%= block_urls.join("\n") %>
+<%= block_urls.empty? ? '0人' : profile_urls.join("\n") %>
 
 「ブロックされている」の全データ：
 <%= blockers_url %>
