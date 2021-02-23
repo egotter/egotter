@@ -14,7 +14,8 @@ class SendSentMessageWorker
   end
 
   def static_message?(text)
-    text == I18n.t('quick_replies.prompt_reports.label3')
+    text == I18n.t('quick_replies.prompt_reports.label3') ||
+        text.include?('#egotter')
   end
 
   def send_message_to_slack(recipient_uid, text)

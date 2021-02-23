@@ -19,10 +19,10 @@ module PeriodicReportConcern
       return true
     end
 
-    if processor.received?
-      # Do nothing
-      return true
-    end
+    # if processor.received?
+    #   # Do nothing
+    #   return true
+    # end
 
     if processor.send_requested?
       processor.send_report

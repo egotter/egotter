@@ -42,10 +42,10 @@ describe PeriodicReportConcern do
       end
     end
 
-    context '#received? returns true' do
-      before { allow(processor).to receive(:received?).and_return(true) }
-      it { is_expected.to be_truthy }
-    end
+    # context '#received? returns true' do
+    #   before { allow(processor).to receive(:received?).and_return(true) }
+    #   it { is_expected.to be_truthy }
+    # end
 
     context '#send_requested? returns true' do
       before { allow(processor).to receive(:send_requested?).and_return(true) }

@@ -66,7 +66,8 @@ class ProcessWebhookEventWorker
     GlobalDirectMessageReceivedFlag.new.received(dm.sender_id)
     GlobalSendDirectMessageCountByUser.new.clear(dm.sender_id)
 
-    processed = process_block_report(dm)
+    processed = PeriodicReportReceivedMessageResponder.from_dm(dm).respond
+    processed = process_block_report(dm) unless processed
     processed = process_search_report(dm) unless processed
     processed = process_periodic_report(dm) unless processed
     processed = process_schedule_tweets(dm) unless processed
