@@ -39,4 +39,13 @@ class StartPeriodicReportsCreatingRecordsTask
       CreateReportTwitterUserWorker.perform_in(rand(3600), request.id)
     end
   end
+
+  class << self
+    def delete_scheduled_jobs
+      ss = Sidekiq::ScheduledSet.new
+      jobs = ss.scan('CreateReportTwitterUserWorker').select { |job| job.klass == 'CreateReportTwitterUserWorker' }
+      jobs.each(&:delete)
+      jobs.size
+    end
+  end
 end
