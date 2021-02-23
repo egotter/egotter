@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_09_110237) do
+ActiveRecord::Schema.define(version: 2021_02_23_035110) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -902,6 +902,13 @@ ActiveRecord::Schema.define(version: 2021_02_09_110237) do
     t.string "channel", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_page_cache_logs_on_created_at"
+  end
+
+  create_table "periodic_report_received_message_confirmations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_on_created_at"
+    t.index ["user_id"], name: "index_on_user_id", unique: true
   end
 
   create_table "periodic_report_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
