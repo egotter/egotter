@@ -24,8 +24,7 @@ class CreatePeriodicReportReceivedWebAccessMessageWorker
   def perform(uid, options = {})
     if (user = User.select(:id).find_by(uid: uid))
       if PeriodicReport.access_interval_too_long?(user)
-        message = PeriodicReport.access_interval_too_long_message(user.id).message
-        User.egotter.api_client.create_direct_message_event(uid, message)
+        CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
       else
         User.egotter.api_client.create_direct_message_event(uid, MESSAGE)
       end
