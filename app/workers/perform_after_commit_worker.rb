@@ -60,6 +60,8 @@ class PerformAfterCommitWorker
     if mention_tweets.present?
       S3::MentionTweet.import_from!(uid, screen_name, mention_tweets)
     end
+
+    TwitterUser.find(twitter_user_id).update(cache_created_at: Time.zone.now)
   rescue => e
     logger.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id}"
     logger.info e.backtrace.join("\n")
