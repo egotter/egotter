@@ -16,7 +16,12 @@ class CreateReportTwitterUserWorker < CreateTwitterUserWorker
   end
 
   def perform(request_id, options = {})
-    options['context'] = :reporting
-    super(request_id, options)
+    request = CreateTwitterUserRequest.find(request_id)
+    task = CreateTwitterUserTask.new(request)
+    task.start!(:reporting)
+  rescue CreateTwitterUserRequest::Error => e
+    # Do nothing
+  rescue => e
+    handle_worker_error(e, request_id: request_id, options: options)
   end
 end
