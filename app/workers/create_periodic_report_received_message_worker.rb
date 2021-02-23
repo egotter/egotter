@@ -32,6 +32,9 @@ class CreatePeriodicReportReceivedMessageWorker
 
   # options:
   def perform(uid, options = {})
+    if (user = User.select(:id).find_by(uid: uid))
+      PeriodicReportReceivedMessageConfirmation.create(user_id: user.id)
+    end
     User.egotter.api_client.create_direct_message_event(uid, MESSAGE)
   rescue => e
     unless ignorable_report_error?(e)
