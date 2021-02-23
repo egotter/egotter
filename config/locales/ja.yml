@@ -1956,6 +1956,8 @@ ja:
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
       label2: 'アクセス通知 届きました'
       description2: 'このボタンを押しておくと、DM通知が届きやすくなります'
+      label3: 'フォロー通知 届きました'
+      description3: 'このボタンを押しておくと、DM通知が届きやすくなります'
   directory:
     profiles:
       footer_title: プロフィール
