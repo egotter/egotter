@@ -1416,6 +1416,7 @@ ActiveRecord::Schema.define(version: 2021_02_09_110237) do
     t.integer "inactive_followers_size"
     t.bigint "top_follower_uid"
     t.string "created_by", default: "", null: false
+    t.datetime "cache_created_at"
     t.datetime "assembled_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -21,6 +21,7 @@ class CreateTwitterUsers < ActiveRecord::Migration[4.2]
       t.integer  :inactive_followers_size,  null: true
       t.bigint   :top_follower_uid,         null: true
       t.string   :created_by,               null: false, default: ''
+      t.datetime :cache_created_at,         null: true
       t.datetime :assembled_at,             null: true
 
       t.timestamps null: false
