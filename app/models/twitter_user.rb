@@ -22,7 +22,6 @@
 #  inactive_friends_size    :integer
 #  inactive_followers_size  :integer
 #  top_follower_uid         :bigint(8)
-#  created_by               :string(191)      default(""), not null
 #  cache_created_at         :datetime
 #  assembled_at             :datetime
 #  created_at               :datetime         not null
