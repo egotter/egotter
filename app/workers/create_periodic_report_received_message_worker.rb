@@ -38,7 +38,7 @@ class CreatePeriodicReportReceivedMessageWorker
       # TODO Send a message
     end
 
-    quick_reply_buttons = PeriodicReport.default_quick_reply_options
+    quick_reply_buttons = PeriodicReport.general_quick_reply_options
     event = PeriodicReport.build_direct_message_event(uid, MESSAGE, quick_reply_buttons: quick_reply_buttons)
     User.egotter.api_client.create_direct_message_event(event: event)
   rescue => e
