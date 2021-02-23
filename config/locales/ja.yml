@@ -1954,6 +1954,8 @@ ja:
     shared:
       label1: 'DM届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
+      label2: 'アクセス通知届きました'
+      description2: 'このボタンを押しておくと、DM通知が届きやすくなります'
   directory:
     profiles:
       footer_title: プロフィール
