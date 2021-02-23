@@ -540,7 +540,6 @@ class PeriodicReport < ApplicationRecord
   end
 
   ACCESS_DAYS_SOFT_LIMIT = 5.days
-  ACCESS_DAYS_HARD_LIMIT = 7.days
 
   def send_remind_access_message?
     return false if dont_send_remind_message
@@ -759,12 +758,6 @@ class PeriodicReport < ApplicationRecord
     def web_access_soft_limited?(user)
       access_day = user.access_days.last
       access_day && access_day.date < ACCESS_DAYS_SOFT_LIMIT.ago
-    end
-
-    # TODO Remove later
-    def web_access_hard_limited?(user)
-      access_day = user.access_days.last
-      access_day && access_day.date < ACCESS_DAYS_HARD_LIMIT.ago
     end
 
     def interval_too_short?(user)

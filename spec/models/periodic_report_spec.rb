@@ -435,20 +435,6 @@ RSpec.describe PeriodicReport do
     end
   end
 
-  describe '.web_access_hard_limited?' do
-    subject { described_class.web_access_hard_limited?(user) }
-
-    context 'last access is 6 days ago' do
-      before { AccessDay.create!(user_id: user.id, date: 6.days.ago.to_date) }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'last access is 8 days ago' do
-      before { AccessDay.create!(user_id: user.id, date: 8.days.ago.to_date) }
-      it { is_expected.to be_truthy }
-    end
-  end
-
   describe '.interval_too_short?' do
     subject { described_class.interval_too_short?(user) }
     before { described_class.create!(user_id: user.id, token: 't', message_id: 'id') }
