@@ -71,6 +71,7 @@ class ProcessWebhookEventWorker
     processed = PeriodicReportReceivedNotFollowingMessageResponder.from_dm(dm).respond unless processed
     processed = BlockReportReceivedMessageResponder.from_dm(dm).respond unless processed
     processed = SearchReportReceivedMessageResponder.from_dm(dm).respond unless processed
+    processed = WelcomeReportReceivedMessageResponder.from_dm(dm).respond unless processed
     processed = process_block_report(dm) unless processed
     processed = process_search_report(dm) unless processed
     processed = process_periodic_report(dm) unless processed
