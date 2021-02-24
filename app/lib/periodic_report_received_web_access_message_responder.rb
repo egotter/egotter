@@ -12,7 +12,7 @@ class PeriodicReportReceivedWebAccessMessageResponder < AbstractMessageResponder
     end
 
     def received_regexp
-      /アクセス通知(\s|　)*届きました/
+      /アクセス通知(\s|　)*届きました|URLにアクセスしました/
     end
 
     def send_message
