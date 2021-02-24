@@ -54,7 +54,12 @@ class WelcomeMessage < ApplicationRecord
   def send_starting_message!
     message = StartingMessageBuilder.new(user, token).build
     message = @prefix_message + message if @prefix_message
-    user.api_client.create_direct_message_event(User::EGOTTER_UID, message)
+
+    if PeriodicReport.messages_allotted?(user)
+      User.egotter.api_client.create_direct_message_event(user.uid, message)
+    else
+      user.api_client.create_direct_message_event(User::EGOTTER_UID, message)
+    end
   end
 
   def send_message!
