@@ -58,12 +58,12 @@ class AssembleTwitterUserRequest < ApplicationRecord
 
     if twitter_user.id != latest.id
       update(status: 'not_latest')
-      false
+      return false
     end
 
     if latest.assembled_at.present?
       update(status: 'already_assembled')
-      false
+      return false
     end
 
     true
@@ -72,12 +72,12 @@ class AssembleTwitterUserRequest < ApplicationRecord
   def validate_record_friends!
     if twitter_user.too_little_friends?
       update(status: 'too_little_friends')
-      false
+      return false
     end
 
     if twitter_user.no_need_to_import_friendships?
       update(status: 'no_need_to_import')
-      false
+      return false
     end
 
     true
