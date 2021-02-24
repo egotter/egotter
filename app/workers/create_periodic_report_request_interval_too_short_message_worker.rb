@@ -11,10 +11,6 @@ class CreatePeriodicReportRequestIntervalTooShortMessageWorker
     3.seconds
   end
 
-  def after_skip(*args)
-    logger.warn "The job of #{self.class} is skipped args=#{args.inspect}"
-  end
-
   def _timeout_in
     10.seconds
   end
