@@ -43,7 +43,7 @@ module JobQueueingConcern
     return if from_crawler?
     return unless user_signed_in?
 
-    request = AssembleTwitterUserRequest.create(twitter_user: twitter_user)
+    request = AssembleTwitterUserRequest.create(twitter_user: twitter_user, requested_by: controller_path)
 
     debug_info = {
         user_id: current_user.id,
