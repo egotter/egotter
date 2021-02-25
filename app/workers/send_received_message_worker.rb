@@ -21,7 +21,7 @@ class SendReceivedMessageWorker
       /\A【?#{I18n.t('quick_replies.prompt_reports.label2')}】?\z/,
       /\A【?#{I18n.t('quick_replies.welcome_messages.label1')}】?\z/,
       /\A【?#{I18n.t('quick_replies.welcome_messages.label2')}】?\z/,
-      /\A【?初期設定 開始】?\z/,
+      /\A【?初期設定(\s|　)*開始】?\z/,
       /\A【?#{I18n.t('quick_replies.search_reports.label1')}】?\z/,
       /\A【?#{I18n.t('quick_replies.search_reports.label2')}】?\z/,
       /\A【?#{I18n.t('quick_replies.search_reports.label3')}】?\z/,
@@ -31,8 +31,9 @@ class SendReceivedMessageWorker
       /\A【?#{I18n.t('quick_replies.block_reports.label3')}】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label1')}】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label2')}】?\z/,
-      /\A【?アクセス通知 届きました】?\z/,
+      /\A【?アクセス通知(\s|　)*届きました】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label3')}】?\z/,
+      /\A【?フォロー通知(\s|　)*届きました】?\z/,
   ]
 
   def dont_send_message?(text)

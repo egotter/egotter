@@ -1955,9 +1955,9 @@ ja:
       label1: 'DM届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
       label2: 'URLにアクセスしました'
-      description2: 'このボタンを押しておくと、DM通知が届きやすくなります'
-      label3: 'フォロー通知 届きました'
-      description3: 'このボタンを押しておくと、DM通知が届きやすくなります'
+      description2: 'アクセスした後に押してください'
+      label3: 'フォローしました'
+      description3: 'フォローした後に押してください'
   directory:
     profiles:
       footer_title: プロフィール
