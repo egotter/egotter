@@ -230,6 +230,7 @@ class PeriodicReport < ApplicationRecord
       message = ERB.new(template.read).result_with_hash(
           access_day: user.access_days.last,
           url: root_url(dialog_params.merge(campaign_params('web_access_hard_limited'))),
+          screen_name: user.screen_name,
           support_url: support_url(dialog_params.merge(campaign_params('web_access_hard_limited_support'))),
           pricing_url: pricing_url(dialog_params.merge(campaign_params('web_access_hard_limited_pricing'))),
       )
