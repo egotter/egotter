@@ -12,6 +12,12 @@ class CreatePeriodicReportReceivedWebAccessMessageWorker
     #egotter
   TEXT
 
+  SECOND_MESSAGE = <<~TEXT
+    アクセス履歴が見付かりませんでした。何かお困りですか？
+    分からないことは @egotter_cs までお気軽にご質問ください。
+    #egotter
+  TEXT
+
   def unique_key(uid, options = {})
     uid
   end
@@ -24,7 +30,8 @@ class CreatePeriodicReportReceivedWebAccessMessageWorker
   def perform(uid, options = {})
     if (user = User.select(:id).find_by(uid: uid))
       if PeriodicReport.access_interval_too_long?(user)
-        CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
+        # CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
+        User.egotter.api_client.create_direct_message_event(uid, SECOND_MESSAGE)
       else
         quick_reply_buttons = PeriodicReport.general_quick_reply_options
         event = PeriodicReport.build_direct_message_event(uid, MESSAGE, quick_reply_buttons: quick_reply_buttons)
