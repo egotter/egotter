@@ -7,8 +7,8 @@ namespace :users do
     ApiClient
     CacheDirectory
 
-    green = -> (str) {print "\e[32m#{str}\e[0m"}
-    red = -> (str) {print "\e[31m#{str}\e[0m"}
+    green = -> (str) { print "\e[32m#{str}\e[0m" }
+    red = -> (str) { print "\e[31m#{str}\e[0m" }
     start = ENV['START'] ? ENV['START'].to_i : 1
 
     User.authorized.find_in_batches(start: start, batch_size: 200) do |users|
@@ -49,5 +49,15 @@ namespace :users do
 
       break if sigint.trapped?
     end
+  end
+
+  task update_credential_token: :environment do
+    processed_count = 0
+    User.includes(:credential_token).references(:credential_token).authorized.where('users.token != credential_tokens.token').find_each do |user|
+      user.credential_token.update!(token: user.token, secret: user.secret)
+      processed_count += 1
+      print '.' if processed_count % 1000 == 0
+    end
+    puts "processed #{processed_count}"
   end
 end

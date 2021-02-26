@@ -32,6 +32,7 @@
 class User < ApplicationRecord
   devise :rememberable, :omniauthable
 
+  has_one :credential_token
   has_many :visits, class_name: 'Ahoy::Visit'
 
   include CredentialsApi
@@ -104,6 +105,11 @@ class User < ApplicationRecord
         yield(user, :create) if block_given?
       else
         user.save! if user.changed?
+        begin
+          user.credential_token.update(token: values[:token], secret: values[:secret])
+        rescue => e
+          logger.warn "Updating credential_token is failed: #{e.inspect}"
+        end
         yield(user, :update) if block_given?
       end
 
