@@ -22,6 +22,13 @@ class CreatePeriodicReportReceivedMessageWorker
     #egotter
   TEXT
 
+  SIMPLE_MESSAGE = <<~TEXT
+    通知の送信回数が回復しました。
+    ・残り送信回数：4回
+    ・有効期限：24時間
+    #egotter
+  TEXT
+
   def unique_key(uid, options = {})
     uid
   end
@@ -33,14 +40,19 @@ class CreatePeriodicReportReceivedMessageWorker
   # options:
   def perform(uid, options = {})
     if (user = User.select(:id).find_by(uid: uid))
-      PeriodicReportReceivedMessageConfirmation.create(user_id: user.id)
+      if PeriodicReportReceivedMessageConfirmation.exists?(user_id: user.id)
+        message = SIMPLE_MESSAGE
+      else
+        message = MESSAGE
+        PeriodicReportReceivedMessageConfirmation.create(user_id: user.id)
+      end
+
+      quick_reply_buttons = PeriodicReport.general_quick_reply_options
+      event = PeriodicReport.build_direct_message_event(uid, message, quick_reply_buttons: quick_reply_buttons)
+      User.egotter.api_client.create_direct_message_event(event: event)
     else
       # TODO Send a message
     end
-
-    quick_reply_buttons = PeriodicReport.general_quick_reply_options
-    event = PeriodicReport.build_direct_message_event(uid, MESSAGE, quick_reply_buttons: quick_reply_buttons)
-    User.egotter.api_client.create_direct_message_event(event: event)
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
