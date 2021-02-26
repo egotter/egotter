@@ -1,5 +1,8 @@
 ja:
   layouts:
+    alert:
+      dm_confirmation: '利用を開始するためには【初期設定 開始】と書いたDMを @ego_tter に送ってください。'
+      open: 'DMを開く'
     header:
       title: 'えごったー'
       sign_in: 'ログイン'

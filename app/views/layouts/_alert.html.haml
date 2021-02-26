@@ -1,4 +1,9 @@
 .container._debug_alert
+  - if show_dm_confirmation_announcement?
+    .alert.alert-info.mt-3{role: "alert"}
+      = t('.dm_confirmation')
+      = link_to t('.open'), direct_messages_url('ego_tter'), target: '_blank'
+
   - if GlobalMessage.message_found?
     .alert.alert-dark.mt-3{role: "alert"}
       = raw GlobalMessage.latest_message
