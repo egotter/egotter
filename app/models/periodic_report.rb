@@ -630,7 +630,17 @@ class PeriodicReport < ApplicationRecord
     end
 
     def general_quick_reply_options
-      interval_too_short_quick_reply_options
+      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
+      [
+          {
+              label: I18n.t('quick_replies.shared.label1'),
+              description: I18n.t('quick_replies.shared.description1')
+          },
+          {
+              label: I18n.t('quick_replies.prompt_reports.label3'),
+              description: I18n.t('quick_replies.prompt_reports.description3')
+          }
+      ]
     end
 
     def request_interval_too_short_quick_reply_options

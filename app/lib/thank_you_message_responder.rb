@@ -8,7 +8,7 @@ class ThankYouMessageResponder < AbstractMessageResponder
     include AbstractReportProcessor
 
     def message_length
-      20
+      30
     end
 
     def received_regexp
