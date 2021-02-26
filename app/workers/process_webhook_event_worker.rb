@@ -82,6 +82,7 @@ class ProcessWebhookEventWorker
     processed = ThankYouMessageResponder.from_dm(dm).respond unless processed
     processed = PrettyIconMessageResponder.from_dm(dm).respond unless processed
     processed = process_spam_message(dm) unless processed
+    processed = QuestionMessageResponder.from_dm(dm).respond unless processed
 
     unless processed
       logger.info { "#{__method__} dm is ignored #{dm.text}" }
