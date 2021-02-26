@@ -9,10 +9,6 @@ module CredentialsApi
   included do
   end
 
-  def api_client(options = {})
-    ::ApiClient.instance(options.merge(access_token: token, access_token_secret: secret))
-  end
-
   def rate_limit
     RateLimitClient.new(api_client.twitter).rate_limit
   end

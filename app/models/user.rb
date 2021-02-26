@@ -133,6 +133,11 @@ class User < ApplicationRecord
     screen_name
   end
 
+  def api_client(options = {})
+    opt = options.merge(access_token: credential_token.token, access_token_secret: credential_token.secret)
+    ApiClient.instance(opt)
+  end
+
   def twitter_user
     if instance_variable_defined?(:@twitter_user)
       @twitter_user

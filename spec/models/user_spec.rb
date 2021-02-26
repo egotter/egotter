@@ -104,6 +104,7 @@ RSpec.describe User, type: :model do
   end
 
   describe '.api_client' do
+    let(:user) { create(:user, with_credential_token: true) }
     it 'returns ApiClient' do
       client = user.api_client
       expect(client).to be_a_kind_of(ApiClient)

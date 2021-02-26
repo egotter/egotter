@@ -22,6 +22,10 @@
 class Bot < ApplicationRecord
   include CredentialsApi
 
+  def api_client(options = {})
+    ApiClient.instance(options.merge(access_token: token, access_token_secret: secret))
+  end
+
   class << self
     def current_ids
       where(authorized: true, locked: false).pluck(:id)

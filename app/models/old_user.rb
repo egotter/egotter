@@ -25,4 +25,8 @@ class OldUser < ApplicationRecord
   scope :authorized, -> { where(authorized: true) }
 
   include CredentialsApi
+
+  def api_client(options = {})
+    ApiClient.instance(options.merge(access_token: token, access_token_secret: secret))
+  end
 end
