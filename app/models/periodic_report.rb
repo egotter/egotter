@@ -633,8 +633,8 @@ class PeriodicReport < ApplicationRecord
       # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
       [
           {
-              label: I18n.t('quick_replies.shared.label1'),
-              description: I18n.t('quick_replies.shared.description1')
+              label: I18n.t('quick_replies.shared.label4'),
+              description: I18n.t('quick_replies.shared.description4')
           },
           {
               label: I18n.t('quick_replies.prompt_reports.label3'),

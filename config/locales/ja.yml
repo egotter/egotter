@@ -1961,6 +1961,8 @@ ja:
       description2: 'アクセスした後に押してください'
       label3: 'フォローしました'
       description3: 'フォローした後に押してください'
+      label4: '会話を閉じる（次の通知を待つ）'
+      description4: 'このボタンを押しておくと、DM通知が届きやすくなります'
   directory:
     profiles:
       footer_title: プロフィール

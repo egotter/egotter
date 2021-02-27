@@ -30,6 +30,7 @@ class SendReceivedMessageWorker
       /\A【?#{I18n.t('quick_replies.block_reports.label2')}】?\z/,
       /\A【?#{I18n.t('quick_replies.block_reports.label3')}】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label1')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.shared.label4')}】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label2')}】?\z/,
       /\A【?アクセス通知(\s|　)*届きました】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label3')}】?\z/,
