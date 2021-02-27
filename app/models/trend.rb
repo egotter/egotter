@@ -40,7 +40,7 @@ class Trend < ApplicationRecord
   # tweet3 <- :max_id is tweet3.id - 1
   #
   # more_recent_tweets = search_tweets(since_id: tweets[0].tweet_id)
-  def search_tweets(count:, max_id: nil, since_id: nil, since: nil, _until: nil, client_loader: nil)
+  def search_tweets(count:, max_id: nil, since_id: nil, since: nil, _until: nil, client_loader: nil, progress: false)
     time_format = '%Y-%m-%d_%H:%M:%S_UTC'
     options = {
         count: count,
@@ -50,7 +50,7 @@ class Trend < ApplicationRecord
         # until: (_until || time).strftime(time_format),
         client_loader: client_loader,
     }
-    TrendSearcher.new(name, options).search_tweets
+    TrendSearcher.new(name, options).search_tweets(progress: progress)
   end
 
   def import_tweets(tweets)
@@ -62,8 +62,8 @@ class Trend < ApplicationRecord
     update!(tweets_size: tweets.size, tweets_imported_at: Time.zone.now)
   end
 
-  def replace_tweets(count:)
-    tweets = search_tweets(count: count)
+  def replace_tweets(count:, progress: false)
+    tweets = search_tweets(count: count, progress: progress)
     import_tweets(tweets)
     update_trend_insight(tweets)
 

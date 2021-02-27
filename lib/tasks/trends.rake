@@ -40,7 +40,7 @@ namespace :trends do
 
     ids = ENV['TREND_ID'].split(',')
     Trend.where(id: ids).each do |trend|
-      size = trend.replace_tweets(count: max_tweets)
+      size = trend.replace_tweets(count: max_tweets, progress: true)
       logger.info "task=#{task.name} name=#{trend.name} tweets=#{size}"
     end
     logger.info "task=#{task.name} finish"

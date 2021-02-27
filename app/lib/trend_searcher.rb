@@ -4,13 +4,17 @@ class TrendSearcher
     extract_options(options)
   end
 
-  def search_tweets
+  def search_tweets(progress: false)
     collection = []
 
     while collection.size < @count
       options = {count: 100, since: @since, until: @until, since_id: @since_id, max_id: @max_id}
       tweets = internal_fetch_tweets(@client_loader, @query, options)
       collection.concat(tweets)
+
+      if progress
+        puts "total=#{collection.size} query=#{query} options=#{options}"
+      end
 
       break if tweets.empty?
       @max_id = tweets.last[:id] - 1
