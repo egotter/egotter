@@ -10,6 +10,7 @@ class CreateCredentialTokens < ActiveRecord::Migration[5.2]
       t.timestamps null: false
 
       t.index :user_id, unique: true
+      t.index :token
       t.index :created_at
     end
   end

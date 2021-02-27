@@ -120,7 +120,11 @@ class User < ApplicationRecord
     end
 
     def find_by_token(token, secret)
-      find_by(token: token, secret: secret)
+      includes(:credential_token).
+          references(:credential_token).
+          where('credential_tokens.token = ?', token).
+          where('credential_tokens.secret = ?', secret).
+          first
     end
 
     def api_client

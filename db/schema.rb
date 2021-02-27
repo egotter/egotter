@@ -509,6 +509,7 @@ ActiveRecord::Schema.define(version: 2021_02_23_035110) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_credential_tokens_on_created_at"
+    t.index ["token"], name: "index_credential_tokens_on_token"
     t.index ["user_id"], name: "index_credential_tokens_on_user_id", unique: true
   end
 

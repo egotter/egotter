@@ -14,6 +14,7 @@
 # Indexes
 #
 #  index_credential_tokens_on_created_at  (created_at)
+#  index_credential_tokens_on_token       (token)
 #  index_credential_tokens_on_user_id     (user_id) UNIQUE
 #
 
