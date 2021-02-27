@@ -116,7 +116,9 @@ module Tasks
       def pull_latest_code
         backend('git fetch origin >/dev/null')
         backend('git pull origin master >/dev/null')
-        backend('bundle install --path .bundle --without test development | grep -v Using')
+        backend('bundle config set path ".bundle"')
+        backend('bundle config set without "test development"')
+        backend('bundle install | grep -v Using')
         self
       end
 

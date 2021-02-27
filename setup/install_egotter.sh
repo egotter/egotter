@@ -88,7 +88,9 @@ ${sudo_cmd} "git checkout master && git pull origin master"
 [ ! -f "/usr/bin/convert" ] && yum install -y ImageMagick ImageMagick-devel
 
 cd ${APP_ROOT}
-${sudo_cmd} "/usr/local/bin/bundle install --path .bundle --without test development"
+${sudo_cmd} "/usr/local/bin/bundle config set path '.bundle'"
+${sudo_cmd} "/usr/local/bin/bundle config set without 'test development'"
+${sudo_cmd} "/usr/local/bin/bundle install"
 
 # redis
 [ ! -f "/etc/redis.conf.bak" ] && cp /etc/redis.conf /etc/redis.conf.bak
@@ -192,12 +194,12 @@ Make swap:
     # egrep "Mem|Swap" /proc/meminfo OR swapon -s
 
 # Mount efs:
-# 
+#
 #     mkdir /efs
 #     mount -t nfs4 [NAME]:/ /efs/
 #     echo '[NAME]:/ /efs efs defaults,_netdev 0 0' >>/etc/fstab
 #     # df -h
-    
+
 Install monitoring script:
 
     # https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/mon-scripts.html
