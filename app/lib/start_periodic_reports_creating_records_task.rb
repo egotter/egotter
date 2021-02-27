@@ -11,6 +11,7 @@ class StartPeriodicReportsCreatingRecordsTask
 
     requests = create_requests(user_ids)
     create_jobs(requests)
+    requests.size
   end
 
   def initialize_user_ids
@@ -36,7 +37,7 @@ class StartPeriodicReportsCreatingRecordsTask
 
   def create_jobs(requests)
     requests.each do |request|
-      CreateReportTwitterUserWorker.perform_in(rand(3600), request.id)
+      CreateReportTwitterUserWorker.perform_async(request.id)
     end
   end
 
