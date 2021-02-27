@@ -20,4 +20,7 @@
 
 class CredentialToken < ApplicationRecord
   belongs_to :user
+
+  validates :secret, presence: true
+  validates :token, presence: true
 end

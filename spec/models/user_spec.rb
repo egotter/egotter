@@ -13,17 +13,17 @@ RSpec.describe User, type: :model do
       expect(User.new(screen_name: '$sn').tap { |u| u.valid? }.errors[:screen_name].size).to eq(1)
       expect(User.new(screen_name: 'sn').tap { |u| u.valid? }.errors[:screen_name].size).to eq(0)
 
-      %i(secret token).each do |attr|
-        expect(User.new.tap { |u| u.valid? }.errors[attr].size).to eq(1)
-      end
-      %i(secret token).product([nil, '']).each do |attr, value|
-        expect(User.new(attr => value).tap { |u| u.valid? }.errors[attr].size).to eq(1)
-      end
+      # %i(secret token).each do |attr|
+      #   expect(User.new.tap { |u| u.valid? }.errors[attr].size).to eq(1)
+      # end
+      # %i(secret token).product([nil, '']).each do |attr, value|
+      #   expect(User.new(attr => value).tap { |u| u.valid? }.errors[attr].size).to eq(1)
+      # end
 
       expect(User.new.tap { |u| u.valid? }.errors[:email].size).to eq(0)
       expect(User.new(email: nil).tap { |u| u.valid? }.errors[:email].size).to eq(1)
       expect(User.new(email: '').tap { |u| u.valid? }.errors[:email].size).to eq(0)
-      expect(User.new(email: 'info@egotter.com').tap { |u| u.valid? }.errors[:email].size).to eq(0)
+      expect(User.new(email: 'a@b.com').tap { |u| u.valid? }.errors[:email].size).to eq(0)
     end
   end
 
@@ -34,63 +34,54 @@ RSpec.describe User, type: :model do
           screen_name: 'sn',
           secret: 's',
           token: 't',
-          authorized: true,
           email: 'a@a.com',
-      }.compact
+      }
     end
-    subject { User.update_or_create_with_token!(values) }
+    subject { described_class.update_or_create_with_token!(values) }
 
-    context 'With new uid' do
-      it 'creates new user' do
-        expect { subject }.to change { User.all.size }.by(1)
-
-        user = User.last
-        expect(user.slice(values.keys)).to match(values)
+    context 'user is persisted' do
+      before { allow(described_class).to receive(:exists?).with(uid: 123).and_return(true) }
+      it do
+        expect(described_class).to receive(:update_with_token).with(123, 'sn', 'a@a.com', 't', 's')
+        subject
       end
     end
 
-    context 'With persisted uid' do
-      before { create(:user, uid: values[:uid]) }
-      it 'updates the user' do
-        expect { subject }.to_not change { User.all.size }
-
-        user = User.last
-        expect(user.slice(values.keys)).to match(values)
+    context 'user is NOT persisted' do
+      it do
+        expect(described_class).to receive(:create_with_token).with(123, 'sn', 'a@a.com', 't', 's')
+        subject
       end
     end
+  end
 
-    context 'without uid' do
-      before { values.delete(:uid) }
-      it 'raises an ActiveRecord::RecordInvalid' do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+  describe '.create_with_token' do
+    subject { described_class.create_with_token(123, 'screen_name', 'a@b.com', 'token', 'secret') }
+    it do
+      is_expected.to satisfy do |user|
+        user.uid == 123 &&
+            user.screen_name == 'screen_name' &&
+            user.email == 'a@b.com' &&
+            user.token == 'token' &&
+            user.secret == 'secret' &&
+            user.credential_token.token == 'token' &&
+            user.credential_token.secret == 'secret'
       end
     end
+  end
 
-    context 'without screen_name' do
-      before { values.delete(:screen_name) }
-      it 'raises an ActiveRecord::RecordInvalid' do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
-    context 'without email' do
-      before { values.delete(:email) }
-      it 'does not raise any exception' do
-        expect { subject }.to_not raise_error
-      end
-    end
-
-    context 'without secret' do
-      before { values.delete(:secret) }
-      it 'raises an ActiveRecord::RecordInvalid' do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
-    context 'without token' do
-      before { values.delete(:token) }
-      it 'raises an ActiveRecord::RecordInvalid' do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+  describe '.update_with_token' do
+    let(:persisted_user) { create(:user, with_credential_token: true) }
+    subject { described_class.update_with_token(persisted_user.uid, 'screen_name', 'a@b.com', 'token', 'secret') }
+    it do
+      is_expected.to satisfy do |user|
+        user.uid == persisted_user.uid &&
+            user.screen_name == 'screen_name' &&
+            user.email == 'a@b.com' &&
+            user.token == 'token' &&
+            user.secret == 'secret' &&
+            user.credential_token.token == 'token' &&
+            user.credential_token.secret == 'secret'
       end
     end
   end

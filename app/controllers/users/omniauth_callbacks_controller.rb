@@ -104,7 +104,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         screen_name: values.info.nickname,
         secret: values.credentials.secret,
         token: values.credentials.token,
-        authorized: true,
         email: values.info.email,
     }.compact
   end

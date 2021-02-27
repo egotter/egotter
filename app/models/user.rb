@@ -67,8 +67,6 @@ class User < ApplicationRecord
   validates_with Validations::UidValidator
   validates :screen_name, presence: true
   validates_with Validations::ScreenNameValidator
-  validates :secret, presence: true
-  validates :token, presence: true
   validates_with Validations::EmailValidator
 
   scope :authorized, -> { where(authorized: true) }
@@ -92,31 +90,39 @@ class User < ApplicationRecord
     end
 
     def update_or_create_with_token!(values)
-      user = User.find_or_initialize_by(uid: values.delete(:uid))
-      user.assign_attributes(values)
-
-      if user.new_record?
-        transaction do
-          user.save!
-          user.create_notification_setting!(report_interval: NotificationSetting::DEFAULT_REPORT_INTERVAL)
-          user.create_periodic_report_setting!
-          user.create_credential_token!(token: user.token, secret: user.secret)
-        end
-        yield(user, :create) if block_given?
-      else
-        user.save! if user.changed?
-        begin
-          user.credential_token.update(token: values[:token], secret: values[:secret])
-        rescue => e
-          logger.warn "Updating credential_token is failed: #{e.inspect}"
-        end
+      if exists?(uid: values[:uid])
+        user = update_with_token(values[:uid], values[:screen_name], values[:email], values[:token], values[:secret])
         yield(user, :update) if block_given?
+      else
+        user = create_with_token(values[:uid], values[:screen_name], values[:email], values[:token], values[:secret])
+        yield(user, :create) if block_given?
       end
 
       user
     rescue => e
       logger.warn "#{self}##{__method__}: #{e.class} #{e.message} #{e.respond_to?(:record) ? e.record.inspect : 'NONE'} #{values.inspect}"
       raise e
+    end
+
+    def create_with_token(uid, screen_name, email, token, secret)
+      user = new(uid: uid, screen_name: screen_name, email: email, token: token, secret: secret)
+      transaction do
+        user.save!
+        user.create_notification_setting!(report_interval: NotificationSetting::DEFAULT_REPORT_INTERVAL)
+        user.create_periodic_report_setting!
+        user.create_credential_token!(token: user.token, secret: user.secret)
+      end
+      user
+    end
+
+    def update_with_token(uid, screen_name, email, token, secret)
+      user = find_by(uid: uid)
+      user.assign_attributes(authorized: true, screen_name: screen_name, email: email, token: token, secret: secret)
+      transaction do
+        user.save! if user.changed?
+        user.credential_token.update!(token: token, secret: secret)
+      end
+      user
     end
 
     def find_by_token(token, secret)
