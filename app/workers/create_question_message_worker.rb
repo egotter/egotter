@@ -5,6 +5,7 @@ class CreateQuestionMessageWorker
 
   MESSAGE = <<~TEXT
     何かご質問でしょうか？ お返事が必要な場合は @egotter_cs までご連絡ください。
+    （質問の送り先は ego_tter ではなく egotter_cs です）
     #egotter
   TEXT
 
