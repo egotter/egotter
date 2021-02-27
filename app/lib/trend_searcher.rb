@@ -13,7 +13,7 @@ class TrendSearcher
       collection.concat(tweets)
 
       if progress
-        puts "total=#{collection.size} query=#{query} options=#{options}"
+        puts "total=#{collection.size} query=#{@query} options=#{options}"
       end
 
       break if tweets.empty?
