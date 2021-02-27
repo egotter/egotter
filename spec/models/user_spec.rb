@@ -72,17 +72,29 @@ RSpec.describe User, type: :model do
 
   describe '.update_with_token' do
     let(:persisted_user) { create(:user, with_credential_token: true) }
-    subject { described_class.update_with_token(persisted_user.uid, 'screen_name', 'a@b.com', 'token', 'secret') }
+    let(:screen_name) { 'screen_name' }
+    let(:email) { 'a@b.com' }
+    subject { described_class.update_with_token(persisted_user.uid, screen_name, email, 'token', 'secret') }
     it do
       is_expected.to satisfy do |user|
         user.uid == persisted_user.uid &&
-            user.screen_name == 'screen_name' &&
-            user.email == 'a@b.com' &&
+            user.screen_name == screen_name &&
+            user.email == email &&
             user.token == 'token' &&
             user.secret == 'secret' &&
             user.credential_token.token == 'token' &&
             user.credential_token.secret == 'secret'
       end
+    end
+
+    context 'screen_name is nil' do
+      let(:screen_name) { nil }
+      it { expect(subject.screen_name).not_to be_nil }
+    end
+
+    context 'email is nil' do
+      let(:email) { nil }
+      it { expect(subject.email).not_to be_nil }
     end
   end
 

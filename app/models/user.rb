@@ -117,7 +117,12 @@ class User < ApplicationRecord
 
     def update_with_token(uid, screen_name, email, token, secret)
       user = find_by(uid: uid)
-      user.assign_attributes(authorized: true, screen_name: screen_name, email: email, token: token, secret: secret)
+      user.assign_attributes(authorized: true, token: token, secret: secret)
+
+      # In extremely rare cases, the values may be nil.
+      user.screen_name = screen_name if screen_name.present?
+      user.email = email if email.present?
+
       transaction do
         user.save! if user.changed?
         user.credential_token.update!(token: token, secret: secret)
