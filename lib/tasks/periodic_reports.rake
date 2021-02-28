@@ -52,6 +52,12 @@ namespace :periodic_reports do
     end
   end
 
+  task create_records: :environment do
+    task = StartPeriodicReportsCreatingRecordsTask.new
+    task.start!
+    puts "user_ids=#{task.user_ids.size}"
+  end
+
   namespace :send_messages do
     desc 'Send morning messages'
     task morning: :environment do |task|
