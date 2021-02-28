@@ -13,20 +13,14 @@ RUBY='/var/egotter/bin/cron/ruby.sh'
 # */10 * * * *    /bin/sh -c "$RUBY bin/update_rds_burst_balance.rb"
 
 # PeriodicReport(morning)
-# 20 22 * * * /bin/sh -c "$RAKE servers:launch"
 #  0 20 * * * /bin/sh -c "$RAKE periodic_reports:create_records"
 # 30 22 * * * /bin/sh -c "$RAKE periodic_reports:send_messages:morning"
-# 20  0 * * * /bin/sh -c "$RAKE servers:terminate"
 # PeriodicReport(afternoon)
-# 20  2 * * * /bin/sh -c "$RAKE servers:launch"
 #  0  0 * * * /bin/sh -c "$RAKE periodic_reports:create_records"
 # 30  2 * * * /bin/sh -c "$RAKE periodic_reports:send_messages:afternoon"
-# 20  4 * * * /bin/sh -c "$RAKE servers:terminate"
 # PeriodicReport(night)
-# 20 11 * * * /bin/sh -c "$RAKE servers:launch"
 #  0  9 * * * /bin/sh -c "$RAKE periodic_reports:create_records"
 # 30 11 * * * /bin/sh -c "$RAKE periodic_reports:send_messages:night"
-# 20 13 * * * /bin/sh -c "$RAKE servers:terminate"
 
 */15 * * * * /bin/sh -c "DRY_RUN=true ROLE=web $RUBY bin/adjust_servers.rb"
 */15 * * * * /bin/sh -c "DRY_RUN=true ROLE=sidekiq $RUBY bin/adjust_servers.rb"
