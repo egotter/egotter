@@ -28,7 +28,7 @@ RSpec.describe JobQueueingConcern do
 
   describe '#enqueue_assemble_twitter_user' do
     let(:user) { create(:user) }
-    let(:twitter_user) { create(:twitter_user) }
+    let(:twitter_user) { create(:twitter_user, created_at: 1.minute.ago) }
     subject { instance.enqueue_assemble_twitter_user(twitter_user) }
     before do
       allow(instance).to receive(:from_crawler?)

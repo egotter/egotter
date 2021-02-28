@@ -39,6 +39,7 @@ module JobQueueingConcern
 
   # TODO Update the data as priority if the user searches for yourself
   def enqueue_assemble_twitter_user(twitter_user)
+    return if twitter_user.created_at > 10.seconds.ago
     return if twitter_user.assembled_at.present?
     return if from_crawler?
     return unless user_signed_in?
