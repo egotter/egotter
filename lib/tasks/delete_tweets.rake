@@ -5,7 +5,7 @@ namespace :delete_tweets do
         sync: ENV['SYNC'],
         dry_run: ENV['DRY_RUN'],
         since: ENV['SINCE'],
-        until: ENV['UNTIL']
+        _until: ENV['UNTIL']
     }
     task = StartDeletingTweetsTask.new(ENV['SCREEN_NAME'], ENV['FILE'], **options)
     task.start!
