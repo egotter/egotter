@@ -1,9 +1,10 @@
 class StartDeletingTweetsTask
 
-  def initialize(screen_name, file, dry_run: nil, since: nil, _until: nil)
+  def initialize(screen_name, file, sync: false, dry_run: nil, since: nil, _until: nil)
     @screen_name = screen_name
     @file = file
     @tweets = JSON.load(File.read(@file).remove(/\Awindow\.YTD\.tweet\.part\d+ =/))
+    @sync = sync
     @dry_run = dry_run
     @since = since ? Time.zone.parse(since) : nil
     @until = _until ? Time.zone.parse(_until) : nil
@@ -88,8 +89,15 @@ class StartDeletingTweetsTask
     else
       user = User.find_by(screen_name: @screen_name)
       request = DeleteTweetsRequest.create!(user_id: user.id, finished_at: Time.zone.now)
-      @candidate_tweets.each do |tweet|
-        DeleteTweetWorker.perform_async(user.id, tweet['tweet']['id'], request_id: request.id)
+
+      if @sync
+        @candidate_tweets.each do |tweet|
+          DeleteTweetWorker.new.perform(user.id, tweet['tweet']['id'], request_id: request.id)
+        end
+      else
+        @candidate_tweets.each do |tweet|
+          DeleteTweetWorker.perform_async(user.id, tweet['tweet']['id'], request_id: request.id)
+        end
       end
     end
   end

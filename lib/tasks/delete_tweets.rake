@@ -2,6 +2,7 @@ namespace :delete_tweets do
   desc 'Delete by archive'
   task delete_by_archive: :environment do
     options = {
+        sync: ENV['SYNC'],
         dry_run: ENV['DRY_RUN'],
         since: ENV['SINCE'],
         until: ENV['UNTIL']
