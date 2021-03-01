@@ -10,10 +10,17 @@ class WebhookController < ApplicationController
   end
 
   def twitter
-    if verified_webhook_request? && direct_message_event_for_egotter?
-      params[:direct_message_events].each do |event|
-        event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
-        ProcessWebhookEventWorker.perform_async(event)
+    if verified_webhook_request?
+      if direct_message_event_for_egotter?
+        params[:direct_message_events].each do |event|
+          event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
+          ProcessWebhookEventWorker.perform_async(event)
+        end
+      elsif follow_event_for_egotter?
+        params[:follow_events].each do |event|
+          event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
+          ProcessWebhookFollowEventWorker.perform_async(event)
+        end
       end
     end
 
@@ -28,6 +35,10 @@ class WebhookController < ApplicationController
 
   def direct_message_event_for_egotter?
     params[:for_user_id].to_i == User::EGOTTER_UID && params[:direct_message_events]
+  end
+
+  def follow_event_for_egotter?
+    params[:for_user_id].to_i == User::EGOTTER_UID && params[:follow_events]
   end
 
   def crc_response
