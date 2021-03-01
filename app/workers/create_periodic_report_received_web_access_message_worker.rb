@@ -15,6 +15,10 @@ class CreatePeriodicReportReceivedWebAccessMessageWorker
   SECOND_MESSAGE = <<~TEXT
     アクセス履歴が見付かりませんでした。
 
+    ↓↓↓
+    <%= url %>
+    ↑↑↑
+
     えごったーのWebサイトに <%= user %> さんがアクセスすればOKです。
 
     ログインし直しが面倒な場合は、いつも使っているブラウザからもアクセスしてみてください。
@@ -36,7 +40,7 @@ class CreatePeriodicReportReceivedWebAccessMessageWorker
     if (user = User.select(:id, :screen_name).find_by(uid: uid))
       if PeriodicReport.access_interval_too_long?(user)
         # CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
-        User.egotter.api_client.create_direct_message_event(uid, build_second_message(user.screen_name))
+        User.egotter.api_client.create_direct_message_event(uid, build_second_message(user))
       else
         quick_reply_buttons = PeriodicReport.general_quick_reply_options
         event = PeriodicReport.build_direct_message_event(uid, MESSAGE, quick_reply_buttons: quick_reply_buttons)
@@ -53,7 +57,8 @@ class CreatePeriodicReportReceivedWebAccessMessageWorker
 
   private
 
-  def build_second_message(screen_name)
-    ERB.new(SECOND_MESSAGE).result_with_hash(user: screen_name)
+  def build_second_message(user)
+    url = Rails.application.routes.url_helpers.timeline_url(user, share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false, via: 'web_access_received_message')
+    ERB.new(SECOND_MESSAGE).result_with_hash(url: url, user: user.screen_name)
   end
 end
