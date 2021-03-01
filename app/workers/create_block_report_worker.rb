@@ -1,3 +1,4 @@
+# Implement DispatchBlockReportWorker
 class CreateBlockReportWorker
   include Sidekiq::Worker
   include ReportErrorHandler

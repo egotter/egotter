@@ -247,16 +247,15 @@ RSpec.describe PeriodicReport do
   end
 
   describe '#send_direct_message' do
-    let(:report) { described_class.new(message: 'message', quick_reply_buttons: 'buttons') }
-    let(:recipient) { double('recipient', uid: 2) }
+    let(:user) { create(:user) }
+    let(:report) { described_class.new(user: user, message: 'message', quick_reply_buttons: 'buttons') }
     subject { report.send_direct_message }
-
-    before { allow(report).to receive(:report_recipient).and_return(recipient) }
 
     it do
       expect(report).to receive(:append_remind_message_if_needed).and_return(report.message)
-      expect(described_class).to receive(:build_direct_message_event).with(recipient.uid, 'message', quick_reply_buttons: 'buttons').and_return('event')
-      expect(report).to receive_message_chain(:report_sender, :api_client, :create_direct_message_event).with(event: 'event').and_return('dm')
+      expect(report).to receive(:send_start_message)
+      expect(described_class).to receive(:build_direct_message_event).with(user.uid, 'message', quick_reply_buttons: 'buttons').and_return('event')
+      expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(event: 'event').and_return('dm')
       is_expected.to eq('dm')
     end
   end
@@ -459,43 +458,5 @@ RSpec.describe PeriodicReport do
   describe 'send_report_limited?' do
     subject { described_class.send_report_limited?(user.uid) }
     it { is_expected.to be_falsey }
-  end
-
-  describe '#report_sender' do
-    let(:report) { described_class.new }
-    subject { report.report_sender }
-    before { allow(report).to receive(:user).and_return(user) }
-
-    context 'messages are allotted' do
-      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(true) }
-      it do
-        expect(User).to receive(:egotter).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-
-    context 'messages are not allotted' do
-      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(false) }
-      it { is_expected.to eq(user) }
-    end
-  end
-
-  describe '#report_recipient' do
-    let(:report) { described_class.new }
-    subject { report.report_recipient }
-    before { allow(report).to receive(:user).and_return(user) }
-
-    context 'messages are allotted' do
-      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(true) }
-      it { is_expected.to eq(user) }
-    end
-
-    context 'messages are not allotted' do
-      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(false) }
-      it do
-        expect(User).to receive(:egotter).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
   end
 end

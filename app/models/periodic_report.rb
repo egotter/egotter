@@ -450,6 +450,7 @@ class PeriodicReport < ApplicationRecord
       when CreatePeriodicReportWorker.name
         'b'
       else
+        logger.info "worker_context_text: unknown context is passed value=#{context}"
         'un'
       end
     end
@@ -511,8 +512,21 @@ class PeriodicReport < ApplicationRecord
       self.message = '[dev] ' + self.message
     end
 
-    event = self.class.build_direct_message_event(report_recipient.uid, self.message, quick_reply_buttons: quick_reply_buttons)
-    report_sender.api_client.create_direct_message_event(event: event)
+    send_start_message
+
+    event = self.class.build_direct_message_event(user.uid, self.message, quick_reply_buttons: quick_reply_buttons)
+    User.egotter.api_client.create_direct_message_event(event: event)
+  end
+
+  def send_start_message
+    if self.class.messages_not_allotted?(user)
+      user.api_client.create_direct_message_event(User::EGOTTER_UID, start_message(user))
+    end
+  end
+
+  def start_message(user)
+    template = Rails.root.join('app/views/periodic_reports/start.ja.text.erb')
+    ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
   end
 
   def append_remind_message_if_needed(message)
@@ -802,13 +816,5 @@ class PeriodicReport < ApplicationRecord
       !GlobalDirectMessageReceivedFlag.new.exists?(uid) &&
           GlobalDirectMessageLimitation.new.limited?
     end
-  end
-
-  def report_sender
-    self.class.messages_allotted?(user) ? User.egotter : user
-  end
-
-  def report_recipient
-    self.class.messages_allotted?(user) ? user : User.egotter
   end
 end
