@@ -12,6 +12,20 @@ class CreatePeriodicReportReceivedNotFollowingMessageWorker
     #egotter
   TEXT
 
+  SECOND_MESSAGE = <<~TEXT
+    フォロー履歴が見付かりませんでした。
+
+    フォロー後に、このページへアクセスしてください。
+    ↓↓↓
+    <%= url %>
+    ↑↑↑
+
+    ※ 定期的な通知のみ欲しい場合はフォローなしでOKです。
+
+    分からないところがありますか？ お困りの際は @egotter_cs までお気軽にご質問ください。
+    #egotter
+  TEXT
+
   def unique_key(uid, options = {})
     uid
   end
@@ -28,7 +42,8 @@ class CreatePeriodicReportReceivedNotFollowingMessageWorker
         event = PeriodicReport.build_direct_message_event(uid, MESSAGE, quick_reply_buttons: quick_reply_buttons)
         User.egotter.api_client.create_direct_message_event(event: event)
       else
-        CreatePeriodicReportNotFollowingMessageWorker.perform_async(user.id)
+        # CreatePeriodicReportNotFollowingMessageWorker.perform_async(user.id)
+        User.egotter.api_client.create_direct_message_event(uid, build_second_message)
       end
     else
       # TODO Send a message
@@ -37,5 +52,12 @@ class CreatePeriodicReportReceivedNotFollowingMessageWorker
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
     end
+  end
+
+  private
+
+  def build_second_message
+    url = Rails.application.routes.url_helpers.sign_in_url(share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false, follow: true, via: 'not_following_received_message')
+    ERB.new(SECOND_MESSAGE).result_with_hash(url: url)
   end
 end

@@ -15,7 +15,8 @@ class CreatePeriodicReportReceivedWebAccessMessageWorker
   SECOND_MESSAGE = <<~TEXT
     アクセス履歴が見付かりませんでした。
 
-    えごったーのWebサイトに <%= user %> さんがアクセスすればよいという感じです。
+    えごったーのWebサイトに <%= user %> さんがアクセスすればOKです。
+
     ログインし直しが面倒な場合は、いつも使っているブラウザからもアクセスしてみてください。
 
     分からないところがありますか？ お困りの際は @egotter_cs までお気軽にご質問ください。
