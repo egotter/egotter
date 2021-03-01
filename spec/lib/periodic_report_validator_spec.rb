@@ -109,17 +109,10 @@ RSpec.describe PeriodicReportValidator::FollowingStatusValidator, type: :model d
       it { is_expected.to be_truthy }
     end
 
-    context 'friendship? returns true' do
-      before do
-        allow(user).to receive_message_chain(:api_client, :twitter, :friendship?).
-            with(user.uid, User::EGOTTER_UID).and_return(true)
-      end
-      it { is_expected.to be_truthy }
-    end
-
     context 'else' do
       before do
         allow(EgotterFollower).to receive(:exists?).with(uid: user.uid).and_return(false)
+        allow(user).to receive(:send_periodic_report_even_though_not_following?).and_return(false)
         allow(user).to receive_message_chain(:api_client, :twitter, :friendship?).
             with(user.uid, User::EGOTTER_UID).and_return(false)
       end

@@ -95,7 +95,8 @@ class PeriodicReportValidator
     def validate!
       user = @request.user
       return true if EgotterFollower.exists?(uid: user.uid)
-      return true if user.api_client.twitter.friendship?(user.uid, User::EGOTTER_UID)
+      return true if user.send_periodic_report_even_though_not_following?
+      # return true if user.api_client.twitter.friendship?(user.uid, User::EGOTTER_UID)
 
       @request.update(status: 'not_following')
 

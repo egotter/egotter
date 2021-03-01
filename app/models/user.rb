@@ -235,6 +235,10 @@ class User < ApplicationRecord
     has_valid_subscription? || 1.weeks.ago < created_at
   end
 
+  def send_periodic_report_even_though_not_following?
+    has_valid_subscription? || 1.weeks.ago < created_at
+  end
+
   def continuous_sign_in?(ignore_today = true)
     (ignore_today || access_days.where(date: Time.zone.now.in_time_zone('Tokyo').to_date).exists?) &&
         access_days.where(date: 1.day.ago.in_time_zone('Tokyo').to_date).exists?
