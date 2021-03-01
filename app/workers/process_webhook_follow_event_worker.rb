@@ -23,12 +23,14 @@ class ProcessWebhookFollowEventWorker
 
   # options:
   def perform(event, options = {})
-    unless event['type'] == 'follow'
+    if event['type'] == 'follow'
+      EgotterFollower.import_uids([event['source']['id']])
+    elsif event['type'] == 'unfollow'
+      EgotterFollower.delete_uids([event['source']['id']])
+    else
       logger.info "event is not follow event_type=#{event['type']}"
       return
     end
-
-    EgotterFollower.import_uids([event['source']['id']])
   rescue => e
     logger.warn "#{e.inspect} event=#{event.inspect}"
   end
