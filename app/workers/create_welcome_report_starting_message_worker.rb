@@ -13,11 +13,11 @@ class CreateWelcomeReportStartingMessageWorker
 
   # options:
   def perform(uid, options = {})
-    unless (user = User.select(:id).find_by(uid: uid))
-      # TODO Send a message
+    if (user = User.select(:id).find_by(uid: uid))
+      CreateWelcomeMessageWorker.perform_async(user.id)
+    else
+      CreatePeriodicReportUnregisteredMessageWorker.perform_async(uid)
     end
-
-    CreateWelcomeMessageWorker.perform_async(user.id)
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"

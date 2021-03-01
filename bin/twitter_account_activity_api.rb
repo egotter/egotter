@@ -6,6 +6,8 @@ require 'json'
 require 'dotenv/load'
 require 'base64'
 
+# https://developer.twitter.com/en/docs/twitter-api/premium/account-activity-api/api-reference
+
 def generate_token(key = ENV['TWITTER_CONSUMER_KEY'], secret = ENV['TWITTER_CONSUMER_SECRET'])
   # Twitter::REST::Client.new(consumer_key: 'ck', consumer_secret: 'cs').tap { |c| c.verify_credentials rescue nil }.bearer_token
   # Twitter::Headers
