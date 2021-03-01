@@ -8,11 +8,6 @@ module Api
         SendMetricsToCloudWatchWorker.perform_async
         render json: {status: 'ok'}
       end
-
-      def update_rds_burst_balance
-        UpdateRdsBurstBalanceCacheWorker.perform_async
-        render json: {status: 'ok'}
-      end
     end
   end
 end
