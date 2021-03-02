@@ -13,7 +13,7 @@ class ImportBlockingRelationshipsWorker
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
-    blocked_ids = fetch_blocked_uids(user.api_client.twitter)
+    blocked_ids = BlockingRelationship.collect_uids(user.id)
     return if blocked_ids.blank?
 
     BlockingRelationship.import_from(user.uid, blocked_ids)
@@ -35,36 +35,5 @@ class ImportBlockingRelationshipsWorker
       logger.warn "#{e.inspect.truncate(200)} user_id=#{user_id} options=#{options.inspect}"
       logger.info e.backtrace.join("\n")
     end
-  end
-
-  private
-
-  def fetch_blocked_uids(client)
-    options = {count: 5000, cursor: -1}
-    limit = 20000
-    call_limit = 2
-    call_count = 0
-    collection = []
-
-    while true do
-      response = client.blocked_ids(options)
-      call_count += 1
-      break if response.nil?
-
-      collection.concat(response.attrs[:ids])
-
-      if response.attrs[:next_cursor] == 0 || collection.size >= limit || call_count >= call_limit
-        break
-      end
-
-      options[:cursor] = response.attrs[:next_cursor]
-    end
-
-    if collection.size != collection.uniq.size
-      logger.warn "#{__method__}: uids is not unique"
-      collection.uniq!
-    end
-
-    collection
   end
 end

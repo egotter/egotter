@@ -23,5 +23,35 @@ class BlockingRelationship < ApplicationRecord
         Rails.logger.silence { import([:from_uid, :to_uid], values, validate: false) }
       end
     end
+
+    def collect_uids(user_id)
+      client = User.find(user_id).api_client.twitter
+      options = {count: 5000, cursor: -1}
+      limit = 20000
+      call_limit = 4
+      call_count = 0
+      collection = []
+
+      while true do
+        response = client.blocked_ids(options)
+        call_count += 1
+        break if response.nil?
+
+        collection.concat(response.attrs[:ids])
+
+        if response.attrs[:next_cursor] == 0 || collection.size >= limit || call_count >= call_limit
+          break
+        end
+
+        options[:cursor] = response.attrs[:next_cursor]
+      end
+
+      if collection.size != collection.uniq.size
+        logger.warn "#{__method__}: uids is not unique"
+        collection.uniq!
+      end
+
+      collection
+    end
   end
 end
