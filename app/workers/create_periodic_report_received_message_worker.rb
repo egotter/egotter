@@ -47,8 +47,8 @@ class CreatePeriodicReportReceivedMessageWorker
         PeriodicReportReceivedMessageConfirmation.create(user_id: user.id)
       end
 
-      quick_reply_buttons = PeriodicReport.general_quick_reply_options
-      event = PeriodicReport.build_direct_message_event(uid, message, quick_reply_buttons: quick_reply_buttons)
+      quick_replies = [PeriodicReport::QUICK_REPLY_SEND, BlockReport::QUICK_REPLY_SEND, MuteReport::QUICK_REPLY_SEND]
+      event = PeriodicReport.build_direct_message_event(uid, message, quick_reply_buttons: quick_replies)
       User.egotter.api_client.create_direct_message_event(event: event)
     else
       CreatePeriodicReportUnregisteredMessageWorker.perform_async(uid)

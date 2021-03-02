@@ -33,8 +33,8 @@ class CreateBlockReportReceivedMessageWorker
   # options:
   def perform(uid, options = {})
     if User.exists?(uid: uid)
-      quick_reply_buttons = PeriodicReport.general_quick_reply_options
-      event = BlockReport.build_direct_message_event(uid, MESSAGE, quick_replies: quick_reply_buttons)
+      quick_replies = [PeriodicReport::QUICK_REPLY_SEND, BlockReport::QUICK_REPLY_SEND, MuteReport::QUICK_REPLY_SEND]
+      event = BlockReport.build_direct_message_event(uid, MESSAGE, quick_replies: quick_replies)
       User.egotter.api_client.create_direct_message_event(event: event)
     else
       CreatePeriodicReportUnregisteredMessageWorker.perform_async(uid)

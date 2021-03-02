@@ -22,7 +22,7 @@ class CreateMuteReportReceivedMessageWorker
   def perform(user_id, options = {})
     # The user's existence is confirmed in MuteReportResponder.
     user = User.find(user_id)
-    quick_replies = [MuteReport::QUICK_REPLY_SEND, PeriodicReport::QUICK_REPLY_SEND, BlockReport::QUICK_REPLY_SEND]
+    quick_replies = [PeriodicReport::QUICK_REPLY_SEND, BlockReport::QUICK_REPLY_SEND, MuteReport::QUICK_REPLY_SEND]
     event = MuteReport.build_direct_message_event(user.uid, MESSAGE, quick_replies: quick_replies)
     User.egotter.api_client.create_direct_message_event(event: event)
   rescue => e
