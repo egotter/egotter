@@ -41,7 +41,7 @@ class MuteReport < ApplicationRecord
           timeline_url: url_helper.timeline_url(user, url_options),
           follow_url: url_helper.sign_in_url(url_options.merge(campaign_params('mute_report_not_following_follow'), {force_login: true, follow: true})),
           pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('mute_report_not_following_pricing'))),
-          support_url: url_helper.support_url(url_options.merge(campaign_params('mute_report_not_following_support'))),
+          faq_url: url_helper.support_url(url_options.merge(campaign_params('mute_report_not_following_support'))),
       )
     end
 
@@ -55,7 +55,7 @@ class MuteReport < ApplicationRecord
           timeline_url: url_helper.timeline_url(user, url_options),
           access_url: url_helper.root_url(url_options.merge(campaign_params('mute_report_access_interval_too_long_access'))),
           pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('mute_report_access_interval_too_long_pricing'))),
-          support_url: url_helper.support_url(url_options.merge(campaign_params('mute_report_access_interval_too_long_support'))),
+          faq_url: url_helper.support_url(url_options.merge(campaign_params('mute_report_access_interval_too_long_support'))),
       )
     end
 
@@ -89,6 +89,8 @@ class MuteReport < ApplicationRecord
           screen_name: user.screen_name,
           users_count: MutingRelationship.where(to_uid: user.uid).size,
           timeline_url: url_helper.timeline_url(user, url_options),
+          settings_url: url_helper.settings_url(url_options),
+          faq_url: url_helper.support_url(url_options),
       )
     end
 
