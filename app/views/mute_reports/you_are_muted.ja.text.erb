@@ -1,7 +1,9 @@
 えごったーのミュート通知です。
 
 あなたをミュートしている：
-<%= users_count %>人<%= ' ※これから貯まります' if users_count == 0 %>
+<% if has_valid_subscription %><%= muted_names.blank? ? '0人 ※これから貯まります' : muted_names.join("\n") %>
+<%= remaining_users_count > 0 ? "さらに #{remaining_users_count}人" : "合計 #{users_count}人" %>
+<% else %><%= users_count > 0 ? '0人 ※これから貯まります' : "合計 #{users_count}人 ※有料プランのユーザーはもう少し詳しく分かります。" %><% end %>
 
 ミュート通知とは：
 @<%= screen_name %> をミュートしている人が新しく見つかった時に送信されるDMのことです。

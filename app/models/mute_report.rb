@@ -98,6 +98,35 @@ class MuteReport < ApplicationRecord
       @url_helper ||= Rails.application.routes.url_helpers
     end
 
+    def fetch_muted_users(user, limit: 10)
+      fetched_uids = MutingRelationship.where(to_uid: user.uid).order(created_at: :desc).limit(limit).pluck(:from_uid).uniq
+      fetched_users = TwitterDB::User.where_and_order_by_field(uids: fetched_uids)
+
+      if (missing_uids = fetched_uids - fetched_users.map(&:uid)).any?
+        CreateTwitterDBUserWorker.perform_async(missing_uids, user_id: user.id, enqueued_by: self.class)
+      end
+
+      fetched_users
+    end
+
+    def remaining_users_count(user, limit: 10)
+      MutingRelationship.where(to_uid: user.uid).size - limit
+    end
+
+    def masked_names(names)
+      [*'a'..'z', *'A'..'Z', *'0'..'9'].each_with_object({}) do |letter, memo|
+        if (count = names.count { |name| name[0] == letter }) > 0
+          memo[letter] = count
+        end
+      end
+    end
+
+    def masked_name_descriptions(hash)
+      hash.map do |letter, count|
+        I18n.t('mute_report.name_starting_with', letter: letter, count: count)
+      end
+    end
+
     def build_direct_message_event(uid, message, quick_replies: QUICK_REPLY_DEFAULT)
       {
           type: 'message_create',
@@ -116,11 +145,16 @@ class MuteReport < ApplicationRecord
 
     def report_message(user, token)
       url_options = campaign_params('mute_report').merge(dialog_params).merge(token: token, medium: 'dm', type: 'mute', via: 'mute_report', og_tag: false)
+      muted_users = fetch_muted_users(user)
+      muted_names = masked_name_descriptions(masked_names(muted_users.map(&:screen_name)))
 
       template = Rails.root.join('app/views/mute_reports/you_are_muted.ja.text.erb')
       ERB.new(template.read).result_with_hash(
+          has_valid_subscription: user.has_valid_subscription?,
           screen_name: user.screen_name,
           users_count: MutingRelationship.where(to_uid: user.uid).size,
+          remaining_users_count: remaining_users_count(user),
+          muted_names: muted_names,
           timeline_url: url_helper.timeline_url(user, url_options),
           settings_url: url_helper.settings_url(url_options),
           faq_url: url_helper.support_url(url_options),

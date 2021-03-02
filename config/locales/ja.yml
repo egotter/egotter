@@ -2803,6 +2803,8 @@ ja:
     account_status:
       not_found: '垢消し？'
       suspended: '凍結？'
+  mute_report:
+    name_starting_with: '%{letter} から始まる %{count}人'
 
   activerecord:
     models:
