@@ -8,7 +8,7 @@ class AnonymousMessageResponder < AbstractMessageResponder
     include AbstractReportProcessor
 
     def received?
-      User.exists?(uid: @uid)
+      !User.exists?(uid: @uid)
     end
 
     def send_message
