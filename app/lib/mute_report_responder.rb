@@ -52,7 +52,6 @@ class MuteReportResponder < AbstractMessageResponder
     def send_message
       user = validate_report_status(@uid)
       return unless user
-      return unless user.admin? # Test release
 
       # TODO MuteReport Implement MuteReportReceivedMessageConfirmation
 
