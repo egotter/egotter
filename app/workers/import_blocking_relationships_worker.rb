@@ -41,7 +41,7 @@ class ImportBlockingRelationshipsWorker
 
   def fetch_blocked_uids(client)
     options = {count: 5000, cursor: -1}
-    limit = 10000
+    limit = 20000
     call_limit = 2
     call_count = 0
     collection = []
