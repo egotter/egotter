@@ -31,6 +31,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         if context == :create
           CreateWelcomeMessageWorker.perform_async(user.id)
           ImportBlockingRelationshipsWorker.perform_async(user.id)
+          ImportMutingRelationshipsWorker.perform_async(user.id)
         end
         UpdatePermissionLevelWorker.perform_async(user.id)
         save_context = context
