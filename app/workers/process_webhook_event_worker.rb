@@ -1,5 +1,6 @@
 require 'digest/md5'
 
+# TODO Rename to ProcessWebhookDirectMessageEventWorker
 class ProcessWebhookEventWorker
   include Sidekiq::Worker
   prepend TimeoutableWorker
@@ -70,6 +71,7 @@ class ProcessWebhookEventWorker
     processed = PeriodicReportReceivedWebAccessMessageResponder.from_dm(dm).respond unless processed
     processed = PeriodicReportReceivedNotFollowingMessageResponder.from_dm(dm).respond unless processed
     processed = BlockReportReceivedMessageResponder.from_dm(dm).respond unless processed
+    processed = MuteReportResponder.from_dm(dm).respond unless processed
     processed = SearchReportReceivedMessageResponder.from_dm(dm).respond unless processed
     processed = WelcomeReportReceivedMessageResponder.from_dm(dm).respond unless processed
     processed = WelcomeReportStartingMessageResponder.from_dm(dm).respond unless processed
