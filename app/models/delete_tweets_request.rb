@@ -90,7 +90,8 @@ class DeleteTweetsRequest < ApplicationRecord
     max_id = nil
     options = {count: 200}
 
-    5.times do
+    # Get all tweets at once
+    30.times do
       options[:max_id] = max_id unless max_id.nil?
       response = api_client.user_timeline(options)
       break if response.nil? || response.empty?
@@ -107,6 +108,7 @@ class DeleteTweetsRequest < ApplicationRecord
 
   def destroy_statuses!(tweets)
     tweets.each do |tweet|
+      # TODO remove last_tweet param
       DeleteTweetWorker.perform_async(user_id, tweet.id, request_id: id, last_tweet: tweet == tweets.last)
     end
   end
