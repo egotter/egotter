@@ -30,6 +30,7 @@ class AssembleTwitterUserRequest < ApplicationRecord
     CreateFriendInsightWorker.perform_async(twitter_user.uid, location: self.class)
     CreateFollowerInsightWorker.perform_async(twitter_user.uid, location: self.class)
     CreateTopFollowerWorker.perform_async(twitter_user.id)
+    CreateTwitterUserCloseFriendsWorker.perform_async(twitter_user.id)
 
     perform_direct
   end
@@ -37,21 +38,18 @@ class AssembleTwitterUserRequest < ApplicationRecord
   private
 
   def perform_direct
-    CreateTwitterUserCloseFriendsWorker.perform_async(twitter_user.id)
-
     return unless validate_record_friends!
 
     CreateTwitterUserOneSidedFriendsWorker.perform_async(twitter_user.id)
     CreateTwitterUserInactiveFriendsWorker.perform_async(twitter_user.id)
     CreateTwitterUserUnfriendsWorker.perform_async(twitter_user.id)
 
-    values = {
+    twitter_user.update(
         statuses_interval: twitter_user.calc_statuses_interval,
         follow_back_rate: twitter_user.calc_follow_back_rate,
         reverse_follow_back_rate: twitter_user.calc_reverse_follow_back_rate,
         assembled_at: Time.zone.now,
-    }
-    twitter_user.update(values)
+    )
   end
 
   def validate_record_creation_order!
@@ -73,11 +71,13 @@ class AssembleTwitterUserRequest < ApplicationRecord
   def validate_record_friends!
     if twitter_user.too_little_friends?
       update(status: 'too_little_friends')
+      twitter_user.update(assembled_at: Time.zone.now)
       return false
     end
 
     if twitter_user.no_need_to_import_friendships?
       update(status: 'no_need_to_import')
+      twitter_user.update(assembled_at: Time.zone.now)
       return false
     end
 
