@@ -112,6 +112,7 @@ module PeriodicReportConcern
       DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
 
       unless user.has_valid_subscription?
+        # TODO Check User#send_periodic_report_even_though_not_following?
         unless EgotterFollower.exists?(uid: user.uid)
           CreatePeriodicReportNotFollowingMessageWorker.perform_async(user.id)
           return

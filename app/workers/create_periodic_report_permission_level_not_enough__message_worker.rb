@@ -1,3 +1,4 @@
+# TODO Rename to CreatePermissionLevelNotEnoughMessageWorker
 class CreatePeriodicReportPermissionLevelNotEnoughMessageWorker
   include Sidekiq::Worker
   include ReportErrorHandler

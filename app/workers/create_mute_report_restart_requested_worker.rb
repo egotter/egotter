@@ -1,5 +1,4 @@
-# TODO Rename to CreateUnauthorizedMessageWorker
-class CreatePeriodicReportUnauthorizedMessageWorker
+class CreateMuteReportRestartRequestedWorker
   include Sidekiq::Worker
   include ReportErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
@@ -18,13 +17,11 @@ class CreatePeriodicReportUnauthorizedMessageWorker
 
   # options:
   def perform(user_id, options = {})
+    # The user's existence is confirmed in MuteReportResponder.
     user = User.find(user_id)
-
-    message = PeriodicReport.unauthorized_message.message
-    quick_reply_buttons = PeriodicReport.unauthorized_quick_reply_options
-    event = PeriodicReport.build_direct_message_event(user.uid, message, quick_reply_buttons: quick_reply_buttons)
+    message = MuteReport.restarted_message(user)
+    event = MuteReport.build_direct_message_event(user.uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)
-
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options}"

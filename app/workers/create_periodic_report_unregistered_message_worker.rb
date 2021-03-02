@@ -1,3 +1,4 @@
+# TODO Rename to CreateUnregisteredMessageWorker
 class CreatePeriodicReportUnregisteredMessageWorker
   include Sidekiq::Worker
   include ReportErrorHandler

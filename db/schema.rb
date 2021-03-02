@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_02_092003) do
+ActiveRecord::Schema.define(version: 2021_03_02_160019) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -767,6 +767,19 @@ ActiveRecord::Schema.define(version: 2021_03_02_092003) do
     t.string "channel", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_modal_open_logs_on_created_at"
+  end
+
+  create_table "mute_reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "message_id", default: "", null: false
+    t.string "message", default: "", null: false
+    t.string "token", null: false
+    t.datetime "read_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_mute_reports_on_created_at"
+    t.index ["token"], name: "index_mute_reports_on_token", unique: true
+    t.index ["user_id"], name: "index_mute_reports_on_user_id"
   end
 
   create_table "muting_relationships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
