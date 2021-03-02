@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_23_035110) do
+ActiveRecord::Schema.define(version: 2021_03_02_054235) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -767,6 +767,15 @@ ActiveRecord::Schema.define(version: 2021_02_23_035110) do
     t.string "channel", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_modal_open_logs_on_created_at"
+  end
+
+  create_table "muting_relationships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "from_uid", null: false
+    t.bigint "to_uid", null: false
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_muting_relationships_on_created_at"
+    t.index ["from_uid", "to_uid"], name: "index_muting_relationships_on_from_uid_and_to_uid", unique: true
+    t.index ["to_uid", "from_uid"], name: "index_muting_relationships_on_to_uid_and_from_uid", unique: true
   end
 
   create_table "mutual_friendships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
