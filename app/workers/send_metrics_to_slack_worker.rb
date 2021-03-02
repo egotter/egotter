@@ -13,9 +13,7 @@ class SendMetricsToSlackWorker
   def perform(steps = nil)
     unless steps
       steps = [
-          :send_table_metrics,
           :send_search_histories_metrics,
-          :send_rate_limit_metrics,
           :send_search_error_metrics,
       ]
     end
