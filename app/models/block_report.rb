@@ -58,6 +58,7 @@ class BlockReport < ApplicationRecord
       )
     end
 
+    # TODO Rename to stopped_message
     def report_stopped_message(user)
       users = fetch_blocked_users(user)
       url_options = campaign_params('block_report_stopped').merge(dialog_params)
@@ -71,6 +72,7 @@ class BlockReport < ApplicationRecord
       )
     end
 
+    # TODO Rename to restarted_message
     def report_restarted_message(user)
       users = fetch_blocked_users(user)
       url_options = campaign_params('block_report_restarted').merge(dialog_params)
@@ -81,6 +83,19 @@ class BlockReport < ApplicationRecord
           profile_urls: generate_profile_urls(users, url_options, user.add_atmark_to_periodic_report?),
           timeline_url: url_helper.timeline_url(user, url_options),
           blockers_url: url_helper.blockers_url(url_options),
+      )
+    end
+
+    def help_message(user)
+      url_options = campaign_params('block_report_help').merge(dialog_params).merge(og_tag: false)
+
+      template = Rails.root.join('app/views/block_reports/help.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          screen_name: user.screen_name,
+          users_count: BlockingRelationship.where(to_uid: user.uid).size,
+          timeline_url: url_helper.timeline_url(user, url_options),
+          settings_url: url_helper.settings_url(url_options),
+          faq_url: url_helper.support_url(url_options),
       )
     end
   end
@@ -124,7 +139,6 @@ class BlockReport < ApplicationRecord
   }
   QUICK_REPLY_DEFAULT = [QUICK_REPLY_RECEIVED, QUICK_REPLY_RESTART, QUICK_REPLY_STOP]
 
-
   class << self
     def build_direct_message_event(uid, message, quick_replies: QUICK_REPLY_DEFAULT)
       {
@@ -148,6 +162,7 @@ class BlockReport < ApplicationRecord
       template = Rails.root.join('app/views/block_reports/you_are_blocked.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           user: user,
+          screen_name: user.screen_name,
           block_urls: generate_profile_urls(users, url_options, user.add_atmark_to_periodic_report?),
           timeline_url: url_helper.timeline_url(user, url_options),
           blockers_url: url_helper.blockers_url(url_options),

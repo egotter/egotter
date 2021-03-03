@@ -13,13 +13,11 @@ class CreateBlockReportRestartedMessageWorker
 
   # options:
   def perform(user_id, options = {})
+    # The user's existence is confirmed in BlockReportResponder.
     user = User.find(user_id)
-    return unless user.authorized?
-
     message = BlockReport.report_restarted_message(user)
     event = BlockReport.build_direct_message_event(user.uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)
-
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
