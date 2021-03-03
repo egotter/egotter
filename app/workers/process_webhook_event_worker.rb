@@ -6,7 +6,6 @@ class ProcessWebhookEventWorker
   prepend TimeoutableWorker
   include PeriodicReportConcern
   include SearchReportConcern
-  include BlockReportConcern
   include ScheduleTweetsConcern
   include DeleteTweetsConcern
   include CloseFriendsConcern
@@ -71,12 +70,10 @@ class ProcessWebhookEventWorker
     processed = PeriodicReportReceivedWebAccessMessageResponder.from_dm(dm).respond unless processed
     processed = PeriodicReportReceivedNotFollowingMessageResponder.from_dm(dm).respond unless processed
     processed = BlockReportResponder.from_dm(dm).respond unless processed
-    processed = BlockReportReceivedMessageResponder.from_dm(dm).respond unless processed
     processed = MuteReportResponder.from_dm(dm).respond unless processed
     processed = SearchReportReceivedMessageResponder.from_dm(dm).respond unless processed
     processed = WelcomeReportReceivedMessageResponder.from_dm(dm).respond unless processed
     processed = WelcomeReportStartingMessageResponder.from_dm(dm).respond unless processed
-    processed = process_block_report(dm) unless processed
     processed = process_search_report(dm) unless processed
     processed = process_periodic_report(dm) unless processed
     processed = process_schedule_tweets(dm) unless processed

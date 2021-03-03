@@ -48,10 +48,7 @@ class SendReceivedMessageWorker
         PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).continue_requested? ||
         PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).received? ||
         PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).send_requested? ||
-        BlockReportConcern::BlockReportProcessor.new(nil, text).stop_requested? ||
-        BlockReportConcern::BlockReportProcessor.new(nil, text).restart_requested? ||
-        BlockReportConcern::BlockReportProcessor.new(nil, text).received? ||
-        BlockReportConcern::BlockReportProcessor.new(nil, text).send_requested? ||
+        BlockReportResponder::Processor.new(nil, text).received? ||
         MuteReportResponder::Processor.new(nil, text).received? ||
         SpamMessageConcern::SpamMessageProcessor.new(nil, text).received? ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
