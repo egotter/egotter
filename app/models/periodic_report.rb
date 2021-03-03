@@ -166,6 +166,18 @@ class PeriodicReport < ApplicationRecord
       )
     end
 
+    def help_message(user)
+      template = Rails.root.join('app/views/periodic_reports/help.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash(
+          screen_name: user.screen_name,
+          timeline_url: timeline_url(user, campaign_params('help_timeline')),
+          settings_url: settings_url(campaign_params('help_settings')),
+          faq_url: support_url(campaign_params('help_faq')),
+      )
+
+      new(user: nil, message: message, token: nil)
+    end
+
     def remind_reply_message
       template = Rails.root.join('app/views/periodic_reports/remind_reply.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(

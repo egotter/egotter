@@ -14,11 +14,7 @@ class SendReceivedMessageWorker
   end
 
   QUICK_REPLIES = [
-      /\A【?#{I18n.t('quick_replies.continue.label')}】?\z/,
-      /\A【?#{I18n.t('quick_replies.revive.label')}】?\z/,
       /\A【?#{I18n.t('quick_replies.followed.label')}】?\z/,
-      /\A【?#{I18n.t('quick_replies.prompt_reports.label1')}】?\z/,
-      /\A【?#{I18n.t('quick_replies.prompt_reports.label2')}】?\z/,
       /\A【?#{I18n.t('quick_replies.welcome_messages.label1')}】?\z/,
       /\A【?#{I18n.t('quick_replies.welcome_messages.label2')}】?\z/,
       /\A【?初期設定(\s|　)*開始】?\z/,
@@ -38,25 +34,11 @@ class SendReceivedMessageWorker
   ]
 
   def dont_send_message?(text)
-    text == I18n.t('quick_replies.prompt_reports.label1') ||
-        text == I18n.t('quick_replies.prompt_reports.label2') ||
-        text == I18n.t('quick_replies.prompt_reports.label3') ||
-        text == I18n.t('quick_replies.prompt_reports.label4') ||
-        text == I18n.t('quick_replies.prompt_reports.label5') ||
-        PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).stop_requested? ||
-        PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).restart_requested? ||
-        PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).continue_requested? ||
-        PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).received? ||
-        PeriodicReportConcern::PeriodicReportProcessor.new(nil, text).send_requested? ||
+    PeriodicReportResponder::Processor.new(nil, text).received? ||
         BlockReportResponder::Processor.new(nil, text).received? ||
         MuteReportResponder::Processor.new(nil, text).received? ||
         SpamMessageConcern::SpamMessageProcessor.new(nil, text).received? ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
-        text.match?(/\Aリムられ通知(\s|　)*(送信|受信|継続|今すぐ)?\z/) ||
-        text == 'リムられ' ||
-        text == '通知' ||
-        text == '再開' ||
-        text == '継続' ||
         text == '今すぐ' ||
         text == 'あ' ||
         text == 'は' ||

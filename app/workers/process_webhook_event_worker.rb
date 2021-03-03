@@ -66,7 +66,7 @@ class ProcessWebhookEventWorker
     GlobalDirectMessageReceivedFlag.new.received(dm.sender_id)
     GlobalSendDirectMessageCountByUser.new.clear(dm.sender_id)
 
-    processed = PeriodicReportReceivedMessageResponder.from_dm(dm).respond
+    processed = PeriodicReportResponder.from_dm(dm).respond
     processed = PeriodicReportReceivedWebAccessMessageResponder.from_dm(dm).respond unless processed
     processed = PeriodicReportReceivedNotFollowingMessageResponder.from_dm(dm).respond unless processed
     processed = BlockReportResponder.from_dm(dm).respond unless processed
@@ -95,9 +95,6 @@ class ProcessWebhookEventWorker
 
   def process_message_from_egotter(dm)
     GlobalDirectMessageSentFlag.new.received(dm.recipient_id)
-
-    process_egotter_requested_periodic_report(dm)
-
     SendSentMessageWorker.perform_async(dm.recipient_id, dm_id: dm.id, text: dm.text)
   end
 
