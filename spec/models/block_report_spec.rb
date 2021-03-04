@@ -41,15 +41,15 @@ RSpec.describe BlockReport, type: :model do
     let(:report) { described_class.new(user: user, token: 'token') }
     subject { report.deliver! }
     it do
-      expect(report).to receive(:send_start_message)
+      expect(described_class).to receive(:send_start_message).with(user)
       expect(report).to receive(:send_message).and_return(dm)
       expect(report).to receive(:update!).with(message_id: dm.id, message: dm.truncated_message)
       subject
     end
   end
 
-  describe '#send_start_message' do
-    subject { described_class.new(user: user).send(:send_start_message) }
+  describe '.send_start_message' do
+    subject { described_class.send_start_message(user) }
     before { allow(described_class).to receive(:start_message).with(user).and_return('message') }
     it do
       expect(user).to receive_message_chain(:api_client, :create_direct_message_event).with(User::EGOTTER_UID, 'message')

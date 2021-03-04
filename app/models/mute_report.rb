@@ -171,21 +171,21 @@ class MuteReport < ApplicationRecord
       template = Rails.root.join('app/views/mute_reports/start.ja.text.erb')
       ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
     end
+
+    def send_start_message(user)
+      if PeriodicReport.messages_not_allotted?(user)
+        user.api_client.create_direct_message_event(User::EGOTTER_UID, start_message(user))
+      end
+    end
   end
 
   def deliver!
-    send_start_message
+    self.class.send_start_message(user)
     dm = send_message
     update!(message_id: dm.id, message: dm.truncated_message)
   end
 
   private
-
-  def send_start_message
-    if PeriodicReport.messages_not_allotted?(user)
-      user.api_client.create_direct_message_event(User::EGOTTER_UID, self.class.start_message(user))
-    end
-  end
 
   def send_message
     message = self.class.report_message(user, token)

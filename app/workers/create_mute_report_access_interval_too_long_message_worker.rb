@@ -16,6 +16,7 @@ class CreateMuteReportAccessIntervalTooLongMessageWorker
     user = User.find(user_id)
     return unless user.authorized?
 
+    MuteReport.send_start_message(user)
     message = MuteReport.access_interval_too_long_message(user)
     event = MuteReport.build_direct_message_event(user.uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)

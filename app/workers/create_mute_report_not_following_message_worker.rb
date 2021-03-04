@@ -17,6 +17,7 @@ class CreateMuteReportNotFollowingMessageWorker
     user = User.find(user_id)
     return unless user.authorized?
 
+    MuteReport.send_start_message(user)
     message = MuteReport.not_following_message(user)
     event = MuteReport.build_direct_message_event(user.uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)

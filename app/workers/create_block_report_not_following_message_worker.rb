@@ -17,12 +17,10 @@ class CreateBlockReportNotFollowingMessageWorker
     user = User.find(user_id)
     return unless user.authorized?
 
-    BlockReport.new(user: user).send(:send_start_message)
-
+    BlockReport.send_start_message(user)
     message = BlockReport.not_following_message(user)
     event = BlockReport.build_direct_message_event(user.uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)
-
   rescue => e
     unless ignorable_report_error?(e)
       handle_worker_error(e, user_id: user_id, options: options)
