@@ -36,6 +36,20 @@ RSpec.describe BlockReport, type: :model do
     it { is_expected.to be_truthy }
   end
 
+  describe '#report_message' do
+    subject { described_class.report_message(user, 'token', []) }
+
+    context 'user has valid subscription' do
+      before { allow(user).to receive(:has_valid_subscription?).and_return(true) }
+      it { is_expected.to be_truthy }
+    end
+
+    context "user doesn't have valid subscription" do
+      before { allow(user).to receive(:has_valid_subscription?).and_return(false) }
+      it { is_expected.to be_truthy }
+    end
+  end
+
   describe '#deliver!' do
     let(:dm) { double('dm', id: 1, truncated_message: 'tm') }
     let(:report) { described_class.new(user: user, token: 'token') }

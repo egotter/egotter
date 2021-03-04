@@ -164,11 +164,10 @@ class BlockReport < ApplicationRecord
       }
     end
 
-    def report_message(user, token, users)
+    def report_attributes(user, token, users)
       url_options = campaign_params('block_report_profile').merge(dialog_params).merge(token: token, medium: 'dm', type: 'block', via: 'block_report')
 
-      template = Rails.root.join('app/views/block_reports/you_are_blocked.ja.text.erb')
-      ERB.new(template.read).result_with_hash(
+      {
           user: user,
           screen_name: user.screen_name,
           users_count: BlockingRelationship.where(to_uid: user.uid).size,
@@ -178,7 +177,12 @@ class BlockReport < ApplicationRecord
           blockers_url: url_helper.blockers_url(url_options),
           settings_url: url_helper.settings_url(url_options),
           faq_url: url_helper.support_url(url_options),
-      )
+      }
+    end
+
+    def report_message(user, token, users)
+      template = Rails.root.join('app/views/block_reports/you_are_blocked.ja.text.erb')
+      ERB.new(template.read).result_with_hash(report_attributes(user, token, users))
     end
 
     def start_message(user)
