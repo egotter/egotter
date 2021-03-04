@@ -15,7 +15,7 @@ class CreateMuteReportWorker
   def perform(user_id, options = {})
     user = User.find(user_id)
     return unless user.authorized?
-    return if StopMuteReportRequest.exists?(user_id: user.id)
+    return if already_stop_requested?(user)
 
     if PeriodicReport.send_report_limited?(user.uid)
       logger.info "Send mute report later user_id=#{user_id} raised=false"
@@ -45,5 +45,11 @@ class CreateMuteReportWorker
     else
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
     end
+  end
+
+  private
+
+  def already_stop_requested?(user)
+    StopMuteReportRequest.exists?(user_id: user.id) && self.class != CreateMuteReportByUserRequestWorker
   end
 end

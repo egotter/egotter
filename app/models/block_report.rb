@@ -163,6 +163,7 @@ class BlockReport < ApplicationRecord
       ERB.new(template.read).result_with_hash(
           user: user,
           screen_name: user.screen_name,
+          stop_requested: StopBlockReportRequest.exists?(user_id: user.id),
           block_urls: generate_profile_urls(users, url_options, user.add_atmark_to_periodic_report?),
           timeline_url: url_helper.timeline_url(user, url_options),
           blockers_url: url_helper.blockers_url(url_options),

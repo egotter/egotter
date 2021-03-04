@@ -155,6 +155,7 @@ class MuteReport < ApplicationRecord
           users_count: MutingRelationship.where(to_uid: user.uid).size,
           remaining_users_count: remaining_users_count(user),
           muted_names: muted_names,
+          stop_requested: StopMuteReportRequest.exists?(user_id: user.id),
           timeline_url: url_helper.timeline_url(user, url_options),
           settings_url: url_helper.settings_url(url_options),
           faq_url: url_helper.support_url(url_options),
