@@ -114,7 +114,6 @@ RSpec.describe ProcessWebhookEventWorker do
       expect(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received).with(dm.sender_id)
       expect(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :clear).with(dm.sender_id)
       expect(worker).to receive(:process_search_report).with(dm)
-      expect(worker).to receive(:process_periodic_report).with(dm)
       expect(worker).to receive(:process_schedule_tweets).with(dm)
       expect(worker).to receive(:process_delete_tweets).with(dm)
       expect(worker).to receive(:process_spam_message).with(dm)
