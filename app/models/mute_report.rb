@@ -143,13 +143,12 @@ class MuteReport < ApplicationRecord
       }
     end
 
-    def report_message(user, token)
+    def report_attributes(user, token)
       url_options = campaign_params('mute_report').merge(dialog_params).merge(token: token, medium: 'dm', type: 'mute', via: 'mute_report', og_tag: false)
       muted_users = fetch_muted_users(user)
       muted_names = masked_name_descriptions(masked_names(muted_users.map(&:screen_name)))
 
-      template = Rails.root.join('app/views/mute_reports/you_are_muted.ja.text.erb')
-      ERB.new(template.read).result_with_hash(
+      {
           has_valid_subscription: user.has_valid_subscription?,
           screen_name: user.screen_name,
           users_count: MutingRelationship.where(to_uid: user.uid).size,
@@ -159,7 +158,12 @@ class MuteReport < ApplicationRecord
           timeline_url: url_helper.timeline_url(user, url_options),
           settings_url: url_helper.settings_url(url_options),
           faq_url: url_helper.support_url(url_options),
-      )
+      }
+    end
+
+    def report_message(user, token)
+      template = Rails.root.join('app/views/mute_reports/you_are_muted.ja.text.erb')
+      ERB.new(template.read).result_with_hash(report_attributes(user, token))
     end
 
     def start_message(user)
