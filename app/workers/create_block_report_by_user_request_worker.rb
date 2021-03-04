@@ -4,6 +4,6 @@ class CreateBlockReportByUserRequestWorker < CreateBlockReportWorker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_in(*args)
-    3.seconds
+    1.second
   end
 end
