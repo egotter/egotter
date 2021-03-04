@@ -163,7 +163,11 @@ class MuteReport < ApplicationRecord
     end
 
     def report_message(user, token)
-      template = Rails.root.join('app/views/mute_reports/you_are_muted.ja.text.erb')
+      if user.has_valid_subscription?
+        template = Rails.root.join('app/views/mute_reports/you_are_muted_premium.ja.text.erb')
+      else
+        template = Rails.root.join('app/views/mute_reports/you_are_muted.ja.text.erb')
+      end
       ERB.new(template.read).result_with_hash(report_attributes(user, token))
     end
 

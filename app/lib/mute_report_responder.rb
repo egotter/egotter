@@ -42,7 +42,7 @@ class MuteReportResponder < AbstractMessageResponder
     end
 
     def send_regexp
-      /ミュート(通知)?(\s|　)*送信/
+      /ミュート(通知)?(\s|　)*(今すぐ)?送信/
     end
 
     def help_regexp
