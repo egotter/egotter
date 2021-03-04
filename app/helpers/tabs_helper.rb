@@ -39,7 +39,7 @@ module TabsHelper
 
   def blockers_tabs(user)
     [
-        Tab.new(t('tabs.blockers'), user.blocker_uids.size, blockers_path(via: current_via('tab'))),
+        Tab.new(t('tabs.blockers'), user.blockers_size, blockers_path(via: current_via('tab'))),
     ]
   end
 

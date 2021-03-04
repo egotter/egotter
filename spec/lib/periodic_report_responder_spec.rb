@@ -37,6 +37,17 @@ describe PeriodicReportResponder::Processor do
     end
   end
 
+  describe '#send_regexp' do
+    subject { text.match?(instance.send_regexp) }
+
+    ['リムられ通知 送信', 'リムられ通知 今すぐ送信'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
   describe '#help_regexp' do
     subject { text.match?(instance.help_regexp) }
 

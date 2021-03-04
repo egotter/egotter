@@ -201,6 +201,7 @@ ja:
         unfollowers: 'リムーブされた'
         mutual_unfriends: 'ブロックされたかも'
         blockers: 'ブロックされている（高精度）'
+        muters: 'ミュートされている'
         notice: 'データはこれから保存されていきます'
         word_description: '説明'
         detailed_description_html: 'えごったーのデータは、最初に使った時から保存されていきます。そのため、最初は少ないデータが表示されます。<br><br>また、たくさん使うユーザーほどたくさんデータが更新されます。'
@@ -218,6 +219,7 @@ ja:
           unfollowers: '「あなたは相手からフォローを外された」関係のことです。'
           mutual_unfriends: '「あなたは相手からブロックされた」関係のことです。'
           blockers: 'ブロックされているユーザーをより高精度に集計しています。'
+          muters: '「ミュートされているユーザー」のことです。'
       statuses:
         title: 'ツイート'
       friends:
@@ -263,6 +265,9 @@ ja:
       blockers:
         title: 'ブロックされている（高精度）'
         description: '@%{user} がブロックされたユーザーをできる限り高精度に集計しています。'
+      muters:
+        title: 'ミュートされている'
+        description_html: '@%{user} がミュートされたユーザーを集計しています。<br><br>%{count}人からミュートされているようです。'
       mutual_friends:
         title: '相互フォロー'
         description: '@%{user} が相互フォローしているユーザーです。'

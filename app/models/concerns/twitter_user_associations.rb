@@ -254,4 +254,12 @@ module TwitterUserAssociations
   def blocked_uids
     blocker_uids
   end
+
+  def blockers_size
+    BlockingRelationship.where(to_uid: uid).size
+  end
+
+  def muters_size
+    MutingRelationship.where(to_uid: uid).size
+  end
 end

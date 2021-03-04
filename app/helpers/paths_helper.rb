@@ -65,6 +65,8 @@ module PathsHelper
       mutual_unfriend_path(twitter_user, via: via)
     when 'blockers'
       blockers_path(via: via)
+    when 'muters'
+      nil
     when 'mutual_friends'
       mutual_friend_path(twitter_user, via: via)
     when 'one_sided_friends'
@@ -113,6 +115,8 @@ module PathsHelper
       api_v1_mutual_unfriends_summary_path(uid: twitter_user.uid, via: via)
     when 'blockers'
       api_v1_blockers_summary_path(uid: twitter_user.uid, via: via)
+    when 'muters'
+      nil
     when 'mutual_friends'
       api_v1_mutual_friends_summary_path(uid: twitter_user.uid, via: via)
     when 'one_sided_friends'

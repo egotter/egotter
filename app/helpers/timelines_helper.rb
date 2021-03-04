@@ -19,6 +19,8 @@ module TimelinesHelper
       t('timelines.feeds.summary.description.mutual_unfriends')
     when 'blockers'
       t('timelines.feeds.summary.description.blockers')
+    when 'muters'
+      t('timelines.feeds.summary.description.muters')
     else
       raise "Invalid name value=#{name}"
     end
@@ -50,6 +52,11 @@ module TimelinesHelper
       attrs = {
           feed_title: t('timelines.feeds.blockers.title'),
           feed_description: t('timelines.feeds.blockers.description', user: twitter_user.screen_name),
+      }
+    when 'muters'
+      attrs = {
+          feed_title: t('timelines.feeds.muters.title'),
+          feed_description: t('timelines.feeds.muters.description_html', user: twitter_user.screen_name, count: twitter_user.muters_size),
       }
     when 'mutual_friends'
       attrs = {
