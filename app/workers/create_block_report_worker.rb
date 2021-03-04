@@ -36,7 +36,7 @@ class CreateBlockReportWorker
       end
     end
 
-    BlockReport.you_are_blocked(user.id).deliver!
+    BlockReport.you_are_blocked(user.id, requested_by: requested_by_user? ? 'user' : nil).deliver!
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
       logger.warn "Send block report later user_id=#{user_id} raised=true"
@@ -52,5 +52,9 @@ class CreateBlockReportWorker
 
   def already_stop_requested?(user)
     StopBlockReportRequest.exists?(user_id: user.id) && self.class != CreateBlockReportByUserRequestWorker
+  end
+
+  def requested_by_user?
+    self.class == CreateBlockReportByUserRequestWorker
   end
 end

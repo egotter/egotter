@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CreateBlockReportWorker do
+RSpec.describe CreateMuteReportWorker do
   let(:user) { create(:user, with_settings: true) }
   let(:worker) { described_class.new }
 
@@ -12,7 +12,7 @@ RSpec.describe CreateBlockReportWorker do
     subject { worker.perform(user.id) }
 
     before do
-      create(:blocking_relationship, from_uid: 1, to_uid: user.uid)
+      create(:muting_relationship, from_uid: 1, to_uid: user.uid)
     end
 
     context '#has_valid_subscription? returns true' do
@@ -20,7 +20,7 @@ RSpec.describe CreateBlockReportWorker do
       it do
         expect(user).not_to receive(:following_egotter?)
         expect(PeriodicReport).not_to receive(:access_interval_too_long?)
-        expect(BlockReport).to receive(:you_are_blocked).with(user.id, requested_by: nil)
+        expect(MuteReport).to receive(:you_are_muted).with(user.id, requested_by: nil)
         subject
       end
     end
@@ -30,7 +30,7 @@ RSpec.describe CreateBlockReportWorker do
       it do
         expect(user).to receive(:following_egotter?).and_return(true)
         expect(PeriodicReport).to receive(:access_interval_too_long?).with(user).and_return(false)
-        expect(BlockReport).to receive(:you_are_blocked).with(user.id, requested_by: nil)
+        expect(MuteReport).to receive(:you_are_muted).with(user.id, requested_by: nil)
         subject
       end
     end
