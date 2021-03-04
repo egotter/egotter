@@ -774,6 +774,7 @@ ActiveRecord::Schema.define(version: 2021_03_02_160019) do
     t.string "message_id", default: "", null: false
     t.string "message", default: "", null: false
     t.string "token", null: false
+    t.string "requested_by"
     t.datetime "read_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

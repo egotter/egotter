@@ -2,14 +2,15 @@
 #
 # Table name: mute_reports
 #
-#  id         :bigint(8)        not null, primary key
-#  user_id    :integer          not null
-#  message_id :string(191)      default(""), not null
-#  message    :string(191)      default(""), not null
-#  token      :string(191)      not null
-#  read_at    :datetime
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id           :bigint(8)        not null, primary key
+#  user_id      :integer          not null
+#  message_id   :string(191)      default(""), not null
+#  message      :string(191)      default(""), not null
+#  token        :string(191)      not null
+#  requested_by :string(191)
+#  read_at      :datetime
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 # Indexes
 #
@@ -26,9 +27,9 @@ class MuteReport < ApplicationRecord
   belongs_to :user
 
   class << self
-    def you_are_muted(user_id)
+    def you_are_muted(user_id, requested_by: nil)
       # Create a message as late as possible
-      new(user_id: user_id, token: generate_token)
+      new(user_id: user_id, token: generate_token, requested_by: requested_by)
     end
 
     def not_following_message(user)

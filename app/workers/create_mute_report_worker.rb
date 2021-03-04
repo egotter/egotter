@@ -35,7 +35,7 @@ class CreateMuteReportWorker
       end
     end
 
-    MuteReport.you_are_muted(user.id).deliver!
+    MuteReport.you_are_muted(user.id, requested_by: requested_by_user? ? 'user' : nil).deliver!
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
       logger.warn "Send mute report later user_id=#{user_id} raised=true"
@@ -51,5 +51,9 @@ class CreateMuteReportWorker
 
   def already_stop_requested?(user)
     StopMuteReportRequest.exists?(user_id: user.id) && self.class != CreateMuteReportByUserRequestWorker
+  end
+
+  def requested_by_user?
+    self.class == CreateMuteReportByUserRequestWorker
   end
 end
