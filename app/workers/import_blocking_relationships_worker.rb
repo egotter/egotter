@@ -23,7 +23,7 @@ class ImportBlockingRelationshipsWorker
     end
 
     collected_uids.each_slice(1000) do |uids_array|
-      User.where(uid: uids_array).each do |user|
+      User.authorized.where(uid: uids_array).each do |user|
         CreateBlockReportWorker.perform_in(rand(30).minutes, user.id)
       end
     end

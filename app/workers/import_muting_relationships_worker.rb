@@ -22,11 +22,11 @@ class ImportMutingRelationshipsWorker
       CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids_array, user_id: user_id, enqueued_by: self.class)
     end
 
-    # collected_uids.each_slice(1000) do |uids_array|
-    #   User.where(uid: uids_array).each do |user|
-    #     CreateBlockReportWorker.perform_in(rand(30).minutes, user.id)
-    #   end
-    # end
+    collected_uids.each_slice(1000) do |uids_array|
+      User.authorized.where(uid: uids_array).each do |user|
+        CreateMuteReportWorker.perform_in(rand(30).minutes, user.id)
+      end
+    end
   rescue => e
     if TwitterApiStatus.invalid_or_expired_token?(e) ||
         TwitterApiStatus.temporarily_locked?(e)
