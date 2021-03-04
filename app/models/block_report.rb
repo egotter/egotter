@@ -36,7 +36,7 @@ class BlockReport < ApplicationRecord
       url_options = dialog_params
       template = Rails.root.join('app/views/block_reports/not_following.ja.text.erb')
       ERB.new(template.read).result_with_hash(
-          name: mask_name(blocked_user.screen_name),
+          name: mask_name(blocked_user&.screen_name),
           total_count: blocked_users_count(user),
           records_count: EgotterFollower.all.size,
           follow_url: url_helper.sign_in_url(url_options.merge(campaign_params('block_report_not_following_follow'), {force_login: true, follow: true})),
@@ -50,7 +50,7 @@ class BlockReport < ApplicationRecord
       url_options = dialog_params
       template = Rails.root.join('app/views/block_reports/access_interval_too_long.ja.text.erb')
       ERB.new(template.read).result_with_hash(
-          name: mask_name(blocked_user.screen_name),
+          name: mask_name(blocked_user&.screen_name),
           total_count: blocked_users_count(user),
           access_url: url_helper.root_url(url_options.merge(campaign_params('block_report_access_interval_too_long_access'))),
           pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('block_report_access_interval_too_long_pricing'))),
@@ -198,6 +198,8 @@ class BlockReport < ApplicationRecord
     end
 
     def mask_name(name)
+      return '' if name.blank?
+
       name = name.dup
       (name.size - 2).times do |i|
         at = i + 2
