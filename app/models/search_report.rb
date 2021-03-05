@@ -40,6 +40,14 @@ class SearchReport < ApplicationRecord
       template = Rails.root.join('app/views/search_reports/restarted.ja.text.erb')
       ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
     end
+
+    def help_message(user)
+      template = Rails.root.join('app/views/search_reports/help.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          settings_url: Rails.application.routes.url_helpers.settings_url(og_tag: false),
+          faq_url: Rails.application.routes.url_helpers.support_url(og_tag: false),
+      )
+    end
   end
 
   def deliver!

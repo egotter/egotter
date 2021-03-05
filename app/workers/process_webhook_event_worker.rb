@@ -4,7 +4,6 @@ require 'digest/md5'
 class ProcessWebhookEventWorker
   include Sidekiq::Worker
   prepend TimeoutableWorker
-  include SearchReportConcern
   include ScheduleTweetsConcern
   include DeleteTweetsConcern
   include CloseFriendsConcern
@@ -70,9 +69,8 @@ class ProcessWebhookEventWorker
     processed = PeriodicReportReceivedNotFollowingMessageResponder.from_dm(dm).respond unless processed
     processed = BlockReportResponder.from_dm(dm).respond unless processed
     processed = MuteReportResponder.from_dm(dm).respond unless processed
-    processed = SearchReportReceivedMessageResponder.from_dm(dm).respond unless processed
+    processed = SearchReportResponder.from_dm(dm).respond unless processed
     processed = WelcomeReportResponder.from_dm(dm).respond unless processed
-    processed = process_search_report(dm) unless processed
     processed = process_schedule_tweets(dm) unless processed
     processed = process_delete_tweets(dm) unless processed
     processed = process_close_friends(dm) unless processed

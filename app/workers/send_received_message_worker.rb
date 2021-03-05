@@ -15,16 +15,6 @@ class SendReceivedMessageWorker
 
   QUICK_REPLIES = [
       /\A【?#{I18n.t('quick_replies.followed.label')}】?\z/,
-      /\A【?#{I18n.t('quick_replies.welcome_messages.label1')}】?\z/,
-      /\A【?#{I18n.t('quick_replies.welcome_messages.label2')}】?\z/,
-      /\A【?初期設定(\s|　)*開始】?\z/,
-      /\A【?#{I18n.t('quick_replies.search_reports.label1')}】?\z/,
-      /\A【?#{I18n.t('quick_replies.search_reports.label2')}】?\z/,
-      /\A【?#{I18n.t('quick_replies.search_reports.label3')}】?\z/,
-      /\A【?#{I18n.t('quick_replies.search_reports.label4')}】?\z/,
-      /\A【?#{I18n.t('quick_replies.block_reports.label1')}】?\z/,
-      /\A【?#{I18n.t('quick_replies.block_reports.label2')}】?\z/,
-      /\A【?#{I18n.t('quick_replies.block_reports.label3')}】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label1')}】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label4')}】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label2')}】?\z/,
@@ -37,6 +27,7 @@ class SendReceivedMessageWorker
     PeriodicReportResponder::Processor.new(nil, text).received? ||
         BlockReportResponder::Processor.new(nil, text).received? ||
         MuteReportResponder::Processor.new(nil, text).received? ||
+        SearchReportResponder::Processor.new(nil, text).received? ||
         WelcomeReportResponder::Processor.new(nil, text).received? ||
         SpamMessageConcern::SpamMessageProcessor.new(nil, text).received? ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
