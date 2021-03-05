@@ -384,8 +384,9 @@ ja:
       page_title_ok: 'アクセス履歴の確認が完了しました'
       sign_in_description: 'アクセス履歴を確認するために、えごったーにログインしてください。'
       already_signed_in_description: '@%{user} さん、ログインありがとうございます。アクセス履歴の確認ができました。これからもえごったーのご利用をよろしくお願いします。'
-      notice1: '※1 えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
-      notice2_html: '※2 分からないことがある場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
+      notice1: '※ えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
+      notice2_html: '※ ログインしているアカウントの切り替えは <a href="%{url}">こちら</a>'
+      notice3_html: '※ 分からないことがある場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
     sign_in_button:
       sign_in_label: 'えごったーにログインする'
       timeline_label: '@%{user} の分析結果を見る'

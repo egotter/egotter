@@ -19,5 +19,7 @@
     <%= t('.sign_in_description') %>
   </div>
   <div class="text-muted small my-3"><%= t('.notice1') %></div>
-  <div class="text-muted small my-3"><%= t('.notice2_html') %></div>
+  <% url = access_confirmations_path(share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, purchase_dialog: 1, via: current_via('switch_account')) %>
+  <div class="text-muted small my-3"><%= t('.notice2_html', url: sign_in_path(force_login: true, via: current_via('switch_account'), redirect_path: url)) %></div>
+  <div class="text-muted small my-3"><%= t('.notice3_html') %></div>
 <% end %>
