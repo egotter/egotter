@@ -72,8 +72,6 @@ class ProcessWebhookEventWorker
     processed = MuteReportResponder.from_dm(dm).respond unless processed
     processed = SearchReportReceivedMessageResponder.from_dm(dm).respond unless processed
     processed = WelcomeReportResponder.from_dm(dm).respond unless processed
-    processed = WelcomeReportReceivedMessageResponder.from_dm(dm).respond unless processed
-    processed = WelcomeReportStartingMessageResponder.from_dm(dm).respond unless processed
     processed = process_search_report(dm) unless processed
     processed = process_schedule_tweets(dm) unless processed
     processed = process_delete_tweets(dm) unless processed
