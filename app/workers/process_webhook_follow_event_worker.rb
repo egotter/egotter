@@ -14,7 +14,7 @@ class ProcessWebhookFollowEventWorker
   end
 
   def after_skip(*args)
-    logger.info "The job of #{self.class} is skipped digest=#{digest(args[0])} args=#{args.inspect}"
+    logger.info "The job of #{self.class} is skipped args=#{args.inspect}"
   end
 
   def _timeout_in
