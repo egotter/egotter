@@ -35,7 +35,7 @@ class CreateBlockReportWorker
         return
       end
 
-      if BlockReport.request_interval_too_short?(user)
+      if requested_by_user? && BlockReport.request_interval_too_short?(user)
         CreateBlockReportRequestIntervalTooShortMessageWorker.perform_async(user.id)
         return
       end

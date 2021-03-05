@@ -22,6 +22,11 @@ RSpec.describe MuteReport, type: :model do
     it { is_expected.to be_truthy }
   end
 
+  describe '#request_interval_too_short_message' do
+    subject { described_class.request_interval_too_short_message(user) }
+    it { is_expected.to be_truthy }
+  end
+
   describe '#stopped_message' do
     subject { described_class.stopped_message(user) }
     it { is_expected.to be_truthy }

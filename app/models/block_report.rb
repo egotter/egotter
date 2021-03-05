@@ -105,8 +105,8 @@ class BlockReport < ApplicationRecord
           interval: DateHelper.distance_of_time_in_words(REQUEST_INTERVAL),
           last_time: last_report_time(user.id),
           next_time: next_report_time(user.id),
-          pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('block_report_access_interval_too_long_pricing'))),
-          support_url: url_helper.support_url(url_options.merge(campaign_params('block_report_access_interval_too_long_support'))),
+          pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('block_report_request_interval_too_short_pricing'))),
+          support_url: url_helper.support_url(url_options.merge(campaign_params('block_report_request_interval_too_short_support'))),
       )
     end
 
@@ -289,10 +289,10 @@ class BlockReport < ApplicationRecord
     def url_helper
       @url_helper ||= Rails.application.routes.url_helpers
     end
+  end
 
-    module DateHelper
-      extend ActionView::Helpers::DateHelper
-    end
+  module DateHelper
+    extend ActionView::Helpers::DateHelper
   end
 
   class BlockedUsersNotFound < StandardError; end
