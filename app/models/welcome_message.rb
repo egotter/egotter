@@ -37,6 +37,18 @@ class WelcomeMessage < ApplicationRecord
       message = WelcomeMessageBuilder.new(user, token).build
       new(user_id: user_id, token: token, message: message)
     end
+
+    def help_message(user)
+      template = Rails.root.join('app/views/welcome_messages/help.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          settings_url: url_helper.settings_url(og_tag: false),
+          faq_url: url_helper.support_url(og_tag: false),
+      )
+    end
+
+    def url_helper
+      @url_helper ||= Rails.application.routes.url_helpers
+    end
   end
 
   def set_prefix_message(text)
@@ -55,9 +67,7 @@ class WelcomeMessage < ApplicationRecord
     message = StartingMessageBuilder.new(user, token).build
     message = @prefix_message + message if @prefix_message
 
-    if PeriodicReport.messages_allotted?(user)
-      User.egotter.api_client.create_direct_message_event(user.uid, message)
-    else
+    if PeriodicReport.messages_not_allotted?(user)
       user.api_client.create_direct_message_event(User::EGOTTER_UID, message)
     end
   end
@@ -78,6 +88,10 @@ class WelcomeMessage < ApplicationRecord
   QUICK_REPLY_SEND_PERIODIC_REPORT = {
       label: I18n.t('quick_replies.prompt_reports.label3'),
       description: I18n.t('quick_replies.prompt_reports.description3')
+  }
+  QUICK_REPLY_SEND = {
+      label: I18n.t('quick_replies.welcome_messages.label3'),
+      description: I18n.t('quick_replies.welcome_messages.description3')
   }
   QUICK_REPLY_DEFAULT = [QUICK_REPLY_RECEIVED, QUICK_REPLY_SEND_BLOCK_REPORT, QUICK_REPLY_SEND_PERIODIC_REPORT]
 

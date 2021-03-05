@@ -20,6 +20,11 @@ RSpec.describe WelcomeMessage, type: :model do
     end
   end
 
+  describe '.help_message' do
+    subject { described_class.help_message(user) }
+    it { is_expected.to be_truthy }
+  end
+
   describe '#set_prefix_message' do
     let(:instance) { described_class.new }
     subject { instance.set_prefix_message('text') }

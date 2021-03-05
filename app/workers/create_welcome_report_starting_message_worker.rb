@@ -13,11 +13,9 @@ class CreateWelcomeReportStartingMessageWorker
 
   # options:
   def perform(uid, options = {})
-    if (user = User.select(:id).find_by(uid: uid))
-      CreateWelcomeMessageWorker.perform_async(user.id)
-    else
-      CreatePeriodicReportUnregisteredMessageWorker.perform_async(uid)
-    end
+    # The user's existence is confirmed in WelcomeReportResponder.
+    user = User.find_by(uid: uid)
+    CreateWelcomeMessageWorker.perform_async(user.id)
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"

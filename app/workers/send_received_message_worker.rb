@@ -37,6 +37,7 @@ class SendReceivedMessageWorker
     PeriodicReportResponder::Processor.new(nil, text).received? ||
         BlockReportResponder::Processor.new(nil, text).received? ||
         MuteReportResponder::Processor.new(nil, text).received? ||
+        WelcomeReportResponder::Processor.new(nil, text).received? ||
         SpamMessageConcern::SpamMessageProcessor.new(nil, text).received? ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
         text == '今すぐ' ||
