@@ -85,7 +85,7 @@ class MuteReport < ApplicationRecord
           has_subscription: has_subscription,
           first_name: mask_name(muted_user&.screen_name),
           users_count: MutingRelationship.where(to_uid: user.uid).size,
-          access_url: url_helper.root_url(url_options.merge(campaign_params('mute_report_access_interval_too_long_access'))),
+          access_url: url_helper.access_confirmations_url(url_options.except(:sign_in_dialog).merge(campaign_params('mute_report_access_interval_too_long_access'))),
           pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('mute_report_access_interval_too_long_pricing'))),
           faq_url: url_helper.support_url(url_options.merge(campaign_params('mute_report_access_interval_too_long_support'))),
       )

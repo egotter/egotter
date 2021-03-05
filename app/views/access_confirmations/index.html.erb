@@ -4,9 +4,9 @@
   <%= t('.page_title') %>
 </h2>
 
-<%= render partial: 'sign_in_button' %>
+<div class="mt-3 mb-1"><%= render partial: 'sign_in_button' %></div>
 <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top, user: @user}) %>
-<%= render partial: 'sign_in_button' %>
+<div class="mt-1 mb-3"><%= render partial: 'sign_in_button' %></div>
 
 <% if user_signed_in? %>
   <div class="my-5">

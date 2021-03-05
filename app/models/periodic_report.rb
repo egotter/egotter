@@ -241,7 +241,8 @@ class PeriodicReport < ApplicationRecord
       template = Rails.root.join('app/views/periodic_reports/web_access_hard_limited.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           access_day: user.access_days.last,
-          url: timeline_url(user, dialog_params.merge(campaign_params('web_access_hard_limited'))),
+          url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(campaign_params('web_access_hard_limited'))),
+          access_url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(campaign_params('web_access_hard_limited'))),
           screen_name: user.screen_name,
           support_url: support_url(dialog_params.merge(campaign_params('web_access_hard_limited_support'))),
           pricing_url: pricing_url(dialog_params.merge(campaign_params('web_access_hard_limited_pricing'))),
@@ -479,8 +480,10 @@ class PeriodicReport < ApplicationRecord
   module UrlHelpers
     include Rails.application.routes.url_helpers
 
+    DEFAULT_OPTIONS = {share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, purchase_dialog: 1, og_tag: false}
+
     def root_url(options)
-      super(default_url_options.merge(options))
+      super(DEFAULT_OPTIONS.merge(options))
     end
 
     def sign_in_url(options)
@@ -488,27 +491,31 @@ class PeriodicReport < ApplicationRecord
     end
 
     def timeline_url(user, options)
-      super(user, default_url_options.merge(options))
+      super(user, DEFAULT_OPTIONS.merge(options))
     end
 
-    def profile_url(*args)
-      super(*args)
+    def access_confirmations_url(options)
+      super({share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false}.merge(options))
+    end
+
+    def profile_url(user, options)
+      super(user, DEFAULT_OPTIONS.merge(options))
     end
 
     def pricing_url(options)
-      super(default_url_options.merge(options))
+      super(DEFAULT_OPTIONS.merge(options))
     end
 
     def support_url(options)
-      super(default_url_options.merge(options))
+      super(DEFAULT_OPTIONS.merge(options))
     end
 
-    def settings_url(*args)
-      super(*args)
+    def settings_url(options)
+      super(DEFAULT_OPTIONS.merge(options))
     end
 
     def default_url_options
-      {share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, purchase_dialog: 1, og_tag: false}
+      {}
     end
   end
   extend UrlHelpers
