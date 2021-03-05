@@ -58,7 +58,7 @@ class CreatePeriodicReportReceivedWebAccessMessageWorker
   private
 
   def build_second_message(user)
-    url = Rails.application.routes.url_helpers.access_confirmations(share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false, via: 'web_access_received_message')
+    url = Rails.application.routes.url_helpers.access_confirmations_url(share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false, via: 'web_access_received_message')
     ERB.new(SECOND_MESSAGE).result_with_hash(url: url, user: user.screen_name)
   end
 end

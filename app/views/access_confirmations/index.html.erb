@@ -1,7 +1,9 @@
-<% title t('.page_title', user: @screen_name) %>
-
 <h2 class="h3 text-center my-5">
-  <%= t('.page_title') %>
+  <% if user_signed_in? %>
+    <%= t('.page_title_ok') %>
+  <% else %>
+    <%= t('.page_title') %>
+  <% end %>
 </h2>
 
 <div class="mt-3 mb-1"><%= render partial: 'sign_in_button' %></div>
