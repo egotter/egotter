@@ -2,6 +2,7 @@
 
 定期送信：
 無効
+※ 無効になっている間は、ミュートしている人が新しく見つかっても通知が届きません。
 
 通知の再開：
 【ミュート通知 再開】をDMで送信
@@ -14,9 +15,9 @@
 IDは分からず、人数だけが通知されます。
 
 あなたをミュートしている：
-<%= users_count %>人<%= ' ※これから貯まります' if users_count == 0 %>
+<%= "#{first_name} と" if first_name.present? %>合計 <%= users_count %>人<%= ' ※これから貯まります' if users_count == 0 %>
 
 @<%= screen_name %> の分析結果：
 <%= timeline_url %>
 
-#egotter
+#egotter <%= '#hs' if has_subscription %>

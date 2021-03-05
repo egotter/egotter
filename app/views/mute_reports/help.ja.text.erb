@@ -21,7 +21,7 @@
 IDは分からず、人数だけが通知されます。
 
 あなたをミュートしている：
-<%= users_count %>人<%= ' ※これから貯まります' if users_count == 0 %>
+<%= "#{first_name} と" if first_name.present? %>合計 <%= users_count %>人<%= ' ※これから貯まります' if users_count == 0 %>
 
 @<%= screen_name %> の分析結果：
 <%= timeline_url %>
@@ -30,4 +30,4 @@ IDは分からず、人数だけが通知されます。
 よくある質問 <%= faq_url %>
 問い合わせアカウント @egotter_cs
 
-#egotter
+#egotter <%= '#hs' if has_subscription %>

@@ -88,4 +88,34 @@ RSpec.describe BlockReport, type: :model do
     end
     it { is_expected.to be_truthy }
   end
+
+  describe '.mask_name' do
+    subject { described_class.mask_name(name) }
+
+    context 'name is blank' do
+      let(:name) { nil }
+      it { is_expected.to eq('') }
+    end
+
+    context 'name.length is 1' do
+      let(:name) { 'a' }
+      it { is_expected.to eq('*') }
+    end
+
+    context 'name.length is 2' do
+      let(:name) { 'ab' }
+      it { is_expected.to eq('a*') }
+    end
+
+    context 'name.length is 5' do
+      let(:name) { 'abcde' }
+      it { is_expected.to eq('ab***') }
+    end
+
+    context 'has_subscription is true' do
+      let(:name) { 'abcde' }
+      subject { described_class.mask_name(name, true) }
+      it { is_expected.to eq('abcde') }
+    end
+  end
 end

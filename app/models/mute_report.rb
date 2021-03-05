@@ -32,14 +32,41 @@ class MuteReport < ApplicationRecord
       new(user_id: user_id, token: generate_token, requested_by: requested_by)
     end
 
+    def report_attributes(user, token)
+      has_subscription = user.has_valid_subscription?
+      muted_users = fetch_muted_users(user)
+      url_options = campaign_params('mute_report').merge(dialog_params).merge(token: token, medium: 'dm', type: 'mute', via: 'mute_report', og_tag: false)
+      muted_names = masked_names(muted_users.map(&:screen_name), has_subscription)
+
+      {
+          has_subscription: has_subscription,
+          screen_name: user.screen_name,
+          users_count: MutingRelationship.where(to_uid: user.uid).size,
+          remaining_users_count: remaining_users_count(user),
+          stop_requested: StopMuteReportRequest.exists?(user_id: user.id),
+          muted_names: muted_names,
+          timeline_url: url_helper.timeline_url(user, url_options),
+          pricing_url: url_helper.pricing_url(url_options),
+          settings_url: url_helper.settings_url(url_options),
+          faq_url: url_helper.support_url(url_options),
+      }
+    end
+
+    def report_message(user, token)
+      template = Rails.root.join('app/views/mute_reports/you_are_muted.ja.text.erb')
+      ERB.new(template.read).result_with_hash(report_attributes(user, token))
+    end
+
     def not_following_message(user)
+      has_subscription = user.has_valid_subscription?
+      muted_user = fetch_muted_users(user, limit: 1)[0]
       url_options = dialog_params.merge(og_tag: false)
 
       template = Rails.root.join('app/views/mute_reports/not_following.ja.text.erb')
       ERB.new(template.read).result_with_hash(
-          screen_name: user.screen_name,
+          has_subscription: has_subscription,
+          first_name: mask_name(muted_user&.screen_name),
           users_count: MutingRelationship.where(to_uid: user.uid).size,
-          timeline_url: url_helper.timeline_url(user, url_options),
           follow_url: url_helper.sign_in_url(url_options.merge(campaign_params('mute_report_not_following_follow'), {force_login: true, follow: true})),
           pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('mute_report_not_following_pricing'))),
           faq_url: url_helper.support_url(url_options.merge(campaign_params('mute_report_not_following_support'))),
@@ -47,13 +74,15 @@ class MuteReport < ApplicationRecord
     end
 
     def access_interval_too_long_message(user)
+      has_subscription = user.has_valid_subscription?
+      muted_user = fetch_muted_users(user, limit: 1)[0]
       url_options = dialog_params.merge(og_tag: false)
 
       template = Rails.root.join('app/views/mute_reports/access_interval_too_long.ja.text.erb')
       ERB.new(template.read).result_with_hash(
-          screen_name: user.screen_name,
+          has_subscription: has_subscription,
+          first_name: mask_name(muted_user&.screen_name),
           users_count: MutingRelationship.where(to_uid: user.uid).size,
-          timeline_url: url_helper.timeline_url(user, url_options),
           access_url: url_helper.root_url(url_options.merge(campaign_params('mute_report_access_interval_too_long_access'))),
           pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('mute_report_access_interval_too_long_pricing'))),
           faq_url: url_helper.support_url(url_options.merge(campaign_params('mute_report_access_interval_too_long_support'))),
@@ -61,33 +90,45 @@ class MuteReport < ApplicationRecord
     end
 
     def stopped_message(user)
+      has_subscription = user.has_valid_subscription?
+      muted_user = fetch_muted_users(user, limit: 1)[0]
       url_options = campaign_params('mute_report_stopped').merge(dialog_params).merge(og_tag: false)
 
       template = Rails.root.join('app/views/mute_reports/stopped.ja.text.erb')
       ERB.new(template.read).result_with_hash(
+          has_subscription: has_subscription,
           screen_name: user.screen_name,
+          first_name: mask_name(muted_user&.screen_name),
           users_count: MutingRelationship.where(to_uid: user.uid).size,
           timeline_url: url_helper.timeline_url(user, url_options),
       )
     end
 
     def restarted_message(user)
+      has_subscription = user.has_valid_subscription?
+      muted_user = fetch_muted_users(user, limit: 1)[0]
       url_options = campaign_params('mute_report_restarted').merge(dialog_params).merge(og_tag: false)
 
       template = Rails.root.join('app/views/mute_reports/restarted.ja.text.erb')
       ERB.new(template.read).result_with_hash(
+          has_subscription: has_subscription,
           screen_name: user.screen_name,
+          first_name: mask_name(muted_user&.screen_name),
           users_count: MutingRelationship.where(to_uid: user.uid).size,
           timeline_url: url_helper.timeline_url(user, url_options),
       )
     end
 
     def help_message(user)
+      has_subscription = user.has_valid_subscription?
+      muted_user = fetch_muted_users(user, limit: 1)[0]
       url_options = campaign_params('mute_report_help').merge(dialog_params).merge(og_tag: false)
 
       template = Rails.root.join('app/views/mute_reports/help.ja.text.erb')
       ERB.new(template.read).result_with_hash(
+          has_subscription: has_subscription,
           screen_name: user.screen_name,
+          first_name: mask_name(muted_user&.screen_name),
           users_count: MutingRelationship.where(to_uid: user.uid).size,
           timeline_url: url_helper.timeline_url(user, url_options),
           settings_url: url_helper.settings_url(url_options),
@@ -114,17 +155,34 @@ class MuteReport < ApplicationRecord
       MutingRelationship.where(to_uid: user.uid).size - limit
     end
 
-    def masked_names(names)
-      [*'a'..'z', *'A'..'Z', *'0'..'9'].each_with_object({}) do |letter, memo|
-        if (count = names.count { |name| name[0] == letter }) > 0
-          memo[letter] = count
-        end
+    def mask_name(name)
+      return '' if name.blank?
+      return '*' if name.length == 1
+      return "#{name[0]}*" if name.length == 2
+
+      name = name.dup
+      (name.size - 2).times do |i|
+        at = i + 2
+        name[at] = '*' if name.length >= at + 1
       end
+      name
     end
 
-    def masked_name_descriptions(hash)
-      hash.map do |letter, count|
-        I18n.t('mute_report.name_starting_with', letter: letter, count: count)
+    def masked_names(names, has_subscription = false)
+      if has_subscription
+        names.map do |name|
+          mask_name(name)
+        end
+      else
+        hash = [*'a'..'z', *'A'..'Z', *'0'..'9'].each_with_object({}) do |letter, memo|
+          if (count = names.count { |name| name[0] == letter }) > 0
+            memo[letter] = count
+          end
+        end
+
+        hash.map do |letter, count|
+          I18n.t('mute_report.name_starting_with', letter: letter, count: count)
+        end
       end
     end
 
@@ -142,33 +200,6 @@ class MuteReport < ApplicationRecord
               }
           }
       }
-    end
-
-    def report_attributes(user, token)
-      url_options = campaign_params('mute_report').merge(dialog_params).merge(token: token, medium: 'dm', type: 'mute', via: 'mute_report', og_tag: false)
-      muted_users = fetch_muted_users(user)
-      muted_names = masked_name_descriptions(masked_names(muted_users.map(&:screen_name)))
-
-      {
-          has_valid_subscription: user.has_valid_subscription?,
-          screen_name: user.screen_name,
-          users_count: MutingRelationship.where(to_uid: user.uid).size,
-          remaining_users_count: remaining_users_count(user),
-          muted_names: muted_names,
-          stop_requested: StopMuteReportRequest.exists?(user_id: user.id),
-          timeline_url: url_helper.timeline_url(user, url_options),
-          settings_url: url_helper.settings_url(url_options),
-          faq_url: url_helper.support_url(url_options),
-      }
-    end
-
-    def report_message(user, token)
-      if user.has_valid_subscription?
-        template = Rails.root.join('app/views/mute_reports/you_are_muted_premium.ja.text.erb')
-      else
-        template = Rails.root.join('app/views/mute_reports/you_are_muted.ja.text.erb')
-      end
-      ERB.new(template.read).result_with_hash(report_attributes(user, token))
     end
 
     def start_message(user)

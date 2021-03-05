@@ -36,9 +36,9 @@ class BlockReport < ApplicationRecord
 
     def report_attributes(user, token)
       has_subscription = user.has_valid_subscription?
-      users = fetch_blocked_users(user)
+      blocked_users = fetch_blocked_users(user)
       url_options = campaign_params('block_report_profile').merge(dialog_params).merge(token: token, medium: 'dm', type: 'block', via: 'block_report')
-      blocked_names = generate_profile_urls(users, url_options, user.add_atmark_to_block_report?)
+      blocked_names = generate_profile_urls(blocked_users, url_options, user.add_atmark_to_block_report?)
 
       {
           has_subscription: has_subscription,
@@ -247,6 +247,8 @@ class BlockReport < ApplicationRecord
     def mask_name(name, has_subscription = false)
       return '' if name.blank?
       return name if has_subscription
+      return '*' if name.length == 1
+      return "#{name[0]}*" if name.length == 2
 
       name = name.dup
       (name.size - 2).times do |i|
