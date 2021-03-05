@@ -1,0 +1,21 @@
+<% title t('.page_title', user: @screen_name) %>
+
+<h2 class="h3 text-center my-5">
+  <%= t('.page_title') %>
+</h2>
+
+<%= render partial: 'sign_in_button' %>
+<%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top, user: @user}) %>
+<%= render partial: 'sign_in_button' %>
+
+<% if user_signed_in? %>
+  <div class="my-5">
+    <%= t('.already_signed_in_description', user: current_user.screen_name) %>
+  </div>
+<% else %>
+  <div class="my-5">
+    <%= t('.sign_in_description') %>
+  </div>
+  <div class="text-muted small my-3"><%= t('.notice1') %></div>
+  <div class="text-muted small my-3"><%= t('.notice2_html') %></div>
+<% end %>

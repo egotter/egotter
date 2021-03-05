@@ -114,6 +114,7 @@ Rails.application.routes.draw do
   ).each do |controller_name|
     resources controller_name, only: %i(show), param: :screen_name
   end
+  resources 'access_confirmations', only: %i(index)
   resources 'blockers', only: %i(index)
   resources 'trends', only: %i(index)
   get 'trends/:id/tweets', to: 'trends#tweets', as:  'trend_tweets'

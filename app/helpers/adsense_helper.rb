@@ -98,9 +98,9 @@ module AdsenseHelper
       7844957271, # 0333
       1607933550, # 0334
       4210880319, # 0335
-      5452501065, # 0336 <- Next
+      5452501065, # 0336
       9235122967, # 0337
-      4139419396, # 0338
+      4139419396, # 0338 <- Next
       7922041298, # 0339
       3982796283, # 0340
   ]
@@ -185,6 +185,7 @@ module AdsenseHelper
         when [true,  'usage_stats',           'show', :bottom] then USER_USAGE_STATS
         when [true,  'usage_stats',           'show', :middle] then USER_USAGE_STATS
         when [true,  'usage_stats',           'show', :top]    then USER_USAGE_STATS
+        when [true,  'access_confirmations',  'index', :top]   then 5452501065 # 0336
 
         when [false, 'home',                  'new',  :top]    then GUEST_HOME
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM
@@ -208,6 +209,7 @@ module AdsenseHelper
         when [false, 'close_friends',         'show', :bottom] then 6707297127 # 0326
         when [false, 'close_friends',         'show', :middle] then 4436604425 # 0327
         when [false, 'close_friends',         'show', :top]    then 8094925634 # 0314
+        when [false, 'access_confirmations',  'index', :top]   then 5452501065 # 0336
         else nil
         end
 
@@ -412,6 +414,7 @@ module AdsenseHelper
         when [true,  'usage_stats',           'show', :bottom] then USER_USAGE_STATS_RESP
         when [true,  'usage_stats',           'show', :middle] then USER_USAGE_STATS_RESP
         when [true,  'usage_stats',           'show', :top]    then USER_USAGE_STATS_RESP
+        when [true,  'access_confirmations',  'index', :top]   then 9235122967 # 0337
 
         when [false, 'home',                  'new',  :top]    then GUEST_HOME_RESP
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM_RESP
@@ -500,6 +503,7 @@ module AdsenseHelper
         when [false, 'usage_stats',           'show', :bottom] then GUEST_USAGE_STATS_RESP
         when [false, 'usage_stats',           'show', :middle] then GUEST_USAGE_STATS_RESP
         when [false, 'usage_stats',           'show', :top]    then GUEST_USAGE_STATS_RESP
+        when [false,  'access_confirmations', 'index', :top]   then 9235122967 # 0337
         else nil
         end
 
