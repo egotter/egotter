@@ -5,15 +5,20 @@
 <%= access_url %>
 ↑↑↑
 
+※ 上記のURLにアクセスしてログインまで完了してください。
+
 あなたをブロックしている：
-<%= name %>、合計 <%= total_count %>人
+<%= "#{first_name} と" if first_name.present? %>合計 <%= total_count %>人<%= ' ※これから貯まります' if total_count == 0 %>
 
 何をすればよい？：
-上記のURLにアクセスした後に【ブロック通知 送信】とDMしてください。
+1. 上記のURLにアクセスする
+2. その後に【ブロック通知 送信】とDMする
 
+<% unless has_subscription %>
 アクセスが面倒な場合は？：
 有料プランのユーザーはアクセスしていなくてもブロック通知の送信リクエストができます。
 料金はこちら。無料のお試し期間あり <%= pricing_url %>
+<% end %>
 
 ブロック通知の停止：
 【ブロック通知 停止】をDMで送信
@@ -24,4 +29,4 @@
 よくある質問 <%= support_url %>
 問い合わせアカウント @egotter_cs
 
-#egotter
+#egotter <%= '#hs' if has_subscription %>

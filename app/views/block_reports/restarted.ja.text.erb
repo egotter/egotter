@@ -2,6 +2,7 @@
 
 定期送信：
 有効
+※ 有効になっている間は、ブロックしている人が新しく見つかると自動的に通知が届きます。
 
 ブロック通知の停止：
 【ブロック通知 停止】をDMで送信
@@ -13,9 +14,9 @@
 @<%= screen_name %> をブロックしている人が新しく見つかった時に送信されるDMのことです。
 
 あなたをブロックしている：
-<%= profile_urls.empty? ? '0人 ※これから貯まります' : profile_urls.join("\n") %>
+<%= "#{first_name} と" if first_name.present? %>合計 <%= total_count %>人<%= ' ※これから貯まります' if total_count == 0 %>
 
 ブロックの全データ：
 <%= blockers_url %>
 
-#egotter
+#egotter <%= '#hs' if has_subscription %>

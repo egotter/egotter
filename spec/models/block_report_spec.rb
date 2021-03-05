@@ -37,17 +37,8 @@ RSpec.describe BlockReport, type: :model do
   end
 
   describe '#report_message' do
-    subject { described_class.report_message(user, 'token', []) }
-
-    context 'user has valid subscription' do
-      before { allow(user).to receive(:has_valid_subscription?).and_return(true) }
-      it { is_expected.to be_truthy }
-    end
-
-    context "user doesn't have valid subscription" do
-      before { allow(user).to receive(:has_valid_subscription?).and_return(false) }
-      it { is_expected.to be_truthy }
-    end
+    subject { described_class.report_message(user, 'token') }
+    it { is_expected.to be_truthy }
   end
 
   describe '#deliver!' do
@@ -74,8 +65,7 @@ RSpec.describe BlockReport, type: :model do
   describe '#send_message' do
     subject { described_class.new(user: user, token: 'token').send(:send_message) }
     before do
-      allow(described_class).to receive(:fetch_blocked_users).with(user).and_return([])
-      allow(described_class).to receive(:report_message).with(user, 'token', []).and_return('message')
+      allow(described_class).to receive(:report_message).with(user, 'token').and_return('message')
       allow(described_class).to receive(:build_direct_message_event).with(user.uid, 'message').and_return('event')
     end
     it do

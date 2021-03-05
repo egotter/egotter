@@ -20,13 +20,13 @@
 @<%= screen_name %> をブロックしている人が新しく見つかった時に送信されるDMのことです。
 
 あなたをブロックしている：
-<%= users_count %>人<%= ' ※これから貯まります' if users_count == 0 %>
+<%= "#{first_name} と" if first_name.present? %>合計 <%= total_count %>人<%= ' ※これから貯まります' if total_count == 0 %>
 
-@<%= screen_name %> の分析結果：
-<%= timeline_url %>
+ブロックの全データ：
+<%= blockers_url %>
 
 通知の設定変更 <%= settings_url %>
 よくある質問 <%= faq_url %>
 問い合わせアカウント @egotter_cs
 
-#egotter
+#egotter <%= '#hs' if has_subscription %>
