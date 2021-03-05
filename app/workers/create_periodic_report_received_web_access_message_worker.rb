@@ -42,8 +42,8 @@ class CreatePeriodicReportReceivedWebAccessMessageWorker
         # CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
         User.egotter.api_client.create_direct_message_event(uid, build_second_message(user))
       else
-        quick_reply_buttons = PeriodicReport.general_quick_reply_options
-        event = PeriodicReport.build_direct_message_event(uid, MESSAGE, quick_reply_buttons: quick_reply_buttons)
+        quick_replies = [PeriodicReport::QUICK_REPLY_SEND, BlockReport::QUICK_REPLY_SEND, MuteReport::QUICK_REPLY_SEND]
+        event = PeriodicReport.build_direct_message_event(uid, MESSAGE, quick_reply_buttons: quick_replies)
         User.egotter.api_client.create_direct_message_event(event: event)
       end
     else
