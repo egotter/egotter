@@ -32,6 +32,32 @@ class BlockReport < ApplicationRecord
       new(user_id: user_id, token: generate_token, requested_by: requested_by)
     end
 
+    def report_attributes(user, token)
+      has_subscription = user.has_valid_subscription?
+      users = fetch_blocked_users(user)
+      url_options = campaign_params('block_report_profile').merge(dialog_params).merge(token: token, medium: 'dm', type: 'block', via: 'block_report')
+      blocked_names = generate_profile_urls(users, url_options, user.add_atmark_to_block_report?)
+
+      {
+          has_subscription: has_subscription,
+          screen_name: user.screen_name,
+          users_count: BlockingRelationship.where(to_uid: user.uid).size,
+          remaining_users_count: remaining_users_count(user),
+          stop_requested: StopBlockReportRequest.exists?(user_id: user.id),
+          blocked_names: blocked_names,
+          timeline_url: url_helper.timeline_url(user, url_options),
+          blockers_url: url_helper.blockers_url(url_options),
+          pricing_url: url_helper.pricing_url(url_options),
+          settings_url: url_helper.settings_url(url_options),
+          faq_url: url_helper.support_url(url_options),
+      }
+    end
+
+    def report_message(user, token)
+      template = Rails.root.join('app/views/block_reports/you_are_blocked.ja.text.erb')
+      ERB.new(template.read).result_with_hash(report_attributes(user, token))
+    end
+
     def not_following_message(user)
       has_subscription = user.has_valid_subscription?
       blocked_user = fetch_blocked_users(user, limit: 1)[0]
@@ -178,32 +204,6 @@ class BlockReport < ApplicationRecord
       }
     end
 
-    def report_attributes(user, token)
-      has_subscription = user.has_valid_subscription?
-      users = fetch_blocked_users(user)
-      url_options = campaign_params('block_report_profile').merge(dialog_params).merge(token: token, medium: 'dm', type: 'block', via: 'block_report')
-      blocked_names = generate_profile_urls(users, url_options, user.add_atmark_to_periodic_report?)
-
-      {
-          has_subscription: has_subscription,
-          screen_name: user.screen_name,
-          users_count: BlockingRelationship.where(to_uid: user.uid).size,
-          remaining_users_count: remaining_users_count(user),
-          stop_requested: StopBlockReportRequest.exists?(user_id: user.id),
-          blocked_names: blocked_names,
-          timeline_url: url_helper.timeline_url(user, url_options),
-          blockers_url: url_helper.blockers_url(url_options),
-          pricing_url: url_helper.pricing_url(url_options),
-          settings_url: url_helper.settings_url(url_options),
-          faq_url: url_helper.support_url(url_options),
-      }
-    end
-
-    def report_message(user, token)
-      template = Rails.root.join('app/views/block_reports/you_are_blocked.ja.text.erb')
-      ERB.new(template.read).result_with_hash(report_attributes(user, token))
-    end
-
     def start_message(user)
       template = Rails.root.join('app/views/block_reports/start.ja.text.erb')
       ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
@@ -239,10 +239,10 @@ class BlockReport < ApplicationRecord
     private
 
     def generate_profile_urls(users, url_options, add_atmark)
-      users.map.with_index do |user, i|
+      users.map do |user|
         screen_name = user[:screen_name]
         url = url_helper.profile_url({screen_name: screen_name}.merge(url_options))
-        if add_atmark || i < 1
+        if add_atmark
           name = "@#{screen_name}"
         else
           name = mask_name(screen_name)

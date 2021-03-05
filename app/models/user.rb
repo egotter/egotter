@@ -239,6 +239,10 @@ class User < ApplicationRecord
     has_valid_subscription? || 1.weeks.ago < created_at
   end
 
+  def add_atmark_to_block_report?
+    has_valid_subscription?
+  end
+
   def continuous_sign_in?(ignore_today = true)
     (ignore_today || access_days.where(date: Time.zone.now.in_time_zone('Tokyo').to_date).exists?) &&
         access_days.where(date: 1.day.ago.in_time_zone('Tokyo').to_date).exists?
