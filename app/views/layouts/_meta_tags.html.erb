@@ -1,22 +1,33 @@
 <%=
   if params[:og_tag] == 'false'
     og_tag = {}
+  elsif params[:og_tag] == 'debug'
+    # For debugging
+    og_tag = {
+      title: :title,
+      type: (action_name == 'new' ? 'website' : 'article'),
+      url: request.original_url,
+      image: meta_og_image2_url,
+      site_name: t('.title'),
+      description: :description,
+      locale: 'ja_JP'
+    }
   else
     og_tag = {
-        title: :title,
-        type: (action_name == 'new' ? 'website' : 'article'),
-        url: request.original_url,
-        image: meta_og_image_url,
-        site_name: t('.title'),
-        description: :description,
-        locale: 'ja_JP'
+      title: :title,
+      type: (action_name == 'new' ? 'website' : 'article'),
+      url: request.original_url,
+      image: meta_og_image_url,
+      site_name: t('.title'),
+      description: :description,
+      locale: 'ja_JP'
     }
   end
 
   # Set default values
   display_meta_tags(
-      description: t('.description'),
-      title: "#{'[dev] ' if Rails.env.development?}#{t('.title')}",
-      og: og_tag
+    description: t('.description'),
+    title: "#{'[dev] ' if Rails.env.development?}#{t('.title')}",
+    og: og_tag
   )
 %>
