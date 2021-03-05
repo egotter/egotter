@@ -26,6 +26,8 @@ class BlockReport < ApplicationRecord
 
   belongs_to :user
 
+  REQUEST_INTERVAL = 6.hours
+
   class << self
     def you_are_blocked(user_id, requested_by: nil)
       # Create a message as late as possible
@@ -85,6 +87,24 @@ class BlockReport < ApplicationRecord
           first_name: mask_name(blocked_user&.screen_name, has_subscription),
           total_count: BlockingRelationship.where(to_uid: user.uid).size,
           access_url: url_helper.root_url(url_options.merge(campaign_params('block_report_access_interval_too_long_access'))),
+          pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('block_report_access_interval_too_long_pricing'))),
+          support_url: url_helper.support_url(url_options.merge(campaign_params('block_report_access_interval_too_long_support'))),
+      )
+    end
+
+    def request_interval_too_short_message(user)
+      has_subscription = user.has_valid_subscription?
+      blocked_user = fetch_blocked_users(user, limit: 1)[0]
+      url_options = dialog_params
+
+      template = Rails.root.join('app/views/block_reports/request_interval_too_short.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          has_subscription: has_subscription,
+          first_name: mask_name(blocked_user&.screen_name, has_subscription),
+          total_count: BlockingRelationship.where(to_uid: user.uid).size,
+          interval: DateHelper.distance_of_time_in_words(REQUEST_INTERVAL),
+          last_time: last_report_time(user.id),
+          next_time: next_report_time(user.id),
           pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('block_report_access_interval_too_long_pricing'))),
           support_url: url_helper.support_url(url_options.merge(campaign_params('block_report_access_interval_too_long_support'))),
       )
@@ -236,6 +256,19 @@ class BlockReport < ApplicationRecord
       name
     end
 
+    def request_interval_too_short?(user)
+      where(user_id: user.id, created_at: REQUEST_INTERVAL.ago..Time.zone.now).exists?
+    end
+
+    def last_report_time(user_id)
+      where(user_id: user_id).order(created_at: :desc).limit(1).pluck(:created_at).first
+    end
+
+    def next_report_time(user_id)
+      time = last_report_time(user_id)
+      time ? time + REQUEST_INTERVAL : nil
+    end
+
     private
 
     def generate_profile_urls(users, url_options, add_atmark)
@@ -253,6 +286,10 @@ class BlockReport < ApplicationRecord
 
     def url_helper
       @url_helper ||= Rails.application.routes.url_helpers
+    end
+
+    module DateHelper
+      extend ActionView::Helpers::DateHelper
     end
   end
 

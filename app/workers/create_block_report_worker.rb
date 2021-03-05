@@ -34,6 +34,11 @@ class CreateBlockReportWorker
         CreateBlockReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
         return
       end
+
+      if BlockReport.request_interval_too_short?(user)
+        CreateBlockReportRequestIntervalTooShortMessageWorker.perform_async(user.id)
+        return
+      end
     end
 
     BlockReport.you_are_blocked(user.id, requested_by: requested_by_user? ? 'user' : nil).deliver!

@@ -1,0 +1,22 @@
+ブロック通知の間隔が短すぎて送信できませんでした。前回の通知から <%= interval %> 以上たってからリクエストしてください。
+
+もっと早く通知が欲しい場合は？：
+有料プランのユーザーはすぐに次のブロック通知を受け取ることができます。
+料金はこちら。無料のお試し期間あり <%= pricing_url %>
+
+最後のブロック通知：
+<%= last_time ? I18n.l(last_time.in_time_zone('Tokyo'), format: :block_report_short) : '' %>
+
+次のブロック通知：
+<%= next_time ? I18n.l(next_time.in_time_zone('Tokyo'), format: :block_report_short) : '' %> 以降
+
+あなたをブロックしている：
+<%= "#{first_name} と" if first_name.present? %>合計 <%= total_count %>人<%= ' ※これから貯まります' if total_count == 0 %>
+
+通知の使い方：
+【ブロック通知 使い方】をDMで送信
+
+よくある質問 <%= support_url %>
+問い合わせアカウント @egotter_cs
+
+#egotter <%= '#hs' if has_subscription %>

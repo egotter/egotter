@@ -24,6 +24,12 @@ RSpec.describe BlockReport, type: :model do
     it { is_expected.to be_truthy }
   end
 
+  describe '#request_interval_too_short_message' do
+    subject { described_class.request_interval_too_short_message(user) }
+    before { allow(described_class).to receive(:fetch_blocked_users).and_return([create(:twitter_db_user)]) }
+    it { is_expected.to be_truthy }
+  end
+
   describe '#report_stopped_message' do
     subject { described_class.report_stopped_message(user) }
     before { allow(described_class).to receive(:fetch_blocked_users).and_return([create(:twitter_db_user)]) }

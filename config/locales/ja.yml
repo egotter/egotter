@@ -3097,6 +3097,7 @@ ja:
       short: "%y/%m/%d %H:%M"
       trend_short: "%m月%d日 %-H時"
       prompt_report_short: "%m月%d日 %-H時%-M分"
+      block_report_short: "%-m月%-d日 %-H時%-M分"
       periodic_report_short: "%-m月%-d日 %-H時%-M分"
       delete_tweets_short: "%-H時%-M分"
       delete_tweets_long: "%-m月%-d日 %-H時%-M分"
