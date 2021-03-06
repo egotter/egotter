@@ -31,7 +31,8 @@ class SendReceivedMessageWorker
         WelcomeReportResponder::Processor.new(nil, text).received? ||
         SpamMessageConcern::SpamMessageProcessor.new(nil, text).received? ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
-        text == '今すぐ' ||
+        text.include?('送信】をDMにコピペして送ってください') ||
+        text.include?('送ると、今すぐリムられ通知を受信することができます') ||
         text == 'あ' ||
         text == 'は' ||
         text == 'り'
