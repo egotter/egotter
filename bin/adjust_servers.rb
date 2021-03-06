@@ -8,9 +8,9 @@ require 'dotenv/load'
 SETTINGS = [
     [2, 1], # 09
     [2, 1], # 10
-    [3, 2], # 11
-    [3, 2], # 12
-    [3, 2], # 13
+    [3, 1], # 11
+    [3, 1], # 12
+    [3, 1], # 13
     [2, 1], # 14
     [2, 1], # 15
     [2, 1], # 16
@@ -20,7 +20,7 @@ SETTINGS = [
     [3, 2], # 20
     [3, 2], # 21
     [3, 2], # 22
-    [2, 2], # 23
+    [2, 1], # 23
     [2, 1], # 00
     [2, 1], # 01
     [2, 1], # 02
@@ -28,8 +28,8 @@ SETTINGS = [
     [1, 0], # 04
     [1, 0], # 05
     [2, 1], # 06
-    [3, 2], # 07
-    [3, 2], # 08
+    [3, 1], # 07
+    [3, 1], # 08
 ]
 
 def now
@@ -58,7 +58,7 @@ end
 def adjust_sidekiq(dry_run)
   prev = list_server('sidekiq')
   count = SETTINGS[now.hour][1]
-  count += 1 if remaining_reports > 0
+  # count += 1 if remaining_reports > 0
   adjust_server('sidekiq', 'm5.large', count, dry_run)
   cur = list_server('sidekiq')
   post("prev=#{prev} cur=#{cur}") if prev != cur
