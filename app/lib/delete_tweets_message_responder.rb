@@ -12,7 +12,7 @@ class DeleteTweetsMessageResponder < AbstractMessageResponder
     end
 
     def received_regexp
-      /削除|消去|全消し|ツイ消し|クリーナ/
+      /削除|消去|全消し|ツイ消し|つい消し|クリーナ/
     end
 
     def send_message

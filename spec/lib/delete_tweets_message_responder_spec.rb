@@ -8,7 +8,7 @@ describe DeleteTweetsMessageResponder::Processor do
   describe '#received?' do
     subject { instance.received? }
 
-    ['ツイ消し', '削除', 'クリーナー'].each do |word|
+    ['ツイ消し', 'つい消し', '削除', 'クリーナー'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
