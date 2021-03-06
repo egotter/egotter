@@ -46,7 +46,7 @@ class MuteReportResponder < AbstractMessageResponder
     end
 
     def help_regexp
-      /ミュート/
+      /ミュート|みゅーと/
     end
 
     def send_message

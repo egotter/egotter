@@ -46,7 +46,7 @@ class BlockReportResponder < AbstractMessageResponder
     end
 
     def help_regexp
-      /ブロック/
+      /ブロック|ぶろっく/
     end
 
     def send_message
