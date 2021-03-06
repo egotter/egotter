@@ -11,7 +11,7 @@ class DeleteNotFoundUsersWorker
   end
 
   def perform(options = {})
-    NotFoundUser.where('created_at < ?', 15.minutes.ago).order(created_at: :desc).find_in_batches do |users|
+    NotFoundUser.where('created_at < ?', 15.minutes.ago).find_in_batches do |users|
       NotFoundUser.where(id: users.map(&:id)).delete_all
     end
   rescue => e
