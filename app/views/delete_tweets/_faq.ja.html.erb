@@ -11,11 +11,19 @@
 <% end %>
 
 <% faq_id :auto %>
-<% faq_question '無料で使ってみることはできますか？' %>
+<% faq_question 'ツイートクリーナーで何ができますか？' %>
 <% faq_answer do %>
-  できます。<%= destroy_limit %>件までのツイートは無料プランで削除できます。<br>
+  ツイートを一括削除することができます。<%= destroy_limit %>件までのツイートは無料で削除できます。<br>
   <br>
-  試してみたい方はページ上部の「○○のツイートを削除する」と書かれた<span class="text-danger">赤いボタン</span>を押してみてください。
+  <%= destroy_limit %>件を超えるツイートは、えごったー有料プランのユーザーであれば全て削除できます。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">もっと詳しく</a>
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question 'ツイートクリーナーは無料で使えますか？' %>
+<% faq_answer do %>
+  使えます。<%= destroy_limit %>件までのツイートは無料プランで削除できます。<br>
+  <br>
+  試してみたい方は、<%= link_to 'ツイート削除マイページ', delete_tweets_mypage_path %>へお進みください。
 <% end %>
 
 <% faq_id :auto %>
@@ -52,27 +60,83 @@
   希望される方は「30万件以上のツイート削除」の旨を <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
 <% end %>
 
+<% faq_id :auto %>
+<% faq_question '無料プランでツイートを削除する方法を教えてください' %>
+<% faq_answer do %>
+  <%= link_to 'ツイート削除マイページ', delete_tweets_mypage_path %>へ進んだ後に、「無料で直近のツイートを削除する」と書かれた赤いボタンを押してください。<br>
+  <br>
+  ボタンを押すと確認事項が表示されます。その内容をよく読み、次の手順に進んでください。
+<% end %>
+
 <% faq_id 'download-full-archive' %>
 <% faq_question '有料プランを購入しました。全てのツイートを削除する手順を教えてください' %>
 <% faq_answer do %>
-
-  「全ツイート履歴」を用意し、アップロードしてください。それで手順は完了です。<br>
+  「アーカイブデータ」を用意し、アップロードしてください。それで手順は完了です。<br>
   <br>
-  1. 「全ツイート履歴」を<strong>ダウンロード</strong>する<br>
-  <a href="https://twitter.com/settings/your_twitter_data" target="_blank">ツイッター設定 > アーカイブをダウンロード</a> から「全ツイート履歴」をダウンロードする<br>
+  1. 「アーカイブデータ」を<strong>ダウンロード</strong>する<br>
+  <a href="https://twitter.com/settings/your_twitter_data" target="_blank">ツイッター設定 > アーカイブをダウンロード</a><br>
+  から「アーカイブデータ」をダウンロードする<br>
   <br>
-  2. 「全ツイート履歴」を<strong>アップロード</strong>する<br>
+  2. 「アーカイブデータ」を<strong>アップロード</strong>する<br>
   えごったーの <a href="#delete-tweets-uploader">アップロード機能</a> をご利用ください。<br>
   <br>
-  「全ツイート履歴」のアップロード後に、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までDMにてご連絡ください。<br>
+  「アーカイブデータ」のアップロード後に、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までDMにてご連絡ください。<br>
   <br>
   手順中で分からないことがありましたら、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。
 <% end %>
 
 <% faq_id :auto %>
+<% faq_question 'アップロード完了後に通知は届きますか？' %>
+<% faq_answer do %>
+  届きます。アーカイブデータのアップロード完了後にDMが届きます。<br>
+  <br>
+  アップロード完了の通知は @egotter_cs からDMで届きます。「DMを受け取れる設定」にしておくことを忘れないでください。
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question 'アーカイブデータのアップロードにはどれくらい時間がかかりますか？' %>
+<% faq_answer do %>
+  ツイート総数が 約10万件 未満であれば、通常は5分以内にアップロードが完了します。<br>
+  <br>
+  インターネット回線が遅いとさらに時間がかかることがあるようです。その際は、Wi-Fiを試すと早くアップロードできます。また、スマホよりはパソコンから操作した方が早く完了するようです。
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question 'アーカイブデータのアップロードが進まなくなりました。' %>
+<% faq_answer do %>
+  スマホが速度制限を受けているとアップロードが進まなくなることがあるようです。その際は、速度制限がなくなってから試すか、Wi-Fiが使える環境でアップロードをお試しください。
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question 'アーカイブデータのアップロード後、削除完了までどれくらい時間がかかりますか？' %>
+<% faq_answer do %>
+  早い場合は1時間以内に削除完了します。サーバーの負荷が高い場合は、日本時間の深夜に少しずつ削除していきます。<br>
+  <br>
+  通常は遅くとも2〜3日以内に削除が完了します。
+  それ以上時間がかかっている場合は、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question '「削除を待っている間にしたツイート」は削除されますか？' %>
+<% faq_answer do %>
+  削除されません。「ツイート削除の依頼より後にしたツイート」は削除せずに残しています。必要な場合はご自身で削除してください。
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question 'ツイート削除完了後に通知は届きますか？' %>
+<% faq_answer do %>
+  届きます。無料版と有料版の両方で削除完了後にDMが届きます。<br>
+  <br>
+  削除完了の通知は @egotter_cs からDMで届きます。「DMを受け取れる設定」にしておくことを忘れないでください。
+<% end %>
+
+<% faq_id :auto %>
 <% faq_question 'トライアル期間中でも全てのツイートの削除は可能ですか？' %>
 <% faq_answer do %>
-  可能です。この場合、トライアル期間は終了しすぐに支払いが始まります。
+  可能です。この場合、トライアル期間は終了しすぐに支払いが始まります。<br>
+  <br>
+  トライアル期間とは：えごったーの有料プランを初めて購入してから <%= Order::TRIAL_DAYS %>日間 のことです。この期間内のキャンセルであれば通常は支払いは発生しません。
+  ただし、この期間中に「有料プランでツイートを完全削除」をご利用いただくと、その時点からすぐに初回の支払いが発生します。
 <% end %>
 
 <% faq_id :auto %>
@@ -92,9 +156,9 @@
 <% faq_id :auto %>
 <% faq_question '削除されたツイートが表示され続けるのはなぜですか？' %>
 <% faq_answer do %>
-  ツイッターの仕組み上、削除済みのツイートがしばらく表示され続けることがあります。<br>
+  ツイッターの仕組み上、削除済みのツイートがしばらくアプリに表示され続けることがあります。<br>
   <br>
-  ページを更新したり、ツイッターにログインし直すと削除済みのツイートは画面から消えます。
+  ページを更新したり、ツイッターアプリにログインし直すと削除済みのツイートは画面から消えます。
 <% end %>
 
 <% faq_id :auto %>
@@ -104,8 +168,7 @@
   <br>
   えごったーでは、<%= destroy_limit %>件を超えるツイートを安全に削除する方法を確立しています。<br>
   <br>
-  全てのツイートの削除を希望される方は、有料プランの購入後、<a href="#download-full-archive"><%= destroy_limit %>件よりも多いツイートを削除する方法</a> の手順をお試しください。
-  <a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a>
+  一括で簡単に古いツイートを削除したい方は、全てのツイートを削除できるえごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a>
 <% end %>
 
 <% faq_id :auto %>
@@ -125,11 +188,27 @@
 <% end %>
 
 <% faq_id :auto %>
-<% faq_question 'ツイートクリーナーを複数回使えば無料で全て削除できますか？' %>
+<% faq_question "無料のままで#{destroy_limit}件を超えるツイートが削除されました。なぜですか？" %>
 <% faq_answer do %>
-  できません。最新の<%= destroy_limit %>件を削除後は、自動で削除できなくなります。これは世界中の全てのツールで共通の制限です。<br>
+  ツイッター公式情報では通常削除できるのは<%= destroy_limit %>件までとなっているのですが、たまに<%= destroy_limit + 800 %>件近く削除されることがあるようです。<br>
   <br>
-  <%= destroy_limit %>件を超える全てのツイートの削除を希望される方は、えごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a>
+  これはたまに起きるツイッターのエラーのようなもので、えごったー側で制御することはできないようです。
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question '無料版のツイートクリーナーを何度も使えば無料で全て削除できますか？' %>
+<% faq_answer do %>
+  数ヶ月〜1年ほどかければできるようです。<br>
+  （保証はできません）<br>
+  <br>
+  ツイート総数が<%= destroy_limit %>件以上ある場合、無料プランで全てのツイートを削除するには下記の手順が必要です。<br>
+  <br>
+  1. <%= destroy_limit %>件のツイートをえごったーで削除する<br>
+  2. しばらくは表示されるツイートが無い状態になる<br>
+  3. 数ヶ月後、残りのツイートが表示され始める<br>
+  4. 表示されたツイートを削除し、1. に戻る<br>
+  <br>
+  えごったーの有料プランであれば、上記のような面倒な手順は不要です。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a>
 <% end %>
 
 <% faq_id :auto %>
@@ -140,7 +219,7 @@
 
 <ul class="list-group list-group-flush">
   <% faq_questions.each.with_index do |q, i| %>
-    <%= link_to q, "##{faq_ids[i]}", class: 'list-group-item' %>
+    <%= link_to "#{i + 1}. #{q}", "##{faq_ids[i]}", class: 'list-group-item' %>
   <% end %>
 </ul>
 
