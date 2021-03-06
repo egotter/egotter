@@ -16,6 +16,7 @@ class CreateDeleteTweetsUploadCompletedMessageWorker
     user = User.find(user_id)
     return unless user.authorized?
 
+    DeleteTweetsReport.send_upload_completed_starting_message(user)
     message = DeleteTweetsReport.upload_completed_message
     event = DeleteTweetsReport.build_direct_message_event(user.uid, message)
     User.egotter_cs.api_client.create_direct_message_event(event: event)

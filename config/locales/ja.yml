@@ -1437,7 +1437,13 @@ ja:
         <br>
         ファイルのアップロードが途中で止まってしまう場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。
       alert_on_beforeunload: '編集中です。本当に他のページに移動しますか？'
-      success_html: 'ファイルのアップロードに成功しました。<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> から届くDMをお待ちください。'
+      success_html:
+        ファイルのアップロードに成功しました。<br>
+        <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> から届くDMをお待ちください。<br>
+        <br>
+        DMが届かない場合は、@egotter_cs に「アップロード完了しました」とDMしてください。<br>
+        <br>
+        このWebページは閉じて大丈夫です。
       fail_html: 'ファイルのアップロードに失敗しました。何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
     confirmation_modal:
       title: '@%{user} のツイート削除'

@@ -67,6 +67,17 @@ class DeleteTweetsReport
       new(User.egotter, user, message)
     end
 
+    def send_upload_completed_starting_message(user)
+      if PeriodicReport.messages_not_allotted?(user)
+        user.api_client.create_direct_message_event(User::EGOTTER_CS_UID, upload_completed_starting_message(user))
+      end
+    end
+
+    def upload_completed_starting_message(user)
+      template = Rails.root.join('app/views/delete_tweets/upload_completed_starting.ja.text.erb')
+      ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
+    end
+
     def upload_completed_message
       template = Rails.root.join('app/views/delete_tweets/upload_completed.ja.text.erb')
       ERB.new(template.read).result_with_hash(url: delete_tweets_url('upload_completed'))
