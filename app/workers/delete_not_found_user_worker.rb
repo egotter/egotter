@@ -1,3 +1,4 @@
+# TODO Remove later
 class DeleteNotFoundUserWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'deleting_low', retry: 0, backtrace: false

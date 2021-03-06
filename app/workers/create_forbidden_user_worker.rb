@@ -14,7 +14,7 @@ class CreateForbiddenUserWorker
   #   uid
   def perform(screen_name, options = {})
     ForbiddenUser.create!(screen_name: screen_name)
-    DeleteForbiddenUserWorker.perform_in(15.minutes, screen_name, options)
+    # DeleteForbiddenUserWorker.perform_in(15.minutes, screen_name, options)
   rescue ActiveRecord::RecordNotUnique => e
     # Do nothing
   rescue => e
