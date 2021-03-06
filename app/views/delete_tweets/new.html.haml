@@ -1,9 +1,11 @@
+- usage_count = Rails.configuration.x.constants[:delete_tweets_count]
+
 - title t('.meta_title')
-- set_meta_tags description: t('.meta_description', count: Rails.configuration.x.constants[:usage_count] / 10000)
+- set_meta_tags description: t('.meta_description', count: usage_count / 10000)
 
 - content_for :navbar_title, t('.navbar_title')
 
-- right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html', count: Rails.configuration.x.constants[:usage_count] / 10000), redirect_path: delete_tweets_mypage_path(via: current_via), show_search_form: false, show_screenshots: false}
+- right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html', count: usage_count / 10000), redirect_path: delete_tweets_mypage_path(via: current_via), show_search_form: false, show_screenshots: false}
 = render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options}
 
 = render partial: 'shared/delete_tweets_tweets_section'
@@ -12,7 +14,7 @@
 
 = render partial: 'shared/review_section'
 
-= render partial: 'shared/feature_section', locals: {title: t('shared.features.title1_html'), image: '/egotter_globe_with_text_400x448.png', description: t('shared.features.text1_html', count: Rails.configuration.x.constants[:usage_count] / 10000), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_safe')), 'feature_safe', class: 'btn btn-primary btn-block'), check: t('shared.features.check1')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title1_html'), image: '/egotter_globe_with_text_400x448.png', description: t('shared.features.text1_html', count: usage_count / 10000), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_safe')), 'feature_safe', class: 'btn btn-primary btn-block'), check: t('shared.features.check1')}
 = render partial: 'shared/feature_section', locals: {title: t('shared.features.title2_html'), image: '/egotter_trash_with_text_400x448.png', description: t('shared.features.text2_html'), note: t('shared.features.note2'), link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_complete')), 'feature_complete', class: 'btn btn-primary btn-block'), check: t('shared.features.check2')}
 = render partial: 'shared/feature_section', locals: {title: t('shared.features.title3_html'), image: '/egotter_clock_with_text_400x448.png', description: t('shared.features.text3_html'), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_progress')), 'feature_progress', class: 'btn btn-primary btn-block'), check: t('shared.features.check3')}
 = render partial: 'shared/feature_section', locals: {title: t('shared.features.title4_html'), image: '/egotter_email_with_text_400x448.png', description: t('shared.features.text4_html'), note: t('shared.features.note4'), link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_removed')), 'feature_removed', class: 'btn btn-primary btn-block'), check: t('shared.features.check4')}

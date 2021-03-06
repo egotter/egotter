@@ -228,6 +228,9 @@ module PathsHelper
       image_url('/egotter_personality_insight_840x450.jpg?loc=og_image')
     elsif controller_name == 'close_friends' && @twitter_user&.close_friends_og_image
       @twitter_user.close_friends_og_image.lambda_url
+    elsif controller_name == 'delete_tweets'
+      # TODO
+      image_url('/egotter_like_app_store_840x450.png?loc=og_image')
     else
       image_url('/egotter_like_app_store_840x450.png?loc=og_image')
     end

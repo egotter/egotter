@@ -1,5 +1,6 @@
 default: &default
   usage_count: 19000000
+  delete_tweets_count: 35000000
   usage_stat_recently_created: <%= 30.minutes %>
   search_limitation:
     soft_limit: 2000
