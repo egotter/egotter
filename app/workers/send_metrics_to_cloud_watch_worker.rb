@@ -21,8 +21,11 @@ class SendMetricsToCloudWatchWorker
   end
 
   # Run every minute
-  def perform
-    %i(send_google_analytics_metrics
+  def perform(type = nil)
+    if type
+      calc_metrics(type)
+    else
+      %i(send_google_analytics_metrics
        send_periodic_reports_metrics
        send_create_periodic_report_requests_metrics
        send_search_error_logs_metrics
@@ -30,17 +33,22 @@ class SendMetricsToCloudWatchWorker
        send_requests_metrics
        send_bots_metrics
     ).each do |method_name|
-      Timeout.timeout(10.seconds) do
-        send(method_name)
+        calc_metrics(method_name)
       end
-    rescue => e
-      logger.warn "#{e.inspect} method_name=#{method_name}"
     end
 
     client.update
   end
 
   private
+
+  def calc_metrics(type)
+    Timeout.timeout(10.seconds) do
+      send(type)
+    end
+  rescue => e
+    logger.warn "#{e.inspect} type=#{type}"
+  end
 
   def send_sidekiq_metrics
     # region = %x(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed -e 's/.$//')
@@ -76,41 +84,12 @@ class SendMetricsToCloudWatchWorker
   end
 
   def send_google_analytics_metrics
-    namespace = "Google Analytics/#{Rails.env}"
+    namespace = "Google Analytics#{"/#{Rails.env}" unless Rails.env.production?}"
+    client = GoogleAnalyticsClient.new
 
-    dimensions = [{name: 'rt:total', value: 'total'}]
-    options = {namespace: namespace, dimensions: dimensions}
-    begin
-      active_users = GoogleAnalyticsClient.new.active_users
-      put_metric_data('rt:activeUsers', active_users, options)
-    rescue => e
-      logger.warn "#{e.class} #{e.message} active_users=#{active_users} options=#{options.inspect}"
-    end
-
-    # There are many kinds of sources.
-    # [["DESKTOP", "(none)", "(direct)", "NEW", "0"],
-    #  ["DESKTOP", "ORGANIC", "google", "NEW", "0"],
-    #  ["DESKTOP", "SOCIAL", "Twitter", "NEW", "0"],
-    #  ["MOBILE", "(none)", "(direct)", "NEW", "0"],
-    #  ["MOBILE", "ORGANIC", "google", "NEW", "0"],
-    #  ["MOBILE", "SOCIAL", "Twitter", "NEW", "0"]]
-    #GoogleAnalyticsClient.new.realtime_data(
-    #    metrics: %w(rt:activeUsers),
-    #    dimensions: %w(rt:deviceCategory rt:medium rt:source rt:userType)
-    #).rows.each do |device_category, medium, source, user_type, active_users|
-    #  next if active_users.to_i <= 3
-    #  dimensions = [
-    #      {name: 'rt:deviceCategory', value: device_category},
-    #      {name: 'rt:medium', value: encode(medium)},
-    #      {name: 'rt:source', value: encode(source)},
-    #      {name: 'rt:userType', value: user_type}
-    #  ]
-    #
-    #  options = {namespace: namespace, dimensions: dimensions}
-    #  put_metric_data('rt:activeUsers', active_users, options)
-    #rescue => e
-    #  logger.warn "#{e.class} #{e.message} device_category=#{device_category} medium=#{encode(medium)} source=#{encode(source)} user_type=#{user_type} active_users=#{active_users}"
-    #end
+    put_metric_data('rt:activeUsers', client.active_users, namespace: namespace, dimensions: [{name: 'rt:deviceCategory', value: 'TOTAL'}])
+    put_metric_data('rt:activeUsers', client.mobile_active_users, namespace: namespace, dimensions: [{name: 'rt:deviceCategory', value: 'MOBILE'}])
+    put_metric_data('rt:activeUsers', client.desktop_active_users, namespace: namespace, dimensions: [{name: 'rt:deviceCategory', value: 'DESKTOP'}])
   end
 
   def send_periodic_reports_metrics

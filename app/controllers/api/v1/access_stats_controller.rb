@@ -6,7 +6,9 @@ module Api
       before_action :check_key
 
       def index
-        render json: {active_users: GoogleAnalyticsClient.new.active_users.to_i}
+        # count = GoogleAnalyticsClient.new.active_users
+        count = CloudWatchClient.new.get_active_users
+        render json: {active_users: count}
       end
 
       private

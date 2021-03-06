@@ -36,6 +36,17 @@ class CloudWatchClient
     )
   end
 
+  def get_active_users
+    dimensions = [
+        {
+            name: 'rt:deviceCategory',
+            value: 'TOTAL',
+        },
+    ]
+    resp = get_metric_statistics('rt:activeUsers', namespace: 'Google Analytics', dimensions: dimensions)
+    resp.datapoints[0].average
+  end
+
   def get_rds_burst_balance
     dimensions = [
         {

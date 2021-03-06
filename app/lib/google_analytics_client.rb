@@ -13,9 +13,20 @@ class GoogleAnalyticsClient
     @client.authorization = build_credentials
   end
 
-  # TODO Add #to_i
   def active_users
-    @client.get_realtime_data("ga:#{PROFILE_ID}", 'rt:activeUsers').totals_for_all_results['rt:activeUsers']
+    @client.get_realtime_data("ga:#{PROFILE_ID}", 'rt:activeUsers').totals_for_all_results['rt:activeUsers'].to_i
+  end
+
+  def mobile_active_users
+    realtime_data(metrics: %w(rt:activeUsers), dimensions: %w(rt:deviceCategory)).rows.find { |name, _| name == 'MOBILE' }[1].to_i
+  rescue => e
+    Rails.logger.warn "mobile_active_users: #{e.inspect}"
+  end
+
+  def desktop_active_users
+    realtime_data(metrics: %w(rt:activeUsers), dimensions: %w(rt:deviceCategory)).rows.find { |name, _| name == 'DESKTOP' }[1].to_i
+  rescue => e
+    Rails.logger.warn "desktop_active_users: #{e.inspect}"
   end
 
   # puts result.column_headers.map { |h| h.name }.inspect
