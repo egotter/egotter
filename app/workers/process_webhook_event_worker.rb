@@ -5,7 +5,6 @@ class ProcessWebhookEventWorker
   include Sidekiq::Worker
   prepend TimeoutableWorker
   include ScheduleTweetsConcern
-  include DeleteTweetsConcern
   include CloseFriendsConcern
   include SpamMessageConcern
   sidekiq_options queue: 'webhook', retry: 0, backtrace: false
@@ -72,7 +71,7 @@ class ProcessWebhookEventWorker
     processed = SearchReportResponder.from_dm(dm).respond unless processed
     processed = WelcomeReportResponder.from_dm(dm).respond unless processed
     processed = process_schedule_tweets(dm) unless processed
-    processed = process_delete_tweets(dm) unless processed
+    processed = DeleteTweetsMessageResponder.from_dm(dm).respond unless processed
     processed = process_close_friends(dm) unless processed
     processed = ThankYouMessageResponder.from_dm(dm).respond unless processed
     processed = PrettyIconMessageResponder.from_dm(dm).respond unless processed
