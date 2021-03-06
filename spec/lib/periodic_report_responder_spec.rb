@@ -51,14 +51,14 @@ describe PeriodicReportResponder::Processor do
   describe '#help_regexp' do
     subject { text.match?(instance.help_regexp) }
 
-    ['リムーブ', 'リムられ', 'リム', '通知', '再開', '継続', '今すぐ'].each do |word|
+    ['リムーブ', 'リムられ', 'リム', 'リム通', '通知', '再開', '継続', '今すぐ', '今すぐ送信'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
       end
     end
 
-    ['継続って何？', 'リムとは', '再開してください', '今すぐ送信'].each do |word|
+    ['継続って何？', 'リムとは', '再開してください', 'ブロック通知 送信', 'ブロック通知 停止'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_falsey }

@@ -52,7 +52,7 @@ class PeriodicReportResponder < AbstractMessageResponder
     end
 
     def help_regexp
-      /リムーブ|リムられ|(^(リム|通知|再開|継続|送信|今すぐ)$)/
+      /リムーブ|りむーぶ|リムられ|りむられ|(^(リム通?|通知|再開|継続|送信|停止|止めて|今すぐ(送信)?|DM|使い方)$)/
     end
 
     def send_message
