@@ -13,6 +13,7 @@ class GoogleAnalyticsClient
     @client.authorization = build_credentials
   end
 
+  # TODO Add #to_i
   def active_users
     @client.get_realtime_data("ga:#{PROFILE_ID}", 'rt:activeUsers').totals_for_all_results['rt:activeUsers']
   end

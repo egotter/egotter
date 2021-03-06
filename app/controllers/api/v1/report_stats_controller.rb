@@ -12,6 +12,7 @@ module Api
       private
 
       def check_key
+        # TODO Use STATS_API_KEY
         unless params['key'] == ENV['REPORT_STATS_KEY']
           head :forbidden
         end
