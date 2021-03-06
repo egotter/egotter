@@ -37,6 +37,17 @@ describe BlockReportResponder::Processor do
     end
   end
 
+  describe '#help_regexp' do
+    subject { text.match?(instance.help_regexp) }
+
+    ['ブロック', 'ぶろっく', 'ブロられ', 'ぶろられ'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
   describe '#send_message' do
     let(:user) { create(:user, uid: uid) }
     subject { instance.send_message }
