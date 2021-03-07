@@ -14,7 +14,6 @@ class CreateNotFoundUserWorker
   #   uid
   def perform(screen_name, options = {})
     NotFoundUser.create!(screen_name: screen_name)
-    # DeleteNotFoundUserWorker.perform_in(15.minutes, screen_name, options)
   rescue ActiveRecord::RecordNotUnique => e
     # Do nothing
   rescue => e
