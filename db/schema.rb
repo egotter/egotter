@@ -557,7 +557,7 @@ ActiveRecord::Schema.define(version: 2021_03_02_160019) do
   end
 
   create_table "egotter_followers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "screen_name", null: false
+    t.string "screen_name"
     t.bigint "uid", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

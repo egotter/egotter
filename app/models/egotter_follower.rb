@@ -3,7 +3,7 @@
 # Table name: egotter_followers
 #
 #  id          :bigint(8)        not null, primary key
-#  screen_name :string(191)      not null
+#  screen_name :string(191)
 #  uid         :bigint(8)        not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
@@ -50,7 +50,7 @@ class EgotterFollower < ApplicationRecord
 
     def import_uids(uids)
       uids.each_slice(1000).with_index do |uids_array, i|
-        users = uids_array.map.with_index { |uid, i| new(uid: uid, screen_name: "sn#{i}") }
+        users = uids_array.map { |uid| new(uid: uid) }
         benchmark("import_uids chunk=#{i} uids=#{uids_array.size}") do
           import users, on_duplicate_key_update: %i(uid), validate: false
         end
