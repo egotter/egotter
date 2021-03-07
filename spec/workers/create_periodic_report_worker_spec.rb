@@ -56,6 +56,15 @@ RSpec.describe CreatePeriodicReportWorker do
       expect(worker).to receive(:do_perform).with(request, {})
       subject
     end
+
+    context 'sending DM is rate-limited' do
+      before { allow(PeriodicReport).to receive(:send_report_limited?).with(user.uid).and_return(true) }
+      it do
+        expect(worker).to receive(:retry_current_report).with(request.id, {})
+        expect(worker).not_to receive(:do_perform)
+        subject
+      end
+    end
   end
 
   describe '#do_perform' do

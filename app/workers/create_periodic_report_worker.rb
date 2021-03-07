@@ -1,5 +1,6 @@
 class CreatePeriodicReportWorker
   include Sidekiq::Worker
+  include ReportRetryHandler
   prepend TimeoutableWorker
   sidekiq_options queue: 'report_low', retry: 0, backtrace: false
 
@@ -42,8 +43,7 @@ class CreatePeriodicReportWorker
     return unless request.user.authorized?
 
     if PeriodicReport.send_report_limited?(request.user.uid)
-      logger.info "Send periodic report later request_id=#{request_id} raised=false"
-      CreatePeriodicReportWorker.perform_in(1.hour + rand(30).minutes, request_id, options)
+      retry_current_report(request_id, options)
       return
     end
 
