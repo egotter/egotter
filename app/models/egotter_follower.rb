@@ -50,9 +50,10 @@ class EgotterFollower < ApplicationRecord
 
     def import_uids(uids)
       uids.each_slice(1000).with_index do |uids_array, i|
-        users = uids_array.map { |uid| new(uid: uid) }
+        time = Time.zone.now
+        data = uids_array.map { |uid| [uid, time, time] }
         benchmark("import_uids chunk=#{i} uids=#{uids_array.size}") do
-          import users, on_duplicate_key_update: %i(uid), validate: false
+          import %i(uid created_at updated_at), data, on_duplicate_key_update: %i(uid updated_at), validate: false, timestamps: false
         end
       end
     end
@@ -73,7 +74,11 @@ class EgotterFollower < ApplicationRecord
 
     def benchmark(message, &block)
       super(message) do
-        Rails.logger.silence(&block)
+        if Rails.env.production?
+          Rails.logger.silence(&block)
+        else
+          yield
+        end
       end
     end
   end

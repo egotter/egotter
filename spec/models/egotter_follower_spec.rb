@@ -18,7 +18,8 @@ RSpec.describe EgotterFollower, type: :model do
   end
 
   describe '.import_uids' do
-    subject { described_class.import_uids([1, 2]) }
+    subject { described_class.import_uids([1, 2, 3]) }
+    before { create(:egotter_follower, uid: 2) }
     it { expect { subject }.to change { described_class.all.size }.by(2) }
   end
 
