@@ -9,10 +9,20 @@ RSpec.describe CreateBlockReportWorker do
   end
 
   describe '#perform' do
-    subject { worker.perform(user.id) }
+    let(:options) { {} }
+    subject { worker.perform(user.id, options) }
 
     before do
       create(:blocking_relationship, from_uid: 1, to_uid: user.uid)
+    end
+
+    context 'sending DM is rate-limited' do
+      before { allow(PeriodicReport).to receive(:send_report_limited?).with(user.uid).and_return(true) }
+      it do
+        expect(worker).to receive(:retry_current_job).with(user.id, options)
+        expect(BlockReport).not_to receive(:you_are_blocked)
+        subject
+      end
     end
 
     context '#has_valid_subscription? returns true' do
@@ -31,6 +41,27 @@ RSpec.describe CreateBlockReportWorker do
         expect(user).to receive(:following_egotter?).and_return(true)
         expect(PeriodicReport).to receive(:access_interval_too_long?).with(user).and_return(false)
         expect(BlockReport).to receive(:you_are_blocked).with(user.id, requested_by: nil)
+        subject
+      end
+    end
+  end
+
+  describe '#retry_current_job' do
+    let(:options) { {} }
+    let(:exception) { nil }
+    subject { worker.send(:retry_current_job, user.id, options, exception: exception) }
+
+    it do
+      expect(described_class).to receive(:perform_in).
+          with(instance_of(Integer), user.id, options)
+      subject
+    end
+
+    context 'with an exception' do
+      let(:exception) { RuntimeError.new('anything') }
+      it do
+        expect(described_class).to receive(:perform_in).
+            with(instance_of(Integer), user.id, options)
         subject
       end
     end
