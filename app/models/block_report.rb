@@ -86,7 +86,7 @@ class BlockReport < ApplicationRecord
           has_subscription: has_subscription,
           first_name: mask_name(blocked_user&.screen_name, has_subscription),
           total_count: BlockingRelationship.where(to_uid: user.uid).size,
-          access_url: url_helper.access_confirmations_url(url_options.except(:sign_in_dialog).merge(campaign_params('block_report_access_interval_too_long_access'))),
+          access_url: url_helper.access_confirmations_url(url_options.except(:sign_in_dialog).merge(campaign_params('block_report_access_interval_too_long_access'), user_token: user.user_token)),
           pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('block_report_access_interval_too_long_pricing'))),
           support_url: url_helper.support_url(url_options.merge(campaign_params('block_report_access_interval_too_long_support'))),
       )

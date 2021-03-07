@@ -7,6 +7,7 @@ RSpec.describe CreatePeriodicReportAccessIntervalTooLongMessageWorker do
     let(:user) { create(:user) }
     subject { worker.perform(user.id) }
     it do
+      expect(PeriodicReport).to receive_message_chain(:access_interval_too_long_message, :message).with(user.id).with(no_args).and_return('message')
       expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(anything)
       subject
     end

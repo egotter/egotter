@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CreatePeriodicReportReceivedWebAccessMessageWorker do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, with_credential_token: true) }
   let(:worker) { described_class.new }
 
   describe '#perform' do

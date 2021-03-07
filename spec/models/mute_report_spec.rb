@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe MuteReport, type: :model do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, with_credential_token: true) }
 
   before do
     allow(User).to receive(:find).with(user.id).and_return(user)

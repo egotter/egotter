@@ -245,8 +245,8 @@ class PeriodicReport < ApplicationRecord
       template = Rails.root.join('app/views/periodic_reports/web_access_hard_limited.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           access_day: user.access_days.last,
-          url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(campaign_params('web_access_hard_limited'))),
-          access_url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(campaign_params('web_access_hard_limited'))),
+          url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(campaign_params('web_access_hard_limited'), user_token: user.user_token)),
+          access_url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(campaign_params('web_access_hard_limited'), user_token: user.user_token)),
           screen_name: user.screen_name,
           support_url: support_url(dialog_params.merge(campaign_params('web_access_hard_limited_support'))),
           pricing_url: pricing_url(dialog_params.merge(campaign_params('web_access_hard_limited_pricing'))),

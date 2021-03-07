@@ -283,4 +283,14 @@ class User < ApplicationRecord
   def persisted_favorites_count
     TwitterDB::User.find_by(uid: uid)&.favourites_count
   end
+
+  def user_token
+    signature_base = uid.to_s
+    signature_key = credential_token.secret
+    OpenSSL::HMAC.hexdigest('sha1', signature_key, signature_base)
+  end
+
+  def valid_user_token?(value)
+    user_token == value
+  end
 end

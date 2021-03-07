@@ -37,7 +37,7 @@ class CreatePeriodicReportReceivedWebAccessMessageWorker
 
   # options:
   def perform(uid, options = {})
-    if (user = User.select(:id, :screen_name).find_by(uid: uid))
+    if (user = User.find_by(uid: uid))
       if PeriodicReport.access_interval_too_long?(user)
         # CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
         User.egotter.api_client.create_direct_message_event(uid, build_second_message(user))
@@ -58,7 +58,7 @@ class CreatePeriodicReportReceivedWebAccessMessageWorker
   private
 
   def build_second_message(user)
-    url = Rails.application.routes.url_helpers.access_confirmations_url(share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false, via: 'web_access_received_message')
+    url = Rails.application.routes.url_helpers.access_confirmations_url(user_token: user.user_token, share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false, via: 'web_access_received_message')
     ERB.new(SECOND_MESSAGE).result_with_hash(url: url, user: user.screen_name)
   end
 end

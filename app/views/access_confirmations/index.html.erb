@@ -1,10 +1,22 @@
 <h2 class="h3 text-center my-5">
   <% if user_signed_in? %>
-    <%= t('.page_title_ok') %>
+    <%= t('.page_title_ok', user: current_user.screen_name) %>
   <% else %>
     <%= t('.page_title') %>
   <% end %>
 </h2>
+
+<div class="my-5">
+  <% if user_signed_in? %>
+    <% if params[:user_token] && current_user.valid_user_token?(params[:user_token]) %>
+      <%= t('.already_signed_in_description', user: current_user.screen_name) %>
+    <% else %>
+      <span class="text-danger"><%= t('.make_sure_description', user: current_user.screen_name) %></span>
+    <% end %>
+  <% else %>
+    <span class="text-danger"><%= t('.sign_in_description') %></span>
+  <% end %>
+</div>
 
 <div class="mt-3 mb-1"><%= render partial: 'sign_in_button' %></div>
 <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top, user: @user}) %>
@@ -12,13 +24,17 @@
 
 <div class="my-5">
   <% if user_signed_in? %>
-    <%= t('.already_signed_in_description', user: current_user.screen_name) %>
+    <% if params[:user_token] && current_user.valid_user_token?(params[:user_token]) %>
+      <%= t('.already_signed_in_description', user: current_user.screen_name) %>
+    <% else %>
+      <span class="text-danger"><%= t('.make_sure_description', user: current_user.screen_name) %></span>
+    <% end %>
   <% else %>
-    <%= t('.sign_in_description') %>
+    <span class="text-danger"><%= t('.sign_in_description') %></span>
   <% end %>
 </div>
 
 <div class="text-muted small my-3"><%= t('.notice1') %></div>
-<% url = access_confirmations_path(share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, purchase_dialog: 1, via: current_via('switch_account')) %>
+<% url = access_confirmations_path(user_token: params[:user_token], share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, purchase_dialog: 1, via: current_via('switch_account')) %>
 <div class="text-muted small my-3"><%= t('.notice2_html', url: sign_in_path(force_login: true, via: current_via('switch_account'), redirect_path: url)) %></div>
 <div class="text-muted small my-3"><%= t('.notice3_html') %></div>
