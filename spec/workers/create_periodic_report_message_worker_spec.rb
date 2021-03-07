@@ -19,44 +19,91 @@ RSpec.describe CreatePeriodicReportMessageWorker do
   end
 
   describe '#perform' do
+    let(:user_id) { user.id }
+    let(:options) { {} }
     subject { worker.perform(user_id, options) }
 
     before do
-      user.create_notification_setting!
-      allow(user.notification_setting).to receive(:enough_permission_level?).and_return(true)
       allow(User).to receive(:find).with(user.id).and_return(user)
     end
 
-    context 'correct option is specified' do
-      let(:user_id) { user.id }
-      let(:options) do
-        {request_id: 1, start_date: 1.day.ago, end_date: Time.zone.now, unfriends: [1], unfollowers: [2]}
-      end
+    it do
+      expect(worker).to receive(:send_push_message).with(user, options)
+      expect(worker).to receive(:send_direct_message).with(user, options)
+      subject
+    end
+
+    context 'sending DM is rate-limited' do
+      before { allow(PeriodicReport).to receive(:send_report_limited?).with(user.uid).and_return(true) }
       it do
-        expect(worker).to receive(:handle_weird_error).with(user).and_call_original
-        expect(PeriodicReport).to receive_message_chain(:periodic_message, :deliver!).with(user.id, options).with(no_args)
+        expect(worker).to receive(:retry_current_job).with(user.id, options)
+        expect(worker).not_to receive(:send_push_message)
+        expect(worker).not_to receive(:send_direct_message)
         subject
       end
     end
+  end
+
+  describe '#send_push_message' do
+    let(:options) { {request_id: 1} }
+    subject { worker.send_push_message(user, options) }
+    before { allow(user).to receive_message_chain(:credential_token, :instance_id).and_return('id') }
+    it do
+      expect(PeriodicReport).to receive(:periodic_push_message).with(user.id, options).and_return('message')
+      expect(CreatePushNotificationWorker).to receive(:perform_async).with(user.id, '', 'message', request_id: 1)
+      subject
+    end
+  end
+
+  describe '#send_direct_message' do
+    let(:options) { {} }
+    subject { worker.send_direct_message(user, options) }
+
+    it do
+      expect(PeriodicReport).to receive_message_chain(:periodic_message, :deliver!).with(user.id, options).with(no_args)
+      subject
+    end
 
     context 'an exception is raised' do
-      let(:user_id) { user.id }
       let(:options) { {} }
-      before { allow(options).to receive(:symbolize_keys!).and_raise('anything') }
+      before { allow(worker).to receive(:handle_weird_error).and_raise('anything') }
 
-      context "ignorable_report_error? returns true" do
-        before { allow(worker).to receive(:ignorable_report_error?).with(anything).and_return(true) }
+      context 'the exception is Twitter::Error::EnhanceYourCalm' do
+        before { allow(DirectMessageStatus).to receive(:enhance_your_calm?).with(anything).and_return(true) }
         it do
-          expect(worker.logger).to receive(:info).with(instance_of(String))
-          subject
+          expect(worker).to receive(:retry_current_job).with(user.id, options, exception: instance_of(RuntimeError))
+          expect { subject }.not_to raise_error
         end
       end
 
-      context "unknown exception is raised" do
-        it do
-          expect(worker.logger).to receive(:warn).with(instance_of(String))
-          subject
-        end
+      context 'the exception is ignorable' do
+        before { allow(worker).to receive(:ignorable_report_error?).with(anything).and_return(true) }
+        it { expect { subject }.not_to raise_error }
+      end
+
+      context 'the exception is unknown' do
+        it { expect { subject }.to raise_error('anything') }
+      end
+    end
+  end
+
+  describe '#retry_current_job' do
+    let(:options) { {} }
+    let(:exception) { nil }
+    subject { worker.retry_current_job(user.id, options, exception: exception) }
+
+    it do
+      expect(CreatePeriodicReportMessageWorker).to receive(:perform_in).
+          with(instance_of(Integer), user.id, options)
+      subject
+    end
+
+    context 'with an exception' do
+      let(:exception) { RuntimeError.new('anything') }
+      it do
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_in).
+            with(instance_of(Integer), user.id, options)
+        subject
       end
     end
   end

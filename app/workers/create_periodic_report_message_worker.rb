@@ -38,51 +38,48 @@ class CreatePeriodicReportMessageWorker
   #   new_friends
   #   new_followers
   #   worker_context
-  #
-  #   interval_too_short
-  #   stop_requested
-  #   restart_requested
-  #   not_following
-  #   request_interval_too_short
-  #   sending_soft_limited
-  #   web_access_hard_limited
-  #   scheduled_job_exists and scheduled_jid
-  #   scheduled_job_created and scheduled_jid
-  #   allotted_messages_will_expire
   def perform(user_id, options = {})
     options = options.symbolize_keys!
-
     user = User.find(user_id)
 
     if PeriodicReport.send_report_limited?(user.uid)
-      logger.info "Send periodic report later user_id=#{user_id} raised=false"
-      CreatePeriodicReportMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
+      retry_current_job(user.id, options)
       return
     end
 
-    if user.credential_token.instance_id.present?
-      begin
-        push_message = PeriodicReport.periodic_push_message(user.id, options)
-        CreatePushNotificationWorker.perform_async(user.id, '', push_message, request_id: options[:request_id])
-      rescue => e
-        logger.warn "I can't send a push-notification #{e.inspect} user_id=#{user_id} request_id=#{options[:request_id]}"
-      end
-    end
+    send_push_message(user, options)
+    send_direct_message(user, options)
+  rescue => e
+    logger.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
+    logger.info e.backtrace.join("\n")
+  end
 
+  def send_push_message(user, options)
+    return unless user.credential_token.instance_id.present?
+
+    message = PeriodicReport.periodic_push_message(user.id, options)
+    CreatePushNotificationWorker.perform_async(user.id, '', message, request_id: options[:request_id])
+  rescue => e
+    logger.warn "I can't send a push-notification #{e.inspect} user_id=#{user.id} request_id=#{options[:request_id]}"
+  end
+
+  def send_direct_message(user, options)
     handle_weird_error(user) do
-      PeriodicReport.periodic_message(user_id, options).deliver!
+      PeriodicReport.periodic_message(user.id, options).deliver!
     end
-
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
-      logger.warn "Send periodic report later user_id=#{user_id} raised=true"
-      CreatePeriodicReportMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
+      retry_current_job(user.id, options, exception: e)
     elsif ignorable_report_error?(e)
-      logger.info "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
+      logger.info "#{e.class} #{e.message} user_id=#{user.id} options=#{options}"
     else
-      logger.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
-      logger.info e.backtrace.join("\n")
+      raise
     end
+  end
+
+  def retry_current_job(user_id, options, exception: nil)
+    logger.add(exception ? Logger::WARN : Logger::INFO) { "CreatePeriodicReportMessageWorker will be performed again user_id=#{user_id} exception=#{exception.inspect}" }
+    CreatePeriodicReportMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options)
   end
 
   def send_message_from_egotter(uid, message, options = {})

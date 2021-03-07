@@ -75,6 +75,10 @@ class PeriodicReport < ApplicationRecord
     end
 
     def build_report_message(user, token, options)
+      raise ':start_date is not specified' unless options[:start_date]
+      raise ':end_date is not specified' unless options[:end_date]
+      raise ':unfollowers is not specified' unless options[:unfollowers]
+
       start_date = extract_date(:start_date, options)
       end_date = extract_date(:end_date, options)
       account_statuses = options[:account_statuses] || []
@@ -390,6 +394,8 @@ class PeriodicReport < ApplicationRecord
     end
 
     def generate_profile_urls(screen_names, url_options, add_atmark = false, hide_name = true, account_statuses = [])
+      return [] if screen_names.blank?
+
       encrypted_names = encrypt_indicator_names(screen_names)
 
       screen_names.map.with_index do |screen_name, i|
