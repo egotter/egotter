@@ -27,33 +27,6 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       allow(User).to receive(:find).with(user.id).and_return(user)
     end
 
-    context 'options[:unregistered] is specified' do
-      let(:user_id) { nil }
-      let(:options) { {unregistered: true, uid: 1} }
-      it do
-        expect(CreatePeriodicReportUnregisteredMessageWorker).to receive(:perform_async).with(1)
-        subject
-      end
-    end
-
-    context 'options[:permission_level_not_enough] is specified' do
-      let(:user_id) { user.id }
-      let(:options) { {permission_level_not_enough: true} }
-      it do
-        expect(CreatePeriodicReportPermissionLevelNotEnoughMessageWorker).to receive(:perform_async).with(user.id)
-        subject
-      end
-    end
-
-    context 'options[:unauthorized] is specified' do
-      let(:user_id) { user.id }
-      let(:options) { {unauthorized: true} }
-      it do
-        expect(CreatePeriodicReportUnauthorizedMessageWorker).to receive(:perform_async).with(user.id)
-        subject
-      end
-    end
-
     context 'correct option is specified' do
       let(:user_id) { user.id }
       let(:options) do

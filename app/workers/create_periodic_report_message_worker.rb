@@ -40,8 +40,6 @@ class CreatePeriodicReportMessageWorker
   #   worker_context
   #
   #   interval_too_short
-  #   unauthorized
-  #   unregistered and uid
   #   stop_requested
   #   restart_requested
   #   not_following
@@ -54,29 +52,11 @@ class CreatePeriodicReportMessageWorker
   def perform(user_id, options = {})
     options = options.symbolize_keys!
 
-    # TODO Remove later
-    if options[:unregistered]
-      CreatePeriodicReportUnregisteredMessageWorker.perform_async(options[:uid])
-      return
-    end
-
     user = User.find(user_id)
 
     if PeriodicReport.send_report_limited?(user.uid)
       logger.info "Send periodic report later user_id=#{user_id} raised=false"
       CreatePeriodicReportMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
-      return
-    end
-
-    # TODO Remove later
-    if options[:permission_level_not_enough] || !user.notification_setting.enough_permission_level?
-      CreatePeriodicReportPermissionLevelNotEnoughMessageWorker.perform_async(user.id)
-      return
-    end
-
-    # TODO Remove later
-    if options[:unauthorized] || !user.authorized?
-      CreatePeriodicReportUnauthorizedMessageWorker.perform_async(user.id)
       return
     end
 
@@ -110,6 +90,7 @@ class CreatePeriodicReportMessageWorker
     User.egotter.api_client.create_direct_message_event(event: event)
   end
 
+  # TODO Remove later
   def handle_weird_error(user)
     yield
   rescue => e
