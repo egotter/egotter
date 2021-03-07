@@ -53,7 +53,9 @@ class EgotterFollower < ApplicationRecord
         time = Time.zone.now
         data = uids_array.map { |uid| [uid, time, time] }
         benchmark("import_uids chunk=#{i} uids=#{uids_array.size}") do
-          import %i(uid created_at updated_at), data, on_duplicate_key_update: %i(uid updated_at), validate: false, timestamps: false
+          if where(uid: uids_array).size != uids_array.size
+            import %i(uid created_at updated_at), data, on_duplicate_key_update: %i(uid updated_at), validate: false, timestamps: false
+          end
         end
       end
     end
