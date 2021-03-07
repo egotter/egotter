@@ -17,9 +17,9 @@ SETTINGS = [
     [2, 1], # 17
     [2, 1], # 18
     [2, 1], # 19
-    [3, 2], # 20
-    [3, 2], # 21
-    [3, 2], # 22
+    [3, 1], # 20
+    [3, 1], # 21
+    [3, 1], # 22
     [2, 1], # 23
     [2, 1], # 00
     [2, 1], # 01
@@ -36,6 +36,8 @@ def now
   Time.now.utc
 end
 
+# TODO Run the below task in Ruby
+
 def adjust_server(role, instance_type, num, dry_run)
   params = "--adjust --role #{role} --instance-type #{instance_type} --count #{num} --without-tag"
   cmd = "cd /var/egotter && /usr/local/bin/bundle exec bin/deploy.rb #{params}"
@@ -48,6 +50,7 @@ def list_server(role)
   `#{cmd}`.chomp
 end
 
+# TODO Set suitable instance_type
 def adjust_web(dry_run)
   prev = list_server('web')
   count = SETTINGS[now.hour][0]
@@ -62,7 +65,8 @@ end
 def adjust_sidekiq(dry_run)
   prev = list_server('sidekiq')
   count = SETTINGS[now.hour][1]
-  count += 1 if remaining_reports > 100
+  count += 1 if remaining_creation_jobs > 1000
+  count += 1 if remaining_creation_jobs > 10000
   adjust_server('sidekiq', 'm5.large', count, dry_run)
   cur = list_server('sidekiq')
   post("prev=#{prev} cur=#{cur}") if prev != cur
@@ -83,9 +87,12 @@ rescue => e
   0
 end
 
-def remaining_reports
-  uri = URI.parse('https://egotter.com/api/v1/report_stats?key=' + ENV['REPORT_STATS_KEY'])
-  JSON.parse(Net::HTTP.get(uri))['report_low']
+def remaining_creation_jobs
+  unless @remaining_creation_jobs
+    uri = URI.parse('https://egotter.com/api/v1/report_stats?key=' + ENV['REPORT_STATS_KEY'])
+    JSON.parse(Net::HTTP.get(uri))['CreateReportTwitterUserWorker']
+  end
+  @remaining_creation_jobs
 rescue => e
   0
 end
