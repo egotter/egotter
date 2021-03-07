@@ -3,7 +3,7 @@ module Api
     class AccessStatsController < ApplicationController
 
       skip_before_action :verify_authenticity_token
-      before_action :check_key
+      before_action :check_key, if: -> { Rails.env.production? }
 
       def index
         # count = GoogleAnalyticsClient.new.active_users

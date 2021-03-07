@@ -3,17 +3,19 @@ module Api
     class ReportStatsController < ApplicationController
 
       skip_before_action :verify_authenticity_token
-      before_action :check_key
+      before_action :check_key, if: -> { Rails.env.production? }
 
       def index
-        render json: %w(report_low report_high).map { |name| [name, Sidekiq::Queue.new(name).size] }.to_h
+        response = %w(report_low report_high CreateReportTwitterUserWorker).map do |name|
+          [name, Sidekiq::Queue.new(name).size]
+        end.to_h
+        render json: response
       end
 
       private
 
       def check_key
-        # TODO Use STATS_API_KEY
-        unless params['key'] == ENV['REPORT_STATS_KEY']
+        unless params['key'] == ENV['STATS_API_KEY']
           head :forbidden
         end
       end
