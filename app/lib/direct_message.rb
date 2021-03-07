@@ -53,6 +53,8 @@ class DirectMessage
 
     res = https.start { https.request(req) }
     Media.new(res.body, res['content-type'])
+  rescue => e
+    nil
   end
 
   def dig(*args)

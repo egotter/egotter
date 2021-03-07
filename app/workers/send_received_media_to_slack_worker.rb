@@ -12,7 +12,13 @@ class SendReceivedMediaToSlackWorker
       media = dm.retrieve_media(client)
       user = TwitterDB::User.find_by(uid: dm.sender_id)
       text = "uid=#{dm.sender_id} screen_name=#{user&.screen_name} text=#{dm.text}"
-      SlackBotClient.channel('general').upload_media(media, initial_comment: text)
+
+      if media.present?
+        SlackBotClient.channel('general').upload_media(media, initial_comment: text)
+      else
+        text += " media=error"
+        SlackBotClient.channel('general').post_message(text)
+      end
     end
   rescue => e
     logger.warn "#{e.inspect} response=#{response.inspect.truncate(100)}"
