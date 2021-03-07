@@ -11,6 +11,9 @@ class ApiClient
   def create_direct_message_event(*args)
     resp = twitter.create_direct_message_event(*args).to_h
     DirectMessage.new(event: resp)
+  rescue => e
+    CreateDirectMessageErrorLogWorker.perform_async(args, e.class, e.message, Time.zone.now)
+    raise
   end
 
   def direct_message(id)
