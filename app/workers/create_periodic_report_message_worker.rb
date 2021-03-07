@@ -3,6 +3,7 @@ require 'digest/md5'
 class CreatePeriodicReportMessageWorker
   include Sidekiq::Worker
   include ReportErrorHandler
+  include ReportRetryHandler
   prepend TimeoutableWorker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
@@ -43,7 +44,7 @@ class CreatePeriodicReportMessageWorker
     user = User.find(user_id)
 
     if PeriodicReport.send_report_limited?(user.uid)
-      retry_current_job(user.id, options)
+      retry_current_report(user.id, options)
       return
     end
 
@@ -69,17 +70,12 @@ class CreatePeriodicReportMessageWorker
     end
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
-      retry_current_job(user.id, options, exception: e)
+      retry_current_report(user.id, options, exception: e)
     elsif ignorable_report_error?(e)
       logger.info "#{e.class} #{e.message} user_id=#{user.id} options=#{options}"
     else
       raise
     end
-  end
-
-  def retry_current_job(user_id, options, exception: nil)
-    logger.add(exception ? Logger::WARN : Logger::INFO) { "#{self.class} will be performed again user_id=#{user_id} exception=#{exception.inspect}" }
-    CreatePeriodicReportMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options)
   end
 
   def send_message_from_egotter(uid, message, options = {})

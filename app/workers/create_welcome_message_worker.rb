@@ -1,6 +1,7 @@
 class CreateWelcomeMessageWorker
   include Sidekiq::Worker
   include ReportErrorHandler
+  include ReportRetryHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -18,7 +19,7 @@ class CreateWelcomeMessageWorker
     return unless user.authorized?
 
     if PeriodicReport.send_report_limited?(user.uid)
-      retry_current_job(user_id, options)
+      retry_current_report(user_id, options)
       return
     end
 
@@ -34,15 +35,10 @@ class CreateWelcomeMessageWorker
     message.deliver!
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
-      retry_current_job(user.id, options, exception: e)
+      retry_current_report(user.id, options, exception: e)
     else
       error_message = "#{e.inspect} user_id=#{user.id} screen_name=#{user.screen_name} options=#{options.inspect}"
       SendMessageToSlackWorker.perform_async(:welcome_messages, error_message)
     end
-  end
-
-  def retry_current_job(user_id, options, exception: nil)
-    logger.add(exception ? Logger::WARN : Logger::INFO) { "#{self.class} will be performed again user_id=#{user_id} exception=#{exception.inspect}" }
-    CreateWelcomeMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options)
   end
 end

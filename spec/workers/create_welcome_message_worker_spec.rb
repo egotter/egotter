@@ -20,7 +20,7 @@ RSpec.describe CreateWelcomeMessageWorker do
     context 'sending DM is rate-limited' do
       before { allow(PeriodicReport).to receive(:send_report_limited?).with(user.uid).and_return(true) }
       it do
-        expect(worker).to receive(:retry_current_job).with(user.id, options)
+        expect(worker).to receive(:retry_current_report).with(user.id, options)
         expect(worker).not_to receive(:send_direct_message)
         subject
       end
@@ -42,7 +42,7 @@ RSpec.describe CreateWelcomeMessageWorker do
       context 'the exception is Twitter::Error::EnhanceYourCalm' do
         before { allow(DirectMessageStatus).to receive(:enhance_your_calm?).with(anything).and_return(true) }
         it do
-          expect(worker).to receive(:retry_current_job).with(user.id, options, exception: instance_of(RuntimeError))
+          expect(worker).to receive(:retry_current_report).with(user.id, options, exception: instance_of(RuntimeError))
           expect { subject }.not_to raise_error
         end
       end
@@ -52,27 +52,6 @@ RSpec.describe CreateWelcomeMessageWorker do
           expect(SendMessageToSlackWorker).to receive(:perform_async).with(:welcome_messages, instance_of(String))
           subject
         end
-      end
-    end
-  end
-
-  describe '#retry_current_job' do
-    let(:options) { {} }
-    let(:exception) { nil }
-    subject { worker.retry_current_job(user.id, options, exception: exception) }
-
-    it do
-      expect(described_class).to receive(:perform_in).
-          with(instance_of(Integer), user.id, options)
-      subject
-    end
-
-    context 'with an exception' do
-      let(:exception) { RuntimeError.new('anything') }
-      it do
-        expect(described_class).to receive(:perform_in).
-            with(instance_of(Integer), user.id, options)
-        subject
       end
     end
   end
