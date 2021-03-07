@@ -20,13 +20,13 @@ class GoogleAnalyticsClient
   def mobile_active_users
     realtime_data(metrics: %w(rt:activeUsers), dimensions: %w(rt:deviceCategory)).rows.find { |name, _| name == 'MOBILE' }[1].to_i
   rescue => e
-    Rails.logger.warn "mobile_active_users: #{e.inspect}"
+    -1
   end
 
   def desktop_active_users
     realtime_data(metrics: %w(rt:activeUsers), dimensions: %w(rt:deviceCategory)).rows.find { |name, _| name == 'DESKTOP' }[1].to_i
   rescue => e
-    Rails.logger.warn "desktop_active_users: #{e.inspect}"
+    -1
   end
 
   # puts result.column_headers.map { |h| h.name }.inspect
