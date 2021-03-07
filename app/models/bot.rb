@@ -26,6 +26,23 @@ class Bot < ApplicationRecord
     ApiClient.instance(options.merge(access_token: token, access_token_secret: secret))
   end
 
+  def sync_credential_status
+    begin
+      user = api_client.twitter.verify_credentials
+      assign_attributes(authorized: true, screen_name: user.screen_name)
+    rescue => e
+      if TwitterApiStatus.unauthorized?(e)
+        assign_attributes(authorized: false)
+      elsif TwitterApiStatus.temporarily_locked?(e)
+        assign_attributes(locked: true)
+      else
+        raise
+      end
+    end
+
+    save! if changed?
+  end
+
   class << self
     def current_ids
       where(authorized: true, locked: false).pluck(:id)
@@ -41,6 +58,7 @@ class Bot < ApplicationRecord
       end
     end
 
+    # TODO Remove later
     def invalidate_all_expired_credentials
       verify_all_credentials.each do |cred|
         bot = find(cred[:id])
@@ -58,6 +76,7 @@ class Bot < ApplicationRecord
       end
     end
 
+    # TODO Remove later
     def verify_all_credentials
       processed = Queue.new
 

@@ -1,3 +1,4 @@
+# TODO Remove later
 class InvalidateExpiredCredentialsWorker
   include Sidekiq::Worker
   include WorkerErrorHandler
