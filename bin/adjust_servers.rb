@@ -89,8 +89,8 @@ end
 
 def remaining_creation_jobs
   unless @remaining_creation_jobs
-    uri = URI.parse('https://egotter.com/api/v1/report_stats?key=' + ENV['REPORT_STATS_KEY'])
-    JSON.parse(Net::HTTP.get(uri))['CreateReportTwitterUserWorker']
+    uri = URI.parse('https://egotter.com/api/v1/report_stats?key=' + ENV['STATS_API_KEY'])
+    @remaining_creation_jobs = JSON.parse(Net::HTTP.get(uri))['CreateReportTwitterUserWorker']
   end
   @remaining_creation_jobs
 rescue => e
