@@ -76,5 +76,4 @@ RSpec.describe CreateWelcomeMessageWorker do
       end
     end
   end
-
 end
