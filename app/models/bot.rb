@@ -58,56 +58,6 @@ class Bot < ApplicationRecord
       end
     end
 
-    # TODO Remove later
-    def invalidate_all_expired_credentials
-      verify_all_credentials.each do |cred|
-        bot = find(cred[:id])
-        bot.screen_name = cred[:screen_name]
-        bot.authorized = cred[:authorized]
-        bot.locked = cred[:locked]
-
-        if bot.changed?
-          bot.save!
-
-          message = "bot is changed #{bot.saved_changes}"
-          SlackClient.bot.send_message(message)
-          logger.warn message
-        end
-      end
-    end
-
-    # TODO Remove later
-    def verify_all_credentials
-      processed = Queue.new
-
-      all.each do |bot|
-        screen_name = bot.screen_name
-        suspended = nil
-        authorized = true
-        locked = false
-
-        begin
-          cred = bot.api_client.verify_credentials
-          screen_name = cred[:screen_name]
-          suspended = cred[:suspended]
-          bot.api_client.users([bot.id])
-        rescue => e
-          if TwitterApiStatus.unauthorized?(e)
-            authorized = false
-          elsif TwitterApiStatus.temporarily_locked?(e)
-            locked = true
-          elsif TwitterApiStatus.no_user_matches?(e)
-            # Do nothing
-          else
-            raise
-          end
-        end
-        processed << {id: bot.id, uid: bot.uid, screen_name: screen_name, suspended: suspended, authorized: authorized, locked: locked}
-      end
-
-      processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }
-    end
-
     def all_rate_limit
       processed = Queue.new
       current_ids.each do |id|
