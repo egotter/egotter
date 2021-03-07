@@ -18,8 +18,7 @@ class CreateMuteReportWorker
     return if already_stop_requested?(user)
 
     if PeriodicReport.send_report_limited?(user.uid)
-      logger.info "Send mute report later user_id=#{user_id} raised=false"
-      CreateMuteReportWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
+      retry_current_job(user_id, options)
       return
     end
 
@@ -43,8 +42,7 @@ class CreateMuteReportWorker
     MuteReport.you_are_muted(user.id, requested_by: requested_by_user? ? 'user' : nil).deliver!
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
-      logger.warn "Send mute report later user_id=#{user_id} raised=true"
-      CreateMuteReportWorker.perform_in(1.hour + rand(30).minutes, user_id, options.merge(delay: true))
+      retry_current_job(user_id, options, exception: e)
     elsif ignorable_report_error?(e)
       # Do nothing
     else
@@ -53,6 +51,11 @@ class CreateMuteReportWorker
   end
 
   private
+
+  def retry_current_job(user_id, options, exception: nil)
+    logger.add(exception ? Logger::WARN : Logger::INFO) { "#{self.class} will be performed again user_id=#{user_id} exception=#{exception.inspect}" }
+    CreateMuteReportWorker.perform_in(1.hour + rand(30).minutes, user_id, options)
+  end
 
   def already_stop_requested?(user)
     StopMuteReportRequest.exists?(user_id: user.id) && self.class != CreateMuteReportByUserRequestWorker
