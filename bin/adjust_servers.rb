@@ -50,7 +50,10 @@ end
 
 def adjust_web(dry_run)
   prev = list_server('web')
-  adjust_server('web', 't3.medium', SETTINGS[now.hour][0], dry_run)
+  count = SETTINGS[now.hour][0]
+  count += 1 if active_users > 300
+  count += 1 if active_users > 400
+  adjust_server('web', 't3.medium', count, dry_run)
   cur = list_server('web')
   post("prev=#{prev} cur=#{cur}") if prev != cur
 end
@@ -58,7 +61,7 @@ end
 def adjust_sidekiq(dry_run)
   prev = list_server('sidekiq')
   count = SETTINGS[now.hour][1]
-  # count += 1 if remaining_reports > 0
+  count += 1 if remaining_reports > 100
   adjust_server('sidekiq', 'm5.large', count, dry_run)
   cur = list_server('sidekiq')
   post("prev=#{prev} cur=#{cur}") if prev != cur
@@ -67,6 +70,16 @@ end
 def post(text)
   uri = URI.parse(ENV['SLACK_DEPLOY_URL'])
   Net::HTTP.post_form(uri, payload: {text: text}.to_json).body
+end
+
+def active_users
+  unless @active_users
+    uri = URI.parse('https://egotter.com/api/v1/access_stats?key=' + ENV['STATS_API_KEY'])
+    @active_users = JSON.parse(Net::HTTP.get(uri))['active_users']
+  end
+  @active_users
+rescue => e
+  0
 end
 
 def remaining_reports
