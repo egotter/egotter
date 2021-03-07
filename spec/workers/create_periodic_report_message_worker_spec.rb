@@ -93,7 +93,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
     subject { worker.retry_current_job(user.id, options, exception: exception) }
 
     it do
-      expect(CreatePeriodicReportMessageWorker).to receive(:perform_in).
+      expect(described_class).to receive(:perform_in).
           with(instance_of(Integer), user.id, options)
       subject
     end
@@ -101,7 +101,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
     context 'with an exception' do
       let(:exception) { RuntimeError.new('anything') }
       it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_in).
+        expect(described_class).to receive(:perform_in).
             with(instance_of(Integer), user.id, options)
         subject
       end

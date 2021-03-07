@@ -9,22 +9,72 @@ RSpec.describe CreateWelcomeMessageWorker do
   end
 
   describe '#perform' do
-    subject { worker.perform(user.id, {}) }
+    let(:options) { {} }
+    subject { worker.perform(user.id, options) }
+
+    it do
+      expect(worker).to receive(:send_direct_message).with(user, options)
+      subject
+    end
+
+    context 'sending DM is rate-limited' do
+      before { allow(PeriodicReport).to receive(:send_report_limited?).with(user.uid).and_return(true) }
+      it do
+        expect(worker).to receive(:retry_current_job).with(user.id, options)
+        expect(worker).not_to receive(:send_direct_message)
+        subject
+      end
+    end
+  end
+
+  describe '#send_direct_message' do
+    let(:options) { {} }
+    subject { worker.send_direct_message(user, options) }
 
     it do
       expect(WelcomeMessage).to receive_message_chain(:welcome, :deliver!).with(user.id).with(no_args)
       subject
     end
 
-    context 'An error occurs when sending a welcome message' do
-      before do
-        allow(WelcomeMessage).to receive_message_chain(:welcome, :deliver!).
-            with(user.id).with(no_args).and_raise('Error')
+    context 'an exception is raised' do
+      before { allow(WelcomeMessage).to receive(:welcome).with(user.id).and_raise('anything') }
+
+      context 'the exception is Twitter::Error::EnhanceYourCalm' do
+        before { allow(DirectMessageStatus).to receive(:enhance_your_calm?).with(anything).and_return(true) }
+        it do
+          expect(worker).to receive(:retry_current_job).with(user.id, options, exception: instance_of(RuntimeError))
+          expect { subject }.not_to raise_error
+        end
       end
+
+      context 'the exception is unknown' do
+        it do
+          expect(SendMessageToSlackWorker).to receive(:perform_async).with(:welcome_messages, instance_of(String))
+          subject
+        end
+      end
+    end
+  end
+
+  describe '#retry_current_job' do
+    let(:options) { {} }
+    let(:exception) { nil }
+    subject { worker.retry_current_job(user.id, options, exception: exception) }
+
+    it do
+      expect(described_class).to receive(:perform_in).
+          with(instance_of(Integer), user.id, options)
+      subject
+    end
+
+    context 'with an exception' do
+      let(:exception) { RuntimeError.new('anything') }
       it do
-        expect(SendMessageToSlackWorker).to receive(:perform_async).with(:welcome_messages, instance_of(String))
+        expect(described_class).to receive(:perform_in).
+            with(instance_of(Integer), user.id, options)
         subject
       end
     end
   end
+
 end

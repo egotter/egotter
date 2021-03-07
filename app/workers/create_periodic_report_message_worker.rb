@@ -78,7 +78,7 @@ class CreatePeriodicReportMessageWorker
   end
 
   def retry_current_job(user_id, options, exception: nil)
-    logger.add(exception ? Logger::WARN : Logger::INFO) { "CreatePeriodicReportMessageWorker will be performed again user_id=#{user_id} exception=#{exception.inspect}" }
+    logger.add(exception ? Logger::WARN : Logger::INFO) { "#{self.class} will be performed again user_id=#{user_id} exception=#{exception.inspect}" }
     CreatePeriodicReportMessageWorker.perform_in(1.hour + rand(30).minutes, user_id, options)
   end
 
