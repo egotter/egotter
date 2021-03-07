@@ -21,12 +21,20 @@ class EgotterFollower < ApplicationRecord
 
   class << self
     def collect_uids(uid = User::EGOTTER_UID)
+      benchmark("collect_uids uid=#{uid}") do
+        collect_with_max_id do |options|
+          client = Bot.api_client.twitter
+          client.follower_ids(uid, options)
+        end
+      end
+    end
+
+    def collect_with_max_id(&block)
       options = {count: 5000, cursor: -1}
       collection = []
 
       50.times do
-        client = Bot.api_client.twitter
-        response = client.follower_ids(uid, options)
+        response = yield(options)
         break if response.nil?
 
         attrs = response.attrs
@@ -50,7 +58,9 @@ class EgotterFollower < ApplicationRecord
     end
 
     def filter_unnecessary_uids(uids)
-      pluck(:uid) - uids
+      benchmark("filter_unnecessary_uids uids=#{uids.size}") do
+        pluck(:uid) - uids
+      end
     end
 
     def delete_uids(uids)

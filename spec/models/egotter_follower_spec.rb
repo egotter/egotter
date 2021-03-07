@@ -2,13 +2,17 @@ require 'rails_helper'
 
 RSpec.describe EgotterFollower, type: :model do
   describe '.collect_uids' do
-    let(:ids) { [1, 2, 3] }
-    let(:response) { double('Response', attrs: {ids: ids, next_cursor: 0}) }
-    let(:client) { double('Client') }
     subject { described_class.collect_uids }
-    before do
-      allow(Bot).to receive_message_chain(:api_client, :twitter).and_return(client)
-      allow(client).to receive(:follower_ids).with(any_args).and_return(response)
+    before { allow(described_class).to receive(:collect_with_max_id).and_return('response') }
+    it { is_expected.to eq('response') }
+  end
+
+  describe '.collect_with_max_id' do
+    let(:ids) { [1, 2, 3] }
+    subject do
+      described_class.collect_with_max_id do
+        double('Response', attrs: {ids: ids, next_cursor: 0})
+      end
     end
     it { is_expected.to eq(ids) }
   end
