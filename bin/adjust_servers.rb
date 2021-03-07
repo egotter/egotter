@@ -53,7 +53,8 @@ def adjust_web(dry_run)
   count = SETTINGS[now.hour][0]
   count += 1 if active_users > 300
   count += 1 if active_users > 400
-  adjust_server('web', 't3.medium', count, dry_run)
+  instance_type = count >= 3 ? 't3.large' : 't3.medium'
+  adjust_server('web', instance_type, count, dry_run)
   cur = list_server('web')
   post("prev=#{prev} cur=#{cur}") if prev != cur
 end
