@@ -1,0 +1,21 @@
+<div class="card">
+  <div class="card-body">
+    <div>
+      <div class="mb-3">
+        @ego_tter をブロックしているため、Webサイトの利用が制限されています。
+      </div>
+
+      <div>
+        <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">公式アカウントに質問</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function () {
+    var deviceType = '<%= request.device_type %>';
+    var controllerAction = '<%= controller_name %>#<%= action_name %>';
+    ahoy.track("BlockerNotPermittedMessage shown", {deviceType: deviceType, controllerAction: controllerAction});
+  });
+</script>

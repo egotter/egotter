@@ -52,7 +52,7 @@ module ApplicationHelper
   end
 
   def show_redirection_modal?
-    user_signed_in? && !@has_error && flash[:alert].blank?
+    user_signed_in? && !@has_error && flash[:alert].blank? && !@bypassed_notice_message_set
   end
 
   def remove_related_page?

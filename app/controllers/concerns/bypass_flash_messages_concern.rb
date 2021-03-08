@@ -9,6 +9,7 @@ module BypassFlashMessagesConcern
       if bypassed_notice_message_found?
         begin
           flash.now[:notice] = bypassed_notice_message
+          @bypassed_notice_message_set = true
         rescue => e
           logger.warn "Cannot create bypassed message for #{session[:bypassed_notice_message]} #{e.inspect} user_id=#{current_user&.id} controller=#{controller_name} action=#{action_name}"
         ensure
@@ -26,6 +27,7 @@ module BypassFlashMessagesConcern
     too_many_searches
     permission_level_not_enough
     omniauth_failure
+    blocker_not_permitted
   )
 
   def set_bypassed_notice_message(key, params = nil)
@@ -61,6 +63,9 @@ module BypassFlashMessagesConcern
     elsif session[:bypassed_notice_message] == BYPASSED_MESSAGE_KEYS[5]
       @without_alert_container = true
       omniauth_failure_message
+    elsif session[:bypassed_notice_message] == BYPASSED_MESSAGE_KEYS[6]
+      @without_alert_container = true
+      blocker_not_permitted_message
     elsif start_page? && user_signed_in?
       @without_alert_container = true
       after_sign_in_message(nil)
@@ -74,6 +79,10 @@ module BypassFlashMessagesConcern
         sign_in_url: sign_in_url(via: 'omniauth_failure_message'),
     }
     render_to_string(template: 'messages/omniauth_failure', layout: false, locals: values)
+  end
+
+  def blocker_not_permitted_message
+    render_to_string(template: 'messages/blocker_not_permitted', layout: false)
   end
 
   def after_sign_in_message(context)

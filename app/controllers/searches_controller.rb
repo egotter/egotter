@@ -7,6 +7,7 @@ class SearchesController < ApplicationController
   before_action :reject_crawler
   before_action { signed_in_user_authorized? }
   before_action { current_user_has_dm_permission? }
+  before_action { current_user_not_blocker? }
   before_action { valid_screen_name? }
   before_action { @self_search = current_user_search_for_yourself?(params[:screen_name]) }
   before_action { !@self_search && !not_found_screen_name?(params[:screen_name]) && !not_found_user?(params[:screen_name]) }

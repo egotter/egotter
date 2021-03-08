@@ -11,6 +11,7 @@ module SearchRequestConcern
     before_action(only: :show) { search_request_concern_bm_start }
     before_action(only: :show) { signed_in_user_authorized? }
     before_action(only: :show) { current_user_has_dm_permission? }
+    before_action(only: :show) { current_user_not_blocker? }
     before_action(only: :show) { valid_screen_name? }
     before_action(only: :show) do
       if skip_search_request_check?

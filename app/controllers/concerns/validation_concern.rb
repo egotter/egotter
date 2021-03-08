@@ -128,6 +128,19 @@ module ValidationConcern
     end
   end
 
+  def current_user_not_blocker?
+    return true unless user_signed_in?
+
+    if EgotterBlocker.where(uid: current_user.uid).exists?
+      set_bypassed_notice_message('blocker_not_permitted')
+      redirect_to root_path(via: current_via(__method__))
+      create_error_log(__method__, 'blocker_not_permitted')
+      false
+    else
+      true
+    end
+  end
+
   def search_request_cache_exists?(screen_name)
     if SearchRequest.new.exists?(screen_name)
       true
