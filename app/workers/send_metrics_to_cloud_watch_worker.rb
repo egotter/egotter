@@ -25,13 +25,15 @@ class SendMetricsToCloudWatchWorker
     if type
       calc_metrics(type)
     else
-      %i(send_google_analytics_metrics
-       send_periodic_reports_metrics
-       send_create_periodic_report_requests_metrics
-       send_search_error_logs_metrics
-       send_search_histories_metrics
-       send_requests_metrics
-       send_bots_metrics
+      %i(
+        send_google_analytics_metrics
+        send_table_records_metrics
+        send_periodic_reports_metrics
+        send_create_periodic_report_requests_metrics
+        send_search_error_logs_metrics
+        send_search_histories_metrics
+        send_requests_metrics
+        send_bots_metrics
     ).each do |method_name|
         calc_metrics(method_name)
       end
@@ -141,6 +143,21 @@ class SendMetricsToCloudWatchWorker
     end
   end
 
+  def send_table_records_metrics
+    namespace = "TableRecords#{"/#{Rails.env}" unless Rails.env.production?}"
+    time_duration = 1.hour
+    time_condition = {created_at: time_duration.ago..Time.zone.now}
+
+    [
+        [TwitterUser, TwitterUser.where(time_condition)],
+        [PeriodicReport, PeriodicReport.where(time_condition)],
+    ].each do |klass, records_query|
+      dimensions = [{name: 'Table', value: klass.table_name}, {name: 'Duration', value: time_duration.inspect}]
+      put_metric_data('RecordsCount', records_query.size, {namespace: namespace, dimensions: dimensions})
+    end
+  end
+
+  # TODO Remove later
   def send_twitter_users_metrics
     namespace = "TwitterUsers#{"/#{Rails.env}" unless Rails.env.production?}"
     duration = {created_at: 10.minutes.ago..Time.zone.now}
@@ -165,6 +182,7 @@ class SendMetricsToCloudWatchWorker
     end
   end
 
+  # TODO Remove later
   def send_twitter_db_users_metrics
     namespace = "TwitterDBUsers#{"/#{Rails.env}" unless Rails.env.production?}"
 
