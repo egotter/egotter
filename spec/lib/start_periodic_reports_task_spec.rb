@@ -158,6 +158,14 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     end
   end
 
+  describe '.reject_egotter_blocker_user_ids' do
+    let(:users) { [create(:user), create(:user)] }
+    let(:user_ids) { users.map(&:id) }
+    subject { described_class.reject_egotter_blocker_user_ids(user_ids) }
+    before { create(:egotter_blocker, uid: users[0].uid) }
+    it { is_expected.to match_array([users[1].id]) }
+  end
+
   describe '.reject_stop_requested_user_ids' do
     let(:user_ids) { [1, 2, 3] }
     subject { described_class.reject_stop_requested_user_ids(user_ids) }

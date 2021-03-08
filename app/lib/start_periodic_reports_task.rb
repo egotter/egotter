@@ -48,18 +48,21 @@ class StartPeriodicReportsTask
   end
 
   class << self
-    def morning_user_ids
+    def periodic_base_user_ids
       user_ids = (premium_user_ids + dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
-      reject_specific_period_stopped_user_ids(user_ids, :morning)
+      reject_egotter_blocker_user_ids(user_ids)
+    end
+
+    def morning_user_ids
+      reject_specific_period_stopped_user_ids(periodic_base_user_ids, :morning)
     end
 
     def afternoon_user_ids
-      user_ids = (premium_user_ids + dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
-      reject_specific_period_stopped_user_ids(user_ids, :afternoon)
+      reject_specific_period_stopped_user_ids(periodic_base_user_ids, :afternoon)
     end
 
     def night_user_ids
-      (premium_user_ids + dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
+      periodic_base_user_ids
     end
 
     def reject_specific_period_stopped_user_ids(user_ids, period_name)
@@ -119,14 +122,23 @@ class StartPeriodicReportsTask
         PeriodicReport.allotted_messages_will_expire_soon?(user) &&
             PeriodicReport.allotted_messages_left?(user)
       end.map(&:id)
-      user_ids = reject_stop_requested ? reject_stop_requested_user_ids(user_ids) : user_ids
-      user_ids = reject_remind_requested ? reject_remind_requested_user_ids(user_ids) : user_ids
-      reject_premium ? reject_premium_user_ids(user_ids) : user_ids
+      user_ids = reject_stop_requested_user_ids(user_ids)
+      user_ids = reject_remind_requested_user_ids(user_ids)
+      user_ids = reject_premium_user_ids(user_ids)
+      reject_egotter_blocker_user_ids(user_ids)
     end
 
     def reject_remind_requested_user_ids(user_ids)
       RemindPeriodicReportRequest.select(:id, :user_id).find_in_batches do |requests|
         user_ids -= requests.map(&:user_id)
+      end
+      user_ids
+    end
+
+    def reject_egotter_blocker_user_ids(user_ids)
+      EgotterBlocker.select(:id, :uid).find_in_batches do |blockers|
+        users = User.select(:id).where(uid: blockers.map(&:uid))
+        user_ids -= users.map(&:id)
       end
       user_ids
     end
