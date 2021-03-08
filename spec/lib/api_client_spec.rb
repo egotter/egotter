@@ -5,14 +5,27 @@ RSpec.describe ApiClient, type: :model do
   let(:instance) { ApiClient.new(client) }
 
   describe '#create_direct_message_event' do
+    let(:client) { double('client') }
     let(:response) { {message_create: {message_data: {text: 'text'}}} }
     subject { instance.create_direct_message_event(1, 'text') }
+    before { allow(instance).to receive(:twitter).and_return(client) }
 
     it do
-      expect(instance).to receive_message_chain(:twitter, :create_direct_message_event).
-          with(1, 'text').and_return(response)
+      expect(client).to receive(:create_direct_message_event).with(1, 'text').and_return(response)
       expect(DirectMessage).to receive(:new).with(event: response).and_return('dm')
       is_expected.to eq('dm')
+    end
+
+    context 'an exception is raised' do
+      before do
+        allow(client).to receive(:create_direct_message_event).and_raise('anything')
+        allow(DirectMessageStatus).to receive(:you_have_blocked?).with(any_args).and_return(true)
+      end
+      it do
+        expect(CreateDirectMessageErrorLogWorker).to receive(:perform_async).with(any_args)
+        expect(CreateEgotterBlockerWorker).to receive(:perform_async).with(any_args)
+        expect { subject }.to raise_error('anything')
+      end
     end
   end
 

@@ -12,4 +12,5 @@
 #  index_egotter_blockers_on_uid         (uid) UNIQUE
 #
 class EgotterBlocker < ApplicationRecord
+  validates :uid, presence: true, uniqueness: true
 end

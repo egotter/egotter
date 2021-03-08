@@ -13,6 +13,12 @@ class ApiClient
     DirectMessage.new(event: resp)
   rescue => e
     CreateDirectMessageErrorLogWorker.perform_async(args, e.class, e.message, Time.zone.now)
+
+    if DirectMessageStatus.you_have_blocked?(e)
+      recipient_uid = CreateDirectMessageErrorLogWorker.dig_recipient_id(args)
+      CreateEgotterBlockerWorker.perform_async(recipient_uid)
+    end
+
     raise
   end
 
