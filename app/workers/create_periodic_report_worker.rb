@@ -37,7 +37,6 @@ class CreatePeriodicReportWorker
 
   # options:
   #   user_id
-  #   scheduled_request
   def perform(request_id, options = {})
     request = CreatePeriodicReportRequest.find(request_id)
     return unless request.user.authorized?
@@ -65,7 +64,7 @@ class CreatePeriodicReportWorker
       request.check_following_status = false
       request.check_allotted_messages_count = false
     else
-      request.check_interval = user_requested_job? && !options.has_key?('scheduled_request')
+      request.check_interval = user_requested_job?
       request.check_following_status = !request.user.has_valid_subscription? && user_requested_job?
       request.check_allotted_messages_count = batch_requested_job?
     end

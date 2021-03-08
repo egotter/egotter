@@ -19,6 +19,7 @@ class CreateReportTwitterUserWorker < CreateTwitterUserWorker
     request = CreateTwitterUserRequest.find(request_id)
     task = CreateTwitterUserTask.new(request)
     task.start!(:reporting)
+    PeriodicReportReportableFlag.create(user_id: request.user_id)
   rescue CreateTwitterUserRequest::Error => e
     # Do nothing
   rescue => e
