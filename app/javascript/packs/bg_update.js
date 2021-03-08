@@ -43,23 +43,6 @@ class SecretModeDetector {
 
 window.SecretModeDetector = SecretModeDetector;
 
-class AdBlockDetector {
-  constructor(token) {
-    this.token = token;
-  }
-
-  detect(callback) {
-    if (document.getElementById(this.token)) {
-      logger.log('Blocking Ads: No');
-    } else {
-      logger.log('Blocking Ads: Yes');
-      callback();
-    }
-  }
-}
-
-window.AdBlockDetector = AdBlockDetector;
-
 class Polling {
   constructor(options) {
     Object.assign(this, options);

@@ -1,0 +1,24 @@
+<% if controller_name == 'timelines' && action_name == 'show' %>
+  <script>
+    $(function () {
+      var token = 'poinpgwawoiwoignsdoa';
+      var message = '<%= t('before_sign_in.ad_blocker_detected_with_count', seconds: 3) %>';
+      var redirectPath = "<%= root_path(via: current_via('ad_blocker_detected')).html_safe %>";
+      new AdBlockDetector(token).detect(function () {
+        ToastMessage.warn(message);
+        ToastMessage.freeze();
+
+        setTimeout(function () {
+          window.location.href = redirectPath;
+        }, 3000);
+
+        ga('send', {
+          hitType: 'event',
+          eventCategory: 'Detect AdBlocker',
+          eventAction: 'detected',
+          eventLabel: JSON.stringify(twitterUser)
+        });
+      });
+    });
+  </script>
+<% end %>

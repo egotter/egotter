@@ -48,6 +48,7 @@ import "./orders";
 import "./timelines";
 import "./waiting";
 import "./bg_update";
+import "./ad_block_detector";
 import "./heart";
 import "./announcements";
 import "./features";
