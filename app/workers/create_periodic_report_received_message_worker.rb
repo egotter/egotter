@@ -58,4 +58,8 @@ class CreatePeriodicReportReceivedMessageWorker
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
     end
   end
+
+  def disposable_report?
+    true
+  end
 end
