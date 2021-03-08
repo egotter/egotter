@@ -464,8 +464,6 @@ class PeriodicReport < ApplicationRecord
         'u'
       when CreateAndroidRequestedPeriodicReportWorker.name
         'a'
-      when CreateEgotterRequestedPeriodicReportWorker.name
-        'e'
       when CreatePeriodicReportWorker.name
         'b'
       else

@@ -45,8 +45,7 @@ class PeriodicReportValidator
     end
 
     def user_or_egotter_requested_job?
-      @request.worker_context == CreateUserRequestedPeriodicReportWorker ||
-          @request.worker_context == CreateEgotterRequestedPeriodicReportWorker
+      @request.worker_context == CreateUserRequestedPeriodicReportWorker
     end
 
     def logger
