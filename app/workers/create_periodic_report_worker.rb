@@ -40,6 +40,7 @@ class CreatePeriodicReportWorker
   def perform(request_id, options = {})
     request = CreatePeriodicReportRequest.find(request_id)
     return unless request.user.authorized?
+    return if EgotterBlocker.where(uid: request.user.uid).exists?
 
     if PeriodicReport.send_report_limited?(request.user.uid)
       retry_current_report(request_id, options)
