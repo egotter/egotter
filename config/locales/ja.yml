@@ -382,12 +382,15 @@ ja:
     index:
       page_title: 'ログインしてください'
       page_title_ok: '@%{user} でログイン中です'
+      notice1: '※ えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
+      notice2_html: '※ <a href="%{url}" class="btn btn-outline-secondary btn-sm">アカウントを切り替える</a>こともできます。'
+      notice3_html: '※ 分からないことがある場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
+    sign_in_description:
       sign_in_description: 'アクセス履歴を確認するために、えごったーにログインしてください。'
       make_sure_description: '@%{user} でログインしています。DMが届いたユーザーと同じかご確認ください。'
       already_signed_in_description: '@%{user} さん、ログインありがとうございます。アクセス履歴の確認ができました。これからもえごったーのご利用をよろしくお願いします。'
-      notice1: '※ えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
-      notice2_html: '※ ログインしているアカウントの切り替えは <a href="%{url}">こちら</a>'
-      notice3_html: '※ 分からないことがある場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
+      or: 'または'
+      switch_account: 'アカウントを切り替える'
     sign_in_button:
       sign_in_label: 'えごったーにログインする'
       timeline_label: '@%{user} の分析結果を見る'
