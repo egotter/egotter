@@ -582,7 +582,6 @@ ActiveRecord::Schema.define(version: 2021_03_08_072029) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_egotter_followers_on_created_at"
     t.index ["uid"], name: "index_egotter_followers_on_uid", unique: true
-    t.index ["updated_at"], name: "index_egotter_followers_on_updated_at"
   end
 
   create_table "favorite_friendships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
