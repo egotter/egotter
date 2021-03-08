@@ -49,6 +49,7 @@ import "./timelines";
 import "./waiting";
 import "./bg_update";
 import "./ad_block_detector";
+import "./cognite_mode_detector";
 import "./heart";
 import "./announcements";
 import "./features";
