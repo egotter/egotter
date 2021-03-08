@@ -17,13 +17,10 @@ RSpec.describe ApiClient, type: :model do
     end
 
     context 'an exception is raised' do
-      before do
-        allow(client).to receive(:create_direct_message_event).and_raise('anything')
-        allow(DirectMessageStatus).to receive(:you_have_blocked?).with(any_args).and_return(true)
-      end
+      before { allow(client).to receive(:create_direct_message_event).and_raise('anything') }
       it do
         expect(CreateDirectMessageErrorLogWorker).to receive(:perform_async).with(any_args)
-        expect(CreateEgotterBlockerWorker).to receive(:perform_async).with(any_args)
+        expect(instance).to receive(:update_blocker_status).with(any_args)
         expect { subject }.to raise_error('anything')
       end
     end
@@ -57,6 +54,25 @@ RSpec.describe ApiClient, type: :model do
         expect(instance).to receive(:create_not_found_user).with(error, :user, 1)
         expect(instance).to receive(:create_forbidden_user).with(error, :user, 1)
         expect { subject }.to raise_error(error) # Or NoMethodError
+      end
+    end
+  end
+
+  describe '#update_blocker_status' do
+    let(:error) { RuntimeError.new('error') }
+    subject { instance.update_blocker_status(error) }
+
+    context 'token is invalid' do
+      let(:client) { double('client', access_token: 'at', access_token_secret: 'ats') }
+      let(:user) { create(:user) }
+      before do
+        allow(DirectMessageStatus).to receive(:you_have_blocked?).with(error).and_return(true)
+        allow(User).to receive_message_chain(:select, :find_by_token).
+            with(:id).with(client.access_token, client.access_token_secret).and_return(user)
+      end
+      it do
+        expect(CreateEgotterBlockerWorker).to receive(:perform_async).with(user.uid)
+        subject
       end
     end
   end

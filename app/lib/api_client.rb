@@ -13,12 +13,7 @@ class ApiClient
     DirectMessage.new(event: resp)
   rescue => e
     CreateDirectMessageErrorLogWorker.perform_async(args, e.class, e.message, Time.zone.now)
-
-    if DirectMessageStatus.you_have_blocked?(e)
-      recipient_uid = CreateDirectMessageErrorLogWorker.dig_recipient_id(args)
-      CreateEgotterBlockerWorker.perform_async(recipient_uid)
-    end
-
+    update_blocker_status(e)
     raise
   end
 
@@ -59,6 +54,14 @@ class ApiClient
     create_not_found_user(e, method, *args)
     create_forbidden_user(e, method, *args)
     raise
+  end
+
+  def update_blocker_status(e)
+    if DirectMessageStatus.you_have_blocked?(e)
+      if (user = User.select(:id).find_by_token(@client.access_token, @client.access_token_secret))
+        CreateEgotterBlockerWorker.perform_async(user.uid)
+      end
+    end
   end
 
   def update_authorization_status(e)
