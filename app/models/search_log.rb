@@ -40,8 +40,6 @@
 #
 
 class SearchLog < ApplicationRecord
-  include DeletableLog
-
   belongs_to :user, optional: true
 
   before_validation :truncate_attrs

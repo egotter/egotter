@@ -22,5 +22,4 @@
 #
 
 class CrawlerLog < ApplicationRecord
-  include DeletableLog
 end

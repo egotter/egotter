@@ -24,8 +24,7 @@ namespace :search_logs do
     end
   end
 
-  desc 'Delete'
   task delete: :environment do
-    SearchLog.delete_old_logs(ENV['YEAR'], ENV['MONTH'])
+    DeleteLogsTask.new(SearchLog, ENV['YEAR'], ENV['MONTH']).start!
   end
 end
