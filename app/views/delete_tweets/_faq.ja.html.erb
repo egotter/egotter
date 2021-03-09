@@ -225,7 +225,5 @@
 
 <% faq_questions.each.with_index do |q, i| %>
   <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
-  <div class="mb-5">
-    <%= faq_answers[i].html_safe %>
-  </div>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
 <% end %>

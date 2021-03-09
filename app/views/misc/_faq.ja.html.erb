@@ -3,135 +3,204 @@
 <h3 class="h5 my-5">えごったー 全般</h3>
 
 
-<%= render partial: 'q', locals: {text: 'えごったーとは何ですか？'} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question 'えごったーとは何ですか？' %>
+<% faq_answer do %>
   ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるWebサイトです。<br><br>使い方は Twitter ID 入力するだけ！ いつでもすぐに結果を見ることができます。
   <% if user_signed_in? %>
     <%= link_to t('.search', user: current_user.screen_name), timeline_path(current_user, via: via), class: 'btn btn-outline-primary btn-sm' %>
   <% else %>
     <%= link_to t('.sign_in'), sign_in_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
   <% end %>
-</div>
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'えごったーに公式アカウントはありますか？'} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question 'えごったーに公式アカウントはありますか？' %>
+<% faq_answer do %>
   <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> が公式アカウントです。気になることはいつでもご質問ください。質問する際はリプライですと見逃しが少なくなります。
   <%= link_to t('.see_on_twitter', user: 'ego_tter'), user_url('ego_tter'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
-</div>
+<% end %>
 
-<%= render partial: 'q', locals: {text: '公式アカウントのフォローは必須ですか？'} %>
-<div class="mb-5">必須ではないです。@ego_tter をフォローしていると<span class="egotter-pink">データ更新が早くなる</span>という効果はありますが、フォローしていなくてもえごったーを使うことはできます。</div>
+<% faq_id :auto %>
+<% faq_question '公式アカウントのフォローは必須ですか？' %>
+<% faq_answer do %>
+  必須ではないです。@ego_tter をフォローしていると<span class="egotter-pink">データ更新が早くなる</span>という効果はありますが、フォローしていなくてもえごったーを使うことはできます。
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>
 
 
 <h3 class="h5 my-5">プライバシーとセキュリティ</h3>
 
 
-<%= render partial: 'q', locals: {text: 'えごったーは安全ですか？'} %>
-<div class="mb-5">安全です。TLS/SSLを用いた通信の暗号化により、プライバシーとセキュリティは強固に守られています。</div>
+<% faq_id :auto %>
+<% faq_question 'えごったーは安全ですか？' %>
+<% faq_answer do %>
+  安全です。TLS/SSLを用いた通信の暗号化により、プライバシーとセキュリティは強固に守られています。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'えごったーを使ったことは誰かにバレますか？'} %>
-<div class="mb-5">バレません。このWebサイトの利用状況を他の人に知られることはありません。<br><br>@ego_tter をフォローすることで、ツイッター公式の「共通のフォロー」に表示されてしまうことはあります。</div>
+<% faq_id :auto %>
+<% faq_question 'えごったーを使ったことは誰かにバレますか？' %>
+<% faq_answer do %>
+  バレません。このWebサイトの利用状況を他の人に知られることはありません。<br><br>@ego_tter をフォローすることで、ツイッター公式の「共通のフォロー」に表示されてしまうことはあります。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'えごったーを使うと勝手にツイートされますか？'} %>
-<div class="mb-5">勝手にツイートすることはありませんのでご安心ください。</div>
+<% faq_id :auto %>
+<% faq_question 'えごったーを使うと勝手にツイートされますか？' %>
+<% faq_answer do %>
+  勝手にツイートすることはありませんのでご安心ください。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'えごったーを使うとDMを勝手に見られますか？'} %>
-<div class="mb-5">DMを勝手に見ることはありませんのでご安心ください。</div>
+<% faq_id :auto %>
+<% faq_question 'えごったーを使うとDMを勝手に見られますか？' %>
+<% faq_answer do %>
+  DMを勝手に見ることはありませんのでご安心ください。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'なんでたくさんの権限が必要なんですか？'} %>
-<div class="mb-5"><span class="egotter-pink">ツイッターの仕様</span>です。「DMを送る」だけであっても、他の不要な権限まで自動的についてきてしまうんです。</div>
+<% faq_id :auto %>
+<% faq_question 'なんでたくさんの権限が必要なんですか？' %>
+<% faq_answer do %>
+  <span class="egotter-pink">ツイッターの仕様</span>です。「DMを送る」だけであっても、他の不要な権限まで自動的についてきてしまうんです。
+<% end %>
 
-<%= render partial: 'q', locals: {text: '他の人も検索できてよいのですか？'} %>
-<div class="mb-5">えごったーで検索できるのは「公開情報のみ」ですのでご安心ください。<br><br>鍵アカウントについては、ログインしているユーザーに見る権限があるときだけ検索できます。</div>
+<% faq_id :auto %>
+<% faq_question '他の人も検索できてよいのですか？' %>
+<% faq_answer do %>
+  えごったーで検索できるのは「公開情報のみ」ですのでご安心ください。<br><br>鍵アカウントについては、ログインしているユーザーに見る権限があるときだけ検索できます。
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>
 
 
 <h3 class="h5 my-5">リムられ通知 全般</h3>
 
 
-<%= render partial: 'q', locals: {text: 'リムられ通知とは何ですか？'} %>
-<div class="mb-5">「誰かにフォローを外されたこと」をDMで通知する機能のことです。<br><br>Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。</div>
+<% faq_id :auto %>
+<% faq_question 'リムられ通知とは何ですか？' %>
+<% faq_answer do %>
+  「誰かにフォローを外されたこと」をDMで通知する機能のことです。<br><br>Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'リムられ通知はどうすれば届きますか？'} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question 'リムられ通知はどうすれば届きますか？' %>
+<% faq_answer do %>
   Webサイトにログインすればその後は自動で届きます。
   <% unless user_signed_in? %>
     <%= link_to t('.sign_in'), sign_in_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
   <% end %>
-</div>
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'リムられ通知が止まりました。再開することはできますか？'} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question 'リムられ通知が止まりました。再開することはできますか？' %>
+<% faq_answer do %>
   リムられ通知はいつでも再開できます。「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてみてください。
   <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %><br>
   <br>
   止まっている理由がある場合は、返信のDMに解決方法が書かれています。
-</div>
+<% end %>
 
-<%= render partial: 'q', locals: {text: "「#{t('quick_replies.prompt_reports.label3')}」は何回までできますか？"} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question "「#{t('quick_replies.prompt_reports.label3')}」は何回までできますか？" %>
+<% faq_answer do %>
   何回でもできます。リムられが増えたかな？と思うタイミングで「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてください。
   <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
-</div>
+<% end %>
 
-<%= render partial: 'q', locals: {text: '@ego_tter をフォローしたのにリムられ通知が届きません。どうしてですか？'} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question '@ego_tter をフォローしたのにリムられ通知が届きません。どうしてですか？' %>
+<% faq_answer do %>
   Webサイトにログインしてください。@ego_tter のフォローだけではリムられ通知は届きません。
   <% unless user_signed_in? %>
     <%= link_to t('.sign_in'), sign_in_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
   <% end %>
-</div>
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'リムられ通知はどれくらいの頻度で届きますか？'} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question 'リムられ通知はどれくらいの頻度で届きますか？' %>
+<% faq_answer do %>
   今のところは、朝・昼・夜の1日3回届きます。届く回数は設定ページから変更できます。
   <% if user_signed_in? %>
     <%= link_to t('.settings'), settings_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
   <% end %>
-</div>
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'リムられ通知をすぐに受け取ることはできますか？'} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question 'リムられ通知をすぐに受け取ることはできますか？' %>
+<% faq_answer do %>
   @ego_tter に「リムられ通知 今すぐ送信」とDMしてください。そうすれば、すぐにリムられ通知が届きます。
   <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
-</div>
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'リムられ通知に @ が付かなくなりました。理由は何ですか？'} %>
-<div class="mb-5">リムられ通知でユーザー名の前に @ が付くのは、有料プランのユーザーか、「えごったーの登録後1週間以内」のユーザーのみになります。</div>
+<% faq_id :auto %>
+<% faq_question 'リムられ通知に @ が付かなくなりました。理由は何ですか？' %>
+<% faq_answer do %>
+  リムられ通知でユーザー名の前に @ が付くのは、有料プランのユーザーか、「えごったーの登録後1週間以内」のユーザーのみになります。
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>
 
 
 <h3 id="direct-message-expiration" class="h5 my-5">リムられ通知 有効期限</h3>
 
 
-<%= render partial: 'q', locals: {text: 'リムられ通知の有効期限とは何ですか？'} %>
-<div class="mb-5">ツイッターの仕様上、DMを一方的に送り続けることはできません。そのため、リムられ通知を受け取るには、定期的に @ego_tter に返信のDMを送る必要があります。<br>
+<% faq_id :auto %>
+<% faq_question 'リムられ通知の有効期限とは何ですか？' %>
+<% faq_answer do %>
+  ツイッターの仕様上、DMを一方的に送り続けることはできません。そのため、リムられ通知を受け取るには、定期的に @ego_tter に返信のDMを送る必要があります。<br>
   <br>
-  これがリムられ通知の有効期限です。これは<span class="egotter-pink">ツイッターの仕様</span>です。</div>
+  これがリムられ通知の有効期限です。これは<span class="egotter-pink">ツイッターの仕様</span>です。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'リムられ通知の有効期限が切れかけています。何をすればよいですか？'} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question 'リムられ通知の有効期限が切れかけています。何をすればよいですか？' %>
+<% faq_answer do %>
   リムられ通知を継続する：<br>
   リムられ通知を受け取り続けるには【リムられ通知 継続】をDMにコピペして送ってください<br>
   <br>
   リムられ通知を止める：<br>
   リムられ通知を止めるには【リムられ通知 停止】をDMにコピペして送ってください
-</div>
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'リムられ通知の有効期限が切れました。何をすればよいですか？'} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question 'リムられ通知の有効期限が切れました。何をすればよいですか？' %>
+<% faq_answer do %>
   リムられ通知の有効期限が切れていると、データの自動更新とリムられ通知の定期配信が止まります。<br>
   <br>
   自動更新やリムられ通知の定期配信の再開を希望する場合は、【リムられ通知 再開】をDMにコピペして送ってください
-</div>
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'リムられ通知の有効期限がすぐに切れるのはどうしてですか？'} %>
-<div class="mb-5"><span class="egotter-pink">ツイッターの仕様</span>です。相手からDMの送信がないと、通知DMを送り続けることができないのです。</div>
+
+<% faq_id :auto %>
+<% faq_question 'リムられ通知の有効期限がすぐに切れるのはどうしてですか？' %>
+<% faq_answer do %>
+  <span class="egotter-pink">ツイッターの仕様</span>です。相手からDMの送信がないと、通知DMを送り続けることができないのです。
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>
 
 
 <h3 class="h5 my-5">リムられ通知 DMでの操作</h3>
 
 
-<%= render partial: 'q', locals: {text: 'リムられ通知をDMで操作する方法を教えてください'} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question 'リムられ通知をDMで操作する方法を教えてください' %>
+<% faq_answer do %>
   決められたメッセージをDMで送ることで、リムられ通知をDMで操作することができます。<br>
   <br>
   <%= link_to t('quick_replies.prompt_reports.label3'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする<br>
@@ -142,86 +211,176 @@
   <br>
   <%= link_to t('quick_replies.prompt_reports.label4'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label4')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする<br>
   リムられ通知の定期的な送信を再開します。
-</div>
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>
 
 
 <h3 class="h5 my-5">検索回数の制限</h3>
 
 
-<%= render partial: 'q', locals: {text: 'えごったーでの検索回数とは何ですか？'} %>
-<div class="mb-5">えごったーで1日に分析できるユーザー数の制限のことです。<br><br>Webサイトへのログイン、えごったーの宣伝ツイート、 有料プランの購入をすることによって回数を増やすことができます。</div>
+<% faq_id :auto %>
+<% faq_question 'えごったーでの検索回数とは何ですか？' %>
+<% faq_answer do %>
+  えごったーで1日に分析できるユーザー数の制限のことです。<br>
+  <br>
+  Webサイトへのログイン、えごったーの宣伝ツイート、 有料プランの購入をすることによって回数を増やすことができます。
+<% end %>
 
-<%= render partial: 'q', locals: {text: '検索回数を増やす方法を教えてください'} %>
-<div class="mb-5">
+<% faq_id :auto %>
+<% faq_question '検索回数を増やす方法を教えてください' %>
+<% faq_answer do %>
   あなたは1日あたり <%= @search_count_limitation.max_count %>回 検索することができます。残りの検索回数は <%= @search_count_limitation.remaining_count %>回 です。<br>
   <br>
   もっとたくさん検索することもできます。お好きなプランをお選びください。<br>
   <br>
   <%= render template: 'messages/ways_to_increase_searches', locals: {via: via} %>
-</div>
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>
 
 
 <h3 class="h5 my-5">データの正確性</h3>
 
 
-<%= render partial: 'q', locals: {text: 'フォロワー数が減っているのに「リムられは0人」と表示されます。このデータは正しいですか？'} %>
-<div class="mb-5">フォロワー数が1〜2人減ったのにリムられていない、という状況がたまに起きるようです。おそらくツイッターのバグです。少し時間が経ったら元に戻るようです。</div>
+<% faq_id :auto %>
+<% faq_question 'フォロワー数が減っているのに「リムられは0人」と表示されます。このデータは正しいですか？' %>
+<% faq_answer do %>
+  フォロワー数が1〜2人減ったのにリムられていない、という状況がたまに起きるようです。おそらくツイッターのバグです。少し時間が経ったら元に戻るようです。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'リムられていない人がリムられ通知に表示されます。このデータは正しいですか？'} %>
-<div class="mb-5">一時的な凍結をリムられと認識することがあるようです。本当にリムられているかどうかは相手のツイッターページを見て確認するのが確実です。</div>
+<% faq_id :auto %>
+<% faq_question 'リムられていない人がリムられ通知に表示されます。このデータは正しいですか？' %>
+<% faq_answer do %>
+  一時的な凍結をリムられと認識することがあるようです。本当にリムられているかどうかは相手のツイッターページを見て確認するのが確実です。
+<% end %>
 
-<%= render partial: 'q', locals: {text: '「フォローを外されたユーザーは0人です」と表示されます。このデータは正しいですか？'} %>
-<div class="mb-5">えごったーのデータは初めて検索した時から溜まっていきます。そのため、初めて使った時は必ず0人になっています。今後使っていくうちにリムられのデータは増えていきます。</div>
+<% faq_id :auto %>
+<% faq_question '「フォローを外されたユーザーは0人です」と表示されます。このデータは正しいですか？' %>
+<% faq_answer do %>
+  えごったーのデータは初めて検索した時から溜まっていきます。そのため、初めて使った時は必ず0人になっています。今後使っていくうちにリムられのデータは増えていきます。
+<% end %>
 
-<%= render partial: 'q', locals: {text: '「フォローを外されたユーザー」が0人のまま増えません。このデータは正しいですか？'} %>
-<div class="mb-5">何回か使っていくうちにデータが溜まっていくはずですが、もし更新されない場合は、@ego_tter までお気軽にお問い合わせください。</div>
+<% faq_id :auto %>
+<% faq_question '「フォローを外されたユーザー」が0人のまま増えません。このデータは正しいですか？' %>
+<% faq_answer do %>
+  何回か使っていくうちにデータが溜まっていくはずですが、もし更新されない場合は、@ego_tter までお気軽にお問い合わせください。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'データが表示されない項目がいくつかあります。このデータは正しいですか？'} %>
-<div class="mb-5">フォロー・フォロワーがとても多いユーザーは、いくつかの項目の表示がスキップされます。フォロー・フォロワーが多くないのに結果が表示されない場合は、@ego_tter までお気軽にお問い合わせください。</div>
+<% faq_id :auto %>
+<% faq_question 'データが表示されない項目がいくつかあります。このデータは正しいですか？' %>
+<% faq_answer do %>
+  フォロー・フォロワーがとても多いユーザーは、いくつかの項目の表示がスキップされます。フォロー・フォロワーが多くないのに結果が表示されない場合は、@ego_tter までお気軽にお問い合わせください。
+<% end %>
 
-<%= render partial: 'q', locals: {text: '自分からブロックしたユーザーもリムられに表示されます。このデータは正しいですか？'} %>
-<div class="mb-5">リムり（フォローを外した）、リムられ（フォローを外された）は、どっちが先に行動したのかと関係なくフォローが外れたことを検出しています。そのため、自分からブロックしたとしてもリムられに表示されます。</div>
+<% faq_id :auto %>
+<% faq_question '自分からブロックしたユーザーもリムられに表示されます。このデータは正しいですか？' %>
+<% faq_answer do %>
+  リムり（フォローを外した）、リムられ（フォローを外された）は、どっちが先に行動したのかと関係なくフォローが外れたことを検出しています。そのため、自分からブロックしたとしてもリムられに表示されます。
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>
 
 
 <h3 class="h5 my-5">データの更新間隔</h3>
 
 
-<%= render partial: 'q', locals: {text: 'データはいつ更新されるのですか？'} %>
-<div class="mb-5">リムられ通知を設定している場合は、リムられ通知が届くタイミングで更新されます。リムられ通知を設定していないユーザーは、Webサイトを使うタイミングで更新されます。</div>
+<% faq_id :auto %>
+<% faq_question 'データはいつ更新されるのですか？' %>
+<% faq_answer do %>
+  リムられ通知を設定している場合は、リムられ通知が届くタイミングで更新されます。リムられ通知を設定していないユーザーは、Webサイトを使うタイミングで更新されます。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'データの更新間隔はどれくらいですか？'} %>
-<div class="mb-5">最短で <%= distance_of_time_in_words(TwitterUser::CREATE_RECORD_INTERVAL) %> に一度更新されます。Webサイトにログインしたことがある、リムられ通知が設定されている、@ego_tter をフォローしているという条件を満たしているほど早く更新されます。</div>
+<% faq_id :auto %>
+<% faq_question 'データの更新間隔はどれくらいですか？' %>
+<% faq_answer do %>
+  最短で <%= distance_of_time_in_words(TwitterUser::CREATE_RECORD_INTERVAL) %> に一度更新されます。Webサイトにログインしたことがある、リムられ通知が設定されている、@ego_tter をフォローしているという条件を満たしているほど早く更新されます。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'データを自動的に更新することはできますか？'} %>
-<div class="mb-5">リムられ通知が設定されていれば、データは自動的に更新されます。</div>
+<% faq_id :auto %>
+<% faq_question 'データを自動的に更新することはできますか？' %>
+<% faq_answer do %>
+  リムられ通知が設定されていれば、データは自動的に更新されます。
+<% end %>
 
-<%= render partial: 'q', locals: {text: '鍵付きアカウントも検索できますか？'} %>
-<div class="mb-5">えごったーでは、「自分が見れるデータ」であれば検索することができます。例えば、鍵付きアカウントが自分自身であったり、フォローしているユーザーであれば検索できます。</div>
+<% faq_id :auto %>
+<% faq_question '鍵付きアカウントも検索できますか？' %>
+<% faq_answer do %>
+  えごったーでは、「自分が見れるデータ」であれば検索することができます。例えば、鍵付きアカウントが自分自身であったり、フォローしているユーザーであれば検索できます。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'データの更新を通知してもらうことはできますか？'} %>
-<div class="mb-5">リムられ通知が設定されていればデータの更新が通知されます。</div>
+<% faq_id :auto %>
+<% faq_question 'データの更新を通知してもらうことはできますか？' %>
+<% faq_answer do %>
+  リムられ通知が設定されていればデータの更新が通知されます。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'データの更新通知はどれくらいの頻度で届きますか？'} %>
-<div class="mb-5">リムられ通知でデータの更新は通知されます。標準では1日に3回ほど通知されます。</div>
+<% faq_id :auto %>
+<% faq_question 'データの更新通知はどれくらいの頻度で届きますか？' %>
+<% faq_answer do %>
+  リムられ通知でデータの更新は通知されます。標準では1日に3回ほど通知されます。
+<% end %>
 
-<%= render partial: 'q', locals: {text: '自分がえごったーで検索されたことを通知してもらうことはできますか？'} %>
-<div class="mb-5">はい、できます。この設定は標準で有効になっているので、誰かがえごったーであなたを検索すると、@ego_tter からあなたにそのことを知らせるDMが届きます。検索したのが誰なのかは分かりません。</div>
+<% faq_id :auto %>
+<% faq_question '自分がえごったーで検索されたことを通知してもらうことはできますか？' %>
+<% faq_answer do %>
+  はい、できます。この設定は標準で有効になっているので、誰かがえごったーであなたを検索すると、@ego_tter からあなたにそのことを知らせるDMが届きます。検索したのが誰なのかは分かりません。
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>
 
 
-<h3 class="h5">その他</h3>
+<h3 class="h5 my-5">その他</h3>
 
 
-<%= render partial: 'q', locals: {text: '昔のえごったーの機能はもう使えないのですか？'} %>
-<div class="mb-5">必要であれば復活させますのでどの機能がほしいか @ego_tter までお気軽にご連絡ください。</div>
+<% faq_id :auto %>
+<% faq_question '昔のえごったーの機能はもう使えないのですか？' %>
+<% faq_answer do %>
+  必要であれば復活させますのでどの機能がほしいか @ego_tter までお気軽にご連絡ください。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'Webサイトをクロールしてもよいですか？'} %>
-<div class="mb-5">機械的なものか人が手作業したものかを問わず、えごったーWebサイトのデータ収集は全て禁止です。</div>
+<% faq_id :auto %>
+<% faq_question 'Webサイトをクロールしてもよいですか？' %>
+<% faq_answer do %>
+  機械的なものか人が手作業したものかを問わず、えごったーWebサイトのデータ収集は全て禁止です。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'Webサイトのデータを利用させてもらえますか？'} %>
-<div class="mb-5">えごったーやツイッターの利用規約、プライバシーポリシーに違反しない範囲であれば、特定のデータの収集、販売も可能です。希望する場合は @ego_tter までお問い合わせください。</div>
+<% faq_id :auto %>
+<% faq_question 'Webサイトのデータを利用させてもらえますか？' %>
+<% faq_answer do %>
+  えごったーやツイッターの利用規約、プライバシーポリシーに違反しない範囲であれば、特定のデータの収集、販売も可能です。希望する場合は @ego_tter までお問い合わせください。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'えごったーのデータを消す方法はありますか？'} %>
-<div class="mb-5">えごったーにログイン後、設定ページから「データの削除」をご利用ください。</div>
+<% faq_id :auto %>
+<% faq_question 'えごったーのデータを消す方法はありますか？' %>
+<% faq_answer do %>
+  えごったーにログイン後、設定ページから「データの削除」をご利用ください。
+<% end %>
 
-<%= render partial: 'q', locals: {text: 'ここに載っていない質問をするにはどうすればよいですか？'} %>
-<div class="mb-5">@ego_tter までお気軽にご連絡ください。DMで質問が届いても気付かないことが多いため、できればリプライで質問してもらえると助かります。</div>
+<% faq_id :auto %>
+<% faq_question 'ここに載っていない質問をするにはどうすればよいですか？' %>
+<% faq_answer do %>
+  @ego_tter までお気軽にご連絡ください。DMで質問が届いても気付かないことが多いため、できればリプライで質問してもらえると助かります。
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>

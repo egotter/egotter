@@ -22,4 +22,10 @@ module FaqHelper
   def faq_answers
     @faq_answers
   end
+
+  def flush_faq
+    @faq_ids = nil
+    @faq_questions = nil
+    @faq_answers = nil
+  end
 end
