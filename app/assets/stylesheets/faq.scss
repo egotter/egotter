@@ -1,0 +1,31 @@
+.faq {
+  .faq-question {
+    font-size: 18px;
+    border: 15px solid #EA2184;
+    width: 560px;
+    max-width: 100%;
+  }
+
+  .faq-question-inner {
+    padding: 15%;
+  }
+
+  .faq-watermark {
+    background-color: #EA2184;
+    width: 560px;
+    max-width: 100%;
+    padding-left: 15px;
+    padding-bottom: 15px;
+
+    .faq-watermark-inner {
+      padding: 3px;
+      margin-right: 15px;
+    }
+
+    .faq-sitename {
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
+}
