@@ -1,5 +1,5 @@
 - if user_signed_in?
-  -# This modal is always embedded because it is used in settings page.
+  -# The share modal is always embedded because it is used in settings page.
   - tweets = t('.share.tweets').shuffle
   - data = {url: api_v1_share_tweets_path(via: current_via('share_egotter_modal'))}
   = modal_dialog id: 'share-modal', title: t('.share.title_html'), button: {positive: t('.share.ok'), negative: t('.share.cancel')}, data: data do
@@ -25,20 +25,20 @@
       });
     });
 
-  - if current_user.continuous_sign_in?
+  - if show_continuous_sign_in_modal?
     = modal_dialog id: 'continuous-sign-in-modal', title: t('.continuous_sign_in.title_html'), button: {positive: t('.continuous_sign_in.ok')} do
       .d-flex.align-items-center.mb-3
         = image_tag image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'
         .ml-3= t('.continuous_sign_in.text_html', count: SearchCountLimitation::CONTINUOUS_SIGN_IN_BONUS)
 
-  - if params[:follow_dialog] == '1'
+  - if show_follow_modal?
     - data = {url: api_v1_follow_requests_path(via: current_via('follow_egotter_modal')), uid: User::EGOTTER_UID, follow_url: follow_intent_url('ego_tter')}
     = modal_dialog id: 'follow-modal', title: t('.follow.title_html'), button: {positive: t('.follow.ok'), negative: t('.follow.cancel')}, data: data do
       .d-flex.align-items-center.mb-3
         %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
         .ml-3= t('.follow.note_html')
 
-  - if params[:purchase_dialog] == '1'
+  - if show_purchase_modal?
     = modal_dialog id: 'purchase-modal', title: t('.purchase.title_html'), button: {positive: t('.purchase.ok'), negative: t('.purchase.cancel')} do
       .d-flex.align-items-center.mb-3
         %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
@@ -46,10 +46,10 @@
 
   :javascript
     $(function () {
-      var showFollowDialog = #{params[:follow_dialog] == '1' && !current_user.following_egotter?};
-      var showShareDialog = #{params[:share_dialog] == '1'};
-      var showPurchaseDialog = #{params[:purchase_dialog] == '1' && current_user.following_egotter? && !current_user.has_valid_subscription?};
-      var showContinuousSignInDiallog = #{current_user.continuous_sign_in?};
+      var showFollowDialog = #{show_follow_modal?};
+      var showShareDialog = #{show_share_modal?};
+      var showPurchaseDialog = #{show_purchase_modal?};
+      var showContinuousSignInDialog = #{show_continuous_sign_in_modal?};
       var followDialog = new FollowDialog();
       var purchaseDialog = new PurchaseDialog('#{raw pricing_path(via: current_via('purchase_modal'))}');
       var shareDialog = new ShareDialog();
@@ -65,13 +65,13 @@
       if (showShareDialog) {
         queue.add(shareDialog);
       }
-      if (showContinuousSignInDiallog) {
+      if (showContinuousSignInDialog) {
         queue.add(continuousSignInDialog);
       }
       queue.start();
     });
 - else
-  - if params[:sign_in_dialog] == '1' || from_search_engine?
+  - if show_sign_in_modal?
     = modal_dialog id: 'sign-in-modal', title: t('.sign_in.title'), body: t('.sign_in.body_html'), button: {positive: t('.sign_in.ok'), negative: t('.sign_in.cancel')}
 
     :javascript

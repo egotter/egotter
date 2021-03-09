@@ -21,6 +21,10 @@ module ApplicationHelper
     controller_name == 'waiting'
   end
 
+  def timeline_waiting_page?
+    controller_name == 'timelines' && action_name == 'waiting'
+  end
+
   def start_page?
     controller_name == 'home' && action_name == 'start'
   end

@@ -22,25 +22,25 @@
       var retryMax = 5;
       var retryInterval = 3000;
 
-      function check() {
-        $.get(url).done(function (res) {
-          if (res['found']) {
-            redirectTo(false);
-          } else {
-            retryCount++;
-            if (retryCount < retryMax) {
-              setTimeout(check, retryInterval);
+      return {
+        check: function () {
+          $.get(url).done(function (res) {
+            if (res['found']) {
+              redirectTo(false);
             } else {
-              redirectTo(true);
+              retryCount++;
+              if (retryCount < retryMax) {
+                setTimeout(check, retryInterval);
+              } else {
+                redirectTo(true);
+              }
             }
-          }
-        }).fail(function (xhr) {
-          logger.warn(xhr.responseText);
-          redirectTo(true);
-        });
-      }
-
-      return {check: check};
+          }).fail(function (xhr) {
+            logger.warn(xhr.responseText);
+            redirectTo(true);
+          });
+        }
+      };
     }
 
     createChecker().check();

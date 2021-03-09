@@ -188,21 +188,30 @@ module PathsHelper
   end
 
   def redirect_path_for_after_waiting(screen_name)
+    options = {
+        screen_name: screen_name,
+        follow_dialog: params[:follow_dialog],
+        sign_in_dialog: params[:sign_in_dialog],
+        share_dialog: params[:share_dialog],
+        purchase_dialog: params[:purchase_dialog],
+        via: current_via,
+    }.compact
+
     case controller_path
     when 'timelines'
-      timeline_path(screen_name: screen_name, via: current_via)
+      timeline_path(options)
     when 'close_friends'
-      close_friend_path(screen_name: screen_name, via: current_via)
+      close_friend_path(options)
     when 'unfriends'
-      unfriend_path(screen_name: screen_name, via: current_via)
+      unfriend_path(options)
     when 'unfollowers'
-      unfollower_path(screen_name: screen_name, via: current_via)
+      unfollower_path(options)
     when 'mutual_unfriends'
-      mutual_unfriend_path(screen_name: screen_name, via: current_via)
+      mutual_unfriend_path(options)
     when 'replying'
-      replying_path(screen_name: screen_name, via: current_via)
+      replying_path(options)
     when 'replied'
-      replied_path(screen_name: screen_name, via: current_via)
+      replied_path(options)
     else
       raise "#{__method__} Invalid controller_path value=#{controller_path}"
     end

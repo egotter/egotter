@@ -86,4 +86,5 @@
         - if current_user.has_trial_subscription?
           = render partial: 'modal/end_trial_modal'
 
-    = render partial: 'modal/welcome_modal'
+    - unless timeline_waiting_page?
+      = render partial: 'modal/welcome_modal'

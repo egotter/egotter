@@ -21,6 +21,7 @@ module CrawlersHelper
       'https://search.yahoo.co.jp/',
   ]
 
+  # TODO Rename to #user_from_search_engine?
   def from_search_engine?
     !from_crawler? && SEARCH_ENGINES.include?(request.referer)
   end
