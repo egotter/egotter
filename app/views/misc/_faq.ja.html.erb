@@ -17,14 +17,23 @@
 <% faq_id :auto %>
 <% faq_question 'えごったーに公式アカウントはありますか？' %>
 <% faq_answer do %>
-  <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> が公式アカウントです。気になることはいつでもご質問ください。質問する際はリプライですと見逃しが少なくなります。
-  <%= link_to t('.see_on_twitter', user: 'ego_tter'), user_url('ego_tter'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+  <div class="mb-3">
+    @ego_tter が公式アカウントです。フォローしていると検索回数や使える機能が増えます。
+    <%= link_to '@ego_tter を開く', user_url('ego_tter'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+  </div>
+
+  @egotter_cs は問い合わせ用のアカウントです。お返事が必要な場合はこちらにご連絡ください。
+  <%= link_to '@egotter_cs を開く', user_url('egotter_cs'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
 <% end %>
 
 <% faq_id :auto %>
 <% faq_question '公式アカウントのフォローは必須ですか？' %>
 <% faq_answer do %>
-  必須ではないです。@ego_tter をフォローしていると<span class="egotter-pink">データ更新が早くなる</span>という効果はありますが、フォローしていなくてもえごったーを使うことはできます。
+  <div class="mb-3">
+    必須ではないです。フォローしていなくてもえごったーを使うことはできます。
+  </div>
+
+  @ego_tter をフォローしていると検索回数や使える機能が増えます。
 <% end %>
 
 <% faq_questions.each.with_index do |q, i| %>
@@ -64,7 +73,7 @@
 <% faq_id :auto %>
 <% faq_question 'なんでたくさんの権限が必要なんですか？' %>
 <% faq_answer do %>
-  <span class="egotter-pink">ツイッターの仕様</span>です。「DMを送る」だけであっても、他の不要な権限まで自動的についてきてしまうんです。
+  全世界共通の<span class="egotter-pink">ツイッターの仕様</span>です。ツイッターの権限には「全部できる」または「全部できない」しかないためこのようになっています。
 <% end %>
 
 <% faq_id :auto %>
@@ -86,22 +95,57 @@
 <% faq_id :auto %>
 <% faq_question 'リムられ通知とは何ですか？' %>
 <% faq_answer do %>
-  「誰かにフォローを外されたこと」をDMで通知する機能のことです。<br><br>Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。
+  「誰かにフォローを外されたこと」を @ego_tter から <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %> にDMで通知する機能のことです。<br>
+  <br>
+  Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question 'リムられ通知の使い方を教えてください' %>
+<% faq_answer do %>
+  リムられ通知は、1日3回 定期的にDMで届きます。さらに、必要なときに「<%= t('quick_replies.prompt_reports.label3') %>」と @ego_tter にDMすればすぐに受信することができます。<br>
+  <br>
+  リムられ通知はさらに細かくDMで操作することができます。詳しく知るには「リムられ通知 使い方」と @ego_tter にDMしてみてください。
+  <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %><br>
 <% end %>
 
 <% faq_id :auto %>
 <% faq_question 'リムられ通知はどうすれば届きますか？' %>
 <% faq_answer do %>
-  Webサイトにログインすればその後は自動で届きます。
-  <% unless user_signed_in? %>
-    <%= link_to t('.sign_in'), sign_in_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
-  <% end %>
+  <div class="mb-3">
+    Webサイトにログインすればその後は定期的に届きます。
+    <% unless user_signed_in? %>
+      <%= link_to t('.sign_in'), sign_in_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
+    <% end %>
+  </div>
+
+  今すぐ通知を受信したい場合は「<%= t('quick_replies.prompt_reports.label3') %>」と @ego_tter にDMしてみてください。
+  <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %><br>
 <% end %>
 
 <% faq_id :auto %>
-<% faq_question 'リムられ通知が止まりました。再開することはできますか？' %>
+<% faq_question 'リムられ通知が定期的に届かなくなりました' %>
 <% faq_answer do %>
-  リムられ通知はいつでも再開できます。「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてみてください。
+  リムられ通知は止まることがあります。代表的な理由は下記の通りです。<br>
+  <br>
+  ・DMを送れない設定になっている<br>
+  ツイッターの設定で @ego_tter からのDMを受信できるようにしてください。<br>
+  <br>
+  ・@ego_tter の連携を解除している<br>
+  えごったーにログインし直してください。
+  <%= link_to '再ログインする', sign_in_path(force_login: true, via: via), class: 'btn btn-outline-primary btn-sm' %><br>
+  <br>
+  ・@ego_tter をブロックしている<br>
+  ブロックを解除してください。<br>
+  <br>
+  ・@ego_tter からのDMに返信していない<br>
+  「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてみてください。
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question '止まったリムられ通知を再開することはできますか？' %>
+<% faq_answer do %>
+  リムられ通知はいつでも再開できます。「<%= t('quick_replies.prompt_reports.label3') %>」と @ego_tter にDMしてみてください。
   <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %><br>
   <br>
   止まっている理由がある場合は、返信のDMに解決方法が書かれています。
@@ -110,7 +154,7 @@
 <% faq_id :auto %>
 <% faq_question "「#{t('quick_replies.prompt_reports.label3')}」は何回までできますか？" %>
 <% faq_answer do %>
-  何回でもできます。リムられが増えたかな？と思うタイミングで「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてください。
+  何回でもできます。リムられが増えたかな？と思うタイミングで「<%= t('quick_replies.prompt_reports.label3') %>」と @ego_tter にDMしてください。
   <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
 <% end %>
 
@@ -126,10 +170,20 @@
 <% faq_id :auto %>
 <% faq_question 'リムられ通知はどれくらいの頻度で届きますか？' %>
 <% faq_answer do %>
-  今のところは、朝・昼・夜の1日3回届きます。届く回数は設定ページから変更できます。
-  <% if user_signed_in? %>
+  <div class="mb-3">
+    今のところは、朝・昼・夜の 1日3回 届きます。届く回数は設定ページから変更できます。
+  </div>
+
+  朝と昼のリムられ通知は設定でオフにできます。夜のリムられ通知は必ず届きます。
+ <% if user_signed_in? %>
     <%= link_to t('.settings'), settings_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
   <% end %>
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question '朝・昼・夜のリムられ通知は何時頃に届きますか？' %>
+<% faq_answer do %>
+  朝の通知は7〜9時、昼の通知は11〜13時、夜の通知は20〜22時あたりに届きます。
 <% end %>
 
 <% faq_id :auto %>
@@ -142,7 +196,7 @@
 <% faq_id :auto %>
 <% faq_question 'リムられ通知に @ が付かなくなりました。理由は何ですか？' %>
 <% faq_answer do %>
-  リムられ通知でユーザー名の前に @ が付くのは、有料プランのユーザーか、「えごったーの登録後1週間以内」のユーザーのみになります。
+  リムられ通知でユーザー名の前に @ が付くのは、「有料プランのユーザー」または「えごったーの登録から <%= User::PERIODIC_REPORT_AT_MARK_DURATION / 1.day %>日 以内」のユーザーのみになります。
 <% end %>
 
 <% faq_questions.each.with_index do |q, i| %>
@@ -160,17 +214,17 @@
 <% faq_answer do %>
   ツイッターの仕様上、DMを一方的に送り続けることはできません。そのため、リムられ通知を受け取るには、定期的に @ego_tter に返信のDMを送る必要があります。<br>
   <br>
-  これがリムられ通知の有効期限です。これは<span class="egotter-pink">ツイッターの仕様</span>です。
+  これがリムられ通知の有効期限です。これは全世界共通の<span class="egotter-pink">ツイッターの仕様</span>です。
 <% end %>
 
 <% faq_id :auto %>
 <% faq_question 'リムられ通知の有効期限が切れかけています。何をすればよいですか？' %>
 <% faq_answer do %>
-  リムられ通知を継続する：<br>
-  リムられ通知を受け取り続けるには【リムられ通知 継続】をDMにコピペして送ってください<br>
+  ・通知を継続したい場合<br>
+  【リムられ通知 継続】をDMにコピペして送ってください<br>
   <br>
-  リムられ通知を止める：<br>
-  リムられ通知を止めるには【リムられ通知 停止】をDMにコピペして送ってください
+  ・通知を止めたい場合<br>
+  【リムられ通知 停止】をDMにコピペして送ってください
 <% end %>
 
 <% faq_id :auto %>
@@ -185,7 +239,7 @@
 <% faq_id :auto %>
 <% faq_question 'リムられ通知の有効期限がすぐに切れるのはどうしてですか？' %>
 <% faq_answer do %>
-  <span class="egotter-pink">ツイッターの仕様</span>です。相手からDMの送信がないと、通知DMを送り続けることができないのです。
+  全世界共通の<span class="egotter-pink">ツイッターの仕様</span>です。相手からDMの送信がないと、通知DMを送り続けることができないのです。
 <% end %>
 
 <% faq_questions.each.with_index do |q, i| %>
@@ -203,14 +257,91 @@
 <% faq_answer do %>
   決められたメッセージをDMで送ることで、リムられ通知をDMで操作することができます。<br>
   <br>
-  <%= link_to t('quick_replies.prompt_reports.label3'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする<br>
+  <%= link_to t('quick_replies.prompt_reports.label3'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
+  <br>
   リムられ通知をすぐに送信します。もし送信できない場合は、その理由が返信のDMに書かれています。<br>
   <br>
-  <%= link_to t('quick_replies.prompt_reports.label5'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label5')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする<br>
+  <%= link_to t('quick_replies.prompt_reports.label5'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label5')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
+  <br>
   リムられ通知の定期的な送信を停止します。<br>
   <br>
-  <%= link_to t('quick_replies.prompt_reports.label4'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label4')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする<br>
-  リムられ通知の定期的な送信を再開します。
+  <%= link_to t('quick_replies.prompt_reports.label4'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label4')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
+  <br>
+  リムられ通知の定期的な送信を再開します。<br>
+  <br>
+  <%= link_to 'リムられ通知 使い方', direct_message_url(User.egotter.uid, 'リムられ通知 使い方'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
+  <br>
+  リムられ通知の使い方を返信で教えてくれます。<br>
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>
+
+
+<h3 class="h5 my-5">ブロック通知</h3>
+
+
+<% faq_id :auto %>
+<% faq_question 'ブロック通知とは何ですか？' %>
+<% faq_answer do %>
+  「誰かにブロックされていること」を @ego_tter から <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %> にDMで通知する機能のことです。<br>
+  <br>
+  Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question 'ブロック通知の使い方を教えてください' %>
+<% faq_answer do %>
+  ブロック通知は、不定期にDMで届きます。さらに、必要なときに「<%= t('quick_replies.block_reports.label4') %>」と @ego_tter にDMすればすぐに受信することができます。<br>
+  <br>
+  ブロック通知はさらに細かくDMで操作することができます。詳しく知るには「ブロック通知 使い方」と @ego_tter にDMしてみてください。
+  <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, 'ブロック通知 使い方'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %><br>
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question 'ブロック通知のデータが0人のままです。なぜですか？' %>
+<% faq_answer do %>
+  ブロック通知のデータは不定期に更新されます。よく利用するユーザーほど早くデータが更新されます。<br>
+  <br>
+  定期的に「<%= t('quick_replies.block_reports.label4') %>」と @ego_tter にDMしてみてください。
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>
+
+
+<h3 class="h5 my-5">ミュート通知</h3>
+
+
+<% faq_id :auto %>
+<% faq_question 'ミュート通知とは何ですか？' %>
+<% faq_answer do %>
+  「誰かにミュートされていること」を @ego_tter から <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %> にDMで通知する機能のことです。<br>
+  <br>
+  Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question 'ミュート通知の使い方を教えてください' %>
+<% faq_answer do %>
+  ミュート通知は、不定期にDMで届きます。さらに、必要なときに「<%= t('quick_replies.mute_reports.label4') %>」と @ego_tter にDMすればすぐに受信することができます。<br>
+  <br>
+  ミュート通知はさらに細かくDMで操作することができます。詳しく知るには「ミュート通知 使い方」と @ego_tter にDMしてみてください。
+  <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, 'ミュート通知 使い方'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %><br>
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question 'ミュート通知のデータが0人のままです。なぜですか？' %>
+<% faq_answer do %>
+  ミュート通知のデータは不定期に更新されます。よく利用するユーザーほど早くデータが更新されます。<br>
+  <br>
+  定期的に「<%= t('quick_replies.mute_reports.label4') %>」と @ego_tter にDMしてみてください。
 <% end %>
 
 <% faq_questions.each.with_index do |q, i| %>
@@ -337,6 +468,36 @@
 <% faq_question '自分がえごったーで検索されたことを通知してもらうことはできますか？' %>
 <% faq_answer do %>
   はい、できます。この設定は標準で有効になっているので、誰かがえごったーであなたを検索すると、@ego_tter からあなたにそのことを知らせるDMが届きます。検索したのが誰なのかは分かりません。
+<% end %>
+
+<% faq_questions.each.with_index do |q, i| %>
+  <%= render partial: 'misc/q', locals: {id: faq_ids[i], text: q} %>
+  <div class="mb-5"><%= faq_answers[i].html_safe %></div>
+<% end %>
+<% flush_faq %>
+
+
+<h3 class="h5 my-5">利用をやめる</h3>
+
+<% faq_id :auto %>
+<% faq_question 'えごったーの利用をやめる方法を教えてください。' %>
+<% faq_answer do %>
+  えごったーWebサイトのログアウトをクリックしてください。
+  <% if user_signed_in? %>
+    <%= link_to 'ログアウトする', goodbye_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
+  <% end %>
+<% end %>
+
+<% faq_id :auto %>
+<% faq_question 'えごったーの通知を止める方法を教えてください。' %>
+<% faq_answer do %>
+  通知のDMは何も返信しなければ自動的に止まります。明示的に止める場合は下記のDMを @ego_tter に送ってください。<br>
+  <br>
+  ※ それぞれ別のDMで送ってください。<br>
+  <br>
+  ・リムられ通知 停止<br>
+  ・ブロック通知 停止<br>
+  ・ミュート通知 停止
 <% end %>
 
 <% faq_questions.each.with_index do |q, i| %>

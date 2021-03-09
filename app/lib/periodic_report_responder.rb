@@ -59,16 +59,17 @@ class PeriodicReportResponder < AbstractMessageResponder
       user = validate_report_status(@uid)
       return unless user
 
-      if @stop
+      if @stop || @restart || @continue || @received || @send || @help
         DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
+      end
+
+      if @stop
         StopPeriodicReportRequest.create(user_id: user.id)
         CreatePeriodicReportStopRequestedMessageWorker.perform_async(user.id)
       elsif @restart
-        DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
         StopPeriodicReportRequest.find_by(user_id: user.id)&.destroy
         CreatePeriodicReportRestartRequestedMessageWorker.perform_async(user.id)
       elsif @continue
-        DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
         CreatePeriodicReportContinueRequestedMessageWorker.perform_async(user.id)
       elsif @received
         CreatePeriodicReportReceivedMessageWorker.perform_async(@uid)
@@ -80,8 +81,6 @@ class PeriodicReportResponder < AbstractMessageResponder
     end
 
     def send_periodic_report(user)
-      DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
-
       unless user.has_valid_subscription?
         # TODO Check User#send_periodic_report_even_though_not_following?
         unless EgotterFollower.exists?(uid: user.uid)

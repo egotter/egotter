@@ -231,8 +231,10 @@ class User < ApplicationRecord
     uid == ADMIN_UID
   end
 
+  PERIODIC_REPORT_AT_MARK_DURATION = 1.week
+
   def add_atmark_to_periodic_report?
-    has_valid_subscription? || 1.weeks.ago < created_at
+    has_valid_subscription? || PERIODIC_REPORT_AT_MARK_DURATION.ago < created_at
   end
 
   def send_periodic_report_even_though_not_following?

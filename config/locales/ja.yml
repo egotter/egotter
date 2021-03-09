@@ -733,7 +733,6 @@ ja:
     faq:
       search: '@%{user} を分析する'
       sign_in: 'ログインする'
-      see_on_twitter: '@%{user} をツイッターで見る'
       settings: '設定ページを開く'
       open_dm: 'DM作成画面を開く'
     terms_of_service:
