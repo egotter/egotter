@@ -43,7 +43,11 @@
   <div class="col-8">
     <h6><%= t('.sneak_search_request.title_html') %></h6>
     <div class="text-muted small"><%= t('.sneak_search_request.note1') %></div>
-    <div class="text-muted small"><%= t('.sneak_search_request.note2') %></div>
+    <div class="text-muted small my-2"><%= t('.sneak_search_request.note1_2') %></div>
+    <div class="text-muted small">
+      <%= t('.sneak_search_request.note2') %>
+      <a href="#" class="btn btn-outline-primary btn-sm btn-checkout"><%= t('.sneak_search_request.purchase') %></a>
+    </div>
   </div>
 </div>
 <% if current_user.has_valid_subscription? %>
@@ -63,6 +67,7 @@
 <% else %>
   <script>
     $(function () {
+      // Go to the purchase page after clicking the toggle button.
       $('#sneak_search_request').addClass('btn-checkout')
     });
   </script>

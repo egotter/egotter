@@ -24,4 +24,8 @@ namespace :orders do
       end
     end
   end
+
+  task create: :environment do
+    Order.create!(user_id: ENV['USER_ID'], name: 'dummy', customer_id: 'dummy', subscription_id: 'dummy', trial_end: 14.days.since)
+  end
 end
