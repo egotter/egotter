@@ -13,6 +13,7 @@ class SearchesController < ApplicationController
   before_action { !@self_search && !not_found_screen_name?(params[:screen_name]) && !not_found_user?(params[:screen_name]) }
   before_action { !@self_search && !forbidden_screen_name?(params[:screen_name]) && !forbidden_user?(params[:screen_name]) }
   before_action { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
+  before_action { private_mode_specified?(@twitter_user) }
   before_action { search_limitation_soft_limited?(@twitter_user) }
   before_action { !@self_search && !protected_search?(@twitter_user) }
   before_action { !@self_search && !blocked_search?(@twitter_user) }

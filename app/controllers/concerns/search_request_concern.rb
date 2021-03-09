@@ -30,6 +30,7 @@ module SearchRequestConcern
     # confirming the latest account status
     before_action(only: :show) { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
 
+    before_action(only: :show) { private_mode_specified?(@twitter_user) }
     before_action(only: :show) { search_limitation_soft_limited?(@twitter_user) }
     before_action(only: :show) { !@self_search && !protected_search?(@twitter_user) }
     before_action(only: :show) { !@self_search && !blocked_search?(@twitter_user) }

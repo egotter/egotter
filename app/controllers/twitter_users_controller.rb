@@ -8,6 +8,7 @@ class TwitterUsersController < ApplicationController
   before_action { valid_uid?(params[:uid]) }
   before_action { @self_search = user_requested_self_search_by_uid?(params[:uid]) }
   before_action { @twitter_user = build_twitter_user_by_uid(params[:uid]) }
+  before_action { private_mode_specified?(@twitter_user) }
   before_action { search_limitation_soft_limited?(@twitter_user) }
   before_action { !@self_search && !protected_search?(@twitter_user) }
   before_action { !@self_search && !blocked_search?(@twitter_user) }

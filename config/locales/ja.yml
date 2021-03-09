@@ -2729,6 +2729,7 @@ ja:
     ad_blocker_detected_with_count: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。%{seconds}秒後にトップページへ移動します。'
     only_for_login_user: '%{name}はログインしている本人のみ見ることができます。'
     must_specify_valid_uid: '有効な uid を指定してください。'
+    private_mode_specified: 'データが見付かりませんでした。'
   after_sign_in:
     too_many_requests_with_reset_in: >
       一時的なエラーが起きました。ツイッターAPIが回復するまで %{seconds}秒 ほど待ってください。<br>

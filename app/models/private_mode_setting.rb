@@ -14,4 +14,11 @@
 #
 class PrivateModeSetting < ApplicationRecord
   validates :user_id, uniqueness: true
+
+  class << self
+    def specified?(uid)
+      (user = User.select(:id).find_by(uid: uid)) &&
+          where(user_id: user.id).exists?
+    end
+  end
 end

@@ -249,6 +249,17 @@ module ValidationConcern
     true
   end
 
+  def private_mode_specified?(twitter_user)
+    return false if user_signed_in? && current_user.uid == twitter_user.uid
+
+    if PrivateModeSetting.specified?(twitter_user.uid)
+      redirect_to root_path(via: current_via('pms')), alert: t('before_sign_in.private_mode_specified')
+      true
+    else
+      false
+    end
+  end
+
   # TODO Rename to current_visitor_cannot_search_for_user_has_many_friends_and_followers
   def search_limitation_soft_limited?(user)
     return false if from_crawler?
