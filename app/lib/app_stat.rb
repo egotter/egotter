@@ -41,8 +41,8 @@ class AppStat
     def to_s
       [
           "UserTimeline #{CallUserTimelineCount.new.size}",
-          "CreateFriendship #{CallCreateFriendshipCount.new.size}",
-          "DestroyFriendship #{CallDestroyFriendshipCount.new.size}",
+          "CreateFriendship #{CallCreateFriendshipCount.new.size} (400 per user; 1000 per app)",
+          "DestroyFriendship #{CallDestroyFriendshipCount.new.size} (800 - 900 per day)",
       ].join("\n")
     end
   end

@@ -243,11 +243,7 @@ Rails.application.routes.draw do
     end
   end
 
-  authenticate :user, lambda { |u| [User::ADMIN_UID, User::EGOTTER_UID].include?(u.uid) } do
-    match 'app_stats' => proc {
-        [200, {'Content-Type' => 'text/plain'}, [AppStat.new.to_s]]
-    }, via: :get
-  end
+  get 'app_stats', to: 'app_stats#index'
 
   require 'sidekiq/web'
   if Rails.env.production?
