@@ -724,6 +724,7 @@ ja:
       sign_in_with_twitter_html: '%{icon} Twitter でログイン'
   misc:
     support:
+      meta_title: 'えごったーサポート・よくある質問'
       title: "お問い合わせ"
       lead_html: |
         気になることや分からないことについて、お気軽にお問い合わせください。公式アカウントは <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> です。<br>
