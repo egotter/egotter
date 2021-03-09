@@ -27,8 +27,7 @@
 .my-2= pricing_checked_item(t('.list.free_plan_search_count', min: SearchCountLimitation::ANONYMOUS, max: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS))
 .my-2= pricing_checked_item(t('.list.notification'))
 .my-2= pricing_checked_item(t('.list.private_search'))
-.my-2= pricing_checked_item(t('.list.follow', count: CreateFollowLimitation::ANONYMOUS))
-.mt-2.mb-4= pricing_checked_item(t('.list.unfollow', count: CreateUnfollowLimitation::ANONYMOUS))
+.mb-4
 .my-2= pricing_unchecked_item(t('.list.download'))
 .my-2= pricing_unchecked_item(t('.list.egotter_follow'))
 .my-2= pricing_unchecked_item(t('.list.atmark'))
@@ -45,8 +44,7 @@
 .my-2= pricing_checked_item(t('.list.basic_plan_search_count', count: SearchCountLimitation::BASIC_PLAN))
 .my-2= pricing_checked_item(t('.list.notification'))
 .my-2= pricing_checked_item(t('.list.private_search'))
-.my-2= pricing_checked_item(t('.list.follow', count: CreateFollowLimitation::BASIC_PLAN))
-.mt-2.mb-4= pricing_checked_item(t('.list.unfollow', count: CreateUnfollowLimitation::BASIC_PLAN))
+.mb-4
 .my-2= pricing_checked_item(t('.list.download'))
 .my-2= pricing_checked_item(t('.list.egotter_follow'))
 .my-2= pricing_checked_item(t('.list.atmark'))

@@ -1,5 +1,10 @@
 module TwitterHelper
+  # TODO Remove
   def user_url(screen_name)
+    twitter_web_url(screen_name)
+  end
+
+  def twitter_web_url(screen_name)
     "https://twitter.com/#{screen_name}"
   end
 
