@@ -13,5 +13,6 @@
 #  index_sneak_search_requests_on_user_id     (user_id) UNIQUE
 #
 class SneakSearchRequest < ApplicationRecord
+  # TODO Rename to SneakSearchSettings
   validates :user_id, uniqueness: true
 end

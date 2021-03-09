@@ -12,6 +12,7 @@ class SettingsController < ApplicationController
     @reset_cache_request = current_user.reset_cache_requests.not_finished.where(created_at: 12.hours.ago..Time.zone.now).exists?
     @create_periodic_tweet_request = CreatePeriodicTweetRequest.find_by(user_id: current_user.id)
     @sneak_search_request = SneakSearchRequest.find_by(user_id: current_user.id)
+    @private_mode_setting = PrivateModeSetting.find_by(user_id: current_user.id)
   end
 
   def follow_requests

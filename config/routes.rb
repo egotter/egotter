@@ -57,6 +57,7 @@ Rails.application.routes.draw do
       resources :close_friends_og_images, only: %i(show), param: :uid
 
       resource :sneak_search_requests, only: %i(create destroy)
+      resource :private_mode_settings, only: %i(create destroy)
       resources :delete_tweets_requests, only: %i(create)
       resources :delete_tweets_notifications, only: %i(create)
       resources :delete_tweets_presigned_urls, only: %i(create)

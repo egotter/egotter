@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_08_072029) do
+ActiveRecord::Schema.define(version: 2021_03_09_014524) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1015,6 +1015,14 @@ ActiveRecord::Schema.define(version: 2021_03_08_072029) do
     t.index ["session_id"], name: "index_polling_logs_on_session_id"
     t.index ["uid"], name: "index_polling_logs_on_uid"
     t.index ["user_id"], name: "index_polling_logs_on_user_id"
+  end
+
+  create_table "private_mode_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_private_mode_settings_on_created_at"
+    t.index ["user_id"], name: "index_private_mode_settings_on_user_id", unique: true
   end
 
   create_table "prompt_reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

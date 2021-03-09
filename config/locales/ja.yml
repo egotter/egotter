@@ -528,9 +528,14 @@ ja:
         on_note: '1日に1回 自動的にツイートします'
         off_note_html: 'オンにすると <span class="egotter-pink">%{count}回/日</span> の検索ボーナス'
       sneak_search_request:
-        title_html: 'こっそり検索 <span class="egotter-pink">New</span>'
+        title_html: 'こっそり検索 <span class="egotter-pink">プレミアム</span>'
         note1: 'オンにすると、誰かを検索したときに「検索通知」が相手に届かなくなります'
         note1_2: '※ 検索通知にIDは書かれません'
+        note2: '※ 有料プラン限定機能です'
+        purchase: '購入する'
+      private_mode_setting:
+        title_html: 'データ非公開 <span class="egotter-pink">プレミアム</span>'
+        note1: 'オンにすると、えごったーのあなたのデータが非公開になります'
         note2: '※ 有料プラン限定機能です'
         purchase: '購入する'
       search_count:
@@ -2297,6 +2302,11 @@ ja:
           success_html: 'こっそり検索の設定を <span class="text-success">有効</span> にしました。'
         destroy:
           success_html: 'こっそり検索の設定を <span class="text-danger">無効</span> にしました。'
+      private_mode_settings:
+        create:
+          success_html: 'データ非公開の設定を <span class="text-success">有効</span> にしました。'
+        destroy:
+          success_html: 'データ非公開の設定を <span class="text-danger">無効</span> にしました。'
       user_caches:
         destroy:
           success: 'キャッシュのリセットがリクエストされました。'

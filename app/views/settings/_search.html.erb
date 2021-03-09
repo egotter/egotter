@@ -76,6 +76,46 @@
 <hr>
 
 <div class="row">
+  <div class="col-4">
+    <%= check_box_tag :private_mode_setting, true, @private_mode_setting, {id: 'private_mode_setting', class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="private_mode_setting"></label>
+  </div>
+
+  <div class="col-8">
+    <h6><%= t('.private_mode_setting.title_html') %></h6>
+    <div class="text-muted small"><%= t('.private_mode_setting.note1') %></div>
+    <div class="text-muted small">
+      <%= t('.private_mode_setting.note2') %>
+      <a href="#" class="btn btn-outline-primary btn-sm btn-checkout"><%= t('.private_mode_setting.purchase') %></a>
+    </div>
+  </div>
+</div>
+<% if current_user.has_valid_subscription? %>
+  <% if current_user.has_trial_subscription? %>
+    <script>
+      $(function () {
+        $('#private_mode_setting').addClass('btn-end-trial')
+      });
+    </script>
+  <% else %>
+    <script>
+      $(function () {
+        new PrivateModeSetting('private_mode_setting');
+      });
+    </script>
+  <% end %>
+<% else %>
+  <script>
+    $(function () {
+      // Go to the purchase page after clicking the toggle button.
+      $('#private_mode_setting').addClass('btn-checkout')
+    });
+  </script>
+<% end %>
+
+<hr>
+
+<div class="row">
   <div class="col-4"><%= t('.search_count.title') %></div>
   <div class="col-8">
     <div>
