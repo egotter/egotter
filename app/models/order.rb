@@ -39,8 +39,11 @@ class Order < ApplicationRecord
 
   BASIC_PLAN_ID = ENV['STRIPE_BASIC_PLAN_ID']
   BASIC_PLAN_PRICE_ID = ENV['STRIPE_BASIC_PLAN_PRICE_ID']
+  TAX_RATE_ID = ENV['STRIPE_TAX_RATE_ID']
+  TAX_RATE = 0.1
   PRICE = 300
   TRIAL_DAYS = 14
+  COUPON_ID = ENV['STRIPE_COUPON_ID']
   FREE_PLAN_USERS_LIMIT = 100
   BASIC_PLAN_USERS_LIMIT = 10000
   FREE_PLAN_BLOCKERS_LIMIT = 10
@@ -60,15 +63,13 @@ class Order < ApplicationRecord
       # tax_rate = checkout_session.subscription.tax_percent / 100.0
       # Temporary code
       name = 'えごったー ベーシック'
-      amount = 300
-      tax_rate = 0.1
 
       create!(
           user_id: checkout_session.client_reference_id,
           email: checkout_session.customer_email,
           name: name,
-          price: amount,
-          tax_rate: tax_rate,
+          price: PRICE,
+          tax_rate: 0.1,
           search_count: SearchCountLimitation::BASIC_PLAN,
           follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
           unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,
