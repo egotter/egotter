@@ -8,7 +8,7 @@ class GlobalFollowLimitation
   end
 
   def limit_start
-    @redis.setex(@key, @ttl, true)
+    @redis.setex(@key, @ttl, Time.zone.now.to_s)
   end
 
   def limited?

@@ -39,10 +39,12 @@ class AppStat
 
   class TwitterApiStat
     def to_s
+      follow_limited = GlobalFollowLimitation.new.limited?
+      unfollow_limited = GlobalUnfollowLimitation.new.limited?
       [
           "UserTimeline #{CallUserTimelineCount.new.size}",
-          "CreateFriendship #{CallCreateFriendshipCount.new.size} (400 per user; 1000 per app)",
-          "DestroyFriendship #{CallDestroyFriendshipCount.new.size} (800 - 900 per day)",
+          "CreateFriendship(#{follow_limited}) #{CallCreateFriendshipCount.new.size} (400 per user; 1000 per app)",
+          "DestroyFriendship(#{unfollow_limited}) #{CallDestroyFriendshipCount.new.size} (800 - 900 per day)",
       ].join("\n")
     end
   end
