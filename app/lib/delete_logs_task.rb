@@ -6,7 +6,7 @@ class DeleteLogsTask
   end
 
   def start!
-    unless File.basename($0) == 'rake'
+    if !Rails.env.test? && File.basename($0) != 'rake'
       raise "Don't call #{self}##{__method__} outside Rake tasks"
     end
 
@@ -19,7 +19,7 @@ class DeleteLogsTask
     if @year.blank? || @month.blank?
       time = first_log.created_at
     else
-      time = Time.zone.now.change(year: year, month: month)
+      time = Time.zone.now.change(year: @year, month: @month)
     end
 
     start_time = time.beginning_of_month.to_s(:db)
