@@ -12,10 +12,11 @@ class CreateAccessDayWorker
 
   def perform(user_id, options = {})
     user = User.find(user_id)
-    date = Time.zone.now.in_time_zone('Tokyo').to_date
+    time = Time.zone.now
+    date = time.in_time_zone('Tokyo').to_date
 
     unless user.access_days.exists?(date: date)
-      user.access_days.create!(date: date)
+      user.access_days.create!(date: date, time: time)
     end
   rescue ActiveRecord::RecordNotUnique => e
     logger.info e.message.truncate(100)
