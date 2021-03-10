@@ -3,6 +3,7 @@ class CreateAccessDays < ActiveRecord::Migration[5.2]
     create_table :access_days do |t|
       t.integer :user_id, null: false
       t.string :date, null: false
+      t.timestamp :time, null: true
 
       t.timestamps null: false
 

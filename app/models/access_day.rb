@@ -5,6 +5,7 @@
 #  id         :bigint(8)        not null, primary key
 #  user_id    :integer          not null
 #  date       :string(191)      not null
+#  time       :datetime
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
