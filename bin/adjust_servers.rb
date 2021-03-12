@@ -45,30 +45,35 @@ def adjust_server(role, instance_type, num, dry_run)
   params
 end
 
-def list_server(role)
-  cmd = "cd /var/egotter && /usr/local/bin/bundle exec bin/deploy.rb --list --role #{role}"
+def list_server(role, instance_type)
+  cmd = "cd /var/egotter && /usr/local/bin/bundle exec bin/deploy.rb --list --role #{role} --instance-type #{instance_type}"
   `#{cmd}`.chomp
 end
 
 # TODO Set suitable instance_type
 def adjust_web(dry_run)
-  prev = list_server('web')
   count = SETTINGS[now.hour][0]
   count += 1 if active_users > 300
   count += 1 if active_users > 400
   instance_type = count >= 3 ? 't3.large' : 't3.medium'
+
+  prev = list_server('web', instance_type)
   adjust_server('web', instance_type, count, dry_run)
-  cur = list_server('web')
+
+  cur = list_server('web', instance_type)
   post("prev=#{prev} cur=#{cur}") if prev != cur
 end
 
 def adjust_sidekiq(dry_run)
-  prev = list_server('sidekiq')
   count = SETTINGS[now.hour][1]
   count += 1 if remaining_creation_jobs > 1000
   count += 1 if remaining_creation_jobs > 10000
-  adjust_server('sidekiq', 'm5.large', count, dry_run)
-  cur = list_server('sidekiq')
+  instance_type = 'm5.large'
+
+  prev = list_server('sidekiq', instance_type)
+  adjust_server('sidekiq', instance_type, count, dry_run)
+
+  cur = list_server('sidekiq', instance_type)
   post("prev=#{prev} cur=#{cur}") if prev != cur
 end
 
