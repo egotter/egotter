@@ -1,9 +1,9 @@
 <% if user_signed_in? %>
   <% if current_user.has_valid_subscription? %>
-    <div>1. <a href="#" class="btn btn-outline-primary disabled btn-sm"><%= Order::PRICE %>円で購入して増やす</a></div>
+    <div>1. <a href="#" class="btn btn-outline-primary disabled btn-sm">購入して増やす</a></div>
     <div class="small mt-1 mb-3"><span class="text-muted">購入済み </span><a href="<%= settings_path(via: via) %>">設定ページ</a></div>
   <% else %>
-    <div>1. <a href="#" class="btn btn-outline-primary btn-checkout btn-sm"><%= Order::PRICE %>円で購入して増やす</a></div>
+    <div>1. <a href="#" class="btn btn-outline-primary btn-checkout btn-sm">購入して増やす</a></div>
     <div class="small mt-1 mb-3">こっそり使いたい方向け <span class="small"><a href="#" class="btn-checkout">もっと詳しく</a></span></div>
   <% end %>
 

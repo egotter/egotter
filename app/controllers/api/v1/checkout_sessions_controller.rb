@@ -16,15 +16,15 @@ module Api
             metadata: {user_id: current_user.id},
             success_url: ENV['STRIPE_SUCCESS_URL'],
             cancel_url: pricing_url(via: 'cancel_checkout'),
-
         }
-
-        # attrs[:discounts] = [{coupon: Order::COUPON_ID}]
 
         if (order = current_user.orders.where.not(customer_id: :nil).order(created_at: :desc).first)
           attrs[:customer] = order.customer_id
+          attrs[:metadata][:price] = Order::REGULAR_PRICE
         else
           attrs[:subscription_data][:trial_period_days] = Order::TRIAL_DAYS
+          attrs[:discounts] = [{coupon: Order::COUPON_ID}]
+          attrs[:metadata][:price] = Order::DISCOUNT_PRICE
         end
 
         session = Stripe::Checkout::Session.create(attrs)
