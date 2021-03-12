@@ -3,7 +3,7 @@ require_relative './ec2'
 module Deploy
   module Aws
     class Instance
-      attr_reader :id, :name, :public_ip, :availability_zone, :launched_at
+      attr_reader :id, :name, :public_ip, :availability_zone, :launched_at, :instance_type
 
       def initialize(instance)
         @instance = instance
@@ -12,6 +12,7 @@ module Deploy
         @public_ip = instance.public_ip_address
         @availability_zone = instance.placement.availability_zone
         @launched_at = instance.launch_time
+        @instance_type = instance.instance_type
       end
 
       def host

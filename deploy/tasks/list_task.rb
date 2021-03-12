@@ -38,21 +38,23 @@ module Tasks
       def initialize(params)
         super
         @state = params['state'].to_s.empty? ? 'healthy' : params['state']
+        @instance_type = params['instance-type']
         @target_group = ::Deploy::Aws::TargetGroup.new(params['target-group'])
       end
 
       def instance_names
-        @target_group.registered_instances(state: @state).map(&:name).sort
+        @target_group.registered_instances(state: @state, instance_type: @instance_type).map(&:name).sort
       end
     end
 
     class Sidekiq < Base
       def initialize(params)
         super
+        @instance_type = params['instance-type']
       end
 
       def instance_names
-        ::Deploy::Aws::EC2.new.retrieve_instances.map do |i|
+        ::Deploy::Aws::EC2.new.retrieve_instances(instance_type: @instance_type).map do |i|
           ::Deploy::Aws::Instance.new(i)
         end.select do |i|
           i.name&.match?(/^egotter_sidekiq[^5]/)
@@ -66,7 +68,7 @@ module Tasks
       end
 
       def instance_names
-        ::Deploy::Aws::EC2.new.retrieve_instances.map do |i|
+        ::Deploy::Aws::EC2.new.retrieve_instances(instance_type: @instance_type).map do |i|
           ::Deploy::Aws::Instance.new(i)
         end.select do |i|
           i.name&.start_with?('egotter_plain')

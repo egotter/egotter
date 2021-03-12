@@ -48,14 +48,21 @@ module Deploy
         true
       end
 
-      def registered_instances(state: 'healthy')
+      def registered_instances(state: 'healthy', instance_type: nil)
         params = {target_group_arn: @arn}
 
-        @elb_client.describe_target_health(params).
+        instances = @elb_client.describe_target_health(params).
             target_health_descriptions.
-            select { |d| d.target_health.state == state }.map do |description|
+            select { |d| d.target_health.state == state }.
+            map do |description|
           Instance.retrieve(description.target.id)
         end
+
+        if instance_type
+          instances.select! { |i| i.instance_type == instance_type }
+        end
+
+        instances
       end
 
       def oldest_instance

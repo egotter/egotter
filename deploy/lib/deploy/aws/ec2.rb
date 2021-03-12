@@ -59,8 +59,9 @@ module Deploy
         instance
       end
 
-      def retrieve_instances
+      def retrieve_instances(instance_type: nil)
         filters = [{name: 'instance-state-name', values: ['running']}]
+        filters << {name: 'instance-type', values: [instance_type]} if instance_type
         @ec2_resource.instances(filters: filters)
       end
 
