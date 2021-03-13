@@ -12,6 +12,21 @@
     <% end %>
   <% end %>
 
+  <% faq_question 'えごったーの使い方を教えてください' do %>
+    <div class="mb-1">
+      1. Webサイトにログインする
+      <% unless user_signed_in? %>
+        <%= link_to t('.sign_in'), sign_in_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
+      <% end %>
+    </div>
+    <div class="mb-3">
+      2. @ego_tter に【リムられ通知 送信】とDMする
+    </div>
+
+    たったこれだけでえごったーを使い始めることができます。ぜひお試しください。
+    <%= link_to t('.open_dm'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+  <% end %>
+
   <% faq_question 'えごったーに公式アカウントはありますか？' do %>
     <div class="mb-3">
       @ego_tter が公式アカウントです。フォローしていると検索回数や使える機能が増えます。
@@ -22,12 +37,24 @@
     <%= link_to '@egotter_cs を開く', user_url('egotter_cs'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
   <% end %>
 
-  <% faq_question '公式アカウントのフォローは必須ですか？' do %>
+  <% faq_question '@ego_tter と @egotter_cs の違いは何ですか？' do %>
     <div class="mb-3">
-      必須ではないです。フォローしていなくてもえごったーを使うことはできます。
+      @ego_tter は、フォローしていると使える機能が増えたりします。さらに、DMで特定の言葉を送ることで自動通知を行うことができます。
     </div>
 
-    @ego_tter をフォローしていると検索回数や使える機能が増えます。
+    @egotter_cs は、中の人がお返事をするためのアカウントです。回答が必要な連絡は必ずこちらに送ってください。
+  <% end %>
+
+  <% faq_question '公式アカウントをフォローすると良いことがありますか？' do %>
+    あります。@ego_tter をフォローするとWebサイトでの検索回数や使える機能が増えます。さらに、@ego_tter に【リムられ通知 送信】とDMすることでリムられ通知を受け取ることができます。
+  <% end %>
+
+  <% faq_question '公式アカウントのフォローは必須ですか？' do %>
+    <div class="mb-3">
+      必須ではないです。@ego_tter をフォローしていなくてもえごったーを使うことはできます。
+    </div>
+
+    @ego_tter をフォローしていると検索回数やWebサイトで使える機能が増えます。
   <% end %>
 <% end %>
 
@@ -36,29 +63,119 @@
     安全です。TLS/SSLを用いた通信の暗号化により、プライバシーとセキュリティは強固に守られています。
   <% end %>
 
-  <% faq_question 'えごったーを使ったことは誰かにバレますか？' do %>
-    バレません。このWebサイトの利用状況を他の人に知られることはありません。<br><br>@ego_tter をフォローすることで、ツイッター公式の「共通のフォロー」に表示されてしまうことはあります。
+  <% faq_question 'えごったーを使うと他の人にバレますか？' do %>
+    <div class="mb-3">バレません。このWebサイトの利用状況を他の人に知られることはありません。</div>
+
+    @ego_tter をフォローすることで、ツイッター公式の「共通のフォロー」に表示されてしまうことはあります。
   <% end %>
 
   <% faq_question 'えごったーを使うと勝手にツイートされますか？' do %>
-    勝手にツイートすることはありませんのでご安心ください。
+    <div class="mb-3">勝手にツイートすることはありませんのでご安心ください。</div>
+
+    <div class="mb-1"><strong>よくある誤解</strong></div>
+    <div>「検索回数を増やすために、えごったーをツイートする」という設定をオンにしていると、ツイートすることがあります。この設定は設定ページからいつでもオフにできます。</div>
   <% end %>
 
   <% faq_question 'えごったーを使うとDMを勝手に見られますか？' do %>
-    DMを勝手に見ることはありませんのでご安心ください。
+    <div class="mb-3">DMを勝手に見ることはありませんのでご安心ください。</div>
+
+    <div class="mb-1"><strong>よくある誤解</strong></div>
+    <div>ツイッター連携ログインで許可する項目に「DMの送信」があるのは、リムられ通知を送信するためです。また、ツイッターの権限は細かい選択ができないため今の形式になっています。</div>
   <% end %>
 
   <% faq_question 'なんでたくさんの権限が必要なんですか？' do %>
     全世界共通の<span class="egotter-pink">ツイッターの仕様</span>です。ツイッターの権限には「全部できる」または「全部できない」しかないためこのようになっています。
   <% end %>
 
-  <% faq_question '他の人も検索できてよいのですか？' do %>
-    えごったーで検索できるのは「公開情報のみ」ですのでご安心ください。<br><br>鍵アカウントについては、ログインしているユーザーに見る権限があるときだけ検索できます。
+  <% faq_question '他の人も検索できますか？' do %>
+    「自分が見ることのできるユーザー」のみに限り、他のユーザーも検索できます。
+  <% end %>
+
+  <% faq_question '鍵アカウントも検索できますか？' do %>
+    「自分自身」または「自分がフォローしている鍵アカウント」のみに限り、鍵アカウントも検索できます。
+  <% end %>
+<% end %>
+
+<% faq_section '検索でできること' do %>
+  <% faq_question 'えごったーの検索機能では何ができますか？' do %>
+    <div class="mb-3">
+      色々なツイッターユーザーのフォロー、フォロワーを分析することができます。単純な一覧だけでなく、片思いフォロー、非アクティブなフォローだけを抽出することもできます。
+    </div>
+
+    他にもたくさんの情報を分析することができます。ぜひお試しください。
+    <% if user_signed_in? %>
+      <%= link_to t('.search', user: current_user.screen_name), timeline_path(current_user, via: via), class: 'btn btn-outline-primary btn-sm' %>
+    <% else %>
+      <%= link_to t('.sign_in'), sign_in_path(via: via), class: 'btn btn-outline-primary btn-sm' %>
+    <% end %>
+  <% end %>
+
+  <% faq_question 'えごったーでの検索回数とは何ですか？' do %>
+    <div class="mb-3">
+      えごったーで1日に分析できるユーザー数の制限のことです。例えば、Aさんを検索してその後にBさんを検索すると、合計の検索利用回数は2回になります。
+    </div>
+    <br>
+    Webサイトへのログイン、えごったーの宣伝ツイート、 有料プランの購入をすることによって回数を増やすことができます。
+  <% end %>
+
+  <% faq_question '検索回数を増やす方法を教えてください' do %>
+    あなたは1日あたり <%= @search_count_limitation.max_count %>回 検索することができます。残りの検索回数は <%= @search_count_limitation.remaining_count %>回 です。<br>
+    <br>
+    もっとたくさん検索することもできます。お好きなプランをお選びください。<br>
+    <br>
+    <%= render template: 'messages/ways_to_increase_searches', locals: {via: via} %>
+  <% end %>
+<% end %>
+
+<% faq_section '通知機能 全般' do %>
+  <% faq_question 'えごったーの通知機能とは何ですか？' do %>
+    <div class="mb-3">
+      フォローやフォロワーに変化があったことを @ego_tter から
+      <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %> にDMでお知らせする機能ことです。
+    </div>
+
+    えごったーの通知機能には、リムられ通知、ブロック通知、ミュート通知、検索通知があります。
+  <% end %>
+
+  <% faq_question 'リムられ通知とは何ですか？' do %>
+    <div class="mb-3">
+      「誰かにフォローを外されたこと」を @eo_tter から
+      <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %>にDMでお知らせする機能のことです。
+    </div>
+
+    さらに詳細ついては <%= link_to 'リムられ通知の詳細', '#what_is_periodic_report' %> をご覧になってください。
+  <% end %>
+
+  <% faq_question 'ブロック通知とは何ですか？' do %>
+    <div class="mb-3">
+      「誰かにブロックされたこと」を @eo_tter から
+      <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %>にDMでお知らせする機能のことです。
+    </div>
+
+    さらに詳細ついては <%= link_to 'ブロック通知の詳細', '#what_is_block_report' %> をご覧になってください。
+  <% end %>
+
+  <% faq_question 'ミュート通知とは何ですか？' do %>
+    <div class="mb-3">
+      「誰かにミュートされたこと」を @eo_tter から
+      <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %>にDMでお知らせする機能のことです。
+    </div>
+
+    さらに詳細ついては <%= link_to 'ミュート通知の詳細', '#what_is_mute_report' %> をご覧になってください。
+  <% end %>
+
+  <% faq_question '検索通知とは何ですか？' do %>
+    <div class="mb-3">
+      「誰かにえごったー上で検索されたこと」を @eo_tter から
+      <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %>にDMでお知らせする機能のことです。
+    </div>
+
+    さらに詳細ついては <%= link_to '検索通知の詳細', '#what_is_search_report' %> をご覧になってください。
   <% end %>
 <% end %>
 
 <% faq_section 'リムられ通知 全般' do %>
-  <% faq_question 'リムられ通知とは何ですか？' do %>
+  <% faq_question 'リムられ通知とは何ですか？', id: 'what_is_periodic_report' do %>
     「誰かにフォローを外されたこと」を @ego_tter から <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %> にDMで通知する機能のことです。<br>
     <br>
     Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。
@@ -68,7 +185,7 @@
     リムられ通知は、1日3回 定期的にDMで届きます。さらに、必要なときに「<%= t('quick_replies.prompt_reports.label3') %>」と @ego_tter にDMすればすぐに受信することができます。<br>
     <br>
     リムられ通知はさらに細かくDMで操作することができます。詳しく知るには「リムられ通知 使い方」と @ego_tter にDMしてみてください。
-    <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    <%= link_to t('.open_dm'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
     <br>
   <% end %>
 
@@ -81,7 +198,7 @@
     </div>
 
     今すぐ通知を受信したい場合は「<%= t('quick_replies.prompt_reports.label3') %>」と @ego_tter にDMしてみてください。
-    <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    <%= link_to t('.open_dm'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
     <br>
   <% end %>
 
@@ -104,7 +221,7 @@
 
   <% faq_question '止まったリムられ通知を再開することはできますか？' do %>
     リムられ通知はいつでも再開できます。「<%= t('quick_replies.prompt_reports.label3') %>」と @ego_tter にDMしてみてください。
-    <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    <%= link_to t('.open_dm'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
     <br>
     <br>
     止まっている理由がある場合は、返信のDMに解決方法が書かれています。
@@ -112,7 +229,7 @@
 
   <% faq_question "「#{t('quick_replies.prompt_reports.label3')}」は何回までできますか？" do %>
     何回でもできます。リムられが増えたかな？と思うタイミングで「<%= t('quick_replies.prompt_reports.label3') %>」と @ego_tter にDMしてください。
-    <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    <%= link_to t('.open_dm'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
   <% end %>
 
   <% faq_question '@ego_tter をフォローしたのにリムられ通知が届きません。どうしてですか？' do %>
@@ -139,7 +256,7 @@
 
   <% faq_question 'リムられ通知をすぐに受け取ることはできますか？' do %>
     @ego_tter に「リムられ通知 今すぐ送信」とDMしてください。そうすれば、すぐにリムられ通知が届きます。
-    <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    <%= link_to t('.open_dm'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
   <% end %>
 
   <% faq_question 'リムられ通知に @ が付かなくなりました。理由は何ですか？' do %>
@@ -178,19 +295,19 @@
   <% faq_question 'リムられ通知をDMで操作する方法を教えてください' do %>
     決められたメッセージをDMで送ることで、リムられ通知をDMで操作することができます。<br>
     <br>
-    <%= link_to t('quick_replies.prompt_reports.label3'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
+    <%= link_to t('quick_replies.prompt_reports.label3'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
     <br>
     リムられ通知をすぐに送信します。もし送信できない場合は、その理由が返信のDMに書かれています。<br>
     <br>
-    <%= link_to t('quick_replies.prompt_reports.label5'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label5')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
+    <%= link_to t('quick_replies.prompt_reports.label5'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label5')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
     <br>
     リムられ通知の定期的な送信を停止します。<br>
     <br>
-    <%= link_to t('quick_replies.prompt_reports.label4'), direct_message_url(User.egotter.uid, t('quick_replies.prompt_reports.label4')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
+    <%= link_to t('quick_replies.prompt_reports.label4'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label4')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
     <br>
     リムられ通知の定期的な送信を再開します。<br>
     <br>
-    <%= link_to 'リムられ通知 使い方', direct_message_url(User.egotter.uid, 'リムられ通知 使い方'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
+    <%= link_to 'リムられ通知 使い方', direct_message_url(User::EGOTTER_UID, 'リムられ通知 使い方'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>とDMする
     <br>
     リムられ通知の使い方を返信で教えてくれます。<br>
   <% end %>
@@ -198,7 +315,7 @@
 
 
 <% faq_section 'ブロック通知' do %>
-  <% faq_question 'ブロック通知とは何ですか？' do %>
+  <% faq_question 'ブロック通知とは何ですか？', id: 'what_is_block_report' do %>
     「誰かにブロックされていること」を @ego_tter から <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %> にDMで通知する機能のことです。<br>
     <br>
     Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。
@@ -208,19 +325,47 @@
     ブロック通知は、不定期にDMで届きます。さらに、必要なときに「<%= t('quick_replies.block_reports.label4') %>」と @ego_tter にDMすればすぐに受信することができます。<br>
     <br>
     ブロック通知はさらに細かくDMで操作することができます。詳しく知るには「ブロック通知 使い方」と @ego_tter にDMしてみてください。
-    <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, 'ブロック通知 使い方'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %><br>
+    <%= link_to t('.open_dm'), direct_message_url(User::EGOTTER_UID, 'ブロック通知 使い方'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
   <% end %>
 
-  <% faq_question 'ブロック通知のデータが0人のままです。なぜですか？' do %>
+  <% faq_question 'ブロック通知は有料プランで何が変わりますか？' do %>
+    <div class="mb-3">
+      ブロック通知は、有料プランを購入すると具体的なIDまで分かるようになります。
+      例えば、haruto、souta、minato からブロックされている時は購入前と後で下記のように表記が変わります。
+    </div>
+
+    <div class="mb-1"><strong>購入前の通知</strong></div>
+    <div class="mb-3">
+      ha****<br>
+      so***<br>
+      さらに 1人
+    </div>
+
+    <div class="mb-1"><strong>購入後の通知</strong></div>
+    <div class="mb-3">
+      @haruto<br>
+      @souta<br>
+      さらに 1人
+    </div>
+
+    購入後は、IDの伏せ字（*の部分）がなくなります。また、アットマーク（@の部分）が付くためワンクリックで相手のページを見れるようになります。
+  <% end %>
+
+  <% faq_question 'ブロック通知のデータが0人のままです。いつ更新されますか？' do %>
     ブロック通知のデータは不定期に更新されます。よく利用するユーザーほど早くデータが更新されます。<br>
     <br>
     定期的に「<%= t('quick_replies.block_reports.label4') %>」と @ego_tter にDMしてみてください。
+  <% end %>
+
+  <% faq_question 'ブロック通知はどれくらい正確ですか？' do %>
+    えごったーのブロック通知は「もし見つかっていれば、そのデータを表示する」という仕組みになっています。
+    そのため、完全にブロック情報が揃っているのではなく「見れることもある」というくらいに思ってください。
   <% end %>
 <% end %>
 
 
 <% faq_section 'ミュート通知' do %>
-  <% faq_question 'ミュート通知とは何ですか？' do %>
+  <% faq_question 'ミュート通知とは何ですか？', id: 'what_is_mute_report' do %>
     「誰かにミュートされていること」を @ego_tter から <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %> にDMで通知する機能のことです。<br>
     <br>
     Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。
@@ -230,31 +375,61 @@
     ミュート通知は、不定期にDMで届きます。さらに、必要なときに「<%= t('quick_replies.mute_reports.label4') %>」と @ego_tter にDMすればすぐに受信することができます。<br>
     <br>
     ミュート通知はさらに細かくDMで操作することができます。詳しく知るには「ミュート通知 使い方」と @ego_tter にDMしてみてください。
-    <%= link_to t('.open_dm'), direct_message_url(User.egotter.uid, 'ミュート通知 使い方'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %><br>
+    <%= link_to t('.open_dm'), direct_message_url(User::EGOTTER_UID, 'ミュート通知 使い方'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
   <% end %>
 
-  <% faq_question 'ミュート通知のデータが0人のままです。なぜですか？' do %>
+  <% faq_question 'ミュート通知は有料プランで何が変わりますか？' do %>
+    <div class="mb-3">
+      ミュート通知は、有料プランを購入すると「IDの先頭二文字」まで分かるようになります。
+      例えば、haruto、souta、minato からミュートされている時は購入前と後で下記のように表記が変わります。
+    </div>
+
+    <div class="mb-1"><strong>購入前の通知</strong></div>
+    <div class="mb-3">
+      h から始まる 1人<br>
+      s から始まる 1人<br>
+      さらに 1人
+    </div>
+
+    <div class="mb-1"><strong>購入後の通知</strong></div>
+    <div class="mb-3">
+      ha****<br>
+      so***<br>
+      さらに 1人
+    </div>
+
+    購入前は、「先頭から一文字」だけを集計した結果でした。それが購入後は、「IDの先頭二文字」まで分かるようになります。
+  <% end %>
+
+  <% faq_question 'ミュート通知のデータが0人のままです。いつ更新されますか？' do %>
     ミュート通知のデータは不定期に更新されます。よく利用するユーザーほど早くデータが更新されます。<br>
     <br>
     定期的に「<%= t('quick_replies.mute_reports.label4') %>」と @ego_tter にDMしてみてください。
   <% end %>
+
+  <% faq_question 'ミュート通知はどれくらい正確ですか？' do %>
+    えごったーのミュート通知は「もし見つかっていれば、そのデータを表示する」という仕組みになっています。
+    そのため、完全にミュート情報が揃っているのではなく「見れることもある」というくらいに思ってください。
+  <% end %>
 <% end %>
 
-
-
-<% faq_section '検索回数の制限' do %>
-  <% faq_question 'えごったーでの検索回数とは何ですか？' do %>
-    えごったーで1日に分析できるユーザー数の制限のことです。<br>
+<% faq_section '検索通知' do %>
+  <% faq_question '検索通知とは何ですか？', id: 'what_is_search_report' do %>
+    「誰かにえごったー上で検索されたこと」を @ego_tter から <%= user_signed_in? ? "@#{current_user.screen_name}" : 'あなた' %> にDMで通知する機能のことです。<br>
     <br>
-    Webサイトへのログイン、えごったーの宣伝ツイート、 有料プランの購入をすることによって回数を増やすことができます。
+    Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。
   <% end %>
 
-  <% faq_question '検索回数を増やす方法を教えてください' do %>
-    あなたは1日あたり <%= @search_count_limitation.max_count %>回 検索することができます。残りの検索回数は <%= @search_count_limitation.remaining_count %>回 です。<br>
+  <% faq_question '検索通知の使い方を教えてください' do %>
+    検索通知は、不定期にDMで届きます。<br>
     <br>
-    もっとたくさん検索することもできます。お好きなプランをお選びください。<br>
-    <br>
-    <%= render template: 'messages/ways_to_increase_searches', locals: {via: via} %>
+    検索通知の使い方を詳しく知るには「検索通知 使い方」と @ego_tter にDMしてみてください。
+    <%= link_to t('.open_dm'), direct_message_url(User::EGOTTER_UID, '検索通知 使い方'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+  <% end %>
+
+  <% faq_question '検索通知が届くということは、誰かを検索するとバレるということですか？' do %>
+    いいえ、そんなことはないです。検索通知には「誰かに検索されたこと」だけが書かれます。
+    それが誰なのかは書かれないため、相手に自分のことがバレることはありません。
   <% end %>
 <% end %>
 

@@ -15,7 +15,7 @@ module FaqHelper
   end
 
   def faq_generate_id(value)
-    value == :auto ? "faq-id-#{@faq_questions.size}" : value
+    value == :auto ? "faq-#{Digest::MD5.hexdigest(@faq_section)}-#{@faq_questions.size}" : value
   end
 
   def faq_question(value, id: :auto, &block)
