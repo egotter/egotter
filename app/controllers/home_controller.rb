@@ -35,16 +35,17 @@ class HomeController < ApplicationController
 
     elsif via.end_with?('secret_mode_detected')
       @without_alert_container = true
+      @has_error = true
       flash.now[:notice] = render_to_string(template: 'messages/secret_mode_detected', layout: false)
     elsif via.end_with?('ad_blocker_detected')
       @without_alert_container = true
+      @has_error = true
       flash.now[:notice] = render_to_string(template: 'messages/ad_blocker_detected', layout: false)
     elsif via.end_with?('unauthorized_detected')
       if user_signed_in?
         url = sign_in_path(via: current_via('signed_in_user_not_authorized'))
         flash.now[:alert] = t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
       end
-
     elsif via.end_with?('blocked_detected')
       if user_signed_in?
         url = sign_in_path(via: current_via('egotter_is_blocked'))
