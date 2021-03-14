@@ -625,12 +625,13 @@ ja:
       free_plan_text_html: 'えごったーを<span class="egotter-pink">無料で使いたい</span>方に適したプランです。ログインするだけでこの状態になります。'
       free_plan_price: '0円/月'
       basic_plan_title: 'こっそり使いたい'
-      basic_plan_text_html: 'えごったーを<span class="egotter-pink">こっそり使いたい</span>方に適したプランです。無料プランの内容に加えて、検索回数、フォロー回数、アンフォロー回数が増えています。'
+      basic_plan_text_html: 'えごったーを<span class="egotter-pink">こっそり使いたい</span>方に適したプランです。無料プランの内容に加えて、検索回数が大幅に追加されます。'
       basic_plan_price_html: '<del class="text-muted">¥%{regular_price}</del> ¥%{discount_price}'
       basic_plan_price_period: '/月'
       basic_plan_price_note_html: |
-      basic_plan_price_note1: '※ この割引価格は初回購入時とそこから継続した定期購入に対して適用されます。'
-      basic_plan_price_note2: '※ 定期購入をキャンセル後に再度購入した場合は割引の適用されない価格となります。'
+      basic_plan_price_note1: '※ %{old_price}円から%{new_price}円への割引は、初回購入とそこから継続した定期購入に対してのみ適用されます。'
+      basic_plan_price_note2: '※ 定期購入をキャンセル後に再度購入した場合は、割引の適用されない価格（%{price}円）となります。'
+      basic_plan_price_note3: '※ 一部の機能を利用すると無料期間はその時点で終了します。その場合は返金の対象外となります。'
       pro_plan_title: 'プロフェッショナル'
       pro_plan_text_html: '特別なデータ収集依頼については、個別に引き受けています。<br><br>ツイッターで公開されているデータはおよそ全て収集可能です。お気軽にご相談ください。'
       pro_plan_price: '2万円〜'
@@ -654,7 +655,7 @@ ja:
         nonstop: 'リムられ通知の連続送信'
         delete_all_tweets: '%{count}件を超えるツイートの削除'
         reset_egotter: 'えごったーデータの削除'
-        money_back_guarantee: "%{count}日間は100%返金保証"
+        money_back_guarantee: "初回購入から %{count}日間 は無料のお試し期間です。（一部の機能は除く）"
       basic_plan_purchased: "購入済み"
       sign_in: 'ログインする'
       purchase: '購入する'
@@ -2621,6 +2622,8 @@ ja:
     end_trial_modal:
       title: 'トライアル期間の終了'
       message_html: 'この機能を使うとトライアル期間が終了しすぐに課金を開始します。よろしいですか？'
+      note1: '※ 「はい」を押すと無料期間が終わります。'
+      note2: '※ 「はい」を押すと返金の対象外となります。'
       processing_html: '購入処理中です。<img src="/ajax-loader.gif?a=1">'
       'yes': 'はい'
       'no': 'キャンセル'

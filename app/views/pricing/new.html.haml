@@ -39,12 +39,9 @@
 
 %h3.h4.text-center.my-5= t('.basic_plan_title')
 .my-3= t('.basic_plan_text_html')
-.h4.mt-4.mb-2
+.h4.my-4
   %strong= t('.basic_plan_price_html', regular_price: Order::REGULAR_PRICE, discount_price: Order::DISCOUNT_PRICE)
   %span.small= t('.basic_plan_price_period')
-.small.text-muted.mt-2.mb-4
-  .mb-1= t('.basic_plan_price_note1')
-  = t('.basic_plan_price_note2')
 .my-2= pricing_checked_item(t('.list.basic_plan_search_count', count: SearchCountLimitation::BASIC_PLAN))
 .my-2= pricing_checked_item(t('.list.notification'))
 .my-2= pricing_checked_item(t('.list.private_search'))
@@ -64,6 +61,10 @@
       = link_to t('.purchase'), '#', class: 'btn btn-primary btn-checkout'
   - else
     = link_to t('.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
+.small.text-muted.my-4
+  .mb-1= t('.basic_plan_price_note1', old_price: Order::REGULAR_PRICE, new_price: Order::DISCOUNT_PRICE)
+  .mb-1= t('.basic_plan_price_note2', price: Order::REGULAR_PRICE)
+  .mb-1= t('.basic_plan_price_note3')
 
 %hr
 

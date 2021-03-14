@@ -1,5 +1,7 @@
 <%= modal_dialog id: 'end-trial-modal', title: t('.title'), button: {positive: t('.yes'), negative: t('.no')} do %>
-  <p><%= t('.message_html') %></p>
+  <div class="mb-3"><%= t('.message_html') %></div>
+  <div class="small text-muted mb-1"><%= t('.note1') %></div>
+  <div class="small text-muted mb-1"><%= t('.note2') %></div>
 <% end %>
 <script>
   $(function () {
