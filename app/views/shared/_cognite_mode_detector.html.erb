@@ -1,29 +1,28 @@
-<% if controller_name == 'timelines' && action_name == 'show' %>
-  <script>
-    $(function () {
-      var allowCognite = <%= ENV['ALLOW_COGNITE'] == '1' %>;
-      var message = '<%= t('before_sign_in.secret_mode_detected_with_count', count: 3) %>';
-      var redirectPath = "<%= root_path(via: current_via('secret_mode_detected')).html_safe %>";
+<script>
+  $(function () {
+    var allowCognite = <%= ENV['ALLOW_COGNITE'] == '1' %>;
+    var message = '<%= t('before_sign_in.secret_mode_detected_with_count', count: 3) %>';
+    var redirectPath = "<%= root_path(via: current_via('secret_mode_detected')).html_safe %>";
 
-      new SecretModeDetector().detect(function () {
-        if (allowCognite || signedIn || isOldAndroid) {
-          return;
-        }
+    new SecretModeDetector().detect(function () {
+      // TODO Fix
+      if (allowCognite || signedIn || isOldAndroid) {
+        return;
+      }
 
-        ToastMessage.warn(message);
-        ToastMessage.freeze();
+      ToastMessage.warn(message);
+      ToastMessage.freeze();
 
-        setTimeout(function () {
-          window.location.href = redirectPath;
-        }, 3000);
+      setTimeout(function () {
+        window.location.href = redirectPath;
+      }, 3000);
 
-        ga('send', {
-          hitType: 'event',
-          eventCategory: 'Detect SecretMode',
-          eventAction: 'detected',
-          eventLabel: JSON.stringify(twitterUser)
-        });
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'Detect SecretMode',
+        eventAction: 'detected',
+        eventLabel: JSON.stringify(twitterUser)
       });
     });
-  </script>
-<% end %>
+  });
+</script>

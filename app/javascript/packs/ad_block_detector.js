@@ -4,11 +4,11 @@ class AdBlockDetector {
   }
 
   detect(callback) {
-    if (document.getElementById(this.token)) {
-      logger.log('Blocking Ads: No');
-    } else {
-      logger.log('Blocking Ads: Yes');
+    if (window.adBlockerDetected || !document.getElementById(this.token)) {
+      logger.log('Blocking Ads: Yes', window.adBlockerDetected);
       callback();
+    } else {
+      logger.log('Blocking Ads: No', window.adBlockerDetected);
     }
   }
 }
