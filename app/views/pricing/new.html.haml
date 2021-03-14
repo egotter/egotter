@@ -27,12 +27,18 @@
 .my-2= pricing_checked_item(t('.list.free_plan_search_count', min: SearchCountLimitation::ANONYMOUS, max: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS))
 .my-2= pricing_checked_item(t('.list.notification'))
 .my-2= pricing_checked_item(t('.list.private_search'))
+.my-2= pricing_checked_item(t('.list.block_report'))
+.my-2= pricing_checked_item(t('.list.mute_report'))
 .mb-4
+.my-2= pricing_unchecked_item(t('.list.sneak_search'))
 .my-2= pricing_unchecked_item(t('.list.download'))
 .my-2= pricing_unchecked_item(t('.list.egotter_follow'))
 .my-2= pricing_unchecked_item(t('.list.atmark'))
 .my-2= pricing_unchecked_item(t('.list.nonstop'))
+.my-2= pricing_unchecked_item(t('.list.advanced_block_report'))
+.my-2= pricing_unchecked_item(t('.list.advanced_mute_report'))
 .my-2= pricing_unchecked_item(t('.list.delete_all_tweets', count: DeleteTweetsRequest::DESTROY_LIMIT))
+.my-2= pricing_unchecked_item(t('.list.private_mode'))
 .my-2= pricing_unchecked_item(t('.list.reset_egotter'))
 
 %hr
@@ -45,13 +51,20 @@
 .my-2= pricing_checked_item(t('.list.basic_plan_search_count', count: SearchCountLimitation::BASIC_PLAN))
 .my-2= pricing_checked_item(t('.list.notification'))
 .my-2= pricing_checked_item(t('.list.private_search'))
+.my-2= pricing_checked_item(t('.list.block_report'))
+.my-2= pricing_checked_item(t('.list.mute_report'))
 .mb-4
+.my-2= pricing_checked_item(t('.list.sneak_search'))
 .my-2= pricing_checked_item(t('.list.download'))
 .my-2= pricing_checked_item(t('.list.egotter_follow'))
 .my-2= pricing_checked_item(t('.list.atmark'))
 .mt-2= pricing_checked_item(t('.list.nonstop'))
+.mt-2= pricing_checked_item(t('.list.advanced_block_report'))
+.mt-2= pricing_checked_item(t('.list.advanced_mute_report'))
 .my-2= pricing_checked_item(t('.list.delete_all_tweets', count: DeleteTweetsRequest::DESTROY_LIMIT))
-.my-2.mb-4= pricing_checked_item(t('.list.reset_egotter'))
+.my-2= pricing_checked_item(t('.list.private_mode'))
+.my-2= pricing_checked_item(t('.list.reset_egotter'))
+.mb-4
 .my-2= pricing_checked_item(t('.list.money_back_guarantee', count: Order::TRIAL_DAYS))
 .my-2
   - if user_signed_in?

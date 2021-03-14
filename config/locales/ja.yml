@@ -446,7 +446,7 @@ ja:
       cancel: 'キャンセルする'
       charge_failed_description: '支払いに失敗したため自動でキャンセルされました。'
       update_payment_method: '支払い方法を更新する'
-      cancel_confirmation: '有料プランをキャンセルします。よろしいですか？'
+      cancel_confirmation: '2回目以降の購入は初回の割引が適用されなくなります。本当に現在のプランをキャンセルしますか？'
       canceling_html: 'キャンセル処理中です。<img src="/ajax-loader.gif?a=1">'
       has_not_purchased: "まだ購入していません"
       purchase: '購入する'
@@ -645,15 +645,21 @@ ja:
       list:
         free_plan_search_count: '検索回数 %{min}〜%{max} 回'
         basic_plan_search_count: '検索回数 %{count} 回'
-        notification: 'リム通知'
+        notification: 'リムられ通知'
         private_search: '鍵アカウントの検索'
+        sneak_search: 'こっそり検索'
         follow: '1日のフォロー %{count} 回'
         unfollow: '1日のアンフォロー %{count} 回'
-        download: 'ユーザーのダウンロード'
+        download: 'ユーザーリストのダウンロード'
         egotter_follow: '@ego_tter のフォローなしで高速検索'
         atmark: 'リムられ通知の全員にアットマーク付与'
-        nonstop: 'リムられ通知の連続送信'
+        nonstop: 'リムられ通知をいつでもすぐに送信'
+        block_report: '無料版のシンプルなブロック通知'
+        mute_report: '無料版のシンプルなミュート通知'
+        advanced_block_report: '高度なブロック通知'
+        advanced_mute_report: '高度なミュート通知'
         delete_all_tweets: '%{count}件を超えるツイートの削除'
+        private_mode: 'えごったーデータの非公開'
         reset_egotter: 'えごったーデータの削除'
         money_back_guarantee: "初回購入から %{count}日間 は無料のお試し期間です。（一部の機能は除く）"
       basic_plan_purchased: "購入済み"
