@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-4"><%= t('.manual.title') %></div>
+  <div class="col-8">
+    <% word = t('quick_replies.mute_reports.label5') %>
+    <%= t('.manual.description_html', egotter_link: direct_message_link(User::EGOTTER_UID, 'ego_tter', word), word: word) %>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-4"><%= t('.receive.title') %></div>
+  <div class="col-8">
+    <% word = t('quick_replies.mute_reports.label4') %>
+    <%= t('.receive.description_html', egotter_link: direct_message_link(User::EGOTTER_UID, 'ego_tter', word), word: word) %>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-4"><%= t('.stop.title') %></div>
+  <div class="col-8">
+    <% word = t('quick_replies.mute_reports.label3') %>
+    <%= t('.receive.description_html', egotter_link: direct_message_link(User::EGOTTER_UID, 'ego_tter', word), word: word) %>
+  </div>
+</div>
+
+<hr>

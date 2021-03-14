@@ -17,6 +17,10 @@ module TwitterHelper
     "https://twitter.com/messages/compose?recipient_id=#{uid}#{text}"
   end
 
+  def direct_message_link(uid, screen_name, text = nil)
+    link_to '@' + screen_name, direct_message_url(uid, text), target: '_blank'
+  end
+
   def direct_messages_url(screen_name)
     "https://twitter.com/direct_messages/create/#{screen_name}"
   end

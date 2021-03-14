@@ -587,6 +587,30 @@ ja:
         name: 'リムられたときのみ通知する'
         desc: 'リムられに変化があったときのみ、リムられ通知が届くようになります。'
         confirm: 'ツイッターDMの仕組み上、この設定をオンにするとリムられ通知の送信が不安定になります。それでも本当によろしいですか？'
+    block_report:
+      title: 'ブロック通知の設定'
+      description: 'ブロックされているユーザーが見付かったときに届く通知です。'
+      manual:
+        title: 'ブロック通知の使い方'
+        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
+      receive:
+        title: 'ブロック通知を受け取る'
+        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
+      stop:
+        title: 'ブロック通知を停止する'
+        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
+    mute_report:
+      title: 'ミュート通知の設定'
+      description: 'ミュートされているユーザーが見付かったときに届く通知です。'
+      manual:
+        title: 'ミュート通知の使い方'
+        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
+      receive:
+        title: 'ミュート通知を受け取る'
+        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
+      stop:
+        title: 'ミュート通知を停止する'
+        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
   pricing:
     new:
       crumb_title: '料金プラン'
@@ -1987,6 +2011,7 @@ ja:
       description3: 'ブロックされた時の通知を停止します'
       label4: 'ブロック通知 送信'
       description4: 'ブロックされた時の通知を送信します'
+      label5: 'ブロック通知 使い方'
     mute_reports:
       label1: 'ミュート通知 届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
