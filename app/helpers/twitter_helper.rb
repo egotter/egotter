@@ -8,6 +8,10 @@ module TwitterHelper
     "https://twitter.com/#{screen_name}"
   end
 
+  def twitter_web_link(screen_name)
+    link_to '@' + screen_name, twitter_web_url(screen_name), target: '_blank'
+  end
+
   def direct_message_url(uid, text = nil)
     text = "&text=#{URI.encode(text)}" if text
     "https://twitter.com/messages/compose?recipient_id=#{uid}#{text}"

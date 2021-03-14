@@ -2,11 +2,22 @@
   <div class="card-body">
     <div>
       <div class="mb-3">
-        @ego_tter をブロックしているため、Webサイトの利用が制限されています。
+        <%= twitter_web_link('ego_tter') %> をブロックしているため、Webサイトの利用が制限されています。
+      </div>
+
+      <div class="mb-3">
+        Webサイトを今後も利用する場合は、ブロックを解除した後に <%= twitter_web_link('egotter_cs') %> にDMで連絡してください。
+      </div>
+
+      <div class="mb-3">
+        1. ブロックを解除する<br>
+        <%= link_to '@ego_tter を開く', twitter_web_url('ego_tter'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
       </div>
 
       <div>
-        <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">公式アカウントに質問</a>
+        2. DMで申請する<br>
+        <% url = direct_message_url(User::EGOTTER_CS_UID, 'ブロックを解除しました。Webサイトの利用を再開してください。') %>
+        <%= link_to '@egotter_cs に解除を申請する', url, class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
       </div>
     </div>
   </div>
