@@ -25,14 +25,8 @@ class OrdersController < ApplicationController
     event = construct_webhook_event
     process_webhook_event(event)
     head :ok
-  rescue JSON::ParserError => e
-    logger.warn "#{controller_name}##{action_name} Invalid payload exception=#{e.inspect}"
-    head :bad_request
-  rescue Stripe::SignatureVerificationError => e
-    logger.warn "#{controller_name}##{action_name} Invalid signature exception=#{e.inspect}"
-    head :bad_request
   rescue => e
-    logger.warn "#{controller_name}##{action_name} Unknown error exception=#{e.inspect}"
+    logger.warn "#{controller_name}##{action_name} #{e.inspect}"
     head :bad_request
   end
 
@@ -68,7 +62,6 @@ class OrdersController < ApplicationController
 
       send_message("`#{Rails.env}:checkout_session_completed` already purchased user_id=#{user.id}")
     else
-      set_tax_rate_to_subscription(checkout_session.subscription_id)
       order = Order.create_by!(checkout_session)
       set_metadata_to_subscription(checkout_session.subscription_id, order_id: order.id)
 
@@ -111,10 +104,6 @@ class OrdersController < ApplicationController
   rescue => e
     send_message("`#{Rails.env}:charge_failed` exception=#{e.inspect}")
     raise
-  end
-
-  def set_tax_rate_to_subscription(subscription_id, tax_rate_id = ENV['STRIPE_TAX_RATE_ID'])
-    Stripe::Subscription.update(subscription_id, {default_tax_rates: [tax_rate_id]})
   end
 
   def set_metadata_to_subscription(subscription_id, order_id:)

@@ -6,30 +6,39 @@
 
 <% if current_user.orders.any? %>
   <% current_user.orders.order(created_at: :desc).limit(3).select { |o| !o.purchase_failed? }.each do |order| %>
+    <% is_trial = order.trial? && !order.charge_failed_at && !order.canceled_at %>
     <div class="<%= 'text-muted' if order.canceled_at %>">
       <h5><%= order.short_name %></h5>
-      <div>
+      <% if is_trial %>
+        <div class="text-muted mb-3"><%= t('.no_payment_guranteed') %></div>
+      <% end %>
+
+      <div class="mb-3">
         <%= t('.price', price: order.price) %>
 
-        <% if order.trial? && !order.charge_failed_at && !order.canceled_at %>
-          <span class="badge badge-primary"><%= t('.during_trial_period') %></span>
-        <% end %>
-
-        <% if order.charge_failed_at %>
-          <div class="text-danger"><%= t('.charge_failed_description') %></div>
-        <% elsif order.canceled_at %>
-          <div><%= t('.already_canceled') %></div>
-        <% else %>
-          <% details_html = t('.details_html', amount: order.price, search_count: order.search_count, follow_count: order.follow_requests_count, unfollow_count: order.unfollow_requests_count, created: l(order.created_at.in_time_zone('Tokyo'), format: :order_short)) %>
-          <div>
-            <%= link_to t('.see_details'), '#', class: 'btn-order-details', data: {toggle: 'modal', target: '#order-details-modal', details: details_html} %>
-            <%= link_to t('.cancel'), '#', class: 'text-warning btn-cancel-order', data: {id: order.id} %>
-          </div>
+        <% if is_trial %>
+          <% if order.trial_end.present? %>
+            <span class="badge badge-primary"><%= t('.trial_period_until', time: l(order.trial_end_time.in_time_zone('Tokyo'), format: :order_short)) %></span>
+          <% else %>
+            <span class="badge badge-primary"><%= t('.during_trial_period') %></span>
+          <% end %>
         <% end %>
       </div>
 
+      <% if order.charge_failed_at %>
+        <div class="text-danger"><%= t('.charge_failed_description') %></div>
+      <% elsif order.canceled_at %>
+        <div><%= t('.already_canceled') %></div>
+      <% else %>
+        <div class="mb-3">
+          <% time = l(order.created_at.in_time_zone('Tokyo'), format: :order_short) %>
+          <%= link_to t('.see_details'), '#', class: 'btn btn-outline-primary btn-order-details', data: {toggle: 'modal', target: '#order-details-modal', amount: order.price, search_count: order.search_count, time: time} %>
+          <%= link_to t('.cancel'), '#', class: 'btn btn-outline-danger btn-cancel-order ml-3', data: {id: order.id} %>
+        </div>
+      <% end %>
+
       <% if current_user.admin? %>
-        <div><%= link_to t('.update_payment_method'), '#', class: 'btn btn-outline-primary btn-sm btn-customer-portal', data: {id: order.id} %></div>
+        <div class="mt-3"><%= link_to t('.update_payment_method'), '#', class: 'btn btn-outline-primary btn-sm btn-customer-portal', data: {id: order.id} %></div>
       <% end %>
     </div>
 

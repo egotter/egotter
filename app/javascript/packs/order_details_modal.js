@@ -9,7 +9,9 @@ class OrderDetailsModal {
 
     this.$el.on('show.bs.modal', function (e) {
       var button = e.relatedTarget;
-      self.$el.find('.order-details').html($(button).data('details'));
+      self.$el.find('.order-time').html($(button).data('time'));
+      self.$el.find('.order-amount').html($(button).data('amount'));
+      self.$el.find('.order-search-count').html($(button).data('search-count'));
     });
   }
 

@@ -437,16 +437,11 @@ ja:
         title: "通知設定"
     order:
       order_histories: "購入履歴"
+      no_payment_guranteed: '※ トライアル期間中は支払いは発生しません。'
       during_trial_period: "トライアル期間中"
+      trial_period_until: '%{time}までトライアル期間中'
       already_canceled: "キャンセル済み"
       see_details: '詳細を見る'
-      details_html: |
-        %{created}に購入<br>
-        <br>
-        %{amount}円/月（税別）<br>
-        検索回数 %{search_count}回/日<br>
-        フォロー %{follow_count}回/日<br>
-        フォロー解除%{unfollow_count}回/日
       price: "%{price}円/月（税別）"
       cancel: 'キャンセルする'
       charge_failed_description: '支払いに失敗したため自動でキャンセルされました。'
@@ -631,7 +626,11 @@ ja:
       free_plan_price: '0円/月'
       basic_plan_title: 'こっそり使いたい'
       basic_plan_text_html: 'えごったーを<span class="egotter-pink">こっそり使いたい</span>方に適したプランです。無料プランの内容に加えて、検索回数、フォロー回数、アンフォロー回数が増えています。'
-      basic_plan_price: '%{price}円/月'
+      basic_plan_price_html: '<del class="text-muted">¥%{regular_price}</del> ¥%{discount_price}'
+      basic_plan_price_period: '/月'
+      basic_plan_price_note_html: |
+      basic_plan_price_note1: '※ この割引価格は初回購入時とそこから継続した定期購入に対して適用されます。'
+      basic_plan_price_note2: '※ 定期購入をキャンセル後に再度購入した場合は割引の適用されない価格となります。'
       pro_plan_title: 'プロフェッショナル'
       pro_plan_text_html: '特別なデータ収集依頼については、個別に引き受けています。<br><br>ツイッターで公開されているデータはおよそ全て収集可能です。お気軽にご相談ください。'
       pro_plan_price: '2万円〜'
@@ -2615,6 +2614,9 @@ ja:
         login: 'ログインする'
     order_details_modal:
       title: '購入の詳細'
+      order_time: 'に購入'
+      order_amount: '円/月（税別）'
+      order_search_count: '回/日の検索回数'
       'yes': 'OK'
     end_trial_modal:
       title: 'トライアル期間の終了'
