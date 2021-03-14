@@ -18,7 +18,10 @@ class PeriodicReportReceivedWebAccessMessageResponder < AbstractMessageResponder
     end
 
     def send_message
-      CreatePeriodicReportReceivedWebAccessMessageWorker.perform_async(@uid)
+      user = validate_report_status(@uid)
+      return unless user
+
+      CreatePeriodicReportReceivedWebAccessMessageWorker.perform_async(user.uid)
     end
   end
 end

@@ -18,7 +18,10 @@ class PeriodicReportReceivedNotFollowingMessageResponder < AbstractMessageRespon
     end
 
     def send_message
-      CreatePeriodicReportReceivedNotFollowingMessageWorker.perform_async(@uid)
+      user = validate_report_status(@uid)
+      return unless user
+
+      CreatePeriodicReportReceivedNotFollowingMessageWorker.perform_async(user.uid)
     end
   end
 end

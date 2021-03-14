@@ -32,13 +32,9 @@ class CreateSearchReportReceivedMessageWorker
 
   # options:
   def perform(uid, options = {})
-    if User.exists?(uid: uid)
-      quick_replies = [PeriodicReport::QUICK_REPLY_SEND, BlockReport::QUICK_REPLY_SEND, MuteReport::QUICK_REPLY_SEND]
-      event = SearchReport.build_direct_message_event(uid, MESSAGE, quick_replies: quick_replies)
-      User.egotter.api_client.create_direct_message_event(event: event)
-    else
-      CreatePeriodicReportUnregisteredMessageWorker.perform_async(uid)
-    end
+    quick_replies = [PeriodicReport::QUICK_REPLY_SEND, BlockReport::QUICK_REPLY_SEND, MuteReport::QUICK_REPLY_SEND]
+    event = SearchReport.build_direct_message_event(uid, MESSAGE, quick_replies: quick_replies)
+    User.egotter.api_client.create_direct_message_event(event: event)
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
