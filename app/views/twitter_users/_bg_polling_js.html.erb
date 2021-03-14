@@ -1,7 +1,6 @@
 <script>
   var jid = '<%= @jid %>';
   var signedIn = <%= user_signed_in? %>;
-  var invalidToken = <%= user_signed_in? && !current_user.authorized? %>;
   var softLimited = <%= !user_signed_in? && SearchLimitation.soft_limited?(twitter_user) %>;
   var crawler = <%= from_crawler? %>;
   var removePage = <%= remove_related_page? %>;
@@ -26,6 +25,8 @@
     createdAt_s: '<%= twitter_user.created_at %>'
   };
 
+  // The credentials are verified in the controller.
+
   $(function () {
     if (profileNotFound) {
       ToastMessage.info('<%= t('twitter_users.in_background.profile_not_found_html', url: timeline_path(twitter_user, via: current_via('profile_not_found'))) %>');
@@ -33,11 +34,7 @@
     }
 
     if (signedIn) {
-      if (invalidToken) {
-        var message = '<%= t('twitter_users.in_background.invalid_token_html', user: twitter_user.screen_name, url: sign_in_and_timeline_path(twitter_user, via: 'invalid_token')) %>';
-        ToastMessage.info(message);
-        return;
-      } else if (!isPremium && !isEgotterFollower) {
+      if (!isPremium && !isEgotterFollower) {
         var message = '<%= t('twitter_users.in_background.is_not_egotter_follower_html', user: current_user&.screen_name, url: sign_in_and_timeline_path(twitter_user, via: 'not_egotter_follower', follow: true)) %>';
         ToastMessage.info(message, {id: 'not_egotter_follower'});
         return;

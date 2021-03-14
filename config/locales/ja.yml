@@ -1308,9 +1308,6 @@ ja:
       soft_limited_html: >-
         @%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。
         <a href="%{url}" class="btn btn-outline-primary">ログインする</a>
-      invalid_token_html: >-
-        @%{user} のツイッター連携が無効になっているため、自動更新が止まっています。
-        <a href="%{url}" class="btn btn-outline-primary">ログインする</a>
       accurate_counting_html: >-
         リムられやブロられは、ログインすると結果がより正確になります。
         <a href="%{url}" class="btn btn-outline-primary">ログインする</a>
@@ -2773,9 +2770,7 @@ ja:
       2. [1]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送ってください。<br>
       <br>
       エラー：NA403
-    egotter_is_blocked_html: '@%{user} は @ego_tter をブロックしています。えごったーを利用するには、ブロックを解除してください。'
     unauthorized_detected_with_count: 'ツイッター連携が無効になっています。%{seconds}秒後にトップページへ移動します。'
-    blocked_detected_with_count: '@ego_tter がブロックされています。%{seconds}秒後にトップページへ移動します。'
     must_have_order: 'まだ有料プランを購入していません。有料プランを購入後にお試しください。'
     must_have_valid_subscription: 'まだ有料プランを購入していません。有料プランを購入後にお試しください。'
     already_have_valid_subscription: '有料プランを購入済みです。'
