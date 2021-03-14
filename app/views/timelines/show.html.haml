@@ -21,7 +21,7 @@
   .loading-image.text-center.my-3
     = image_tag '/ajax-loader.gif', size: '16x16'
     = t('.now_loading', user: @twitter_user.screen_name)
-  .load-error.my-3{style: 'display: none;'}= t('.loading_error_html', user: @twitter_user.screen_name)
+  .load-error.my-3{style: 'display: none;'}= t('.loading_error_html', user: @twitter_user.screen_name, egotter_link:  twitter_web_link('egotter_cs'))
 
 :javascript
   $(function () {

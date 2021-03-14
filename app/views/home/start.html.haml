@@ -38,4 +38,4 @@
     = t('.a4_anonymous_html', url: sign_in_url(via: current_via('question4'), redirect_path: timeline_path(screen_name: ':screen_name', via: current_via('question4'))))
 
 = render partial: 'misc/q', locals: {text: t('.q5')}
-.mt-3.mb-5= t('.a5_html', url: support_path(via: current_via('question5')))
+.mt-3.mb-5= t('.a5_html', egotter_link: twitter_web_link('ego_tter'), url: support_path(via: current_via('question5')))

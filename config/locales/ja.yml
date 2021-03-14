@@ -144,7 +144,7 @@ ja:
         えごったーでは、片思いフォローやクラスタ分析など、たくさんの分析結果を見ることができます。
         ログインして分析結果を見てみましょう。<a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">ログインして分析する</a>
       a5_html: |
-        公式アカウントは <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> です。分からないことは何でもご質問ください。
+        公式アカウントは %{egotter_link} です。分からないことは何でもご質問ください。
         <a href="https://twitter.com/ego_tter" target="_blank" class="btn btn-outline-primary btn-sm">@ego_tter をツイッターで見る</a><br>
         <br>
         よるある質問はこちらにまとまっています。
@@ -159,7 +159,7 @@ ja:
       meta_description: "えごったーなら全部無料！ @%{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
       now_loading: '@%{user} のデータを読み込んでいます'
-      loading_error_html: '@%{user} の分析結果の読み込みに失敗しました。お手数ですが再度お試しください。何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
+      loading_error_html: '@%{user} の分析結果の読み込みに失敗しました。お手数ですが再度お試しください。何度も起きる場合は %{egotter_link} までご連絡ください。'
       reload: "ページを更新する"
       sign_in_and_reload: "ログインして自動更新を有効にする"
       reinvestigate: "再度チェックする"
@@ -384,7 +384,7 @@ ja:
       page_title_ok: '@%{user} でログイン中です'
       notice1: '※ えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
       notice2_html: '※ <a href="%{url}" class="btn btn-outline-secondary btn-sm">アカウントを切り替える</a>こともできます。'
-      notice3_html: '※ 分からないことがある場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
+      notice3_html: '※ 分からないことがある場合は %{egotter_link} までご連絡ください。'
     sign_in_description:
       sign_in_description: 'アクセス履歴を確認するために、えごったーにログインしてください。'
       make_sure_description: '@%{user} でログインしています。DMが届いたユーザーと同じかご確認ください。'
@@ -2767,7 +2767,7 @@ ja:
       <br>
       1. <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してください。ほとんどの場合これで解決します。<br>
       <br>
-      2. [1]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送ってください。<br>
+      2. [1]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
       <br>
       エラー：NA403
     unauthorized_detected_with_count: 'ツイッター連携が無効になっています。%{seconds}秒後にトップページへ移動します。'
