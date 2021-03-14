@@ -15,6 +15,11 @@ module ReportStatusValidator
       return
     end
 
+    if EgotterBlocker.where(uid: user.uid).exists?
+      CreatePeriodicReportBlockerNotPermittedMessageWorker.perform_async(user.id)
+      return
+    end
+
     user
   end
 end
