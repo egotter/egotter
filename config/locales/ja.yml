@@ -185,7 +185,7 @@ ja:
         title: 'オーディエンス分析'
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
     waiting:
-      preparing: "@%{user} の分析結果を準備中です"
+      preparing: "@%{user} の分析結果を準備中です。%{count}秒以内に移動しない場合は、ページを再読込してください。"
     feeds:
       users:
         notice: 'データはこれから保存されていきます'

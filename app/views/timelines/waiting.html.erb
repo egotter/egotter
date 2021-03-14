@@ -1,5 +1,5 @@
 <div class="my-5">
-  <%= image_tag '/ajax-loader.gif' %>&nbsp;<%= t('.preparing', user: @screen_name) %>
+  <%= image_tag '/ajax-loader.gif' %>&nbsp;<%= t('.preparing', user: @screen_name, count: 15) %>
 </div>
 
 <% if @user %>
@@ -23,7 +23,7 @@
       var retryInterval = 3000;
 
       return {
-        check: function () {
+        check: function check() {
           $.get(url).done(function (res) {
             if (res['found']) {
               redirectTo(false);
