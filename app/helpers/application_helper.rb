@@ -29,6 +29,10 @@ module ApplicationHelper
     controller_name == 'timelines' && action_name == 'waiting'
   end
 
+  def profile_page?
+    controller_name == 'profiles' && action_name == 'show'
+  end
+
   def start_page?
     controller_name == 'home' && action_name == 'start'
   end
