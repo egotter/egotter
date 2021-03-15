@@ -1971,6 +1971,9 @@ ja:
       if_you_are_low: '%{name}が低い人は：'
       trait_drilldown: '@%{user} の%{trait}を【%{facets}】に分解して分析した結果です。'
 
+  rake_tasks:
+    egotter_blockers:
+      message: 'ブロック設定を解除しました。#egotter'
   quick_replies:
     continue:
       label: 'リムられ通知 継続'

@@ -15,8 +15,10 @@ namespace :egotter_blockers do
     end
 
     begin
-      User.egotter.user_timeline(user.uid, count: 1)
+      user.api_client.twitter.verify_credentials
+      raise 'Still blocking' if user.api_client.twitter.block?(User::EGOTTER_UID)
       record.destroy
+      User.egotter_cs.api_client.create_direct_message_event(user.uid, I18n.t('rake_tasks.egotter_blockers.message'))
       puts 'Success'
     rescue => e
       puts e.inspect
