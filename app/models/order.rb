@@ -88,8 +88,8 @@ class Order < ApplicationRecord
     end
 
     if stripe_subscription
-      self.name = stripe_subscription.name
-      self.price = stripe_subscription.price
+      # self.name = stripe_subscription.name
+      # self.price = stripe_subscription.price
 
       if stripe_subscription.canceled_at
         self.canceled_at = stripe_subscription.canceled_at
