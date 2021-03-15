@@ -16,9 +16,24 @@ namespace :egotter_blockers do
 
     begin
       user.api_client.twitter.verify_credentials
-      raise 'Still blocking' if user.api_client.twitter.block?(User::EGOTTER_UID)
-      record.destroy
-      User.egotter_cs.api_client.create_direct_message_event(user.uid, I18n.t('rake_tasks.egotter_blockers.message'))
+    rescue => e
+      if e.message == 'Invalid or expired token.'
+        User.egotter_cs.api_client.create_direct_message_event(user.uid, I18n.t('rake_tasks.egotter_blockers.unauthorized_message'))
+        next
+      else
+        raise
+      end
+    end
+
+    if user.api_client.twitter.block?(User::EGOTTER_UID)
+      User.egotter_cs.api_client.create_direct_message_event(user.uid, I18n.t('rake_tasks.egotter_blockers.still_blocking_message'))
+      puts 'Still blocking'
+      next
+    end
+
+    begin
+      record.destroy!
+      User.egotter_cs.api_client.create_direct_message_event(user.uid, I18n.t('rake_tasks.egotter_blockers.success_message'))
       puts 'Success'
     rescue => e
       puts e.inspect

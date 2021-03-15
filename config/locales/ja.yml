@@ -1973,7 +1973,9 @@ ja:
 
   rake_tasks:
     egotter_blockers:
-      message: 'ブロック設定を解除しました。#egotter'
+      unauthorized_message: 'ご連絡ありがとうございます。ツイッター連携が無効になっています。Webサイトにログイン後に再度ご連絡ください。#egotter'
+      still_blocking_message: 'ご連絡ありがとうございます。今もブロック中のようです。ブロックを解除後に再度ご連絡ください。#egotter'
+      success_message: 'ご連絡ありがとうございます。ブロック設定を解除しました。#egotter'
   quick_replies:
     continue:
       label: 'リムられ通知 継続'
