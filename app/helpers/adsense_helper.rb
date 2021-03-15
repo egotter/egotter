@@ -2,7 +2,9 @@ module AdsenseHelper
   AD_NG_UIDS = [740700661939994624, 2412435452, 739670367212445697]
 
   def ad_ng_page?
-    %w(login blockers settings).include?(controller_name) || %w(mypage).include?(action_name)
+    my_page = controller_name == 'delete_tweets' && action_name == 'show'
+    tokimeki = controller_name == 'tokimeki_unfollow' && action_name == 'cleanup'
+    %w(login blockers settings).include?(controller_name) || my_page || tokimeki
   end
 
   def ad_ng_user?(user)
