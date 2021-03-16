@@ -1,17 +1,5 @@
 en:
   searches:
-    common:
-      cluster: "clusters"
-      return: "return to Analysis of %{user}"
-      do_search: "Search"
-      do_follow: "Follow"
-      following: "Following"
-      top_page: "Home Page"
-      feedback: "Feedback"
-      information: "Information"
-      redirect_to: "%{user} の結果を表示します"
-      tweet: "Tweets"
-      see_on_twitter: "See on Twitter"
     sidebar:
       update_request: "Update Request"
       update_request_needs_login: "Requesting to update needs Sign in."
