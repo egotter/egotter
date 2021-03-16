@@ -4,9 +4,9 @@ class CreatePeriodicReportBlockerNotPermittedMessageWorker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   MESSAGE = <<~TEXT
-    @ego_tter をブロックしている場合、通知の送信とWebサイトの利用はできません。
+    @ego_tter をブロックしているため、全ての通知とWebサイトの利用が制限されています。
 
-    利用を再開する場合は、@egotter_cs にDMで連絡してください。
+    Webサイトを今後も利用する場合は、有料プランの購入とブロックの解除が必要です。両方とも完了した後に @egotter_cs にDMで連絡してください。
     #egotter
   TEXT
 
