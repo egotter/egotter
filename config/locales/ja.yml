@@ -1230,8 +1230,10 @@ ja:
       sign_in_html: 'ログインすれば @%{user} の正確なステータスを取得できます。<a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>'
       updating_html: '@%{user} のステータスを更新中 <img src="/ajax-loader-blue.gif?a=1">'
     see_on_twitter_button:
+      description: 'ツイッターで見るにはこちら ↓'
       label: '@%{user} をツイッターで見る'
     analyze_on_egotter_button:
+      description: 'えごったーで分析するにはこちら ↑'
       label: '@%{user} を分析する'
       sign_in_and_analyze: 'ログインして @%{user} を分析する'
   friends:
