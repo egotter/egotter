@@ -15,7 +15,10 @@
       まで送ってください。<br>
       <br>
       ブラウザ情報（スクショに入れてください）<br>
-      <%= request.os %> <%= request.os_version %> <%= request.device_type %> <%= request.browser %> <%= request.browser_version %>
+      <%= request.os %> <%= request.os_version %> <%= request.device_type %> <%= request.browser %> <%= request.browser_version %><br>
+      <br>
+      広告表示判定（スクショに入れてください）<br>
+      <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :message}) %>
     </div>
   </div>
 </div>
