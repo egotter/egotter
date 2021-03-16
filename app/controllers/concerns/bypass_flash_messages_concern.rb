@@ -81,12 +81,6 @@ module BypassFlashMessagesConcern
   end
 
   def after_sign_in_message(context)
-    values = {
-        user_signed_in: user_signed_in?,
-        user: current_user,
-        timeline_url: user_signed_in? ? timeline_path(current_user, via: current_via(context)) : '',
-        settings_url: settings_path(via: current_via(context)),
-    }
-    render_to_string(template: 'messages/current_periodic_report', layout: false, locals: values)
+    render_to_string(template: 'messages/current_periodic_report', layout: false, locals: {context: context})
   end
 end

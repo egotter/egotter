@@ -1,13 +1,14 @@
 <% id_hash = SecureRandom.urlsafe_base64(10) %>
+<% user = current_user %>
 
 <div class="card">
   <div class="card-body">
     <div class="mb-4">
-      <% if user_signed_in %>
+      <% if user_signed_in? %>
         えごったーに <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28"> @<%= user.screen_name %> としてログイン中です。
-        <a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の分析を見る</a><br>
+        <a href="<%= timeline_path(user, via: current_via(context)) %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の分析を見る</a><br>
         <br>
-        仲良しランキングはこちらです。<a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の仲良しランキング見る</a><br>
+        仲良しランキングはこちらです。<a href="<%= timeline_path(user, via: current_via(context)) %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の仲良しランキング見る</a><br>
         <br>
         <% if StopPeriodicReportRequest.exists?(user_id: user.id) %>
           リムられ通知は<span class="egotter-pink"> 停止中 </span>です。再開するには「<span class="egotter-pink">リムられ通知 再開</span>」と @ego_tter にDMしてください。<a href="#" class="small" target="_blank">DM作成画面を開く</a>
