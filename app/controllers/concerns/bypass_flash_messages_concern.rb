@@ -73,12 +73,7 @@ module BypassFlashMessagesConcern
   end
 
   def omniauth_failure_message
-    values = {
-        user_signed_in: user_signed_in?,
-        user: current_user,
-        sign_in_url: sign_in_url(via: 'omniauth_failure_message'),
-    }
-    render_to_string(template: 'messages/omniauth_failure', layout: false, locals: values)
+    render_to_string(template: 'messages/omniauth_failure', layout: false, locals: {usage_count: Rails.configuration.x.constants[:usage_count]})
   end
 
   def blocker_not_permitted_message

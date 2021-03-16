@@ -1,51 +1,60 @@
-<% id_hash = SecureRandom.urlsafe_base64(10) %>
+<% via = current_via('omniauth_failure_message') %>
 
 <div class="card">
   <div class="card-body">
-    <div class="mb-4">
-      <div class="mb-3">
-        <% if user_signed_in %>
-          ツイッターのエラーにより再ログインできませんでしたが、以前にログイン済みのため、ログイン状態は継続中です。
-        <% else %>
-          えごったーへのログインに失敗しました。
-        <% end %>
-      </div>
-
-      <div class="mb-3">えごったーは <span class="egotter-pink"><%= Rails.configuration.x.constants[:usage_count] / 10000 %>万回</span> 以上利用されている安心のサービスです。ログインして便利に使いましょう！</div>
-      <a class="btn btn-primary btn-sm" href="<%= sign_in_url %>">ログインする</a> または <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">公式アカウントに質問</a>
+    <div class="mb-5">
+      ツイッターのエラーによりログインに失敗しました。大半のエラーは一時的なものです。お手数ですが再度お試しください。
+      <a class="btn btn-primary btn-sm" href="<%= sign_in_path(via: via) %>">ログインする</a>
     </div>
 
-    <div class="text-right">
-      <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#omniauth-failure-details-<%= id_hash %>">詳しく見る
-        <i class="far fa-question-circle"></i></a>
+    <div class="mb-5">
+      <% if user_signed_in? %>
+        @<%= current_user.screen_name %> のログインは継続中です。
+      <% end %>
+      <span class="egotter-pink">他のアカウントでログイン</span>し直すこともできます。
+      <%= link_to 'アカウントを切り換える', sign_in_path(force_login: true, via: via), class: 'btn btn-outline-primary btn-sm' %>
     </div>
 
-    <div id="omniauth-failure-details-<%= id_hash %>" class="collapse">
-      <hr>
-      <div>1. えごったーとは何ですか？</div>
-      <div class="mb-4">これまでに<span class="egotter-pink"><%= Rails.configuration.x.constants[:usage_count] / 10000 %>万回</span>以上利用されたツイッター分析アプリです。<br>
-        仲良しランキング、片思いチェック、リムられチェックなどの機能があります。</div>
+    <div class="mb-5">
+      えごったーは <span class="egotter-pink"><%= usage_count / 10000 %>万回</span> 以上利用されている安心のサービスです。
+      何か分からないことがありますか？ 公式アカウントにいつでもご質問ください。
+      <%= link_to '@egotter_cs に質問', twitter_web_url('egotter_cs'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    </div>
 
-      <div>2. ログインするとどうなりますか？</div>
-      <div class="mb-4">Webサイトでの分析が早くなり、リムられ通知が届くようになります。</div>
+    <hr>
 
-      <div>3. リムられ通知とは何ですか？</div>
-      <div class="mb-4">誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。</div>
+    <div class="mb-1">1. えごったーとは何ですか？</div>
+    <div class="mb-5">
+      これまでに<span class="egotter-pink"><%= usage_count / 10000 %>万回</span>以上利用されたツイッター分析アプリです。
+      仲良しランキング、片思いチェック、リムられチェックなどの機能があります。
+    </div>
 
-      <div>4. リムられ通知はどのように届きますか？</div>
-      <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> からDMで届きます。
-        <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image1">サンプル画像を見る</a>
-        <div id="sample_image1" class="collapse"><img src="<%= image_path('/egotter_screenshot_prompt_report_828x739.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像1" loading="lazy"></div>
+    <div class="mb-1">2. ログインするとどうなりますか？</div>
+    <div class="mb-5">Webサイトでの分析が早くなり、リムられ通知が届くようになります。</div>
+
+    <div class="mb-1">3. リムられ通知とは何ですか？</div>
+    <div class="mb-5">誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。</div>
+
+    <div class="mb-1">4. リムられ通知はどのように届きますか？</div>
+    <div class="mb-5"><a href="<%= twitter_web_url('ego_tter') %>" target="_blank">@ego_tter</a> からDMで届きます。
+      <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image1">サンプル画像を見る</a>
+      <div id="sample_image1" class="collapse">
+        <img src="<%= image_path('/egotter_screenshot_prompt_report_828x739.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像1" loading="lazy">
       </div>
+    </div>
 
-      <div>5. リムられ通知を停止することはできますか？</div>
-      <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に「<span class="egotter-pink">リムられ通知 停止</span>」とDMすればすぐに止めることができます。
-        <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image3">サンプル画像を見る</a>
-        <div id="sample_image3" class="collapse"><img src="<%= image_path('/egotter_screenshot_prompt_report_1156x422.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像3" loading="lazy"></div>
+    <div class="mb-1">5. リムられ通知を停止することはできますか？</div>
+    <div class="mb-5"><a href="<%= twitter_web_url('ego_tter') %>" target="_blank">@ego_tter</a> に「<span class="egotter-pink">リムられ通知 停止</span>」とDMすればすぐに止めることができます。
+      <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image3">サンプル画像を見る</a>
+      <div id="sample_image3" class="collapse">
+        <img src="<%= image_path('/egotter_screenshot_prompt_report_1156x422.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像3" loading="lazy">
       </div>
+    </div>
 
-      <div>6. @ego_tter にDMを送ることができません</div>
-      <div>「すべてのユーザーからメッセージを受信する」の設定をオンにしてください。これは<span cllass="egotter-pink">ツイッター公式の設定</span>です。<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/settings/safety" target="_blank">公式設定を開く</a></div>
+    <div class="mb-1">6. @ego_tter にDMを送ることができません</div>
+    <div>
+      「すべてのユーザーからメッセージを受信する」の設定をオンにしてください。これは<span cllass="egotter-pink">ツイッター公式の設定</span>です。
+      <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/settings/safety" target="_blank">ツイッターの設定を開く</a>
     </div>
   </div>
 </div>
