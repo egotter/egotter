@@ -1,10 +1,8 @@
-<% via = current_via('omniauth_failure_message') %>
-
 <div class="card">
   <div class="card-body">
     <div class="mb-5">
       ツイッターのエラーによりログインに失敗しました。大半のエラーは一時的なものです。お手数ですが再度お試しください。
-      <a class="btn btn-primary btn-sm" href="<%= sign_in_path(via: via) %>">ログインする</a>
+      <a class="btn btn-primary btn-sm" href="<%= sign_in_path(via: current_via(via)) %>">ログインする</a>
     </div>
 
     <div class="mb-5">
@@ -12,7 +10,7 @@
         @<%= current_user.screen_name %> のログインは継続中です。
       <% end %>
       <span class="egotter-pink">他のアカウントでログイン</span>し直すこともできます。
-      <%= link_to 'アカウントを切り換える', sign_in_path(force_login: true, via: via), class: 'btn btn-outline-primary btn-sm' %>
+      <%= link_to 'アカウントを切り換える', sign_in_path(force_login: true, via: current_via(via)), class: 'btn btn-outline-primary btn-sm' %>
     </div>
 
     <div class="mb-5">
