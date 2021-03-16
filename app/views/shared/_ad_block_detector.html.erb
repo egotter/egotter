@@ -1,8 +1,13 @@
 <script>
   $(function () {
     var token = 'poinpgwawoiwoignsdoa';
+    var isPremium = <%= user_signed_in? && current_user.has_valid_subscription? %>;
     var message = '<%= t('before_sign_in.ad_blocker_detected_with_count', seconds: 3) %>';
     var redirectPath = "<%= root_path(via: current_via('ad_blocker_detected')).html_safe %>";
+
+    if (isPremium) {
+      return;
+    }
 
     new AdBlockDetector(token).detect(function () {
       ToastMessage.warn(message);

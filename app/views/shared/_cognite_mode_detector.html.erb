@@ -6,11 +6,11 @@
     var message = '<%= t('before_sign_in.secret_mode_detected_with_count', count: 3) %>';
     var redirectPath = "<%= root_path(via: current_via('secret_mode_detected')).html_safe %>";
 
-    new SecretModeDetector().detect(function () {
-      if (allowCognite || signedIn || isOldAndroid) {
-        return;
-      }
+    if (allowCognite || signedIn || isOldAndroid) {
+      return;
+    }
 
+    new SecretModeDetector().detect(function () {
       ToastMessage.warn(message);
       ToastMessage.freeze();
 
