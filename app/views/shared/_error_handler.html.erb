@@ -1,7 +1,7 @@
 <script>
   (function () {
     var userId = '<%= current_user&.id %>';
-    var visitorId = '<%= current_visit&.id %>';
+    var visitId = '<%= current_visit&.id %>';
     var eventAction = '<%= "#{controller_name}##{action_name}" %>';
     var deviceType = '<%= request.device_type %>';
     var os = '<%= request.os + ' ' + request.os_version %>';
@@ -10,7 +10,7 @@
     var sendError = function (kind, message) {
       var eventLabel = JSON.stringify({
         userId: userId,
-        visitorId: visitorId,
+        visitId: visitId,
         deviceType: deviceType,
         os: os,
         browser: browser,
