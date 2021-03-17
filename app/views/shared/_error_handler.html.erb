@@ -2,13 +2,15 @@
   (function () {
     var userId = '<%= current_user&.id %>';
     var visitId = '<%= current_visit&.id %>';
-    var eventAction = '<%= "#{controller_name}##{action_name}" %>';
+    var controllerAction = '<%= "#{controller_name}##{action_name}" %>';
     var deviceType = '<%= request.device_type %>';
     var os = '<%= request.os + ' ' + request.os_version %>';
     var browser = '<%= request.browser + ' ' + request.browser_version %>';
 
     var sendError = function (kind, message) {
-      var eventLabel = JSON.stringify({
+      var eventName = 'JS Exception (' + kind + ')';
+
+      var eventLabel = {
         userId: userId,
         visitId: visitId,
         deviceType: deviceType,
@@ -18,13 +20,13 @@
         message: message,
         path: window.location.href,
         referer: document.referrer
-      });
+      };
 
       var eventParams = {
         hitType: 'event',
-        eventCategory: 'JS Exception (' + kind + ')',
-        eventAction: eventAction,
-        eventLabel: eventLabel
+        eventCategory: eventName,
+        eventAction: controllerAction,
+        eventLabel: JSON.stringify(eventLabel)
       };
 
       try {
@@ -36,6 +38,10 @@
         }
       } catch (e) {
         console.error('Sending JS Exception to GA is failed', e);
+      }
+
+      if (controllerAction === 'home#new') {
+        ahoy.track(eventName, eventLabel);
       }
     };
 
