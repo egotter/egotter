@@ -8,13 +8,17 @@
 
 <div class="my-5"><%= render partial: 'description' %></div>
 
-<div class="mt-3 mb-1"><%= render partial: 'button' %></div>
+<div class="text-center mt-3 mb-1"><%= t('.click_below_button') %></div>
+<div class="mb-1"><%= render partial: 'button' %></div>
+
 <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top, user: @user}) %>
-<div class="mt-1 mb-3"><%= render partial: 'button' %></div>
+
+<div class="mt-1"><%= render partial: 'button' %></div>
+<div class="text-center mt-1 mb-3"><%= t('.click_above_button') %></div>
 
 <div class="my-5"><%= render partial: 'description' %></div>
 
 <div class="text-muted small my-3"><%= t('.notice1') %></div>
-<% url = access_confirmations_path(user_token: params[:user_token], share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, purchase_dialog: 1, via: current_via('switch_account')) %>
-<div class="text-muted small my-3"><%= t('.notice2_html', url: sign_in_path(force_login: true, via: current_via('switch_account'), redirect_path: url)) %></div>
+<% url = follow_confirmations_path(share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, purchase_dialog: 1, via: current_via('switch_account')) %>
+<div class="text-muted small my-3"><%= t('.notice2_html', url: sign_in_path(force_login: true, follow: true, via: current_via('switch_account'), redirect_path: url)) %></div>
 <div class="text-muted small my-3"><%= t('.notice3_html', egotter_link: twitter_web_link('egotter_cs')) %></div>

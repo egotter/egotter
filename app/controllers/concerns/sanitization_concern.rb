@@ -15,6 +15,7 @@ module SanitizationConcern
       /audience_insights
       /profiles
       /access_confirmations
+      /follow_confirmations
   )
   SAFE_REDIRECT_PATH_REGEXP = Regexp.union(((Search::API_V1_NAMES.map { |n| "/#{n}" } + SAFE_REDIRECT_PATHS)).uniq)
 

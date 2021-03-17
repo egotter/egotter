@@ -1,0 +1,8 @@
+<% url_options = {share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, purchase_dialog: 1} %>
+<% via = current_via('follow_button') %>
+<% url = follow_confirmations_path(url_options.merge(via: via)) %>
+
+<%= link_to sign_in_path(via: via, follow: true, redirect_path: url), class: 'btn btn-primary btn-block' do %>
+  <img class="rounded" height="20" src="<%= image_path('/logo_transparent_96x96.png') %>">
+  <%= t('.label', user: 'ego_tter') %>
+<% end %>
