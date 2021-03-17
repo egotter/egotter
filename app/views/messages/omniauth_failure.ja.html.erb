@@ -59,8 +59,21 @@
 
 <script>
   $(function () {
+    var eventName = 'OmniauthFailureMessage shown';
     var deviceType = '<%= request.device_type %>';
     var controllerAction = '<%= controller_name %>#<%= action_name %>';
-    ahoy.track("OmniauthFailureMessage shown", {deviceType: deviceType, controllerAction: controllerAction});
+    ahoy.track(eventName, {deviceType: deviceType, controllerAction: controllerAction});
+
+    var label = {
+      userId: '<%= current_user&.id %>',
+      deviceType: '<%= request.device_type %>'
+    };
+
+    ga('send', {
+      hitType: 'event',
+      eventCategory: eventName,
+      eventAction: controllerAction,
+      eventLabel: JSON.stringify(label)
+    });
   });
 </script>
