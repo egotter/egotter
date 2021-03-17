@@ -69,7 +69,7 @@ class MuteReport < ApplicationRecord
           has_subscription: has_subscription,
           first_name: mask_name(muted_user&.screen_name),
           users_count: MutingRelationship.where(to_uid: user.uid).size,
-          follow_url: url_helper.sign_in_url(url_options.merge(campaign_params('mute_report_not_following_follow'), {force_login: true, follow: true})),
+          follow_url: url_helper.follow_confirmations_url(url_options.except(:sign_in_dialog).merge(campaign_params('mute_report_not_following_follow'))),
           pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('mute_report_not_following_pricing'))),
           faq_url: url_helper.support_url(url_options.merge(campaign_params('mute_report_not_following_support'))),
       )

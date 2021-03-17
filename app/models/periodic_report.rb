@@ -245,7 +245,6 @@ class PeriodicReport < ApplicationRecord
       template = Rails.root.join('app/views/periodic_reports/web_access_hard_limited.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           access_day: user.access_days.last,
-          url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(campaign_params('web_access_hard_limited'), user_token: user.user_token)),
           access_url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(campaign_params('web_access_hard_limited'), user_token: user.user_token)),
           screen_name: user.screen_name,
           support_url: support_url(dialog_params.merge(campaign_params('web_access_hard_limited_support'))),
@@ -311,10 +310,11 @@ class PeriodicReport < ApplicationRecord
     end
 
     def not_following_message
+      dialog_params = {follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}
       template = Rails.root.join('app/views/periodic_reports/not_following.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           records_count: EgotterFollower.all.size,
-          url: sign_in_url(follow: true, via: 'not_following_message'),
+          follow_url: follow_confirmations_url(dialog_params.except(:sign_in_dialog).merge(campaign_params('not_following_message'))),
           pricing_url: pricing_url(campaign_params('not_following_pricing')),
           support_url: support_url(campaign_params('not_following_support')),
       )
@@ -499,6 +499,10 @@ class PeriodicReport < ApplicationRecord
     end
 
     def access_confirmations_url(options)
+      super({share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false}.merge(options))
+    end
+
+    def follow_confirmations_url(options)
       super({share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false}.merge(options))
     end
 

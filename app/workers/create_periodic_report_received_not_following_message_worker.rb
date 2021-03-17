@@ -55,7 +55,7 @@ class CreatePeriodicReportReceivedNotFollowingMessageWorker
   private
 
   def build_second_message
-    url = Rails.application.routes.url_helpers.sign_in_url(share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false, follow: true, via: 'not_following_received_message')
+    url = Rails.application.routes.url_helpers.follow_confirmations_url(share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false, via: 'not_following_received_message')
     ERB.new(SECOND_MESSAGE).result_with_hash(url: url)
   end
 end
