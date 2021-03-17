@@ -23,6 +23,7 @@
 #  index_visitors_on_user_id          (user_id)
 #
 
+# TODO Remove later
 class Visitor < ApplicationRecord
   # visitable :ahoy_visit
 end
