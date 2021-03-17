@@ -1,35 +1,41 @@
 <script>
   (function () {
     var userId = '<%= current_user&.id %>';
+    var visitorId = '<%= current_visit&.id %>';
     var eventAction = '<%= "#{controller_name}##{action_name}" %>';
     var deviceType = '<%= request.device_type %>';
     var os = '<%= request.os + ' ' + request.os_version %>';
     var browser = '<%= request.browser + ' ' + request.browser_version %>';
 
     var sendError = function (kind, message) {
-      try {
-        message = JSON.stringify({
-          userId: userId,
-          deviceType: deviceType,
-          os: os,
-          browser: browser,
-          message: message,
-          path: window.location.href
-        });
+      var eventLabel = JSON.stringify({
+        userId: userId,
+        visitorId: visitorId,
+        deviceType: deviceType,
+        os: os,
+        browser: browser,
+        cookie: navigator.cookieEnabled,
+        message: message,
+        path: window.location.href,
+        referer: document.referrer
+      });
 
+      var eventParams = {
+        hitType: 'event',
+        eventCategory: 'JS Exception (' + kind + ')',
+        eventAction: eventAction,
+        eventLabel: eventLabel
+      };
+
+      try {
         if (ga) {
-          ga('send', {
-            hitType: 'event',
-            eventCategory: 'JS Exception (' + kind + ')',
-            eventAction: eventAction,
-            eventLabel: message
-          });
+          ga('send', eventParams);
           console.warn('Sent JS Exception to GA', kind, message);
         } else {
-          console.warn('ga is not defined', kind, message);
+          console.warn('ga() is not defined', kind, message);
         }
       } catch (e) {
-        console.error(e);
+        console.error('Sending JS Exception to GA is failed', e);
       }
     };
 
