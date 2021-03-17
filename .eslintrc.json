@@ -25,7 +25,6 @@
     "moment": true,
     "d3": true,
     "Egotter": true,
-    "Snackbar": true,
     "ToastMessage": true,
     "Mustache": true,
     "AsyncLoader": true,

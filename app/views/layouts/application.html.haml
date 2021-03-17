@@ -28,10 +28,9 @@
     %script{:crossorigin => "anonymous", :integrity => "sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==", :src => "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"}
     %script{:crossorigin => "anonymous", :integrity => "sha512-YfIXbIiAfl/i9LO4PUETYxh72veiVE9ixWItTOx267LiYsWVAHuTO13jEwiEFAHrBtH87a47+sehqUMX3L3i2w==", :src => "https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.32/moment-timezone-with-data.min.js"}
     %link{crossorigin: "anonymous", href: "//use.fontawesome.com/releases/v5.6.3/css/all.css", integrity: "sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/", rel: "stylesheet"}
-    %link{:crossorigin => "anonymous", :href => "https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css", :integrity => "sha256-qfsdVqVeKPVy58Hx9qCIn8Nsdh2TU1yicE7B5EHi+Ss=", :rel => "stylesheet"}/
-    %script{:crossorigin => "anonymous", :integrity => "sha256-NOqsQWSGulWF4j0yfFlFwk9rmFpAoRV5nodGqIHyjUo=", :src => "https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"}
     %script{:crossorigin => "anonymous", :integrity => "sha512-sE4GyQp4GEFV4qtelZtk1VmjxViVV9zC3PnZCKEjmDIiNZ+MpY/53EKGk+eZUx4FvvH7F2QgduRa2Oxe/pK7fQ==", :src => "https://cdnjs.cloudflare.com/ajax/libs/jquery-sidebar/3.3.2/jquery.sidebar.min.js"}
     %script{:crossorigin => "anonymous", :integrity => "sha512-Qjrukx28QnvFWISw9y4wCB0kTB/ISnWXPz5/RME5o8OlZqllWygc1AB64dOBlngeTeStmYmNTNcM6kfEjUdnnQ==", :src => "https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.2.1/mustache.min.js"}
+    %script{:crossorigin => "anonymous", :integrity => "sha512-QABeEm/oYtKZVyaO8mQQjePTPplrV8qoT7PrwHDJCBLqZl5UmuPi3APEcWwtTNOiH24psax69XPQtEo5dAkGcA==", :src => "https://cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"}
     = csrf_meta_tags
 
     = yield(:canonical_url) if content_for?(:canonical_url)
@@ -70,8 +69,6 @@
               = yield
     - else
       = yield
-
-    %script{src: '//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js', type: 'text/javascript'}
 
   - unless under_maintenance?
     = render partial: 'layouts/footer'
