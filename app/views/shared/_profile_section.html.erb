@@ -1,6 +1,6 @@
 <div class="profile-on-timeline">
   <% if expanded %>
-    <div><%= t('.loading_html', user: twitter_user.screen_name) %></div>
+    <div class="mb-3"><%= t('.loading_html', user: twitter_user.screen_name) %></div>
     <%= render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'} %>
   <% end %>
 </div>
