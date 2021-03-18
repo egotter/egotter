@@ -18,17 +18,7 @@
         window.location.href = redirectPath;
       }, 3000);
 
-      var label = {
-        userId: '<%= current_user&.id %>',
-        deviceType: '<%= request.device_type %>'
-      };
-
-      ga('send', {
-        hitType: 'event',
-        eventCategory: 'SecretMode detected',
-        eventAction: 'detected',
-        eventLabel: JSON.stringify(label)
-      });
+      trackDetectionEvent('SecretMode detected');
     });
   });
 </script>

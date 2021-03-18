@@ -40,6 +40,10 @@ class EventTracker {
     });
     ahoy.track(eventName, {page: window.location.href});
   }
+
+  trackDetectionEvent(eventName) {
+    this.trackMessageEvent(eventName);
+  }
 }
 
 window.EventTracker = EventTracker;

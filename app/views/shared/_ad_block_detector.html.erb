@@ -1,10 +1,5 @@
 <script>
   $(function () {
-    var userId = '<%= current_user&.id %>';
-    var deviceType = '<%= request.device_type %>';
-    var eventName = 'AdBlocker detected';
-    var controllerAction = '<%= controller_name %>#<%= action_name %>';
-
     var token = 'poinpgwawoiwoignsdoa';
     var isPremium = <%= user_signed_in? && current_user.has_valid_subscription? %>;
     var hasShareTweet = <%= user_signed_in? && current_user.sharing_count(5.minutes) > 0 %>;
@@ -26,13 +21,7 @@
         }, 3000);
       }
 
-      ga('send', {
-        hitType: 'event',
-        eventCategory: eventName,
-        eventAction: controllerAction,
-        eventLabel: JSON.stringify({userId: userId, deviceType: deviceType})
-      });
-      ahoy.track(eventName, {page: window.location.href});
+      trackDetectionEvent('AdBlocker detected');
     });
   });
 </script>

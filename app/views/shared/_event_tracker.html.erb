@@ -15,6 +15,10 @@
       eventTracker.trackMessageEvent(eventName);
     };
 
+    window.trackDetectionEvent = function (eventName) {
+      eventTracker.trackDetectionEvent(eventName);
+    };
+
     $(document).on('click', '.track-twitter-link', function () {
       var userId = '<%= current_user&.id %>';
       var deviceType = '<%= request.device_type %>';
