@@ -14,9 +14,10 @@ class ErrorHandler {
   }
 
   sendGoogleAnalytics(kind, message) {
+    var eventName = 'JS Exception';
     var eventParams = {
       hitType: 'event',
-      eventCategory: 'JS Exception',
+      eventCategory: eventName,
       eventAction: kind + ' / ' + this.controllerAction,
       eventLabel: JSON.stringify({
         userId: this.userId,
@@ -34,9 +35,9 @@ class ErrorHandler {
     try {
       if (ga) {
         ga('send', eventParams);
-        console.warn('Sent JS Exception to GA', kind, eventParams);
+        console.warn('Sent JS Exception to GA', eventParams);
       } else {
-        console.warn('ga() is not defined', kind, eventParams);
+        console.warn('ga is not defined', eventName, eventParams);
       }
     } catch (e) {
       console.error('Sending JS Exception to GA is failed', e);
@@ -45,6 +46,7 @@ class ErrorHandler {
 
   sendAhoy(kind, message) {
     if (this.controllerAction === 'home#new') {
+      var eventName = 'JS Exception (' + kind + ')';
       var eventParams = {
         os: this.os,
         browser: this.browser,
@@ -54,7 +56,15 @@ class ErrorHandler {
         referer: document.referrer
       };
 
-      ahoy.track('JS Exception (' + kind + ')', eventParams);
+      try {
+        if (ahoy) {
+          ahoy.track(eventName, eventParams);
+        } else {
+          console.warn('ahoy is not defined', eventName, eventParams);
+        }
+      } catch (e) {
+        console.error('Sending JS Exception to ahoy is failed', e);
+      }
     }
   }
 }
