@@ -1,10 +1,10 @@
 <div class="container">
   <div class="text-center my-3">
-    <div id="waiting-msg" class="alert alert-info">
+    <div id="waiting-msg">
       <%= t('.analyzing', user: @twitter_user.name) %>&nbsp;<%= image_tag '/ajax-loader-blue.gif' %>
     </div>
 
-    <div id="finished-msg" class="alert alert-success" style="display: none;">
+    <div id="finished-msg" style="display: none;">
       <%= t(".finished") %>&nbsp;<%= image_tag '/ajax-loader-blue.gif' %>
     </div>
 
@@ -31,8 +31,14 @@
     </div>
   </div>
 
+  <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
+
+  <div class="mt-1 mb-3">
+    <%= render(partial: 'profiles/twitter_button', locals: {screen_name: @twitter_user.screen_name, location: 'top'}) %>
+  </div>
+
   <div class="mb-3">
-    <%= render partial: 'twitter/profile', locals: {user: @twitter_user, body_expanded: true} %>
+    <%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: true} %>
   </div>
 </div>
 
