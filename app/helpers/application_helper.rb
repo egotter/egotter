@@ -3,6 +3,10 @@ module ApplicationHelper
     ENV['MAINTENANCE'] == '1'
   end
 
+  def root_page?
+    controller_name == 'home' && action_name == 'new'
+  end
+
   def top_page?
     (controller_name == 'home' && action_name == 'new') ||
         (controller_name == 'close_friends' && action_name == 'new') ||

@@ -10,18 +10,21 @@
     var hasShareTweet = <%= user_signed_in? && current_user.sharing_count(5.minutes) > 0 %>;
     var message = '<%= t('before_sign_in.ad_blocker_detected_with_count', seconds: 3) %>';
     var redirectPath = "<%= root_path(via: current_via('ad_blocker_detected')).html_safe %>";
+    var isRootPage = <%= root_page? %>;
 
     if (isPremium || hasShareTweet) {
       return;
     }
 
     new AdBlockDetector(token).detect(function () {
-      ToastMessage.warn(message);
-      ToastMessage.freeze();
+      if (!isRootPage) {
+        ToastMessage.warn(message);
+        ToastMessage.freeze();
 
-      setTimeout(function () {
-        window.location.href = redirectPath;
-      }, 3000);
+        setTimeout(function () {
+          window.location.href = redirectPath;
+        }, 3000);
+      }
 
       ga('send', {
         hitType: 'event',
