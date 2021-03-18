@@ -21,7 +21,7 @@
     <hr class="p-0 m-0">
 
     <div class="text-center py-3">
-      <%= link_to user_url(user.screen_name), class: 'dropdown-item', target: '_blank' do %>
+      <%= link_to user_url(user.screen_name), class: 'track-twitter-link dropdown-item', target: '_blank', data: {location: 'ProfileMenu'} do %>
         <i class="fab fa-twitter no-follow text-muted"></i>
         <%= t('.twitter') %>
       <% end %>

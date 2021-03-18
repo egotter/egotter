@@ -10,5 +10,21 @@
     window.trackPageEvents = function (pageName, eventName, eventParams) {
       eventTracker.track(pageName, eventName, eventParams);
     }
+
+    $(document).on('click', '.track-twitter-link', function () {
+      var userId = '<%= current_user&.id %>';
+      var deviceType = '<%= request.device_type %>';
+      var eventName = 'See on Twitter';
+      var controllerAction = '<%= "#{controller_name}##{action_name}" %>';
+      var eventLocation = $(this).data('location');
+
+      ga('send', {
+        hitType: 'event',
+        eventCategory: eventName,
+        eventAction: controllerAction + ' / ' + eventLocation,
+        eventLabel: JSON.stringify({userId: userId, deviceType: deviceType})
+      });
+      ahoy.track(eventName, {page: window.location.href, location: eventLocation});
+    });
   })();
 </script>

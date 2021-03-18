@@ -33,7 +33,7 @@
   <div class="profile-buttons mt-1 mr-0 mr-sm-3">
     <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
 
-    <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary btn-sm btn-tracked d-none d-md-inline-block', target: '_blank', data: {category: 'See on twitter'} do %>
+    <%= link_to user_url(user.screen_name), class: 'track-twitter-link btn btn-outline-primary btn-sm d-none d-md-inline-block', target: '_blank', data: {location: 'ProfilePanel(large)'} do %>
       <i class="fab fa-twitter no-follow"></i>
       <%= t('.twitter') %>
     <% end %>
@@ -65,7 +65,7 @@
 
     <%# Display on extra small and small %>
     <div class="d-inline-block d-md-none">
-      <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary btn-sm btn-tracked', target: '_blank', data: {category: 'See on twitter'} do %>
+      <%= link_to user_url(user.screen_name), class: 'track-twitter-link btn btn-outline-primary btn-sm', target: '_blank', data: {location: 'ProfilePanel(small)'} do %>
         <i class="fab fa-twitter no-follow"></i>
       <% end %>
 
@@ -108,25 +108,30 @@
 
 <script>
   $(function () {
+    var signedIn = <%= user_signed_in? %>;
     var containerId = '<%= container_id %>';
-    var eventAction = '<%= "#{controller_name}##{action_name}" %>';
 
-    <% if user_signed_in? %>
-    var via = '<%= current_via('profile') %>';
-    new FollowButton('#' + containerId + ' .profile-buttons', via);
-    new UnfollowButton('#' + containerId + ' .profile-buttons', via);
-    <% end %>
+    if (signedIn) {
+      var via = '<%= current_via('profile') %>';
+      new FollowButton('#' + containerId + ' .profile-buttons', via);
+      new UnfollowButton('#' + containerId + ' .profile-buttons', via);
+    }
 
     $('#' + containerId).find('.btn-tracked').on('click', function () {
+      var userId = '<%= current_user&.id %>';
+      var deviceType = '<%= request.device_type %>';
+      var eventName = $(this).data('category');
+      var controllerAction = '<%= "#{controller_name}##{action_name}" %>';
+      var eventLocation = 'ProfilePanel';
+
       var event = {
         hitType: 'event',
-        eventCategory: $(this).data('category'),
-        eventAction: eventAction,
-        eventLabel: "<%= user.screen_name %>"
+        eventCategory: eventName,
+        eventAction: controllerAction + ' / ' + eventLocation,
+        eventLabel: JSON.stringify({userId: userId, deviceType: deviceType})
       };
       ga('send', event);
-      logger.log('event(ga)', event);
+      ahoy.track(eventName, {page: window.location.href, location: eventLocation});
     });
-
   });
 </script>
