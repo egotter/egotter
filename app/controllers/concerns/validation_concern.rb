@@ -19,7 +19,7 @@ module ValidationConcern
     else
       message = t('before_sign_in.need_login_html', url: sign_in_path(via: current_via(__method__), redirect_path: request.fullpath))
       create_error_log(__method__, message)
-      track_event('require_login')
+      track_event('require_login', {controller: controller_name, action: action_name})
       flash.now[:alert] = message
       @has_error = true
       render template: 'home/new', formats: %i(html), status: :unauthorized
@@ -76,7 +76,7 @@ module ValidationConcern
     if from_crawler? || request.xhr? || !user_signed_in?
       url = sign_in_path(via: current_via('twitter_user_not_found'))
       respond_with_error(:not_found, t('application.twitter_user_not_found_html', url: url))
-      track_event('twitter_user_persisted')
+      track_event('twitter_user_persisted', {controller: controller_name, action: action_name, screen_name: @twitter_user&.screen_name})
       return
     end
 
@@ -113,7 +113,7 @@ module ValidationConcern
       true
     else
       respond_with_error(:unauthorized, signed_in_user_not_authorized_message)
-      track_event('signed_in_user_authorized')
+      track_event('signed_in_user_authorized', {controller: controller_name, action: action_name})
       false
     end
   end
@@ -127,7 +127,7 @@ module ValidationConcern
       set_bypassed_notice_message('permission_level_not_enough')
       redirect_to root_path(via: current_via(__method__))
       create_error_log(__method__, 'permission_level_not_enough')
-      track_event('current_user_has_dm_permission')
+      track_event('current_user_has_dm_permission', {controller: controller_name, action: action_name})
       false
     end
   end
@@ -139,7 +139,7 @@ module ValidationConcern
       set_bypassed_notice_message('blocker_not_permitted')
       redirect_to root_path(via: current_via(__method__))
       create_error_log(__method__, 'blocker_not_permitted')
-      track_event('current_user_not_blocker')
+      track_event('current_user_not_blocker', {controller: controller_name, action: action_name})
       false
     else
       true
@@ -275,7 +275,7 @@ module ValidationConcern
       redirect_to profile_path(screen_name: user[:screen_name], via: current_via(__method__))
 
       create_error_log(__method__, 'search_limitation_soft_limited')
-      track_event('search_limitation_soft_limited')
+      track_event('search_limitation_soft_limited', {controller: controller_name, action: action_name, screen_name: user[:screen_name]})
       true
     else
       false
@@ -300,7 +300,7 @@ module ValidationConcern
       # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
       set_bypassed_notice_message('too_many_searches')
       redirect_to profile_path(twitter_user, via: current_via(__method__))
-      track_event('too_many_searches')
+      track_event('too_many_searches', {controller: controller_name, action: action_name, screen_name: twitter_user.screen_name})
       create_error_log(__method__, message)
     end
 
