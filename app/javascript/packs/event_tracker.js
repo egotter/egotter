@@ -6,6 +6,11 @@ class EventTracker {
   }
 
   track(pageName, eventName, eventParams) {
+    this.trackGoogleAnalytics(pageName, eventName, eventParams);
+    this.trackAhoy(pageName, eventName, eventParams);
+  }
+
+  trackGoogleAnalytics(pageName, eventName, eventParams) {
     var params = {user_id: this.userId, deviceType: this.deviceType};
     if (eventParams) {
       params = Object.assign(params, eventParams);
@@ -16,7 +21,14 @@ class EventTracker {
       eventAction: eventName + ' / ' + this.controllerAction,
       eventLabel: JSON.stringify(params)
     });
-    ahoy.track(eventName, params);
+  }
+
+  trackAhoy(pageName, eventName, eventParams) {
+    var params = {page: window.location.href};
+    if (eventParams) {
+      params = Object.assign(params, eventParams);
+    }
+    ahoy.track(pageName + ' / ' + eventName, params);
   }
 }
 
