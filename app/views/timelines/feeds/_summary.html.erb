@@ -49,7 +49,7 @@
 <script>
   function itemOnSummaryClicked(elem, name) {
     var count = $(elem).find('.count').text();
-    ahoy.track('Summary clicked', {name: name, count: count});
+    trackPageEvents('TimelinePage events', 'Summary ' + name + ' clicked', {count: count});
   }
 
   $(function () {
