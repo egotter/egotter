@@ -19,6 +19,10 @@
       eventTracker.trackDetectionEvent(eventName);
     };
 
+    window.trackModalEvent = function (eventName) {
+      eventTracker.trackModalEvent(eventName);
+    };
+
     $(document).on('click', '.track-twitter-link', function () {
       var userId = '<%= current_user&.id %>';
       var deviceType = '<%= request.device_type %>';

@@ -57,8 +57,7 @@
         $modal.find('.modal-title .user').text($input.val());
         $modal.modal();
 
-        var page = window.location.href;
-        ahoy.track('VisitorSearchModal opened', {page: page});
+        trackModalEvent('VisitorSearchModal opened');
 
         return false;
       });

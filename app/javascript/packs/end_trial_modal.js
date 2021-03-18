@@ -15,9 +15,7 @@ class EndTrialModal {
         self.button = e.relatedTarget;
       }
 
-      var page = window.location.href;
-      var text = $(self.button).text().trim();
-      ahoy.track('EndTrialModal opened', {page: page, text: text});
+      window.trackModalEvent('EndTrialModal opened');
     });
 
     this.$el.find('.positive').on('click', function () {

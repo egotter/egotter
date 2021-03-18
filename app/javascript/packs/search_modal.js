@@ -20,14 +20,7 @@ class SearchModal {
       this.load();
     }
 
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'SearchModal opened',
-      eventAction: this.eventAction,
-    });
-
-    var page = window.location.href;
-    ahoy.track('SearchModal opened', {page: page});
+    window.trackModalEvent('SearchModal opened');
   }
 
   load() {

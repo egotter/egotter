@@ -13,9 +13,7 @@ class ResetEgotterModal {
         self.button = e.relatedTarget;
       }
 
-      var page = window.location.href;
-      var text = $(self.button).text().trim();
-      ahoy.track('ResetEgotterModal opened', {page: page, text: text});
+      window.trackModalEvent('ResetEgotterModal opened');
     });
 
     this.$el.find('.positive').on('click', function () {

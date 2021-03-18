@@ -25,6 +25,7 @@
       $modal.find('button.positive').off('click').on('click', function () {
         openTwitter(screenName);
       });
+      trackModalEvent('OpenTwitterModal opened');
     });
 
     $modal.on('shown.bs.modal', function (e) {
