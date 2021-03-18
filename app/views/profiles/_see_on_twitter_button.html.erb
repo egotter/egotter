@@ -1,6 +1,3 @@
-<div class="text-center mb-1">
-  <%= t('.description') %>
-</div>
 <%= link_to user_url(screen_name), class: 'track-twitter-link btn btn-primary btn-block', target: '_blank', data: {location: "Button(#{location})"} do %>
   <img class="rounded" height="20" src="<%= image_path('/logo_transparent_96x96.png') %>">
   <%= t('.label', user: screen_name) %>

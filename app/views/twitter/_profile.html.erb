@@ -79,7 +79,7 @@
   <div class="profile-contents p-0 px-sm-3">
     <div class="my-3">
       <%= user.name_with_icon %>
-      <span class="text-muted"><%= mention_name(user.screen_name) %></span>
+      <span class="text-muted"><%= user.mention_name %></span>
       <%= user.single_followed_label if user_signed_in? && current_user_follower_uids.include?(user.uid) %>
     </div>
 

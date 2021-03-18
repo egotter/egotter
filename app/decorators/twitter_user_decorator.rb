@@ -1,6 +1,10 @@
 class TwitterUserDecorator < ApplicationDecorator
   delegate_all
 
+  def mention_name
+    "@#{screen_name}"
+  end
+
   def delimited_statuses_count
     statuses_count.to_i.to_s(:delimited)
   end
@@ -260,6 +264,7 @@ class TwitterUserDecorator < ApplicationDecorator
     name
   end
 
+  # TODO Rename to name_with_badges
   def name_with_icon
     [
         censored_name,

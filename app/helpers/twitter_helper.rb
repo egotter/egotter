@@ -74,6 +74,7 @@ module TwitterHelper
     extend Twitter::TwitterText::Autolink
   end
 
+  # TODO Deprecated
   def mention_name(screen_name)
     "@#{screen_name}"
   end

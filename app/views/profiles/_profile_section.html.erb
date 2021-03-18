@@ -1,0 +1,32 @@
+<% via = current_via('small_profile') %>
+
+<div class="d-flex align-items-center">
+  <div>
+    <%= link_to user.censored_profile_icon_url do %>
+      <%= image_tag user.censored_profile_icon_url, class: 'rounded-circle', size: '80x80', alt: user.screen_name %>
+    <% end %>
+  </div>
+  <div class="ml-3">
+    <%= user.name_with_icon %>
+    <%= link_to user.mention_name, timeline_path(user, via: via), class: 'text-muted' %>
+  </div>
+</div>
+
+<div class="small mt-3">
+  <%= linkify(user.censored_description).gsub("\n", '<br>').html_safe %>
+</div>
+
+<div class="small mt-3">
+  <%= link_to status_path(user, via: via), class: 'mr-3' do %>
+    <strong class="text-body"><%= user.delimited_statuses_count %></strong>
+    <span class="text-muted"><%= t('.statuses') %></span>
+  <% end %>
+  <%= link_to friend_path(user, via: via), class: 'mr-3' do %>
+    <strong class="text-body"><%= user.delimited_friends_count %></strong>
+    <span class="text-muted"><%= t('.friends') %></span>
+  <% end %>
+  <%= link_to follower_path(user, via: via) do %>
+    <strong class="text-body"><%= user.delimited_followers_count %></strong>
+    <span class="text-muted"><%= t('.followers') %></span>
+  <% end %>
+</div>

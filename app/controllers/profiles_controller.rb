@@ -16,6 +16,7 @@ class ProfilesController < ApplicationController
   def show
     @user = TwitterDB::User.find_by(screen_name: params[:screen_name])
     @user = TwitterUser.latest_by(screen_name: params[:screen_name]) unless @user
+    @user = TwitterUserDecorator.new(@user) if @user
 
     @screen_name = params[:screen_name]
 

@@ -1,8 +1,6 @@
 - content_for :canonical_url do
   %link{href: profile_url(screen_name: @screen_name), rel: 'canonical'}
 
-- breadcrumb :profile, @screen_name
-
 - title t('.page_title', user: @screen_name)
 - set_meta_tags description: t('.meta_description', user: @screen_name)
 
@@ -14,6 +12,8 @@
 .message-box.alert.alert-warning{style: 'display: none;'}
 .forbidden-reason.my-1{style: 'display: none;'}= render(template: 'messages/forbidden_reason')
 .not-found-reason.my-1{style: 'display: none;'}= render(template: 'messages/not_found_reason')
+
+= render(partial: 'profile_section', locals: {user: @user}) if @user
 
 .mt-3.mb-1= render(partial: 'see_on_twitter_button', locals: {screen_name: @screen_name, location: 'top'})
 = render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top, user: @user})

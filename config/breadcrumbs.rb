@@ -51,11 +51,6 @@ crumb :blocker do |screen_name|
   parent :timeline, screen_name
 end
 
-crumb :profile do |screen_name|
-  link t('profiles.show.crumb_title', user: screen_name), profile_path(screen_name: screen_name, via: current_via("breadcrumb_profile"))
-  parent :root
-end
-
 crumb :word_cloud do |screen_name|
   link t('word_clouds.show.crumb_title'), word_cloud_path(screen_name: screen_name, via: current_via("breadcrumb_word_cloud"))
   parent :timeline, screen_name
