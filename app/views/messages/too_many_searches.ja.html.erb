@@ -9,7 +9,7 @@
       もっとたくさん検索することもできます。お好きな方法をお選びください。
     </div>
 
-    <%= render template: 'messages/ways_to_increase_searches', locals: {via: via} %>
+    <%= render template: 'messages/increase_search_counts', locals: {via: via} %>
 
     <div class="text-right">
       <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#too-many-searches-details-<%= id_hash %>">「検索回数」の意味
@@ -46,3 +46,7 @@
     </div>
   </div>
 </div>
+
+<script>
+  trackMessageEvent('TooManySearchesMessage shown');
+</script>

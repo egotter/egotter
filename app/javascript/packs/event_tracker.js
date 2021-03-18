@@ -30,6 +30,16 @@ class EventTracker {
     }
     ahoy.track(pageName + ' / ' + eventName, params);
   }
+
+  trackMessageEvent(eventName) {
+    ga('send', {
+      hitType: 'event',
+      eventCategory: eventName,
+      eventAction: this.controllerAction,
+      eventLabel: JSON.stringify({userId: this.userId, deviceType: this.deviceType})
+    });
+    ahoy.track(eventName, {page: window.location.href});
+  }
 }
 
 window.EventTracker = EventTracker;

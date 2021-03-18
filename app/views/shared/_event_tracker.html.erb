@@ -9,7 +9,11 @@
 
     window.trackPageEvents = function (pageName, eventName, eventParams) {
       eventTracker.track(pageName, eventName, eventParams);
-    }
+    };
+
+    window.trackMessageEvent = function (eventName) {
+      eventTracker.trackMessageEvent(eventName);
+    };
 
     $(document).on('click', '.track-twitter-link', function () {
       var userId = '<%= current_user&.id %>';

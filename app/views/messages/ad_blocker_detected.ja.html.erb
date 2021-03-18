@@ -62,18 +62,5 @@
 </div>
 
 <script>
-  $(function () {
-    var userId = '<%= current_user&.id %>';
-    var deviceType = '<%= request.device_type %>';
-    var eventName = 'AdBlockerDetectedMessage shown';
-    var controllerAction = '<%= controller_name %>#<%= action_name %>';
-
-    ga('send', {
-      hitType: 'event',
-      eventCategory: eventName,
-      eventAction: controllerAction,
-      eventLabel: JSON.stringify({userId: userId, deviceType: deviceType})
-    });
-    ahoy.track(eventName, {page: window.location.href});
-  });
+  trackMessageEvent('AdBlockerDetectedMessage shown');
 </script>

@@ -21,3 +21,7 @@
   <%= link_to 'ログインする', sign_in_path(via: via), class: 'btn btn-primary btn-sm d-inline-block' %>
   <div class="small mt-1 mb-3">ログインすると検索できる数が増えます</div>
 <% end %>
+
+<script>
+  trackMessageEvent('IncreaseSearchCountsMessage shown');
+</script>
