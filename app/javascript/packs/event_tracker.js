@@ -46,7 +46,7 @@ class EventTracker {
   }
 
   trackModalEvent(eventName) {
-    this.trackModalEvent(eventName);
+    this.trackMessageEvent(eventName);
   }
 }
 
