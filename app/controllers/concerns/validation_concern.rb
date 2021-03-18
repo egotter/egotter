@@ -270,6 +270,7 @@ module ValidationConcern
       redirect_to profile_path(screen_name: user[:screen_name], via: current_via(__method__))
 
       create_error_log(__method__, 'search_limitation_soft_limited')
+      track_event('search_limitation_soft_limited')
       true
     else
       false
@@ -294,6 +295,7 @@ module ValidationConcern
       # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
       set_bypassed_notice_message('too_many_searches')
       redirect_to profile_path(twitter_user, via: current_via(__method__))
+      track_event('too_many_searches')
       create_error_log(__method__, message)
     end
 
