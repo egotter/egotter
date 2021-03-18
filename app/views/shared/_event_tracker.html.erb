@@ -1,10 +1,11 @@
 <%= javascript_pack_tag 'event_tracker' %>
 <script>
   (function () {
-    var userId = '<%= current_user&.id %>';
-    var deviceType = '<%= request.device_type %>';
-    var controllerAction = '<%= controller_name %>#<%= action_name %>';
-    var eventTracker = new EventTracker({userId: userId, deviceType: deviceType, controllerAction: controllerAction});
+    var eventTracker = new EventTracker({
+      userId: '<%= current_user&.id %>',
+      deviceType: '<%= request.device_type %>',
+      controllerAction: '<%= controller_name %>#<%= action_name %>'
+    });
 
     window.trackPageEvents = function (pageName, eventName, eventParams) {
       eventTracker.track(pageName, eventName, eventParams);

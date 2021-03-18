@@ -1,54 +1,21 @@
+<%= javascript_pack_tag 'error_handler' %>
 <script>
   (function () {
-    var userId = '<%= current_user&.id %>';
-    var visitId = '<%= current_visit&.id %>';
-    var controllerAction = '<%= "#{controller_name}##{action_name}" %>';
-    var deviceType = '<%= request.device_type %>';
-    var os = '<%= request.os + ' ' + request.os_version %>';
-    var browser = '<%= request.browser + ' ' + request.browser_version %>';
-
-    var sendError = function (kind, message) {
-      var eventLabel = {
-        userId: userId,
-        visitId: visitId,
-        deviceType: deviceType,
-        os: os,
-        browser: browser,
-        cookie: navigator.cookieEnabled,
-        message: message,
-        path: window.location.href,
-        referer: document.referrer
-      };
-
-      var eventParams = {
-        hitType: 'event',
-        eventCategory: 'JS Exception',
-        eventAction: kind + ' / ' + controllerAction,
-        eventLabel: JSON.stringify(eventLabel)
-      };
-
-      try {
-        if (ga) {
-          ga('send', eventParams);
-          console.warn('Sent JS Exception to GA', kind, message);
-        } else {
-          console.warn('ga() is not defined', kind, message);
-        }
-      } catch (e) {
-        console.error('Sending JS Exception to GA is failed', e);
-      }
-
-      if (controllerAction === 'home#new') {
-        ahoy.track('JS Exception (' + kind + ')', eventLabel);
-      }
-    };
+    var errorHandler = new ErrorHandler({
+      userId: '<%= current_user&.id %>',
+      visitId: '<%= current_visit&.id %>',
+      controllerAction: '<%= "#{controller_name}##{action_name}" %>',
+      deviceType: '<%= request.device_type %>',
+      os: '<%= request.os + ' ' + request.os_version %>',
+      browser: '<%= request.browser + ' ' + request.browser_version %>'
+    });
 
     window.onerror = function (message, filePath, rowNumber, columnNumber) {
-      sendError('onerror', 'message=' + message + '&filePath=' + filePath + '&rowNumber=' + rowNumber + '&columnNumber=' + columnNumber);
+      errorHandler.handle('onerror', 'message=' + message + '&filePath=' + filePath + '&rowNumber=' + rowNumber + '&columnNumber=' + columnNumber);
     };
 
     window.addEventListener('unhandledrejection', function (e) {
-      sendError('unhandledrejection', e.message);
+      errorHandler.handle('unhandledrejection', e.message);
     });
   })();
 </script>
