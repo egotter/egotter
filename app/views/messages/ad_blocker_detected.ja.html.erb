@@ -13,17 +13,22 @@
 
     <div class="mb-5">
       2. 広告ブロッカーを使い続けたい場合<br>
-      下記のどちらかの方法を使えば、広告ブロッカーをそのまま利用できます。<br>
-      <br>
-      <div class="ml-3 mb-3">
-        方法1：えごったーをツイートする<br>
-        えごったーのことを1回ツイートすれば、一定の時間だけえごったーをご利用できます。
-        <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">ツイートする</a><br>
+      <% if user_signed_in? %>
+        下記のどちらかの方法を使えば、広告ブロッカーをそのまま利用できます。<br>
         <br>
-        方法2：有料プランを購入する<br>
-        有料プランを購入すれば、広告ブロッカーをそのまま使えます。
-        <a class="btn btn-outline-primary btn-sm" href="<%= pricing_path(via: current_via('ad_blocker_detected')) %>" target="_blank">料金プランを見る</a><br>
-      </div>
+        <div class="ml-3 mb-3">
+          方法1：えごったーをツイートする<br>
+          えごったーのことを1回ツイートすれば、一定の時間だけえごったーをご利用できます。
+          <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">ツイートする</a><br>
+          <br>
+          方法2：有料プランを購入する<br>
+          有料プランを購入すれば、広告ブロッカーをそのまま使えます。
+          <a class="btn btn-outline-primary btn-sm" href="<%= pricing_path(via: current_via('ad_blocker_detected')) %>" target="_blank">料金プランを見る</a>
+        </div>
+      <% else %>
+        ログインしてからえごったーWebサイトをご利用ください。
+        <a class="btn btn-outline-primary btn-sm" href="<%= sign_in_path(via: current_via('ad_blocker_detected')) %>" target="_blank">ログインする</a>
+      <% end %>
     </div>
 
     <div>
@@ -55,3 +60,20 @@
     </div>
   </div>
 </div>
+
+<script>
+  $(function () {
+    var userId = '<%= current_user&.id %>';
+    var deviceType = '<%= request.device_type %>';
+    var eventName = 'AdBlockerDetectedMessage shown';
+    var controllerAction = '<%= controller_name %>#<%= action_name %>';
+
+    ga('send', {
+      hitType: 'event',
+      eventCategory: eventName,
+      eventAction: controllerAction,
+      eventLabel: JSON.stringify({userId: userId, deviceType: deviceType})
+    });
+    ahoy.track(eventName, {page: window.location.href});
+  });
+</script>
