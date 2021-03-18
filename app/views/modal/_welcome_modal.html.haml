@@ -23,6 +23,10 @@
           });
         });
       });
+
+      $('#share-modal').on('show.bs.modal', function (e) {
+        trackModalEvent('ShareModal opened');
+      });
     });
 
   - if show_continuous_sign_in_modal?
