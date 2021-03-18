@@ -15,9 +15,9 @@
 
 = render(partial: 'profile_section', locals: {user: @user}) if @user
 
-.mt-3.mb-1= render(partial: 'see_on_twitter_button', locals: {screen_name: @screen_name, location: 'top'})
+.mt-3.mb-1= render(partial: 'twitter_button', locals: {screen_name: @screen_name, location: 'top'})
 = render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top, user: @user})
-.mt-1.mb-3= render(partial: 'analyze_on_egotter_button', locals: {screen_name: @screen_name})
+.mt-1.mb-3= render(partial: 'timeline_button', locals: {screen_name: @screen_name})
 
 - if @user
   = render partial: 'shared/profile_section', locals: {twitter_user: @user, expanded: true}
@@ -35,9 +35,9 @@
   - else
     %a.twitter-timeline{data: {width: 600, 'tweet-limit' => 3}, href: "https://twitter.com/#{@screen_name}", target: '_blank'}= t('.tweets_by', user: @screen_name)
 
-.mt-3.mb-1= render(partial: 'see_on_twitter_button', locals: {screen_name: @screen_name, location: 'bottom'})
+.mt-3.mb-1= render(partial: 'twitter_button', locals: {screen_name: @screen_name, location: 'bottom'})
 = render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :bottom, user: @user})
-.mt-1.mb-3= render(partial: 'analyze_on_egotter_button', locals: {screen_name: @screen_name})
+.mt-1.mb-3= render(partial: 'timeline_button', locals: {screen_name: @screen_name})
 
 - if user_signed_in?
   :javascript

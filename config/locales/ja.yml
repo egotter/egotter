@@ -1247,9 +1247,9 @@ ja:
       statuses: 'ツイート'
       friends: 'フォロー'
       followers: 'フォロワー'
-    see_on_twitter_button:
+    twitter_button:
       label: '@%{user} をツイッターで見る'
-    analyze_on_egotter_button:
+    timeline_button:
       label: '@%{user} を分析する'
       sign_in_and_analyze: 'ログインして @%{user} を分析する'
   friends:
