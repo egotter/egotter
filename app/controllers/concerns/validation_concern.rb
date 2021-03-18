@@ -19,6 +19,7 @@ module ValidationConcern
     else
       message = t('before_sign_in.need_login_html', url: sign_in_path(via: current_via(__method__), redirect_path: request.fullpath))
       create_error_log(__method__, message)
+      track_event('require_login')
       flash.now[:alert] = message
       @has_error = true
       render template: 'home/new', formats: %i(html), status: :unauthorized
@@ -75,6 +76,7 @@ module ValidationConcern
     if from_crawler? || request.xhr? || !user_signed_in?
       url = sign_in_path(via: current_via('twitter_user_not_found'))
       respond_with_error(:not_found, t('application.twitter_user_not_found_html', url: url))
+      track_event('twitter_user_persisted')
       return
     end
 
@@ -111,6 +113,7 @@ module ValidationConcern
       true
     else
       respond_with_error(:unauthorized, signed_in_user_not_authorized_message)
+      track_event('signed_in_user_authorized')
       false
     end
   end
@@ -124,6 +127,7 @@ module ValidationConcern
       set_bypassed_notice_message('permission_level_not_enough')
       redirect_to root_path(via: current_via(__method__))
       create_error_log(__method__, 'permission_level_not_enough')
+      track_event('current_user_has_dm_permission')
       false
     end
   end
@@ -135,6 +139,7 @@ module ValidationConcern
       set_bypassed_notice_message('blocker_not_permitted')
       redirect_to root_path(via: current_via(__method__))
       create_error_log(__method__, 'blocker_not_permitted')
+      track_event('current_user_not_blocker')
       false
     else
       true
