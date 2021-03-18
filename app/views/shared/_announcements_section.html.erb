@@ -4,16 +4,7 @@
   $(function () {
     var url = '<%= raw api_v1_announcements_list_path(via: current_via) %>';
     new Announcements(url, 'announcements-container', function () {
-      var userId = '<%= current_user&.id %>';
-      var deviceType = '<%= request.device_type %>';
-      var controllerAction = '<%= controller_name %>#<%= action_name %>';
-      ga('send', {
-        hitType: 'event',
-        eventCategory: 'Announcements loaded',
-        eventAction: controllerAction,
-        eventLabel: JSON.stringify({user_id: userId, deviceType: deviceType})
-      });
-      ahoy.track("Announcements loaded", {deviceType: deviceType, controllerAction: controllerAction});
+      trackPageEvents('TopPage events', 'Announcements loaded');
     });
   });
 </script>

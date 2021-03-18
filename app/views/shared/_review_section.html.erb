@@ -31,16 +31,7 @@
     var url = '<%= load_public_tweets_path %>';
     var selector = '#searched-tweets';
     new PublicTweets(url, selector, function () {
-      var userId = '<%= current_user&.id %>';
-      var deviceType = '<%= request.device_type %>';
-      var controllerAction = '<%= controller_name %>#<%= action_name %>';
-      ga('send', {
-        hitType: 'event',
-        eventCategory: 'PublicTweets loaded',
-        eventAction: controllerAction,
-        eventLabel: JSON.stringify({user_id: userId, deviceType: deviceType})
-      });
-      ahoy.track("PublicTweets loaded", {deviceType: deviceType, controllerAction: controllerAction});
+      trackPageEvents('TopPage events', 'PublicTweets loaded');
     });
   });
 </script>

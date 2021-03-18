@@ -17,16 +17,7 @@
 
 <script>
   $(function () {
-    var userId = '<%= current_user&.id %>';
-    var deviceType = '<%= request.device_type %>';
-    var controllerAction = '<%= controller_name %>#<%= action_name %>';
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'TopPage loaded',
-      eventAction: controllerAction,
-      eventLabel: JSON.stringify({user_id: userId, deviceType: deviceType})
-    });
-    ahoy.track("TopPage loaded", {deviceType: deviceType, controllerAction: controllerAction});
+    trackPageEvents('TopPage events', 'Page loaded');
 
     var directionDetector = (function () {
       var prevScroll = 0;
@@ -47,13 +38,13 @@
     var timer = null;
     $(window).on('scroll', function () {
       if (timer === null) {
-        ahoy.track('Scroll ' + directionDetector() + ' started', {deviceType: deviceType, controllerAction: controllerAction});
+        trackPageEvents('TopPage events', 'Scroll ' + directionDetector() + ' started');
       } else {
         clearTimeout(timer);
       }
 
       timer = setTimeout(function () {
-        ahoy.track('Scroll ' + directionDetector() + ' stopped', {deviceType: deviceType, controllerAction: controllerAction});
+        trackPageEvents('TopPage events', 'Scroll ' + directionDetector() + ' stopped');
         timer = null;
       }, 500);
     })
