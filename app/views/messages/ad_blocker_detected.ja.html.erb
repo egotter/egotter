@@ -6,16 +6,29 @@
 
     <hr>
 
-    <div>
+    <div class="mb-5">
       1. 広告ブロッカーとは<br>
-      Webサイトの広告を削除する機能のことです。えごったーは広告収益によって運営されています。今後もWebサイトの利便性を向上していくために、広告表示への協力をよろしくお願いいたします。<br>
+      Webサイトの広告を削除する機能のことです。えごったーは広告収益によって運営されています。今後もWebサイトの利便性を向上していくために、広告表示への協力をよろしくお願いいたします。
+    </div>
+
+    <div class="mb-5">
+      2. 広告ブロッカーを使い続けたい場合<br>
+      下記のどちらかの方法を使えば、広告ブロッカーをそのまま利用できます。<br>
       <br>
-      2. 有料プランへのご登録<br>
-      有料プランを購入すれば広告ブロッカーをそのまま使えます。円滑な運営へのご協力お待ちしております。
-      <a class="btn btn-outline-primary btn-sm" href="<%= pricing_path(via: current_via('ad_blocker_detected')) %>" target="_blank">料金プランを見る</a><br>
-      <br>
+      <div class="ml-3 mb-3">
+        方法1：えごったーをツイートする<br>
+        えごったーのことを1回ツイートすれば、一定の時間だけえごったーをご利用できます。
+        <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">ツイートする</a><br>
+        <br>
+        方法2：有料プランを購入する<br>
+        有料プランを購入すれば、広告ブロッカーをそのまま使えます。
+        <a class="btn btn-outline-primary btn-sm" href="<%= pricing_path(via: current_via('ad_blocker_detected')) %>" target="_blank">料金プランを見る</a><br>
+      </div>
+    </div>
+
+    <div>
       3. 広告ブロッカーを使っていない場合<br>
-      大変お手数ですが、<span class="egotter-pink">下記の5つの質問の回答</span>と<span class="egotter-pink">この画面のスクリーンショット</span>を
+      大変お手数ですが、<span class="egotter-pink">下記の質問の回答</span>と<span class="egotter-pink">この画面のスクリーンショット</span>を
       <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a>
       まで送ってください。<br>
       <br>
@@ -25,8 +38,9 @@
         質問1. <%= request.os %> は最新の状態ですか？<br>
         質問2. <%= request.browser %> は最新の状態ですか？<br>
         質問3. ○○Blockerや○○Filterといったアプリを入れていませんか？<br>
-        質問4. トラッキング防止設定を【厳重】にしていませんか？<br>
-        質問5. 他のブラウザでも同じエラーが表示されますか？
+        質問4. コンテンツブロッカーを【オン】にしていませんか？<br>
+        質問5. トラッキング防止設定を【厳重】にしていませんか？<br>
+        質問6. 他のブラウザでも同じエラーが表示されますか？
       </div>
 
       ↓ スクリーンショットに入れてください ↓

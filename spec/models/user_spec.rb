@@ -188,11 +188,12 @@ RSpec.describe User, type: :model do
     before do
       user.save!
       user.tweet_requests.create!(tweet_id: 1, text: 'text', deleted_at: nil)
+      user.tweet_requests.create!(tweet_id: 2, text: 'text', deleted_at: nil)
       user.tweet_requests.create!(tweet_id: nil, text: 'text', deleted_at: nil)
-      user.tweet_requests.create!(tweet_id: 2, text: 'text', deleted_at: Time.zone.now)
+      user.tweet_requests.create!(tweet_id: 3, text: 'text', deleted_at: Time.zone.now)
       user.tweet_requests.create!(tweet_id: nil, text: 'text', deleted_at: Time.zone.now)
     end
-    it { is_expected.to eq(1) }
+    it { is_expected.to eq(2) }
   end
 
   describe '#add_atmark_to_periodic_report?' do

@@ -206,9 +206,10 @@ class User < ApplicationRecord
     EgotterFollower.exists?(uid: uid)
   end
 
-  def sharing_count
-    tweet_requests.where(created_at: 1.hour.ago..Time.zone.now).
-        where('deleted_at is not null and tweet_id is not null').size
+  def sharing_count(duration = nil)
+    duration = 1.hour unless duration
+    tweet_requests.where(created_at: duration.ago..Time.zone.now).
+        where(deleted_at: nil).where.not(tweet_id: nil).size
   end
 
   def valid_coupons_search_count
