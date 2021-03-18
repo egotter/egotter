@@ -119,7 +119,7 @@ module ViewVariablesHelper
     values = {
         user: timeline_link(twitter_user),
         tag_id: tag_id,
-        url: subroot_path
+        url: subroot_path(via: 'current_page_description')
     }
 
     case controller_name

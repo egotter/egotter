@@ -62,7 +62,7 @@ class ApplicationController < ActionController::Base
     if request.xhr?
       render json: {message: message}, status: code
     else
-      redirect_to subroot_path, alert: message
+      redirect_to subroot_path(via: 'respond_with_error'), alert: message
     end
 
     create_error_log(location, message, ex)

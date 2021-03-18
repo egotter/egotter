@@ -18,7 +18,7 @@
       %img.rounded{alt: "", height: "30", src: image_path('/logo_transparent_96x96.png')}
   %li
     - text = content_for?(:navbar_title) ? yield(:navbar_title) : t('.title')
-    = link_to text, subroot_path, class: 'text-white pl-2'
+    = link_to text, subroot_path(via: 'navbar'), class: 'text-white pl-2'
 
   %li.d-none.d-md-block.right-item
     = link_to '#', class: "btn #{search_modal_icon_style(false)}", onclick: 'ahoy.track("SearchModal opened");', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
@@ -41,7 +41,7 @@
         - if current_user.has_valid_subscription?
           %i.fas.fa-trophy
     - else
-      = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path), class: 'text-white pl-3'
+      = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path(via: 'navbar_sign_in')), class: 'text-white pl-3'
 
   -# Display on extra small and small
   %li.d-block.d-md-none.right-item
@@ -53,4 +53,4 @@
         %img.rounded-circle.btn-sidemenu{src: current_user_icon, width: 22, height: 22}
         = render partial: 'layouts/sidemenu', locals: {button_class: 'btn-sidemenu'}
     - else
-      = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path), class: 'text-white pl-3'
+      = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path(via: 'navbar_sign_in')), class: 'text-white pl-3'

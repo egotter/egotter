@@ -1,6 +1,6 @@
 module PathsHelper
-  def subroot_path
-    via = current_via("root_path_for_#{controller_name}")
+  def subroot_path(via: nil)
+    via = current_via("#{via + '/' if via}root_path_for_#{controller_name}")
     case controller_name
     when 'close_friends', 'one_sided_friends', 'unfriends', 'inactive_friends', 'friends', 'clusters', 'personality_insights' then
       send("#{controller_name}_top_path", via: via)
