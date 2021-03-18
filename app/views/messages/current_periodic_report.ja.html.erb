@@ -1,19 +1,24 @@
 <% id_hash = SecureRandom.urlsafe_base64(10) %>
 <% user = current_user %>
+<%= timeline_url = timeline_path(user, via: current_via(context)) %>
 
 <div class="card">
   <div class="card-body">
     <div class="mb-4">
       <% if user_signed_in? %>
         えごったーに <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28"> @<%= user.screen_name %> としてログイン中です。
-        <a href="<%= timeline_path(user, via: current_via(context)) %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の分析を見る</a><br>
+        <a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の分析を見る</a><br>
         <br>
-        仲良しランキングはこちらです。<a href="<%= timeline_path(user, via: current_via(context)) %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の仲良しランキング見る</a><br>
+        仲良しランキングはこちらです。
+        <a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の仲良しランキング見る</a><br>
         <br>
         <% if StopPeriodicReportRequest.exists?(user_id: user.id) %>
-          リムられ通知は<span class="egotter-pink"> 停止中 </span>です。再開するには「<span class="egotter-pink">リムられ通知 再開</span>」と @ego_tter にDMしてください。<a href="#" class="small" target="_blank">DM作成画面を開く</a>
+          リムられ通知は<span class="egotter-pink"> 停止中 </span>です。
+          再開するには「<span class="egotter-pink">リムられ通知 再開</span>」と @ego_tter にDMしてください。
+          <a href="<%= direct_message_url(User::EGOTTER_UID, 'リムられ通知 再開') %>" class="small" target="_blank">DM作成画面を開く</a>
         <% else %>
-          リムられ通知はDMで<span class="egotter-pink"> 配信中 </span>です。<a href="https://twitter.com/direct_messages/create/<%= user.screen_name %>" class="btn btn-outline-primary btn-sm" target="_blank">リムられ通知DMを見る</a>
+          リムられ通知はDMで<span class="egotter-pink"> 配信中 </span>です。
+          <a href="<%= direct_message_url(User::EGOTTER_UID) %>" class="btn btn-outline-primary btn-sm" target="_blank">リムられ通知DMを見る</a>
         <% end %>
       <% end %>
     </div>
@@ -26,8 +31,10 @@
     <div id="current-periodic-report-details-<%= id_hash %>" class="collapse">
       <hr>
       <div>1. えごったーとは何ですか？</div>
-      <div class="mb-4">これまでに<span class="egotter-pink"><%= Rails.configuration.x.constants[:usage_count] / 10000 %>万回</span>以上利用されたツイッター分析アプリです。<br>
-        仲良しランキング、片思いチェック、リムられチェックなどの機能があります。</div>
+      <div class="mb-4">
+        これまでに<span class="egotter-pink"><%= usage_count / 10000 %>万回</span>以上利用されたツイッター分析アプリです。<br>
+        仲良しランキング、片思いチェック、リムられチェックなどの機能があります。
+      </div>
 
       <div>2. リムられ通知とは何ですか？</div>
       <div class="mb-4">誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。</div>
@@ -35,23 +42,30 @@
       <div>3. リムられ通知はどのように届きますか？</div>
       <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> からDMで届きます。
         <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image1">サンプル画像を見る</a>
-        <div id="sample_image1" class="collapse"><img src="<%= image_path('/egotter_screenshot_prompt_report_828x739.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像1" loading="lazy"></div>
+        <div id="sample_image1" class="collapse">
+          <img src="<%= image_path('/egotter_screenshot_prompt_report_828x739.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像1" loading="lazy">
+        </div>
       </div>
 
       <div>4. リムられ通知をすぐに受け取ることはできますか？</div>
       <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に「<span class="egotter-pink">リムられ通知 今すぐ送信</span>」とDMすればすぐに届きます。
         <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image2">サンプル画像を見る</a>
-        <div id="sample_image2" class="collapse"><img src="<%= image_path('/egotter_screenshot_prompt_report_1165x318.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像2" loading="lazy"></div>
+        <div id="sample_image2" class="collapse">
+          <img src="<%= image_path('/egotter_screenshot_prompt_report_1165x318.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像2" loading="lazy">
+        </div>
       </div>
 
       <div>5. リムられ通知を停止することはできますか？</div>
       <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に「<span class="egotter-pink">リムられ通知 停止</span>」とDMすればすぐに止めることができます。
         <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image3">サンプル画像を見る</a>
-        <div id="sample_image3" class="collapse"><img src="<%= image_path('/egotter_screenshot_prompt_report_1156x422.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像3" loading="lazy"></div>
+        <div id="sample_image3" class="collapse">
+          <img src="<%= image_path('/egotter_screenshot_prompt_report_1156x422.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像3" loading="lazy">
+        </div>
       </div>
 
       <div>6. @ego_tter にDMを送ることができません</div>
-      <div>「すべてのユーザーからメッセージを受信する」の設定をオンにしてください。これは<span cllass="egotter-pink">ツイッター公式の設定</span>です。<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/settings/safety" target="_blank">公式設定を開く</a></div>
+      <div>「すべてのユーザーからメッセージを受信する」の設定をオンにしてください。これは<span cllass="egotter-pink">ツイッター公式の設定</span>です。
+        <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/settings/safety" target="_blank">公式設定を開く</a></div>
     </div>
   </div>
 </div>
