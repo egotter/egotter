@@ -8,8 +8,6 @@
     var browser = '<%= request.browser + ' ' + request.browser_version %>';
 
     var sendError = function (kind, message) {
-      var eventName = 'JS Exception (' + kind + ')';
-
       var eventLabel = {
         userId: userId,
         visitId: visitId,
@@ -24,8 +22,8 @@
 
       var eventParams = {
         hitType: 'event',
-        eventCategory: eventName,
-        eventAction: controllerAction,
+        eventCategory: 'JS Exception',
+        eventAction: kind + ' / ' + controllerAction,
         eventLabel: JSON.stringify(eventLabel)
       };
 
@@ -41,7 +39,7 @@
       }
 
       if (controllerAction === 'home#new') {
-        ahoy.track(eventName, eventLabel);
+        ahoy.track('JS Exception (' + kind + ')', eventLabel);
       }
     };
 
