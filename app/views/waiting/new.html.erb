@@ -48,13 +48,7 @@
   var signedIn = <%= user_signed_in? %>;
   var state = null;
 
-  logger.log('jid', '<%= @jid %>' || 'not started'); // debug
-
-  // var twitterUser = {
-  //   userId: '<%= current_user&.id %>',
-  //   uid: "<%= @twitter_user.uid %>",
-  //   screenName: "<%= @twitter_user.screen_name %>"
-  // };
+  trackPageEvents('WaitingPage events', 'Page loaded');
 
   function redirectTo() {
     window.location.replace(redirectPath);
@@ -74,13 +68,7 @@
   function stopped(res) {
     logger.log('stopped', res);
     state.failed();
-
-    // ga('send', {
-    //   hitType: 'event',
-    //   eventCategory: 'waiting#new',
-    //   eventAction: 'Retry exhausted',
-    //   eventLabel: JSON.stringify(twitterUser)
-    // });
+    trackPageEvents('WaitingPage events', 'Retry exhausted');
   }
 
   function failed(xhr) {
@@ -90,13 +78,7 @@
       state.setErrorMessage(res.message);
     }
     state.failed();
-
-    // ga('send', {
-    //   hitType: 'event',
-    //   eventCategory: 'Waiting#new',
-    //   eventAction: 'Failed',
-    //   eventLabel: JSON.stringify($.extend({status: xhr.status}, twitterUser))
-    // });
+    trackPageEvents('WaitingPage events', 'Polling failed', {status: xhr.status});
   }
 
   function start() {
