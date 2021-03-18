@@ -1,17 +1,13 @@
+<%= javascript_pack_tag 'event_tracker' %>
 <script>
   (function () {
     var userId = '<%= current_user&.id %>';
     var deviceType = '<%= request.device_type %>';
     var controllerAction = '<%= controller_name %>#<%= action_name %>';
+    var eventTracker = new EventTracker({userId: userId, deviceType: deviceType, controllerAction: controllerAction});
 
-    window.trackPageEvents = function (pageName, eventName) {
-      ga('send', {
-        hitType: 'event',
-        eventCategory: pageName,
-        eventAction: eventName + ' / ' + controllerAction,
-        eventLabel: JSON.stringify({user_id: userId, deviceType: deviceType})
-      });
-      ahoy.track(eventName, {deviceType: deviceType, controllerAction: controllerAction});
+    window.trackPageEvents = function (pageName, eventName, eventParams) {
+      eventTracker.track(pageName, eventName, eventParams);
     }
   })();
 </script>

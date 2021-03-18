@@ -44,3 +44,6 @@
 .mb-5= feed_item :ad, feed_title: t('timelines.feeds.scheduled_tweets.title'), feed_description: t('timelines.feeds.scheduled_tweets.description_html', user: @twitter_user.screen_name), feed_image: image_path('/scheduled_tweets_og_image.jpg'), button_text: t('timelines.feeds.scheduled_tweets.open'), page_url: scheduled_tweets_url(via: current_via('feed_text'))
 
 = render(partial: 'adsense/ad', locals: {vertical: :bottom})
+
+:javascript
+  trackPageEvents('TimelinePage events', 'FeedsList loaded');

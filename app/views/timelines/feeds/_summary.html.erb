@@ -1,15 +1,15 @@
 <% via = current_via('summary_on_timeline') %>
 <% items = [
-    ['one_sided_friends', t('.one_sided_friends')],
-    ['one_sided_followers', t('.one_sided_followers')],
-    ['mutual_friends', t('.mutual_friends')],
-    ['inactive_friends', t('.inactive_friends')],
-    ['inactive_followers', t('.inactive_followers')],
-    ['unfriends', t('.unfriends')],
-    ['unfollowers', t('.unfollowers')],
-    ['mutual_unfriends', t('.mutual_unfriends')],
-    ['blockers', t('.blockers')],
-    ['muters', t('.muters')],
+  ['one_sided_friends', t('.one_sided_friends')],
+  ['one_sided_followers', t('.one_sided_followers')],
+  ['mutual_friends', t('.mutual_friends')],
+  ['inactive_friends', t('.inactive_friends')],
+  ['inactive_followers', t('.inactive_followers')],
+  ['unfriends', t('.unfriends')],
+  ['unfollowers', t('.unfollowers')],
+  ['mutual_unfriends', t('.mutual_unfriends')],
+  ['blockers', t('.blockers')],
+  ['muters', t('.muters')],
 ] %>
 
 <div class="summary-on-timeline">
@@ -84,7 +84,7 @@
         $.getJSON(url).done(function (res) {
           logger.log('summary', 'loaded');
           updateView(res);
-          ahoy.track('Feed loaded', {name: 'summary', res: res});
+          trackPageEvents('TimelinePage events', 'Summary loaded', {response: res});
         }).fail(function (xhr, textStatus, errorThrown) {
           logger.warn('summary', 'fetch failed', xhr.status);
           if (xhr.status === 404) {

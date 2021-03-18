@@ -30,6 +30,7 @@
 
     $.getJSON(url).done(function (res) {
       container.empty().html(res.html);
+      trackPageEvents('TimelinePage events', 'Page loaded');
     }).fail(function (xhr, textStatus, errorThrown) {
       container.find('.loading-image').hide().end().find('.load-error').show();
       showErrorMessage(xhr, textStatus, errorThrown);
