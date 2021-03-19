@@ -28,7 +28,7 @@ class PersonalityInsightsController < ApplicationController
   end
 
   def require_signed_in
-    if !from_crawler? && !user_signed_in?
+    unless user_signed_in?
       message = t('.show.need_login_html', url: sign_in_path(via: current_via, redirect_path: request.fullpath))
       redirect_to personality_insights_top_path(via: current_via('need_sign_in')), alert: message
     end
