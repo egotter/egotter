@@ -34,8 +34,8 @@ class EventTracker {
   trackMessageEvent(eventName) {
     ga('send', {
       hitType: 'event',
-      eventCategory: eventName,
-      eventAction: this.controllerAction,
+      eventCategory: 'Message events',
+      eventAction: eventName + ' / ' + this.controllerAction,
       eventLabel: JSON.stringify({userId: this.userId, deviceType: this.deviceType})
     });
     ahoy.track(eventName, {page: window.location.href});

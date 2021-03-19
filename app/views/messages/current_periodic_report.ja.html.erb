@@ -1,6 +1,6 @@
 <% id_hash = SecureRandom.urlsafe_base64(10) %>
 <% user = current_user %>
-<%= timeline_url = timeline_path(user, via: current_via(context)) %>
+<% timeline_url = timeline_path(user, via: current_via(context)) %>
 
 <div class="card">
   <div class="card-body">
