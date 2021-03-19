@@ -1584,10 +1584,16 @@ ja:
         body_html: '@%{user} のツイッター性格診断結果へ移動しますか？'
     show:
       <<: *personality_insights_new
+      need_login_html: '性格診断をするためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
       personality_is_being_analyzed: '@%{user} の性格を分析中です。30秒ほど後に再度アクセスしてみてください。<a href="%{url}" class="btn btn-primary">@%{user} の分析結果を見る</a>'
       tweets_not_enough: 'ツイートが少なすぎるため @%{user} の性格分析に失敗しました。'
       analyzing_failed: 'アクセスが多すぎるため @%{user} の性格分析に失敗しました。%{count}秒ほど時間をおいてから再度アクセスしてみてください。'
-      rate_limited_html: '1日の分析回数を使い切りました。時間をおいてから再度アクセスしてみてください。<br><br>有料プランのユーザーはすぐに分析できます。<a href="#" class="btn btn-outline-primary btn-checkout btn-sm">もっと詳しく</a>'
+      rate_limited_html: |
+        1日の分析回数を使い切りました。時間をおいてから再度アクセスしてみてください。<br>
+        <br>
+        有料プランのユーザーはすぐに分析できます。<a href="#" class="btn btn-outline-primary btn-checkout btn-sm">もっと詳しく</a><br>
+        <br>
+        えごったーの宣伝ツイートをした後ならすぐに分析できます。<a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">もっと詳しく</a>
       navbar_title: 'ツイッター性格診断'
       crumb_title: 'ツイッター性格診断'
       page_title:  'ツイッター性格診断'

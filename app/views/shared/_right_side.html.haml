@@ -3,9 +3,9 @@
 - ab_test_flag = fifty_percent?
 
 %h1.h4
-  = link_to root_path(via: current_via) do
+  = link_to root_path(via: current_via('right_side_image')) do
     = image_tag '/logo_96x96.png', size: '48x48', alt: header
-  = link_to header, subroot_path, class: 'text-body'
+  = link_to header, subroot_path(via: current_via('right_side_text')), class: 'text-body'
 
 %h2.h5.my-4= subheader
 .mb-3= lead
