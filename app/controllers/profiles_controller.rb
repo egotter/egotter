@@ -2,6 +2,7 @@ class ProfilesController < ApplicationController
 
   around_action :disable_newrelic_tracer_for_crawlers
   before_action { head :forbidden if twitter_dm_crawler? }
+  before_action { require_login! if !user_signed_in? && request.referer.blank? && request.device_type == :pc }
   before_action :valid_screen_name?
 
   before_action do
