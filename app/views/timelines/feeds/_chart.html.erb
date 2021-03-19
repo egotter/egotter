@@ -26,6 +26,7 @@
     } else {
       $(placeholderSelector).lazyload().one('appear', function () {
         logger.log('appear', feedName);
+        trackPageEvents('TimelinePage events', feedName + ' loaded');
         drawChart();
       });
     }
