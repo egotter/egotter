@@ -26,6 +26,21 @@ module ValidationConcern
     end
   end
 
+  def reject_spam_access!
+    return unless !user_signed_in? && request.referer.blank? && request.device_type == :pc
+
+    if request.xhr?
+      head :forbidden
+    else
+      message = t('before_sign_in.spam_access_detected_html', url: sign_in_path(via: current_via(__method__), redirect_path: request.fullpath))
+      create_error_log(__method__, message)
+      track_event('reject_spam_access', {controller: controller_name, action: action_name})
+      flash.now[:alert] = message
+      @has_error = true
+      render template: 'home/new', formats: %i(html), status: :forbidden
+    end
+  end
+
   def current_user_has_order!
     return if !user_signed_in? || current_user.orders.any?
 
