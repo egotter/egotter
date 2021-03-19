@@ -15,7 +15,7 @@ class EndTrialModal {
         self.button = e.relatedTarget;
       }
 
-      window.trackModalEvent('EndTrialModal opened');
+      window.trackModalEvent('EndTrialModal');
     });
 
     this.$el.find('.positive').on('click', function () {

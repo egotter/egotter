@@ -13,7 +13,7 @@ class ResetCacheModal {
         self.button = e.relatedTarget;
       }
 
-      window.trackModalEvent('ResetCacheModal opened');
+      window.trackModalEvent('ResetCacheModal');
     });
 
     this.$el.find('.positive').on('click', function () {

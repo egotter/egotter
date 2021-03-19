@@ -46,7 +46,13 @@ class EventTracker {
   }
 
   trackModalEvent(eventName) {
-    this.trackMessageEvent(eventName);
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'Modal events',
+      eventAction: eventName + ' / ' + this.controllerAction,
+      eventLabel: JSON.stringify({userId: this.userId, deviceType: this.deviceType})
+    });
+    ahoy.track(eventName, {page: window.location.href});
   }
 }
 

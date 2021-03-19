@@ -147,7 +147,7 @@ class SignInDialog {
       window.location.href = url;
     });
 
-    window.trackModalEvent('SignInModal opened');
+    window.trackModalEvent('SignInModal');
 
     $el.modal();
   }

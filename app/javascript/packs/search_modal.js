@@ -20,7 +20,7 @@ class SearchModal {
       this.load();
     }
 
-    window.trackModalEvent('SearchModal opened');
+    window.trackModalEvent('SearchModal');
   }
 
   load() {

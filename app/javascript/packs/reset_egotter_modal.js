@@ -13,7 +13,7 @@ class ResetEgotterModal {
         self.button = e.relatedTarget;
       }
 
-      window.trackModalEvent('ResetEgotterModal opened');
+      window.trackModalEvent('ResetEgotterModal');
     });
 
     this.$el.find('.positive').on('click', function () {
