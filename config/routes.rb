@@ -73,6 +73,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources 'ad_blockers', only: %i(index)
+
   get 'l/:name', to: 'landing_pages#new'
 
   get 'delete_tweets', to: 'delete_tweets#new'

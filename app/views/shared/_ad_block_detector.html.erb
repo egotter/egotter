@@ -4,7 +4,7 @@
     var isPremium = <%= user_signed_in? && current_user.has_valid_subscription? %>;
     var hasShareTweet = <%= user_signed_in? && current_user.sharing_count(5.minutes) > 0 %>;
     var message = '<%= t('before_sign_in.ad_blocker_detected_with_count', seconds: 3) %>';
-    var redirectPath = "<%= root_path(user_token: current_user&.user_token, via: current_via('ad_blocker_detected')).html_safe %>";
+    var redirectPath = "<%= ad_blockers_path(via: current_via('ad_blocker_detected')).html_safe %>";
     var isRootPage = <%= root_page? %>;
 
     if (isPremium || hasShareTweet) {
