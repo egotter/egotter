@@ -1,4 +1,7 @@
 class TimelinesController < ApplicationController
+
+  before_action { require_login! if !user_signed_in? && request.referer.blank? && request.device_type == :pc }
+
   include JobQueueingConcern
   include SearchRequestConcern
   include SanitizationConcern

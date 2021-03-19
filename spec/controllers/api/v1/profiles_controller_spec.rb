@@ -4,8 +4,9 @@ RSpec.describe Api::V1::ProfilesController, type: :controller do
   let(:twitter_user) { create(:twitter_user) }
 
   before do
+    request.headers['HTTP_REFERER'] = 'referer'
     request.headers['HTTP_X_CSRF_TOKEN'] = 'token'
-    allow(controller).to receive(:valid_uid?).with(twitter_user.uid.to_s)
+    allow(controller).to receive(:valid_uid?).with(any_args)
   end
 
   describe 'GET #show' do
@@ -15,7 +16,7 @@ RSpec.describe Api::V1::ProfilesController, type: :controller do
       before { create(:twitter_db_user, uid: twitter_user.uid) }
 
       it do
-        get :show, params: {uid: twitter_user.uid}
+        get :show, params: {uid: twitter_user.uid}, xhr: true
         expect(JSON.parse(response.body).has_key?('html')).to be_truthy
       end
 
@@ -23,7 +24,7 @@ RSpec.describe Api::V1::ProfilesController, type: :controller do
 
     context 'user is not found' do
       it do
-        get :show, params: {uid: twitter_user.uid}
+        get :show, params: {uid: twitter_user.uid}, xhr: true
         expect(JSON.parse(response.body).has_key?('error')).to be_truthy
       end
     end
