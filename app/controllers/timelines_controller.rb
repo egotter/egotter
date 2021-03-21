@@ -1,6 +1,6 @@
 class TimelinesController < ApplicationController
 
-  before_action { reject_spam_access! }
+  before_action :reject_spam_access!
 
   include JobQueueingConcern
   include SearchRequestConcern

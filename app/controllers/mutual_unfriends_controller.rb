@@ -1,4 +1,7 @@
 class MutualUnfriendsController < ApplicationController
+
+  before_action :reject_spam_access!
+
   include SearchRequestConcern
   include DownloadRequestConcern
   include JobQueueingConcern

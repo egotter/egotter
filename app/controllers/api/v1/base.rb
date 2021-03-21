@@ -1,6 +1,9 @@
 module Api
   module V1
     class Base < ApplicationController
+
+      before_action :reject_spam_access!
+
       include ApiRequestConcern
       include AccountStatusesHelper
       include UsersHelper
