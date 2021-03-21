@@ -216,6 +216,7 @@ Rails.application.routes.draw do
   get 'pricing', to: "pricing#new"
   resources :orders, only: %i(create)
   get 'orders/success', to: "orders#success"
+  get 'orders/failure', to: "orders#failure"
   get 'orders/cancel', to: "orders#cancel"
   post 'orders/checkout_session_completed', to: "orders#checkout_session_completed"
 

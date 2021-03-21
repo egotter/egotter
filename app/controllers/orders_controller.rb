@@ -9,16 +9,19 @@ class OrdersController < ApplicationController
     checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
     subscription_id = Order::CheckoutSession.new(checkout_session).subscription_id
 
-    if Order.exists?(user_id: current_user.id, subscription_id: subscription_id)
-      redirect_to root_path(via: current_via), notice: t('.success_html', url: after_purchase_path('after_purchasing'))
-    else
-      redirect_to root_path(via: current_via('order_not_found')), alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error'))
+    unless Order.exists?(user_id: current_user.id, subscription_id: subscription_id)
+      redirect_to orders_failure_path(via: current_via('order_not_found'))
     end
+  rescue => e
+    logger.warn "#{controller_name}##{action_name}: #{e.inspect}"
+    redirect_to orders_failure_path(via: current_via('internal_error'))
+  end
+
+  def failure
   end
 
   # Callback URL for a canceled payment
   def cancel
-    redirect_to root_path(via: current_via), notice: t('.canceled_html', count: Rails.configuration.x.constants[:usage_count] / 10000)
   end
 
   def checkout_session_completed
