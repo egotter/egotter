@@ -12,6 +12,10 @@ module CrawlersHelper
     request.user_agent.to_s.match?(/\AStripe/) && controller_name == 'orders' && action_name == 'checkout_session_completed'
   end
 
+  def twitter_webhook?
+    request.user_agent.to_s == '' && controller_name == 'webhook' && action_name == 'twitter'
+  end
+
   def twitter_crawler?
     request.from_crawler? && request.browser == 'twitter'
   end
