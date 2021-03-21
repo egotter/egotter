@@ -1999,6 +1999,7 @@ ja:
     egotter_blockers:
       unauthorized_message: 'ご連絡ありがとうございます。ツイッター連携が無効になっています。Webサイトにログイン後に再度ご連絡ください。#egotter'
       still_blocking_message: 'ご連絡ありがとうございます。今もブロック中のようです。ブロックを解除後に再度ご連絡ください。#egotter'
+      dont_have_subscription_message: 'ご連絡ありがとうございます。有料プランの購入がまだのようです。購入後にご連絡ください。#egotter'
       success_message: 'ご連絡ありがとうございます。ブロック設定を解除しました。#egotter'
   quick_replies:
     continue:
