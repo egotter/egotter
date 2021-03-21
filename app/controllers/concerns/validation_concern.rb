@@ -29,6 +29,7 @@ module ValidationConcern
   def reject_spam_ip!
     return if twitter_webhook?
     return if stripe_webhook?
+    return if og_image_checker?
     return unless !user_signed_in? && request.remote_ip.to_s.match?(/\A3[45]\./)
 
     if request.xhr?
