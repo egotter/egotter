@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
 
   before_action :require_login!, except: :checkout_session_completed
 
-  # Not used: Callback URL for a successful payment
+  # Callback URL for a successful payment
   def success
     checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
     subscription_id = Order::CheckoutSession.new(checkout_session).subscription_id

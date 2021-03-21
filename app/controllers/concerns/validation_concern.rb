@@ -27,6 +27,7 @@ module ValidationConcern
   end
 
   def reject_spam_ip!
+    return if stripe_webhook?
     return unless !user_signed_in? && request.remote_ip.to_s.match?(/\A3[45]\./)
 
     if request.xhr?

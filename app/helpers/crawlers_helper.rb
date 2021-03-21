@@ -4,7 +4,12 @@ module CrawlersHelper
   end
 
   def from_crawler?
+    return false if stripe_webhook?
     request.from_crawler? || from_minor_crawler?(request.user_agent)
+  end
+
+  def stripe_webhook?
+    request.user_agent.to_s.match?(/\AStripe/) && controller_name == 'orders' && action_name == 'checkout_session_completed'
   end
 
   def twitter_crawler?
