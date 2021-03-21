@@ -31,6 +31,12 @@ namespace :egotter_blockers do
       next
     end
 
+    unless user.has_valid_subscription?
+      User.egotter_cs.api_client.create_direct_message_event(user.uid, I18n.t('rake_tasks.egotter_blockers.dont_have_subscription_message'))
+      puts "Don't have a subscription"
+      next
+    end
+
     begin
       record.destroy!
       User.egotter_cs.api_client.create_direct_message_event(user.uid, I18n.t('rake_tasks.egotter_blockers.success_message'))
