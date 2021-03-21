@@ -150,6 +150,12 @@ module Logging
     logger.warn "#{self.class}##{__method__}: #{e.inspect} action_name=#{action_name}"
   end
 
+  def track_order_activity(prop = {})
+    event_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+    properties = {path: request.path, params: event_params}.merge(prop)
+    track_event('Order activity', properties)
+  end
+
   private
 
   def find_uid_and_screen_name

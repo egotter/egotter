@@ -5,6 +5,7 @@ module Api
       before_action :reject_crawler
       before_action :require_login!
       before_action :doesnt_have_valid_subscription!
+      after_action { track_order_activity(session_id: @session&.id) }
 
       def create
         attrs = {
@@ -27,9 +28,9 @@ module Api
           attrs[:metadata][:price] = Order::DISCOUNT_PRICE
         end
 
-        session = Stripe::Checkout::Session.create(attrs)
+        @session = Stripe::Checkout::Session.create(attrs)
 
-        render json: {session_id: session.id}
+        render json: {session_id: @session.id}
       end
     end
   end

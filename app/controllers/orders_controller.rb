@@ -4,6 +4,9 @@ class OrdersController < ApplicationController
 
   before_action :require_login!, except: :checkout_session_completed
 
+  after_action :track_order_activity
+
+  # TODO The callback action is #callback and redirect to #success or #failure
   # Callback URL for a successful payment
   def success
     checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
@@ -20,6 +23,7 @@ class OrdersController < ApplicationController
   def failure
   end
 
+  # TODO Rename to #cancel_callback and redirect to pricing page
   # Callback URL for a canceled payment
   def cancel
   end
