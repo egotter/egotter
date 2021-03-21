@@ -2,6 +2,7 @@ class WaitingController < ApplicationController
   include SanitizationConcern
 
   before_action :reject_crawler
+  before_action :reject_spam_access!
   before_action { valid_uid?(params[:uid]) }
   before_action { @twitter_user = build_twitter_user_by_uid(params[:uid]) }
 
