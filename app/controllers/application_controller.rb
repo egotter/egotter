@@ -16,6 +16,8 @@ class ApplicationController < ActionController::Base
   include BypassFlashMessagesConcern
   include Logging
 
+  before_action :reject_spam_ip!
+
   skip_before_action :track_ahoy_visit, if: -> { apache_bench? }
 
   after_action do

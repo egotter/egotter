@@ -26,6 +26,21 @@ module ValidationConcern
     end
   end
 
+  def reject_spam_ip!
+    return unless !user_signed_in? && request.remote_ip.to_s.match?(/\A3[45]\./)
+
+    if request.xhr?
+      head :forbidden
+    else
+      message = t('before_sign_in.spam_ip_detected_html', url: sign_in_path(via: current_via(__method__), redirect_path: request.fullpath))
+      create_error_log(__method__, message)
+      track_event('reject_spam_ip', {controller: controller_name, action: action_name})
+      flash.now[:alert] = message
+      @has_error = true
+      render template: 'home/new', formats: %i(html), status: :forbidden
+    end
+  end
+
   def reject_spam_access!
     return unless !user_signed_in? && request.referer.blank? && request.device_type == :pc
 
