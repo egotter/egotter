@@ -1,5 +1,5 @@
 module AdsenseHelper
-  AD_NG_UIDS = [740700661939994624, 2412435452, 739670367212445697]
+  AD_NG_UIDS = File.read(Rails.root.join('config/adult_ng_uids.txt')).split("\n").map(&:to_i)
 
   def ad_ng_page?
     my_page = controller_name == 'delete_tweets' && action_name == 'show'
