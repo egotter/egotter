@@ -2,13 +2,14 @@ require 'rails_helper'
 
 RSpec.describe AdsenseHelper, type: :helper do
   describe '#ad_ng_user?' do
-    let(:user) { double('user', uid: 1, name: 'name', description: 'description') }
+    let(:user) { double('user', uid: 1, name: 'name', description: 'description', location: 'location') }
     subject { helper.ad_ng_user?(user) }
 
     it do
       expect(helper).to receive(:ad_ng_uid?).with(user.uid)
       expect(helper).to receive(:ad_ng_text?).with(user.name)
       expect(helper).to receive(:ad_ng_text?).with(user.description)
+      expect(helper).to receive(:ad_ng_text?).with(user.location)
       is_expected.to be_falsey
     end
   end
