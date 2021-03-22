@@ -49,6 +49,17 @@ class TwitterUserDecorator < ApplicationDecorator
     account_created_at.present? && !account_created_at.kind_of?(String)
   end
 
+  def censored_location
+    if location? && location.match?(ADULT_ACCOUNT_REGEXP)
+      I18n.t('twitter.censored_location')
+    else
+      location
+    end
+  rescue => e
+    logger.warn "#{__method__}: Unhandled exception #{e.inspect} location=#{location}"
+    location
+  end
+
   def location?
     location.present?
   end

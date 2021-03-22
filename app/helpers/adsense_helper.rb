@@ -8,7 +8,7 @@ module AdsenseHelper
   end
 
   def ad_ng_user?(user)
-    user && (ad_ng_uid?(user.uid) || ad_ng_text?(user.name) || ad_ng_text?(user.description) || ad_ng_text?(user.location))
+    user && (ad_ng_uid?(user.uid) || ad_ng_name?(user) || ad_ng_description?(user) || ad_ng_location?(user))
   rescue => e
     logger.warn "#{__method__}: Unhandled exception #{e.inspect}"
     false
@@ -16,6 +16,18 @@ module AdsenseHelper
 
   def ad_ng_uid?(uid)
     uid && AD_NG_UIDS.include?(uid)
+  end
+
+  def ad_ng_name?(user)
+    ad_ng_text?(user.name)
+  end
+
+  def ad_ng_description?(user)
+    ad_ng_text?(user.description)
+  end
+
+  def ad_ng_location?(user)
+    ad_ng_text?(user.location)
   end
 
   def ad_ng_text?(text)

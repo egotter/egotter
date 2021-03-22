@@ -1,5 +1,5 @@
 <% if user.location? %>
-  <div class="small my-1"><i class="fas fa-map-marker text-muted"></i>&nbsp;<%= user.location %></div>
+  <div class="small my-1"><i class="fas fa-map-marker text-muted"></i>&nbsp;<%= user.censored_location %></div>
 <% end %>
 
 <% if user.profile_url? %>
