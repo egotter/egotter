@@ -106,19 +106,28 @@ module ValidationConcern
   def twitter_user_persisted?(uid)
     return true if ::TwitterUser.with_delay.exists?(uid: uid)
 
-    if from_crawler? || request.xhr? || !user_signed_in?
-      url = sign_in_path(via: current_via('twitter_user_not_found'))
-      respond_with_error(:not_found, t('application.twitter_user_not_found_html', url: url))
-      track_event('twitter_user_persisted', {controller: controller_name, action: action_name, screen_name: @twitter_user&.screen_name})
-      return
+    create_error_log(__method__, '')
+    track_event('twitter_user_persisted', {controller: controller_name, action: action_name})
+
+    if request.xhr?
+      head :not_found
+      return false
     end
 
-    @screen_name = @twitter_user.screen_name
-    @user = @twitter_user
-    @redirect_path = timeline_path(@twitter_user, via: current_via(__method__))
-    @via = params['via'].presence || current_via('render_template')
-    self.sidebar_disabled = true
-    render template: 'searches/create'
+    if user_signed_in?
+      @screen_name = @twitter_user.screen_name
+      @user = @twitter_user
+      @redirect_path = timeline_path(@twitter_user, via: current_via(__method__))
+      @via = params['via'].presence || current_via('render_template')
+      self.sidebar_disabled = true
+      render template: 'searches/create'
+    else
+      url = sign_in_path(via: current_via('twitter_user_not_found'))
+      message = t('application.twitter_user_not_found_html', url: url)
+      flash.now[:alert] = message
+      @has_error = true
+      render template: 'home/new', formats: %i(html), status: :not_found
+    end
 
     false
   end

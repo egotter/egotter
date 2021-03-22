@@ -2692,10 +2692,11 @@ ja:
       'no': 'キャンセル'
   application:
     twitter_user_not_found_html: |
-      データの取得に失敗しました。大変お手数ですが、トップページから再度検索してみてください。<br>
+      データの取得に一時的に失敗しました。大変お手数ですが、トップページから再度検索してみてください。<br>
       <br>
-      ログインしてから検索するとこのエラーは起きづらくなります。
-      <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> エラー：TUNF404
+      ログインしてから検索するとこのエラーは起きづらくなります。何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a>
+      <br>エラー：TUNF404
     internal_server_error_html: |
       一時的なエラーが起きました。トップページから再度検索してみてください。
       何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
