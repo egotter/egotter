@@ -63,7 +63,7 @@ class ProgressBar {
   }
 }
 
-class State {
+class WaitingState {
   constructor() {
     this.bar = new ProgressBar();
 
@@ -95,4 +95,4 @@ class State {
   }
 }
 
-window.State = State;
+window.WaitingState = WaitingState;
