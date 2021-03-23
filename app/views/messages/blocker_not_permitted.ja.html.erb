@@ -23,7 +23,7 @@
 
       <div>
         3. DMで申請する<br>
-        <% url = direct_message_url(User::EGOTTER_CS_UID, '自動入力：ブロックを解除し有料プランを購入しました。Webサイトの利用を再開してください。') %>
+        <% url = direct_message_url(User::EGOTTER_CS_UID, '自動入力：ブロックを解除しました。有料プランを購入します（もしくは購入済みです）。Webサイトの利用を再開してください。') %>
         <%= link_to '@egotter_cs に解除を申請する', url, class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
       </div>
     </div>
