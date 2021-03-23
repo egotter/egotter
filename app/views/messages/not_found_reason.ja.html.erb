@@ -1,11 +1,9 @@
-<% id_hash = SecureRandom.urlsafe_base64(10) %>
-
 <div class="text-right">
-  <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#not-found-reason-details-<%= id_hash %>">「アカウント削除」の意味
+  <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#not-found-reason-details">「アカウント削除」の意味
     <i class="far fa-question-circle"></i></a>
 </div>
 
-<div id="not-found-reason-details-<%= id_hash %>" class="card collapse my-3">
+<div id="not-found-reason-details" class="card collapse my-3">
   <div class="card-body">
     1. <strong>アカウント削除</strong>はどういう時に起きる？<br>
     アカウントの持ち主がアカウントを削除すると、この状態になります。もうフォローすることもツイートを見ることもできません。<br>
@@ -17,3 +15,11 @@
     削除した直後だったり、削除と復活を繰り返していると、えごったー上での表示と一時的にずれることがあります。その時は、<span class="egotter-pink">ツイッターで見る</span>と確実です。
   </div>
 </div>
+
+<script>
+  $(function () {
+    $('#not-found-reason-details').one('show.bs.collapse', function () {
+      trackMessageEvent('NotFoundReasonDetailsMessage');
+    });
+  });
+</script>
