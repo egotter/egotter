@@ -1,24 +1,21 @@
-<% id_hash = SecureRandom.urlsafe_base64(10) %>
-<% via = current_via(via) %>
-
 <div class="card">
   <div class="card-body small">
     <div class="mb-3">
-      <strong>注意</strong> リムーブ、リムーブされた、ブロックされたのデータは、ツイッター自体の不整合により、<span class="text-primary">一時的に結果が不正確になる</span>ことがあります。<br>
-      <br>
-      <% if user_signed_in? %>
-        より正確に結果を知りたい場合は、各ユーザーの分析ページから、<span class="text-primary">ツイッターにアクセス</span>して結果を確認してください。
-      <% else %>
-        より正確に結果を知りたい場合は、各ユーザーの分析ページから、<a href="<%= sign_in_path(via: via) %>" class="btn btn-primary btn-sm">ログイン</a>して結果を確認してください。
-      <% end %>
+      <div class="text-primary mb-1">Q. フォローしているのにリムられにいるのはなぜですか？</div>
+      <div class="mb-4">「フォローが外れる」と「再度フォローする」を繰り返すと、フォローしているのにリムられに表示されることがあります。</div>
+
+      <div class="text-primary mb-1">Q. 再フォローとはどういう意味ですか？</div>
+      <div class="mb-4">フォローが外れたと検出された後にまたフォローされると、再フォローという状態になります。</div>
     </div>
 
     <div class="text-right">
-      <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#forbidden-reason-details-<%= id_hash %>">データの正確性について
-        <i class="far fa-question-circle"></i></a>
+      <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#data-inconsistency-details">
+        <i class="far fa-question-circle"></i>
+        詳しい説明を見る
+      </a>
     </div>
 
-    <div id="forbidden-reason-details-<%= id_hash %>" class="collapse">
+    <div id="data-inconsistency-details" class="collapse">
       <hr>
       1. リムられはどういう時に起きる？<br>
       ほとんどの場合はフォローを外された時に起きます。一部の特殊なケースでは、<span class="text-primary">フォローを外されていないのにリムられに表示される</span>ことがあります。<br>
@@ -30,7 +27,18 @@
       大半は些細な理由です。いつも使っているのとは違うスマホでログインしたり、短時間にたくさんツイートしたり等です。<br>
       <br>
       4. 確実にフォローを確認する方法はありますか？<br>
-      ツイッターでそのユーザーのプロフィールを見てください。そうすればフォローされているかどうか正確に分かります。
+      ツイッターでそのユーザーのプロフィールを見てください。そうすればフォローされているかどうか正確に分かります。<br>
+      <br>
+      5. 他にも質問してもよいですか？<br>
+      分からないことや気になることは <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。
     </div>
   </div>
 </div>
+
+<script>
+  $(function () {
+    $('#data-inconsistency-details').one('show.bs.collapse', function () {
+      trackMessageEvent('ExplanationOfDataInconsistencyMessage');
+    });
+  });
+</script>
