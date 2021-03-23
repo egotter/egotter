@@ -74,15 +74,6 @@ RSpec.describe TwitterHelper, type: :helper do
     it { is_expected.to eq('@name') }
   end
 
-  describe '#normal_icon_url' do
-    let(:user) { double('User') }
-    subject { helper.normal_icon_url(user) }
-    it do
-      expect(user).to receive_message_chain(:profile_image_url_https, :to_s)
-      subject
-    end
-  end
-
   describe '#bigger_icon_url' do
     let(:user) { double('User') }
     subject { helper.bigger_icon_url(user) }
