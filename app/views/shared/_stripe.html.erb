@@ -62,7 +62,7 @@
       }
 
       function redirectToCheckout() {
-        var url = '<%= api_v1_checkout_sessions_path %>';
+        var url = '<%= raw api_v1_checkout_sessions_path(via: current_via) %>';
         $.post(url).done(function (res) {
           stripe.redirectToCheckout({sessionId: res.session_id}).then(function (result) {
             logger.log(result.error.message);
