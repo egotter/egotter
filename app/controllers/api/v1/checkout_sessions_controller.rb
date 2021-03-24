@@ -5,7 +5,7 @@ module Api
       before_action :reject_crawler
       before_action :require_login!
       before_action :doesnt_have_valid_subscription!
-      after_action { track_order_activity(session_id: @session&.id) }
+      after_action { track_order_activity(checkout_session: {id: @session&.id, customer: @session&.customer, metadata: @session&.metadata}) }
 
       def create
         attrs = {
