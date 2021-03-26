@@ -38,6 +38,7 @@ class DeleteTweetWorker
         TwitterApiStatus.suspended?(e) ||
         TweetStatus.no_status_found?(e) ||
         TweetStatus.not_authorized?(e) ||
+        TweetStatus.temporarily_locked?(e) ||
         TweetStatus.that_page_does_not_exist?(e)
       nil
     else
