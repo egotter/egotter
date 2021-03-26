@@ -1,7 +1,22 @@
 <%= modal_dialog id: modal_id, title: t('.title'), button: {positive: t('.yes')} do %>
-  <div class="mb-3"><span class="order-time"></span><%= t('.order_time') %></div>
-  <div><span class="order-amount"></span><%= t('.order_amount') %></div>
-  <div><span class="order-search-count"></span><%= t('.order_search_count') %></div>
+  <div class="mb-1">
+    <%= t('.order_created_at') %>
+    <span class="order-created-at"></span>
+  </div>
+  <div class="mb-1">
+    <%= t('.order_canceled_at') %>
+    <span class="order-canceled-at"></span>
+  </div>
+  <div class="mb-3">
+    <%= t('.order_charge_failed_at') %>
+    <span class="order-charge-failed-at"></span>
+  </div>
+
+  <div class="mb-1"><span class="order-amount"></span><%= t('.order_amount') %></div>
+  <div class="mb-3"><span class="order-search-count"></span><%= t('.order_search_count') %></div>
+
+  <div class="mb-1 small"><%= t('.note1_html', url: pricing_path(via: current_via('order_details'))) %></div>
+  <div class="small"><%= t('.note2_html', url: twitter_web_url('egotter_cs')) %></div>
 <% end %>
 <script>
   $(function () {

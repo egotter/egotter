@@ -455,16 +455,22 @@ ja:
       no_payment_guranteed: '※ トライアル期間中は支払いは発生しません。'
       during_trial_period: "トライアル期間中"
       trial_period_until: '%{time}までトライアル期間中'
-      already_canceled: "キャンセル済み"
+      charge_failed_title: '支払い失敗により自動キャンセル済み'
+      charge_failed_description: '支払い失敗の失敗は一時的なエラーや残高不足など様々です。具体的な理由はカード発行会社に直接お問い合わせください。'
+      canceled_title: "キャンセル済み"
+      canceled_description: "もう支払いは発生しません。"
+      valid_title: '購読中'
+      valid_description: '現在も有効なプランです。'
+      invalid_time: 'なし'
       see_details: '詳細を見る'
       price: "%{price}円/月（税別）"
       cancel: 'キャンセルする'
-      charge_failed_description: '支払いに失敗したため自動でキャンセルされました。'
       update_payment_method: '支払い方法を更新する'
       cancel_confirmation: '2回目以降の購入は初回の割引が適用されなくなります。本当に現在のプランをキャンセルしますか？'
       canceling_html: 'キャンセル処理中です。<img src="/ajax-loader.gif?a=1">'
       has_not_purchased: "まだ購入していません"
       purchase: '購入する'
+      has_purchased: '購入済み'
       see_plans: '料金プランを見る'
     data:
       title: 'データ設定'
@@ -2664,9 +2670,13 @@ ja:
         login: 'ログインする'
     order_details_modal:
       title: '購入の詳細'
-      order_time: 'に購入'
+      order_created_at: '購入した日時：'
+      order_canceled_at: 'キャンセルした日時：'
+      order_charge_failed_at: '支払いに失敗した日時：'
       order_amount: '円/月（税別）'
       order_search_count: '回/日の検索回数'
+      note1_html: '有料プランの特典については <a href="%{url}" target="_blank">プランの詳細</a> をご覧ください。'
+      note2_html: '質問やお問い合わせは <a href="%{url}" target="_blank">@egotter_cs</a> にご連絡ください。'
       'yes': 'OK'
     end_trial_modal:
       title: 'トライアル期間の終了'
@@ -3214,6 +3224,7 @@ ja:
       delete_favorites_short: "%-H時%-M分"
       delete_favorites_long: "%-m月%-d日 %-H時%-M分"
       order_short: "%-m月%-d日 %-H時"
+      order_long: "%-m月%-d日 %-H時%-M分"
       coupon_short: "%-m月%-d日 %-H時%-M分"
       profile_short: "%-m月%-d日 %-H時"
       profile_header_long: "%Y年%-m月%-d日 %-H時%-M分"

@@ -128,6 +128,7 @@ class Order < ApplicationRecord
     @stripe_checkout_session ||= (checkout_session_id ? Subscription.new(::Stripe::Checkout::Session.retrieve(checkout_session_id)) : nil)
   end
 
+  # For debugging
   def purchase_failed?
     customer_id.nil? || subscription_id.nil?
   end
