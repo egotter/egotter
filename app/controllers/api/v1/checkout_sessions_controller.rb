@@ -8,19 +8,27 @@ module Api
       after_action { track_order_activity(checkout_session: {id: @session&.id, customer: @session&.customer, metadata: @session&.metadata}) }
 
       def create
+        attrs = build_checkout_session_attrs(current_user)
+        @session = Stripe::Checkout::Session.create(attrs)
+        render json: {session_id: @session.id}
+      end
+
+      private
+
+      def build_checkout_session_attrs(user)
         attrs = {
-            client_reference_id: current_user.id,
+            client_reference_id: user.id,
             payment_method_types: ['card'],
             mode: 'subscription',
             line_items: [{quantity: 1, price: Order::BASIC_PLAN_PRICE_ID}],
             subscription_data: {default_tax_rates: [Order::TAX_RATE_ID]},
-            metadata: {user_id: current_user.id},
+            metadata: {user_id: user.id},
             success_url: ENV['STRIPE_SUCCESS_URL'],
             cancel_url: pricing_url(via: 'cancel_checkout'),
         }
 
-        if (order = current_user.orders.where.not(customer_id: :nil).order(created_at: :desc).first)
-          attrs[:customer] = order.customer_id
+        if (customer_id = user.valid_customer_id)
+          attrs[:customer] = customer_id
           attrs[:metadata][:price] = Order::REGULAR_PRICE
         else
           attrs[:subscription_data][:trial_period_days] = Order::TRIAL_DAYS
@@ -28,9 +36,7 @@ module Api
           attrs[:metadata][:price] = Order::DISCOUNT_PRICE
         end
 
-        @session = Stripe::Checkout::Session.create(attrs)
-
-        render json: {session_id: @session.id}
+        attrs
       end
     end
   end

@@ -271,6 +271,11 @@ class User < ApplicationRecord
     orders.unexpired.last
   end
 
+  def valid_customer_id
+    order = orders.where.not(customer_id: :nil).order(created_at: :desc).first
+    order&.customer_id
+  end
+
   def purchased_plan_name
     valid_order.short_name
   end
