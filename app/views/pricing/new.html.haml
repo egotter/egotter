@@ -81,34 +81,4 @@
 
 %hr
 
-%h3#enterprise-plan.text-center.my-5= t('.pro_plan_title')
-.my-3= t('.pro_plan_text_html')
-.h4.my-4
-  %strong= t('.pro_plan_price')
-
-.my-1= t('.pro_delivery_date')
-.my-1= t('.pro_purchasing_method')
-
-.my-3= t('.pro_content_html')
-
-.my-3= t('.inquiry_methods')
-= link_to t('.inquiry_by_email'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-primary'
-= link_to t('.inquiry_by_dm'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-outline-primary'
-
-%hr
-
-%h3#enterprise-plan.text-center.my-5= t('.enterprise_plan_title')
-.my-3= t('.enterprise_plan_text_html')
-.h4.my-4
-  %strong= t('.enterprise_plan_price')
-
-.my-1= t('.enterprise_delivery_date')
-.my-1= t('.enterprise_purchasing_method')
-
-.my-3= t('.enterprise_content_html')
-
-.my-3= t('.inquiry_methods')
-= link_to t('.inquiry_by_email'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-primary'
-= link_to t('.inquiry_by_dm'), direct_message_url(User::EGOTTER_CS_UID), class: 'btn btn-outline-primary'
-
-%div.mb-3
+#enterprise-plan.mb-3= render partial: 'custom_work'
