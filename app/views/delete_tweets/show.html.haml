@@ -5,21 +5,10 @@
 %h2.h4.text-center.my-5= t('.page_title')
 .mb-5= t('.page_description', count: DeleteTweetsRequest::DESTROY_LIMIT)
 
-%h3.h5.card-title.text-center.mt-5.mb-3= t('.free.title')
-.card.my-3
-  .card-body
-    .card-text
-      = t('.free.description', user: current_user.screen_name, count: DeleteTweetsRequest::DESTROY_LIMIT)
-      = link_to '#delete-tweets-faq', class: 'btn btn-outline-primary btn-sm' do
-        %i.far.fa-question-circle
-        = t('.word_description')
-
-      - if @processing
-        .text-center.mt-3
-          .btn.btn-danger.disabled= t('.requested')
-      - else
-        .mt-3
-        = render partial: 'confirmation_modal'
+- if @processing
+  = render partial: 'processing'
+- else
+  = render partial: 'free'
 
 %h3#delete-tweets-uploader.h5.card-title.text-center.mt-5.mb-3= t('.premium.title')
 .card.my-3

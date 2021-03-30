@@ -1,0 +1,64 @@
+<h3 class="h5 card-title text-center mt-5 mb-3"><%= t('.title') %></h3>
+
+<div class="card my-3">
+  <div class="card-body">
+    <div class="card-text">
+      <%= t('.description', user: current_user.screen_name, count: DeleteTweetsRequest::DESTROY_LIMIT) %>
+
+      <%= link_to '#delete-tweets-faq', class: 'btn btn-outline-primary btn-sm' do %>
+        <i class="far fa-question-circle"></i>
+        <%= t('.more') %>
+      <% end %>
+
+      <div class="my-4">
+        <div>
+          <label for="since_date"><%= t('.since_date') %></label>
+          <%= date_field_tag('since_date') %>
+        </div>
+        <div>
+          <label for="until_date"><%= t('.until_date') %></label>
+          <%= date_field_tag('until_date') %>
+        </div>
+      </div>
+
+      <div class="my-4">
+        <div>
+          <%= check_box_tag('send_dm', '1', true) %>
+          <label for="send_dm"><%= t('.send_dm') %></label>
+        </div>
+        <div>
+          <%= check_box_tag('post_tweet', '1', true) %>
+          <label for="post_tweet"><%= t('.post_tweet') %></label>
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <div id="open-delete-tweets-modal" class="btn btn-danger" data-target="#delete-tweets-modal" data-toggle="modal">
+          <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+          <%= t('.button') %>
+        </div>
+      </div>
+
+      <div class="text-center text-muted small">
+        <div class="mt-1"><%= t('.note1') %></div>
+        <div class="mt-1"><%= t('.note2', count: DeleteTweetsRequest::DESTROY_LIMIT) %></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<%= render partial: 'confirmation_modal', locals: {modal_id: 'delete-tweets-modal'} %>
+
+<script>
+  $(function () {
+    $('#open-delete-tweets-modal').on('click', function () {
+      $('#delete-tweets-modal').data({
+        since: $('#since_date').val(),
+        until: $('#until_date').val(),
+        dm: $('#send_dm').prop('checked'),
+        tweet: $('#post_tweet').prop('checked')
+      });
+    });
+  });
+</script>

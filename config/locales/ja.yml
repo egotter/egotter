@@ -1436,16 +1436,28 @@ ja:
         description: '@%{user} のツイート削除状況です。'
         no_request_description: '削除中の場合は、ここに進行状況が表示されます。'
         empty_date: '○月○日'
-      requested: '削除リクエスト済み'
-      word_description: '説明'
       word_procedure: '手順'
-      free:
-        title: '無料でツイートを削除する'
-        description: '無料プランの場合は、最新の%{count}件までをワンクリックで削除することができます。'
       premium:
         title: '有料で完全にツイートを削除する'
         description: '有料プランの場合は、アーカイブデータ（全ツイート履歴）をアップロードすれば全てのツイートを削除できます。'
         button_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> アーカイブデータをアップロード'
+    free:
+      title: '無料でツイートを削除する'
+      description: '無料プランの場合は、最新の%{count}件までをワンクリックで削除することができます。'
+      more: 'よくある質問'
+      since_date: 'この日付から'
+      until_date: 'この日付まで'
+      send_dm: '削除の完了後に自分へDMする'
+      post_tweet: '削除の完了後にツイートする'
+      button: '無料で直近のツイートを削除する'
+      note1: '※ ツイート削除は取り消しできません。'
+      note2: '※ 無料で削除できるのは%{count}件です。'
+    processing:
+      title: '無料でツイートを削除する'
+      description: '無料プランの場合は、最新の%{count}件までをワンクリックで削除することができます。'
+      more: 'よくある質問'
+      requested: '削除リクエスト済み'
+      note: '完了後に再度リクエストできます。'
     message:
       finished: '%{count}件のツイートを削除しました。削除は完了しています。'
       processing_html: |
@@ -1497,14 +1509,19 @@ ja:
       fail_html: 'ファイルのアップロードに失敗しました。何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
     confirmation_modal:
       title: '@%{user} のツイート削除'
-      body_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートをすべて削除します。本当に削除しますか？'
-      button_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> 無料で直近のツイートを削除する'
-      check_boxes:
-        dm: '削除の完了後に自分へDMする'
-        tweet: '削除の完了後にツイートする'
+      body_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートを削除します。本当によろしいですか？'
       confirmation_text: '確認のために「%{text}」と入力してください'
-      ok: "削除します"
-      cancel: "いいえ"
+      since_date: 'この日付から：'
+      until_date: 'この日付まで：'
+      send_dm: '完了後に自分へDM：'
+      post_tweet: '完了後にツイート：'
+      not_specified: '指定無し'
+      send: '送る'
+      not_sent: '送らない'
+      post: 'する'
+      not_posted: 'しない'
+      ok: "削除する"
+      cancel: "キャンセル"
       warnings:
         - 'ツイート削除は取り消しできません'
         - '3200件までは無料で削除できます'

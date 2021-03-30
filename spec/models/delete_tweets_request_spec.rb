@@ -10,20 +10,23 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       freeze_time do
         expect(request).to receive(:update!).with(finished_at: Time.zone.now)
         expect(request).not_to receive(:tweet_finished_message)
-        expect(request).to receive(:send_finished_message)
+        expect(request).not_to receive(:send_finished_message)
         subject
       end
     end
   end
 
   describe '#perform!' do
+    let(:tweets) { 'tweets' }
     let(:subject) { request.perform! }
 
     it do
       expect(request).to receive(:verify_credentials!)
       expect(request).to receive(:tweets_exist!)
-      expect(request).to receive(:fetch_statuses!).and_return('tweets')
-      expect(request).to receive(:destroy_statuses!).with('tweets')
+      expect(request).to receive(:fetch_statuses!).and_return(tweets)
+      expect(request).to receive(:filter_statuses!).with(tweets).and_return(tweets)
+      expect(request).to receive(:filtered_tweets_exist!).with(tweets)
+      expect(request).to receive(:destroy_statuses!).with(tweets)
       subject
     end
   end
@@ -93,7 +96,10 @@ RSpec.describe DeleteTweetsRequest, type: :model do
 
   describe '#fetch_statuses!' do
     let(:tweets) do
-      [double('tweet', id: 200, created_at: 1.day.ago), double('tweet', id: 100, created_at: 1.day.ago)]
+      [
+          double('tweet', id: 200, created_at: 1.day.ago),
+          double('tweet', id: 100, created_at: 1.day.ago)
+      ]
     end
     subject { request.fetch_statuses! }
 
@@ -111,6 +117,28 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       it do
         expect { subject }.to raise_error(described_class::TweetsNotFound)
       end
+    end
+  end
+
+  describe '#filter_statuses!' do
+    let(:tweets) do
+      [
+          double('tweet1', id: 200, created_at: Time.zone.parse('2021-04-10')),
+          double('tweet2', id: 100, created_at: Time.zone.parse('2021-04-01'))
+      ]
+    end
+    subject { request.filter_statuses!(tweets) }
+
+    it { is_expected.to match_array(tweets) }
+
+    context ':since_date is specified' do
+      before { request.update!(since_date: Time.zone.parse('2021-04-05')) }
+      it { is_expected.to match_array([tweets[0]]) }
+    end
+
+    context ':until_date is specified' do
+      before { request.update!(until_date: Time.zone.parse('2021-04-05')) }
+      it { is_expected.to match_array([tweets[1]]) }
     end
   end
 

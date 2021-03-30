@@ -546,6 +546,9 @@ ActiveRecord::Schema.define(version: 2021_03_09_014524) do
   create_table "delete_tweets_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "session_id"
     t.integer "user_id", null: false
+    t.datetime "since_date"
+    t.datetime "until_date"
+    t.boolean "send_dm", default: false, null: false
     t.boolean "tweet", default: false, null: false
     t.integer "destroy_count", default: 0, null: false
     t.datetime "finished_at"

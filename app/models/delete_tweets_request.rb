@@ -42,7 +42,7 @@ class DeleteTweetsRequest < ApplicationRecord
     if finished_at.nil?
       update!(finished_at: Time.zone.now)
       tweet_finished_message if tweet
-      send_finished_message
+      send_finished_message if send_dm
     end
   end
 
@@ -60,6 +60,8 @@ class DeleteTweetsRequest < ApplicationRecord
     verify_credentials!
     tweets_exist!
     tweets = fetch_statuses!
+    tweets = filter_statuses!(tweets)
+    filtered_tweets_exist!(tweets)
     destroy_statuses!(tweets)
   end
 
@@ -85,6 +87,10 @@ class DeleteTweetsRequest < ApplicationRecord
     retry if (@retries -= 1) > 0
   end
 
+  def filtered_tweets_exist!(tweets)
+    raise TweetsNotFound if tweets.empty?
+  end
+
   def fetch_statuses!
     tweets = []
     max_id = nil
@@ -106,9 +112,17 @@ class DeleteTweetsRequest < ApplicationRecord
     tweets
   end
 
+  def filter_statuses!(tweets)
+    return tweets if !since_date && !until_date
+
+    tweets.reject do |tweet|
+      (since_date && tweet.created_at < since_date) ||
+          (until_date && tweet.created_at > until_date)
+    end
+  end
+
   def destroy_statuses!(tweets)
     tweets.each do |tweet|
-      # TODO remove last_tweet param
       DeleteTweetWorker.perform_async(user_id, tweet.id, request_id: id, last_tweet: tweet == tweets.last)
     end
   end
