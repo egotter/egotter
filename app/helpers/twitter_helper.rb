@@ -82,12 +82,4 @@ module TwitterHelper
   def bigger_icon_url(user)
     user.profile_image_url_https.to_s.gsub(/_normal(\.jpe?g|\.png|\.gif)$/, '_bigger\1')
   end
-
-  def twitter_icon_url(condition)
-    if condition[:uid] == User::EGOTTER_UID || condition[:screen_name] == 'ego_tter' || !(user = TwitterDB::User.find_by(condition))
-      image_path('/logo_transparent_96x96.png')
-    else
-      user.profile_image_url_https
-    end
-  end
 end

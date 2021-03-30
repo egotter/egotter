@@ -1,12 +1,12 @@
 <% if user_signed_in? %>
   <%= link_to timeline_path(screen_name: screen_name, via: current_via('analyze_button')), class: 'btn btn-primary btn-block' do %>
-    <img class="rounded" height="20" src="<%= twitter_icon_url(screen_name: screen_name) %>">
+    <img class="rounded-circle" height="20" src="<%= icon_url %>">
     <%= t('.label', user: screen_name) %>
   <% end %>
 <% else %>
   <% url = timeline_path(screen_name: screen_name, via: current_via('sign_in_and_analyze_button')) %>
   <%= link_to sign_in_path(redirect_path: url, via: current_via('sign_in_and_analyze_button')), class: 'btn btn-primary btn-block' do %>
-    <img class="rounded" height="20" src="<%= twitter_icon_url(screen_name: screen_name) %>">
+    <img class="rounded-circle" height="20" src="<%= icon_url %>">
     <%= t('.sign_in_and_analyze', user: screen_name) %>
   <% end %>
 <% end %>
