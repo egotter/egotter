@@ -1,0 +1,63 @@
+<h3 id="delete-tweets-uploader" class="h5 card-title text-center mt-5 mb-3"><%= t('.title') %></h3>
+
+<div class="card my-3">
+  <div class="card-body">
+    <div class="card-text">
+      <%= t('.description', user: current_user.screen_name) %>
+
+      <%= link_to '#download-full-archive', class: 'btn btn-outline-primary btn-sm' do %>
+        <i class="far fa-question-circle"></i>
+        <%= t('.more') %>
+      <% end %>
+
+      <% if current_user.has_valid_subscription? %>
+        <% if current_user.has_trial_subscription? %>
+          <div class="text-center mt-3">
+            <%= link_to '#', class: 'btn btn-outline-primary btn-end-trial' do %>
+              <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+              <%= t('.button') %>
+            <% end %>
+          </div>
+          <div class="text-muted small">
+            <div class="mt-1"><%= t('.note1_html', url: delete_tweets_mypage_path(anchor: 'what_is_archive_data')) %></div>
+            <div class="mt-1"><%= t('.note2') %></div>
+          </div>
+        <% else %>
+          <div class="my-4">
+            <div>
+              <label for="premium_since_date"><%= t('.since_date') %></label>
+              <%= date_field_tag('premium_since_date') %>
+            </div>
+            <div>
+              <label for="premium_until_date"><%= t('.until_date') %></label>
+              <%= date_field_tag('premium_until_date') %>
+            </div>
+          </div>
+
+          <div class="text-center mt-3">
+            <%= link_to '#', id: 'delete-tweets-button', class: 'btn btn-outline-primary' do %>
+              <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+              <%= t('.button') %>
+            <% end %>
+          </div>
+          <div class="text-muted small">
+            <div class="mt-1"><%= t('.note1_html', url: delete_tweets_mypage_path(anchor: 'what_is_archive_data')) %></div>
+            <div class="mt-1"><%= t('.note2') %></div>
+          </div>
+          <%= render partial: 'uploader', locals: {button_id: 'delete-tweets-button'} %>
+        <% end %>
+      <% else %>
+        <div class="text-center mt-3">
+          <%= link_to '#', class: 'btn btn-outline-primary btn-checkout' do %>
+            <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+            <%= t('.button') %>
+          <% end %>
+        </div>
+        <div class="text-muted small">
+          <div class="mt-1"><%= t('.note1_html', url: delete_tweets_mypage_path(anchor: 'what_is_archive_data')) %></div>
+          <div class="mt-1"><%= t('.note3_html', url: pricing_path(via: current_via)) %></div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

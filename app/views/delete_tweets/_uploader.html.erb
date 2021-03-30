@@ -1,5 +1,3 @@
-<%= link_to button_label, '#', id: 'delete-tweets-button', class: 'btn btn-outline-primary' %>
-<div class="text-muted small mt-1"><%= t('.archive_data_only') %></div>
 <input type="file" id="delete-tweets-file" accept=".zip,application/zip" style="display: none;">
 
 <script src="https://sdk.amazonaws.com/js/aws-sdk-2.820.0.min.js"></script>
@@ -22,6 +20,6 @@
       bucket: '<%= S3::ArchiveData.bucket_name %>',
       key: '<%= current_user.uid %>' + '-' + '<%= current_user.screen_name %>' + '-' + new Date().getTime() + '-' + Math.random().toString(36).substring(7)
     };
-    new DeleteTweetsUploader('delete-tweets-button', 'delete-tweets-file', options, i18n);
+    new DeleteTweetsUploader('<%= button_id %>', 'delete-tweets-file', options, i18n);
   });
 </script>

@@ -25,7 +25,7 @@ module Api
 
       private
 
-      DATE_REGEXP = /\d{4}-\d{2}-\d{2}/
+      DATE_REGEXP = /\A\d{4}-\d{2}-\d{2}\z/
 
       def validated_since
         if params[:since]&.match?(DATE_REGEXP)

@@ -39,9 +39,9 @@
         </div>
       </div>
 
-      <div class="text-center text-muted small">
+      <div class="text-muted small">
         <div class="mt-1"><%= t('.note1') %></div>
-        <div class="mt-1"><%= t('.note2', count: DeleteTweetsRequest::DESTROY_LIMIT) %></div>
+        <div class="mt-1"><%= t('.note2_html', count: DeleteTweetsRequest::DESTROY_LIMIT, url: delete_tweets_mypage_path(anchor: 'reason-of-3200')) %></div>
       </div>
 
     </div>

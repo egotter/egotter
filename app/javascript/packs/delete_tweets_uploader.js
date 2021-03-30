@@ -92,17 +92,22 @@ class DeleteTweetsUploader {
       IdentityPoolId: this.options.IdentityPoolId,
     });
 
+    self.metadata = {
+      filename: file.name,
+      filesize: '' + file.size,
+      filetype: file.type,
+      since: $('#premium_since_date').val(),
+      until: $('#premium_until_date').val()
+    };
+    logger.log(self.metadata);
+
     var upload = new AWS.S3.ManagedUpload({
       params: {
         Bucket: this.options.bucket,
         Key: this.options.key,
         Body: file,
         ACL: 'private',
-        Metadata: {
-          filename: file.name,
-          filesize: '' + file.size,
-          filetype: file.type
-        }
+        Metadata: self.metadata
       }
     });
 
@@ -111,7 +116,7 @@ class DeleteTweetsUploader {
     promise.then(
         function () {
           self.completed = true;
-          self.notifyUploadCompleted();
+          self.notifyUploadCompleted(self.metadata);
           ToastMessage.info(i18n['success'], {autohide: false});
         },
         function (err) {
@@ -200,9 +205,9 @@ class DeleteTweetsUploader {
     }).fail(showErrorMessage);
   }
 
-  notifyUploadCompleted() {
+  notifyUploadCompleted(metadata) {
     var url = '/api/v1/delete_tweets_notifications'; //  api_v1_delete_tweets_notifications_path
-    $.post(url).done(function () {
+    $.post(url, metadata).done(function () {
     }).fail(showErrorMessage);
   }
 

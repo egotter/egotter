@@ -10,25 +10,7 @@
 - else
   = render partial: 'free'
 
-%h3#delete-tweets-uploader.h5.card-title.text-center.mt-5.mb-3= t('.premium.title')
-.card.my-3
-  .card-body
-    .card-text
-      = t('.premium.description', user: current_user.screen_name)
-      = link_to '#download-full-archive', class: 'btn btn-outline-primary btn-sm' do
-        %i.far.fa-question-circle
-        = t('.word_procedure')
-
-      .text-center.mt-3
-        - button_label = t('.premium.button_html', icon: current_user_icon)
-        - if current_user.has_valid_subscription?
-          - if current_user.has_trial_subscription?
-            = link_to button_label, '#', class: 'btn btn-outline-primary btn-end-trial'
-          - else
-            = render partial: 'uploader', locals: {button_label: button_label}
-        - else
-          = link_to button_label, '#', class: 'btn btn-outline-primary btn-checkout'
-
+= render partial: 'premium'
 
 %h3.h5.text-center.mt-5.mb-3= t('.status.title')
 .text-center.mb-3= t('.status.description', user: current_user.screen_name)

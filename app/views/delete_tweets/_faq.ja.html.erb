@@ -51,7 +51,7 @@
     「アーカイブデータ」を用意し、アップロードしてください。それで手順は完了です。<br>
     <br>
     1. 「アーカイブデータ」を<strong>ダウンロード</strong>する<br>
-    <a href="https://twitter.com/settings/your_twitter_data" target="_blank">ツイッター設定 > アーカイブをダウンロード</a><br>
+    <a href="https://twitter.com/settings/download_your_data" target="_blank">ツイッター設定 > アーカイブをダウンロード</a><br>
     から「アーカイブデータ」をダウンロードする<br>
     <br>
     2. 「アーカイブデータ」を<strong>アップロード</strong>する<br>
@@ -109,7 +109,7 @@
     この条件に該当する方は、全てのツイートを削除できるえごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a>
   <% end %>
 
-  <% faq_question '1回で全てのツイートが削除されないことがあるのはなぜですか？' do %>
+  <% faq_question '1回で全てのツイートが削除されないことがあるのはなぜですか？', id: 'reason-of-3200' do %>
     ツイッターの仕組み上、自動で削除できるのは最新の<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。<br>
     <br>
     <%= destroy_limit %>件を超える全てのツイートの削除を希望される方は、えごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a>
@@ -141,9 +141,16 @@
 <% end %>
 
 <% faq_section 'アーカイブデータについて' do %>
-  <% faq_question 'アーカイブデータとは何ですか？' do %>
-    ツイッターからダウンロードできる「今までのツイートが全て入ったデータ」のことです。
+  <% faq_question 'アーカイブデータとは何ですか？', id: 'what_is_archive_data' do %>
+    ツイッターからダウンロードできる「今までのツイートが全て入ったデータ」のことです。<br>
+    <br>
     全てのツイートの削除をする場合は必ずこのデータを用意する必要があります。
+  <% end %>
+
+  <% faq_question 'アーカイブデータはどこにありますか？' do %>
+    <a href="https://twitter.com/settings/download_your_data" target="_blank">ツイッターの設定 > データのアーカイブをダウンロード</a> からダウンロードできます。<br>
+    <br>
+    さらに詳細は <a href="https://help.twitter.com/ja/managing-your-account/how-to-download-your-twitter-archive" target="_blank">全ツイート履歴をダウンロードする方法</a> をご覧ください。
   <% end %>
 
   <% faq_question 'アーカイブデータのアップロード完了後に通知は届きますか？' do %>
