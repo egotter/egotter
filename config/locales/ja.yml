@@ -2158,8 +2158,8 @@ ja:
       check1: '安心の実績'
       check2: '満足率95%'
     profile_section:
-      loading_html: '@%{user} のプロフィールを読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
-      loading_error_html: '@%{user} のプロフィール読み込みに失敗しました'
+      loading: '@%{user} のプロフィールを読み込み中'
+      loading_error_html: '@%{user} のプロフィール読み込みに失敗しました。お手数ですが再度お試しください。何度も起きる場合は %{egotter_link} までご連絡ください。'
     users_section:
       not_found: "指定された条件での検索結果は0件でした。"
       need_click: '続きを読み込むには「もっと見る」をクリックしてください。'

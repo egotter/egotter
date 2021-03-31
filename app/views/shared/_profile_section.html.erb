@@ -1,14 +1,25 @@
-<div class="profile-on-timeline">
+<% container_id = "profile-section-#{twitter_user.uid}" %>
+
+<div id="<%= container_id %>">
   <% if expanded %>
-    <div class="mb-3"><%= t('.loading_html', user: twitter_user.screen_name) %></div>
+    <div class="mb-3">
+      <%= t('.loading', user: twitter_user.screen_name) %>
+      <img src="/ajax-loader-blue.gif?a=1">
+    </div>
     <%= render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'} %>
   <% end %>
 </div>
 
 <script>
   $(function () {
+    var id = '<%= container_id %>';
     var url = '<%= raw api_v1_profiles_path(uid: twitter_user.uid, expanded: expanded, via: current_via('profile_on_timeline')) %>';
-    var errorMessage = '<%= t('.loading_error_html', user: twitter_user.screen_name) %>';
-    new ProfileLoader(url, '.profile-on-timeline', errorMessage);
+    var errorMessage = '<%= t('.loading_error_html', user: twitter_user.screen_name, egotter_link:  twitter_web_link('egotter_cs')) %>';
+
+    $('#' + id).lazyload().one('appear', function () {
+      setTimeout(function () {
+        new ProfileLoader(url, '#' + id, errorMessage);
+      }, 1000);
+    });
   });
 </script>

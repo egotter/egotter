@@ -27,11 +27,17 @@
     var url = '#{raw api_v1_timelines_path(uid: @twitter_user.uid)}';
     var container = $('#timelines-show-container');
 
-    $.getJSON(url).done(function (res) {
-      container.empty().html(res.html);
-    }).fail(function (xhr, textStatus, errorThrown) {
-      container.find('.loading-image').hide().end().find('.load-error').show();
-      showErrorMessage(xhr, textStatus, errorThrown);
+    function loadFeedsList() {
+      $.getJSON(url).done(function (res) {
+        container.empty().html(res.html);
+      }).fail(function (xhr, textStatus, errorThrown) {
+        container.find('.loading-image').hide().end().find('.load-error').show();
+        showErrorMessage(xhr, textStatus, errorThrown);
+      });
+    }
+
+    container.lazyload().one('appear', function () {
+      setTimeout(loadFeedsList, 1000);
     });
 
     trackPageEvents('TimelinePage events', 'Page loaded');
