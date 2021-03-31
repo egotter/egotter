@@ -40,7 +40,22 @@ class StartDeletingTweetsTask
     puts "tweets_size=#{@tweets.size}"
 
     tweet_ids = @tweets.map { |tweet| tweet['tweet']['id'] }
-    tweet = user.api_client.twitter.status(tweet_ids[0])
+    tweet = nil
+
+    [0, 100, 500].each do |i|
+      tweet = user.api_client.twitter.status(tweet_ids[i])
+    rescue => e
+      if TwitterApiStatus.no_status_found?(e)
+        next
+      else
+        raise
+      end
+    end
+
+    if tweet.nil?
+      raise "No status found user_id=#{user.id}"
+    end
+
     if tweet.user.id != user.uid
       raise "The uid of the user doesn't match the uid of a tweet user_id=#{user.id} tweet_id=#{tweet_ids[0]}"
     end
