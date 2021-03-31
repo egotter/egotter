@@ -42,13 +42,13 @@ module ModalHelper
 
   def modal_positive_button(id, button)
     <<~HTML.html_safe
-      <button type="button" id="button-#{id}" class="btn btn-#{button[:category]} #{button[:positive_class]} positive" data-dismiss="modal">#{button[:positive]}</button>
+      <button type="button" id="button-ok-#{id}" class="btn btn-#{button[:category]} #{button[:positive_class]} positive" data-dismiss="modal">#{button[:positive]}</button>
     HTML
   end
 
   def modal_negative_button(id, label)
     <<~HTML.html_safe
-      <button type="button" id="button-#{id}" class="btn btn-outline-secondary negative" data-dismiss="modal">#{label}</button>
+      <button type="button" id="button-cancel-#{id}" class="btn btn-outline-secondary negative" data-dismiss="modal">#{label}</button>
     HTML
   end
 end

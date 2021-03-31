@@ -19,8 +19,8 @@
       eventTracker.trackDetectionEvent(eventName);
     };
 
-    window.trackModalEvent = function (eventName) {
-      eventTracker.trackModalEvent(eventName);
+    window.trackModalEvent = function (eventName, eventAction) {
+      eventTracker.trackModalEvent(eventName, eventAction);
     };
 
     $(document).on('click', '.track-twitter-link', function () {
