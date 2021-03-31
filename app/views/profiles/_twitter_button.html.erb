@@ -1,4 +1,22 @@
-<%= link_to user_url(screen_name), class: 'track-twitter-link btn btn-outline-primary btn-block', target: '_blank', data: {location: "Button(#{location})"} do %>
-  <i class="fab fa-twitter"></i>
+<% button_id = "profile-#{location}-#{screen_name}" %>
+
+<%= link_to user_url(screen_name), id: button_id, class: 'track-twitter-link btn btn-outline-primary btn-block disabled', disabled: 'disabled', target: '_blank', data: {location: "Button(#{location})"} do %>
+  <%= image_tag '/ajax-loader-primary.gif', size: '16x16' %>
+  <i class="fab fa-twitter" style="display: none;"></i>
   <%= t('.label', user: screen_name) %>
 <% end %>
+
+<script>
+  $(function () {
+    var id = '<%= button_id %>';
+
+    $('#' + id).lazyload().one('appear', function () {
+      setTimeout(function () {
+        $('#' + id)
+            .find('img').remove().end()
+            .find('i').css('display', 'inline-block').end()
+            .removeClass('disabled').removeAttr('disabled');
+      }, 3000);
+    });
+  });
+</script>
