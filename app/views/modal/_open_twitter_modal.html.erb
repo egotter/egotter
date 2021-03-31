@@ -1,11 +1,15 @@
 <% modal_id = 'open-twitter-modal' %>
-<% ad_wrapper_id = "async-ad-#{SecureRandom.urlsafe_base64(10)}" %>
+<% ad_wrapper_id = "async-ad-#{modal_id}" %>
 
 <%= modal_dialog(id: modal_id, title: t('.title_html'), footer: false) do %>
   <div style="max-width: 100%;"><%= render(partial: 'adsense/ad', locals: {vertical: :modal, wrapper_id: ad_wrapper_id}) %></div>
   <div class="d-flex justify-content-end">
-    <div class="m-1"><button type="button" id="button-<%= modal_id %>" class="btn btn-outline-secondary negative" data-dismiss="modal"><%= t('.no') %></button></div>
-    <div class="m-1"><button type="button" id="button-<%= modal_id %>" class="btn btn-primary positive" data-dismiss="modal"><%= t('.yes') %></button></div>
+    <div class="m-1">
+      <button type="button" id="button-ok-<%= modal_id %>" class="btn btn-outline-secondary negative" data-dismiss="modal"><%= t('.no') %></button>
+    </div>
+    <div class="m-1">
+      <button type="button" id="button-cancel-<%= modal_id %>" class="btn btn-primary track-twitter-link positive" data-dismiss="modal" data-location="<%= modal_id %>"><%= t('.yes') %></button>
+    </div>
   </div>
 <% end %>
 
