@@ -42,10 +42,10 @@ class StartDeletingTweetsTask
     tweet_ids = @tweets.map { |tweet| tweet['tweet']['id'] }
     tweet = nil
 
-    [0, 100, 500].each do |i|
+    [0, tweet_ids.size / 2, tweet_ids.size - 1].each do |i|
       tweet = user.api_client.twitter.status(tweet_ids[i])
     rescue => e
-      if TwitterApiStatus.no_status_found?(e)
+      if TweetStatus.no_status_found?(e)
         next
       else
         raise
