@@ -23,20 +23,13 @@
       eventTracker.trackModalEvent(eventName, eventAction);
     };
 
-    $(document).on('click', '.track-twitter-link', function () {
-      var userId = '<%= current_user&.id %>';
-      var deviceType = '<%= request.device_type %>';
-      var eventName = 'See on Twitter';
-      var controllerAction = '<%= "#{controller_name}##{action_name}" %>';
-      var eventLocation = $(this).data('location');
+    window.trackTwitterLink = function (eventLocation, eventAction) {
+      eventTracker.trackTwitterLink(eventLocation, eventAction);
+    };
 
-      ga('send', {
-        hitType: 'event',
-        eventCategory: eventName,
-        eventAction: controllerAction + ' / ' + eventLocation,
-        eventLabel: JSON.stringify({userId: userId, deviceType: deviceType})
-      });
-      ahoy.track(eventName, {page: window.location.href, location: eventLocation});
+    $(document).on('click', '.track-twitter-link', function () {
+      var eventLocation = $(this).data('location');
+      window.trackTwitterLink(eventLocation, 'clicked');
     });
   })();
 </script>

@@ -58,6 +58,18 @@ class EventTracker {
     });
     ahoy.track(eventName, {action: eventAction, page: window.location.href});
   }
+
+  trackTwitterLink(eventLocation, eventAction) {
+    var eventCategory = 'See on Twitter';
+
+    ga('send', {
+      hitType: 'event',
+      eventCategory: eventCategory,
+      eventAction: this.controllerAction + ' / ' + eventLocation + ' ' + eventAction,
+      eventLabel: JSON.stringify({userId: this.userId, deviceType: this.deviceType})
+    });
+    ahoy.track(eventCategory, {page: window.location.href, location: eventLocation, action: eventAction});
+  }
 }
 
 window.EventTracker = EventTracker;

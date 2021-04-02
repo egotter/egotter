@@ -1,6 +1,7 @@
 <% button_id = "profile-#{location}-#{screen_name}" %>
+<% location_name = "Button(#{location})" %>
 
-<%= link_to user_url(screen_name), id: button_id, class: 'track-twitter-link btn btn-outline-primary btn-block disabled', disabled: 'disabled', target: '_blank', data: {location: "Button(#{location})"} do %>
+<%= link_to user_url(screen_name), id: button_id, class: 'track-twitter-link btn btn-outline-primary btn-block disabled', disabled: 'disabled', target: '_blank', data: {location: location_name} do %>
   <%= image_tag '/ajax-loader-primary.gif', size: '16x16' %>
   <i class="fab fa-twitter" style="display: none;"></i>
   <%= t('.label', user: screen_name) %>
@@ -9,6 +10,7 @@
 <script>
   $(function () {
     var id = '<%= button_id %>';
+    var location = '<%= location_name %>';
 
     $('#' + id).lazyload().one('appear', function () {
       setTimeout(function () {
@@ -18,5 +20,9 @@
             .removeClass('disabled').removeAttr('disabled');
       }, 3000);
     });
+
+    if (location === 'Button(top)') {
+      trackTwitterLink(location, 'shown');
+    }
   });
 </script>
