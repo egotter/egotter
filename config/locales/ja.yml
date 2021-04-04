@@ -2801,6 +2801,9 @@ ja:
     unauthorized_html: |
       一時的なエラーが起きました。ログインしてから検索してみてください。
       <a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>
+    bad_authentication_html: |
+      一時的なエラーが起きました。このエラーは数分ほどで直ります。それまで少々お待ちください。<br>
+      何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     something_wrong_with_error_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。（%{error}）'
@@ -2835,9 +2838,6 @@ ja:
     forbidden_html: |
       検索された %{user} が見付かりません。アカウントが凍結されています。
       <a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>
-    forbidden_with_request_html: |
-      検索された %{user} が見付かりません。アカウントが凍結されています。
-      <a href="%{url}" class="btn btn-outline-primary btn-sm">更新をリクエストする</a>
     unauthorized_html: |
       ツイッター連携の有効期限が切れています。
       <a class="btn btn-primary" href="%{url}">ログイン</a> してから検索してみてください。

@@ -22,7 +22,7 @@ module AlertMessagesConcern
       when Twitter::Error::NotFound then not_found_message(screen_name)
       when Twitter::Error::Forbidden then forbidden_message(screen_name)
       when Twitter::Error::Unauthorized then unauthorized_message(screen_name)
-      when Twitter::Error::BadRequest then unauthorized_message(screen_name)
+      when Twitter::Error::BadRequest then bad_authentication_message
       when Twitter::Error::TooManyRequests then too_many_requests_message(ex.rate_limit.reset_in.to_i + 1)
       when Twitter::Error::ServiceUnavailable then internal_server_error_message
       when Twitter::Error::InternalServerError then internal_server_error_message
@@ -91,6 +91,10 @@ module AlertMessagesConcern
     else
       t('before_sign_in.unauthorized_html', url: sign_in_path(via: current_via(__method__)))
     end
+  end
+
+  def bad_authentication_message
+    t('before_sign_in.bad_authentication_html')
   end
 
   def suspended_message(screen_name)
