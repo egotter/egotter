@@ -1405,6 +1405,11 @@ ja:
       after_keep_modal:
         next: "次に進む"
       finish: 'お片付けはこれで終わりです！ お疲れ様でした。'
+  error_pages:
+    not_found_user:
+      message: '@%{user} は存在しないか削除済みです。'
+    forbidden_user:
+      message: '@%{user} は凍結されています。'
   delete_tweets:
     new: &delete_tweets_new
       crumb_title: 'ツイートクリーナー'

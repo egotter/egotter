@@ -220,7 +220,7 @@ describe ValidationConcern, type: :controller do
 
     context 'screen_name is not found' do
       let(:found) { true }
-      before { allow(controller).to receive(:profile_path).with(anything).and_return('path') }
+      before { allow(controller).to receive(:error_pages_not_found_user_path).with(anything).and_return('path') }
       it do
         expect(controller).to receive(:redirect_to).with('path')
         is_expected.to be_truthy
@@ -242,7 +242,7 @@ describe ValidationConcern, type: :controller do
 
     context 'screen_name is not found' do
       let(:found) { true }
-      before { allow(controller).to receive(:profile_path).with(anything).and_return('path') }
+      before { allow(controller).to receive(:error_pages_not_found_user_path).with(anything).and_return('path') }
       it do
         expect(controller).to receive(:redirect_to).with('path')
         is_expected.to be_truthy
@@ -262,7 +262,7 @@ describe ValidationConcern, type: :controller do
 
     context 'screen_name is not forbidden' do
       let(:found) { true }
-      before { allow(controller).to receive(:profile_path).with(anything).and_return('path') }
+      before { allow(controller).to receive(:error_pages_forbidden_user_path).with(anything).and_return('path') }
       it do
         expect(controller).to receive(:redirect_to).with('path')
         is_expected.to be_truthy
@@ -284,7 +284,7 @@ describe ValidationConcern, type: :controller do
 
     context 'screen_name is not forbidden' do
       let(:found) { true }
-      before { allow(controller).to receive(:profile_path).with(anything).and_return('path') }
+      before { allow(controller).to receive(:error_pages_forbidden_user_path).with(anything).and_return('path') }
       it do
         expect(controller).to receive(:redirect_to).with('path')
         is_expected.to be_truthy

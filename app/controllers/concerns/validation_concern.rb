@@ -219,7 +219,8 @@ module ValidationConcern
 
   def not_found_screen_name?(screen_name)
     if NotFoundUser.exists?(screen_name: screen_name)
-      redirect_to profile_path(screen_name: screen_name, via: current_via(__method__))
+      session[:screen_name] = screen_name
+      redirect_to error_pages_not_found_user_path(via: current_via(__method__))
       true
     else
       false
@@ -230,7 +231,8 @@ module ValidationConcern
   # but since the same Twitter API is called in other places, it's a bit meaningless.
   def not_found_user?(screen_name)
     if search_request_validator.not_found_user?(screen_name)
-      redirect_to profile_path(screen_name: screen_name, via: current_via(__method__))
+      session[:screen_name] = screen_name
+      redirect_to error_pages_not_found_user_path(via: current_via(__method__))
       true
     else
       false
@@ -239,7 +241,8 @@ module ValidationConcern
 
   def forbidden_screen_name?(screen_name)
     if ForbiddenUser.exists?(screen_name: screen_name)
-      redirect_to profile_path(screen_name: screen_name, via: current_via(__method__))
+      session[:screen_name] = screen_name
+      redirect_to error_pages_forbidden_user_path(via: current_via(__method__))
       true
     else
       false
@@ -251,7 +254,8 @@ module ValidationConcern
   # NOTE: The temporarily suspended users ( user[:suspended] == true ) are not checked.
   def forbidden_user?(screen_name)
     if search_request_validator.forbidden_user?(screen_name)
-      redirect_to profile_path(screen_name: screen_name, via: current_via(__method__))
+      session[:screen_name] = screen_name
+      redirect_to error_pages_forbidden_user_path(via: current_via(__method__))
       true
     else
       false
