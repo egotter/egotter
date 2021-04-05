@@ -74,6 +74,7 @@ Rails.application.routes.draw do
   end
 
   resources 'ad_blockers', only: %i(index)
+  get 'error_pages/too_many_searches', to: 'error_pages#too_many_searches'
 
   get 'l/:name', to: 'landing_pages#new'
 

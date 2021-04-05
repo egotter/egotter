@@ -30,6 +30,7 @@ module BypassFlashMessagesConcern
     blocker_not_permitted
   )
 
+  # Set a bypassed message to avoid ActionDispatch::Cookies::CookieOverflow
   def set_bypassed_notice_message(key, params = nil)
     if BYPASSED_MESSAGE_KEYS.include?(key)
       session[:bypassed_notice_message] = key

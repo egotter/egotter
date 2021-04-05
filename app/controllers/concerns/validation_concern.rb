@@ -339,9 +339,7 @@ module ValidationConcern
     if request.xhr?
       respond_with_error(:bad_request, message)
     else
-      # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
-      set_bypassed_notice_message('too_many_searches')
-      redirect_to profile_path(twitter_user, via: current_via(__method__))
+      redirect_to error_pages_too_many_searches_path(twitter_user, via: current_via(__method__))
       track_event('too_many_searches', {controller: controller_name, action: action_name, screen_name: twitter_user.screen_name})
       create_error_log(__method__, message)
     end

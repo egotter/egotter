@@ -179,6 +179,7 @@ module AlertMessagesConcern
     render_to_string template: 'messages/permission_level_not_enough', locals: {user: current_user.screen_name, url: url}, layout: false
   end
 
+  # TODO Remove later
   def too_many_searches_message
     render_to_string template: 'messages/too_many_searches', locals: {via: 'too_many_searches_message'}, layout: false
   end
