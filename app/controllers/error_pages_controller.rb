@@ -1,4 +1,6 @@
 class ErrorPagesController < ApplicationController
+  before_action :set_screen_name, only: %i(too_many_searches soft_limited not_found_user forbidden_user)
+
   def too_many_searches
   end
 
@@ -9,12 +11,14 @@ class ErrorPagesController < ApplicationController
   end
 
   def not_found_user
-    unless (@screen_name = session.delete(:screen_name))
-      redirect_to root_path(via: current_via)
-    end
   end
 
   def forbidden_user
+  end
+
+  private
+
+  def set_screen_name
     unless (@screen_name = session.delete(:screen_name))
       redirect_to root_path(via: current_via)
     end

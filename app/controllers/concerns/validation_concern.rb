@@ -316,6 +316,7 @@ module ValidationConcern
     return false if user_signed_in?
 
     if SearchLimitation.soft_limited?(user)
+      session[:screen_name] = user.screen_name
       redirect_to error_pages_soft_limited_path(via: current_via(__method__))
 
       create_error_log(__method__, 'search_limitation_soft_limited')
@@ -341,6 +342,7 @@ module ValidationConcern
     if request.xhr?
       respond_with_error(:bad_request, message)
     else
+      session[:screen_name] = twitter_user.screen_name
       redirect_to error_pages_too_many_searches_path(twitter_user, via: current_via(__method__))
       track_event('too_many_searches', {controller: controller_name, action: action_name, screen_name: twitter_user.screen_name})
       create_error_log(__method__, message)

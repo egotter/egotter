@@ -1,2 +1,2 @@
 <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
-<%= render template: 'messages/search_limitation_soft_limited', locals: {user: 'user', via: current_via} %>
+<%= render template: 'messages/search_limitation_soft_limited', locals: {user: @screen_name, via: current_via} %>
