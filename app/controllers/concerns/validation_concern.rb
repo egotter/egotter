@@ -307,14 +307,12 @@ module ValidationConcern
     end
   end
 
-  # TODO Rename to current_visitor_cannot_search_for_user_has_many_friends_and_followers
   def search_limitation_soft_limited?(user)
     return false if from_crawler?
     return false if user_signed_in?
 
     if SearchLimitation.soft_limited?(user)
-      set_bypassed_notice_message('search_limitation_soft_limited', screen_name: user[:screen_name])
-      redirect_to profile_path(screen_name: user[:screen_name], via: current_via(__method__))
+      redirect_to error_pages_soft_limited_path(via: current_via(__method__))
 
       create_error_log(__method__, 'search_limitation_soft_limited')
       track_event('search_limitation_soft_limited', {controller: controller_name, action: action_name, screen_name: user[:screen_name]})

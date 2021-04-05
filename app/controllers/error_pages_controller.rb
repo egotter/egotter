@@ -3,6 +3,8 @@ class ErrorPagesController < ApplicationController
   end
 
   def ad_blocker_detected
+  end
 
+  def soft_limited
   end
 end

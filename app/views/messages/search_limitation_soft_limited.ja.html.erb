@@ -1,4 +1,3 @@
-<% id_hash = SecureRandom.urlsafe_base64(10) %>
 <% via = current_via(via) %>
 
 <div class="card">
@@ -7,30 +6,23 @@
       検索された @<%= user %> はフォローとフォロワーが多いため、<a class="btn btn-primary btn-sm" href="<%= sign_in_path(via: via) %>">ログイン</a> した後のみ検索できます。
     </div>
 
-    <div class="text-right">
-      <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#hidden-detailed-message-<%= id_hash %>">詳しく見る
-        <i class="far fa-question-circle"></i></a>
-    </div>
+    <hr>
+    1. これは何？<br>
+    検索されたユーザーのフォロー＋フォロワーが多く、さらに、検索したユーザーがログインしていない時に起きるエラーです。<br>
+    <br>
+    2. どうやったら検索できるの？<br>
+    <a class="btn btn-primary btn-sm" href="<%= sign_in_path(via: via) %>">ログイン</a> して検索すればOKです。<br>
+    <br>
+    3. ログインするとどうなるの？<br>
+    専用のツイッターAPIで検索するので、フォロー＋フォロワー数が多くても検索できるようになります。さらに、検索が早くなったり、リムられ通知が届くようになります。<br>
+    <br>
 
-    <div id="hidden-detailed-message-<%= id_hash %>" class="collapse">
-      <hr>
-      1. これは何？<br>
-      検索されたユーザーのフォロー＋フォロワーが多く、さらに、検索したユーザーがログインしていない時に起きるエラーです。<br>
-      <br>
-      2. どうやったら検索できるの？<br>
-      <a class="btn btn-primary btn-sm" href="<%= sign_in_path(via: via) %>">ログイン</a> して検索すればOKです。<br>
-      <br>
-      3. ログインするとどうなるの？<br>
-      専用のツイッターAPIで検索するので、フォロー＋フォロワー数が多くても検索できるようになります。さらに、検索が早くなったり、リムられ通知が届くようになります。<br>
-      <br>
-
-      <div>4. マーケティングでご利用の方へ</div>
-      <div class="mb-3">ツイッターでの各種データ調査依頼については、こちらからお問い合わせください。<a href="<%= pricing_path(via: via, anchor: 'enterprise-plan') %>" class="btn btn-outline-primary btn-sm">問い合わせページ</a></div>
-      <div>5. 公式アカウントはありますか？</div>
-      <div class="mb-3">@ego_tter が公式アカウントです。<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/ego_tter" target="_blank">@ego_tter を見る</a></div>
-      <div>6. よくある質問</div>
-      <div class="mb-3">こちらをご覧ください。<a class="btn btn-outline-primary btn-sm" href="<%= support_path(via: via) %>">よくある質問</a></div>
-    </div>
+    <div>4. マーケティングでご利用の方へ</div>
+    <div class="mb-3">ツイッターでの各種データ調査依頼については、こちらからお問い合わせください。<a href="<%= pricing_path(via: via, anchor: 'enterprise-plan') %>" class="btn btn-outline-primary btn-sm">問い合わせページ</a></div>
+    <div>5. 公式アカウントはありますか？</div>
+    <div class="mb-3">お問い合わせは @egotter_cs に送ってください。<a class="btn btn-outline-primary btn-sm" href="<%= twitter_web_url('egotter_cs') %>" target="_blank">@egotter_cs</a></div>
+    <div>6. よくある質問</div>
+    <div class="mb-3">こちらをご覧ください。<a class="btn btn-outline-primary btn-sm" href="<%= support_path(via: via) %>">よくある質問</a></div>
   </div>
 </div>
 

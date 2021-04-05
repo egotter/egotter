@@ -75,6 +75,7 @@ Rails.application.routes.draw do
 
   get 'error_pages/too_many_searches', to: 'error_pages#too_many_searches'
   get 'error_pages/ad_blocker_detected', to: 'error_pages#ad_blocker_detected'
+  get 'error_pages/soft_limited', to: 'error_pages#soft_limited'
 
   get 'l/:name', to: 'landing_pages#new'
 
