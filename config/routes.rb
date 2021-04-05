@@ -73,7 +73,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources 'ad_blockers', only: %i(index)
   get 'error_pages/too_many_searches', to: 'error_pages#too_many_searches'
   get 'error_pages/ad_blocker_detected', to: 'error_pages#ad_blocker_detected'
 
