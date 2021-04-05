@@ -39,7 +39,7 @@ class HomeController < ApplicationController
       @has_error = true
       flash.now[:notice] = render_to_string(template: 'messages/secret_mode_detected', layout: false)
     elsif via.end_with?('ad_blocker_detected')
-      redirect_to ad_blockers_path(via: current_via)
+      redirect_to error_pages_ad_blocker_detected_path(via: current_via)
     end
   end
 end
