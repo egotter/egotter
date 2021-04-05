@@ -114,9 +114,9 @@ module AdsenseHelper
       4210880319, # 0335
       5452501065, # 0336
       9235122967, # 0337
-      4139419396, # 0338 <- Next
+      4139419396, # 0338
       7922041298, # 0339
-      3982796283, # 0340
+      3982796283, # 0340 <- Next
   ]
 
   def left_slot_pc_ad_id(controller, action, position)
@@ -226,6 +226,10 @@ module AdsenseHelper
         when [false, 'access_confirmations',  'index', :top]   then 5452501065 # 0336
         else nil
         end
+
+    if controller == 'error_pages'
+      slot = 4139419396
+    end
 
     if slot
       slot
@@ -520,6 +524,10 @@ module AdsenseHelper
         when [false,  'access_confirmations', 'index', :top]   then 9235122967 # 0337
         else nil
         end
+
+    if controller == 'error_pages'
+      slot = 7922041298
+    end
 
     if slot
       slot
