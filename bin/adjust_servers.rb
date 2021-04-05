@@ -41,7 +41,8 @@ end
 def adjust_server(role, instance_type, num, dry_run)
   params = "--adjust --role #{role} --instance-type #{instance_type} --count #{num} --without-tag"
   cmd = "cd /var/egotter && /usr/local/bin/bundle exec bin/deploy.rb #{params}"
-  dry_run ? (puts cmd) : system(cmd)
+  puts cmd
+  system(cmd) unless dry_run
   params
 end
 
