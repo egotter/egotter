@@ -1422,6 +1422,11 @@ ja:
         不審なアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
         <br>
         普通のアクセスでこのメッセージが表示されている場合は、<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    twitter_user_not_persisted:
+      message_html: |
+        ログインしていないためTwitterデータの取得に一時的に失敗しました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        <br>
+        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
   delete_tweets:
     new: &delete_tweets_new
       crumb_title: 'ツイートクリーナー'
@@ -2718,12 +2723,6 @@ ja:
       'yes': 'はい'
       'no': 'キャンセル'
   application:
-    twitter_user_not_found_html: |
-      データの取得に一時的に失敗しました。大変お手数ですが、トップページから再度検索してみてください。<br>
-      <br>
-      ログインしてから検索するとこのエラーは起きづらくなります。何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
-      <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a>
-      <br>エラー：TUNF404
     internal_server_error_html: |
       一時的なエラーが起きました。トップページから再度検索してみてください。
       何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。

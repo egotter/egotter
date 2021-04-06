@@ -27,6 +27,9 @@ class ErrorPagesController < ApplicationController
   def suspicious_access_detected
   end
 
+  def twitter_user_not_persisted
+  end
+
   private
 
   def set_screen_name

@@ -81,6 +81,7 @@ Rails.application.routes.draw do
   get 'error_pages/not_signed_in', to: 'error_pages#not_signed_in'
   get 'error_pages/spam_ip_detected', to: 'error_pages#spam_ip_detected'
   get 'error_pages/suspicious_access_detected', to: 'error_pages#suspicious_access_detected'
+  get 'error_pages/twitter_user_not_persisted', to: 'error_pages#twitter_user_not_persisted'
 
   get 'l/:name', to: 'landing_pages#new'
 

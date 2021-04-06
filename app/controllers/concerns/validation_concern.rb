@@ -113,11 +113,7 @@ module ValidationConcern
       self.sidebar_disabled = true
       render template: 'searches/create'
     else
-      url = sign_in_path(via: current_via('twitter_user_not_found'))
-      message = t('application.twitter_user_not_found_html', url: url)
-      flash.now[:alert] = message
-      @has_error = true
-      render template: 'home/new', formats: %i(html), status: :not_found
+      redirect_to error_pages_twitter_user_not_persisted_path(via: current_via(__method__))
     end
 
     false
