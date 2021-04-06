@@ -10,8 +10,8 @@
     %div= (@next_name ? link_to(t('.next', user: @next_name), profile_path(@next_name, {names: params[:names]}.merge(campaign_params('next_name'))), class: 'btn btn-outline-primary btn-sm') : '')
 
 .message-box.alert.alert-warning{style: 'display: none;'}
-.forbidden-reason.my-1{style: 'display: none;'}= render(template: 'messages/forbidden_reason')
-.not-found-reason.my-1{style: 'display: none;'}= render(template: 'messages/not_found_reason')
+.forbidden-reason.my-1{style: 'display: none;'}= render(template: 'messages/forbidden_reason', locals: {expanded: true})
+.not-found-reason.my-1{style: 'display: none;'}= render(template: 'messages/not_found_reason', locals: {expanded: true})
 
 = render(partial: 'profile_section', locals: {user: @user}) if @user
 

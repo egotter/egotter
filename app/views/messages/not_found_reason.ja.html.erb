@@ -1,9 +1,13 @@
-<div class="text-right">
-  <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#not-found-reason-details">「アカウント削除」の意味
-    <i class="far fa-question-circle"></i></a>
-</div>
+<% expanded ||= false %>
 
-<div id="not-found-reason-details" class="card collapse my-3">
+<% unless expanded %>
+  <div class="text-right">
+    <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#not-found-reason-details">「アカウント削除」の意味
+      <i class="far fa-question-circle"></i></a>
+  </div>
+<% end %>
+
+<div id="not-found-reason-details" class="card <%= 'collapse' unless expanded %> my-3">
   <div class="card-body">
     1. <strong>アカウント削除</strong>はどういう時に起きる？<br>
     アカウントの持ち主がアカウントを削除すると、この状態になります。もうフォローすることもツイートを見ることもできません。<br>
