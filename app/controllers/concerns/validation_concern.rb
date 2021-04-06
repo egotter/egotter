@@ -282,7 +282,8 @@ module ValidationConcern
     return false unless protected_user?(twitter_user.screen_name)
     return false if timeline_readable?(twitter_user.screen_name)
 
-    redirect_to profile_path(twitter_user, via: current_via(__method__))
+    session[:screen_name] = twitter_user.screen_name
+    redirect_to error_pages_protected_user_path(via: current_via(__method__))
     true
   end
 
