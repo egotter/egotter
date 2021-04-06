@@ -30,6 +30,9 @@ class ErrorPagesController < ApplicationController
   def twitter_user_not_persisted
   end
 
+  def secret_mode_detected
+  end
+
   private
 
   def set_screen_name

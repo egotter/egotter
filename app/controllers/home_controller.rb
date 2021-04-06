@@ -35,9 +35,7 @@ class HomeController < ApplicationController
       @has_error = true
       flash.now[:notice] = render_to_string(template: 'messages/omniauth_failure', layout: false, locals: {usage_count: Rails.configuration.x.constants[:usage_count], via: 'back_from_twitter'})
     elsif via.end_with?('secret_mode_detected')
-      @without_alert_container = true
-      @has_error = true
-      flash.now[:notice] = render_to_string(template: 'messages/secret_mode_detected', layout: false)
+      redirect_to error_pages_secret_mode_detected_path(via: current_via)
     elsif via.end_with?('ad_blocker_detected')
       redirect_to error_pages_ad_blocker_detected_path(via: current_via)
     end

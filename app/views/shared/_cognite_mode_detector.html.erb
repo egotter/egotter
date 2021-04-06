@@ -4,7 +4,7 @@
     var signedIn = <%= user_signed_in? %>;
     var isOldAndroid = <%= request.os == 'Android' && request.os_version.match?(/^[654]/) %>;
     var message = '<%= t('before_sign_in.secret_mode_detected_with_count', count: 3) %>';
-    var redirectPath = "<%= root_path(via: current_via('secret_mode_detected')).html_safe %>";
+    var redirectPath = "<%= raw error_paged_secret_mode_detected_path(via: current_via) %>";
 
     if (allowCognite || signedIn || isOldAndroid) {
       return;
