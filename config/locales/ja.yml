@@ -1414,6 +1414,8 @@ ja:
       message: '@%{user} は存在しないか削除済みです。'
     forbidden_user:
       message: '@%{user} は凍結されています。'
+    you_have_blocked:
+      message: '@%{user} からブロックされています。'
     not_signed_in:
       message_html: 'このページを見るには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> が必要です。'
     spam_ip_detected:

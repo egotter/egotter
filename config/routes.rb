@@ -78,6 +78,7 @@ Rails.application.routes.draw do
   get 'error_pages/soft_limited', to: 'error_pages#soft_limited'
   get 'error_pages/not_found_user', to: 'error_pages#not_found_user'
   get 'error_pages/forbidden_user', to: 'error_pages#forbidden_user'
+  get 'error_pages/you_have_blocked', to: 'error_pages#you_have_blocked'
   get 'error_pages/not_signed_in', to: 'error_pages#not_signed_in'
   get 'error_pages/spam_ip_detected', to: 'error_pages#spam_ip_detected'
   get 'error_pages/suspicious_access_detected', to: 'error_pages#suspicious_access_detected'

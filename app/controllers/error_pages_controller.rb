@@ -1,7 +1,7 @@
 class ErrorPagesController < ApplicationController
 
-  before_action :set_screen_name, only: %i(too_many_searches soft_limited not_found_user forbidden_user)
-  before_action :set_user, only: %i(too_many_searches soft_limited not_found_user forbidden_user)
+  before_action :set_screen_name, only: %i(too_many_searches soft_limited not_found_user forbidden_user you_have_blocked)
+  before_action :set_user, only: %i(too_many_searches soft_limited not_found_user forbidden_user you_have_blocked)
 
   def too_many_searches
   end
@@ -16,6 +16,9 @@ class ErrorPagesController < ApplicationController
   end
 
   def forbidden_user
+  end
+
+  def you_have_blocked
   end
 
   def not_signed_in
