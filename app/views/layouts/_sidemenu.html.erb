@@ -53,6 +53,11 @@
         <%= t('.config') %>
       <% end %>
     </div>
+    <hr class="p-0 m-0">
+
+    <div class="text-center text-body py-3">
+      <%= link_to t('.switch_account'), sign_in_path(force_login: true, via: current_via('navmenu')) %>
+    </div>
   <% else %>
     <div class="text-center text-body py-3"><%= link_to t('.sign_in'), sign_in_path(via: current_via('navmenu')) %></div>
   <% end %>

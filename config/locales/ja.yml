@@ -24,6 +24,7 @@ ja:
       start: '使い方'
       pricing: '料金プラン'
       notification: 'リムられ通知'
+      switch_account: 'アカウントの切り替え'
       sign_out: 'ログアウト'
     profilemenu:
       close: 'メニューを閉じる'
