@@ -7,6 +7,7 @@ class ErrorPagesController < ApplicationController
     forbidden_user
     protected_user
     you_have_blocked
+    too_many_api_requests
   )
 
   before_action :set_screen_name, only: SET_USER_ACTIONS
@@ -55,6 +56,9 @@ class ErrorPagesController < ApplicationController
   end
 
   def omniauth_failure
+  end
+
+  def too_many_api_requests
   end
 
   def twitter_error

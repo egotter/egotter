@@ -88,6 +88,7 @@ Rails.application.routes.draw do
   get 'error_pages/blocker_detected', to: 'error_pages#blocker_detected'
   get 'error_pages/secret_mode_detected', to: 'error_pages#secret_mode_detected'
   get 'error_pages/omniauth_failure', to: 'error_pages#omniauth_failure'
+  get 'error_pages/too_many_api_requests', to: 'error_pages#too_many_api_requests'
   get 'error_pages/twitter_error', to: 'error_pages#twitter_error'
   get 'error_pages/routing_error', to: 'error_pages#routing_error'
   get 'error_pages/csrf_error', to: 'error_pages#csrf_error'

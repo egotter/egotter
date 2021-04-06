@@ -319,10 +319,10 @@ describe ValidationConcern, type: :controller do
         context 'the timeline is not readable' do
           before do
             allow(controller).to receive(:timeline_readable?).with(anything).and_return(false)
-            allow(controller).to receive(:profile_path).with(any_args).and_return('protected_path')
+            allow(controller).to receive(:error_pages_protected_user_path).with(any_args).and_return('path')
           end
           it do
-            expect(controller).to receive(:redirect_to).with('protected_path')
+            expect(controller).to receive(:redirect_to).with('path')
             is_expected.to be_truthy
           end
         end
@@ -370,10 +370,10 @@ describe ValidationConcern, type: :controller do
     context 'blocked_user? returns true' do
       include_context 'blocked_user? returns true'
       before do
-        allow(controller).to receive(:profile_path).with(any_args).and_return('blocked_path')
+        allow(controller).to receive(:error_pages_you_have_blocked_path).with(any_args).and_return('path')
       end
       it do
-        expect(controller).to receive(:redirect_to).with('blocked_path')
+        expect(controller).to receive(:redirect_to).with('path')
         is_expected.to be_truthy
       end
     end

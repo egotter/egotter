@@ -349,7 +349,8 @@ module ValidationConcern
     if request.xhr?
       respond_with_error(:bad_request, message)
     else
-      redirect_to profile_path(twitter_user, via: current_via(__method__)), alert: message
+      session[:screen_name] = twitter_user.screen_name
+      redirect_to error_pages_too_many_api_requests_path(via: current_via(__method__))
       create_error_log(__method__, message)
     end
 
