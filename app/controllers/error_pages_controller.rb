@@ -21,6 +21,9 @@ class ErrorPagesController < ApplicationController
   def not_signed_in
   end
 
+  def spam_ip_detected
+  end
+
   private
 
   def set_screen_name

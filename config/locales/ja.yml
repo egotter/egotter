@@ -1412,6 +1412,11 @@ ja:
       message: '@%{user} は凍結されています。'
     not_signed_in:
       message_html: 'このページを見るには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> が必要です。'
+    spam_ip_detected:
+      message_html: |
+        スパム報告されているアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        <br>
+        普通のアクセスでこのメッセージが表示されている場合は、<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
   delete_tweets:
     new: &delete_tweets_new
       crumb_title: 'ツイートクリーナー'
@@ -2792,9 +2797,6 @@ ja:
     honorific: "さん"
   before_sign_in:
     coming_soon: 'この機能は近日公開予定です。公開までもう少々お待ちください。'
-    spam_ip_detected_html: |
-      スパム報告されているアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。
-      普通のアクセスでこのメッセージが表示されている場合は、<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     spam_access_detected_html: |
       通常とは異なるアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。
       普通のアクセスでこのメッセージが表示されている場合は、<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
