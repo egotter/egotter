@@ -20,7 +20,7 @@ module InternalServerErrorHandler
     if request.xhr?
       head :internal_server_error
     else
-      render file: "#{Rails.root}/public/500.html", status: :internal_server_error, layout: false unless performed?
+      redirect_to error_pages_internal_server_error_path(via: current_via) unless performed?
     end
   end
 
@@ -31,7 +31,7 @@ module InternalServerErrorHandler
     if request.xhr?
       head :request_timeout
     else
-      render file: "#{Rails.root}/public/408.html", status: :request_timeout, layout: false unless performed?
+      redirect_to error_pages_request_timeout_error_path(via: current_via) unless performed?
     end
   end
 

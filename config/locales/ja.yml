@@ -1450,6 +1450,16 @@ ja:
         お探しのページが見つかりませんでした。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
         <br>
         何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    internal_server_error:
+      message_html: |
+        一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        <br>
+        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    request_timeout_error:
+      message_html: |
+        アクセスが多すぎてリクエストがタイムアウトしました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        <br>
+        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     csrf_error:
       message_html: |
         ページの有効期限が切れました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>

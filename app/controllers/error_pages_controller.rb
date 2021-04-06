@@ -49,6 +49,10 @@ class ErrorPagesController < ApplicationController
 
   def routing_error; end
 
+  def internal_server_error; end
+
+  def request_timeout_error; end
+
   def csrf_error; end
 
   private
