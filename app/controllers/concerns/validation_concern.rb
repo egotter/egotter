@@ -164,8 +164,7 @@ module ValidationConcern
     return true unless user_signed_in?
 
     if EgotterBlocker.where(uid: current_user.uid).exists?
-      set_bypassed_notice_message('blocker_not_permitted')
-      redirect_to root_path(via: current_via(__method__))
+      redirect_to error_pages_blocker_detected_path(via: current_via(__method__))
       create_error_log(__method__, 'blocker_not_permitted')
       track_event('current_user_not_blocker', {controller: controller_name, action: action_name})
       false

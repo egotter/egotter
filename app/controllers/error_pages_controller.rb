@@ -33,6 +33,9 @@ class ErrorPagesController < ApplicationController
   def permission_level_not_enough
   end
 
+  def blocker_detected
+  end
+
   def secret_mode_detected
   end
 
