@@ -1437,6 +1437,11 @@ ja:
         お探しのページが見つかりませんでした。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
         <br>
         何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    csrf_error:
+      message_html: |
+        ページの有効期限が切れました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        <br>
+        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
   delete_tweets:
     new: &delete_tweets_new
       crumb_title: 'ツイートクリーナー'
@@ -2740,18 +2745,6 @@ ja:
       一時的なエラーが起きました。トップページから再度検索してみてください。
       何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
       <a href="%{url}" class="btn btn-outline-primary btn-sm">@%{user} で検索</a>
-    invalid_token:
-      session_expired_html: |
-        一定時間操作がなかったため、セッションの有効期限が切れました。
-        <a href="%{url}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{url}">ログイン</a> してください。
-      session_expired_and_recover_html: |
-        一定時間操作がなかったため、@%{user} の検索に失敗しました。
-        再度結果を見るにはこちら → <a href="%{url1}" class="btn btn-outline-primary btn-sm">@%{user} の結果を見る</a>
-        表示が遅い場合はこちら → <a href="%{url2}" class="btn btn-primary btn-sm">ログインして @%{user} の結果を見る</a>
-      ready_to_search_html: |
-        データの準備が完了しました。
-        結果を見るにはこちら → <a href="%{url1}" class="btn btn-outline-primary btn-sm">@%{user} の結果を見る</a>
-        表示が遅い場合はこちら → <a href="%{url2}" class="btn btn-primary btn-sm">ログインして @%{user} の結果を見る</a>
   sort:
     desc: "新しい順"
     asc: "古い順"

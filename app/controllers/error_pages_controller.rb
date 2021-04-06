@@ -42,6 +42,9 @@ class ErrorPagesController < ApplicationController
   def routing_error
   end
 
+  def csrf_error
+  end
+
   private
 
   def set_screen_name

@@ -15,12 +15,10 @@ module InternalServerErrorHandler
 
   def handle_general_error(ex)
     handle_request_error(ex)
-
-    message = internal_server_error_message
-    create_error_log(__method__, message, ex)
+    create_error_log(__method__, 'internal_server_error', ex)
 
     if request.xhr?
-      render json: {message: message}, status: :internal_server_error
+      head :internal_server_error
     else
       render file: "#{Rails.root}/public/500.html", status: :internal_server_error, layout: false unless performed?
     end
@@ -28,43 +26,22 @@ module InternalServerErrorHandler
 
   def handle_request_timeout(ex)
     handle_request_error(ex)
+    create_error_log(__method__, 'request_timeout', ex)
 
     if request.xhr?
-      render json: {message: nil}, status: :request_timeout
+      head :request_timeout
     else
       render file: "#{Rails.root}/public/408.html", status: :request_timeout, layout: false unless performed?
     end
   end
 
   def handle_csrf_error(ex)
-    logger.info "##{__method__}: #{ex.class} #{request_details}"
+    create_error_log(__method__, 'csrf_error', ex)
 
     if request.xhr?
-      render json: {message: nil}, status: :bad_request
+      head :bad_request
     else
-      screen_name = params[:screen_name].to_s.strip.remove /^@/
-      if screen_name.match? Validations::ScreenNameValidator::REGEXP
-        search = timeline_path(screen_name: screen_name, via: current_via('invalid_token_and_recover'))
-        sign_in = sign_in_path(via: current_via('invalid_token_and_recover'), redirect_path: search)
-
-        if recoverable_request?
-          redirect_to root_path(via: current_via('ready_to_search')), alert: t('application.invalid_token.ready_to_search_html', user: screen_name, url1: search, url2: sign_in)
-        else
-          redirect_to root_path(via: current_via('session_expired_and_recover')), alert: t('application.invalid_token.session_expired_and_recover_html', user: screen_name, url1: search, url2: sign_in)
-        end
-      else
-        redirect_to root_path(via: current_via('session_expired')), alert: t('application.invalid_token.session_expired_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token"))
-      end
+      redirect_to error_pages_csrf_error_path(via: current_via) unless performed?
     end
-  end
-
-  def recoverable_request?
-    %i(pc smartphone).include?(request.device_type) &&
-        !request.xhr? &&
-        params['screen_name'].to_s.match?(Validations::ScreenNameValidator::REGEXP) &&
-        controller_name == 'searches' &&
-        action_name == 'create' &&
-        egotter_visit_id.present?
-    # SearchLog.exists?(created_at: 3.hours.ago..Time.zone.now, session_id: session[:egotter_visit_id])
   end
 end
