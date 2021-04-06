@@ -1,9 +1,10 @@
 class HomeController < ApplicationController
   include JobQueueingConcern
 
+  before_action :redirect_to_error_page, only: :new
+
   def new
     enqueue_update_authorized
-    set_flash_message
   end
 
   def start
@@ -20,14 +21,7 @@ class HomeController < ApplicationController
 
   private
 
-  def after_start_redirect_path
-    url = timeline_path(screen_name: current_user.screen_name, via: current_via('auto_redirect_from_start'))
-    url = append_query_params(url, follow_dialog: params[:follow_dialog]) if params[:follow_dialog]
-    url = append_query_params(url, share_dialog: params[:share_dialog]) if params[:share_dialog]
-    url
-  end
-
-  def set_flash_message
+  def redirect_to_error_page
     via = params[:via].to_s
 
     if params[:back_from_twitter] == 'true'

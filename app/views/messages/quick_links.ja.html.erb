@@ -1,34 +1,39 @@
-<% id_hash = SecureRandom.urlsafe_base64(10) %>
-<% user = current_user %>
-<% timeline_url = timeline_path(user, via: current_via(context)) %>
+<% timeline_url = timeline_path(current_user, via: current_via(context)) %>
 
 <div class="card">
   <div class="card-body">
     <div class="mb-4">
       <% if user_signed_in? %>
-        えごったーに <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28"> @<%= user.screen_name %> としてログイン中です。
-        <a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の分析を見る</a><br>
+        えごったーに <img class="rounded-circle" src="<%= current_user_icon %>" width="24" height="24"> @<%= current_user.screen_name %> としてログイン中です。
+        <a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">分析結果を見る</a><br>
         <br>
-        仲良しランキングはこちらです。
-        <a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">@<%= user.screen_name %> の仲良しランキング見る</a><br>
+        @<%= current_user.screen_name %> の仲良しランキングはこちらです。
+        <a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">仲良しランキングを見る</a><br>
         <br>
-        <% if StopPeriodicReportRequest.exists?(user_id: user.id) %>
-          リムられ通知は<span class="egotter-pink"> 停止中 </span>です。
-          再開するには「<span class="egotter-pink">リムられ通知 再開</span>」と @ego_tter にDMしてください。
-          <a href="<%= direct_message_url(User::EGOTTER_UID, 'リムられ通知 再開') %>" class="small" target="_blank">DM作成画面を開く</a>
-        <% else %>
-          リムられ通知はDMで<span class="egotter-pink"> 配信中 </span>です。
-          <a href="<%= direct_message_url(User::EGOTTER_UID) %>" class="btn btn-outline-primary btn-sm" target="_blank">リムられ通知DMを見る</a>
-        <% end %>
       <% end %>
+
+      <div class="mt-3">
+        リムられ通知は @ego_tter からDMで届きます。<span class="egotter-pink">リムられ通知 送信</span> とDMしてください。
+        <a href="<%= direct_message_url(User::EGOTTER_UID, 'リムられ通知 送信') %>" class="btn btn-outline-primary btn-sm" target="_blank">リムられ通知を見る</a>
+      </div>
+
+      <div class="mt-3">
+        ブロック通知は @ego_tter からDMで届きます。<span class="egotter-pink">ブロック通知 送信</span> とDMしてください。
+        <a href="<%= direct_message_url(User::EGOTTER_UID, 'ブロック通知 送信') %>" class="btn btn-outline-primary btn-sm" target="_blank">ブロック通知を見る</a>
+      </div>
+
+      <div class="mt-3">
+        ミュート通知は @ego_tter からDMで届きます。<span class="egotter-pink">ミュート通知 送信</span> とDMしてください。
+        <a href="<%= direct_message_url(User::EGOTTER_UID, 'ミュート通知 送信') %>" class="btn btn-outline-primary btn-sm" target="_blank">ミュート通知を見る</a>
+      </div>
     </div>
 
     <div class="text-right">
-      <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#current-periodic-report-details-<%= id_hash %>">詳しく見る
+      <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#current-periodic-report-details">えごったーとは
         <i class="far fa-question-circle"></i></a>
     </div>
 
-    <div id="current-periodic-report-details-<%= id_hash %>" class="collapse">
+    <div id="current-periodic-report-details" class="collapse">
       <hr>
       <div>1. えごったーとは何ですか？</div>
       <div class="mb-4">

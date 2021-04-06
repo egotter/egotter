@@ -82,6 +82,6 @@ module BypassFlashMessagesConcern
   end
 
   def after_sign_in_message(context)
-    render_to_string(template: 'messages/current_periodic_report', layout: false, locals: {usage_count: Rails.configuration.x.constants[:usage_count], context: context})
+    render_to_string(template: 'messages/quick_links', layout: false, locals: {usage_count: Rails.configuration.x.constants[:usage_count], context: context})
   end
 end
