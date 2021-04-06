@@ -33,6 +33,9 @@ class ErrorPagesController < ApplicationController
   def secret_mode_detected
   end
 
+  def omniauth_failure
+  end
+
   private
 
   def set_screen_name

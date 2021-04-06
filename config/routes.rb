@@ -83,6 +83,7 @@ Rails.application.routes.draw do
   get 'error_pages/suspicious_access_detected', to: 'error_pages#suspicious_access_detected'
   get 'error_pages/twitter_user_not_persisted', to: 'error_pages#twitter_user_not_persisted'
   get 'error_pages/secret_mode_detected', to: 'error_pages#secret_mode_detected'
+  get 'error_pages/omniauth_failure', to: 'error_pages#omniauth_failure'
 
   get 'l/:name', to: 'landing_pages#new'
 
