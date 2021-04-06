@@ -1427,6 +1427,11 @@ ja:
         ログインしていないためTwitterデータの取得に一時的に失敗しました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
         <br>
         何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    twitter_error:
+      message_html: |
+        Twitterの一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        <br>
+        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
   delete_tweets:
     new: &delete_tweets_new
       crumb_title: 'ツイートクリーナー'

@@ -17,16 +17,9 @@ module TwitterErrorHandler
     logger.info ex.backtrace.join("\n")
 
     if request.xhr?
-      render json: {message: nil}, status: :internal_server_error
+      head :internal_server_error
     else
-      self.sidebar_disabled = true
-      if user_signed_in?
-        flash.now[:alert] = signed_in_user_not_authorized_message
-      else
-        flash.now[:alert] = unknown_alert_message(ex)
-      end
-      @has_error = true
-      render template: 'home/new', formats: %i(html), status: :internal_server_error
+      redirect_to error_pages_twitter_error_path(via: current_via)
     end
   end
 end

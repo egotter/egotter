@@ -36,6 +36,9 @@ class ErrorPagesController < ApplicationController
   def omniauth_failure
   end
 
+  def twitter_error
+  end
+
   private
 
   def set_screen_name

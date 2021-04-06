@@ -60,7 +60,7 @@ module ApplicationHelper
   def wrap_in_container?
     settings = controller_name == 'settings' && action_name == 'index'
     trend_media = controller_name == 'trends' && action_name == 'media'
-    !@has_error && !top_page? && !waiting_page? && !settings && !trend_media
+    !top_page? && !waiting_page? && !settings && !trend_media
   end
 
   def show_common_friends?(twitter_user)
@@ -68,7 +68,7 @@ module ApplicationHelper
   end
 
   def show_redirection_modal?
-    user_signed_in? && !@has_error && flash[:alert].blank? && !@bypassed_notice_message_set
+    user_signed_in? && flash[:alert].blank? && !@bypassed_notice_message_set
   end
 
   def remove_related_page?
