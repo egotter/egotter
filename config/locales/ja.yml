@@ -107,8 +107,11 @@ ja:
         body_html: |
           <img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} の分析結果へ移動しますか？<br>
           <br>
-          設定ページは <a href="%{url}">こちら</a><br>
-          アカウント切り替えは <a href="%{url2}">こちら</a>
+          分析結果はこちら <a href="%{timeline_url}" class="btn btn-outline-primary btn-sm">分析結果を見る</a><br>
+          <br>
+          通知設定の変更はこちら <a href="%{url}" class="btn btn-outline-primary btn-sm">設定ページ</a><br>
+          <br>
+          アカウントの切り替えはこちら <a href="%{url2}" class="btn btn-outline-primary btn-sm">アカウントの切り換え</a>
     start:
       crumb_title: "えごったーの使い方"
       page_title: "えごったーの使い方"
