@@ -39,6 +39,9 @@ class ErrorPagesController < ApplicationController
   def twitter_error
   end
 
+  def routing_error
+  end
+
   private
 
   def set_screen_name
