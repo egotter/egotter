@@ -10,24 +10,14 @@ class LoginController < ApplicationController
   end
 
   def sign_in
-    session[:sign_in_from] = request.url
-    if !session[:sign_in_referer] && !session[:sign_in_via]
-      session[:sign_in_referer] = request.referer
-      session[:sign_in_via] = params['via']
-    end
-
     if params['ab_test']
       session[:sign_in_ab_test] = params['ab_test']
     end
 
     session[:sign_in_follow] = 'true' == params[:follow] ? 'true' : 'false'
-
     session[:redirect_path] = params[:redirect_path]
 
-    force_login = params[:force_login] && params[:force_login] == 'true'
-    session[:force_login] = force_login.to_s
-
-    redirect_to "/users/auth/twitter?force_login=#{force_login}"
+    redirect_to "/users/auth/twitter?force_login=#{params[:force_login] == 'true'}"
   end
 
   # This action is created for conversion tracking.

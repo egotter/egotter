@@ -21,9 +21,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def twitter
     via = session[:sign_in_via] ? session.delete(:sign_in_via) : ''
-    referer = session[:sign_in_referer] ? session.delete(:sign_in_referer) : ''
     follow = 'true' == session.delete(:sign_in_follow)
-    force_login = 'true' == session.delete(:force_login)
 
     save_context = nil
     begin
@@ -38,12 +36,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       end
     rescue => e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
-      return redirect_to root_path(via: current_via('save_error')), alert: t('.login_failed_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
+      redirect_to error_pages_omniauth_failure_path(via: current_via('save_error'))
+      return
     end
 
     sign_in user, event: :authentication
     track_sign_in_event(context: save_context, via: via)
-    redirect_to after_callback_path(user, save_context: save_context, force_login: force_login)
+    redirect_to after_callback_path(user, save_context)
 
     @user = user
     @follow = follow
@@ -61,14 +60,15 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       force_login
     ).each { |key| session.delete(key) }
 
-    after_failure_message(request.env['omniauth.error.type'].to_s)
-    redirect_to root_path(via: current_via("signed_in_#{user_signed_in?}"))
+    # invalid_credentials session_expired service_unavailable timeout
+    error_name = request.env['omniauth.error.type'].to_s
+    redirect_to error_pages_omniauth_failure_path(via: current_via(error_name))
   end
 
   private
 
-  def after_callback_path(user, save_context:, force_login: false)
-    options = {redirect_path: after_callback_redirect_path(user, save_context: save_context, force_login: force_login)}
+  def after_callback_path(user, save_context)
+    options = {redirect_path: after_callback_redirect_path(user, save_context)}
     if save_context == :create
       after_sign_up_path(options)
     else
@@ -76,25 +76,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
   end
 
-  def after_callback_redirect_path(user, save_context:, force_login:)
+  def after_callback_redirect_path(user, save_context)
     url = session.delete(:redirect_path)
     url = start_path(save_context: save_context, via: "after_sign_in_#{save_context}") if url.blank?
     url = sanitized_redirect_path(url)
     url = url.sub!(':screen_name', user.screen_name) if url.include?(':screen_name')
 
     append_query_params(url, follow_dialog: 1, share_dialog: 1)
-  end
-
-  KNOWN_REASONS = %w(invalid_credentials session_expired service_unavailable timeout)
-
-  def after_failure_message(reason)
-    if KNOWN_REASONS.include?(reason)
-      logger.info "#{self.class}##{__method__}: Reason #{reason}"
-    else
-      logger.warn "#{self.class}##{__method__}: Unknown reason #{reason}"
-    end
-
-    set_bypassed_notice_message('omniauth_failure')
   end
 
   def user_params

@@ -2383,9 +2383,6 @@ ja:
       already_purchased: '購入済み'
   breadcrumb:
     root: 'トップ'
-  users:
-    omniauth_callbacks:
-      login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
   api:
     v1:
       follow_requests:
