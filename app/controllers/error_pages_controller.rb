@@ -18,6 +18,9 @@ class ErrorPagesController < ApplicationController
   def forbidden_user
   end
 
+  def not_signed_in
+  end
+
   private
 
   def set_screen_name

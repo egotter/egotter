@@ -17,12 +17,9 @@ module ValidationConcern
       message = t('before_sign_in.ajax.need_login_html', url: kick_out_error_path('need_login'))
       respond_with_error(:unauthorized, message)
     else
-      message = t('before_sign_in.need_login_html', url: sign_in_path(via: current_via(__method__), redirect_path: request.fullpath))
-      create_error_log(__method__, message)
+      create_error_log(__method__, 'require_login!')
       track_event('require_login', {controller: controller_name, action: action_name})
-      flash.now[:alert] = message
-      @has_error = true
-      render template: 'home/new', formats: %i(html), status: :unauthorized
+      redirect_to error_pages_not_signed_in_path(via: current_via(__method__))
     end
   end
 
