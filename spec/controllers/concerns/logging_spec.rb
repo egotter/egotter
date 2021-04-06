@@ -20,14 +20,4 @@ RSpec.describe Logging do
       subject
     end
   end
-
-  describe '#find_referral' do
-    subject { controller.send(:find_referral, %w(http://t.co/aaa http://egotter.com)) }
-    it { is_expected.to eq('t.co') }
-  end
-
-  describe '#find_channel' do
-    subject { controller.send(:find_channel, 't.co') }
-    it { is_expected.to eq('twitter') }
-  end
 end

@@ -159,52 +159,17 @@ module Logging
   private
 
   def find_uid_and_screen_name
-    if instance_variable_defined?(:@twitter_user) && !@twitter_user.nil?
+    if @twitter_user
       uid = @twitter_user.uid
       screen_name = @twitter_user.screen_name
+    elsif @screen_name
+      uid = -1
+      screen_name = @screen_name
     else
-      uid = valid_uid?(params[:uid], only_validation: true) ? params[:uid].to_i : -1
-      if uid != -1 && TwitterUser.exists?(uid: uid)
-        screen_name = TwitterUser.latest_by(uid: uid).screen_name
-      else
-        uid = screen_name = -1
-      end
+      uid = screen_name = -1
     end
 
     [uid, screen_name]
-  end
-
-  def find_referral(referers)
-    url = referers.find do |referer|
-      referer.present? && referer.match?(URI.regexp) && !URI.parse(referer).host.include?('egotter')
-    end
-    url.blank? ? '' : URI.parse(url).host
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    ''
-  end
-
-  def find_channel(referral)
-    twitter = ->r{ %w(t.co twitter.com api.twitter.com mobile.twitter.com tweetdeck.twitter.com).include? r }
-    naver = ->r{ %w(matome.naver.jp).include? r }
-    google = ->r{ r.start_with? 'www.google' }
-    yahoo = ->r{ %w(search.yahoo.co.jp).include? r }
-    chiebukuro = ->r{ %w(m.chiebukuro.yahoo.co.jp detail.chiebukuro.yahoo.co.jp).include? r }
-    livedoor = ->r{ %w(news.livedoor.com).include? r }
-
-    case referral
-      when nil, ''     then ''
-      when twitter     then 'twitter'
-      when naver       then 'naver'
-      when google      then 'google'
-      when yahoo       then 'yahoo'
-      when chiebukuro  then 'chiebukuro'
-      when livedoor    then 'livedoor'
-      else 'others'
-    end
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    ''
   end
 
   def ensure_utf8(str)
