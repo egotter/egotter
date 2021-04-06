@@ -13,62 +13,43 @@ class ErrorPagesController < ApplicationController
   before_action :set_screen_name, only: SET_USER_ACTIONS
   before_action :set_user, only: SET_USER_ACTIONS
 
-  def too_many_searches
-  end
+  def too_many_searches; end
 
-  def ad_blocker_detected
-  end
+  def ad_blocker_detected; end
 
-  def soft_limited
-  end
+  def soft_limited; end
 
-  def not_found_user
-  end
+  def not_found_user; end
 
-  def forbidden_user
-  end
+  def forbidden_user; end
 
-  def protected_user
-  end
+  def protected_user; end
 
-  def you_have_blocked
-  end
+  def you_have_blocked; end
 
-  def not_signed_in
-  end
+  def not_signed_in; end
 
-  def spam_ip_detected
-  end
+  def spam_ip_detected; end
 
-  def suspicious_access_detected
-  end
+  def suspicious_access_detected; end
 
-  def twitter_user_not_persisted
-  end
+  def twitter_user_not_persisted; end
 
-  def permission_level_not_enough
-  end
+  def permission_level_not_enough; end
 
-  def blocker_detected
-  end
+  def blocker_detected; end
 
-  def secret_mode_detected
-  end
+  def secret_mode_detected; end
 
-  def omniauth_failure
-  end
+  def omniauth_failure; end
 
-  def too_many_api_requests
-  end
+  def too_many_api_requests; end
 
-  def twitter_error
-  end
+  def twitter_error; end
 
-  def routing_error
-  end
+  def routing_error; end
 
-  def csrf_error
-  end
+  def csrf_error; end
 
   private
 
