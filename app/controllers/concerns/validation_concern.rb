@@ -153,8 +153,7 @@ module ValidationConcern
     if current_user.notification_setting.enough_permission_level?
       true
     else
-      set_bypassed_notice_message('permission_level_not_enough')
-      redirect_to root_path(via: current_via(__method__))
+      redirect_to error_pages_permission_level_not_enough_path(via: current_via(__method__))
       create_error_log(__method__, 'permission_level_not_enough')
       track_event('current_user_has_dm_permission', {controller: controller_name, action: action_name})
       false

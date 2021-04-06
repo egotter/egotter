@@ -1,0 +1,1 @@
+<%= render template: 'messages/permission_level_not_enough', locals: {user: current_user&.screen_name, url: sign_in_path(force_login: true, via: current_via)} %>

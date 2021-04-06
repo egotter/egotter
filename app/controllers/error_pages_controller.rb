@@ -30,6 +30,9 @@ class ErrorPagesController < ApplicationController
   def twitter_user_not_persisted
   end
 
+  def permission_level_not_enough
+  end
+
   def secret_mode_detected
   end
 
