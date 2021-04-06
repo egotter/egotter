@@ -73,7 +73,7 @@ describe ValidationConcern, type: :controller do
       end
       it do
         expect(controller).to receive(:create_error_log).with(any_args)
-        expect(controller).to receive(:render).with(hash_including(template: 'home/new', status: :unauthorized))
+        expect(controller).to receive(:redirect_to).with(any_args)
         subject
       end
     end
