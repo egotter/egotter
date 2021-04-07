@@ -54,12 +54,12 @@ class ToastMessage {
   }
 
   static info(message, options = {}) {
-    this.show(message, options);
+    return this.show(message, options);
   }
 
   static warn(message, options = {}) {
     options['warn'] = true;
-    this.show(message, options);
+    return this.show(message, options);
   }
 
   static isAlreadyShown(id, ttl) {
@@ -77,6 +77,10 @@ class ToastMessage {
 
   static freeze() {
     this.freezed = true;
+  }
+
+  static hide(id) {
+    $('#' + id).toast('hide');
   }
 
   static clear() {

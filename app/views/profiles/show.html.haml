@@ -5,8 +5,8 @@
 - set_meta_tags description: t('.meta_description', user: @screen_name)
 
 .message-box.alert.alert-warning{style: 'display: none;'}
-.forbidden-reason.my-1{style: 'display: none;'}= render(template: 'messages/forbidden_reason', locals: {expanded: true})
-.not-found-reason.my-1{style: 'display: none;'}= render(template: 'messages/not_found_reason', locals: {expanded: true})
+.forbidden-reason.my-1{style: 'display: none;'}= render(template: 'messages/forbidden_reason', locals: {expanded: false})
+.not-found-reason.my-1{style: 'display: none;'}= render(template: 'messages/not_found_reason', locals: {expanded: false})
 
 = render(partial: 'profile_section', locals: {user: @user}) if @user
 
@@ -38,9 +38,10 @@
       var retryCount = 0;
       var retryMax = 5;
       var retryInterval = 3000;
+      var toastId = '';
 
       function showMessage(message) {
-        ToastMessage.warn(message);
+        ToastMessage.clear();
         $('.message-box').text(message).show();
         $('.forbidden-reason').show();
         $('.not-found-reason').show();
@@ -75,7 +76,7 @@
       if (isYourself) {
         logger.log('The current user is target user');
       } else {
-        ToastMessage.info('#{t('.updating_html', user: @screen_name)}');
+        toastId = ToastMessage.info('#{t('.updating_html', user: @screen_name)}');
         fetch();
       }
     });
