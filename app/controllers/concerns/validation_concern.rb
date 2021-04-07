@@ -154,15 +154,12 @@ module ValidationConcern
 
   def current_user_not_blocker?
     return true unless user_signed_in?
+    return true unless EgotterBlocker.where(uid: current_user.uid).exists?
 
-    if EgotterBlocker.where(uid: current_user.uid).exists?
-      redirect_to error_pages_blocker_detected_path(via: current_via(__method__))
-      create_error_log(__method__, 'blocker_not_permitted')
-      track_event('current_user_not_blocker', {controller: controller_name, action: action_name})
-      false
-    else
-      true
-    end
+    redirect_to error_pages_blocker_detected_path(via: current_via(__method__))
+    create_error_log(__method__, 'blocker_not_permitted')
+    track_event('current_user_not_blocker', {controller: controller_name, action: action_name})
+    false
   end
 
   def search_request_cache_exists?(screen_name)

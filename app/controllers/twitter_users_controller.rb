@@ -2,7 +2,6 @@ class TwitterUsersController < ApplicationController
   include JobQueueingConcern
 
   before_action :reject_crawler
-  before_action { current_user_not_blocker? }
   before_action { valid_uid?(params[:uid]) }
   before_action { @self_search = user_requested_self_search_by_uid?(params[:uid]) }
   before_action { @twitter_user = build_twitter_user_by_uid(params[:uid]) }

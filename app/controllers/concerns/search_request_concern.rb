@@ -7,7 +7,6 @@ module SearchRequestConcern
   included do
     around_action :disable_newrelic_tracer_for_crawlers, only: :show
     before_action(only: :show) { head :forbidden if twitter_dm_crawler? }
-    before_action(only: :show) { current_user_not_blocker? }
     before_action(only: :show) { valid_screen_name? }
     before_action(only: :show) do
       if skip_search_request_check?
