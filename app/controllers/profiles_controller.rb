@@ -5,21 +5,9 @@ class ProfilesController < ApplicationController
   before_action :reject_spam_access!
   before_action :valid_screen_name?
 
-  before_action do
-    self.sidebar_disabled = true
-
-    if flash.empty? && !@search_count_limitation.count_remaining?
-      @without_alert_container = true
-      flash.now[:notice] = too_many_searches_message
-    end
-  end
-
   def show
-    @user = TwitterDB::User.find_by(screen_name: params[:screen_name])
-    @user = TwitterUser.latest_by(screen_name: params[:screen_name]) unless @user
-    @user = TwitterUserDecorator.new(@user) if @user
-
     @screen_name = params[:screen_name]
+    @user = set_user(params[:screen_name])
 
     if params[:names].present? && user_signed_in?
       set_decrypt_names(params[:screen_name], params[:names])
@@ -27,6 +15,13 @@ class ProfilesController < ApplicationController
   end
 
   private
+
+  def set_user(screen_name)
+    user = TwitterDB::User.find_by(screen_name: screen_name)
+    user = TwitterUser.latest_by(screen_name: screen_name) unless user
+    user = TwitterUserDecorator.new(user) if user
+    user
+  end
 
   def set_decrypt_names(name, content)
     @indicator_names = MessageEncryptor.new.decrypt(content).split(',')
