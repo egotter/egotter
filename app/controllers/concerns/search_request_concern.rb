@@ -3,12 +3,10 @@ require 'active_support/concern'
 module SearchRequestConcern
   extend ActiveSupport::Concern
   include ValidationConcern
-  include SearchRequestInstrumentationConcern
 
   included do
     around_action :disable_newrelic_tracer_for_crawlers, only: :show
     before_action(only: :show) { head :forbidden if twitter_dm_crawler? }
-    before_action(only: :show) { search_request_concern_bm_start }
     before_action(only: :show) { signed_in_user_authorized? }
     before_action(only: :show) { current_user_has_dm_permission? }
     before_action(only: :show) { current_user_not_blocker? }
@@ -40,7 +38,6 @@ module SearchRequestConcern
     before_action(only: :show) { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) } # Call after #twitter_user_persisted?
 
     before_action(only: :show) { set_new_screen_name_if_changed }
-    before_action(only: :show) { search_request_concern_bm_finish }
   end
 
   def skip_search_request_check?
