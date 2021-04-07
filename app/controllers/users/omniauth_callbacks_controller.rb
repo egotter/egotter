@@ -3,6 +3,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   include SanitizationConcern
   include JobQueueingConcern
 
+  skip_before_action :current_user_authorized?
+  skip_before_action :current_user_has_dm_permission?
+  skip_before_action :current_user_not_blocker?
+
   after_action only: :twitter do
     if @follow
       request = FollowRequest.create(user_id: @user.id, uid: User::EGOTTER_UID, requested_by: 'sign_in')
