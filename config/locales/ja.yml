@@ -1232,8 +1232,6 @@ ja:
       page_title: "@%{user} のプロフィール"
       meta_description: "@%{user} の のプロフィール"
       update: '@%{user} のプロフィールを更新する'
-      prev: '< @%{user}'
-      next: '@%{user} >'
       see: '@%{user} を見る'
       seeing: '@%{user} を見ています'
       sensitive_tweets_by: '@%{user} のツイート（性的な単語が含まれています）'

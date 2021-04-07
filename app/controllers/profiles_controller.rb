@@ -29,11 +29,7 @@ class ProfilesController < ApplicationController
   private
 
   def set_decrypt_names(name, content)
-    @indicator_names = names = MessageEncryptor.new.decrypt(content).split(',')
-    if (index = names.index(name))
-      @prev_name = names[index - 1] if index - 1 >= 0
-      @next_name = names[index + 1] if index + 1 <= names.size - 1
-    end
+    @indicator_names = MessageEncryptor.new.decrypt(content).split(',')
   rescue => e
   end
 end

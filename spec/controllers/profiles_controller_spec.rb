@@ -19,8 +19,6 @@ RSpec.describe ProfilesController, type: :controller do
     it do
       subject
       expect(controller.instance_variable_get(:@indicator_names)).to eq(['a', 'b', 'c'])
-      expect(controller.instance_variable_get(:@prev_name)).to eq('a')
-      expect(controller.instance_variable_get(:@next_name)).to eq('c')
     end
   end
 end
