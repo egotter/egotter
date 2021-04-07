@@ -4,10 +4,6 @@ RSpec.describe OrdersController, type: :controller do
   let(:user) { create(:user) }
   let(:order) { create(:order, user_id: user.id) }
 
-  before do
-    allow(controller).to receive(:current_user_has_dm_permission?)
-  end
-
   describe 'POST #checkout_session_completed' do
     subject { post :checkout_session_completed, params: {} }
     it do

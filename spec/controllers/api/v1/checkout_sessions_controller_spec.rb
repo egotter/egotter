@@ -4,7 +4,6 @@ RSpec.describe Api::V1::CheckoutSessionsController, type: :controller do
   let(:user) { create(:user) }
 
   before do
-    allow(controller).to receive(:current_user_has_dm_permission?)
     allow(controller).to receive(:require_login!)
     allow(controller).to receive(:current_user).and_return(user)
   end

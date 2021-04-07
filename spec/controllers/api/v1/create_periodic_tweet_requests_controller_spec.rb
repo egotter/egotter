@@ -4,7 +4,6 @@ RSpec.describe Api::V1::CreatePeriodicTweetRequestsController, type: :controller
   let(:user) { create(:user) }
 
   before do
-    allow(controller).to receive(:current_user_has_dm_permission?)
     allow(controller).to receive(:user_signed_in?).and_return(true)
     allow(controller).to receive(:current_user).and_return(user)
   end

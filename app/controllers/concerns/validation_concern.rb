@@ -144,7 +144,7 @@ module ValidationConcern
 
   def current_user_has_dm_permission?
     return true unless user_signed_in?
-    return true if current_user.notification_setting.enough_permission_level?
+    return true if current_user.enough_permission_level?
 
     redirect_to error_pages_permission_level_not_enough_path(via: current_via(__method__))
     create_error_log(__method__, 'permission_level_not_enough')

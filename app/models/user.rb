@@ -305,4 +305,9 @@ class User < ApplicationRecord
   def can_see_adult_account?
     has_valid_subscription? || ((user = TwitterDB::User.find_by(uid: uid)) && TwitterUserDecorator.new(user).adult_account?)
   end
+
+  def enough_permission_level?
+    return true unless notification_setting # For test
+    notification_setting.permission_level == NotificationSetting::PROPER_PERMISSION
+  end
 end

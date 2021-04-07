@@ -35,7 +35,7 @@ describe ReportStatusValidator do
 
     context 'enough_permission_level? returns false' do
       before do
-        allow(user).to receive_message_chain(:notification_setting, :enough_permission_level?).and_return(false)
+        allow(user).to receive(:enough_permission_level?).and_return(false)
       end
       it do
         expect(CreatePeriodicReportPermissionLevelNotEnoughMessageWorker).to receive(:perform_async).with(user.id)

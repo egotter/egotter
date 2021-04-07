@@ -5,7 +5,6 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
   let(:order) { user.orders.last }
 
   before do
-    allow(controller).to receive(:current_user_has_dm_permission?)
     allow(controller).to receive(:current_user).and_return(user)
   end
 

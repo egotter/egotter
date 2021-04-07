@@ -174,11 +174,11 @@ describe ValidationConcern, type: :controller do
 
   describe '#current_user_has_dm_permission?' do
     shared_context 'user has proper permission' do
-      before { allow(user).to receive_message_chain(:notification_setting, :enough_permission_level?).and_return(true) }
+      before { allow(user).to receive(:enough_permission_level?).and_return(true) }
     end
 
     shared_context "user doesn't have proper permission" do
-      before { allow(user).to receive_message_chain(:notification_setting, :enough_permission_level?).and_return(false) }
+      before { allow(user).to receive(:enough_permission_level?).and_return(false) }
     end
 
     subject { controller.current_user_has_dm_permission? }

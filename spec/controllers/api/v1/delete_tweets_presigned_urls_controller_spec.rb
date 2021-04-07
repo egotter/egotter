@@ -4,7 +4,6 @@ RSpec.describe Api::V1::DeleteTweetsPresignedUrlsController, type: :controller d
   let(:user) { create(:user) }
 
   before do
-    allow(controller).to receive(:current_user_has_dm_permission?)
     allow(controller).to receive(:current_user).and_return(user)
     allow(user).to receive(:has_valid_subscription?).and_return(true)
   end

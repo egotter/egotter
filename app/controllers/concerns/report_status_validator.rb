@@ -10,7 +10,7 @@ module ReportStatusValidator
       return
     end
 
-    unless user.notification_setting.enough_permission_level?
+    unless user.enough_permission_level?
       CreatePeriodicReportPermissionLevelNotEnoughMessageWorker.perform_async(user.id)
       return
     end
