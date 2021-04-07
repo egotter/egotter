@@ -7,6 +7,7 @@ class ErrorPagesController < ApplicationController
     forbidden_user
     protected_user
     you_have_blocked
+    adult_user
     too_many_api_requests
   )
 
@@ -26,6 +27,8 @@ class ErrorPagesController < ApplicationController
   def protected_user; end
 
   def you_have_blocked; end
+
+  def adult_user; end
 
   def not_signed_in; end
 

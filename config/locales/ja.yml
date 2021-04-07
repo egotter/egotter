@@ -1416,6 +1416,11 @@ ja:
       message: '@%{user} は鍵アカウントです。自分に見る権限がある場合のみ分析できます。'
     you_have_blocked:
       message: '@%{user} からブロックされています。'
+    adult_user:
+      message_html: |
+        @%{user} はアダルトアカウントです。自分がアダルトアカウントの場合は分析できます。<br>
+        <br>
+        自分がアダルトアカウントでない場合は、有料プラン を購入することで分析できます。
     not_signed_in:
       message_html: 'このページを見るには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> が必要です。'
     spam_ip_detected:
