@@ -50,7 +50,7 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def censored_location
-    if location? && location.match?(ADULT_ACCOUNT_REGEXP)
+    if location&.match?(ADULT_ACCOUNT_REGEXP) && cannot_see_adult_account?
       I18n.t('twitter.censored_location')
     else
       location
@@ -73,11 +73,15 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def censored_profile_url
-    I18n.t('twitter.censored_profile_url')
+    if adult_account? && cannot_see_adult_account?
+      I18n.t('twitter.censored_profile_url')
+    else
+      profile_url
+    end
   end
 
   def censored_description
-    if description? && description.match?(ADULT_ACCOUNT_REGEXP)
+    if description&.match?(ADULT_ACCOUNT_REGEXP) && cannot_see_adult_account?
       I18n.t('twitter.censored_description')
     else
       description
@@ -134,7 +138,19 @@ class TwitterUserDecorator < ApplicationDecorator
   ADULT_ACCOUNT_REGEXP = Regexp.new(File.read(Rails.root.join('config/adult_ng_words.txt')).split("\n").join('|'))
 
   def adult_account?
-    name&.match?(ADULT_ACCOUNT_REGEXP) || description&.match?(ADULT_ACCOUNT_REGEXP)
+    name&.match?(ADULT_ACCOUNT_REGEXP) || description&.match?(ADULT_ACCOUNT_REGEXP) || location&.match?(ADULT_ACCOUNT_REGEXP)
+  end
+
+  def can_see_adult_account?
+    if instance_variable_defined?(:@can_see_adult_account)
+      @can_see_adult_account
+    else
+      @can_see_adult_account = h.user_signed_in? && (h.current_user.uid == object.uid || h.current_user.can_see_adult_account?)
+    end
+  end
+
+  def cannot_see_adult_account?
+    !can_see_adult_account?
   end
 
   def profile_icon_url?
@@ -144,7 +160,7 @@ class TwitterUserDecorator < ApplicationDecorator
   GRAY_100 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAIAAAD/gAIDAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAy5pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQwIDc5LjE2MDMwMiwgMjAxNy8wMy8wMi0xNjo1OTozOCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIEVsZW1lbnRzIDE2LjAgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MzczODMxNkM1MDQyMTFFQkEwMUVBNzBERkMwMUQ5QjEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RTM3QkUwMzY1MTM3MTFFQkEwMUVBNzBERkMwMUQ5QjEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDozNzM4MzE2QTUwNDIxMUVCQTAxRUE3MERGQzAxRDlCMSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDozNzM4MzE2QjUwNDIxMUVCQTAxRUE3MERGQzAxRDlCMSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlRKEtUAAACiSURBVHja7NAxAQAACAMgtX+0hbKCnw9EoJMUN6NAlixZsmTJUiBLlixZsmQpkCVLlixZshTIkiVLlixZCmTJkiVLliwFsmTJkiVLlgJZsmTJkiVLgSxZsmTJkqVAlixZsmTJUiBLlixZsmQpkCVLlixZshTIkiVLlixZCmTJkiVLliwFsmTJkiVLlgJZsmTJkiVLgSxZsmTJkqVAlqxvK8AAh5UDLHJQma8AAAAASUVORK5CYII='
 
   def censored_profile_icon_url(size = nil)
-    if !profile_icon_url? || adult_account?
+    if adult_account? && cannot_see_adult_account?
       GRAY_100
     else
       profile_icon_url(size)
@@ -265,7 +281,7 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def censored_name
-    if name.present? && name.match?(ADULT_ACCOUNT_REGEXP)
+    if name&.match?(ADULT_ACCOUNT_REGEXP) && cannot_see_adult_account?
       I18n.t('twitter.censored_name')
     else
       name

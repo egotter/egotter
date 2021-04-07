@@ -4,7 +4,7 @@
 
 <% if user.profile_url? %>
   <div class="small my-1">
-    <% if user.adult_account? %>
+    <% if user.adult_account? && user.cannot_see_adult_account? %>
       <i class="fas fa-link text-muted"></i>&nbsp;<span style="word-break: break-all;"><%= user.censored_profile_url %></span>
     <% else %>
       <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url_label, user.profile_url, style: 'word-break: break-all;', target: '_blank', rel: 'nofollow') %>

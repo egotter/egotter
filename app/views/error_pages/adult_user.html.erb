@@ -1,4 +1,4 @@
-<div class="my-3"><%= t('.message_html', user: @screen_name) %></div>
+<div class="my-3"><%= t('.message_html', user: @screen_name, url: pricing_path(via: current_via)) %></div>
 
 <%= render(partial: 'profiles/profile_section', locals: {user: @user}) if @user %>
 

@@ -24,9 +24,7 @@ module ValidationConcern
   end
 
   def reject_spam_ip!
-    return if twitter_webhook?
-    return if stripe_webhook?
-    return if og_image_checker?
+    return if twitter_webhook? || stripe_webhook? || og_image_checker?
     return unless !user_signed_in? && request.remote_ip.to_s.match?(/\A3[45]\./)
 
     if request.xhr?
@@ -285,6 +283,19 @@ module ValidationConcern
     session[:screen_name] = twitter_user.screen_name
     redirect_to error_pages_protected_user_path(via: current_via(__method__))
     true
+  end
+
+  def can_search_adult_user?(twitter_user)
+    return true unless TwitterUserDecorator.new(twitter_user).adult_account?
+
+    if user_signed_in?
+      return true if current_user.uid == twitter_user.uid
+      return true if current_user.can_see_adult_account?
+    end
+
+    session[:screen_name] = twitter_user.screen_name
+    redirect_to error_pages_adult_user_path(via: current_via(__method__))
+    false
   end
 
   def private_mode_specified?(twitter_user)

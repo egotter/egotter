@@ -301,4 +301,8 @@ class User < ApplicationRecord
   def valid_user_token?(value)
     user_token == value
   end
+
+  def can_see_adult_account?
+    has_valid_subscription? || ((user = TwitterDB::User.find_by(uid: uid)) && TwitterUserDecorator.new(user).adult_account?)
+  end
 end
