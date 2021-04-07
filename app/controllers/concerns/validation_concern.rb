@@ -132,17 +132,13 @@ module ValidationConcern
     result
   end
 
-  # TODO Rename to current_user_authorized?
-  def signed_in_user_authorized?
+  def current_user_authorized?
     return true unless user_signed_in?
+    return true if current_user.authorized?
 
-    if current_user.authorized?
-      true
-    else
-      respond_with_error(:unauthorized, signed_in_user_not_authorized_message)
-      track_event('signed_in_user_authorized', {controller: controller_name, action: action_name})
-      false
-    end
+    respond_with_error(:unauthorized, signed_in_user_not_authorized_message)
+    track_event('signed_in_user_authorized', {controller: controller_name, action: action_name})
+    false
   end
 
   def current_user_has_dm_permission?

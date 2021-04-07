@@ -6,7 +6,7 @@ module DownloadRequestConcern
 
   included do
     before_action(only: :download) { head :forbidden if twitter_dm_crawler? }
-    before_action(only: :download) { signed_in_user_authorized? }
+    before_action(only: :download) { current_user_authorized? }
     before_action(only: :download) { current_user_has_dm_permission? }
     before_action(only: :download) { current_user_not_blocker? }
     before_action(only: :download) { valid_screen_name? }

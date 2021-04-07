@@ -147,8 +147,8 @@ describe ValidationConcern, type: :controller do
     end
   end
 
-  describe '#signed_in_user_authorized?' do
-    subject { controller.signed_in_user_authorized? }
+  describe '#current_user_authorized?' do
+    subject { controller.current_user_authorized? }
 
     context 'user is not signed in' do
       include_context 'user is not signed in'

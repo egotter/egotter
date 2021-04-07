@@ -2,7 +2,7 @@ class TwitterUsersController < ApplicationController
   include JobQueueingConcern
 
   before_action :reject_crawler
-  before_action { signed_in_user_authorized? }
+  before_action { current_user_authorized? }
   before_action { current_user_has_dm_permission? }
   before_action { current_user_not_blocker? }
   before_action { valid_uid?(params[:uid]) }
