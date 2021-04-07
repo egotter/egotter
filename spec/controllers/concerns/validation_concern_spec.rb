@@ -164,11 +164,9 @@ describe ValidationConcern, type: :controller do
     context 'user is signed in and not authorized' do
       include_context 'user is signed in'
       include_context 'user is not authorized'
-      before do
-        allow(controller).to receive(:signed_in_user_not_authorized_message).and_return('message')
-      end
+      before { allow(controller).to receive(:error_pages_api_not_authorized_path).with(anything).and_return('path') }
       it do
-        expect(controller).to receive(:respond_with_error).with(:unauthorized, 'message')
+        expect(controller).to receive(:redirect_to).with('path')
         is_expected.to be_falsey
       end
     end

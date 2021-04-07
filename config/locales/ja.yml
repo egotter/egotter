@@ -1408,6 +1408,15 @@ ja:
         next: "次に進む"
       finish: 'お片付けはこれで終わりです！ お疲れ様でした。'
   error_pages:
+    api_not_authorized:
+      message_html: |
+        @%{user} のツイッター連携（API）が無効になっています。<br>
+        <br>
+        1. <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してください。ほとんどの場合これで解決します。<br>
+        <br>
+        2. [1]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
+        <br>
+        エラー：NA403
     not_found_user:
       message: '@%{user} は存在しないか削除済みです。'
     forbidden_user:

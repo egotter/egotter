@@ -73,6 +73,7 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'error_pages/api_not_authorized', to: 'error_pages#api_not_authorized'
   get 'error_pages/too_many_searches', to: 'error_pages#too_many_searches'
   get 'error_pages/ad_blocker_detected', to: 'error_pages#ad_blocker_detected'
   get 'error_pages/soft_limited', to: 'error_pages#soft_limited'

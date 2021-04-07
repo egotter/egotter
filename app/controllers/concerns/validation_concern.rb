@@ -136,8 +136,9 @@ module ValidationConcern
     return true unless user_signed_in?
     return true if current_user.authorized?
 
-    respond_with_error(:unauthorized, signed_in_user_not_authorized_message)
-    track_event('signed_in_user_authorized', {controller: controller_name, action: action_name})
+    redirect_to error_pages_api_not_authorized_path(via: current_via(__method__))
+    create_error_log(__method__, 'api_not_authorized')
+    track_event('api_not_authorized', {controller: controller_name, action: action_name})
     false
   end
 

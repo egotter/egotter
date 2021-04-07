@@ -7,7 +7,6 @@ RSpec.describe TimelinesController, type: :controller do
     subject { get :show, params: {screen_name: screen_name} }
 
     it do
-      expect(controller).to receive(:current_user_authorized?)
       expect(controller).to receive(:current_user_has_dm_permission?)
       expect(controller).to receive(:valid_screen_name?)
       expect(controller).to receive(:search_request_cache_exists?).with(screen_name)
@@ -35,7 +34,6 @@ RSpec.describe TimelinesController, type: :controller do
       end
 
       it do
-        expect(controller).to receive(:current_user_authorized?)
         expect(controller).to receive(:current_user_has_dm_permission?)
         expect(controller).to receive(:valid_screen_name?)
         expect(controller).to receive(:search_request_cache_exists?).with(screen_name)

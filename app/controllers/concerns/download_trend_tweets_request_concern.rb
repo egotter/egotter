@@ -6,7 +6,6 @@ module DownloadTrendTweetsRequestConcern
 
   included do
     before_action(only: :download_tweets) { head :forbidden if twitter_dm_crawler? }
-    before_action(only: :download_tweets) { current_user_authorized? }
   end
 
   private
