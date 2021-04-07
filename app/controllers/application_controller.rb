@@ -17,7 +17,8 @@ class ApplicationController < ActionController::Base
   include Logging
 
   before_action :reject_spam_ip!
-  before_action :current_user_authorized?, unless: -> { controller_name == 'error_pages' }
+  before_action :current_user_authorized?, if: -> { controller_name != 'error_pages' }
+  before_action :current_user_has_dm_permission?, if: -> { controller_name != 'error_pages' }
 
   skip_before_action :track_ahoy_visit, if: -> { apache_bench? }
 

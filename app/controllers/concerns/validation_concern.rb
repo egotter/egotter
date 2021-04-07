@@ -144,15 +144,12 @@ module ValidationConcern
 
   def current_user_has_dm_permission?
     return true unless user_signed_in?
+    return true if current_user.notification_setting.enough_permission_level?
 
-    if current_user.notification_setting.enough_permission_level?
-      true
-    else
-      redirect_to error_pages_permission_level_not_enough_path(via: current_via(__method__))
-      create_error_log(__method__, 'permission_level_not_enough')
-      track_event('current_user_has_dm_permission', {controller: controller_name, action: action_name})
-      false
-    end
+    redirect_to error_pages_permission_level_not_enough_path(via: current_via(__method__))
+    create_error_log(__method__, 'permission_level_not_enough')
+    track_event('current_user_has_dm_permission', {controller: controller_name, action: action_name})
+    false
   end
 
   def current_user_not_blocker?

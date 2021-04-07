@@ -7,7 +7,6 @@ RSpec.describe SearchesController, type: :controller do
     subject { post :create, params: {screen_name: screen_name} }
 
     it do
-      expect(controller).to receive(:current_user_has_dm_permission?)
       expect(controller).to receive(:valid_screen_name?)
       expect(controller).to receive(:current_user_search_for_yourself?).with(screen_name)
       expect(controller).to receive(:not_found_screen_name?).with(screen_name)
@@ -30,7 +29,6 @@ RSpec.describe SearchesController, type: :controller do
       end
 
       it do
-        expect(controller).to receive(:current_user_has_dm_permission?)
         expect(controller).to receive(:valid_screen_name?)
         # current_user_search_for_yourself? is called
         expect(controller).not_to receive(:not_found_screen_name?).with(screen_name)
