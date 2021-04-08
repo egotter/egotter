@@ -14,7 +14,9 @@ class ErrorPagesController < ApplicationController
   before_action :set_screen_name, only: SET_USER_ACTIONS
   before_action :set_user, only: SET_USER_ACTIONS
 
-  def api_not_authorized; end
+  def api_not_authorized
+    @screen_name = current_user&.screen_name
+  end
 
   def too_many_searches; end
 
