@@ -1,6 +1,5 @@
 class UpdatePermissionLevelWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -33,7 +32,6 @@ class UpdatePermissionLevelWorker
     elsif TwitterApiStatus.not_found?(e) || TwitterApiStatus.suspended?(e) || TwitterApiStatus.too_many_requests?(e)
     else
       logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
-      notify_airbrake(e, user_id: user_id, options: options)
     end
   end
 end

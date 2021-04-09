@@ -1,6 +1,5 @@
 class SendSentMessageWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   # options:
@@ -10,7 +9,7 @@ class SendSentMessageWorker
     return if static_message?(options['text'])
     send_message_to_slack(recipient_uid, options['text'])
   rescue => e
-    notify_airbrake(e, recipient_uid: recipient_uid, options: options)
+    logger.warn "Sending a message to slack is failed #{e.inspect}"
   end
 
   def static_message?(text)
@@ -22,9 +21,6 @@ class SendSentMessageWorker
     screen_name = fetch_screen_name(recipient_uid)
     text = dm_url(screen_name) + "\n" + text
     SlackClient.sent_messages.send_message(text, title: "`#{screen_name}` `#{recipient_uid}`")
-  rescue => e
-    logger.warn "Sending a message to slack is failed #{e.inspect}"
-    notify_airbrake(e, recipient_uid: recipient_uid, text: text)
   end
 
   def fetch_screen_name(uid)

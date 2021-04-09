@@ -2,7 +2,6 @@ require 'googleauth'
 
 class CreatePushNotificationWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, title, body, options = {})
@@ -43,7 +42,6 @@ class CreatePushNotificationWorker
 
   rescue => e
     logger.warn "#{e.inspect} #{user_id} #{title} #{body} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
-    notify_airbrake(e, user_id: user_id, title: title, body: body, options: options)
   end
 
   private

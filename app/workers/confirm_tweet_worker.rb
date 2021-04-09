@@ -1,6 +1,5 @@
 class ConfirmTweetWorker
   include Sidekiq::Worker
-  include AirbrakeErrorHandler
   sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
