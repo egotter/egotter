@@ -5,6 +5,9 @@
 #  id            :bigint(8)        not null, primary key
 #  session_id    :string(191)
 #  user_id       :integer          not null
+#  since_date    :datetime
+#  until_date    :datetime
+#  send_dm       :boolean          default(FALSE), not null
 #  tweet         :boolean          default(FALSE), not null
 #  destroy_count :integer          default(0), not null
 #  finished_at   :datetime

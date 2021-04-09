@@ -10,7 +10,7 @@ RSpec.describe DeleteFavoritesRequest, type: :model do
       freeze_time do
         expect(request).to receive(:update!).with(finished_at: Time.zone.now)
         expect(request).not_to receive(:tweet_finished_message)
-        expect(request).to receive(:send_finished_message)
+        expect(request).not_to receive(:send_finished_message)
         subject
       end
     end

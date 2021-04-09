@@ -1,5 +1,6 @@
 class SendDeleteTweetsStartedWorker
   include Sidekiq::Worker
+  include WorkerErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   # options:
@@ -8,7 +9,6 @@ class SendDeleteTweetsStartedWorker
     request = DeleteTweetsRequest.find(request_id)
     SendMessageToSlackWorker.perform_async(:delete_tweets, "`Started` #{request.to_message}")
   rescue => e
-    logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    handle_worker_error(e, request_id: request_id, options: options)
   end
 end

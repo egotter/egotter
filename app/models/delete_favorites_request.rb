@@ -4,6 +4,9 @@
 #
 #  id            :bigint(8)        not null, primary key
 #  user_id       :integer          not null
+#  since_date    :datetime
+#  until_date    :datetime
+#  send_dm       :boolean          default(FALSE), not null
 #  tweet         :boolean          default(FALSE), not null
 #  destroy_count :integer          default(0), not null
 #  finished_at   :datetime
@@ -38,7 +41,7 @@ class DeleteFavoritesRequest < ApplicationRecord
     if finished_at.nil?
       update!(finished_at: Time.zone.now)
       tweet_finished_message if tweet
-      send_finished_message
+      send_finished_message if send_dm
     end
   end
 
@@ -56,6 +59,8 @@ class DeleteFavoritesRequest < ApplicationRecord
     verify_credentials!
     favorites_exist!
     tweets = fetch_favorites!
+    tweets = filter_favorites!(tweets)
+    filtered_favorites_exist!(tweets)
     destroy_favorites!(tweets)
   end
 
@@ -81,12 +86,17 @@ class DeleteFavoritesRequest < ApplicationRecord
     retry if (@retries -= 1) > 0
   end
 
+  def filtered_favorites_exist!(tweets)
+    raise FavoritesNotFound if tweets.empty?
+  end
+
   def fetch_favorites!
     tweets = []
     max_id = nil
     options = {count: 200}
 
-    5.times do
+    # Get all favorites at once
+    30.times do
       options[:max_id] = max_id unless max_id.nil?
       response = api_client.favorites(options)
       break if response.nil? || response.empty?
@@ -99,6 +109,15 @@ class DeleteFavoritesRequest < ApplicationRecord
     raise FavoritesNotFound if tweets.empty?
 
     tweets
+  end
+
+  def filter_favorites!(tweets)
+    return tweets if !since_date && !until_date
+
+    tweets.reject do |tweet|
+      (since_date && tweet.created_at < since_date) ||
+          (until_date && tweet.created_at > until_date)
+    end
   end
 
   def destroy_favorites!(tweets)

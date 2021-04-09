@@ -1,5 +1,6 @@
 class SendDeleteTweetsNotFinishedWorker
   include Sidekiq::Worker
+  include WorkerErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   # options:
@@ -7,10 +8,9 @@ class SendDeleteTweetsNotFinishedWorker
   def perform(request_id, options = {})
     request = DeleteTweetsRequest.find(request_id)
     unless request.finished?
-      SendMessageToSlackWorker.perform_async(:delete_tweets, "request=#{request.inspect}", 'Not finished')
+      SendMessageToSlackWorker.perform_async(:delete_tweets, "`Not finished` #{request.to_message}")
     end
   rescue => e
-    logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    handle_worker_error(e, request_id: request_id, options: options)
   end
 end

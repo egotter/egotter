@@ -1610,6 +1610,7 @@ ja:
         - '3200件までは無料で削除できます'
   delete_favorites:
     new: &delete_favorites_new
+      crumb_title: 'いいねクリーナー'
       navbar_title: 'いいねクリーナー'
       footer_title: 'いいねを一括削除'
       meta_title: 'いいねクリーナー - ワンクリックでいいねを一括削除'
@@ -1626,32 +1627,34 @@ ja:
           アカウント切り替えは <a href="%{url}">こちら</a>
     show:
       <<: *delete_favorites_new
-      crumb_title: 'いいねクリーナー'
-      modal_button_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のいいねを削除する'
+      crumb_title: 'マイページ'
+      page_title: 'いいねクリーナー'
+      page_description: |
+        いいねクリーナーは、いいねを簡単に素早く削除するためのツールです。
+        最新の%{count}件まで無料で削除することができます。
       see_progress: 'いいね削除ステータスを見る'
       status:
         title: 'いいね削除ステータス'
         description: '@%{user} のいいね削除状況です。'
         no_request_description: '削除中の場合は、ここに進行状況が表示されます。'
         empty_date: '○月○日'
+    free:
+      title: '無料でいいねを削除する'
+      description: '無料プランの場合は、最新の%{count}件までをワンクリックで削除することができます。'
+      more: 'よくある質問'
+      since_date: 'この日付から'
+      until_date: 'この日付まで'
+      send_dm: '削除の完了後に自分へDMする'
+      post_tweet: '削除の完了後にツイートする'
+      button: '無料で直近のいいねを削除する'
+      note1: '※ いいね削除は取り消しできません。'
+      note2_html: '※ 無料で削除できるのは%{count}件までです。<a href="%{url}">理由</a>'
+    processing:
+      title: '無料でいいねを削除する'
+      description: '無料プランの場合は、最新の%{count}件までをワンクリックで削除することができます。'
+      more: 'よくある質問'
       requested: '削除リクエスト済み'
-      warnings:
-        - 'いいね削除は取り消しできません'
-        - '3200件までは無料で削除できます'
-        - '削除後もいいね総数は変化しません'
-      word_description: '説明'
-      word_procedure: '手順'
-      description_for_free: '@%{user} は無料プランのユーザーです。最新の%{count}件まで削除することができます。'
-      description_for_premium: '@%{user} は有料プランのユーザーです。全てのいいねを削除するにはTwitterデータのアーカイブが必要です。'
-      modal:
-        title: '@%{user} のいいね削除'
-        confirmation_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のいいねをすべて削除します。本当に削除しますか？'
-        dm_after_finishing: "削除の完了後に自分へDMする"
-        tweet_after_finishing: "削除の完了後にツイートする"
-        please_enter_confirmation_text: '確認のために「%{text}」と入力してください'
-        confirmation_text: 'いいねを全て削除'
-        ok: "削除します"
-        cancel: "いいえ"
+      note: '一定時間後に再度リクエストできます。'
     message:
       finished: '%{count}件のいいねを削除しました。削除は完了しています。'
       processing_html: |
@@ -1662,6 +1665,24 @@ ja:
         %{count}件のいいねを削除中にエラーが起きました。一定時間後に再度お試しください。<br>
         <br>
         何度も失敗する場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    confirmation_modal:
+      title: '@%{user} のいいね削除'
+      body_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のいいねを削除します。本当によろしいですか？'
+      confirmation_text: '確認のために「%{text}」と入力してください'
+      since_date: 'この日付から：'
+      until_date: 'この日付まで：'
+      send_dm: '完了後に自分へDM：'
+      post_tweet: '完了後にツイート：'
+      not_specified: '指定無し'
+      send: '送る'
+      not_sent: '送らない'
+      post: 'する'
+      not_posted: 'しない'
+      ok: "削除する"
+      cancel: "キャンセル"
+      warnings:
+        - 'いいね削除は取り消しできません'
+        - '3200件までは無料で削除できます'
   personality_insights:
     new: &personality_insights_new
       page_title: 'ツイッター性格診断'
@@ -2435,6 +2456,9 @@ ja:
       delete_tweets_presigned_urls:
         create:
           fail: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをそのまま指定してください。'
+      delete_favorites_requests:
+        create:
+          success: 'いいね削除のリクエストに成功しました。ページを更新します。'
       friend_insights:
         fail: '更新中です。数分後に再度お試しください。'
       follower_insights:
@@ -2842,7 +2866,6 @@ ja:
   dictionary:
     honorific: "さん"
   before_sign_in:
-    coming_soon: 'この機能は近日公開予定です。公開までもう少々お待ちください。'
     need_login_html: 'このページを見るためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'

@@ -3,8 +3,14 @@ class DeleteFavoritesModal {
     var $modal = $('#' + id);
     var caller = null;
 
-    $modal.on('show.bs.modal', function (e) {
+    $modal.on('shown.bs.modal', function (e) {
       caller = e.relatedTarget;
+
+      $modal.find('#since-date-confirmation').text($modal.data('since') || i18n['notSpecified']);
+      $modal.find('#until-date-confirmation').text($modal.data('until') || i18n['notSpecified']);
+
+      $modal.find('#send-dm-confirmation').text($modal.data('dm') ? i18n['send'] : i18n['notSent']);
+      $modal.find('#post-tweet-confirmation').text($modal.data('tweet') ? i18n['post'] : i18n['notPosted']);
     });
 
     $modal.find('.positive').on('click', function () {
@@ -20,10 +26,15 @@ class DeleteFavoritesModal {
         $(caller).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
       }
 
-      var tweet = $modal.find('#tweet-after-finishing').prop('checked');
+      var options = {
+        since: $modal.data('since'),
+        until: $modal.data('until'),
+        dm: $modal.data('dm'),
+        tweet: $modal.data('tweet')
+      };
 
-      $.post(url, {tweet: tweet}).done(function (res) {
-        logger.log(res);
+      $.post(url, options).done(function (res) {
+        ToastMessage.info(res.message);
 
         setTimeout(function () {
           window.location.reload();

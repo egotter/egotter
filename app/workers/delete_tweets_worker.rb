@@ -1,5 +1,6 @@
 class DeleteTweetsWorker
   include Sidekiq::Worker
+  include WorkerErrorHandler
   sidekiq_options queue: 'deleting_high', retry: 0, backtrace: false
 
   # Don't check the uniqueness of the job since this worker processes the same request multiple times.
@@ -10,7 +11,6 @@ class DeleteTweetsWorker
     request = DeleteTweetsRequest.find(request_id)
     DeleteTweetsTask.new(request, options).start!
   rescue => e
-    logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    handle_worker_error(e, request_id: request_id, options: options)
   end
 end

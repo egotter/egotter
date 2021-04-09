@@ -1,0 +1,38 @@
+- confirmation_text = current_user.screen_name
+
+= modal_dialog(id: modal_id, title: t('.title', user: current_user.screen_name), button: {positive: t('.ok'), negative: t('.cancel'), category: 'danger'}) do
+  .mb-3= t('.body_html', user: current_user.screen_name, icon: current_user_icon)
+
+  .mb-1
+    = t('.since_date')
+    %span#since-date-confirmation
+  .mb-1
+    = t('.until_date')
+    %span#until-date-confirmation
+  .mb-1
+    = t('.send_dm')
+    %span#send-dm-confirmation
+  .mb-1
+    = t('.post_tweet')
+    %span#post-tweet-confirmation
+
+  .my-3
+    %small.form-text.text-muted= t('.confirmation_text', text: confirmation_text)
+    = text_field_tag '', '', class: 'form-control confirm-input', placeholder: ''
+
+:javascript
+  $(function () {
+    var id = '#{modal_id}';
+    var url = '#{api_v1_delete_favorites_requests_path}';
+
+    var i18n = {
+      pleaseEnterConfirmationText: '#{t('.confirmation_text', text: confirmation_text)}',
+      confirmationText: '#{confirmation_text}',
+      notSpecified: '#{t('.not_specified')}',
+      send: '#{t('.send')}',
+      notSent: '#{t('.not_sent')}',
+      post: '#{t('.post')}',
+      notPosted: '#{t('.not_posted')}'
+    };
+    new DeleteFavoritesModal(id, url, i18n);
+  });
