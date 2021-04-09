@@ -208,6 +208,7 @@ module AdsenseHelper
         when [true,  'usage_stats',           'show', :middle] then USER_USAGE_STATS
         when [true,  'usage_stats',           'show', :top]    then USER_USAGE_STATS
         when [true,  'access_confirmations',  'index', :top]   then 5452501065 # 0336
+        when [true,  'follow_confirmations',  'index', :top]   then 3953737396 # 0344
 
         when [false, 'home',                  'new',  :top]    then GUEST_HOME
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM
@@ -232,6 +233,7 @@ module AdsenseHelper
         when [false, 'close_friends',         'show', :middle] then 4436604425 # 0327
         when [false, 'close_friends',         'show', :top]    then 8094925634 # 0314
         when [false, 'access_confirmations',  'index', :top]   then 5452501065 # 0336
+        when [false, 'follow_confirmations',  'index', :top]   then 3953737396 # 0344
         else nil
         end
 
@@ -441,6 +443,7 @@ module AdsenseHelper
         when [true,  'usage_stats',           'show', :middle] then USER_USAGE_STATS_RESP
         when [true,  'usage_stats',           'show', :top]    then USER_USAGE_STATS_RESP
         when [true,  'access_confirmations',  'index', :top]   then 9235122967 # 0337
+        when [true,  'follow_confirmations',  'index', :top]   then 3057596301 # 0345
 
         when [false, 'home',                  'new',  :top]    then GUEST_HOME_RESP
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM_RESP
@@ -530,6 +533,7 @@ module AdsenseHelper
         when [false, 'usage_stats',           'show', :middle] then GUEST_USAGE_STATS_RESP
         when [false, 'usage_stats',           'show', :top]    then GUEST_USAGE_STATS_RESP
         when [false,  'access_confirmations', 'index', :top]   then 9235122967 # 0337
+        when [false,  'follow_confirmations', 'index', :top]   then 3057596301 # 0345
         else nil
         end
 
