@@ -58,6 +58,16 @@ class ErrorPagesController < ApplicationController
 
   def twitter_error; end
 
+  def twitter_error_not_found; end
+
+  def twitter_error_suspended; end
+
+  def twitter_error_unauthorized; end
+
+  def twitter_error_temporarily_locked; end
+
+  def twitter_error_unknown; end
+
   def routing_error; end
 
   def internal_server_error; end

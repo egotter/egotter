@@ -6,40 +6,37 @@ module TwitterUsersConcern
   included do
   end
 
-  # Normally you will not be redirected to not_found_path or forbidden_path here.
-  # See also #not_found_user? in #not_found_screen_name? or #forbidden_user? in #forbidden_screen_name?
   def build_twitter_user_by(screen_name:)
     user = request_context_client.user(screen_name)
-    ::TwitterUser.build_by(user: user)
+    TwitterUser.build_by(user: user)
   rescue => e
-    handle_twitter_api_error(e, screen_name)
+    handle_twitter_api_error(e, __method__)
     nil
-  end
-
-  def handle_twitter_api_error(e, screen_name)
-    if TwitterApiStatus.not_found?(e)
-      redirect_to profile_path(screen_name: screen_name, via: current_via('not_found'))
-    elsif TwitterApiStatus.suspended?(e)
-      redirect_to profile_path(screen_name: screen_name, via: current_via('suspended'))
-    elsif TwitterApiStatus.invalid_or_expired_token?(e)
-      respond_with_error(:bad_request, unauthorized_message)
-    elsif TwitterApiStatus.temporarily_locked?(e)
-      respond_with_error(:bad_request, temporarily_locked_message)
-    else
-      respond_with_error(:bad_request, twitter_exception_messages(e, screen_name))
-      logger.info "#{__method__}: #{e.inspect} controller=#{controller_name} action=#{action_name} screen_name=#{screen_name} user_id=#{current_user&.id}}"
-    end
   end
 
   def build_twitter_user_by_uid(uid)
     screen_name = request_context_client.user(uid.to_i)[:screen_name]
     build_twitter_user_by(screen_name: screen_name)
   rescue => e
-    if !TwitterApiStatus.suspended?(e) && !TwitterApiStatus.not_found?(e) && !TwitterApiStatus.unauthorized?(e)
-      logger.warn "#{self.class}##{action_name} in #build_twitter_user_by_uid #{e.inspect} uid=#{uid} user_id=#{current_user_id}}"
-    end
-
-    respond_with_error(:bad_request, twitter_exception_messages(e, "ID #{uid}"))
+    handle_twitter_api_error(e, __method__)
     nil
+  end
+
+  private
+
+  def handle_twitter_api_error(e, location)
+    via = current_via(location)
+
+    if TwitterApiStatus.not_found?(e)
+      redirect_to error_pages_twitter_error_not_found_path(via: via)
+    elsif TwitterApiStatus.suspended?(e)
+      redirect_to error_pages_twitter_error_suspended_path(via: via)
+    elsif TwitterApiStatus.unauthorized?(e)
+      redirect_to error_pages_twitter_error_unauthorized_path(via: via)
+    elsif TwitterApiStatus.temporarily_locked?(e)
+      redirect_to error_pages_twitter_error_temporarily_locked_path(via: via)
+    else
+      redirect_to error_pages_twitter_error_unknown_path(via: via)
+    end
   end
 end

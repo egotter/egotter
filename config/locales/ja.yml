@@ -1433,6 +1433,31 @@ ja:
         Twitterの一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
         <br>
         何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    twitter_error_not_found:
+      message_html: |
+        Twitterの NotFound エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        <br>
+        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    twitter_error_suspended:
+      message_html: |
+        Twitterの Suspended エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        <br>
+        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    twitter_error_unauthorized:
+      message_html: |
+        Twitterの Unauthorized エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        <br>
+        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    twitter_error_temporarily_locked:
+      message_html: |
+        Twitterの TemporarilyLocked エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        <br>
+        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    twitter_error_unknown:
+      message_html: |
+        Twitterの Unknown エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        <br>
+        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     routing_error:
       message_html: |
         お探しのページが見つかりませんでした。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
@@ -2774,14 +2799,6 @@ ja:
         <b>※削除完了まで少し時間がかかります</b>
       'yes': 'はい'
       'no': 'キャンセル'
-  application:
-    internal_server_error_html: |
-      一時的なエラーが起きました。トップページから再度検索してみてください。
-      何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
-    internal_server_error_with_recovery_html: |
-      一時的なエラーが起きました。トップページから再度検索してみてください。
-      何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
-      <a href="%{url}" class="btn btn-outline-primary btn-sm">@%{user} で検索</a>
   sort:
     desc: "新しい順"
     asc: "古い順"
@@ -2842,19 +2859,6 @@ ja:
   before_sign_in:
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     screen_name_changed_html: '検索された @%{user} はTwitter IDを変えたようです。<a href="%{url}">ログイン</a>して検索すると、結果がより正確になります。'
-    temporarily_locked_html: |
-      一時的なエラーが起きました。ログインしてから検索してみてください。
-      <a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>
-    not_found_html: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
-    forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
-    unauthorized_html: |
-      一時的なエラーが起きました。ログインしてから検索してみてください。
-      <a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>
-    bad_authentication_html: |
-      一時的なエラーが起きました。このエラーは数分ほどで直ります。それまで少々お待ちください。<br>
-      何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
-    suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
-    protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     something_wrong_with_error_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。（%{error}）'
     ajax:
       need_login_html: 'この操作を行うためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
@@ -2876,23 +2880,8 @@ ja:
       3. どうして起きたの？<br>
       検索数が多かったり、検索したユーザーのフォロー＋フォロワー数が多いと起きます。
     screen_name_changed_html: |
-      検索された %{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。
+      検索された @%{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。
       <a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>
-    temporarily_locked_html: |
-      %{user} のアカウントが一時的にロックされています。ツイッター公式にログインし、ロックを解除してからえごったーをご利用ください。
-      <a href="https://twitter.com" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターを見る</a>
-    not_found_html: |
-      検索された %{user} が見付かりません。アカウントが削除されています。
-      <a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>
-    forbidden_html: |
-      検索された %{user} が見付かりません。アカウントが凍結されています。
-      <a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>
-    unauthorized_html: |
-      ツイッター連携の有効期限が切れています。
-      <a class="btn btn-primary" href="%{url}">ログイン</a> してから検索してみてください。
-    suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されています。'
-    protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
-    blocked_html: '%{user} からブロックされているため検索できません。<a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
     tokimeki_unfollow_too_many_friends: 'フォロー数が 10,000人 を超えている場合は、ときめきアンフォローをご利用いただくことができません。'
     signed_in_user_not_authorized_html: >
       @%{user} のツイッター連携（API）が無効になっています。<br>

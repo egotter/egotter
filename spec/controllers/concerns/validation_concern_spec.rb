@@ -381,10 +381,10 @@ describe ValidationConcern, type: :controller do
     context 'blocked_user? raises an error' do
       include_context 'blocked_user? raises an error'
       before do
-        allow(controller).to receive(:twitter_exception_messages).with(any_args).and_return('message')
+        allow(controller).to receive(:error_pages_twitter_error_unknown_path).with(any_args).and_return('path')
       end
       it do
-        expect(controller).to receive(:respond_with_error).with(:bad_request, instance_of(String))
+        expect(controller).to receive(:redirect_to).with('path')
         is_expected.to be_falsey
       end
     end

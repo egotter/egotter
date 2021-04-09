@@ -249,7 +249,7 @@ module ValidationConcern
     redirect_to error_pages_you_have_blocked_path(via: current_via(__method__))
     true
   rescue => e
-    respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
+    redirect_to error_pages_twitter_error_unknown_path(via: current_via(__method__))
     false
   end
 
@@ -354,7 +354,8 @@ module ValidationConcern
     true
   rescue => e
     # This is a special case because it call redirect_to and returns false.
-    respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
+    redirect_to error_pages_twitter_error_unknown_path(via: current_via(__method__))
+
     false
   end
 

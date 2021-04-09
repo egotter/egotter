@@ -13,24 +13,4 @@ describe AlertMessagesConcern, type: :controller do
       allow(controller).to receive(:current_user).and_return(user)
     end
   end
-
-  describe '#temporarily_locked_message' do
-    subject { controller.temporarily_locked_message }
-    it { is_expected.to be_truthy }
-
-    context 'user is signed in' do
-      include_context 'user is signed in'
-      it { is_expected.to be_truthy }
-    end
-  end
-
-  describe '#unauthorized_message' do
-    subject { controller.unauthorized_message }
-    it { is_expected.to be_truthy }
-
-    context 'user is signed in' do
-      include_context 'user is signed in'
-      it { is_expected.to be_truthy }
-    end
-  end
 end
