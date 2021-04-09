@@ -1427,9 +1427,9 @@ ja:
       message: '@%{user} からブロックされています。'
     adult_user:
       message_html: |
-        @%{user} はアダルトアカウントです。自分がアダルトアカウントの場合は分析できます。<br>
+        @%{user} はアダルトアカウントです。<br>
         <br>
-        自分がアダルトアカウントでない場合は、<a href="%{url}">有料プラン</a> を購入することで分析できます。<a href="%{url}">もっと詳しく</a>
+        このアカウントを分析するには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> が必要です。
     not_signed_in:
       message_html: 'このページを見るには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> が必要です。'
     spam_ip_detected:

@@ -277,12 +277,8 @@ module ValidationConcern
   end
 
   def can_search_adult_user?(twitter_user)
+    return true if user_signed_in?
     return true unless TwitterUserDecorator.new(twitter_user).adult_account?
-
-    if user_signed_in?
-      return true if current_user.uid == twitter_user.uid
-      return true if current_user.can_see_adult_account?
-    end
 
     session[:screen_name] = twitter_user.screen_name
     redirect_to error_pages_adult_user_path(via: current_via(__method__))
