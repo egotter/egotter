@@ -5,10 +5,13 @@
   <div style="max-width: 100%;"><%= render(partial: 'adsense/ad', locals: {vertical: :modal, wrapper_id: ad_wrapper_id}) %></div>
   <div class="d-flex justify-content-end">
     <div class="m-1">
-      <button type="button" id="button-ok-<%= modal_id %>" class="btn btn-outline-secondary negative" data-dismiss="modal"><%= t('.no') %></button>
+      <button type="button" id="button-cancel-<%= modal_id %>" class="btn btn-outline-secondary negative" data-dismiss="modal"><%= t('.no') %></button>
     </div>
     <div class="m-1">
-      <button type="button" id="button-cancel-<%= modal_id %>" class="btn btn-primary track-twitter-link positive" data-dismiss="modal" data-location="<%= modal_id %>"><%= t('.yes') %></button>
+      <button type="button" id="button-ok-<%= modal_id %>" class="btn btn-outline-primary track-twitter-link positive disabled" disabled="disabled" data-dismiss="modal" data-location="<%= modal_id %>">
+        <%= image_tag '/ajax-loader-primary.gif', size: '16x16' %>
+        <%= t('.yes') %>
+      </button>
     </div>
   </div>
 <% end %>
@@ -17,6 +20,8 @@
   $(function () {
     var adWrapperId = '<%= ad_wrapper_id %>';
     var $modal = $('#<%= modal_id %>');
+    var positiveButton = $modal.find('button.positive');
+    var timerId;
 
     function openTwitter(screenName) {
       window.open('https://twitter.com/' + screenName, '_blank');
@@ -26,14 +31,22 @@
       var $button = $(e.relatedTarget);
       var screenName = $button.data('screen-name');
       $modal.find('.modal-title .screen-name').text(screenName);
-      $modal.find('button.positive').off('click').on('click', function () {
+      positiveButton.off('click').on('click', function () {
         openTwitter(screenName);
       });
+      timerId = setTimeout(function () {
+        positiveButton.removeAttr('disabled').removeClass('disabled').find('img').hide();
+      }, 3000);
       trackModalEvent('OpenTwitterModal');
     });
 
     $modal.on('shown.bs.modal', function (e) {
       $('#' + adWrapperId).trigger('appear');
+    });
+
+    $modal.on('hidden.bs.modal', function (e) {
+      clearTimeout(timerId);
+      positiveButton.attr({disabled: 'disabled'}).addClass('disabled').find('img').show();
     });
   });
 </script>
