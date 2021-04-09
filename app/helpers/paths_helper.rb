@@ -267,6 +267,10 @@ module PathsHelper
     'https://docs.google.com/forms/d/e/1FAIpQLScGxNuSm1na2yQeUwuoHoS37T3zLDMwnOpccZV4R1S_Ac3zLw/viewform'
   end
 
+  def force_sign_in_path(options)
+    sign_in_path(options.merge(force_login: true))
+  end
+
   def current_via(suffix = nil)
     via = "#{controller_name}/#{action_name}"
     via += "/#{suffix}" if suffix

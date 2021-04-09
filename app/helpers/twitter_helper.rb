@@ -82,4 +82,8 @@ module TwitterHelper
   def bigger_icon_url(user)
     user.profile_image_url_https.to_s.gsub(/_normal(\.jpe?g|\.png|\.gif)$/, '_bigger\1')
   end
+
+  def egotter_icon_url
+    image_path('/logo_transparent_96x96.png')
+  end
 end

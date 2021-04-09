@@ -111,6 +111,7 @@ module ValidationConcern
       self.sidebar_disabled = true
       render template: 'searches/create'
     else
+      session[:screen_name] = @twitter_user.screen_name
       redirect_to error_pages_twitter_user_not_persisted_path(via: current_via(__method__))
     end
 
@@ -322,15 +323,13 @@ module ValidationConcern
     return false if @search_count_limitation.count_remaining?
     return false if current_search_histories.any? { |history| history.uid == twitter_user.uid }
 
-    message = too_many_searches_message
-
     if request.xhr?
-      respond_with_error(:bad_request, message)
+      respond_with_error(:bad_request, 'too_many_searches')
     else
       session[:screen_name] = twitter_user.screen_name
       redirect_to error_pages_too_many_searches_path(via: current_via(__method__))
       track_event('too_many_searches', {controller: controller_name, action: action_name, screen_name: twitter_user.screen_name})
-      create_error_log(__method__, message)
+      create_error_log(__method__, 'too_many_searches')
     end
 
     true

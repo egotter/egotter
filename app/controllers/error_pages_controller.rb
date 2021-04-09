@@ -9,6 +9,8 @@ class ErrorPagesController < ApplicationController
     you_have_blocked
     adult_user
     too_many_api_requests
+    too_many_searches
+    twitter_user_not_persisted
   )
 
   before_action :set_screen_name, only: SET_USER_ACTIONS
@@ -44,7 +46,9 @@ class ErrorPagesController < ApplicationController
 
   def permission_level_not_enough; end
 
-  def blocker_detected; end
+  def blocker_detected
+    @screen_name = current_user&.screen_name
+  end
 
   def secret_mode_detected; end
 
@@ -60,7 +64,9 @@ class ErrorPagesController < ApplicationController
 
   def request_timeout_error; end
 
-  def csrf_error; end
+  def csrf_error
+    @screen_name = current_user&.screen_name
+  end
 
   private
 

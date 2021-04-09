@@ -1,1 +1,7 @@
-<div class="mb-3" style="min-height: 300px;"><%= t('.message_html', url: sign_in_path(via: current_via)) %></div>
+<div class="my-3"><%= t('.message_html', user: @screen_name, url: sign_in_path(via: current_via)) %></div>
+
+<%= render(partial: 'profiles/profile_section', locals: {user: @user}) if @user %>
+
+<div class="mt-3 mb-1"><%= render(partial: 'profiles/twitter_button', locals: {screen_name: @screen_name, location: 'top'}) %></div>
+<%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
+<div class="mt-1 mb-3"><%= render(partial: 'profiles/timeline_button', locals: {screen_name: @screen_name, icon_url: egotter_icon_url}) if @screen_name %></div>

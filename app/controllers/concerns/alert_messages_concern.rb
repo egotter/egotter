@@ -166,11 +166,6 @@ module AlertMessagesConcern
     end
   end
 
-  # TODO Remove later
-  def too_many_searches_message
-    render_to_string template: 'messages/too_many_searches', locals: {via: 'too_many_searches_message'}, layout: false
-  end
-
   def unknown_alert_message(ex)
     notify_airbrake(ex)
 

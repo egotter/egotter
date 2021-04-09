@@ -1412,11 +1412,13 @@ ja:
       message_html: |
         @%{user} のツイッター連携（API）が無効になっています。<br>
         <br>
-        1. <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してください。ほとんどの場合これで解決します。<br>
+        1. <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> し直してください。ほとんどの場合これで解決します。<br>
         <br>
         2. [1]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
         <br>
         エラー：NA403
+    blocker_detected:
+      message_html: '@%{user} は @ego_tter をブロックしているため、全ての通知とWebサイトの利用が制限されています。'
     not_found_user:
       message: '@%{user} は存在しないか削除済みです。'
     forbidden_user:
@@ -1432,6 +1434,9 @@ ja:
         このアカウントを分析するには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> が必要です。
     not_signed_in:
       message_html: 'このページを見るには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> が必要です。'
+    soft_limited:
+      message_html: |
+        検索された @%{user} はフォローとフォロワーが多いため、<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> した後のみ検索できます。
     spam_ip_detected:
       message_html: |
         スパム報告されているアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
@@ -1444,14 +1449,16 @@ ja:
         普通のアクセスでこのメッセージが表示されている場合は、<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     twitter_user_not_persisted:
       message_html: |
-        ログインしていないためTwitterデータの取得に一時的に失敗しました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
+        ログインしていないため @%{user} のTwitterデータ取得に失敗しました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
         <br>
         何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     too_many_api_requests:
       message_html: |
-        検索数が多いため一時的にTwitter APIが制限されています。最大で 15分 ほどお待ちください。<br>
+        検索数が多いため一時的にツイッターAPIが制限されています。最大で 15分 ほどお待ちください。<br>
         <br>
         何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+    too_many_searches:
+      message: '現在のプランで検索できる上限に達しました。%{count}回/日'
     twitter_error:
       message_html: |
         Twitterの一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>

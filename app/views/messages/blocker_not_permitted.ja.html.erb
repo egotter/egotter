@@ -1,35 +1,28 @@
-<div class="card">
-  <div class="card-body">
-    <div>
-      <div class="mb-3">
-        <%= twitter_web_link('ego_tter') %> をブロックしているため、全ての通知とWebサイトの利用が制限されています。
-      </div>
+<div class="my-3">
+  <div class="mb-3">
+    Webサイトを今後も利用する場合は、有料プランの購入とブロックの解除が必要です。<br>
+    <br>
+    両方とも完了した後に <%= twitter_web_link('egotter_cs') %> にDMで連絡してください。
+  </div>
 
-      <hr>
+  <div class="mb-3">
+    1. ブロックを解除する<br>
+    <%= link_to '@ego_tter を開く', twitter_web_url('ego_tter'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+  </div>
 
-      <div class="mb-3">
-        Webサイトを今後も利用する場合は、有料プランの購入とブロックの解除が必要です。両方とも完了した後に <%= twitter_web_link('egotter_cs') %> にDMで連絡してください。
-      </div>
+  <div class="mb-3">
+    2. 有料プランを購入する<br>
+    <%= link_to '料金ページ を開く', pricing_path(via: current_via('blocker_not_permitted_message')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+  </div>
 
-      <div class="mb-3">
-        1. ブロックを解除する<br>
-        <%= link_to '@ego_tter を開く', twitter_web_url('ego_tter'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
-      </div>
-
-      <div class="mb-3">
-        2. 有料プランを購入する<br>
-        <%= link_to '料金ページ を開く', pricing_path(via: current_via('blocker_not_permitted_message')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
-      </div>
-
-      <div>
-        3. DMで申請する<br>
-        <% url = direct_message_url(User::EGOTTER_CS_UID, '自動入力：ブロックを解除しました。有料プランを購入します（もしくは購入済みです）。Webサイトの利用を再開してください。') %>
-        <%= link_to '@egotter_cs に解除を申請する', url, class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
-      </div>
-    </div>
+  <div>
+    3. DMで申請する<br>
+    <% if user_signed_in? && current_user.has_valid_subscription? %>
+      <% url = direct_message_url(User::EGOTTER_CS_UID, '自動入力：ブロックを解除しました。有料プランを購入します（もしくは購入済みです）。Webサイトの利用を再開してください。') %>
+      <%= link_to '@egotter_cs に解除を申請する', url, class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    <% else %>
+      <%= link_to '@egotter_cs に解除を申請する', '#', class: 'btn btn-outline-primary btn-sm disabled', disabled: 'disabled' %>
+      <div class="text-muted small mt-1">※ 有料プランの購入を先に済ませてください。</div>
+    <% end %>
   </div>
 </div>
-
-<script>
-  trackMessageEvent('BlockerNotPermittedMessage');
-</script>
