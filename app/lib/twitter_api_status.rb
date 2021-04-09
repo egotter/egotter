@@ -28,6 +28,10 @@ class TwitterApiStatus
       ex && ex.class == Twitter::Error::Unauthorized && ex.message == "Not authorized."
     end
 
+    def not_authorized?(ex)
+      ex && ex.class == Twitter::Error::Unauthorized && ex.message == "Not authorized."
+    end
+
     def unauthorized?(ex)
       invalid_or_expired_token?(ex) || bad_authentication_data?(ex)
     end

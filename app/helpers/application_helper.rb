@@ -75,29 +75,6 @@ module ApplicationHelper
     %w(unfriends unfollowers mutual_unfriends).include?(controller_name)
   end
 
-  def kick_out_error_path(reason, redirect_path: nil)
-    if redirect_path
-      sign_in_path(via: "#{controller_name}/#{action_name}/#{reason}", redirect_path: redirect_path)
-    else
-      sign_in_path(via: "#{controller_name}/#{action_name}/#{reason}")
-    end
-  end
-
-  ANCHOR_REGEXP = /(#[a-zA-Z0-9_-]+)/
-
-  def append_query_params(path, params)
-    path += path.include?('?') ? '&' : '?'
-    path + params.to_query
-
-    if path.match?(ANCHOR_REGEXP)
-      anchor = path.match(ANCHOR_REGEXP)[0]
-      path.remove!(ANCHOR_REGEXP)
-      path = path + anchor
-    end
-
-    path
-  end
-
   def png_image
     @png_image ||= 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC'
   end

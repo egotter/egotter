@@ -89,6 +89,21 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     append_query_params(url, follow_dialog: 1, share_dialog: 1)
   end
 
+  ANCHOR_REGEXP = /(#[a-zA-Z0-9_-]+)/
+
+  def append_query_params(path, params)
+    path += path.include?('?') ? '&' : '?'
+    path + params.to_query
+
+    if path.match?(ANCHOR_REGEXP)
+      anchor = path.match(ANCHOR_REGEXP)[0]
+      path.remove!(ANCHOR_REGEXP)
+      path = path + anchor
+    end
+
+    path
+  end
+
   def user_params
     values = Hashie::Mash.new(request.env['omniauth.auth'].symbolize_keys.slice(:provider, :uid, :info, :credentials).to_h)
 

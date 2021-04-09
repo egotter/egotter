@@ -9,13 +9,13 @@ module AlertMessagesConcern
   end
 
   def twitter_exception_messages(ex, screen_name)
-    if ex.message.start_with?('You have been blocked')
+    if TwitterApiStatus.blocked?(ex)
       blocked_message(screen_name)
-    elsif ex.message == 'Not authorized.' && error_reason_is_forbidden?(screen_name)
+    elsif TwitterApiStatus.not_authorized?(ex) && error_reason_is_forbidden?(screen_name)
       forbidden_message(screen_name)
-    elsif ex.message == 'Not authorized.' && error_reason_is_protected?(screen_name)
+    elsif TwitterApiStatus.not_authorized?(ex) && error_reason_is_protected?(screen_name)
       protected_message(screen_name)
-    elsif ex.message == 'Not authorized.' && error_reason_is_not_found?(screen_name)
+    elsif TwitterApiStatus.not_authorized?(ex) && error_reason_is_not_found?(screen_name)
       not_found_message(screen_name)
     else
       case ex
@@ -57,7 +57,8 @@ module AlertMessagesConcern
     if user_signed_in?
       t('after_sign_in.screen_name_changed_html', user: user_link(screen_name), screen_name: screen_name)
     else
-      t('before_sign_in.screen_name_changed_html', user: user_link(screen_name), url: kick_out_error_path('not_found'))
+      url = sign_in_path(via: current_via('screen_name_changed'))
+      t('before_sign_in.screen_name_changed_html', user: screen_name, url: url)
     end
   end
 
@@ -73,7 +74,8 @@ module AlertMessagesConcern
     if user_signed_in?
       t('after_sign_in.not_found_html', user: user_link(screen_name), screen_name: screen_name)
     else
-      t('before_sign_in.not_found_html', user: user_link(screen_name), url: kick_out_error_path('not_found'))
+      url = sign_in_path(via: current_via('not_found_message'))
+      t('before_sign_in.not_found_html', user: user_link(screen_name), url: url)
     end
   end
 
@@ -81,7 +83,8 @@ module AlertMessagesConcern
     if user_signed_in?
       t('after_sign_in.forbidden_html', user: user_link(screen_name), screen_name: screen_name)
     else
-      t('before_sign_in.forbidden_html', user: user_link(screen_name), url: kick_out_error_path('forbidden'))
+      url = sign_in_path(via: current_via('forbidden_message'))
+      t('before_sign_in.forbidden_html', user: user_link(screen_name), url: url)
     end
   end
 
@@ -101,37 +104,23 @@ module AlertMessagesConcern
     if user_signed_in?
       t('after_sign_in.suspended_html', user: user_link(screen_name))
     else
-      t('before_sign_in.suspended_html', user: user_link(screen_name), url: kick_out_error_path('suspended'))
+      url = sign_in_path(via: current_via('suspended_message'))
+      t('before_sign_in.suspended_html', user: user_link(screen_name), url: url)
     end
   end
 
   def protected_message(screen_name)
+    url = sign_in_path(via: current_via('protected_message'))
     if user_signed_in?
-      t('after_sign_in.protected_html', user: user_link(screen_name), url: kick_out_error_path('protected'))
+      t('after_sign_in.protected_html', user: user_link(screen_name), url: url)
     else
-      t('before_sign_in.protected_html', user: user_link(screen_name), url: kick_out_error_path('protected'))
-    end
-  end
-
-  def protected_with_request_message(screen_name, url)
-    if user_signed_in?
-      t('after_sign_in.protected_with_request_html', user: user_link(screen_name), url: url)
-    else
-      t('before_sign_in.protected_html', user: user_link(screen_name), url: kick_out_error_path('protected'))
+      t('before_sign_in.protected_html', user: user_link(screen_name), url: url)
     end
   end
 
   def blocked_message(screen_name)
     if user_signed_in?
       t('after_sign_in.blocked_html', user: user_link(screen_name), screen_name: screen_name)
-    else
-      raise "#{__method__} is called and the user is not signed in"
-    end
-  end
-
-  def blocked_with_request_message(screen_name, url)
-    if user_signed_in?
-      t('after_sign_in.blocked_with_request_html', user: user_link(screen_name), url: url)
     else
       raise "#{__method__} is called and the user is not signed in"
     end
@@ -151,7 +140,8 @@ module AlertMessagesConcern
       reset_in ||= rate_limit_reset_in
       t('after_sign_in.too_many_requests_with_reset_in', seconds: sprintf('%d', reset_in))
     else
-      t('before_sign_in.too_many_requests_html', url: kick_out_error_path('too_many_requests'))
+      url = sign_in_path(via: current_via('too_many_requests_message'))
+      t('before_sign_in.too_many_requests_html', url: url)
     end
   end
 
@@ -173,7 +163,8 @@ module AlertMessagesConcern
     logger.info "#{self.class}##{__method__} #{ex.inspect} reason=#{reason}"
 
     # Show a sign-in button whether current user is signed in or not.
-    t('before_sign_in.something_wrong_with_error_html', url: kick_out_error_path(reason), error: reason)
+    url = sign_in_path(via: current_via('unknown_alert_message'))
+    t('before_sign_in.something_wrong_with_error_html', url: url, error: reason)
   end
 
   private

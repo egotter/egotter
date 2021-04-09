@@ -14,7 +14,7 @@ module ValidationConcern
     return if user_signed_in? && current_user.authorized?
 
     if request.xhr?
-      message = t('before_sign_in.ajax.need_login_html', url: kick_out_error_path('need_login'))
+      message = t('before_sign_in.ajax.need_login_html', url: sign_in_path(via: current_via('require_login')))
       respond_with_error(:unauthorized, message)
     else
       create_error_log(__method__, 'require_login!')
@@ -71,7 +71,7 @@ module ValidationConcern
 
   def authenticate_admin!
     return if user_signed_in? && current_user.admin?
-    respond_with_error(:unauthorized, t('before_sign_in.need_login_html', url: kick_out_error_path('need_login')))
+    respond_with_error(:unauthorized, 'Unauthorized')
   end
 
   def must_specify_valid_uid!

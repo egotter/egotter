@@ -55,9 +55,6 @@ describe ValidationConcern, type: :controller do
     context 'user is not signed in and request is xhr' do
       include_context 'user is not signed in'
       include_context 'request is xhr'
-      before do
-        allow(controller).to receive(:kick_out_error_path).with(any_args).and_return('kick_out_error_path')
-      end
       it do
         expect(controller).to receive(:respond_with_error).with(:unauthorized, instance_of(String))
         subject

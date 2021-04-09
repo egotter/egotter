@@ -2840,10 +2840,8 @@ ja:
   dictionary:
     honorific: "さん"
   before_sign_in:
-    need_login_html: 'このページを見るためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
-    need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
-    screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。<a href="%{url}">ログイン</a>して検索すると、結果がより正確になります。'
+    screen_name_changed_html: '検索された @%{user} はTwitter IDを変えたようです。<a href="%{url}">ログイン</a>して検索すると、結果がより正確になります。'
     temporarily_locked_html: |
       一時的なエラーが起きました。ログインしてから検索してみてください。
       <a href="%{url}" class="btn btn-outline-primary btn-sm">ログイン</a>
@@ -2894,9 +2892,7 @@ ja:
       <a class="btn btn-primary" href="%{url}">ログイン</a> してから検索してみてください。
     suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されています。'
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
-    protected_with_request_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーでないと検索できません。<a href="%{url}" class="btn btn-outline-primary btn-sm">更新をリクエストする</a>'
     blocked_html: '%{user} からブロックされているため検索できません。<a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
-    blocked_with_request_html: '%{user} からブロックされているため検索できません。<a href="%{url}" class="btn btn-outline-primary btn-sm">更新をリクエストする</a>'
     tokimeki_unfollow_too_many_friends: 'フォロー数が 10,000人 を超えている場合は、ときめきアンフォローをご利用いただくことができません。'
     signed_in_user_not_authorized_html: >
       @%{user} のツイッター連携（API）が無効になっています。<br>
