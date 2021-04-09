@@ -27,7 +27,6 @@ class WebhookController < ApplicationController
     head :ok
   rescue => e
     logger.warn "#{controller_name}##{action_name} #{e.inspect}"
-    notify_airbrake(e)
     head :ok
   end
 

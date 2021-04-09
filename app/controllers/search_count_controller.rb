@@ -15,7 +15,6 @@ class SearchCountController < ApplicationController
 
     render json: {count: count}
   rescue => e
-    notify_airbrake(e)
     render json: {count: DEFAULT_COUNT}
   end
 end
