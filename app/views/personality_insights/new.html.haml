@@ -9,4 +9,4 @@
 = render partial: 'shared/personality_insights_tweets_section'
 
 - if show_redirection_modal? && !personality_insight_is_processing?
-  = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body_html', user: current_user.screen_name), url: personality_insight_path(current_user, via: current_via('redirection_modal'))}
+  = render partial: 'modal/redirection_modal', locals: {icon: current_user_icon, user: current_user, positive_url: personality_insight_path(current_user, via: current_via('redirection_modal'))}

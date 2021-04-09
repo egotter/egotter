@@ -1,8 +1,17 @@
 <% modal_id = "#{controller_name}_#{action_name}_redirection_modal" %>
-<%= modal_dialog(id: modal_id, title: title, body: body, button: {positive: t('.yes'), negative: t('.no')}) %>
+<% modal_body = t(
+  '.body_html',
+  page_name: redirection_modal_page_name,
+  icon: icon,
+  user: user.screen_name,
+  timeline_url: timeline_path(user, via: current_via('redirection_modal')),
+  settings_url: settings_url(via: current_via('redirection_modal')),
+  switch_account_url: force_sign_in_path(via: current_via('redirection_modal')),
+) %>
+<%= modal_dialog(id: modal_id, title: t('.title', user: user.screen_name), body: modal_body, button: {positive: t('.yes'), negative: t('.no')}) %>
 <script>
   $(function () {
-    var url = '<%= raw url %>';
+    var url = '<%= raw positive_url %>';
     var modal_id = '#<%= modal_id %>';
     $(modal_id).modal('show');
     $(modal_id).find('.positive').on('click', function () {

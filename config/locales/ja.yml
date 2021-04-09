@@ -103,16 +103,6 @@ ja:
       text012_html: '公式アカウント'
       text013_html: '何か分からないことがありますか？ <span class="egotter-pink">リプライ</span>でいつでもお聞きください。'
       text014_html: '@egotter_cs に質問してみる'
-      redirection_modal:
-        title: '@%{user} でログイン中です'
-        body_html: |
-          <img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} の分析結果へ移動しますか？<br>
-          <br>
-          分析結果はこちら <a href="%{timeline_url}" class="btn btn-outline-primary btn-sm">分析結果を見る</a><br>
-          <br>
-          通知設定の変更はこちら <a href="%{url}" class="btn btn-outline-primary btn-sm">設定ページ</a><br>
-          <br>
-          アカウントの切り替えはこちら <a href="%{url2}" class="btn btn-outline-primary btn-sm">アカウントの切り換え</a>
     start:
       crumb_title: "えごったーの使い方"
       page_title: "えごったーの使い方"
@@ -800,9 +790,6 @@ ja:
         header: '仲良しランキング'
         subheader: '仲良しの人をすぐに分析'
         lead_html: 'スマホからも簡単！<br>仲良しの人を今すぐチェック'
-      redirection_modal:
-        title: '@%{user} でログイン中です'
-        body: '@%{user} の仲良しランキングへ移動しますか？'
     show:
       sign_in_modal:
         title: '仲良しランキングを作成しよう'
@@ -819,9 +806,6 @@ ja:
         header: '片思いチェック'
         subheader: 'フォロー整理が簡単にできる'
         lead_html: '片思い・片思われチェックの決定版。<br>スマホから使える無料の片思いチェックアプリです。'
-      redirection_modal:
-        title: '@%{user} でログイン中です'
-        body: '@%{user} の片思いフォロー分析結果へ移動しますか？'
   one_sided_followers:
   mutual_friends:
   unfriends:
@@ -834,9 +818,6 @@ ja:
         header: 'リムられチェック'
         subheader: '外れたフォロワーをすぐに確認'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
-      redirection_modal:
-        title: '@%{user} でログイン中です'
-        body: '@%{user} のリムられ分析結果へ移動しますか？'
       what_is_unfriends:
         title: '「リムり」「リムられ」ってどういう意味？'
         description1_html: >
@@ -902,9 +883,6 @@ ja:
         header: '最近いない人チェック'
         subheader: 'スマホでサクッとフォロー整理'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
-      redirection_modal:
-        title: '@%{user} でログイン中です'
-        body: '@%{user} の最近いないフォロー分析結果へ移動しますか？'
   inactive_followers:
   inactive_mutual_friends:
   result_pages:
@@ -1257,9 +1235,6 @@ ja:
         header: 'フォローチェック'
         subheader: 'スマホでサクッとフォロー整理'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
-      redirection_modal:
-        title: '@%{user} でログイン中です'
-        body: '@%{user} のフォローチェック結果へ移動しますか？'
   word_clouds:
     new:
     show:
@@ -1296,9 +1271,6 @@ ja:
         header: 'クラスタ分析'
         subheader: 'クラスタ分析が簡単できる'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
-      redirection_modal:
-        title: '@%{user} でログイン中です'
-        body: '@%{user} のクラスタ分析結果へ移動しますか？'
     show:
       navbar_title: 'クラスタ判定'
       crumb_title: "入っているクラスタ"
@@ -1382,9 +1354,6 @@ ja:
         header: 'ときめきアンフォロー'
         subheader: 'あなたは今のタイムラインにときめきますか？'
         lead_html: 'ときめきアンフォローでタイムラインを整理しましょう。<br><span class="egotter-pink">%{count}万人</span>以上が利用するえごったーに新機能が登場！'
-      redirection_modal:
-        title: '@%{user} でログイン中です'
-        body: 'ときめきアンフォローを続きから再開しますか？'
       text001_html: 'あなたは今のタイムラインにときめきますか？'
       text002_html: '最初は良いと思ってフォローしたけど、今はときめかない・・・そんな時は、相手に感謝しつつアンフォローしましょう。'
       text003_html: '今はもうときめかなくなったフォローを解除する。それは、新たな門出ともいえる儀式なのです。ぜひその門出を祝福してあげてください。'
@@ -1495,12 +1464,6 @@ ja:
         header: 'ツイートクリーナー'
         subheader: 'ワンクリックでツイートを一括削除'
         lead_html: '100ツイート/秒の速さで高速削除！<br><span class="egotter-pink">%{count}万回</span>以上利用された安心のツールです。<br>'
-      redirection_modal:
-        title: '@%{user} でログイン中です'
-        body_html: |
-          <img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイート削除マイページへ移動しますか？<br>
-          <br>
-          アカウント切り替えは <a href="%{url}">こちら</a>
     show:
       <<: *delete_tweets_new
       crumb_title: 'マイページ'
@@ -1619,12 +1582,6 @@ ja:
         header: 'いいねクリーナー'
         subheader: 'ワンクリックでいいねを一括削除'
         lead_html: '100件/秒の速さで高速削除！<br><span class="egotter-pink">%{count}万回</span>以上利用された安心のツールです。<br>'
-      redirection_modal:
-        title: '@%{user} でログイン中です'
-        body_html: |
-          <img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のいいね削除マイページへ移動しますか？<br>
-          <br>
-          アカウント切り替えは <a href="%{url}">こちら</a>
     show:
       <<: *delete_favorites_new
       crumb_title: 'マイページ'
@@ -1694,9 +1651,6 @@ ja:
         lead_html: '性格診断・心理テストの究極系<br>話題のツイート性格分析を今すぐチェック'
       see_sample:
         ツイッター性格診断のサンプルを見る
-      redirection_modal:
-        title: '@%{user} でログイン中です'
-        body_html: '@%{user} のツイッター性格診断結果へ移動しますか？'
     show:
       <<: *personality_insights_new
       need_login_html: '性格診断をするためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
@@ -2722,6 +2676,26 @@ ja:
       history: "検索履歴"
       loading: '読み込み中'
     redirection_modal:
+      title: '@%{user} でログイン中です'
+      page_names:
+        close_friends: '仲良しランキング'
+        unfriends: 'リムられ分析'
+        inactive_friends: '最近いないフォロー分析'
+        one_sided_friends: '片思いフォロー分析'
+        clusters: 'クラスタ分析'
+        delete_tweets: 'ツイート削除マイページ'
+        delete_favorites: 'いいね削除マイページ'
+        tokimeki_unfollow: 'ときめきアンフォローの続き'
+        personality_insights: 'ツイッター性格診断'
+        default: '分析結果'
+      body_html: |
+        <img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} の%{page_name}へ移動しますか？<br>
+        <br>
+        %{page_name}はこちら <a href="%{timeline_url}" class="btn btn-outline-primary btn-sm">%{page_name}</a><br>
+        <br>
+        通知設定の変更はこちら <a href="%{settings_url}" class="btn btn-outline-primary btn-sm">設定ページ</a><br>
+        <br>
+        アカウントの切り替えはこちら <a href="%{switch_account_url}" class="btn btn-outline-primary btn-sm">アカウントの切り換え</a>
       'yes': 'はい'
       'no': 'いいえ'
     open_twitter_modal:
