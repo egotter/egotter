@@ -325,7 +325,7 @@ class PeriodicReport < ApplicationRecord
     def permission_level_not_enough_message
       template = Rails.root.join('app/views/periodic_reports/permission_level_not_enough.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          url: sign_in_url(force_login: true, via: 'permission_level_not_enough_message'),
+          url: force_sign_in_path(via: 'permission_level_not_enough_message'),
           support_url: support_url(campaign_params('permission_level_not_enough_support')),
       )
 
@@ -492,6 +492,10 @@ class PeriodicReport < ApplicationRecord
 
     def sign_in_url(options)
       super({share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false}.merge(options))
+    end
+
+    def force_sign_in_path(options)
+      sign_in_url(options.merge(force_login: true))
     end
 
     def timeline_url(user, options)

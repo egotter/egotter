@@ -11,7 +11,7 @@
 <% if show_redirection_modal? %>
   <% timeline_url = timeline_path(current_user, via: current_via('redirection_modal')) %>
   <% url = settings_path(via: current_via('redirection_modal')) %>
-  <% url2 = sign_in_path(force_login: true, via: current_via('redirection_modal')) %>
+  <% url2 = force_sign_in_path(via: current_via('redirection_modal')) %>
   <% modal_body = t('.redirection_modal.body_html', user: current_user.screen_name, icon: current_user_icon, timeline_url: timeline_url, url: url, url2: url2) %>
   <%= render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: modal_body, url: timeline_path(current_user, via: current_via('redirection_modal'))} %>
 <% end %>

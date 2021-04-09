@@ -87,7 +87,7 @@ module AlertMessagesConcern
 
   def unauthorized_message(screen_name = nil)
     if user_signed_in?
-      t('after_sign_in.unauthorized_html', url: sign_in_path(force_login: true, via: current_via(__method__)))
+      t('after_sign_in.unauthorized_html', url: force_sign_in_path(via: current_via(__method__)))
     else
       t('before_sign_in.unauthorized_html', url: sign_in_path(via: current_via(__method__)))
     end

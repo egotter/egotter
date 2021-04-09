@@ -60,7 +60,7 @@
 <div class="row">
   <div class="col-4"><%= t('.swich_account.title') %></div>
   <div class="col-8">
-    <%= link_to t('.swich_account.switch'), sign_in_path(force_login: true, via: current_via('switch_account'), redirect_path: settings_path), class: 'btn btn-outline-primary btn-sm' %>
+    <%= link_to t('.swich_account.switch'), force_sign_in_path(via: current_via('switch_account'), redirect_path: settings_path), class: 'btn btn-outline-primary btn-sm' %>
     <div class="text-muted small mt-1"><%= t('.swich_account.note_html') %></div>
   </div>
 </div>

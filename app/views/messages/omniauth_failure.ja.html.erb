@@ -10,7 +10,7 @@
         @<%= current_user.screen_name %> のログインは継続中です。
       <% end %>
       <span class="egotter-pink">他のアカウントでログイン</span>し直すこともできます。
-      <%= link_to 'アカウントを切り換える', sign_in_path(force_login: true, via: current_via(via)), class: 'btn btn-outline-primary btn-sm' %>
+      <%= link_to 'アカウントを切り換える', force_sign_in_path(via: current_via(via)), class: 'btn btn-outline-primary btn-sm' %>
     </div>
 
     <div class="mb-5">
