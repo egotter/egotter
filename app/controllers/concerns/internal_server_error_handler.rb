@@ -15,7 +15,6 @@ module InternalServerErrorHandler
 
   def handle_general_error(ex)
     handle_request_error(ex)
-    create_error_log(__method__, 'internal_server_error', ex)
 
     if request.xhr?
       head :internal_server_error
@@ -26,7 +25,6 @@ module InternalServerErrorHandler
 
   def handle_request_timeout(ex)
     handle_request_error(ex)
-    create_error_log(__method__, 'request_timeout', ex)
 
     if request.xhr?
       head :request_timeout
@@ -36,8 +34,6 @@ module InternalServerErrorHandler
   end
 
   def handle_csrf_error(ex)
-    create_error_log(__method__, 'csrf_error', ex)
-
     if request.xhr?
       head :bad_request
     else

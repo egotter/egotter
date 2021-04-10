@@ -56,7 +56,7 @@ describe ValidationConcern, type: :controller do
       include_context 'user is not signed in'
       include_context 'request is xhr'
       it do
-        expect(controller).to receive(:respond_with_error).with(:unauthorized, instance_of(String))
+        expect(controller).to receive(:render).with(any_args)
         subject
       end
     end
@@ -69,7 +69,6 @@ describe ValidationConcern, type: :controller do
         allow(controller).to receive(:sign_in_path).with(anything).and_return('sign_in_path')
       end
       it do
-        expect(controller).to receive(:create_error_log).with(any_args)
         expect(controller).to receive(:redirect_to).with(any_args)
         subject
       end
@@ -195,10 +194,7 @@ describe ValidationConcern, type: :controller do
       include_context 'user is signed in'
       include_context "user doesn't have proper permission"
       before { allow(controller).to receive(:redirect_to).with(instance_of(String)) }
-      it do
-        expect(controller).to receive(:create_error_log).with(:current_user_has_dm_permission?, 'permission_level_not_enough')
-        is_expected.to be_falsey
-      end
+      it { is_expected.to be_falsey }
     end
   end
 

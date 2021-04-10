@@ -15,10 +15,8 @@ module ValidationConcern
 
     if request.xhr?
       message = t('before_sign_in.ajax.need_login_html', url: sign_in_path(via: current_via('require_login')))
-      respond_with_error(:unauthorized, message)
+      render json: {message: message}, status: :unauthorized
     else
-      create_error_log(__method__, 'require_login!')
-      track_event('require_login', {controller: controller_name, action: action_name})
       redirect_to error_pages_not_signed_in_path(via: current_via(__method__))
     end
   end
@@ -30,8 +28,6 @@ module ValidationConcern
     if request.xhr?
       head :forbidden
     else
-      create_error_log(__method__, 'reject_spam_ip!')
-      track_event('reject_spam_ip', {controller: controller_name, action: action_name})
       redirect_to error_pages_spam_ip_detected_path(via: current_via(__method__))
     end
   end
@@ -42,8 +38,6 @@ module ValidationConcern
     if request.xhr?
       head :forbidden
     else
-      create_error_log(__method__, 'reject_spam_access!')
-      track_event('reject_spam_access', {controller: controller_name, action: action_name})
       redirect_to error_pages_suspicious_access_detected_path(via: current_via(__method__))
     end
   end
@@ -95,9 +89,6 @@ module ValidationConcern
   def twitter_user_persisted?(uid)
     return true if ::TwitterUser.with_delay.exists?(uid: uid)
 
-    create_error_log(__method__, '')
-    track_event('twitter_user_persisted', {controller: controller_name, action: action_name})
-
     if request.xhr?
       head :not_found
       return false
@@ -138,8 +129,6 @@ module ValidationConcern
     return true if current_user.authorized?
 
     redirect_to error_pages_api_not_authorized_path(via: current_via(__method__))
-    create_error_log(__method__, 'api_not_authorized')
-    track_event('api_not_authorized', {controller: controller_name, action: action_name})
     false
   end
 
@@ -148,8 +137,6 @@ module ValidationConcern
     return true if current_user.enough_permission_level?
 
     redirect_to error_pages_permission_level_not_enough_path(via: current_via(__method__))
-    create_error_log(__method__, 'permission_level_not_enough')
-    track_event('current_user_has_dm_permission', {controller: controller_name, action: action_name})
     false
   end
 
@@ -158,8 +145,6 @@ module ValidationConcern
     return true unless EgotterBlocker.where(uid: current_user.uid).exists?
 
     redirect_to error_pages_blocker_detected_path(via: current_via(__method__))
-    create_error_log(__method__, 'blocker_not_permitted')
-    track_event('current_user_not_blocker', {controller: controller_name, action: action_name})
     false
   end
 
@@ -300,17 +285,11 @@ module ValidationConcern
   def search_limitation_soft_limited?(user)
     return false if from_crawler?
     return false if user_signed_in?
+    return false unless SearchLimitation.soft_limited?(user)
 
-    if SearchLimitation.soft_limited?(user)
-      session[:screen_name] = user.screen_name
-      redirect_to error_pages_soft_limited_path(via: current_via(__method__))
-
-      create_error_log(__method__, 'search_limitation_soft_limited')
-      track_event('search_limitation_soft_limited', {controller: controller_name, action: action_name, screen_name: user[:screen_name]})
-      true
-    else
-      false
-    end
+    session[:screen_name] = user.screen_name
+    redirect_to error_pages_soft_limited_path(via: current_via(__method__))
+    true
   end
 
   def screen_name_changed?(twitter_user)
@@ -328,8 +307,6 @@ module ValidationConcern
     else
       session[:screen_name] = twitter_user.screen_name
       redirect_to error_pages_too_many_searches_path(via: current_via(__method__))
-      track_event('too_many_searches', {controller: controller_name, action: action_name, screen_name: twitter_user.screen_name})
-      create_error_log(__method__, 'too_many_searches')
     end
 
     true
@@ -348,7 +325,6 @@ module ValidationConcern
     else
       session[:screen_name] = twitter_user.screen_name
       redirect_to error_pages_too_many_api_requests_path(via: current_via(__method__))
-      create_error_log(__method__, message)
     end
 
     true
