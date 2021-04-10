@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
   include BypassFlashMessagesConcern
   include Logging
 
-  before_action :reject_spam_ip!
+  before_action :reject_spam_ip!, if: -> { controller_name != 'error_pages' }
   before_action :current_user_authorized?, if: -> { controller_name != 'error_pages' }
   before_action :current_user_has_dm_permission?, if: -> { controller_name != 'error_pages' }
   before_action :current_user_not_blocker?, if: -> { controller_name != 'error_pages' }
