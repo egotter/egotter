@@ -120,11 +120,11 @@ module AdsenseHelper
       2832227414, # 0341
       7892982400, # 0342
       6579900737, # 0343
-      3953737396, # 0344 <- Next
+      3953737396, # 0344
       3057596301, # 0345
       1327574054, # 0346
       9014492380, # 0347
-      5075247378, # 0348
+      5075247378, # 0348 <- Next
   ]
 
   def left_slot_pc_ad_id(controller, action, position)
@@ -239,6 +239,8 @@ module AdsenseHelper
 
     if controller == 'error_pages'
       slot = 4139419396
+    elsif position == :modal
+      slot = 1327574054
     end
 
     if slot
@@ -539,6 +541,8 @@ module AdsenseHelper
 
     if controller == 'error_pages'
       slot = 7922041298
+    elsif position == :modal
+      slot = 9014492380
     end
 
     if slot
