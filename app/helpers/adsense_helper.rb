@@ -71,6 +71,7 @@ module AdsenseHelper
   GUEST_HOME                 = 1999805511
   GUEST_TIMELINES_TOP        = 7928943138
   GUEST_TIMELINES_BOTTOM     = 5364335453
+  GUEST_UNFRIENDS     = 5075247378
   GUEST_OTHERS        = 6928462015
   GUEST_RIGHT         = 8511414414
   GUEST_WAITING       = 9863392014
@@ -124,7 +125,9 @@ module AdsenseHelper
       3057596301, # 0345
       1327574054, # 0346
       9014492380, # 0347
-      5075247378, # 0348 <- Next
+      5075247378, # 0348
+      8675543043, # 0349 <- Next
+      2110134698, # 0350
   ]
 
   def left_slot_pc_ad_id(controller, action, position)
@@ -200,8 +203,8 @@ module AdsenseHelper
         when [true,  'unfriends',             'list', :slit]   then USER_UNFRIENDS
         when [true,  'unfriends',             'new',  :top]    then USER_UNFRIENDS
         when [true,  'unfriends',             'show', :bottom] then USER_UNFRIENDS
-        when [true,  'unfriends',             'show', :middle] then 1390557110 # 0319
-        when [true,  'unfriends',             'show', :top]    then 2680669624 # 0307
+        when [true,  'unfriends',             'show', :middle] then USER_UNFRIENDS
+        when [true,  'unfriends',             'show', :top]    then USER_UNFRIENDS
         when [true,  'update_histories',      'show', :bottom] then USER_UPDATE_HISTORIES
         when [true,  'update_histories',      'show', :top]    then USER_UPDATE_HISTORIES
         when [true,  'usage_stats',           'show', :bottom] then USER_USAGE_STATS
@@ -223,9 +226,11 @@ module AdsenseHelper
         when [false, 'unfollowers',           'show', :bottom] then 1646542132 # 0320
         when [false, 'unfollowers',           'show', :middle] then 9077475443 # 0321
         when [false, 'unfollowers',           'show', :top]    then 5306832964 # 0306
-        when [false, 'unfriends',             'show', :bottom] then 5697715203 # 0322
-        when [false, 'unfriends',             'show', :middle] then 6335762031 # 0323
-        when [false, 'unfriends',             'show', :top]    then 3034170646 # 0308
+        when [false, 'unfriends',             'list', :slit]   then GUEST_UNFRIENDS
+        when [false, 'unfriends',             'new',  :top]    then GUEST_UNFRIENDS
+        when [false, 'unfriends',             'show', :bottom] then GUEST_UNFRIENDS
+        when [false, 'unfriends',             'show', :middle] then GUEST_UNFRIENDS
+        when [false, 'unfriends',             'show', :top]    then GUEST_UNFRIENDS
         when [false, 'mutual_unfriends',      'show', :bottom] then 7764393778 # 0324
         when [false, 'mutual_unfriends',      'show', :middle] then 8020378796 # 0325
         when [false, 'mutual_unfriends',      'show', :top]    then 9688931108 # 0310
@@ -239,7 +244,7 @@ module AdsenseHelper
 
     if controller == 'error_pages'
       slot = 4139419396
-    elsif position == :modal
+    elsif position.to_sym == :modal
       slot = 1327574054
     end
 
@@ -528,6 +533,7 @@ module AdsenseHelper
         when [false, 'unfriends',             'list', :slit]   then GUEST_UNFRIENDS_RESP
         when [false, 'unfriends',             'new',  :top]    then GUEST_UNFRIENDS_RESP
         when [false, 'unfriends',             'show', :bottom] then GUEST_UNFRIENDS_RESP
+        when [false, 'unfriends',             'show', :middle] then GUEST_UNFRIENDS_RESP
         when [false, 'unfriends',             'show', :top]    then GUEST_UNFRIENDS_RESP
         when [false, 'update_histories',      'show', :bottom] then GUEST_UPDATE_HISTORIES_RESP
         when [false, 'update_histories',      'show', :top]    then GUEST_UPDATE_HISTORIES_RESP
@@ -541,7 +547,7 @@ module AdsenseHelper
 
     if controller == 'error_pages'
       slot = 7922041298
-    elsif position == :modal
+    elsif position.to_sym == :modal
       slot = 9014492380
     end
 

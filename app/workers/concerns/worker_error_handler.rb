@@ -13,7 +13,7 @@ module WorkerErrorHandler
   private
 
   def _print_exception(e, params, nested: false)
-    logger.warn "#{'Caused by ' if nested}#{e.inspect.truncate(200)} #{_extract_params(params)}"
+    logger.warn "WorkerErrorHandler: #{'Caused by ' if nested}#{e.inspect.truncate(200)} #{_extract_params(params)}"
     logger.info e.backtrace.join("\n")
     if e.cause
       _print_exception(e.cause, {}, nested: true)
