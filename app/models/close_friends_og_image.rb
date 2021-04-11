@@ -49,6 +49,12 @@ class CloseFriendsOgImage < ApplicationRecord
     UpdateCloseFriendsOgImageAclWorker.perform_async(id)
   end
 
+  class << self
+    def lambda_url(uid)
+      "https://#{ENV['OG_IMAGE_LAMBDA_HOST']}?uid=#{uid}"
+    end
+  end
+
   class Generator
 
     OG_IMAGE_IMAGEMAGICK = "env OMP_NUM_THREADS=1 MAGICK_THREAD_LIMIT=1 #{ENV['OG_IMAGE_IMAGEMAGICK']}"
