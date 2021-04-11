@@ -177,7 +177,9 @@ module ValidationConcern
     end
   end
 
-  def not_found_screen_name?(screen_name)
+  def not_found_screen_name?(screen_name = nil)
+    screen_name ||= params[:screen_name]
+
     if NotFoundUser.exists?(screen_name: screen_name)
       session[:screen_name] = screen_name
       redirect_to error_pages_not_found_user_path(via: current_via(__method__))
@@ -199,7 +201,9 @@ module ValidationConcern
     end
   end
 
-  def forbidden_screen_name?(screen_name)
+  def forbidden_screen_name?(screen_name = nil)
+    screen_name ||= params[:screen_name]
+
     if ForbiddenUser.exists?(screen_name: screen_name)
       session[:screen_name] = screen_name
       redirect_to error_pages_forbidden_user_path(via: current_via(__method__))
