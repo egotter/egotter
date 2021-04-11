@@ -167,6 +167,13 @@ class TwitterUserDecorator < ApplicationDecorator
     end
   end
 
+  PROFILE_IMAGE_SIZES = [
+      'normal', # 48x48
+      'mini', # 24x24
+      'bigger', # 73x73
+      nil, # original
+  ]
+
   def profile_icon_url(size = nil)
     if size == 'bigger'
       profile_image_url_https.to_s.gsub(/_normal(\.jpe?g|\.png|\.gif)$/, '_bigger\1')
@@ -183,10 +190,20 @@ class TwitterUserDecorator < ApplicationDecorator
     profile_banner_url.present?
   end
 
-  def profile_banner_url_for(request)
-    # suffix = request.from_pc? ? 'web_retina' : 'mobile_retina'
-    suffix = '1080x360'
-    "#{profile_banner_url}/#{suffix}"
+  PROFILE_BANNER_SIZES = %w(
+    1080x360
+    600x200
+    300x100
+    web_retina
+    mobile_retina
+  )
+
+  def profile_banner_url_for(size)
+    if PROFILE_BANNER_SIZES.include?(size)
+      "#{profile_banner_url}/#{size}"
+    else
+      "#{profile_banner_url}/#{PROFILE_BANNER_SIZES[0]}"
+    end
   end
 
   def profile_link_color_code

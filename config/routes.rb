@@ -38,6 +38,7 @@ Rails.application.routes.draw do
       get 'search_requests', to: 'search_requests#show'
       get "announcements/list", to: "announcements#list"
       get "features/list", to: "features#list"
+      get "recent_users", to: "recent_users#index"
       get "functions/list", to: "functions#list"
 
       post 'users/update_instance_id', to: 'users#update_instance_id'

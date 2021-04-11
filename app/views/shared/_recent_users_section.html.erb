@@ -1,0 +1,43 @@
+<h2 class="h4 text-center my-5"><%= t('.title') %></h2>
+<div class="text-center m-3"><%= t('.description', count: UsageCount.get) %></div>
+
+<div id="recent-users-container" class="d-flex" style="overflow-x: scroll;"></div>
+
+<template id="recent-users-template">
+  <div class="m-3">
+    <a href="{{timeline_url}}">
+      <div class="card" style="width: 200px; height: 200px; position: relative;">
+        <div>
+          <img loading="lazy" src="{{profile_banner}}" width="200" height="100" style="object-fit: cover; object-position: center center;">
+        </div>
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+          <img loading="lazy" class="rounded-circle border" style="border-width: 2px !important;" src="{{profile_image}}" width="50" height="50">
+        </div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 1rem;">
+          <div class="text-center text-body">{{name}}</div>
+          <div class="text-center text-muted small">@{{screen_name}}</div>
+        </div>
+      </div>
+    </a>
+  </div>
+</template>
+
+<script>
+  $(function () {
+    var url = '<%= raw api_v1_recent_users_path(via: current_via) %>';
+    var container = $('#recent-users-container');
+
+    container.lazyload().one('appear', function () {
+      $.get(url, function (res) {
+        var template = $('#recent-users-template').html();
+
+        res.users.forEach(function (user) {
+          var rendered = Mustache.render(template, user);
+          container.append(rendered);
+        });
+
+        trackPageEvents('TopPage events', 'RecentUsers loaded');
+      });
+    });
+  });
+</script>

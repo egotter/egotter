@@ -14,8 +14,8 @@
   <%#= Profile banner %>
   <div class="profile-banner">
     <% if user.profile_banner_url? && !user.adult_account? %>
-      <%= link_to user.profile_banner_url_for(request) do %>
-        <img src="<%= user.profile_banner_url_for(request) %>">
+      <%= link_to user.profile_banner_url_for('1080x360') do %>
+        <img src="<%= user.profile_banner_url_for('1080x360') %>">
       <% end %>
     <% else %>
       <div class="w-100 h-100" style="background-color: <%= user.profile_link_color_code %>;"></div>
