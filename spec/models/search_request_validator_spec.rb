@@ -63,22 +63,6 @@ RSpec.describe SearchRequestValidator, type: :model do
     end
   end
 
-  describe 'not_found_user?' do
-    let(:screen_name) { 'name' }
-    subject { instance.not_found_user?(screen_name) }
-    before { allow(client).to receive(:user).with(screen_name) }
-    it { is_expected.to be_falsey }
-
-    context 'exception is raised' do
-      let(:error) { RuntimeError.new }
-      before { allow(client).to receive(:user).with(screen_name).and_raise(error) }
-      it do
-        expect(TwitterApiStatus).to receive(:not_found?).with(error)
-        is_expected.to be_falsey
-      end
-    end
-  end
-
   describe 'forbidden_user?' do
     let(:screen_name) { 'name' }
     let(:response_user) { {suspended: false} }

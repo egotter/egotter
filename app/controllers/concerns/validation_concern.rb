@@ -191,13 +191,20 @@ module ValidationConcern
 
   # It is possible not to call Twitter API in this method only when accessing from crawlers,
   # but since the same Twitter API is called in other places, it's a bit meaningless.
-  def not_found_user?(screen_name)
-    if search_request_validator.not_found_user?(screen_name)
+  def not_found_twitter_user?(screen_name)
+    found = true
+    begin
+      request_context_client.user(screen_name)
+    rescue => e
+      found = !TwitterApiStatus.not_found?(e)
+    end
+
+    if found
+      false
+    else
       session[:screen_name] = screen_name
       redirect_to error_pages_not_found_user_path(via: current_via(__method__))
       true
-    else
-      false
     end
   end
 

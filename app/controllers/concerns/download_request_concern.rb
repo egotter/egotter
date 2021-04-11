@@ -10,7 +10,7 @@ module DownloadRequestConcern
     before_action :not_found_screen_name?, only: :download
     before_action :forbidden_screen_name?, only: :download
     before_action(only: :download) { @self_search = current_user_search_for_yourself?(params[:screen_name]) }
-    before_action(only: :download) { !@self_search && not_found_user?(params[:screen_name]) }
+    before_action(only: :download) { !@self_search && not_found_twitter_user?(params[:screen_name]) }
     before_action(only: :download) { !@self_search && forbidden_user?(params[:screen_name]) }
     before_action(only: :download) { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
     before_action(only: :download) { private_mode_specified?(@twitter_user) }

@@ -218,21 +218,21 @@ describe ValidationConcern, type: :controller do
     end
   end
 
-  describe '#not_found_user?' do
+  describe '#not_found_twitter_user?' do
     let(:screen_name) { 'screen_name' }
-    subject { controller.not_found_user?(screen_name) }
-    before do
-      allow(search_request_validator).to receive(:not_found_user?).with(screen_name).and_return(found)
-    end
+    subject { controller.not_found_twitter_user?(screen_name) }
 
     context 'screen_name is found' do
-      let(:found) { false }
+      before { allow(client).to receive(:user).with(screen_name).and_return('user') }
       it { is_expected.to be_falsey }
     end
 
     context 'screen_name is not found' do
-      let(:found) { true }
-      before { allow(controller).to receive(:error_pages_not_found_user_path).with(anything).and_return('path') }
+      before do
+        allow(client).to receive(:user).with(screen_name).and_raise
+        allow(TwitterApiStatus).to receive(:not_found?).with(anything).and_return(true)
+        allow(controller).to receive(:error_pages_not_found_user_path).with(anything).and_return('path')
+      end
       it do
         expect(controller).to receive(:redirect_to).with('path')
         is_expected.to be_truthy
