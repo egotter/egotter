@@ -39,7 +39,7 @@ class CreateTwitterDBUserWorker
 
     do_perform(user.api_client, target_uids, options)
   rescue => e
-    handle_worker_error(e, uids: uids, options: options)
+    handle_worker_error(e, uids: uids, target_uids: target_uids, options: options)
     FailedCreateTwitterDBUserWorker.perform_async(uids, options.merge(klass: self.class))
   end
 

@@ -72,7 +72,7 @@ RSpec.describe CreateTwitterDBUserWorker do
       let(:error) { RuntimeError.new }
       before { allow(worker).to receive(:do_perform).with(any_args).and_raise(error) }
       it do
-        expect(worker).to receive(:handle_worker_error).with(error, uids: uids, options: options)
+        expect(worker).to receive(:handle_worker_error).with(error, anything)
         expect(FailedCreateTwitterDBUserWorker).to receive(:perform_async).with(uids, options.merge(klass: described_class))
         subject
       end
