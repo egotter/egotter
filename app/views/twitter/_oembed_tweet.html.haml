@@ -1,3 +1,4 @@
-%blockquote.twitter-tweet.mb-3{align: 'center'}
-  %span.text-left= render partial: 'twitter/tweet', locals: {tweet: tweet, margin_class: ''}
-  .text-left.small= tweet_link(tweet)
+.m-3
+  %blockquote.twitter-tweet{align: 'center'}
+    %span.text-left= render partial: 'twitter/tweet', locals: {tweet: tweet, margin_class: ''}
+    .text-left.small= tweet_link(tweet)

@@ -1,5 +1,5 @@
 <h2 class="h4 text-center my-5"><%= t('.title') %></h2>
-<div class="text-center m-3"><%= t('.description', count: UsageCount.get) %></div>
+<div class="text-center m-3"><%= t('.description', count: UsageCount.get.to_s(:delimited)) %></div>
 
 <div id="recent-users-container" class="d-flex" style="overflow-x: scroll;"></div>
 
