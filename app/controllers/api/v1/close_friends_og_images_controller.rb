@@ -2,14 +2,22 @@ module Api
   module V1
     class CloseFriendsOgImagesController < ApplicationController
 
-      before_action :must_specify_valid_uid!
+      before_action :valid_uid?
 
       def show
-        if (image = CloseFriendsOgImage.find_by(uid: params[:uid])) && image.image.attached?
+        if (image = CloseFriendsOgImage.find_by(uid: params[:uid])) && image.image.attached? && image.fresh?
           render json: {key: image.image.blob.key}
         else
           CreateCloseFriendsOgImageWorker.perform_async(params[:uid])
           head :not_found
+        end
+      end
+
+      private
+
+      def valid_uid?
+        unless Validations::UidValidator::REGEXP.match?(params[:uid])
+          head :bad_request
         end
       end
     end

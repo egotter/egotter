@@ -68,13 +68,6 @@ module ValidationConcern
     respond_with_error(:unauthorized, 'Unauthorized')
   end
 
-  def must_specify_valid_uid!
-    return if Validations::UidValidator::REGEXP.match?(params[:uid])
-
-    message = t('before_sign_in.must_specify_valid_uid')
-    respond_with_error(:bad_request, message)
-  end
-
   def valid_uid?(uid, only_validation: false)
     if Validations::UidValidator::REGEXP.match?(uid.to_s)
       true

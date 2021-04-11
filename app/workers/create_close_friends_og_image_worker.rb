@@ -26,6 +26,7 @@ class CreateCloseFriendsOgImageWorker
     return if og_image&.fresh?
 
     twitter_user = TwitterUser.latest_by(uid: uid)
+    return unless twitter_user
 
     if options['uids']
       friends = TwitterDB::User.where_and_order_by_field(uids: options['uids'])
