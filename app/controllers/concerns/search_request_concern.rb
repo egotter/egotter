@@ -8,6 +8,8 @@ module SearchRequestConcern
     around_action :disable_newrelic_tracer_for_crawlers, only: :show
     before_action(only: :show) { head :forbidden if twitter_dm_crawler? }
     before_action(only: :show) { valid_screen_name? }
+    before_action(only: :show) { not_found_screen_name? }
+    before_action(only: :show) { forbidden_screen_name? }
     before_action(only: :show) do
       if skip_search_request_check?
         logger.info "Maybe too many retries of #search_request_cache_exists? screen_name=#{params[:screen_name]} elapsed_time=#{params[:elapsed_time]}"
@@ -18,9 +20,7 @@ module SearchRequestConcern
       end
     end
     before_action(only: :show) { @self_search = current_user_search_for_yourself?(params[:screen_name]) }
-    before_action(only: :show) { !@self_search && not_found_screen_name?(params[:screen_name]) }
     before_action(only: :show) { !@self_search && not_found_user?(params[:screen_name]) }
-    before_action(only: :show) { !@self_search && forbidden_screen_name?(params[:screen_name]) }
     before_action(only: :show) { !@self_search && forbidden_user?(params[:screen_name]) }
 
     # Memo: Call the API for both the purpose of converting :screen_name to :uid and
