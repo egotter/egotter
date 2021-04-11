@@ -260,25 +260,25 @@ describe ValidationConcern, type: :controller do
     end
   end
 
-  describe '#forbidden_user?' do
+  describe '#forbidden_twitter_user?' do
     let(:screen_name) { 'screen_name' }
-    subject { controller.forbidden_user?(screen_name) }
-    before do
-      allow(search_request_validator).to receive(:forbidden_user?).with(screen_name).and_return(found)
-    end
+    subject { controller.forbidden_twitter_user?(screen_name) }
 
     context 'screen_name is forbidden' do
-      let(:found) { false }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'screen_name is not forbidden' do
-      let(:found) { true }
-      before { allow(controller).to receive(:error_pages_forbidden_user_path).with(anything).and_return('path') }
+      before do
+        allow(client).to receive(:user).with(screen_name).and_raise
+        allow(TwitterApiStatus).to receive(:suspended?).with(anything).and_return(true)
+        allow(controller).to receive(:error_pages_forbidden_user_path).with(anything).and_return('path')
+      end
       it do
         expect(controller).to receive(:redirect_to).with('path')
         is_expected.to be_truthy
       end
+    end
+
+    context 'screen_name is not forbidden' do
+      before { allow(client).to receive(:user).with(screen_name).and_return({this_is_user: true}) }
+      it { is_expected.to be_falsey }
     end
   end
 

@@ -10,7 +10,7 @@ class SearchesController < ApplicationController
   before_action :forbidden_screen_name?
   before_action { @self_search = current_user_search_for_yourself?(params[:screen_name]) }
   before_action { !@self_search && not_found_twitter_user?(params[:screen_name]) }
-  before_action { !@self_search && forbidden_user?(params[:screen_name]) }
+  before_action { !@self_search && forbidden_twitter_user?(params[:screen_name]) }
   before_action { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
   before_action { private_mode_specified?(@twitter_user) }
   before_action { search_limitation_soft_limited?(@twitter_user) }

@@ -15,13 +15,6 @@ class SearchRequestValidator
     user_signed_in? && @user.uid == uid.to_i
   end
 
-  def forbidden_user?(screen_name)
-    @client.user(screen_name)[:suspended]
-  rescue => e
-    logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
-    TwitterApiStatus.suspended?(e)
-  end
-
   def blocked_user?(screen_name)
     return false unless user_signed_in?
 

@@ -192,19 +192,19 @@ module ValidationConcern
   # It is possible not to call Twitter API in this method only when accessing from crawlers,
   # but since the same Twitter API is called in other places, it's a bit meaningless.
   def not_found_twitter_user?(screen_name)
-    found = true
+    not_found = false
     begin
       request_context_client.user(screen_name)
     rescue => e
-      found = !TwitterApiStatus.not_found?(e)
+      not_found = TwitterApiStatus.not_found?(e)
     end
 
-    if found
-      false
-    else
+    if not_found
       session[:screen_name] = screen_name
       redirect_to error_pages_not_found_user_path(via: current_via(__method__))
       true
+    else
+      false
     end
   end
 
@@ -223,8 +223,15 @@ module ValidationConcern
   # It is possible not to call Twitter API in this method only when accessing from crawlers,
   # but since the same Twitter API is called in other places, it's a bit meaningless.
   # NOTE: The temporarily suspended users ( user[:suspended] == true ) are not checked.
-  def forbidden_user?(screen_name)
-    if search_request_validator.forbidden_user?(screen_name)
+  def forbidden_twitter_user?(screen_name)
+    suspended = false
+    begin
+      suspended = request_context_client.user(screen_name)[:suspended]
+    rescue => e
+      suspended = TwitterApiStatus.suspended?(e)
+    end
+
+    if suspended
       session[:screen_name] = screen_name
       redirect_to error_pages_forbidden_user_path(via: current_via(__method__))
       true

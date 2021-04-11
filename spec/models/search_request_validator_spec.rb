@@ -63,23 +63,6 @@ RSpec.describe SearchRequestValidator, type: :model do
     end
   end
 
-  describe 'forbidden_user?' do
-    let(:screen_name) { 'name' }
-    let(:response_user) { {suspended: false} }
-    subject { instance.forbidden_user?(screen_name) }
-    before {allow(client).to receive(:user).with(screen_name).and_return(response_user)  }
-    it { is_expected.to be_falsey }
-
-    context 'exception is raised' do
-      let(:error) { RuntimeError.new }
-      before { allow(client).to receive(:user).with(screen_name).and_raise(error) }
-      it do
-        expect(TwitterApiStatus).to receive(:suspended?).with(error)
-        is_expected.to be_falsey
-      end
-    end
-  end
-
   describe 'blocked_user?' do
     let(:screen_name) { 'name' }
     subject { instance.blocked_user?(screen_name) }
