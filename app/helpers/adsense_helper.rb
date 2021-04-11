@@ -145,8 +145,8 @@ module AdsenseHelper
         when [true,  'waiting',               'new',  :top]    then USER_WAITING
         when [true,  'mutual_unfriends',      'list', :slit]   then USER_BLOCKING_OR_BLOCKED
         when [true,  'mutual_unfriends',      'show', :bottom] then USER_BLOCKING_OR_BLOCKED
-        when [true,  'mutual_unfriends',      'show', :middle] then 7010796875 # 0315
-        when [true,  'mutual_unfriends',      'show', :top]    then 8474199583 # 0309
+        when [true,  'mutual_unfriends',      'show', :middle] then USER_BLOCKING_OR_BLOCKED
+        when [true,  'mutual_unfriends',      'show', :top]    then USER_BLOCKING_OR_BLOCKED
         when [true,  'close_friends',         'list', :slit]   then USER_CLOSE_FRIENDS
         when [true,  'close_friends',         'show', :bottom] then 4116152176 # 0316
         when [true,  'close_friends',         'show', :middle] then 5585787146 # 0317
@@ -198,8 +198,8 @@ module AdsenseHelper
         when [true,  'statuses',              'show', :top]    then USER_UNFOLLOWERS
         when [true,  'unfollowers',           'list', :slit]   then USER_UNFOLLOWERS
         when [true,  'unfollowers',           'show', :bottom] then USER_UNFOLLOWERS
-        when [true,  'unfollowers',           'show', :middle] then 3802179603 # 0318
-        when [true,  'unfollowers',           'show', :top]    then 6619914631 # 0305
+        when [true,  'unfollowers',           'show', :middle] then USER_UNFOLLOWERS
+        when [true,  'unfollowers',           'show', :top]    then USER_UNFOLLOWERS
         when [true,  'unfriends',             'list', :slit]   then USER_UNFRIENDS
         when [true,  'unfriends',             'new',  :top]    then USER_UNFRIENDS
         when [true,  'unfriends',             'show', :bottom] then USER_UNFRIENDS
@@ -223,17 +223,19 @@ module AdsenseHelper
         when [false, 'waiting',               'new',  :top]    then GUEST_WAITING
         when [false, 'profiles',              'show', :top]    then 9787281250 # 0304
         when [false, 'profiles',              'show', :bottom] then 2832227414 # 0341
+        when [false, 'unfollowers',           'list', :slit]   then 1646542132 # 0320
         when [false, 'unfollowers',           'show', :bottom] then 1646542132 # 0320
-        when [false, 'unfollowers',           'show', :middle] then 9077475443 # 0321
-        when [false, 'unfollowers',           'show', :top]    then 5306832964 # 0306
+        when [false, 'unfollowers',           'show', :middle] then 1646542132 # 0320
+        when [false, 'unfollowers',           'show', :top]    then 1646542132 # 0320
         when [false, 'unfriends',             'list', :slit]   then GUEST_UNFRIENDS
         when [false, 'unfriends',             'new',  :top]    then GUEST_UNFRIENDS
         when [false, 'unfriends',             'show', :bottom] then GUEST_UNFRIENDS
         when [false, 'unfriends',             'show', :middle] then GUEST_UNFRIENDS
         when [false, 'unfriends',             'show', :top]    then GUEST_UNFRIENDS
+        when [false, 'mutual_unfriends',      'list', :slit]   then 7764393778 # 0324
         when [false, 'mutual_unfriends',      'show', :bottom] then 7764393778 # 0324
-        when [false, 'mutual_unfriends',      'show', :middle] then 8020378796 # 0325
-        when [false, 'mutual_unfriends',      'show', :top]    then 9688931108 # 0310
+        when [false, 'mutual_unfriends',      'show', :middle] then 7764393778 # 0324
+        when [false, 'mutual_unfriends',      'show', :top]    then 7764393778 # 0324
         when [false, 'close_friends',         'show', :bottom] then 6707297127 # 0326
         when [false, 'close_friends',         'show', :middle] then 4436604425 # 0327
         when [false, 'close_friends',         'show', :top]    then 8094925634 # 0314
@@ -436,9 +438,9 @@ module AdsenseHelper
         when [true,  'scores',                'show', :top]    then USER_SCORES_RESP
         when [true,  'statuses',              'show', :top]    then USER_STATUSES_RESP
         when [true,  'unfollowers',           'list', :slit]   then 8717742161 # 0330
-        when [true,  'unfollowers',           'show', :bottom] then 7404660497 # 0331
-        when [true,  'unfollowers',           'show', :middle] then 6837043653 # 0332
-        when [true,  'unfollowers',           'show', :top]    then 7844957271 # 0333
+        when [true,  'unfollowers',           'show', :bottom] then 8717742161 # 0330
+        when [true,  'unfollowers',           'show', :middle] then 8717742161 # 0330
+        when [true,  'unfollowers',           'show', :top]    then 8717742161 # 0330
         when [true,  'unfriends',             'list', :slit]   then USER_UNFRIENDS_RESP
         when [true,  'unfriends',             'new',  :top]    then USER_UNFRIENDS_RESP
         when [true,  'unfriends',             'show', :bottom] then USER_UNFRIENDS_RESP
@@ -465,6 +467,7 @@ module AdsenseHelper
         when [false, 'audience_insights',     'show', :bottom] then GUEST_AUDIENCE_INSIGHTS_RESP
         when [false, 'mutual_unfriends',      'list', :slit]   then GUEST_BLOCKING_OR_BLOCKED_RESP
         when [false, 'mutual_unfriends',      'show', :bottom] then GUEST_BLOCKING_OR_BLOCKED_RESP
+        when [false, 'mutual_unfriends',      'show', :middle] then GUEST_BLOCKING_OR_BLOCKED_RESP
         when [false, 'mutual_unfriends',      'show', :top]    then GUEST_BLOCKING_OR_BLOCKED_RESP
         when [false, 'close_friends',         'list', :slit]   then GUEST_CLOSE_FRIENDS_RESP
         when [false, 'close_friends',         'show', :bottom] then GUEST_CLOSE_FRIENDS_RESP
@@ -529,6 +532,7 @@ module AdsenseHelper
         when [false, 'statuses',              'show', :top]    then GUEST_STATUSES_RESP
         when [false, 'unfollowers',           'list', :slit]   then GUEST_UNFOLLOWERS_RESP
         when [false, 'unfollowers',           'show', :bottom] then GUEST_UNFOLLOWERS_RESP
+        when [false, 'unfollowers',           'show', :middle] then GUEST_UNFOLLOWERS_RESP
         when [false, 'unfollowers',           'show', :top]    then GUEST_UNFOLLOWERS_RESP
         when [false, 'unfriends',             'list', :slit]   then GUEST_UNFRIENDS_RESP
         when [false, 'unfriends',             'new',  :top]    then GUEST_UNFRIENDS_RESP
