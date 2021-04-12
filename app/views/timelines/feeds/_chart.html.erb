@@ -5,7 +5,7 @@
   <%= render partial: 'timelines/placeholder', locals: {menu_name: feed_name, menu_or_users: 'menu'} %>
 
   <% container_id = "id-#{graph.object_id}" %>
-  <div id="<%= container_id %>" class="mb-5" style="height: 120px;"></div>
+  <div id="<%= container_id %>" class="mb-5" style="height: 140px;"></div>
 
   <%= link_to(t('timelines.feeds.view_more'), url, class: 'btn btn-primary btn-block btn-view-more') %>
 </div>

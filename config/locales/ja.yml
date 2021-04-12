@@ -807,51 +807,6 @@ ja:
         header: 'リムられチェック'
         subheader: '外れたフォロワーをすぐに確認'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
-      what_is_unfriends:
-        title: '「リムり」「リムられ」ってどういう意味？'
-        description1_html: >
-          リムるは「<span class="egotter-pink">リムーブする</span>」を省略した言葉です。
-          直訳すると、「取り除く」や「削除する」という意味になります。<br>
-          <br>
-          このことから、ツイッターでは「<span class="egotter-pink">フォローを解除する</span>」ことを「リムる」と表現します。
-        description2_html: >
-          フォローを解除すると、解除された人のツイートはもう見ることができません。<br>
-          <br>
-          「リムーブする」にはさらにいくつかのバリエーションがあります。<br>
-          <br>
-          リムる：フォローを解除<span class="egotter-pink">する</span>こと<br>
-          リムられる：フォローを解除<span class="egotter-pink">される</span>こと<br>
-          <br>
-          自分が解除するのか、相手に解除されるのかによって、リムるとリムられるを使い分けることができます。<br>
-          <br>
-          関連する言葉として「お別れはブロックで」というものがあります。<br>
-          <br>
-          これは相手に対して「フォローを解除する場合は、<span class="egotter-pink">お互いにリムりましょう</span>」という意思表示をすることになります。<br>
-          <br>
-          リムりやリムられは、今見ている<span class="egotter-pink">リムられチェックを使うことで初めて</span>確認することができます。ツイッターを使っているだけでは確認することができません。<br>
-          <br>
-          <a href="%{url}">リムられチェック</a>を使うと、自分のフォロワーの中から、フォローを解除されたアカウントを簡単に見付けることができます。<br>
-          <br>
-          <a href="%{url}">リムられチェック</a>でフォローを解除されたアカウントを見付けた後は、その場で簡単にフォロワー整理を行うことができます。
-      how_to_use_unfriends:
-        title: 'リムられチェックはどうやって使うの？'
-        description_html: >
-          <a href="%{url}">リムられチェックにログイン</a>するだけで、利用登録は完了です。<br>
-          後は自動でリムられの集計を行います。<br>
-          <br>
-          その後は、リムられが増えたタイミングで、<span class="egotter-pink">DMで通知</span>が届きます。<br>
-          <br>
-          通知の中には、「新しく ○ 人にリムられました。次の更新は 約○時間後 です」という内容と、リムられた具体的な<span class="egotter-pink">ユーザー名</span>が書かれています。
-        check: 'ログインするだけ'
-      when_to_use_unfriends:
-        title: 'リムられチェックの登録はいつでもいいの？'
-        description_html: >
-          できるだけ早く登録した方がよいです。リムられデータは、<br>
-          <span class="egotter-pink">登録を開始してから</span>たまっていきます。<br>
-          <br>
-          そのため、<a href="%{url}">リムられチェックへのログイン</a>は先にしておきましょう。<br>
-          リムられた後にログインしても、もう誰にリムられたのか<span class="egotter-pink">分からない</span>ままになってしまいます。
-        check: 'すぐに登録'
     show:
       tweet: '%{text} #egotter %{url}'
   unfollowers:
@@ -2219,18 +2174,6 @@ ja:
         使い始めてからデータが貯まるので、<span class="egotter-pink">早く使うほどお得</span>です。
       check1: '安心の実績'
       check2: '満足率95%'
-    close_friends_tweets_section:
-      check1: '安心の実績'
-      check2: '満足率95%'
-    personality_insights_tweets_section:
-      check1: '安心の実績'
-      check2: '満足率95%'
-    delete_tweets_tweets_section:
-      check1: '安心の実績'
-      check2: '満足率95%'
-    delete_favorites_tweets_section:
-      check1: '安心の実績'
-      check2: '満足率95%'
     profile_section:
       loading: '@%{user} のプロフィールを読み込み中'
       loading_error_html: '@%{user} のプロフィール読み込みに失敗しました。お手数ですが再度お試しください。何度も起きる場合は %{egotter_link} までご連絡ください。'
@@ -2243,42 +2186,6 @@ ja:
     announcement:
       title: "お知らせ"
     features:
-      title1_html: '<span class="egotter-pink">安全に</span>ツイートを削除'
-      title2_html: '<span class="egotter-pink">完全に</span>ツイートを削除'
-      title3_html: 'ツイート削除の<span class="egotter-pink">進捗</span>をお知らせ'
-      title1_2_html: '<span class="egotter-pink">安全に</span>いいねを削除'
-      title2_2_html: '<span class="egotter-pink">完全に</span>いいねを削除'
-      title3_2_html: 'いいね削除の<span class="egotter-pink">進捗</span>をお知らせ'
-      title4_html: 'えごったーって何？'
-      title5_html: '公式アカウント'
-      title6_html: '<span class="egotter-pink">安全に</span>リムられをチェック'
-      title7_html: '公式アカウント'
-      text1_html: '<span class="egotter-pink">%{count}万回</span>以上利用されたえごったーなら、安全にツイートを削除することができます。'
-      text2_html: '可能な限り完全にツイートを削除します。'
-      text3_html: 'どこまで進んでいるのかを簡単に確認できます。'
-      text1_2_html: '<span class="egotter-pink">%{count}万回</span>以上利用されたえごったーなら、安全にいいねを削除することができます。'
-      text2_2_html: '可能な限り完全にいいねを削除します。'
-      text3_2_html: 'どこまで進んでいるのかを簡単に確認できます。'
-      text4_html: 'フォローを外されたときにDMが届きます。'
-      text5_html: |
-        ツイッターの一括削除にはえごったーを利用しています。もし、ツイートの一括削除ができない場合は、
-        <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
-      text6_html: '<span class="egotter-pink">%{count}万回</span>以上利用されたえごったーなら、安全にリムられをチェックできます。'
-      text7_html: |
-        ユーザーのフォロー解除、リムられは、えごったーが分析したデータから集計しています。<br>
-        <br>
-        フォロー解除やリムられに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
-      note2: '※ツイッターの仕組み上、最大で3200件まで削除できます。'
-      note4: '※設定でオフにすることができます。'
-      button5: '@egotter_cs に質問してみる'
-      button7: '@egotter_cs に質問してみる'
-      check1: '安全で安心'
-      check2: '完全に削除'
-      check3: '進捗がすぐ分かる'
-      check4: 'リムられ通知'
-      check5: '質問はお気軽に'
-      check6: '安全で安心'
-      check7: '質問はお気軽に'
     functions:
       title: 'えごったーには他にも便利な機能がたくさん'
       text_html: >

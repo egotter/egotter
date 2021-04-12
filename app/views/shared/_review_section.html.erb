@@ -13,7 +13,9 @@
   <i class="fas fa-user"></i>
 </div>
 
-<div id="searched-tweets" class="d-flex" style="overflow-x: scroll;"></div>
+<div id="searched-tweets" class="d-flex" style="overflow-x: scroll;">
+  <%= image_tag '/ajax-loader.gif' %>
+</div>
 
 <div class="text-center m-3"><%= t('.description_bottom_html') %></div>
 
@@ -24,9 +26,15 @@
   <%= render partial: 'shared/check_and_note', locals: {text: t('.check2')} %>
 </div>
 
+<% if divider %>
+  <hr>
+<% end %>
+
+<% kind ||= '' %>
+
 <script>
   $(function () {
-    var url = '<%= load_public_tweets_path %>';
+    var url = '<%= raw load_public_tweets_path(kind: kind, via: current_via) %>';
     var selector = '#searched-tweets';
     new PublicTweets(url, selector, function () {
       trackPageEvents('TopPage events', 'PublicTweets loaded');

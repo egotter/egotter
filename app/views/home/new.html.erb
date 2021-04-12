@@ -3,22 +3,16 @@
 
 <%= render partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top} %>
 
-<%= render partial: 'shared/review_section' %>
-<hr>
+<%= render partial: 'shared/about_egotter' %>
 
-<%= render partial: 'shared/features_section' %>
-<hr>
-
-<%= render partial: 'shared/recent_users_section' %>
-<hr>
-
-<%= render partial: 'shared/functions_section' %>
-<hr>
-
+<%= render partial: 'shared/review_section', locals: {divider: true} %>
+<%= render partial: 'shared/features_section', locals: {divider: true} %>
+<%= render partial: 'shared/recent_users_section', locals: {divider: true} %>
+<%= render partial: 'shared/functions_section', locals: {divider: true} %>
 <%= render partial: 'shared/announcements_section' %>
 
 <% if show_redirection_modal? %>
-  <%= render partial: 'modal/redirection_modal', locals: {icon: current_user_icon, user: current_user, positive_url: timeline_path(current_user, via: current_via('redirection_modal'))} %>
+  <%= render partial: 'modal/redirection_modal', locals: {positive_url: timeline_path(current_user, via: current_via('redirection_modal'))} %>
 <% end %>
 
 <script>

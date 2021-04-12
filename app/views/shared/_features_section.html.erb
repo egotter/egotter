@@ -1,5 +1,9 @@
 <div id="features-container" style="min-height: 200px;"></div>
 
+<% if divider %>
+  <hr>
+<% end %>
+
 <script>
   $(function () {
     var url = '<%= raw api_v1_features_list_path(via: current_via) %>';

@@ -4,10 +4,14 @@
 - right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html'), redirect_path: cluster_path(screen_name: ':screen_name', via: current_via)}
 = render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options}
 
-- if show_redirection_modal?
-  = render partial: 'modal/redirection_modal', locals: {icon: current_user_icon, user: current_user, positive_url: cluster_path(current_user, via: current_via('redirection_modal'))}
+= render partial: 'description'
+= render partial: 'shared/about_egotter'
 
-= render partial: 'shared/review_section'
-= render partial: 'shared/features_section'
-= render partial: 'shared/functions_section'
+= render partial: 'shared/review_section', locals: {divider: true}
+= render partial: 'shared/features_section', locals: {divider: true}
+= render partial: 'shared/recent_users_section', locals: {divider: true}
+= render partial: 'shared/functions_section', locals: {divider: true}
 = render partial: 'shared/announcements_section'
+
+- if show_redirection_modal?
+  = render partial: 'modal/redirection_modal', locals: {positive_url: cluster_path(current_user, via: current_via('redirection_modal'))}

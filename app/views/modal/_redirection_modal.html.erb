@@ -2,13 +2,13 @@
 <% modal_body = t(
   '.body_html',
   page_name: redirection_modal_page_name,
-  icon: icon,
-  user: user.screen_name,
-  timeline_url: timeline_path(user, via: current_via('redirection_modal')),
+  icon: current_user_icon,
+  user: current_user.screen_name,
+  timeline_url: timeline_path(current_user, via: current_via('redirection_modal')),
   settings_url: settings_url(via: current_via('redirection_modal')),
   switch_account_url: force_sign_in_path(via: current_via('redirection_modal')),
 ) %>
-<%= modal_dialog(id: modal_id, title: t('.title', user: user.screen_name), body: modal_body, button: {positive: t('.yes'), negative: t('.no')}) %>
+<%= modal_dialog(id: modal_id, title: t('.title', user: current_user.screen_name), body: modal_body, button: {positive: t('.yes'), negative: t('.no')}) %>
 <script>
   $(function () {
     var url = '<%= raw positive_url %>';

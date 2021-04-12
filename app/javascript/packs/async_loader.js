@@ -52,7 +52,7 @@ class AsyncLoader {
 
   update(res) {
     if (res.html) {
-      $(this.selector).html(res.html);
+      $(this.selector).empty().html(res.html);
     }
 
     if (this.callback) {

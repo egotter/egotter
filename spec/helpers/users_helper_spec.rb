@@ -7,7 +7,8 @@ RSpec.describe UsersHelper, type: :helper do
 
   describe '#current_user_icon' do
     subject { helper.current_user_icon }
-    it { is_expected.to be_falsey }
+    before { allow(helper).to receive(:user_signed_in?) }
+    it { is_expected.to be_truthy }
   end
 
   describe '#current_user_statuses_count' do

@@ -6,7 +6,7 @@
 
 .text-center.my-5= link_to t('.see_sample'), personality_insight_path(screen_name: 'ego_tter', via: current_via('see_sample')), class: 'btn btn-outline-primary'
 
-= render partial: 'shared/personality_insights_tweets_section'
+= render partial: 'shared/review_section', locals: {kind: 'personality_insights', divider: true}
 
 - if show_redirection_modal? && !personality_insight_is_processing?
-  = render partial: 'modal/redirection_modal', locals: {icon: current_user_icon, user: current_user, positive_url: personality_insight_path(current_user, via: current_via('redirection_modal'))}
+  = render partial: 'modal/redirection_modal', locals: {positive_url: personality_insight_path(current_user, via: current_via('redirection_modal'))}
