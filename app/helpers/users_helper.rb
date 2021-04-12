@@ -34,7 +34,12 @@ module UsersHelper
     if instance_variable_defined?(:@current_user_icon)
       @current_user_icon
     else
-      @current_user_icon = TwitterDB::User.find_by(uid: current_user&.uid)&.profile_image_url_https
+      if user_signed_in?
+        url = TwitterDB::User.find_by(uid: current_user.uid)&.profile_image_url_https
+      else
+        url = egotter_icon_url
+      end
+      @current_user_icon = url
     end
   end
 

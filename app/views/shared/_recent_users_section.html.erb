@@ -3,6 +3,12 @@
 
 <div id="recent-users-container" class="d-flex" style="overflow-x: scroll;"></div>
 
+<div class="text-center m-3"><%= t('.description_bottom') %></div>
+
+<div class="mx-auto" style="width: 300px;">
+  <%= sign_in_with_twitter_link(nil, 'recent_users_button', class: 'btn btn-primary w-100') %>
+</div>
+
 <template id="recent-users-template">
   <div class="m-3">
     <a href="{{timeline_url}}">

@@ -1,9 +1,10 @@
 class PublicTweets {
   constructor(url, selector, callback) {
     new AsyncLoader(url, selector, function (res) {
-      window.twttr.widgets.load(
-          document.getElementById(selector)
-      );
+      // Loaded in shared/twitter
+      window.twttr.ready(function () {
+        window.twttr.widgets.load(document.getElementById(selector));
+      });
       callback(res);
     }).lazyload();
   }

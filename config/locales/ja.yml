@@ -2208,6 +2208,7 @@ ja:
     recent_users_section:
       title: '最近検索されたユーザー'
       description: 'えごったーは 直近の1日で %{count} 回利用されました。世界でもトップクラスのツイッター分析アプリです。'
+      description_bottom: 'みんな使っている安心の分析アプリで、フォロー・フォロワーを管理しましょう。'
     review_section:
       title: 'レビュー'
       description_top_html: |

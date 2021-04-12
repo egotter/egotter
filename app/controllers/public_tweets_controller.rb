@@ -29,7 +29,7 @@ class PublicTweetsController < ApplicationController
   def fetch_tweets(keyword)
     if SearchedTweets.exists?(keyword)
       CreateTweetsWorker.perform_async(keyword) if SearchedTweets.ttl(keyword) < 5.minutes
-      JSON.parse(SearchedTweets.get(keyword)).take(5).map { |tweet| Hashie::Mash.new(tweet) }
+      JSON.parse(SearchedTweets.get(keyword)).take(10).map { |tweet| Hashie::Mash.new(tweet) }
     else
       CreateTweetsWorker.perform_async(keyword)
       []
