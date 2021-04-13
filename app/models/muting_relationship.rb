@@ -28,12 +28,17 @@ class MutingRelationship < ApplicationRecord
       client = User.find(user_id).api_client.twitter
       options = {count: 5000, cursor: -1}
       limit = 20000
-      call_limit = 4
+      call_limit = 10
       call_count = 0
       collection = []
 
       while true do
-        response = client.muted_ids(options)
+        response = nil
+        begin
+          response = client.muted_ids(options)
+        rescue => e
+        end
+
         call_count += 1
         break if response.nil?
 

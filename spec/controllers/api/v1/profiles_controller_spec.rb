@@ -25,7 +25,7 @@ RSpec.describe Api::V1::ProfilesController, type: :controller do
     context 'user is not found' do
       it do
         get :show, params: {uid: twitter_user.uid}, xhr: true
-        expect(JSON.parse(response.body).has_key?('error')).to be_truthy
+        expect(response.body).to be_empty
       end
     end
   end
