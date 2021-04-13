@@ -12,7 +12,7 @@ module ViewVariablesHelper
     when 'unfriends'
       t('page_titles.unfriends', user: name)
     when 'unfollowers'
-      t('page_titles.unfollowers', user: name)
+      t('page_titles.unfollowers', user: name, count: Rails.configuration.x.constants[:persisted_count_ja])
     when 'mutual_unfriends'
       t('page_titles.mutual_unfriends', user: name)
     when 'blockers'
@@ -83,7 +83,7 @@ module ViewVariablesHelper
     when 'unfriends'
       t('meta_descriptions.unfriends', values)
     when 'unfollowers'
-      t('meta_descriptions.unfollowers', values)
+      t('meta_descriptions.unfollowers', values.merge(count: Rails.configuration.x.constants[:persisted_count_ja]))
     when 'mutual_unfriends'
       t('meta_descriptions.mutual_unfriends', values)
     when 'one_sided_friends'
