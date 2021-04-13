@@ -29,7 +29,7 @@
 .mb-5= render(partial: 'adsense/ad', locals: {vertical: :feed_unfollowers})
 .mb-0= feed_item :users, feed_attrs('mutual_unfriends', @twitter_user)
 .mb-5= render(partial: 'adsense/ad', locals: {vertical: :feed_mutual_unfriends})
-.mb-5= feed_item :users, feed_attrs('blockers', @twitter_user)
+.mb-5= render partial: 'timelines/feeds/blockers', locals: {twitter_user: @twitter_user}
 .mb-5= feed_item :muters, feed_attrs('muters', @twitter_user)
 .mb-5= feed_item :users, feed_attrs('mutual_friends', @twitter_user)
 .mb-5= feed_item :users, feed_attrs('one_sided_friends', @twitter_user)

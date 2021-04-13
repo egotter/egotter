@@ -38,7 +38,7 @@ class BlockReport < ApplicationRecord
       has_subscription = user.has_valid_subscription?
       blocked_users = fetch_blocked_users(user)
       url_options = campaign_params('block_report_profile').merge(dialog_params).merge(token: token, medium: 'dm', type: 'block', via: 'block_report')
-      blocked_names = generate_profile_urls(blocked_users, url_options, user.add_atmark_to_block_report?)
+      blocked_names = generate_profile_urls(blocked_users, url_options, user.reveal_names_on_block_report?)
 
       {
           has_subscription: has_subscription,
@@ -273,16 +273,16 @@ class BlockReport < ApplicationRecord
 
     private
 
-    def generate_profile_urls(users, url_options, add_atmark)
+    def generate_profile_urls(users, url_options, reveal_name)
       users.map do |user|
         screen_name = user[:screen_name]
-        url = url_helper.profile_url({screen_name: screen_name}.merge(url_options))
-        if add_atmark
-          name = "@#{screen_name}"
+
+        if reveal_name
+          url = url_helper.profile_url({screen_name: screen_name}.merge(url_options))
+          "@#{screen_name} #{url}"
         else
-          name = mask_name(screen_name)
+          mask_name(screen_name)
         end
-        "#{name} #{url}"
       end
     end
 

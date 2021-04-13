@@ -70,7 +70,7 @@ module PathsHelper
     when 'mutual_unfriends'
       mutual_unfriend_path(twitter_user, via: via)
     when 'blockers'
-      blockers_path(via: via)
+      nil
     when 'muters'
       nil
     when 'mutual_friends'
@@ -120,7 +120,7 @@ module PathsHelper
     when 'mutual_unfriends'
       api_v1_mutual_unfriends_summary_path(uid: twitter_user.uid, via: via)
     when 'blockers'
-      api_v1_blockers_summary_path(uid: twitter_user.uid, via: via)
+      nil
     when 'muters'
       nil
     when 'mutual_friends'

@@ -250,11 +250,6 @@ module TwitterUserAssociations
     BlockingRelationship.where(to_uid: uid).limit(FETCH_USERS_LIMIT).pluck(:from_uid)
   end
 
-  # TODO Remove later
-  def blocked_uids
-    blocker_uids
-  end
-
   def blockers_size
     BlockingRelationship.where(to_uid: uid).size
   end

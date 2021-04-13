@@ -242,8 +242,8 @@ class User < ApplicationRecord
     has_valid_subscription? || 1.weeks.ago < created_at
   end
 
-  def add_atmark_to_block_report?
-    has_valid_subscription?
+  def reveal_names_on_block_report?
+    has_valid_subscription? && !has_trial_subscription?
   end
 
   def continuous_sign_in?(ignore_today = true)

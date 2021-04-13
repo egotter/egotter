@@ -38,6 +38,8 @@ class ErrorPagesController < ApplicationController
 
   def not_signed_in; end
 
+  def blockers_not_permitted; end
+
   def spam_ip_detected; end
 
   def suspicious_access_detected; end

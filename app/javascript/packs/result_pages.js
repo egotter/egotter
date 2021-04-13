@@ -119,41 +119,12 @@ class FetchTask {
     var users = [];
 
     res.users.forEach(function (user) {
-      var rendered = self.renderUser(user);
+      var rendered = MustacheUtil.renderUser(self.template, user);
       users.push(rendered);
     });
 
     return users;
   }
-
-  renderUser(user) {
-    var self = this;
-    var rendered = $(Mustache.render(this.template, user));
-
-    if (user.profile_image_url) {
-      rendered.find('img').on('error', function () {
-        self.drawFallbackTextToImage(rendered.find('img'));
-        return true;
-      }).attr('src', user.profile_image_url);
-    } else {
-      self.drawFallbackTextToImage(rendered.find('img'));
-    }
-
-    return rendered;
-
-  }
-
-  drawFallbackTextToImage(img) {
-    this.drawText(img.parent(), img.attr('alt'));
-    img.remove();
-  }
-
-  drawText(container, text) {
-    var style = 'font-size: x-small; width: 50px; height: 50px; overflow: hidden;';
-    var div = $('<div/>', {text: text, class: 'rounded-circle shadow p-1', style: style});
-    container.append(div);
-  }
-
 }
 
 window.FetchTask = FetchTask;

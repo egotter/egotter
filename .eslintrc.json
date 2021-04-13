@@ -19,6 +19,7 @@
     "ga": true,
     "logger": true,
     "ahoy": true,
+    "MustacheUtil": true,
     "extractErrorMessage": true,
     "showErrorMessage": true,
     "Highcharts": true,

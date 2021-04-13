@@ -23,6 +23,7 @@ window.ahoy = ahoy;
 
 import "./egotter";
 import "./cache";
+import "./mustache_util";
 import "./modal_dialog";
 import "./toast_message";
 import "./welcome";

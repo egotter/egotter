@@ -1,0 +1,44 @@
+<div id="feed-blockers" class="blockers feed-item card p-3">
+  <h3 class="h4 text-center"><%= t('.title') %></h3>
+
+  <div class="text-center my-3"><%= t('.description_html', user: twitter_user.screen_name) %></div>
+
+  <% if user_signed_in? && current_user.uid == twitter_user.uid %>
+    <% if current_user.has_valid_subscription? %>
+      <% if current_user.has_trial_subscription? %>
+        <div class="my-3"><%= t('.text_with_count', user: twitter_user.screen_name, count: twitter_user.blockers_size) %></div>
+        <div class="text-muted small my-3"><%= t('.note2') %></div>
+        <a href="#" class="btn btn-primary btn-end-trial"><%= t('.end_trial') %></a>
+      <% else %>
+        <div id="blockers-container" class="d-flex justify-content-center flex-wrap my-5"></div>
+        <a href="<%= blockers_path(via: current_via) %>" class="btn btn-primary">
+          <%= t('.view') %>
+          <span><%= twitter_user.blockers_size %></span>
+        </a>
+        <script>
+          $(function () {
+            var url = '<%= raw api_v1_blockers_summary_path(uid: twitter_user.uid, via: current_via) %>';
+            var container = $('#blockers-container');
+
+            container.lazyload().one('appear', function () {
+              $.get(url).done(function (res) {
+                var template = window.templates['user'];
+
+                res.users.forEach(function (user) {
+                  var rendered = MustacheUtil.renderUser(template, user);
+                  container.append(rendered);
+                });
+              });
+            });
+          });
+        </script>
+      <% end %>
+    <% else %>
+      <div class="my-3"><%= t('.text_with_count', user: twitter_user.screen_name, count: twitter_user.blockers_size) %></div>
+      <div class="text-muted small my-3"><%= t('.note1') %></div>
+      <a href="#" class="btn btn-primary btn-checkout"><%= t('.purchase') %></a>
+    <% end %>
+  <% else %>
+    <div class="text-center my-3"><%= t('.not_signed_in') %></div>
+  <% end %>
+</div>

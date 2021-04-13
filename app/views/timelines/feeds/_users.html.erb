@@ -84,7 +84,7 @@
         var template = window.templates['user'];
 
         res.users.forEach(function (user) {
-          var rendered = renderUser(template, user);
+          var rendered = MustacheUtil.renderUser(template, user);
           box.find('.users').append(rendered);
         });
 
@@ -102,32 +102,6 @@
       $(placeholderSelector).hide();
       var box = $(boxSelector);
       box.find('.empty-result-and-message').find('.message').text(message).end().show();
-    }
-
-    function renderUser(template, user) {
-      var rendered = $(Mustache.render(template, user));
-
-      if (user.profile_image_url) {
-        rendered.find('img').on('error', function () {
-          drawFallbackTextToImage(rendered.find('img'));
-          return true;
-        }).attr('src', user.profile_image_url);
-      } else {
-        drawFallbackTextToImage(rendered.find('img'));
-      }
-
-      return rendered;
-    }
-
-    function drawFallbackTextToImage(img) {
-      drawText(img.parent(), img.attr('alt'));
-      img.remove();
-    }
-
-    function drawText(container, text) {
-      var style = 'font-size: x-small; width: 48px; height: 48px; overflow: hidden;';
-      var div = $('<div/>', {text: text, class: 'rounded shadow p-1', style: style});
-      container.append(div);
     }
 
     if (fromCrawler) {

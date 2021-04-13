@@ -247,10 +247,20 @@ ja:
         description: '@%{user} がブロックされたかもしれないユーザーです。相互フォローが外れた数を集計しています。'
       blockers:
         title: 'ブロックされている（高精度）'
-        description: '@%{user} がブロックされたユーザーをできる限り高精度に集計しています。'
+        description_html: '@%{user} がブロックされたユーザーをできる限り高精度に集計しています。'
+        not_signed_in: 'このデータは本人のみ見ることができます。'
+        text_with_count: '@%{user} は %{count}人 からブロックされているようです。'
+        end_trial: 'トライアル期間を終了する'
+        purchase: '有料プランを購入する'
+        view: '続きを見る'
+        note1: '有料プランを購入すれば、Twitter IDまで分かります。'
+        note2: 'トライアル期間を終了すれば、Twitter IDまで分かります。'
       muters:
         title: 'ミュートされている'
-        description_html: '@%{user} がミュートされたユーザーを集計しています。<br><br>%{count}人からミュートされているようです。'
+        description_html: |
+          @%{user} がミュートされたユーザーを集計しています。<br>
+          <br>
+          %{count}人からミュートされているようです。
       mutual_friends:
         title: '相互フォロー'
         description: '@%{user} が相互フォローしているユーザーです。'
@@ -1347,6 +1357,8 @@ ja:
         このアカウントを分析するには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> が必要です。
     not_signed_in:
       message_html: 'このページを見るには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> が必要です。'
+    blockers_not_permitted:
+      message_html: 'このページを見るには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> と <a href="%{pricing_url}" class="btn btn-primary btn-sm">有料プラン</a> の購入と トライアル期間の終了 が必要です。'
     soft_limited:
       message_html: |
         検索された @%{user} はフォローとフォロワーが多いため、<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> した後のみ検索できます。
@@ -1949,10 +1961,10 @@ ja:
           error: '検索された @%{user} のデータ取得に失敗しました。ページを更新してみてください。'
       orders:
         end_trial:
-          success_html: 'トライアル期間の更新に成功しました。ページを更新してください。<span class="text-info">%{count}秒後に自動的に移動します</span> <img src="/ajax-loader.gif?a=1">'
+          success_html: 'トライアル期間の更新に成功しました。ページを更新します。<span class="text-info">%{count}秒後に自動的に移動します</span> <img src="/ajax-loader.gif?a=1">'
           fail: 'トライアル期間の更新に失敗しましたお手数ですが、@egotter_cs までご連絡ください'
         cancel:
-          success_html: '有料プランをキャンセルしました。ページを更新してください。<span class="text-info">%{count}秒後に自動的に移動します</span> <img src="/ajax-loader.gif?a=1">'
+          success_html: '有料プランをキャンセルしました。ページを更新します。<span class="text-info">%{count}秒後に自動的に移動します</span> <img src="/ajax-loader.gif?a=1">'
           fail: '有料プランのキャンセルに失敗しました。お手数ですが、@egotter_cs までご連絡ください'
   modal:
     welcome_modal:
@@ -2331,7 +2343,6 @@ ja:
       need_login_html: 'この操作を行うためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
     secret_mode_detected_with_count: 'えごったーはシークレットモードではご利用いただけません。%{count}秒後にトップページへ移動します。'
     ad_blocker_detected_with_count: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。%{seconds}秒後にトップページへ移動します。'
-    only_for_login_user: '%{name}はログインしている本人のみ見ることができます。'
     private_mode_specified: 'データが見付かりませんでした。'
   after_sign_in:
     too_many_requests_with_reset_in: >
