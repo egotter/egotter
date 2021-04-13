@@ -18,7 +18,7 @@ RSpec.describe SearchCountController, type: :controller do
       before { allow(UsageCount).to receive(:exists?).and_raise('Anything') }
       it do
         is_expected.to have_http_status(:success)
-        expect(JSON.parse(response.body)).to match('count' => described_class::DEFAULT_COUNT)
+        expect(JSON.parse(response.body)).to match('count' => -1)
       end
     end
   end
