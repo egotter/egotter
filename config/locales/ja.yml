@@ -2174,6 +2174,11 @@ ja:
         使い始めてからデータが貯まるので、<span class="egotter-pink">早く使うほどお得</span>です。
       check1: '安心の実績'
       check2: '満足率95%'
+    functions_section:
+      title: 'えごったーには他にも便利な機能がたくさん'
+      text_html: >
+        えごったーを使えば、他にもたくさんのツイッター分析ができます。<br class="d-none d-lg-block">
+        リムられチェック、リムられの自動通知、片思いチェックなどが特に人気です。
     profile_section:
       loading: '@%{user} のプロフィールを読み込み中'
       loading_error_html: '@%{user} のプロフィール読み込みに失敗しました。お手数ですが再度お試しください。何度も起きる場合は %{egotter_link} までご連絡ください。'
@@ -2187,116 +2192,112 @@ ja:
       title: "お知らせ"
     features:
     functions:
-      title: 'えごったーには他にも便利な機能がたくさん'
-      text_html: >
-        えごったーを使えば、他にもたくさんのツイッター分析ができます。<br class="d-none d-lg-block">
-        リムられチェック、リムられの自動通知、片思いチェックなどが特に人気です。
-      analyze: '@%{user} を分析する'
-      visitor: '自分'
-      me_html: '<a href="%{url}">@%{user}</a>'
+      visitor: 'あなた'
       one_sided_friends:
         title: '片思いチェック'
-        what_is_this_html: >
-          片思いとは、<span class="egotter-pink">フォローだけ</span>の関係のことです。<br>
-          <br>
-          片思いの例：<br>
-          &nbsp;&nbsp;・%{user}から相手へのフォロー ○<br>
-          &nbsp;&nbsp;・相手から%{user}へのフォロー ☓
-        text_html: >
-          <a title="%{title}" href="%{url}">%{title}</a>を使うと、%{user}のフォローの中から、片思いになっているアカウントを簡単に見付けることができます。<br>
-          <br>
-          <a title="%{title}" href="%{url}">%{title}</a>で片思いになっているアカウントを見付けた後は、その場で簡単にフォロー整理を行うことができます。
+        description_html: |
+          <p>片思いとは、<span class="egotter-pink">フォローだけ</span>の関係のことです。</p>
+
+          <p>
+            自分から片思いの例：<br>
+            %{user}は相手をフォローしているのに、相手は%{user}をフォローしていない
+          </p>
+
+          <p>
+            相手から片思われの例：<br>
+            相手は%{user}をフォローしているのに、%{user}は相手をフォローしていない
+          </p>
+
+          <p><span class="egotter-pink">%{title}</span>を使うと、%{user}のフォローの中から、片思いになっているアカウントを簡単に見付けることができます。</p>
+          <p><span class="egotter-pink">%{title}</span>で片思いになっているアカウントを見付けた後は、その場で簡単にフォロー整理を行うことができます。</p>
       unfriends:
         title: 'リムられチェック'
-        what_is_this_html: >
-          リムられとは、<span class="egotter-pink">フォローを解除された</span>の関係のことです。<br>
-          <br>
-          リムられの例：<br>
-          &nbsp;&nbsp;・相手から%{user}へのフォロー （以前は）○<br>
-          &nbsp;&nbsp;・相手から%{user}へのフォロー （いつの間にか）☓
-        text_html: >
-          <a title="%{title}" href="%{url}">%{title}</a>を使うと、%{user}のフォロワーの中から、フォローを解除されたアカウントを簡単に見付けることができます。<br>
-          <br>
-          <a title="%{title}" href="%{url}">%{title}</a>でフォローを解除されたアカウントを見付けた後は、その場で簡単にフォロワー整理を行うことができます。
+        description_html: |
+          <p>リムられとは、<span class="egotter-pink">フォローを解除された</span>の関係のことです。</p>
+
+          <p>
+            リムり（リムーブ）の例：<br>
+            %{user}は相手のフォローを外した
+          </p>
+
+          <p>
+            リムられの例：<br>
+            %{user}は相手からフォローを外された
+          </p>
+
+          <p><span class="egotter-pink">%{title}</span>を使うと、%{user}のフォロワーの中から、フォローを解除されたアカウントを簡単に見付けることができます。</p>
+          <p><span class="egotter-pink">%{title}</span>でフォローを解除されたアカウントを見付けた後は、その場で簡単にフォロワー整理を行うことができます。</p>
       inactive_friends:
         title: '最近いない人検索'
-        what_is_this_html: >
-          最近いない人とは、<span class="egotter-pink">一定の期間ツイートしなかった</span>アカウントのことです。<br>
-          <br>
-          アクティブ（活発）の反対なので、えごったーでは<span class="egotter-pink">非アクティブ</span>とも書いています。<br>
-          <br>
-          最近いない人（非アクティブ）の例：<br>
-          &nbsp;&nbsp;・最後のツイートから一定期間経っている<br>
-          &nbsp;&nbsp;・これまで一度もツイートしていない
-        text_html: >
-          <a title="%{title}" href="%{url}">%{title}</a>を使うと、%{user}のフォロー・フォロワーの中から、一定期間ツイートしていないアカウントを簡単に見付けることができます。<br>
-          <br>
-          <a title="%{title}" href="%{url}">%{title}</a>で一定期間ツイートしていないアカウントを見付けた後は、その場で簡単にフォロー整理を行うことができます。
+        description_html: |
+          <p>最近いない人とは、<span class="egotter-pink">一定の期間ツイートしなかった</span>アカウントのことです。</p>
+          <p>アクティブ（活発）の反対なので、えごったーでは<span class="egotter-pink">非アクティブ</span>とも書いています。</p>
+
+          <p>
+            最近いない（非アクティブ）フォローの例：<br>
+            フォローのうち、最後のツイートから一定期間が経過した人たち
+          </p>
+
+          <p>
+            最近いないフォロワーの例：<br>
+            フォロワーのうち、最後のツイートから一定期間が経過した人たち
+          </p>
+
+          <p><span class="egotter-pink">%{title}</span>を使うと、%{user}のフォロー・フォロワーの中から、一定期間ツイートしていないアカウントを簡単に見付けることができます。</p>
+          <p><span class="egotter-pink">%{title}</span>で一定期間ツイートしていないアカウントを見付けた後は、その場で簡単にフォロー整理を行うことができます。</p>
       friends:
         title: 'フォローチェック'
-        what_is_this_html: >
-          フォローチェックとは、フォローしているユーザーの中から<span class="egotter-pink">様々な条件でユーザーを検索できる</span>機能のことです。<br>
-          <br>
-          検索条件の例：<br>
-          &nbsp;&nbsp;・フォロー返し率の高い順に並び替え<br>
-          &nbsp;&nbsp;・非アクティブのみを抽出
-        text_html: >
-          <a title="%{title}" href="%{url}">%{title}</a>を使うと、%{user}のフォロー・フォロワーの中から、フォロー返し率の高いアカウントを簡単に見付けることができます。<br>
-          <br>
-          <a title="%{title}" href="%{url}">%{title}</a>でフォロー返し率の高いアカウントを見付けた後は、その場で簡単にフォロー整理を行うことができます。
+        description_html: |
+          <p>フォローチェックとは、フォローしているユーザーの中から<span class="egotter-pink">様々な条件でユーザーを検索できる</span>機能のことです。</p>
+
+          <p>
+            検索条件の例：<br>
+            フォロー返し率の高い順に並び替え
+            最近ツイートしていない人だけを並び替え
+          </p>
+
+          <p><span class="egotter-pink">%{title}</span>を使うと、%{user}のフォロー・フォロワーの中から、フォロー返し率の高いアカウントを簡単に見付けることができます。</p>
+          <p><span class="egotter-pink">%{title}</span>でフォロー返し率の高いアカウントを見付けた後は、その場で簡単にフォロー整理を行うことができます。</p>
       clusters:
         title: 'クラスタ判定'
-        what_is_this_html: >
-          クラスタ判定とは、今までのツイートを分析して、検索されたユーザーが入っている<span class="egotter-pink">クラスタを検索できる</span>機能のことです。<br>
-          <br>
-          クラスタとは、興味のあるテーマみたいなものです。<br>
-          <br>
-          クラスタ判定の例：<br>
-          &nbsp;&nbsp;・可愛いクラスタ<br>
-          &nbsp;&nbsp;・クソリプクラスタ
-        text_html: >
-          <a title="%{title}" href="%{url}">%{title}</a>を使うと、人には内緒にしていたはずの興味・趣味が丸分かりになります。<br>
-          <br>
-          <a title="%{title}" href="%{url}">%{title}</a>で興味のあるクラスタを見付けた後は、同じクラスタに入っている他のユーザーを簡単に見付けることができます。
+        description_html: |
+          <p>クラスタ判定とは、今までのツイートを分析して、検索されたユーザーが入っている<span class="egotter-pink">クラスタを検索できる</span>機能のことです。</p>
+          <p>クラスタとは、興味のあるテーマみたいなものです。</p>
+
+          <p>
+            クラスタ判定の例：<br>
+            お絵描きクラスタ、大学生クラスタ、くそりぷクラスタ
+          </p>
+
+          <p><span class="egotter-pink">%{title}</span>を使うと、人には内緒にしていたはずの興味・趣味が丸分かりになります。</p>
+          <p><span class="egotter-pink">%{title}</span>で興味のあるクラスタを見付けた後は、同じクラスタに入っている他のユーザーを簡単に見付けることができます。</p>
       tokimeki_unfollow:
         title: 'ときめきアンフォロー'
-        what_is_this_html: >
-          ときめきアンフォローとは、<span class="egotter-pink">昔はときめいていたけど、今はそうでもない</span>ユーザーのフォローを解除する機能のことです。<br>
-          <br>
-          今はもうときめかなくなったフォローを解除する。それは、<span class="egotter-pink">新たな門出</span>ともいえる儀式なのです。ぜひその門出を祝福してあげてください。
-        text_html: >
-          <a title="%{title}" href="%{url}">%{title}</a>を使うと、フォローの中から、ときめかなくなったユーザーを簡単に見付けることができます。<br>
-          <br>
-          <a title="%{title}" href="%{url}">%{title}</a>でときめかなくなったユーザーを見付けた後は、相手に感謝しつつ、フォロー解除しましょう。
+        description_html: |
+          <p>ときめきアンフォローとは、<span class="egotter-pink">昔はときめいていたけど、今はそうでもない</span>ユーザーのフォローを解除する機能のことです。</p>
+          <p>今はもうときめかなくなったフォローを解除する。それは、<span class="egotter-pink">新たな門出</span>ともいえる儀式なのです。ぜひその門出を祝福してあげてください。</p>
+          <p><span class="egotter-pink">%{title}</span>を使うと、フォローの中から、ときめかなくなったユーザーを簡単に見付けることができます。</p>
+          <p><span class="egotter-pink">%{title}</span>でときめかなくなったユーザーを見付けた後は、相手に感謝しつつ、フォロー解除しましょう。</p>
       delete_tweets:
         title: 'ツイートクリーナー'
-        what_is_this_html: >
-          ツイートクリーナーとは、ワンクリックで<span class="egotter-pink">ツイートを一括削除する</span>機能のことです。<br>
-          <br>
-          黒歴史を消したくなるとき、ありますよね。そんなときは、えごったーでツイートを<span class="egotter-pink">ワンクリック削除</span>してしまいましょう。
-        text_html: >
-          <a title="%{title}" href="%{url}">%{title}</a>を使うと、これまでのツイートをワンクリックで一括削除することができます。<br>
-          <br>
-          <a title="%{title}" href="%{url}">%{title}</a>でツイートを一括削除した後は、作業の完了をDMでお知らせします。
+        description_html: |
+          <p>ツイートクリーナーとは、ワンクリックで<span class="egotter-pink">ツイートを一括削除する</span>機能のことです。</p>
+          <p>黒歴史を消したくなるとき、ありますよね。そんなときは、えごったーでツイートを<span class="egotter-pink">ワンクリック削除</span>してしまいましょう。</p>
+          <p><span class="egotter-pink">%{title}</span>を使うと、これまでのツイートをワンクリックで一括削除することができます。</p>
+          <p><span class="egotter-pink">%{title}</span>でツイートを一括削除した後は、作業の完了をDMでお知らせします。</p>
       delete_favorites:
         title: 'いいねクリーナー'
-        what_is_this_html: >
-          いいねクリーナーとは、ワンクリックで<span class="egotter-pink">いいねを一括削除する</span>機能のことです。<br>
-          <br>
-          アカウントを消すときは、いいねも消したくなると思います。そんなときは、えごったーでいいねを<span class="egotter-pink">ワンクリック削除</span>してしまいましょう。
-        text_html: >
-          <a title="%{title}" href="%{url}">%{title}</a>を使うと、これまでのいいねをワンクリックで一括削除することができます。<br>
-          <br>
-          <a title="%{title}" href="%{url}">%{title}</a>でいいねを一括削除した後は、作業の完了をDMでお知らせします。
+        description_html: |
+          <p>いいねクリーナーとは、ワンクリックで<span class="egotter-pink">いいねを一括削除する</span>機能のことです。</p>
+          <p>アカウントを消すときは、いいねも消したくなると思います。そんなときは、えごったーでいいねを<span class="egotter-pink">ワンクリック削除</span>してしまいましょう。</p>
+          <p><span class="egotter-pink">%{title}</span>を使うと、これまでのいいねをワンクリックで一括削除することができます。</p>
+          <p><span class="egotter-pink">%{title}</span>でいいねを一括削除した後は、作業の完了をDMでお知らせします。</p>
       schedule_tweets:
         title: 'ツイート予約投稿'
-        button: 'ツイート予約投稿を見てみる'
-        what_is_this_html: >
-          ツイート予約投稿を使うと、ツイートを時間指定で投稿することができます。「予約するツイート」にツイートしたいテキストを入力し、「ツイートを予約する」ボタンを押してください。画像を添付することもできます。
-        text_html: >
-          <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後は、予約したツイートを一覧で管理できます。<br>
-          <br>
-          <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後に、予約したツイートをキャンセルすることもできます。
+        description_html: |
+          <p>ツイート予約投稿を使うと、ツイートを時間指定で投稿することができます。「予約するツイート」にツイートしたいテキストを入力し、「ツイートを予約する」ボタンを押してください。画像を添付することもできます。</p>
+          <p><span class="egotter-pink">%{title}</span>を使ってツイートを予約した後は、予約したツイートを一覧で管理できます。</p>
+          <p><span class="egotter-pink">%{title}</span>を使ってツイートを予約した後に、予約したツイートをキャンセルすることもできます。</p>
     word_cloud:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
     tweet_times:

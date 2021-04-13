@@ -1,13 +1,64 @@
-<div class="container">
-  <h2 class="h4 text-center my-5"><%= t('shared.functions.title') %></h2>
-  <p class="text-center my-5"><%= t('shared.functions.text_html') %></p>
-  <div class="mb-5"><%= render partial: 'shared/function_section', locals: function_one_sided_friends_values %></div>
-  <div class="mb-5"><%= render partial: 'shared/function_section', locals: function_unfriends_values %></div>
-  <div class="mb-5"><%= render partial: 'shared/function_section', locals: function_inactive_friends_values %></div>
-  <div class="mb-5"><%= render partial: 'shared/function_section', locals: function_friends_values %></div>
-  <div class="mb-5"><%= render partial: 'shared/function_section', locals: function_clusters_values %></div>
-  <div class="mb-5"><%= render partial: 'shared/function_section', locals: function_tokimeki_unfollow_values %></div>
-  <div class="mb-5"><%= render partial: 'shared/function_section', locals: function_delete_tweets_values %></div>
-  <div class="mb-5"><%= render partial: 'shared/function_section', locals: function_delete_favorites_values %></div>
-  <div class="mb-5"><%= render partial: 'shared/function_section', locals: function_schedule_tweets_values %></div>
-</div>
+<% your_name = current_user&.screen_name || t('.visitor') %>
+
+<%= render partial: 'shared/function_section', locals: {
+  title: (title = t('.one_sided_friends.title')),
+  description: t('.one_sided_friends.description_html', title: title, user: your_name),
+  image: '/egotter_onesided_friends_with_text_400x453.png',
+  url: one_sided_friends_top_path(via: current_via('functions'))
+} %>
+
+<%= render partial: 'shared/function_section', locals: {
+  title: (title = t('.unfriends.title')),
+  description: t('.unfriends.description_html', title: title, user: your_name),
+  image: '/egotter_unfriends_with_text_400x453.png',
+  url: unfriends_top_path(via: current_via('functions'))
+} %>
+
+<%= render partial: 'shared/function_section', locals: {
+  title: (title = t('.inactive_friends.title')),
+  description: t('.inactive_friends.description_html', title: title, user: your_name),
+  image: '/egotter_inactive_friends_with_text_400x453.png',
+  url: inactive_friends_top_path(via: current_via('functions'))
+} %>
+
+<%= render partial: 'shared/function_section', locals: {
+  title: (title = t('.friends.title')),
+  description: t('.friends.description_html', title: title, user: your_name),
+  image: '/egotter_friends_with_text_400x453.png',
+  url: friends_top_path(via: current_via('functions'))
+} %>
+
+<%= render partial: 'shared/function_section', locals: {
+  title: (title = t('.clusters.title')),
+  description: t('.clusters.description_html', title: title),
+  image: '/egotter_clusters_with_text_400x453.png',
+  url: clusters_top_path(via: current_via('functions'))
+} %>
+
+<%= render partial: 'shared/function_section', locals: {
+  title: (title = t('.tokimeki_unfollow.title')),
+  description: t('.tokimeki_unfollow.description_html', title: title),
+  image: '/egotter_tokimeki_unfollow_with_text_400x453.png',
+  url: tokimeki_unfollow_top_path(via: current_via('functions'))
+} %>
+
+<%= render partial: 'shared/function_section', locals: {
+  title: (title = t('.delete_tweets.title')),
+  description: t('.delete_tweets.description_html', title: title),
+  image: '/egotter_delete_tweets_with_text_400x453.png',
+  url: delete_tweets_path(via: current_via('functions'))
+} %>
+
+<%= render partial: 'shared/function_section', locals: {
+  title: (title = t('.delete_favorites.title')),
+  description: t('.delete_favorites.description_html', title: title),
+  image: '/egotter_delete_favorites_with_text_400x453.png',
+  url: delete_favorites_path(via: current_via('functions'))
+} %>
+
+<%= render partial: 'shared/function_section', locals: {
+  title: (title = t('.schedule_tweets.title')),
+  description: t('.schedule_tweets.description_html', title: title),
+  image: '/egotter_schedule_tweets.jpg',
+  url: scheduled_tweets_url(via: 'egotter_functions', utm_source: 'egotter-functions', utm_medium: 'web', utm_campaign: 'egotter')
+} %>

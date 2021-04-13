@@ -1,9 +1,9 @@
-.card.mx-auto{style: 'max-width: 500px;'}
-  = link_to url do
-    = image_tag image, style: 'width: 100%;', title: strip_tags(title), alt: strip_tags(title)
-  .card-body
-    %h5.card-title= raw title
-    %p.card-text
-      .my-3= what_is_this
-      .my-3= description
-    .text-center= button
+%div
+  .card.m-3{style: 'min-width: 300px; max-width: 400px;'}
+    = link_to url do
+      = image_tag image, style: 'width: 100%;', loading: 'lazy', title: title, alt: title
+    .card-body
+      %h5.card-title= title
+      .card-text= description
+      .text-center
+        = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary btn-block')
