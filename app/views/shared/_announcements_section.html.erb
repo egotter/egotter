@@ -1,4 +1,8 @@
-<div id="announcements-container" style="min-height: 200px;"></div>
+<h2 class="h4 text-center mx-3 my-5"><%= t('shared.announcement.title') %></h2>
+
+<div id="announcements-container" class="d-flex" style="overflow-x: scroll;">
+  <%= image_tag '/ajax-loader.gif' %>
+</div>
 
 <script>
   $(function () {
