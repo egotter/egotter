@@ -2160,7 +2160,7 @@ ja:
       text_html: |
         定期的なツイートの設定をオンにすると、<br>検索回数が <span class="egotter-pink">%{count}回/日</span> 増えます。<br>
         <br>
-        <span class="small text-muted">※えごったーのことを 1回/日 自動的にツイートします</span>
+        <span class="small text-muted">※えごったーのことを 1-2回/日 自動的にツイートします</span>
       ok: "定期ツイートオン"
       cancel: "やめておく"
     search_modal:
