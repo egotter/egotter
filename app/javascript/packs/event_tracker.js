@@ -3,6 +3,7 @@ class EventTracker {
     this.userId = attrs['userId'];
     this.deviceType = attrs['deviceType'];
     this.controllerAction = attrs['controllerAction'];
+    this.via = attrs['via'];
   }
 
   track(pageName, eventName, eventParams) {
@@ -24,7 +25,7 @@ class EventTracker {
   }
 
   trackAhoy(pageName, eventName, eventParams) {
-    var params = {page: window.location.href};
+    var params = {url: window.location.href, page: window.location.pathname, via: this.via};
     if (eventParams) {
       params = Object.assign(params, eventParams);
     }

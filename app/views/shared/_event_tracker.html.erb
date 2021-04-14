@@ -4,7 +4,8 @@
     var eventTracker = new EventTracker({
       userId: '<%= current_user&.id %>',
       deviceType: '<%= request.device_type %>',
-      controllerAction: '<%= controller_name %>#<%= action_name %>'
+      controllerAction: '<%= controller_name %>#<%= action_name %>',
+      via: '<%= params[:via]&.truncate(200) %>'
     });
 
     window.trackPageEvents = function (pageName, eventName, eventParams) {
