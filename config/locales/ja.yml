@@ -534,7 +534,7 @@ ja:
         advise_html: '@ego_tter ををフォローすると<br><span class="egotter-pink">高速モード</span>になります'
       periodic_tweet:
         title: '定期ツイート'
-        on_note: '1日に1回 自動的にツイートします'
+        on_note: 'えごったーを %{min_count}-%{max_count}回/日 自動的にツイート'
         off_note_html: 'オンにすると <span class="egotter-pink">%{count}回/日</span> の検索ボーナス'
       sneak_search_request:
         title_html: 'こっそり検索 <span class="egotter-pink">プレミアム</span>'
@@ -2158,9 +2158,9 @@ ja:
     periodic_tweet_modal:
       title_html: '<span class="egotter-pink">定期ツイート</span>で検索回数 大幅アップ'
       text_html: |
-        定期的なツイートの設定をオンにすると、<br>検索回数が <span class="egotter-pink">%{count}回/日</span> 増えます。<br>
+        定期的なツイートの設定をオンにすると、<br>検索回数が <span class="egotter-pink">%{bonus}回/日</span> 増えます。<br>
         <br>
-        <span class="small text-muted">※えごったーのことを 1-2回/日 自動的にツイートします</span>
+        <span class="small text-muted">※えごったーのことを %{min_count}-%{max_count}回/日 自動的にツイートします</span>
       ok: "定期ツイートオン"
       cancel: "やめておく"
     search_modal:

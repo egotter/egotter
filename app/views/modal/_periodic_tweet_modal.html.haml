@@ -3,7 +3,7 @@
 = modal_dialog id: 'periodic-tweet-modal', title: t('.title_html'), button: {positive: t('.ok'), negative: t('.cancel')}, data: data do
   .d-flex.align-items-center.mb-3
     %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
-    .ml-3= t('.text_html', count: SearchCountLimitation::PERIODIC_TWEET_BONUS)
+    .ml-3= t('.text_html', bonus: SearchCountLimitation::PERIODIC_TWEET_BONUS, min_count: SearchCountLimitation::PERIODIC_TWEET_MIN, max_count: SearchCountLimitation::PERIODIC_TWEET_MAX)
 
 :javascript
   $(function () {

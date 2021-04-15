@@ -22,7 +22,7 @@
   <div class="col-8">
     <h6><%= t('.periodic_tweet.title') %></h6>
     <div class="text-muted small"><%= t('.periodic_tweet.off_note_html', count: SearchCountLimitation::PERIODIC_TWEET_BONUS) %></div>
-    <div class="text-muted small"><%= t('.periodic_tweet.on_note') %></div>
+    <div class="text-muted small"><%= t('.periodic_tweet.on_note', min_count: SearchCountLimitation::PERIODIC_TWEET_MIN, max_count: SearchCountLimitation::PERIODIC_TWEET_MAX) %></div>
   </div>
 </div>
 <script>
