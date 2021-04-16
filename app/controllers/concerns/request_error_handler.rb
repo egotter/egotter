@@ -4,7 +4,7 @@ module RequestErrorHandler
 
     if Rails.env.production?
       message = "#{exception.inspect.truncate(200)} #{_extract_params(params)}"
-      request_details_json.each { |key, value| message << "\n#{key}=#{value}" }
+      request_details.each { |key, value| message << "\n#{key}=#{value}" }
       backtrace = exception.backtrace.join("\n")
       SendErrorMessageToSlackWorker.perform_async(message, backtrace, channel: 'rails_web')
     end
