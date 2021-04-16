@@ -106,8 +106,16 @@ class StartDeletingTweetsTask
       request = DeleteTweetsRequest.create!(user_id: user.id, finished_at: Time.zone.now)
 
       if @sync
+        deleted_count = 0
+        started_time = Time.zone.now
+
         @candidate_tweets.each do |tweet|
           DeleteTweetWorker.new.perform(user.id, tweet['tweet']['id'], request_id: request.id)
+
+          if (deleted_count += 1) % 1000 == 0
+            time = Time.zone.now - started_time
+            puts "total #{@candidate_tweets.size}, deleted #{deleted_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / deleted_count)}"
+          end
         end
       else
         @candidate_tweets.each do |tweet|
