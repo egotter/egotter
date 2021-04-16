@@ -52,6 +52,7 @@ Rails.application.routes.draw do
       post 'orders/end_trial', to: 'orders#end_trial'
       post 'orders/cancel', to: 'orders#cancel'
       resources :share_tweets, only: %i(create)
+      resources :share_candidate_tweets, only: %i(index)
 
       resources :follow_requests, only: %i(create)
 

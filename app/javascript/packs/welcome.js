@@ -54,24 +54,40 @@ class ShareDialog extends ModalDialog {
 window.ShareDialog = ShareDialog;
 
 class TweetTextUpdater {
-  constructor(tweets, textAreaSelector) {
-    var index = 0;
-    this.updateText = function () {
-      ++index;
-      if (index >= tweets.length) {
-        index = 0;
-      }
-      $(textAreaSelector).val(tweets[index].replace(/\\n/g, '\n'));
-    };
+  constructor(url) {
+    this.url = url;
+    this.tweets = null;
   }
 
-  update(callback) {
-    this.updateText();
-    callback();
+  getText(callback) {
+    var self = this;
+    var returnValue = function () {
+      callback(self.selectTweet(self.tweets));
+    };
+
+    if (this.tweets) {
+      returnValue();
+    } else {
+      this.fetchTweets(function (tweets) {
+        self.tweets = tweets;
+        returnValue();
+      });
+    }
+  }
+
+  fetchTweets(callback) {
+    $.get(this.url).done(function (res) {
+      callback(res.tweets);
+    });
+  }
+
+  selectTweet(tweets) {
+    var index = Math.floor(Math.random() * tweets.length);
+    return tweets[index];
   }
 }
 
-ShareDialog.TweetTextUpdater = TweetTextUpdater;
+window.TweetTextUpdater = TweetTextUpdater;
 
 class PeriodicTweetDialog extends ModalDialog {
   constructor() {

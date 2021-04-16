@@ -4,6 +4,7 @@ module Api
 
       before_action :reject_crawler
       before_action :require_login!
+      before_action :require_text!
 
       def create
         text = params[:text]
@@ -29,6 +30,12 @@ module Api
       rescue => e
         logger.warn "#{controller_name}##{action_name} #{e.inspect} user_id=#{current_user.id}"
         render json: {message: t('.fail')}, status: :bad_request
+      end
+
+      def require_text!
+        if params[:text].blank?
+          head :bad_request
+        end
       end
     end
   end
