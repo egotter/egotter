@@ -4,6 +4,7 @@ class OrdersController < ApplicationController
   skip_before_action :verify_authenticity_token, only: :checkout_session_completed
 
   before_action :require_login!, except: :checkout_session_completed
+  before_action :validate_stripe_session_id, only: :success
 
   after_action :track_order_activity
 
@@ -126,5 +127,11 @@ class OrdersController < ApplicationController
     SendMessageToSlackWorker.perform_async(:orders, message)
   rescue => e
     logger.warn "#{controller_name}##{action_name}: #send_message is failed exception=#{e.inspect} caller=#{caller[0][/`([^']*)'/, 1] rescue ''} message=#{message}"
+  end
+
+  def validate_stripe_session_id
+    if params[:stripe_session_id].blank?
+      redirect_to settings_path(via: current_via('stripe_session_id_not_found'))
+    end
   end
 end

@@ -2,9 +2,12 @@ module Api
   module V1
     class OrdersController < ApplicationController
 
+      skip_before_action :current_user_not_blocker?
+
       before_action :reject_crawler
       before_action :require_login!
       before_action :has_valid_subscription!
+
       after_action :track_order_activity
 
       INTERVAL = 10
