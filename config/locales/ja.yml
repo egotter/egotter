@@ -1984,21 +1984,21 @@ ja:
         note_html: '有料プランを購入すると検索回数が大幅に増えます。<br><br>今なら <span class="egotter-pink">最初の%{days}日間は無料</span> です。'
         ok: "もっと詳しく"
         cancel: "やめておく"
-      share:
-        title_html: '<span class="egotter-pink">ツイート</span>で検索回数アップ'
-        note_for_count_html: |
-          えごったーのことを1度だけツイートすると、<br>
-          検索回数が <span class="egotter-pink">%{count}回分</span> 増えます。<br>
-          <br>
-          <span class="small text-muted">※テキストの最後にえごったーのURLが付きます</span>
-        see_other_candidates: '他のテキストを見る'
-        ok: "ツイートする"
-        cancel: "やめておく"
       sign_in:
         title: 'えごったーにログインしよう'
         body_html: 'えごったーにログインすれば、人気の<span class="egotter-pink">仲良しランキング</span>やリムられチェックをすぐに使うことができます。'
         ok: 'ログインする'
         cancel: 'やめておく'
+    share_tweet_modal:
+      title_html: '<span class="egotter-pink">ツイート</span>で検索回数アップ'
+      note_for_count_html: |
+        えごったーのことを1度だけツイートすると、<br>
+        検索回数が <span class="egotter-pink">%{count}回分</span> 増えます。<br>
+        <br>
+        <span class="small text-muted">※テキストの最後にえごったーのURLが付きます</span>
+      see_other_candidates: '他のテキストを見る'
+      ok: "ツイートする"
+      cancel: "やめておく"
     periodic_tweet_modal:
       title_html: '<span class="egotter-pink">定期ツイート</span>で検索回数 大幅アップ'
       text_html: |

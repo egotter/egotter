@@ -1,34 +1,5 @@
 - if user_signed_in?
-  -# The share modal is always embedded because it is used in settings page.
-  - tweets = ShareTweets.load.shuffle
-  - data = {url: api_v1_share_tweets_path(via: current_via('share_egotter_modal'))}
-  = modal_dialog id: 'share-modal', title: t('.share.title_html'), button: {positive: t('.share.ok'), negative: t('.share.cancel')}, data: data do
-    .d-flex.align-items-center.mb-3
-      %img{src: image_path('/egotter_plain_200x265.png'), class: 'd-block', style: 'width: 100px;'}
-      .ml-3= t('.share.note_for_count_html', count: @search_count_limitation.current_sharing_bonus)
-    %textarea#share-modal-tweet{rows: '5', class: 'small', style: 'width: 100%; -webkit-appearance: none;'}= raw tweets[0]
-    .text-right
-      #see-other-candidates.btn.btn-outline-primary.btn-sm= t('.share.see_other_candidates')
-  :javascript
-    $(function () {
-      var tweets = #{raw tweets.to_json};
-      var textUpdater = new ShareDialog.TweetTextUpdater(tweets, '#share-modal-tweet');
-      $('#see-other-candidates').on('click', function (){
-        textUpdater.update(function () {
-          trackModalEvent('ShareModal', 'text-updated');
-        });
-      });
-
-      var $modal = $('#share-modal');
-
-      $modal.on('show.bs.modal', function (e) {
-        trackModalEvent('ShareModal', 'opened');
-      });
-
-      $modal.find('button.positive').on('click', function (e) {
-        trackModalEvent('ShareModal', 'ok-clicked');
-      });
-    });
+  = render partial: 'modal/share_tweet_modal'
 
   - if show_continuous_sign_in_modal?
     = modal_dialog id: 'continuous-sign-in-modal', title: t('.continuous_sign_in.title_html'), button: {positive: t('.continuous_sign_in.ok')} do
