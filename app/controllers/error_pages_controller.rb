@@ -13,6 +13,7 @@ class ErrorPagesController < ApplicationController
     twitter_user_not_persisted
   )
 
+  before_action :validate_request_format
   before_action :set_screen_name, only: SET_USER_ACTIONS
   before_action :set_user, only: SET_USER_ACTIONS
 
@@ -81,6 +82,12 @@ class ErrorPagesController < ApplicationController
   end
 
   private
+
+  def validate_request_format
+    unless request.format == :html
+      request.format = :html
+    end
+  end
 
   def set_screen_name
     unless (@screen_name = session.delete(:screen_name))
