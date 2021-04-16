@@ -8,18 +8,18 @@ require 'dotenv/load'
 SETTINGS = [
     [2, 1], # 09
     [2, 1], # 10
-    [3, 1], # 11
-    [3, 1], # 12
-    [3, 1], # 13
+    [4, 1], # 11
+    [4, 1], # 12
+    [4, 1], # 13
     [2, 1], # 14
     [2, 1], # 15
     [2, 1], # 16
     [2, 1], # 17
     [2, 1], # 18
     [2, 1], # 19
-    [3, 1], # 20
-    [3, 1], # 21
-    [3, 1], # 22
+    [4, 1], # 20
+    [4, 1], # 21
+    [4, 1], # 22
     [2, 1], # 23
     [2, 1], # 00
     [2, 1], # 01
@@ -28,8 +28,8 @@ SETTINGS = [
     [1, 0], # 04
     [1, 0], # 05
     [2, 1], # 06
-    [3, 1], # 07
-    [3, 1], # 08
+    [4, 1], # 07
+    [4, 1], # 08
 ]
 
 def now
@@ -56,7 +56,7 @@ def adjust_web(dry_run)
   count = SETTINGS[now.hour][0]
   count += 1 if active_users > 300
   count += 1 if active_users > 400
-  instance_type = count >= 3 ? 't3.large' : 't3.medium'
+  instance_type = 't3.medium'
 
   prev = list_server('web', instance_type)
   adjust_server('web', instance_type, count, dry_run)
