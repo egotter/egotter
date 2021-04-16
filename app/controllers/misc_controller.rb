@@ -1,4 +1,6 @@
 class MiscController < ApplicationController
+
+  skip_before_action :current_user_not_blocker?
   before_action { head :forbidden if twitter_dm_crawler? }
 
   def maintenance
