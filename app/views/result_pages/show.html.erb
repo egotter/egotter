@@ -32,7 +32,7 @@
 <% end %>
 
 <% if remove_related_page? %>
-  <%= render(partial: 'twitter/tweet_box', locals: {text: t('unfriends.show.tweet', text: t('modal.welcome_modal.share.tweets').sample, url: unfriends_top_url(via: current_via)), twitter_user: @twitter_user}) %>
+  <%= render(partial: 'twitter/tweet_box', locals: {text: t('unfriends.show.tweet', text: ShareTweets.load.sample, url: unfriends_top_url(via: current_via)), twitter_user: @twitter_user}) %>
 <% else %>
   <%= render(partial: 'twitter/tweet_box', locals: {text: current_tweet_text(@twitter_user), twitter_user: @twitter_user}) %>
 <% end %>
