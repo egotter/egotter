@@ -1,5 +1,6 @@
 class OrdersController < ApplicationController
 
+  skip_before_action :current_user_not_blocker?, only: %i(success failure cancel)
   skip_before_action :verify_authenticity_token, only: :checkout_session_completed
 
   before_action :require_login!, except: :checkout_session_completed
