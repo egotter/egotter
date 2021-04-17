@@ -18,11 +18,19 @@ class GlobalMessage < ApplicationRecord
 
   class << self
     def message_found?
-      exists?(expires_at: nil)
+      if instance_variable_defined?(:@message_found)
+        @message_found
+      else
+        @message_found = exists?(expires_at: nil)
+      end
     end
 
     def latest_message
-      order(created_at: :desc).find_by(expires_at: nil)&.text
+      if instance_variable_defined?(:@message)
+        @message
+      else
+        @message = order(created_at: :desc).find_by(expires_at: nil)&.text
+      end
     end
   end
 end
