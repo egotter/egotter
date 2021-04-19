@@ -12,7 +12,7 @@ class PrettyIconMessageResponder < AbstractMessageResponder
     end
 
     def received_regexp
-      /アイコン.*(可愛|かわい)/
+      /アイコン|可愛い|かわいい|カワイイ/
     end
 
     def send_message

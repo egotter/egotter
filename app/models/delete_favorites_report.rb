@@ -36,7 +36,7 @@ class DeleteFavoritesReport
           destroy_count: request.destroy_count,
           url: delete_favorites_url('delete_favorites_finished_tweet', true),
           seconds: (request.updated_at - request.created_at).to_i.to_s(:delimited),
-          kaomoji: 'Σ(-᷅_-᷄๑)'
+          kaomoji: Kaomoji::KAWAII.sample
       )
       new(nil, nil, message)
     end

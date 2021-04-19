@@ -9,17 +9,6 @@ class CreateThankYouMessageWorker
       'いえいえ、また何かあったら何でも言ってください！',
   ]
 
-  KAOMOJI = [
-      'Σ(-᷅_-᷄๑)',
-      '`⁽˙꒳˙⁾´',
-      '( ･ᴗ･ )',
-      '( ੭ ･ᴗ･ )੭',
-      '( ´•ᴗ•ก)',
-      'ᕱ⑅ᕱ',
-      '(๑•ᴗ•๑)',
-      '❀.(*´▽`*)❀',
-  ]
-
   def unique_key(uid, options = {})
     uid
   end
@@ -30,7 +19,7 @@ class CreateThankYouMessageWorker
 
   # options:
   def perform(uid, options = {})
-    message = TEXT.sample + KAOMOJI.sample
+    message = TEXT.sample + Kaomoji::KAWAII.sample
     User.egotter.api_client.create_direct_message_event(uid, message)
   rescue => e
     unless ignorable_report_error?(e)
