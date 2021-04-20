@@ -8,22 +8,26 @@
 %h2.h4.text-center.my-5= t('.page_title')
 .my-3= t('.page_description_html')
 
-.card
-  .card-body
-    - if user_signed_in?
-      %h5.card-title= t('.your_plan_title', user: current_user.screen_name)
-      - if current_user.has_valid_subscription?
-        .card-text= t('.has_basic_plan_text_html', user: current_user.screen_name, plan: current_user.purchased_plan_name, url: settings_path(via: current_via('pricing')))
-      - else
-        .card-text= t('.has_free_plan_text_html', user: current_user.screen_name)
-    - else
-      %h5.card-title= t('.anonymous_plan_title')
-      .card-text= t('.has_no_plan_text_html', url: sign_in_path(via: current_via('pricing')))
+%hr
 
-%h3.h4.text-center.my-5= t('.free_plan_title')
+%h2.h4.text-center.my-5= t('.benefits_title')
+.my-3= t('.benefits_description_html')
+
+%hr
+
+%h2.h4.text-center.my-5= t('.plans_title')
+.my-3= t('.plans_description_html')
+
+%hr
+
+= render partial: 'current_plan'
+
+%hr
+
+%h2.h4.text-center.my-5= t('.free_plan_title')
 .my-3= t('.free_plan_text_html')
 .h4.my-4
-  %strong= t('.free_plan_price')
+  %strong.small= t('.free_plan_price')
 .my-2= pricing_checked_item(t('.list.free_plan_search_count', min: SearchCountLimitation::ANONYMOUS, max: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS))
 .my-2= pricing_checked_item(t('.list.notification'))
 .my-2= pricing_checked_item(t('.list.private_search'))
@@ -43,7 +47,7 @@
 
 %hr
 
-%h3.h4.text-center.my-5= t('.basic_plan_title')
+%h2.h4.text-center.my-5= t('.basic_plan_title')
 .my-3= t('.basic_plan_text_html')
 .h4.my-4
   %strong= t('.basic_plan_price_html', regular_price: Order::REGULAR_PRICE, discount_price: Order::DISCOUNT_PRICE)
@@ -75,9 +79,9 @@
   - else
     = link_to t('.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
 .small.text-muted.my-4
-  .mb-1= t('.basic_plan_price_note1', old_price: Order::REGULAR_PRICE, new_price: Order::DISCOUNT_PRICE)
-  .mb-1= t('.basic_plan_price_note2', price: Order::REGULAR_PRICE)
-  .mb-1= t('.basic_plan_price_note3')
+  .mb-1= t('.basic_plan_note1', old_price: Order::REGULAR_PRICE, new_price: Order::DISCOUNT_PRICE)
+  .mb-1= t('.basic_plan_note2', price: Order::REGULAR_PRICE)
+  .mb-1= t('.basic_plan_note3')
 
 %hr
 

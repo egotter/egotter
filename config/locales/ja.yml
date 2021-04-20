@@ -627,26 +627,38 @@ ja:
       meta_description: 'えごったーの料金プランです。'
       page_title: '料金プラン'
       page_description_html: |
-        えごったーの料金はほとんど無料です。勝手に課金されることはありませんのでご安心ください。<br>
-        <br>
-        えごったーでは、<span class="egotter-pink">こっそり使いたい</span>または<span class="egotter-pink">たくさん使いたい</span>という方向けに、一部だけ有料プランを用意しています。
-      your_plan_title: '@%{user} の現在のプラン'
-      anonymous_plan_title: 'あなたの現在のプラン'
-      has_no_plan_text_html: 'まだプランを購入していません。ログインすれば、無料のまま検索回数を増やすことができます。<a href="%{url}" class="btn btn-outline-primary btn-sm">ログインする</a>'
-      has_free_plan_text_html: 'まだプランを購入していません。'
-      has_basic_plan_text_html: '「%{plan}」を購入済みです。<a href="%{url}" class="btn btn-outline-primary btn-sm">設定ページ</a>'
-      free_plan_title: '無料で使いたい'
-      free_plan_text_html: 'えごったーを<span class="egotter-pink">無料で使いたい</span>方に適したプランです。ログインするだけでこの状態になります。'
+        <p>えごったーの料金はほとんど無料です。勝手に課金されることはありませんのでご安心ください。</p>
+      benefits_title: '有料プランの主な特典'
+      benefits_description_html: |
+        <p>有料プランを購入すると、大きく分けてこのような購入特典があります。</p>
+        <ul style="list-style-type: decimal;">
+          <li>ユーザー検索回数の増加</li>
+          <li>リムられ通知の送信回数の増加</li>
+          <li>ブロック通知のデータの充実</li>
+          <li>ミュート通知のデータの充実</li>
+        </ul>
+      plans_title: 'プランの種類'
+      plans_description_html: |
+        <p>えごったーの利用プランは主にこの2つです。有料プランには <span class="egotter-pink">無料のお試し期間</span> があります。</p>
+        <ul style="list-style-type: decimal;">
+          <li>無料プラン（ログインしただけの状態のこと）</li>
+          <li>有料プラン（無料のお試し期間あり）</li>
+        </ul>
+      free_plan_title: '無料プランの内容'
+      free_plan_text_html: |
+        <p>えごったーを<span class="egotter-pink">無料で少しだけ使いたい</span>方に適したプランです。</p>
+        <p>ログインするだけでこの状態になります。この状態は課金されません。</p>
       free_plan_price: '0円/月'
-      basic_plan_title: 'こっそり使いたい'
-      basic_plan_text_html: 'えごったーを<span class="egotter-pink">こっそり使いたい</span>方に適したプランです。無料プランの内容に加えて、検索回数が大幅に追加されます。'
+      basic_plan_title: '有料プランの内容'
+      basic_plan_text_html: |
+        <p>えごったーを<span class="egotter-pink">こっそりたくさん使いたい</span>方に適したプランです。</p>
+        <p>無料プランの内容に加えて、ユーザー検索回数の増加、リムられ通知の充実、ブロック通知の充実、ミュート通知の充実という特典があります。</p>
       basic_plan_price_html: '<del class="text-muted">¥%{regular_price}</del> ¥%{discount_price}'
       basic_plan_price_period: '/月'
       basic_plan_price_note_html: |
-      basic_plan_price_note1: '※ %{old_price}円から%{new_price}円への割引は、初回購入とそこから継続した定期購入に対してのみ適用されます。'
-      basic_plan_price_note2: '※ 定期購入をキャンセル後に再度購入した場合は、割引の適用されない価格（%{price}円）となります。'
-      basic_plan_price_note3: '※ 一部の機能を利用すると無料期間はその時点で終了します。その場合は返金の対象外となります。'
-      pro_plan_price: '2万円〜'
+      basic_plan_note1: '※ %{old_price}円から%{new_price}円への割引は、初回購入とそこから継続した定期購入に対してのみ適用されます。'
+      basic_plan_note2: '※ 定期購入をキャンセル後に再度購入した場合は、割引の適用されない価格（%{price}円）となります。'
+      basic_plan_note3: '※ 一部の機能を利用すると無料期間はその時点で終了します。その場合は返金の対象外となります。'
       list:
         free_plan_search_count: '検索回数 %{min}〜%{max} 回'
         basic_plan_search_count: '検索回数 %{count} 回'
@@ -671,6 +683,12 @@ ja:
       sign_in: 'ログインする'
       purchase: '購入する'
       plans: '料金プラン'
+    current_plan:
+      title: '%{user} の現在のプラン'
+      basic_plan_html: '「%{plan}」を購入済みです。<a href="%{url}" class="btn btn-outline-primary btn-sm">設定ページ</a>'
+      free_plan_html: 'まだプランを購入していません。'
+      visitor_html: 'まだプランを購入していません。ログインすれば、無料のまま検索回数を増やすことができます。<a href="%{url}" class="btn btn-outline-primary btn-sm">ログインする</a>'
+      visitor: 'あなた'
   orders:
     success:
       message_html: |

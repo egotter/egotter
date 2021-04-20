@@ -1,0 +1,15 @@
+<h2 class="h4 text-center my-5">
+  <%= t('.title', user: current_user&.screen_name || t('.visitor')) %>
+</h2>
+
+<div class="card-text">
+  <% if user_signed_in? %>
+    <% if current_user.has_valid_subscription? %>
+      <%= t('.basic_plan_html', user: current_user.screen_name, plan: current_user.purchased_plan_name, url: settings_path(via: current_via('pricing'))) %>
+    <% else %>
+      <%= t('.free_plan_html') %>
+    <% end %>
+  <% else %>
+    <%= t('.visitor_html', url: sign_in_path(via: current_via('pricing'))) %>
+  <% end %>
+</div>
