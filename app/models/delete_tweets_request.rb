@@ -148,12 +148,15 @@ class DeleteTweetsRequest < ApplicationRecord
     end
   end
 
+  # TODO "Twitter::Error::Unauthorized Could not authenticate you." will happen here.
+  # This error occurs together with DeleteTweetsRequest::TweetsNotFound.
+  # I need to investigate what kind of messages cause this error.
   def tweet_finished_message
     message = DeleteTweetsReport.finished_tweet(user, self).message
     api_client.update(message)
     SendMessageToSlackWorker.perform_async(:delete_tweets, "request_id=#{id} tweet=#{message}")
   rescue => e
-    raise FinishedTweetNotSent.new("#{e.class} #{e.message}")
+    raise FinishedTweetNotSent.new("exception=#{e.inspect} user_id=#{user_id} message=#{message}")
   end
 
   def send_finished_message
