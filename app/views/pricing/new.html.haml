@@ -75,7 +75,7 @@
     - if current_user.has_valid_subscription?
       .btn.btn-outline-primary.disabled= t('.basic_plan_purchased')
     - else
-      = link_to t('.purchase'), '#', class: 'btn btn-primary btn-checkout'
+      = link_to t('.purchase'), '#', class: 'btn btn-primary btn-lg btn-checkout'
   - else
     = link_to t('.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
 .small.text-muted.my-4
@@ -85,4 +85,8 @@
 
 %hr
 
-#enterprise-plan.mb-3= render partial: 'custom_work'
+= render partial: 'egotter_ads'
+
+%hr
+
+#enterprise-plan= render partial: 'custom_work'

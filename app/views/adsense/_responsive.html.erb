@@ -1,16 +1,18 @@
 <% user ||= nil %>
-<% if ad_ng_page? ||  ad_ng_user?(user) %>
+<% if ad_ng_page? || ad_ng_user?(user) %>
   <div class="mb-3"><!-- No ads tag will be inserted. --></div>
 <% else %>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-  <!-- Responsive -->
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-3146843071247817"
-       data-ad-slot="<%= left_slot_ad_id(controller, action, vertical) %>"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
+  <div id="adsense-container">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- Responsive -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-3146843071247817"
+         data-ad-slot="<%= left_slot_ad_id(controller, action, vertical) %>"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
 <% end %>
