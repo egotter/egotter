@@ -13,7 +13,7 @@
   <i class="fas fa-user"></i>
 </div>
 
-<div id="searched-tweets" class="d-flex" style="overflow-x: scroll;">
+<div id="searched-tweets" class="d-flex" style="overflow-x: scroll; min-height: 500px;">
   <%= image_tag '/ajax-loader.gif' %>
 </div>
 
@@ -35,8 +35,12 @@
 <script>
   $(function () {
     var url = '<%= raw load_public_tweets_path(kind: kind, via: current_via) %>';
-    var selector = '#searched-tweets';
-    new PublicTweets(url, selector, function () {
+    var id = 'searched-tweets';
+    new PublicTweets(url, id, function () {
+      setTimeout(function () {
+        // Fix a bug in Safari
+        $('#' + id).find('.twitter-tweet').removeAttr('style');
+      }, 3000);
       trackPageEvents('TopPage events', 'PublicTweets loaded');
     });
   });
