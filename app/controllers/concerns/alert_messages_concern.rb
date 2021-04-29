@@ -16,15 +16,6 @@ module AlertMessagesConcern
     end
   end
 
-  def signed_in_user_not_authorized_message
-    if user_signed_in?
-      url = sign_in_path(via: current_via('signed_in_user_not_authorized'))
-      t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
-    else
-      raise "#{__method__} is called and the user is not signed in"
-    end
-  end
-
   def too_many_requests_message(reset_in = 30)
     if user_signed_in?
       reset_in ||= rate_limit_reset_in
