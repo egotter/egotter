@@ -3,7 +3,7 @@ class StartDeletingTweetsTask
   def initialize(screen_name, file, sync: false, dry_run: nil, since: nil, _until: nil)
     @screen_name = screen_name
     @file = file
-    @tweets = JSON.load(File.read(@file).remove(/\Awindow\.YTD\.tweet\.part\d+ =/))
+    @tweets = load_tweets(file)
     @sync = sync
     @dry_run = dry_run
     @since = since ? Time.zone.parse(since) : nil
@@ -12,11 +12,22 @@ class StartDeletingTweetsTask
 
   def start!
     validate!
+
+    puts "first_tweet=#{@tweets[0].created_at.to_s(:db)}"
+    puts "last_tweet=#{@tweets[-1].created_at.to_s(:db)}"
+
     initialize_task!
     start_task!
   end
 
   private
+
+  def load_tweets(file)
+    data = File.read(file).remove(/\Awindow\.YTD\.tweet\.part\d+ =/)
+    JSON.load(data).map do |hash|
+      Tweet.from_hash(hash)
+    end.sort_by!(&:created_at)
+  end
 
   def validate!
     unless (user = User.find_by(screen_name: @screen_name))
@@ -39,11 +50,12 @@ class StartDeletingTweetsTask
     end
     puts "tweets_size=#{@tweets.size}"
 
-    tweet_ids = @tweets.map { |tweet| tweet['tweet']['id'] }
+    tweet_ids = @tweets.map(&:id)
     tweet = nil
 
     [0, tweet_ids.size / 2, tweet_ids.size - 1].each do |i|
       tweet = user.api_client.twitter.status(tweet_ids[i])
+      break
     rescue => e
       if TweetStatus.no_status_found?(e)
         next
@@ -67,22 +79,14 @@ class StartDeletingTweetsTask
     skipped_tweets = []
     @candidate_tweets = []
 
-    @tweets.each do |t|
-      t['tweet']['id'] = t['tweet']['id'].to_i
-      t['tweet']['created_at'] = Time.zone.parse(t['tweet']['created_at'])
-    end
-    @tweets.sort_by! { |t| t['tweet']['created_at'].to_i }
-
     @tweets.each do |tweet|
-      tweeted_at = tweet['tweet']['created_at']
-
-      if @since && tweeted_at < @since
+      if @since && tweet.created_at < @since
         skipped_tweets << tweet
         print 's'
         next
       end
 
-      if @until && @until < tweeted_at
+      if @until && @until < tweet.created_at
         skipped_tweets << tweet
         print 's'
         next
@@ -99,7 +103,7 @@ class StartDeletingTweetsTask
   def start_task!
     if @dry_run
       @candidate_tweets.each do |tweet|
-        puts "tweet_id=#{tweet['tweet']['id']} tweeted_at=#{tweet['tweet']['created_at']}"
+        puts "tweet_id=#{tweet.id} tweeted_at=#{tweet.created_at}"
       end
     else
       user = User.find_by(screen_name: @screen_name)
@@ -110,7 +114,7 @@ class StartDeletingTweetsTask
         started_time = Time.zone.now
 
         @candidate_tweets.each do |tweet|
-          DeleteTweetWorker.new.perform(user.id, tweet['tweet']['id'], request_id: request.id)
+          DeleteTweetWorker.new.perform(user.id, tweet.id, request_id: request.id)
 
           if (deleted_count += 1) % 1000 == 0
             time = Time.zone.now - started_time
@@ -119,9 +123,29 @@ class StartDeletingTweetsTask
         end
       else
         @candidate_tweets.each do |tweet|
-          DeleteTweetWorker.perform_async(user.id, tweet['tweet']['id'], request_id: request.id)
+          DeleteTweetWorker.perform_async(user.id, tweet.id, request_id: request.id)
         end
       end
+    end
+  end
+
+  class Tweet
+    class << self
+      def from_hash(hash)
+        new(hash)
+      end
+    end
+
+    def initialize(hash)
+      @attrs = hash
+    end
+
+    def id
+      @attrs['id'].to_i
+    end
+
+    def created_at
+      Time.zone.parse(@attrs['created_at'])
     end
   end
 end
