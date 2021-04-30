@@ -130,7 +130,7 @@ ja:
         公式アカウントは %{egotter_link} です。分からないことは何でもご質問ください。
         <a href="https://twitter.com/ego_tter" target="_blank" class="btn btn-outline-primary btn-sm">@ego_tter をツイッターで見る</a><br>
         <br>
-        よるある質問はこちらにまとまっています。
+        よくある質問はこちらにまとまっています。
         <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">よくある質問を見る</a>
   timelines:
     show:
