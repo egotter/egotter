@@ -12,9 +12,13 @@
   <div>Browser version<%= request.browser_version %></div>
   <div>JavaScript: <span id="check-js">disabled</span></div>
   <div>jQuery: <span id="check-jquery">disabled</span></div>
+  <br>
 
+  <div>Ad blocker: <span id="check-blocker">checking...</span></div>
   <div>Ad placement test</div>
-  <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
+  <div style="border: 1px dashed #000; min-height: 100px;">
+    <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
+  </div>
 </div>
 
 <script>
@@ -23,4 +27,8 @@
   $(function () {
     $('#check-jquery').text('enabled');
   })
+
+  setTimeout(function () {
+    document.getElementById('check-blocker').textContent = (window.adBlockerDetected ? 'detected' : 'not detected');
+  }, 100);
 </script>
