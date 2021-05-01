@@ -57,10 +57,10 @@ class StartDeletingTweetsTask
       tweet = user.api_client.twitter.status(tweet_ids[i])
       break
     rescue => e
-      if TweetStatus.no_status_found?(e)
+      if TweetStatus.no_status_found?(e) || TweetStatus.not_authorized?(e)
         next
       else
-        raise
+        raise "#{e.message} tweet_id=#{tweet_ids[i]}"
       end
     end
 
@@ -132,6 +132,7 @@ class StartDeletingTweetsTask
   class Tweet
     class << self
       def from_hash(hash)
+        hash = hash['tweet'] if hash.has_key?('tweet')
         new(hash)
       end
     end
