@@ -2,9 +2,9 @@ class HomeController < ApplicationController
   include JobQueueingConcern
 
   before_action :redirect_to_error_page, only: :new
+  before_action :enqueue_update_authorized, only: :new
 
   def new
-    enqueue_update_authorized
   end
 
   def start
