@@ -2059,7 +2059,7 @@ ja:
       body_html: |
         <img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} の%{page_name}へ移動しますか？<br>
         <br>
-        %{page_name}はこちら <a href="%{timeline_url}" class="btn btn-outline-primary btn-sm">%{page_name}</a><br>
+        %{page_name}はこちら <a href="%{positive_url}" class="btn btn-outline-primary btn-sm">%{page_name}</a><br>
         <br>
         通知設定の変更はこちら <a href="%{settings_url}" class="btn btn-outline-primary btn-sm">設定ページ</a><br>
         <br>
