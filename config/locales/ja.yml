@@ -1503,6 +1503,7 @@ ja:
       more: '手順'
       since_date: 'この日付から'
       until_date: 'この日付まで'
+      send_dm: '削除の完了後に自分へDMする'
       note1_html: 'アーカイブデータは事前にご用意ください。<a href="%{url}">やり方</a>'
       note2: 'twitter-0000-00-00-aaaaaa.zip を選択してください。'
       note3_html: 'この機能には有料プランの購入が必要です。<a href="%{url}" target="_blank">プランの詳細</a>'

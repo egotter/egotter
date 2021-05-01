@@ -10,6 +10,24 @@
         <%= t('.more') %>
       <% end %>
 
+      <div class="my-4">
+        <div>
+          <label for="premium_since_date"><%= t('.since_date') %></label>
+          <%= date_field_tag('premium_since_date') %>
+        </div>
+        <div>
+          <label for="premium_until_date"><%= t('.until_date') %></label>
+          <%= date_field_tag('premium_until_date') %>
+        </div>
+      </div>
+
+      <div class="my-4">
+        <div>
+          <%= check_box_tag('premium_send_dm', '1', true, disabled: true) %>
+          <label for="premium_send_dm"><%= t('.send_dm') %></label>
+        </div>
+      </div>
+
       <% if current_user.has_valid_subscription? %>
         <% if current_user.has_trial_subscription? %>
           <div class="text-center mt-3">
@@ -23,17 +41,6 @@
             <div class="mt-1"><%= t('.note2') %></div>
           </div>
         <% else %>
-          <div class="my-4">
-            <div>
-              <label for="premium_since_date"><%= t('.since_date') %></label>
-              <%= date_field_tag('premium_since_date') %>
-            </div>
-            <div>
-              <label for="premium_until_date"><%= t('.until_date') %></label>
-              <%= date_field_tag('premium_until_date') %>
-            </div>
-          </div>
-
           <div class="text-center mt-3">
             <%= link_to '#', id: 'delete-tweets-button', class: 'btn btn-outline-primary' do %>
               <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
