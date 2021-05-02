@@ -212,8 +212,8 @@ class User < ApplicationRecord
         where(deleted_at: nil).where.not(tweet_id: nil).size
   end
 
-  def valid_coupons_search_count
-    coupons.where('expires_at > ?', Time.zone.now).sum(:search_count)
+  def coupons_search_count
+    coupons.not_expired.has_search_count.sum(:search_count)
   end
 
   def search_mode

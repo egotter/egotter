@@ -35,9 +35,9 @@ RSpec.describe SearchCountLimitation, type: :model do
       it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS + 2) }
     end
 
-    context 'valid_coupons_search_count is 1' do
+    context 'coupons_search_count is 1' do
       before do
-        allow(user).to receive(:valid_coupons_search_count).and_return(1)
+        allow(user).to receive(:coupons_search_count).and_return(1)
       end
       it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS + 1) }
     end

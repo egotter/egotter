@@ -15,4 +15,10 @@
 #  index_coupons_on_user_id     (user_id)
 #
 class Coupon < ApplicationRecord
+  belongs_to :user
+
+  validates :user_id, presence: true
+
+  scope :not_expired, -> { where('expires_at > ?', Time.zone.now) }
+  scope :has_search_count, -> { where('search_count > 0') }
 end

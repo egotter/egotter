@@ -33,7 +33,7 @@ class SearchCountLimitation
     end
 
     if @user
-      count += @user.valid_coupons_search_count
+      count += @user.coupons_search_count
     end
 
     if @user && CreatePeriodicTweetRequest.exists?(user_id: @user.id)
