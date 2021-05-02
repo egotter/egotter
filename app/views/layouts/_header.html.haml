@@ -1,56 +1,49 @@
-:css
-  ul#orig-navbar {
-    background-color: #343a40 !important;
-    display: flex;
-    align-items: center;
-    list-style: none;
-  }
-
-  ul#orig-navbar li.right-item {
-    margin-left: auto;
-  }　
-
 - via = current_via('navbar')
 
-%ul#orig-navbar.m-0.p-3
-  %li
-    = link_to root_path(via: via) do
-      %img.rounded{alt: "", height: "30", src: image_path('/logo_transparent_96x96.png')}
-  %li
-    - text = content_for?(:navbar_title) ? yield(:navbar_title) : t('.title')
-    = link_to text, subroot_path(via: 'navbar'), class: 'text-white pl-2'
+.d-none.d-md-block
+  .d-flex.justify-content-between.align-items-center.m-0.p-3{style: 'background-color: #343a40 !important;'}
+    %div
+      = link_to root_path(via: via) do
+        %img.rounded{alt: t('.title'), height: '30', src: image_path('/logo_transparent_96x96.png')}
+      = link_to subroot_path(via: 'navbar'), class: 'text-white pl-2' do
+        = content_for?(:navbar_title) ? yield(:navbar_title) : t('.title')
+    %div
+      = link_to '#', class: 'border rounded text-white text-center small d-block p-2', style: 'width: 500px;', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
+        %i.fas.fa-search.pr-1
+        = t('.search_by_twitter_id')
+    %div
+      = link_to start_path(via: via), class: 'text-white' do
+        %i.far.fa-question-circle
+        = t('.start')
+      = link_to pricing_path(via: via), class: 'text-white pl-3' do
+        %i.fas.fa-yen-sign
+        = t('.pricing')
+      = link_to direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), class: 'text-white pl-3', target: '_blank' do
+        %i.far.fa-envelope
+        = t('.notification')
+      - if user_signed_in?
+        = link_to settings_path(via: via), class: 'text-white' do
+          %img.rounded-circle.d-inline-block.ml-3{src: current_user_icon, width: 22, height: 22}
+          = current_user.screen_name
+          - if current_user.has_valid_subscription?
+            %i.fas.fa-trophy
+      - else
+        = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path(via: 'navbar_sign_in')), class: 'text-white pl-3'
 
-  %li.d-none.d-md-block.right-item
-    = link_to '#', class: "btn #{search_modal_icon_style(false)}", 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
-      %i.fas.fa-search.pr-1
-      = t('.search_by_twitter_id')
-  %li.d-none.d-md-block.text-white
-    %i.far.fa-question-circle.pl-3
-    = link_to t('.start'), start_path(via: via), class: 'text-white'
-  %li.d-none.d-md-block.text-white
-    %i.fas.fa-yen-sign.pl-3
-    = link_to t('.pricing'), pricing_path(via: via), class: 'text-white'
-  %li.d-none.d-md-block.text-white
-    %i.far.fa-envelope.pl-3
-    = link_to t('.notification'), direct_messages_url('ego_tter'), class: 'text-white', target: '_blank'
-  %li.d-none.d-md-block
-    - if user_signed_in?
-      = link_to settings_path(via: via), class: 'text-white' do
-        %img.rounded-circle.d-inline-block.ml-3{src: current_user_icon, width: 22, height: 22}
-        = current_user.screen_name
-        - if current_user.has_valid_subscription?
-          %i.fas.fa-trophy
-    - else
-      = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path(via: 'navbar_sign_in')), class: 'text-white pl-3'
-
-  -# Display on extra small and small
-  %li.d-block.d-md-none.right-item
-    = link_to '#', class: search_modal_icon_style, 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
-      %i.fas.fa-search
-  %li.d-block.d-md-none
-    - if user_signed_in?
-      = link_to '#', class: 'text-white pl-3' do
-        %img.rounded-circle.btn-sidemenu{src: current_user_icon, width: 22, height: 22}
-        = render partial: 'layouts/sidemenu', locals: {button_class: 'btn-sidemenu'}
-    - else
-      = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path(via: 'navbar_sign_in')), class: 'text-white pl-3'
+-# Display on extra small and small
+.d-block.d-md-none
+  .d-flex.justify-content-between.align-items-center.m-0.p-3{style: 'background-color: #343a40 !important;'}
+    %div
+      = link_to root_path(via: via) do
+        %img.rounded{alt: t('.title'), height: '30', src: image_path('/logo_transparent_96x96.png')}
+      = link_to subroot_path(via: 'navbar'), class: 'text-white pl-2' do
+        = content_for?(:navbar_title) ? yield(:navbar_title) : t('.title')
+    %div
+      = link_to '#', class: 'text-white', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
+        %i.fas.fa-search
+      - if user_signed_in?
+        = link_to '#', class: 'text-white pl-3' do
+          %img.rounded-circle.btn-sidemenu{src: current_user_icon, width: 22, height: 22}
+          = render partial: 'layouts/sidemenu', locals: {button_class: 'btn-sidemenu'}
+      - else
+        = link_to t('.sign_in'), sign_in_path(via: via, redirect_path: subroot_path(via: 'navbar_sign_in')), class: 'text-white pl-3'

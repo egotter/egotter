@@ -8,12 +8,4 @@ module SearchCountLimitationHelper
       t('datetime.distance_in_words.x_seconds', count: seconds.to_i)
     end
   end
-
-  def search_modal_icon_style(mobile = true)
-    if mobile
-      @search_count_limitation.count_remaining? ? 'text-white' : 'text-warning'
-    else
-      @search_count_limitation.count_remaining? ? 'btn-outline-primary' : 'btn-outline-warning'
-    end
-  end
 end
