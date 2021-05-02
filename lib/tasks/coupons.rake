@@ -48,4 +48,13 @@ namespace :coupons do
       end
     end
   end
+
+  task add_stripe_coupon: :environment do
+    user_id = ENV['USER_ID']
+    stripe_coupon_id = ENV['STRIPE_COUPON_ID']
+    expires_at = ENV['EXPIRES_AT'] ? Time.zone.parse(ENV['EXPIRES_AT']) : 7.days.since
+
+    user = User.find(user_id)
+    puts Coupon.create!(user_id: user.id, search_count: 0, stripe_coupon_id: stripe_coupon_id, expires_at: expires_at).inspect
+  end
 end

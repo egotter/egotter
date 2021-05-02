@@ -295,6 +295,7 @@ ActiveRecord::Schema.define(version: 2021_03_29_221652) do
   create_table "coupons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "search_count", null: false
+    t.string "stripe_coupon_id"
     t.datetime "expires_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
