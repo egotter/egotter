@@ -13,6 +13,7 @@ class ModalDialog {
     } else {
       if (this.cache.read(this.cache_key)) {
         logger.log('already shown', this.$el, this.cache_key, this.cache.remaining(this.cache_key));
+        this.$el.trigger('hidden.bs.modal');
       } else {
         logger.log('show', this.$el, this.cache_key, this.cache.remaining(this.cache_key));
         this.cache.write(this.cache_key, true);

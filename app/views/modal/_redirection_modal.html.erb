@@ -12,10 +12,21 @@
 <script>
   $(function () {
     var url = '<%= raw positive_url %>';
-    var modal_id = '#<%= modal_id %>';
-    $(modal_id).modal('show');
-    $(modal_id).find('.positive').on('click', function () {
+    var $modal = $('#<%= modal_id %>');
+
+    $modal.find('.positive').on('click', function () {
       window.location.href = url;
     });
+
+    $modal.show = function () {
+      $modal.modal('show');
+    }
+
+    if (window.modalsQueue) {
+      window.modalsQueue.add($modal);
+      window.modalsQueue.start();
+    } else {
+      window.modalsQueue = [$modal];
+    }
   });
 </script>

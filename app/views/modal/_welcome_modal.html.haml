@@ -32,6 +32,13 @@
       var continuousSignInDialog = new ContinuousSignInDialog();
 
       var queue = new ModalQueue();
+
+      if (window.modalsQueue) {
+        queue.add(window.modalsQueue.pop());
+      }
+
+      window.modalsQueue = queue;
+
       if (showFollowDialog) {
         queue.add(followDialog);
       }
@@ -44,6 +51,7 @@
       if (showContinuousSignInDialog) {
         queue.add(continuousSignInDialog);
       }
+
       queue.start();
     });
 - else
