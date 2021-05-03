@@ -9,6 +9,7 @@ class SettingsController < ApplicationController
   before_action :enqueue_update_egotter_friendship
 
   def index
+    @orders = current_user.orders.order(created_at: :desc).limit(10)
     @reset_egotter_request = current_user.reset_egotter_requests.not_finished.where(created_at: 12.hours.ago..Time.zone.now).exists?
     @reset_cache_request = current_user.reset_cache_requests.not_finished.where(created_at: 12.hours.ago..Time.zone.now).exists?
     @create_periodic_tweet_request = CreatePeriodicTweetRequest.find_by(user_id: current_user.id)

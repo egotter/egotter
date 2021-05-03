@@ -1,0 +1,40 @@
+<div class="text-center mt-5 mb-3"><%= link_to t('.see_plans'), pricing_path(via: current_via('orders_table')) %></div>
+
+<div class="text-center mb-5"><a href="#" class="btn btn-primary btn-checkout"><%= t('.purchase') %></a></div>
+
+<% if orders.any? %>
+  <%= render partial: 'order', collection: orders, cached: true, spacer_template: 'order_ruler' %>
+
+  <%= render partial: 'modal/order_details_modal', locals: {modal_id: 'order-details-modal'} %>
+
+  <script>
+    function clickCancelButton() {
+      var message = '<%= t('.cancel_confirmation') %>';
+      if (confirm(message)) {
+        $(this).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
+        var id = $(this).data('id');
+        var i18n = {processing: '<%= t('.canceling_html') %>'};
+        new Order(id, i18n).cancel();
+      }
+      return false;
+    }
+
+    function clickCustomerPortalButton() {
+      var url = '<%= raw api_v1_customer_portal_urls_path %>';
+      var id = $(this).data('id');
+
+      $.post(url, {order_id: id}).done(function (res) {
+        window.location.href = res.url;
+      }).fail(showErrorMessage);
+
+      return false;
+    }
+
+    $(function () {
+      $('.btn-cancel-order').on('click', clickCancelButton);
+      $('.btn-customer-portal').on('click', clickCustomerPortalButton);
+    });
+  </script>
+<% else %>
+  <div class="text-center my-3"><%= t('.has_not_purchased') %></div>
+<% end %>

@@ -443,8 +443,14 @@ ja:
     index:
       notifications:
         title: "通知設定"
+    orders_section:
+      title: "購入履歴"
+      purchase: '購入する'
+      see_plans: '料金プランを見る'
+      cancel_confirmation: '2回目以降の購入は初回の割引が適用されなくなります。本当に現在のプランをキャンセルしますか？'
+      canceling_html: 'キャンセル処理中です。<img src="/ajax-loader.gif?a=1">'
+      has_not_purchased: "まだ購入していません"
     order:
-      order_histories: "購入履歴"
       no_payment_guranteed: '※ トライアル期間中は支払いは発生しません。'
       during_trial_period: "トライアル期間中"
       trial_period_until: '%{time}までトライアル期間中'
@@ -459,12 +465,6 @@ ja:
       price: "%{price}円/月（税別）"
       cancel: 'キャンセルする'
       update_payment_method: '支払い方法を更新する'
-      cancel_confirmation: '2回目以降の購入は初回の割引が適用されなくなります。本当に現在のプランをキャンセルしますか？'
-      canceling_html: 'キャンセル処理中です。<img src="/ajax-loader.gif?a=1">'
-      has_not_purchased: "まだ購入していません"
-      purchase: '購入する'
-      has_purchased: '購入済み'
-      see_plans: '料金プランを見る'
     data:
       title: 'データ設定'
       requested: 'リクエスト済み'

@@ -1,90 +1,44 @@
-<div class="text-center mt-5 mb-3"><%= link_to t('.see_plans'), pricing_path(via: current_via('orders_table')) %></div>
+<h5><%= order.short_name %></h5>
 
-<div class="text-center mb-5"><a href="#" class="btn btn-primary btn-checkout"><%= t('.purchase') %></a></div>
+<div class="mb-3"><%= t('.price', price: order.price) %></div>
 
-<% if current_user.orders.any? %>
-  <% orders = current_user.orders.order(created_at: :desc).limit(10) %>
-  <% orders.each do |order| %>
-    <h5><%= order.short_name %></h5>
-
-    <div class="mb-3"><%= t('.price', price: order.price) %></div>
-
-    <% if order.trial? && !order.charge_failed_at && !order.canceled_at %>
-      <div class="mb-3">
-        <div class="text-muted"><%= t('.no_payment_guranteed') %></div>
-        <% if order.trial_end.present? %>
-          <span class="badge badge-primary"><%= t('.trial_period_until', time: l(order.trial_end_time.in_time_zone('Tokyo'), format: :order_long)) %></span>
-        <% else %>
-          <span class="badge badge-primary"><%= t('.during_trial_period') %></span>
-        <% end %>
-      </div>
-    <% end %>
-
-    <% if order.charge_failed_at %>
-      <div class="mb-1 text-danger"><%= t('.charge_failed_title') %></div>
-      <div class="small mb-3"><%= t('.charge_failed_description') %></div>
-    <% elsif order.canceled_at %>
-      <div class="mb-1"><%= t('.canceled_title') %></div>
-      <div class="small mb-3"><%= t('.canceled_description') %></div>
+<% if order.trial? && !order.charge_failed_at && !order.canceled_at %>
+  <div class="mb-3">
+    <div class="text-muted"><%= t('.no_payment_guranteed') %></div>
+    <% if order.trial_end.present? %>
+      <span class="badge badge-primary"><%= t('.trial_period_until', time: l(order.trial_end_time.in_time_zone('Tokyo'), format: :order_long)) %></span>
     <% else %>
-      <div class="mb-1 text-primary"><%= t('.valid_title') %></div>
-      <div class="small mb-3"><%= t('.valid_description') %></div>
+      <span class="badge badge-primary"><%= t('.during_trial_period') %></span>
     <% end %>
+  </div>
+<% end %>
 
-    <div class="mb-3">
-      <% modal_data = {
-        amount: order.price,
-        search_count: order.search_count,
-        canceled_at: order.canceled_at ? l(order.canceled_at.in_time_zone('Tokyo'), format: :order_long) : t('.invalid_time'),
-        charge_failed_at: order.charge_failed_at ? l(order.charge_failed_at.in_time_zone('Tokyo'), format: :order_long) : t('.invalid_time'),
-        created_at: l(order.created_at.in_time_zone('Tokyo'), format: :order_long),
-      } %>
-      <%= link_to t('.see_details'), '#', class: 'btn btn-outline-primary btn-order-details', data: {toggle: 'modal', target: '#order-details-modal'}.merge(modal_data) %>
-
-      <% if !order.charge_failed_at && !order.canceled_at %>
-        <%= link_to t('.cancel'), '#', class: 'btn btn-outline-danger btn-cancel-order ml-3', data: {id: order.id} %>
-      <% end %>
-    </div>
-
-    <% if current_user.admin? %>
-      <div class="mt-3"><%= link_to t('.update_payment_method'), '#', class: 'btn btn-outline-primary btn-sm btn-customer-portal', data: {id: order.id} %></div>
-    <% end %>
-
-    <% unless orders.last.id == order.id %>
-      <hr>
-    <% end %>
-  <% end %>
-
-  <%= render partial: 'modal/order_details_modal', locals: {modal_id: 'order-details-modal'} %>
-
-  <script>
-    function clickCancelButton() {
-      var message = '<%= t('.cancel_confirmation') %>';
-      if (confirm(message)) {
-        $(this).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
-        var id = $(this).data('id');
-        var i18n = {processing: '<%= t('.canceling_html') %>'};
-        new Order(id, i18n).cancel();
-      }
-      return false;
-    }
-
-    function clickCustomerPortalButton() {
-      var url = '<%= api_v1_customer_portal_urls_path %>';
-      var id = $(this).data('id');
-
-      $.post(url, {order_id: id}).done(function (res) {
-        window.location.href = res.url;
-      }).fail(showErrorMessage);
-
-      return false;
-    }
-
-    $(function () {
-      $('.btn-cancel-order').on('click', clickCancelButton);
-      $('.btn-customer-portal').on('click', clickCustomerPortalButton);
-    });
-  </script>
+<% if order.charge_failed_at %>
+  <div class="mb-1 text-danger"><%= t('.charge_failed_title') %></div>
+  <div class="small mb-3"><%= t('.charge_failed_description') %></div>
+<% elsif order.canceled_at %>
+  <div class="mb-1"><%= t('.canceled_title') %></div>
+  <div class="small mb-3"><%= t('.canceled_description') %></div>
 <% else %>
-  <div class="text-center my-3"><%= t('.has_not_purchased') %></div>
+  <div class="mb-1 text-primary"><%= t('.valid_title') %></div>
+  <div class="small mb-3"><%= t('.valid_description') %></div>
+<% end %>
+
+<div class="mb-3">
+  <% modal_data = {
+    amount: order.price,
+    search_count: order.search_count,
+    canceled_at: order.canceled_at ? l(order.canceled_at.in_time_zone('Tokyo'), format: :order_long) : t('.invalid_time'),
+    charge_failed_at: order.charge_failed_at ? l(order.charge_failed_at.in_time_zone('Tokyo'), format: :order_long) : t('.invalid_time'),
+    created_at: l(order.created_at.in_time_zone('Tokyo'), format: :order_long),
+  } %>
+  <%= link_to t('.see_details'), '#', class: 'btn btn-outline-primary btn-order-details', data: {toggle: 'modal', target: '#order-details-modal'}.merge(modal_data) %>
+
+  <% if !order.charge_failed_at && !order.canceled_at %>
+    <%= link_to t('.cancel'), '#', class: 'btn btn-outline-danger btn-cancel-order ml-3', data: {id: order.id} %>
+  <% end %>
+</div>
+
+<% if current_user.admin? %>
+  <div class="mt-3"><%= link_to t('.update_payment_method'), '#', class: 'btn btn-outline-primary btn-sm btn-customer-portal', data: {id: order.id} %></div>
 <% end %>
