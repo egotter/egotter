@@ -27,7 +27,7 @@ module Api
             subscription_data: {default_tax_rates: [Order::TAX_RATE_ID]},
             metadata: {user_id: user.id},
             success_url: ENV['STRIPE_SUCCESS_URL'],
-            cancel_url: pricing_url(via: 'cancel_checkout'),
+            cancel_url: ENV['STRIPE_CANCEL_URL'],
         }
 
         if (customer_id = user.valid_customer_id)
@@ -40,8 +40,8 @@ module Api
           attrs[:metadata][:price] = Order::DISCOUNT_PRICE
         end
 
-        if user.coupons_stripe_coupon_ids.any?
-          attrs[:discounts].concat(user.coupons_stripe_coupon_ids.map { |id| {coupon: id} })
+        if attrs[:discounts].empty? && user.coupons_stripe_coupon_ids.any?
+          attrs[:discounts] = [{coupon: user.coupons_stripe_coupon_ids[-1]}]
           attrs[:metadata][:price] = Order::DISCOUNT_PRICE
         end
 
