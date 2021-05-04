@@ -447,15 +447,24 @@ ja:
       title: "購入履歴"
       purchase: '購入する'
       see_plans: '料金プランを見る'
-      cancel_confirmation: '2回目以降の購入は初回の割引が適用されなくなります。本当に現在のプランをキャンセルしますか？'
-      canceling_html: 'キャンセル処理中です。<img src="/ajax-loader.gif?a=1">'
+      cancel_order_modal:
+        title: '定期購読の解約'
+        message_html: |
+          <p>2回目以降の購入には初回購入時の割引が適用されなくなります。</p>
+          <p>本当に現在のプランを解約しますか？</p>
+        'yes': '解約する'
+        'no': 'そのままにする'
+      canceling_html: '解約処理中です。<img src="/ajax-loader.gif?a=1">'
       has_not_purchased: "まだ購入していません"
     order:
       no_payment_guranteed: '※ トライアル期間中は支払いは発生しません。'
       during_trial_period: "トライアル期間中"
       trial_period_until: '%{time}までトライアル期間中'
       charge_failed_title: '支払い失敗により自動キャンセル済み'
-      charge_failed_description: '支払い失敗の失敗は一時的なエラーや残高不足など様々です。具体的な理由はカード発行会社に直接お問い合わせください。'
+      charge_failed_description_html: |
+        <p>カードに問題が無いのに支払いに失敗することがあります。その際は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。以前の価格で定期購読を継続いたします。</p>
+        <p>支払い失敗の理由は一時的なエラーや残高不足など様々です。具体的な理由はカード発行会社に直接お問い合わせください。</p>
+      charge_failed_direct_message: 'カードに問題が無いのに支払いに失敗しました。定期購読の継続を希望します。'
       canceled_title: "キャンセル済み"
       canceled_description: "もう支払いは発生しません。"
       valid_title: '購読中'

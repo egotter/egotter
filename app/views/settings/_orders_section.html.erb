@@ -7,32 +7,36 @@
 
   <%= render partial: 'modal/order_details_modal', locals: {modal_id: 'order-details-modal'} %>
 
+  <%= modal_dialog id: 'cancel-order-modal', title: t('.cancel_order_modal.title'), button: {positive: t('.cancel_order_modal.yes'), category: 'danger', negative: t('.cancel_order_modal.no')} do %>
+    <%= t('.cancel_order_modal.message_html') %>
+  <% end %>
+
   <script>
-    function clickCancelButton() {
-      var message = '<%= t('.cancel_confirmation') %>';
-      if (confirm(message)) {
-        $(this).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
-        var id = $(this).data('id');
-        var i18n = {processing: '<%= t('.canceling_html') %>'};
-        new Order(id, i18n).cancel();
-      }
-      return false;
-    }
-
-    function clickCustomerPortalButton() {
-      var url = '<%= raw api_v1_customer_portal_urls_path %>';
-      var id = $(this).data('id');
-
-      $.post(url, {order_id: id}).done(function (res) {
-        window.location.href = res.url;
-      }).fail(showErrorMessage);
-
-      return false;
-    }
-
     $(function () {
-      $('.btn-cancel-order').on('click', clickCancelButton);
-      $('.btn-customer-portal').on('click', clickCustomerPortalButton);
+      var $modal = $('#cancel-order-modal');
+
+      $modal.find('.positive').on('click', function () {
+        $modal.data('button').addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
+        var i18n = {processing: '<%= t('.canceling_html') %>'};
+        new Order($modal.data('id'), i18n).cancel();
+      });
+
+      $modal.on('show.bs.modal', function (e) {
+        var button = $(e.relatedTarget);
+        $modal.data('id', button.data('id'));
+        $modal.data('button', button);
+      });
+
+      $('.btn-customer-portal').on('click', function () {
+        var url = '<%= raw api_v1_customer_portal_urls_path %>';
+        var id = $(this).data('id');
+
+        $.post(url, {order_id: id}).done(function (res) {
+          window.location.href = res.url;
+        }).fail(showErrorMessage);
+
+        return false;
+      });
     });
   </script>
 <% else %>

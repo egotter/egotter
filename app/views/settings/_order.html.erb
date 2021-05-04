@@ -15,7 +15,7 @@
 
 <% if order.charge_failed_at %>
   <div class="mb-1 text-danger"><%= t('.charge_failed_title') %></div>
-  <div class="small mb-3"><%= t('.charge_failed_description') %></div>
+  <div class="small mb-3"><%= t('.charge_failed_description_html', url: direct_message_url(User::EGOTTER_CS_UID, t('.charge_failed_direct_message'))) %></div>
 <% elsif order.canceled_at %>
   <div class="mb-1"><%= t('.canceled_title') %></div>
   <div class="small mb-3"><%= t('.canceled_description') %></div>
@@ -35,7 +35,7 @@
   <%= link_to t('.see_details'), '#', class: 'btn btn-outline-primary btn-order-details', data: {toggle: 'modal', target: '#order-details-modal'}.merge(modal_data) %>
 
   <% if !order.charge_failed_at && !order.canceled_at %>
-    <%= link_to t('.cancel'), '#', class: 'btn btn-outline-danger btn-cancel-order ml-3', data: {id: order.id} %>
+    <%= link_to t('.cancel'), '#', class: 'btn btn-outline-danger btn-cancel-order ml-3', data: {toggle: 'modal', target: '#cancel-order-modal', id: order.id} %>
   <% end %>
 </div>
 

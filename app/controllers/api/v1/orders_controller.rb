@@ -10,7 +10,7 @@ module Api
 
       after_action :track_order_activity
 
-      INTERVAL = 10
+      INTERVAL = 5
 
       def end_trial
         order = current_user.valid_order
