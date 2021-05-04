@@ -45,8 +45,9 @@
     @egotter_cs は、中の人がお返事をするためのアカウントです。回答が必要な連絡は必ずこちらに送ってください。
   <% end %>
 
-  <% faq_question '公式アカウントをフォローすると良いことがありますか？' do %>
-    あります。@ego_tter をフォローするとWebサイトでの検索回数や使える機能が増えます。さらに、@ego_tter に【リムられ通知 送信】とDMすることでリムられ通知を受け取ることができます。
+  <% faq_question '公式アカウントをフォローするメリット' do %>
+    @ego_tter をフォローするとWebサイトでの検索回数や使える機能が増えます。さらに、@ego_tter に【リムられ通知 送信】とDMすることでリムられ通知を受け取ることができます。
+    <%= link_to '@ego_tter を開く', user_url('ego_tter'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
   <% end %>
 
   <% faq_question '公式アカウントのフォローは必須ですか？' do %>
@@ -69,21 +70,21 @@
     @ego_tter をフォローすることで、ツイッター公式の「共通のフォロー」に表示されてしまうことはあります。
   <% end %>
 
-  <% faq_question 'えごったーを使うと勝手にツイートされますか？' do %>
+  <% faq_question 'えごったーは勝手にツイートしますか？' do %>
     <div class="mb-3">勝手にツイートすることはありませんのでご安心ください。</div>
 
     <div class="mb-1"><strong>よくある誤解</strong></div>
-    <div>「検索回数を増やすために、えごったーをツイートする」という設定をオンにしていると、ツイートすることがあります。この設定は設定ページからいつでもオフにできます。</div>
+    <div>「検索回数を増やすために、定期ツイートを許可する」という設定をオンにしていると、ツイートすることがあります。この設定は設定ページからいつでもオフにできます。</div>
   <% end %>
 
-  <% faq_question 'えごったーを使うとDMを勝手に見られますか？' do %>
+  <% faq_question 'えごったーはDMを勝手に見ますか？' do %>
     <div class="mb-3">DMを勝手に見ることはありませんのでご安心ください。</div>
 
     <div class="mb-1"><strong>よくある誤解</strong></div>
     <div>ツイッター連携ログインで許可する項目に「DMの送信」があるのは、リムられ通知を送信するためです。また、ツイッターの権限は細かい選択ができないため今の形式になっています。</div>
   <% end %>
 
-  <% faq_question 'なんでたくさんの権限が必要なんですか？' do %>
+  <% faq_question '何故たくさんの権限が必要なんですか？' do %>
     全世界共通の<span class="egotter-pink">ツイッターの仕様</span>です。ツイッターの権限には「全部できる」または「全部できない」しかないためこのようになっています。
   <% end %>
 
@@ -93,6 +94,37 @@
 
   <% faq_question '鍵アカウントも検索できますか？' do %>
     「自分自身」または「自分がフォローしている鍵アカウント」のみに限り、鍵アカウントも検索できます。
+  <% end %>
+<% end %>
+
+<% faq_section 'ログイン 全般' do %>
+  <% faq_question 'えごったーにログインすると何ができますか？' do %>
+    <div class="mb-3">
+      えごったーにログインすると、フォロワーが多くても正確にデータを分析できるようになります。また、分析が高速になり、分析回数の上限が増えます。
+    </div>
+
+    ログインしていないと、フォロワーが多いユーザーは検索できません。検索回数の上限も少なくなってしまいます。
+  <% end %>
+
+  <% faq_question 'ログインに失敗することがあります' do %>
+    <div class="mb-3">
+      大半のログインエラーは一時的なものです。お手数ですがもう一度試してみてください。
+    </div>
+
+    <div class="mb-3">
+      ツイッター自体がエラーを出しているときは、しばらく時間をおいてから再度のログインを試してみてください。
+    </div>
+
+    どうしてもログインエラーが直らない場合は @egotter_cs にエラーのスクリーンショットを送ってください。
+    <%= link_to '@egotter_cs に連絡', direct_message_url(User::EGOTTER_CS_UID, 'ログインエラーが直りません。スクリーンショットを送ります。'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+  <% end %>
+
+  <% faq_question 'Twitter IDを変更後にログインできない' do %>
+    Twitter ID（@から始まる名前）を変えると、最大で10日ほど連携アプリにログインできなくなるようです。しばらく待つと自然に直ります。
+  <% end %>
+
+  <% faq_question 'アカウントを削除後にログインできない' do %>
+    Twitterアカウントを削除してその後に復活させると、最大で10日ほど連携アプリにログインできなくなるようです。しばらく待つと自然に直ります。
   <% end %>
 <% end %>
 
@@ -219,7 +251,7 @@
     「<%= t('quick_replies.prompt_reports.label3') %>」とDMしてみてください。
   <% end %>
 
-  <% faq_question '止まったリムられ通知を再開することはできますか？' do %>
+  <% faq_question '止まったリムられ通知を再開する方法' do %>
     リムられ通知はいつでも再開できます。「<%= t('quick_replies.prompt_reports.label3') %>」と @ego_tter にDMしてみてください。
     <%= link_to t('.open_dm'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
     <br>
@@ -239,7 +271,7 @@
     <% end %>
   <% end %>
 
-  <% faq_question 'リムられ通知はどれくらいの頻度で届きますか？' do %>
+  <% faq_question 'リムられ通知の届く頻度' do %>
     <div class="mb-3">
       今のところは、朝・昼・夜の 1日3回 届きます。届く回数は設定ページから変更できます。
     </div>
@@ -250,16 +282,16 @@
     <% end %>
   <% end %>
 
-  <% faq_question '朝・昼・夜のリムられ通知は何時頃に届きますか？' do %>
+  <% faq_question 'リムられ通知の届く時間帯' do %>
     朝の通知は7〜9時、昼の通知は11〜13時、夜の通知は20〜22時あたりに届きます。
   <% end %>
 
-  <% faq_question 'リムられ通知をすぐに受け取ることはできますか？' do %>
+  <% faq_question 'リムられ通知をすぐに受け取る方法' do %>
     @ego_tter に「リムられ通知 今すぐ送信」とDMしてください。そうすれば、すぐにリムられ通知が届きます。
     <%= link_to t('.open_dm'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
   <% end %>
 
-  <% faq_question 'リムられ通知に @ が付かなくなりました。理由は何ですか？' do %>
+  <% faq_question 'なぜかリムられ通知に @ が付かなくなりました' do %>
     リムられ通知でユーザー名の前に @ が付くのは、「有料プランのユーザー」または「えごったーの登録から <%= User::PERIODIC_REPORT_AT_MARK_DURATION / 1.day %>日 以内」のユーザーのみになります。
   <% end %>
 <% end %>
