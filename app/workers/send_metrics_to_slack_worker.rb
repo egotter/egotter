@@ -14,7 +14,7 @@ class SendMetricsToSlackWorker
     unless steps
       steps = [
           :send_search_histories_metrics,
-          :send_search_error_metrics,
+          :send_error_pages_metrics,
       ]
     end
 
@@ -55,7 +55,7 @@ class SendMetricsToSlackWorker
   end
 
   def send_search_histories_metrics
-    records = SearchHistory.where(created_at: 1.hours.ago..Time.zone.now)
+    records = SearchHistory.where(created_at: 24.hours.ago..Time.zone.now)
     message = "count=#{records.size} count(distinct uid)=#{records.select('distinct uid').count} count(distinct user_id)=#{records.select('distinct user_id').count}"
     SendMessageToSlackWorker.perform_async(:search_histories_monitoring, message)
   end
@@ -104,6 +104,12 @@ class SendMetricsToSlackWorker
   def send_search_error_metrics
     records = SearchErrorLog.where(created_at: 1.hours.ago..Time.zone.now).group(:location).count
     message = records.any? ? records.map { |k, v| "#{k}=#{v}" }.join(' ') : 'empty'
+    SendMessageToSlackWorker.perform_async(:search_error_monitoring, message)
+  end
+
+  def send_error_pages_metrics
+    records = SearchLog.where(created_at: 24.hours.ago..Time.zone.now).where(controller: 'error_pages').group(:action).count
+    message = records.any? ? records.sort_by { |_, v| -v }.map { |k, v| "#{k}=#{v}" }.join("\n") : 'empty'
     SendMessageToSlackWorker.perform_async(:search_error_monitoring, message)
   end
 
