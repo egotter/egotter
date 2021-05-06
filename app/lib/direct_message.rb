@@ -66,15 +66,15 @@ class DirectMessage
   end
 
   class Media
-    attr_reader :content_type
+    attr_reader :content, :content_type
 
-    def initialize(body, content_type)
-      @body = body
+    def initialize(content, content_type)
+      @content = content
       @content_type = content_type
     end
 
     def to_io
-      StringIO.new(@body)
+      StringIO.new(@content)
     end
   end
 
