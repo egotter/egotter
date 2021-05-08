@@ -39,12 +39,11 @@ class CreateTwitterDBUserWorker
 
     do_perform(user.api_client, target_uids, options)
   rescue => e
-    if e.class == ApiClient::ContainStrangeUid && target_uids.size > 10
-      target_uids.each_slice(10) do |partial_uids|
-        if partial_uids.any?
-          logger.info "Split uids and retry uids_size=#{partial_uids.size} uids=#{partial_uids}"
-          self.class.perform_async(partial_uids, options)
-        end
+    if e.class == ApiClient::ContainStrangeUid && target_uids.size > 1
+      slice_size = (target_uids.size > 10) ? 10 : 1
+      target_uids.each_slice(slice_size) do |partial_uids|
+        logger.info "Split uids and retry uids_size=#{partial_uids.size} uids=#{partial_uids}"
+        self.class.perform_async(partial_uids, options)
       end
     else
       handle_worker_error(e, uids_size: target_uids.size, uids: target_uids, options: options)
