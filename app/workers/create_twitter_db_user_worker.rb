@@ -47,7 +47,7 @@ class CreateTwitterDBUserWorker
       end
     else
       handle_worker_error(e, uids_size: target_uids.size, uids: target_uids, options: options)
-      FailedCreateTwitterDBUserWorker.perform_async(target_uids, options.merge(klass: self.class))
+      FailedCreateTwitterDBUserWorker.perform_async(target_uids, options.merge(klass: self.class, error_class: e.class))
     end
   end
 
