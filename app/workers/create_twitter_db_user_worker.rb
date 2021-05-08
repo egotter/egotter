@@ -56,12 +56,18 @@ class CreateTwitterDBUserWorker
   def exception_handler(e)
     @retries ||= 3
 
-    unless meet_requirements_for_retrying?(e) && (@retries -= 1) >= 0
-      raise RetryExhausted.new(e.inspect.truncate(100))
+    if retryable_exception?(e)
+      if (@retries -= 1) >= 0
+        logger.info "Retry #{e.inspect.truncate(100)}"
+      else
+        raise RetryExhausted.new(e.inspect.truncate(100))
+      end
+    else
+      raise
     end
   end
 
-  def meet_requirements_for_retrying?(e)
+  def retryable_exception?(e)
     TwitterApiStatus.unauthorized?(e) ||
         TwitterApiStatus.temporarily_locked?(e) ||
         TwitterApiStatus.forbidden?(e) ||

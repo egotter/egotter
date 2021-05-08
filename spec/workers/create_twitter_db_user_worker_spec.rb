@@ -117,40 +117,40 @@ RSpec.describe CreateTwitterDBUserWorker do
   end
 
   describe 'exception_handler' do
-    let(:error) { 'error' }
+    let(:error) { RuntimeError.new }
     subject { worker.send(:exception_handler, error) }
 
-    it do
-      expect(worker).to receive(:meet_requirements_for_retrying?).with(error)
-      expect { subject }.to raise_error(described_class::RetryExhausted)
+    context 'The error is retryable' do
+      before { expect(worker).to receive(:retryable_exception?).with(error).and_return(true) }
+
+      it do
+        expect { subject }.not_to raise_error
+        expect(worker.instance_variable_get(:@retries)).to eq(2)
+      end
+
+      context 'The retry is exhausted' do
+        before { worker.instance_variable_set(:@retries, 0) }
+        it { expect { subject }.to raise_error(described_class::RetryExhausted) }
+      end
     end
 
-    context 'meet_requirements_for_retrying? returns true' do
-      before { allow(worker).to receive(:meet_requirements_for_retrying?).with(error).and_return(true) }
-      it { expect { subject }.not_to raise_error }
-
-      context 'retry is repeated' do
-        before { 3.times { worker.send(:exception_handler, error) } }
-        it do
-          expect { subject }.to raise_error(described_class::RetryExhausted)
-        end
-      end
+    context 'The error is NOT retryable' do
+      before { expect(worker).to receive(:retryable_exception?).with(error).and_return(false) }
+      it { expect { subject }.to raise_error(RuntimeError) }
     end
   end
 
-  describe 'meet_requirements_for_retrying?' do
-    subject { worker.send(:meet_requirements_for_retrying?, error) }
-    [
-        Twitter::Error::Unauthorized.new('Invalid or expired token.'),
-        Twitter::Error::Forbidden.new('To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'),
-        Twitter::Error::Forbidden.new,
-        Twitter::Error::TooManyRequests.new,
-        RuntimeError.new('Connection reset by peer'),
-    ].each do |error_value|
-      context "#{error_value} is raised" do
-        let(:error) { error_value }
-        it { is_expected.to be_truthy }
-      end
+  describe 'retryable_exception?' do
+    let(:error) { 'error' }
+    subject { worker.send(:retryable_exception?, error) }
+
+    it do
+      expect(TwitterApiStatus).to receive(:unauthorized?).with(error)
+      expect(TwitterApiStatus).to receive(:temporarily_locked?).with(error)
+      expect(TwitterApiStatus).to receive(:forbidden?).with(error)
+      expect(TwitterApiStatus).to receive(:too_many_requests?).with(error)
+      expect(ServiceStatus).to receive(:retryable_error?).with(error)
+      is_expected.to be_falsey
     end
   end
 end
