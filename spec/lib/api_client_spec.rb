@@ -233,7 +233,7 @@ RSpec.describe ApiClient::RequestWithRetryHandler, type: :model do
         before { allow(ServiceStatus).to receive(:retryable_error?).with(error).and_return(true) }
         it do
           expect(instance).to receive(:handle_retryable_error).with(error).exactly(retry_count).times.and_call_original
-          expect { subject }.to raise_error(described_class::RetryExhausted)
+          expect { subject }.to raise_error(ApiClient::RetryExhausted)
           expect(instance.instance_variable_get(:@retries)).to eq(retry_count)
         end
       end

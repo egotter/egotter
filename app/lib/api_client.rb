@@ -151,6 +151,12 @@ class ApiClient
     end
   end
 
+  class ContainStrangeUid < StandardError
+  end
+
+  class RetryExhausted < StandardError
+  end
+
   class RequestWithRetryHandler
     def initialize(method)
       @method = method
@@ -173,7 +179,9 @@ class ApiClient
     MAX_RETRIES = 3
 
     def handle_retryable_error(e)
-      if ServiceStatus.retryable_error?(e)
+      if e.message.match?(/Read timed out after \d+ seconds/) && @method == :users
+        raise ContainStrangeUid.new('It may contain a uid that always causes an error.')
+      elsif ServiceStatus.retryable_error?(e)
         if @retries > MAX_RETRIES
           raise RetryExhausted.new("#{e.inspect} method=#{@method} retries=#{@retries}")
         else
@@ -182,9 +190,6 @@ class ApiClient
       else
         raise e
       end
-    end
-
-    class RetryExhausted < StandardError
     end
   end
 

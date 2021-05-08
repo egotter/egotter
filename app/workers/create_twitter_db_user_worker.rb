@@ -39,8 +39,17 @@ class CreateTwitterDBUserWorker
 
     do_perform(user.api_client, target_uids, options)
   rescue => e
-    handle_worker_error(e, uids: uids, target_uids: target_uids, options: options)
-    FailedCreateTwitterDBUserWorker.perform_async(uids, options.merge(klass: self.class))
+    if e.class == ApiClient::ContainStrangeUid && target_uids.size > 10
+      target_uids.each_slice(10) do |partial_uids|
+        if partial_uids.any?
+          logger.info "Split uids and retry uids_size=#{partial_uids.size} uids=#{partial_uids}"
+          self.class.perform_async(partial_uids, options)
+        end
+      end
+    else
+      handle_worker_error(e, uids_size: target_uids.size, uids: target_uids, options: options)
+      FailedCreateTwitterDBUserWorker.perform_async(target_uids, options.merge(klass: self.class))
+    end
   end
 
   private
@@ -63,7 +72,7 @@ class CreateTwitterDBUserWorker
         raise RetryExhausted.new(e.inspect.truncate(100))
       end
     else
-      raise
+      raise e
     end
   end
 
