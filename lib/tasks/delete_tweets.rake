@@ -11,6 +11,17 @@ namespace :delete_tweets do
     task.start!
   end
 
+  task send_dm: :environment do
+    screen_name = ENV['SCREEN_NAME']
+    if (user = User.find_by(screen_name: screen_name))
+      report = DeleteTweetsReport.delete_completed_message(user)
+      report.deliver!
+      puts report.message
+    else
+      puts 'User not found'
+    end
+  end
+
   desc 'Download archive'
   task download_archive: :environment do
     require_relative '../../bin/download_archive'

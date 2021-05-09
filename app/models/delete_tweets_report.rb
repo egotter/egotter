@@ -1,14 +1,15 @@
 class DeleteTweetsReport
   attr_reader :message, :sender
 
-  def initialize(sender, recipient, message)
+  def initialize(sender, recipient, message, quick_replies: nil)
     @sender = sender
     @recipient = recipient
     @message = message
+    @quick_replies = quick_replies
   end
 
   def deliver!
-    event = self.class.build_direct_message_event(@recipient.uid, @message)
+    event = self.class.build_direct_message_event(@recipient.uid, @message, @quick_replies)
     @sender.api_client.create_direct_message_event(event: event)
   end
 
@@ -87,7 +88,15 @@ class DeleteTweetsReport
       )
     end
 
-    def build_direct_message_event(uid, message)
+    def delete_completed_message(user)
+      template = Rails.root.join('app/views/delete_tweets/delete_completed.ja.text.erb')
+      message = ERB.new(template.read).result
+      new(User.egotter_cs, user, message)
+    end
+
+    def build_direct_message_event(uid, message, quick_replies = nil)
+      quick_replies ||= [{label: I18n.t('quick_replies.delete_reports.label1'), description: I18n.t('quick_replies.delete_reports.description1')}]
+
       {
           type: 'message_create',
           message_create: {
@@ -96,12 +105,7 @@ class DeleteTweetsReport
                   text: message,
                   quick_reply: {
                       type: 'options',
-                      options: [
-                          {
-                              label: I18n.t('quick_replies.shared.label1'),
-                              description: I18n.t('quick_replies.shared.description1')
-                          },
-                      ]
+                      options: quick_replies
                   }
               }
           }
