@@ -1527,34 +1527,51 @@ ja:
         <br>
         何度も失敗する場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     uploader:
+      debug_attrs_html:
+        <div>
+          name={name}<br>
+          type={type}<br>
+          size={size}<br>
+          device_type=%{device_type}<br>
+          os=%{os}<br>
+          browser=%{browser}
+        </div>
       invalid_filename_html:
-        <span class="text-danger">ファイル名(twitter-長い文字.zip)が間違っています。Twitterから取得したアーカイブデータをそのまま指定してください。</span><br>
+        ファイル名(twitter-長い文字.zip)が間違っています。<span class="text-danger">Twitterから取得したアーカイブデータをそのまま指定してください。</span><br>
         <br>
         何度も起きる場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
         <br>
-        type={type}<br>
-        device_type=%{device_type}<br>
-        os=%{os}<br>
-        browser=%{browser}
+        %{debug_attrs}
       invalid_content_type_html:
-        <span class="text-danger">ファイルの形式(zip)が違います。Twitterから取得したアーカイブデータをそのまま指定してください。</span><br>
+        ファイルの形式(zip)が違います。<span class="text-danger">Twitterから取得したアーカイブデータをそのまま指定してください。</span><br>
         <br>
         何度も起きる場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
         <br>
-        type={type}<br>
-        device_type=%{device_type}<br>
-        os=%{os}<br>
-        browser=%{browser}
-      filesizeTooSmall: 'ファイルサイズが小さすぎます。アーカイブデータのダウンロードに失敗していませんか？ 分からない場合は @egotter_cs にご連絡ください。'
-      filesizeTooLarge: 'ファイルサイズが上限を超えています。個別に対応しますので @egotter_cs にご連絡ください。'
+        %{debug_attrs}
+      filesize_too_small_html:
+        ファイルサイズが小さすぎます。アーカイブデータのダウンロードに失敗していませんか？<br>
+        <br>
+        何度も起きる場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
+        <br>
+        %{debug_attrs}
+      filesize_too_large_html:
+        ファイルサイズが上限を超えています。<br>
+        <br>
+        個別に対応しますので このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
+        <br>
+        %{debug_attrs}
       preparing_html:
         ファイルのアップロードを準備中です。ページを閉じないでそのままお待ちください。<br>
         <br>
-        通常、「アップロードの準備」は1分以内に完了します。しばらく待ってもこのメッセージが表示され続ける場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。
+        通常、「アップロードの準備」は1分以内に完了します。しばらく待ってもこのメッセージが表示され続ける場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
+        <br>
+        %{debug_attrs}
       uploading_html:
         ファイルをアップロード中です。ページを閉じないでそのままお待ちください。{value}<br>
         <br>
-        ファイルのアップロードが途中で止まってしまう場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。
+        ファイルのアップロードが途中で止まってしまう場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
+        <br>
+        %{debug_attrs}
       alert_on_beforeunload: '編集中です。本当に他のページに移動しますか？'
       success_html:
         ファイルのアップロードに成功しました。<br>
@@ -1563,7 +1580,10 @@ ja:
         DMが届かない場合は、@egotter_cs に「アップロード完了しました」とDMしてください。<br>
         <br>
         このWebページは閉じて大丈夫です。
-      fail_html: 'ファイルのアップロードに失敗しました。何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。'
+      fail_html:
+        ファイルのアップロードに失敗しました。何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。<br>
+        <br>
+        %{debug_attrs}
     confirmation_modal:
       title: '@%{user} のツイート削除'
       body_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートを削除します。本当によろしいですか？'

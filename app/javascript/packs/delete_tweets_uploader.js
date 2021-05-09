@@ -13,37 +13,42 @@ class DeleteTweetsUploader {
 
     this.$input.on('change', function () {
       self.$btn.prop('disabled', true).addClass('disabled');
-      self.validate(self.$input[0].files[0]);
+      var file = self.$input[0].files[0];
+      self.file = file;
+
+      if (self.validate(file)) {
+        self.upload(file);
+      } else {
+        self.$input[0].value = '';
+        self.$btn.prop('disabled', false).removeClass('disabled');
+      }
     });
   }
 
   validate(file) {
     var self = this;
     var valid = true;
-    var message;
+    var error;
 
     if (!file.name.match(/^twitter-20\d{2}-\d{2}-\d{2}-[a-z0-9-]+.zip$/i)) {
-      message = self.i18n['invalidFilename'];
-      ToastMessage.info(message.replace('{type}', self.escapeFileType(file.type)), {autohide: false});
+      error = 'invalidFilename';
       valid = false;
     } else if (file.type.indexOf('zip') === -1 && file.type.indexOf('octet-stream' === -1)) {
-      message = self.i18n['invalidContentType'];
-      ToastMessage.info(message.replace('{type}', self.escapeFileType(file.type)), {autohide: false});
+      error = 'invalidContentType';
       valid = false;
     } else if (file.size < 1000000) { // 1MB
-      ToastMessage.warn(self.i18n['filesizeTooSmall'], {autohide: false});
+      error = 'filesizeTooSmall';
       valid = false;
     } else if (file.size > 30000000000) { // 30GB
-      ToastMessage.warn(self.i18n['filesizeTooLarge'], {autohide: false});
+      error = 'filesizeTooLarge';
       valid = false;
     }
 
-    if (valid) {
-      self.upload(file);
-    } else {
-      self.$input[0].value = '';
-      self.$btn.prop('disabled', false).removeClass('disabled');
+    if (!valid) {
+      self.showMessage(self.i18n[error]);
     }
+
+    return valid;
   }
 
   upload(file) {
@@ -57,7 +62,7 @@ class DeleteTweetsUploader {
       }
     };
 
-    ToastMessage.info(i18n['preparing'], {autohide: false});
+    this.showMessage(i18n['preparing']);
 
     this.uploadFile(file);
 
@@ -82,7 +87,7 @@ class DeleteTweetsUploader {
         var curValue = parseInt((event.loaded * 100) / event.total);
         if (curValue > value) {
           value = curValue;
-          ToastMessage.info(i18n['uploading'].replace('{value}', value + '%'), {autohide: false});
+          self.showMessage(i18n['uploading'].replace('{value}', value + '%'));
         }
       };
     })();
@@ -117,93 +122,96 @@ class DeleteTweetsUploader {
         function () {
           self.completed = true;
           self.notifyUploadCompleted(self.metadata);
-          ToastMessage.info(i18n['success'], {autohide: false});
+          self.showMessage(i18n['success']);
         },
         function (err) {
           logger.error(err.message);
-          ToastMessage.warn(i18n['fail'], {autohide: false});
+          self.showMessage(i18n['fail']);
         }
     );
   }
 
-  readFile(file, callback) {
-    var i18n = this.i18n;
-    var offset = 0;
-    var size = 10_000_000_000; // 10GB
-    var reader = new FileReader();
+  // TODO Remove
+  // readFile(file, callback) {
+  //   var i18n = this.i18n;
+  //   var offset = 0;
+  //   var size = 10_000_000_000; // 10GB
+  //   var reader = new FileReader();
+  //
+  //   var readChunk = function () {
+  //     var slice = file.slice(offset, offset + size, file.type);
+  //     offset += size;
+  //     reader.readAsArrayBuffer(slice);
+  //   };
+  //
+  //   reader.onload = function (e) {
+  //     callback(e.target.result);
+  //     if (offset >= file.size) {
+  //       logger.log('#readFile completed');
+  //     } else {
+  //       readChunk();
+  //     }
+  //   };
+  //
+  //   reader.onerror = function (e) {
+  //     logger.error(e.target.error.name);
+  //     ToastMessage.warn(i18n['fail'], {autohide: false});
+  //   };
+  //
+  //   readChunk();
+  // }
 
-    var readChunk = function () {
-      var slice = file.slice(offset, offset + size, file.type);
-      offset += size;
-      reader.readAsArrayBuffer(slice);
-    };
+  // TODO Remove
+  // uploadChunk(url, data) {
+  //   var i18n = this.i18n;
+  //   var self = this;
+  //
+  //   var onProgress = (function () {
+  //     var value = 0;
+  //     return function (e) {
+  //       if (self.completed) {
+  //         return;
+  //       }
+  //
+  //       if (e.lengthComputable) {
+  //         value = Math.floor(100 * e.loaded / e.total);
+  //       } else {
+  //         value += Math.floor(Math.random() * 6); // 0-5
+  //         if (value > 99) {
+  //           value = 99;
+  //         }
+  //       }
+  //       ToastMessage.info(i18n['uploading'].replace('{value}', value + '%'), {autohide: false});
+  //     };
+  //   })();
+  //
+  //   $.ajax({
+  //     url: url,
+  //     data: data,
+  //     type: 'PUT',
+  //     xhr: function () {
+  //       var xhr = new window.XMLHttpRequest();
+  //       xhr.upload.addEventListener('progress', onProgress, false);
+  //       return xhr;
+  //     },
+  //     processData: false,
+  //     contentType: false
+  //   }).done(function () {
+  //     self.completed = true;
+  //     self.notifyUploadCompleted();
+  //     ToastMessage.info(i18n['success'], {autohide: false});
+  //   }).fail(function () {
+  //     ToastMessage.warn(i18n['fail'], {autohide: false});
+  //   });
+  // }
 
-    reader.onload = function (e) {
-      callback(e.target.result);
-      if (offset >= file.size) {
-        logger.log('#readFile completed');
-      } else {
-        readChunk();
-      }
-    };
-
-    reader.onerror = function (e) {
-      logger.error(e.target.error.name);
-      ToastMessage.warn(i18n['fail'], {autohide: false});
-    };
-
-    readChunk();
-  }
-
-  uploadChunk(url, data) {
-    var i18n = this.i18n;
-    var self = this;
-
-    var onProgress = (function () {
-      var value = 0;
-      return function (e) {
-        if (self.completed) {
-          return;
-        }
-
-        if (e.lengthComputable) {
-          value = Math.floor(100 * e.loaded / e.total);
-        } else {
-          value += Math.floor(Math.random() * 6); // 0-5
-          if (value > 99) {
-            value = 99;
-          }
-        }
-        ToastMessage.info(i18n['uploading'].replace('{value}', value + '%'), {autohide: false});
-      };
-    })();
-
-    $.ajax({
-      url: url,
-      data: data,
-      type: 'PUT',
-      xhr: function () {
-        var xhr = new window.XMLHttpRequest();
-        xhr.upload.addEventListener('progress', onProgress, false);
-        return xhr;
-      },
-      processData: false,
-      contentType: false
-    }).done(function () {
-      self.completed = true;
-      self.notifyUploadCompleted();
-      ToastMessage.info(i18n['success'], {autohide: false});
-    }).fail(function () {
-      ToastMessage.warn(i18n['fail'], {autohide: false});
-    });
-  }
-
-  createPresignedUrl(file, callback) {
-    var url = '/api/v1/delete_tweets_presigned_urls'; //  api_v1_delete_tweets_presigned_urls_path
-    $.post(url, {filename: file.name, filesize: file.size}).done(function (res) {
-      callback(res.url);
-    }).fail(showErrorMessage);
-  }
+  // TODO Remove
+  // createPresignedUrl(file, callback) {
+  //   var url = '/api/v1/delete_tweets_presigned_urls'; //  api_v1_delete_tweets_presigned_urls_path
+  //   $.post(url, {filename: file.name, filesize: file.size}).done(function (res) {
+  //     callback(res.url);
+  //   }).fail(showErrorMessage);
+  // }
 
   notifyUploadCompleted(metadata) {
     var url = '/api/v1/delete_tweets_notifications'; //  api_v1_delete_tweets_notifications_path
@@ -211,7 +219,26 @@ class DeleteTweetsUploader {
     }).fail(showErrorMessage);
   }
 
-  escapeFileType(str) {
+  showMessage(message) {
+    if (this.file) {
+      try {
+        message = message
+            .replace('{name}', this.escapeHtml(this.file.name))
+            .replace('{type}', this.escapeHtml(this.file.type))
+            .replace('{size}', this.escapeHtml('' + this.file.size));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    ToastMessage.info(message, {autohide: false});
+  }
+
+  escapeHtml(str) {
+    if (str.length >= 30) {
+      str = str.substr(0, 30) + '...';
+    }
+
     var type = '';
     try {
       type = str.replace(/<\/?[^>]+(>|$)/g, '');
