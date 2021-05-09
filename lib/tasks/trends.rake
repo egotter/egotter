@@ -13,7 +13,7 @@ namespace :trends do
     logger = TaskLogger.logger
     logger.info "task=#{task.name} start"
 
-    num = ENV['NUM']&.to_i || 3
+    num = ENV['TRENDS']&.to_i || 3
     min_tweets = ENV['MIN_TWEETS']&.to_i || 1000
     max_tweets = ENV['MAX_TWEETS']&.to_i || 50000
 
