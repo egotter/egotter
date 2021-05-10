@@ -9,6 +9,16 @@ from botocore.config import Config
 s3 = boto3.client('s3', config=Config(region_name='ap-northeast-1'))
 
 
+# Deploy
+# cd lambda/unzip_archive_data
+# zip function.zip lambda_function.py
+# aws lambda update-function-code --function-name [NAME] --zip-file fileb://function.zip
+# aws lambda publish-version --function-name [NAME]
+# rm function.zip
+#
+# Show code diffs
+# aws lambda get-function --function-name [NAME] | jq .Code.Location -r | xargs curl -s -o code.zip && unzip -p code.zip lambda_function.py | colordiff -u lambda_function.py -
+# rm code.zip
 def lambda_handler(event, context):
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
@@ -23,8 +33,8 @@ def lambda_handler(event, context):
     if not re.match('^twitter-[0-9a-zA-Z-]+\\.zip$', meta_filename):
         raise Exception('Invalid filename value={0}'.format(meta_filename))
 
-    # 9 GB
-    if int(meta_filesize) > 9000000000:
+    # 30 GB
+    if int(meta_filesize) > 30000000000:
         raise Exception('Invalid filesize value={0}'.format(meta_filesize))
 
     rootdir = '/mnt/data/'
