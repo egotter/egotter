@@ -1516,6 +1516,7 @@ ja:
       note1_html: 'アーカイブデータは事前にご用意ください。<a href="%{url}">やり方</a>'
       note2: 'twitter-0000-00-00-aaaaaa.zip を選択してください。'
       note3_html: 'この機能には有料プランの購入が必要です。<a href="%{url}" target="_blank">プランの詳細</a>'
+      note4: 'パソコンとWi-Fiを使うと高速にアップロードできます。'
     message:
       finished: '%{count}件のツイートを削除しました。削除は完了しています。'
       processing_html: |
@@ -1549,7 +1550,7 @@ ja:
         <br>
         %{debug_attrs}
       filesize_too_small_html:
-        ファイルサイズが小さすぎます。アーカイブデータのダウンロードに失敗していませんか？<br>
+        ファイルサイズが小さすぎます。アーカイブデータのダウンロードに失敗しているようです。もう一度ダウンロードしてからお試しください。<br>
         <br>
         何度も起きる場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
         <br>
@@ -1563,7 +1564,7 @@ ja:
       preparing_html:
         ファイルのアップロードを準備中です。ページを閉じないでそのままお待ちください。<br>
         <br>
-        通常、「アップロードの準備」は1分以内に完了します。しばらく待ってもこのメッセージが表示され続ける場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
+        1分待ってもこのメッセージが表示され続ける場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
         <br>
         %{debug_attrs}
       uploading_html:
