@@ -135,7 +135,7 @@ class TwitterUserDecorator < ApplicationDecorator
     description&.match?(/(裏|サブ)(垢|アカ)/)
   end
 
-  ADULT_ACCOUNT_REGEXP = Regexp.new(File.read(Rails.root.join('config/adult_ng_words.txt')).split("\n").join('|'))
+  ADULT_ACCOUNT_REGEXP = Regexp.new(File.read(Rails.root.join('config/adult_ng_words.txt')).split("\n").uniq.join('|'))
 
   def adult_account?
     name&.match?(ADULT_ACCOUNT_REGEXP) || description&.match?(ADULT_ACCOUNT_REGEXP) || location&.match?(ADULT_ACCOUNT_REGEXP)
