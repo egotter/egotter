@@ -20,6 +20,11 @@
 
 %hr
 
+%h2.h4.text-center.my-5= t('.payment_methods_title')
+.my-3= t('.payment_methods_description_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')))
+
+%hr
+
 = render partial: 'current_plan'
 
 %hr
@@ -78,6 +83,8 @@
       = link_to t('.purchase'), '#', class: 'btn btn-primary btn-lg btn-checkout'
   - else
     = link_to t('.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
+.small.my-4
+  .mb-3= t('.basic_plan_note4_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')))
 .small.text-muted.my-4
   .mb-1= t('.basic_plan_note1', old_price: Order::REGULAR_PRICE, new_price: Order::DISCOUNT_PRICE)
   .mb-1= t('.basic_plan_note2', price: Order::REGULAR_PRICE)

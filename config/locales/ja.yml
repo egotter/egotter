@@ -645,6 +645,7 @@ ja:
           <li>リムられ通知の送信回数の増加</li>
           <li>ブロック通知のデータの充実</li>
           <li>ミュート通知のデータの充実</li>
+          <li>全ツイートの一括削除</li>
         </ul>
       plans_title: 'プランの種類'
       plans_description_html: |
@@ -653,6 +654,14 @@ ja:
           <li>無料プラン（ログインしただけの状態のこと）</li>
           <li>有料プラン（無料のお試し期間あり）</li>
         </ul>
+      payment_methods_title: 'プランの支払い方法'
+      payment_methods_description_html: |
+        <p>えごったーの有料プランはクレジットカードでの支払いに対応しています。</p>
+        <p>長期間の一括購入については追加の割引や銀行振り込みでの支払いにも対応しています。</p>
+        <p>
+          詳しくは <a href="%{url}" target="_blank">@egotter_cs</a> までお問い合わせください。
+          <a href="%{url}" class="btn btn-outline-primary btn-sm" target="_blank">問い合わせ</a>
+        </p>
       free_plan_title: '無料プランの内容'
       free_plan_text_html: |
         <p>えごったーを<span class="egotter-pink">無料で少しだけ使いたい</span>方に適したプランです。</p>
@@ -664,10 +673,12 @@ ja:
         <p>無料プランの内容に加えて、ユーザー検索回数の増加、リムられ通知の充実、ブロック通知の充実、ミュート通知の充実という特典があります。</p>
       basic_plan_price_html: '<del class="text-muted">¥%{regular_price}</del> ¥%{discount_price}'
       basic_plan_price_period: '/月'
-      basic_plan_price_note_html: |
       basic_plan_note1: '※ %{old_price}円から%{new_price}円への割引は、初回購入とそこから継続した定期購入に対してのみ適用されます。'
       basic_plan_note2: '※ 定期購入をキャンセル後に再度購入した場合は、割引の適用されない価格（%{price}円）となります。'
       basic_plan_note3: '※ 一部の機能を利用すると無料期間はその時点で終了します。その場合は返金の対象外となります。'
+      basic_plan_note4_html: |
+        長期間の一括購入については追加の割引や銀行振り込みでの支払いにも対応しています。詳しくは <a href="%{url}" target="_blank">@egotter_cs</a> までお問い合わせください。
+        <a href="%{url}" target="_blank">問い合わせ</a>
       list:
         free_plan_search_count: '検索回数 %{min}〜%{max} 回'
         basic_plan_search_count: '検索回数 %{count} 回'
@@ -1751,6 +1762,9 @@ ja:
       description3: 'フォローした後に押してください'
       label4: '会話を閉じる（次の通知を待つ）'
       description4: 'このボタンを押しておくと、DM通知が届きやすくなります'
+  short_messages:
+    bulk_purchase: '長期間の一括購入を希望します。手続きを教えてください。支払い方法は【クレジットカード・銀行振り込み】を希望します。'
+    refund: '有料プランの返金を希望します。理由：'
   directory:
     profiles:
       footer_title: プロフィール
