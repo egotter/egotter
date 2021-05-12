@@ -77,7 +77,7 @@ class StartDeletingTweetsTask
   def initialize_task!
     processed = 0
     skipped_tweets = []
-    @candidate_tweets = []
+    @deletable_tweets = []
 
     @tweets.each do |tweet|
       if @since && tweet.created_at < @since
@@ -92,9 +92,9 @@ class StartDeletingTweetsTask
         next
       end
 
-      @candidate_tweets << tweet
+      @deletable_tweets << tweet
       processed += 1
-      print 'p'
+      print 'd'
     end
 
     puts "\nprocessed #{processed} skipped #{skipped_tweets.size}"
@@ -102,8 +102,12 @@ class StartDeletingTweetsTask
 
   def start_task!
     if @dry_run
-      @candidate_tweets.each do |tweet|
-        puts "tweet_id=#{tweet.id} tweeted_at=#{tweet.created_at}"
+
+      deletable_tweet_ids = @deletable_tweets.index_by(&:id)
+
+      @tweets.each do |tweet|
+        flag = deletable_tweet_ids[tweet.id] ? 'd' : 's'
+        puts "#{flag} tweet_id=#{tweet.id} tweeted_at=#{tweet.created_at}"
       end
     else
       user = User.find_by(screen_name: @screen_name)
@@ -113,16 +117,17 @@ class StartDeletingTweetsTask
         deleted_count = 0
         started_time = Time.zone.now
 
-        @candidate_tweets.each do |tweet|
+        @deletable_tweets.each do |tweet|
           DeleteTweetWorker.new.perform(user.id, tweet.id, request_id: request.id)
 
           if (deleted_count += 1) % 1000 == 0
             time = Time.zone.now - started_time
-            puts "total #{@candidate_tweets.size}, deleted #{deleted_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / deleted_count)}"
+            puts "total #{@deletable_tweets.size}, deleted #{deleted_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / deleted_count)}"
+            request.update(destroy_count: deleted_count)
           end
         end
       else
-        @candidate_tweets.each do |tweet|
+        @deletable_tweets.each do |tweet|
           DeleteTweetWorker.perform_async(user.id, tweet.id, request_id: request.id)
         end
       end

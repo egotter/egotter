@@ -9,6 +9,10 @@ class TweetStatus
       ex.class == Twitter::Error::NotFound && ex.message == 'Sorry, that page does not exist.'
     end
 
+    def forbidden?(ex)
+      ex.class == Twitter::Error::Forbidden && ex.message == 'Forbidden.'
+    end
+
     def not_authorized?(ex)
       ex.class == Twitter::Error::Forbidden && ex.message == 'Sorry, you are not authorized to see this status.'
     end

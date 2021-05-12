@@ -39,7 +39,8 @@ class DeleteTweetWorker
         TweetStatus.no_status_found?(e) ||
         TweetStatus.not_authorized?(e) ||
         TweetStatus.temporarily_locked?(e) ||
-        TweetStatus.that_page_does_not_exist?(e)
+        TweetStatus.that_page_does_not_exist?(e) ||
+        TweetStatus.forbidden?(e)
       nil
     else
       raise
