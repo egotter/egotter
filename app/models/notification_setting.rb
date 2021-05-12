@@ -62,4 +62,12 @@ class NotificationSetting < ApplicationRecord
     interval = REPORT_INTERVAL_VALUES.include?(report_interval) ? report_interval.seconds : DM_INTERVAL
     last_dm_at.nil? || last_dm_at < interval.ago
   end
+
+  def sync_permission_level
+    update(permission_level: fetch_permission_level)
+  end
+
+  def fetch_permission_level
+    PermissionLevelClient.new(user.api_client.twitter).permission_level
+  end
 end
