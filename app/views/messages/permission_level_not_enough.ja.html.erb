@@ -1,0 +1,14 @@
+<p class="text-danger">@<%= current_user&.screen_name %> のツイッター連携が無効になっています。（Permission level not enough）</p>
+
+<p>1. <a class="btn btn-primary btn-sm" href="<%= force_sign_in_path(via: current_via) %>" target="_blank">強制再ログイン</a> してください。ほとんどの場合これで解決します。</p>
+<p>2. <a href="<%= twitter_applications_url %>" class="btn btn-outline-primary btn-sm" target="_blank">連携アプリの一覧</a> からえごったーを削除した後、もう一度ログインしてください。</p>
+<p>
+  <% url = direct_message_url(User::EGOTTER_CS_UID, t('short_messages.permission_level_not_enough')) %>
+  3. [1]と[2]の両方を試しても解決しない場合は、<br>
+  <br>
+  ・このエラーのスクリーンショット<br>
+  ・ログインを試した時間<br>
+  <br>
+  の2つを <a href="<%= url %>" target="_blank">@egotter_cs</a> まで送ってください。
+  <a href="<%= url %>" class="btn btn-outline-primary btn-sm" target="_blank">問い合わせ</a>
+</p>

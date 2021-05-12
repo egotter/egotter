@@ -273,6 +273,10 @@ module PathsHelper
     'https://docs.google.com/forms/d/e/1FAIpQLScGxNuSm1na2yQeUwuoHoS37T3zLDMwnOpccZV4R1S_Ac3zLw/viewform'
   end
 
+  def twitter_applications_url
+    'https://twitter.com/settings/applications/185425'
+  end
+
   def force_sign_in_path(options)
     sign_in_path(options.merge(force_login: true))
   end
