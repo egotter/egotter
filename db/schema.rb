@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_29_221652) do
+ActiveRecord::Schema.define(version: 2021_05_08_054935) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1692,17 +1692,11 @@ ActiveRecord::Schema.define(version: 2021_03_29_221652) do
     t.string "token", null: false
     t.string "secret", null: false
     t.string "email", default: "", null: false
-    t.datetime "first_access_at"
-    t.datetime "last_access_at"
-    t.datetime "first_search_at"
-    t.datetime "last_search_at"
     t.datetime "first_sign_in_at"
     t.datetime "last_sign_in_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_users_on_created_at"
-    t.index ["first_access_at"], name: "index_users_on_first_access_at"
-    t.index ["last_access_at"], name: "index_users_on_last_access_at"
     t.index ["screen_name"], name: "index_users_on_screen_name"
     t.index ["token"], name: "index_users_on_token"
     t.index ["uid"], name: "index_users_on_uid", unique: true
