@@ -1,0 +1,31 @@
+<% content_for :navbar_title, t('.navbar_title') %>
+
+<% breadcrumb :delete_tweets_mypage %>
+
+<h2 class="h4 text-center my-5"><%= t('.page_title') %></h2>
+<div class="mb-5"><%= t('.page_description', count: DeleteTweetsRequest::DESTROY_LIMIT) %></div>
+
+<% if @processing %>
+  <%= render partial: 'processing' %>
+<% else %>
+  <%= render partial: 'free' %>
+<% end %>
+
+<%= render partial: 'premium' %>
+
+<h3 class="h5 text-center mt-5 mb-3"><%= t('.status.title') %></h3>
+<div class="text-center mb-3"><%= t('.status.description', user: current_user.screen_name) %></div>
+
+<table class="table table-bordered table-condensed">
+  <tr>
+    <% if @request %>
+      <td class="small"><%= @request.display_time %></td>
+      <td class="small"><%= @request.message.html_safe %></td>
+    <% else %>
+      <td class="small text-muted"><%= t('.status.empty_date') %></td>
+      <td class="small text-muted"><%= t('.status.no_request_description', user: current_user.screen_name) %></td>
+    <% end %>
+  </tr>
+</table>
+
+<%= render partial: 'delete_tweets/faq' %>
