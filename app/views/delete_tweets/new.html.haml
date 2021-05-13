@@ -8,8 +8,8 @@
 - right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html', count: usage_count / 10000), redirect_path: delete_tweets_mypage_path(via: current_via), show_search_form: false, show_screenshots: false}
 = render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options}
 
-= render partial: 'description'
-= render partial: 'shared/about_egotter'
+.my-5= render partial: 'description'
+.my-5= render partial: 'shared/about_egotter'
 
 = render partial: 'shared/review_section', locals: {kind: 'delete_tweets', divider: true}
 .container= render partial: 'faq'

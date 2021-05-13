@@ -1766,6 +1766,7 @@ ja:
     bulk_purchase: '長期間の一括購入を希望します。手続きを教えてください。支払い方法は【クレジットカード・銀行振り込み】を希望します。'
     permission_level_not_enough: 'ログインエラー報告：強制再ログインと連携アプリの削除→再登録を試しましたがログインできないままです。試した時間は【○月○日 ○時頃】です。'
     refund: '有料プランの返金を希望します。理由：'
+    delete_tweets_inquiry: 'ツイート削除のお問い合わせ：'
   directory:
     profiles:
       footer_title: プロフィール

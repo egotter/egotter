@@ -1,16 +1,73 @@
-<h2 class="h5 text-center my-5">ツイートクリーナーとは？</h2>
-
-<div class="m-3">
-  <p>ツイッターのツイートを一括で削除するえごったーの機能です。</p>
-
-  <p>最大で <%= DeleteTweetsRequest::DESTROY_LIMIT %>件 のツイートを一括で削除できます。</p>
-
-  <p>さらに残っているツイートは、有料プラン を購入すれば削除できるようになります。</p>
+<div class="d-flex" style="overflow-x: scroll;">
+  <div class="m-3">
+    <%= image_tag '/images/ss_delete_tweets_400.png', class: 'border', width: '200', loading: 'lazy' %>
+    <div class="text-center text-muted small mt-1">ツイート削除の条件指定</div>
+  </div>
+  <div class="m-3">
+    <%= image_tag '/images/ss_delete_tweets2_400.png', class: 'border', width: '200', loading: 'lazy' %>
+    <div class="text-center text-muted small mt-1">アーカイブデータの条件指定</div>
+  </div>
 </div>
 
-<div class="text-center m-3">
-  <%= image_tag '/images/ss_delete_tweets_400.png', class: 'border', width: '200', loading: 'lazy' %>
-  <div class="text-muted small mt-1">ツイート削除の条件指定</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">ツイートクリーナーとは</h3>
+      <div>
+        <p>ツイートクリーナーを使うと、ツイッターのツイートを<span class="egotter-pink">一括で大量に削除する</span>ことができます。</p>
+        <p>世の中のほとんどのツイート削除ツールは、今はもう動いていなかったり、少数のツイートしか削除できません。</p>
+        <p>無料で大量のツイートを削除でき、今も正常に動作するツールの中で、ツイートクリーナーはトップクラスの安定性を誇っています。</p>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">ツイートクリーナーの安全性</h3>
+      <div>
+        <p>ツイートクリーナーは、10年以上に渡って世界最大級のツイッター分析ツールである えごったー&#174; からスピンオフされたツールです。</p>
+        <p>宣伝ツイートを勝手にしたり、不要な広告メールを送ったりすることは一切ありません。ツイートの削除だけに特化した機能のみを持っています。</p>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">ツイートクリーナーの速度</h3>
+      <div>
+        <p>ツイートクリーナーは、平均して100ツイート/秒の速さでツイートを削除することができます。</p>
+        <p>一晩中待っても一向に削除が進まない、そんな不安は全くありませんのでご安心ください。</p>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">ツイート削除数は無制限</h3>
+      <div>
+        <p>無料版のツイートクリーナーでは、一度に削除できるツイートは最大で<%= DeleteTweetsRequest::DESTROY_LIMIT %>件です。これはツイッター側の制限であり、世界中の全てのツールで共通の制限です。</p>
+        <p>世の中のほとんどのツイート削除ツールは、これだけの大量のツイートを一括で削除することができません。10年以上運営されている えごったー&#174; だからこそ実現出来ている技術です。</p>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">アーカイブデータで完璧に削除</h3>
+      <div>
+        <p>ツイート総数が<%= DeleteTweetsRequest::DESTROY_LIMIT %>件を超えている場合は、アーカイブデータをアップロードすることで全てのツイートを1つ残らず削除することが出来ます。</p>
+        <p>アーカイブデータを利用したツイート削除だけは有料です。逆に言うと、それ以外の機能は全て無料で使うことができます。</p>
+        <p>有料プランについては <%= link_to '料金プラン', pricing_path(via: current_via('description')), target: '_blank' %> をご覧ください。</p>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">有料プランの返金保証</h3>
+      <div>
+        <p>ツイートクリーナーの不具合でツイート削除がうまくいかなかった場合は、有料プラン1ヶ月分の返金を行います。</p>
+        <p>支払い情報の取り扱いには <%= link_to 'Stripe', 'https://stripe.com/', target: '_blank' %> を利用しており、グローバル規模のセキュリティ基準である PCI DSS に準拠しています。</p>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">充実のサポート</h3>
+      <div>
+        <% url = direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_tweets_inquiry')) %>
+        <p>ツイートクリーナーに分からないところがある場合は、<%= link_to '@egotter_cs', url, target: '_blank' %> にいつでもご質問ください。</p>
+        <p>日本語と英語のお問い合わせに対応しています。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mx-auto my-5" style="width: 300px;">
+  <%= sign_in_with_twitter_link(nil, 'delete_tweets_button', class: 'btn btn-primary btn-lg w-100') %>
 </div>
 
 <hr>
