@@ -1,0 +1,378 @@
+<div class="my-5"><%= t('.description') %></div>
+
+<div class="alert alert-info my-5">
+  <%= t('.notice_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_tweets_search_inquiry'))) %>
+</div>
+
+<div class="d-flex my-3" style="overflow-x: scroll;">
+  <%= render partial: 'filter_button', locals: {id: 'retweet-count-button', modal_id: 'counts-filter-modal', name: t('.filter.retweet_count'), label: t('.filter.noop')} %>
+  <%= render partial: 'filter_button', locals: {id: 'favorite-count-button', modal_id: 'counts-filter-modal', name: t('.filter.favorite_count'), label: t('.filter.noop')} %>
+</div>
+
+<div class="d-flex my-3" style="overflow-x: scroll;">
+  <%= render partial: 'filter_button', locals: {id: 'since-date-button', modal_id: 'days-filter-modal', name: t('.filter.since_date'), label: t('.filter.noop')} %>
+  <%= render partial: 'filter_button', locals: {id: 'until-date-button', modal_id: 'days-filter-modal', name: t('.filter.until_date'), label: t('.filter.noop')} %>
+</div>
+
+<div class="d-flex my-3" style="overflow-x: scroll;">
+  <%= render partial: 'filter_button', locals: {id: 'hashtags-button', modal_id: 'entities-filter-modal', name: t('.filter.hashtags'), label: t('.filter.noop')} %>
+  <%= render partial: 'filter_button', locals: {id: 'mentions-button', modal_id: 'entities-filter-modal', name: t('.filter.mentions'), label: t('.filter.noop')} %>
+  <%= render partial: 'filter_button', locals: {id: 'urls-button', modal_id: 'entities-filter-modal', name: t('.filter.urls'), label: t('.filter.noop')} %>
+  <%= render partial: 'filter_button', locals: {id: 'media-button', modal_id: 'entities-filter-modal', name: t('.filter.media'), label: t('.filter.noop')} %>
+</div>
+
+<div class="d-flex my-3" style="overflow-x: scroll;">
+  <%= render partial: 'filter_button', locals: {id: 'deleted-button', modal_id: 'meta-filter-modal', button_class: 'btn-outline-primary', name: t('.filter.deleted'), label: t('.filter.excluded')} %>
+</div>
+
+<%= modal_dialog(id: 'counts-filter-modal', klass: 'filter-modal', title: t('.filter.modal')) do %>
+  <%= render partial: 'filter_select_tag', locals: {title: t('.filter.retweet_count'), name: 'retweet-count', options: [[t('.filter.noop'), ''], [t('.filter.more_than_1'), '1'], [t('.filter.more_than_10'), '10'], [t('.filter.more_than_100'), '100'], [t('.filter.more_than_1000'), '1000']], selected: '', button_id: 'retweet-count-button'} %>
+  <%= render partial: 'filter_select_tag', locals: {title: t('.filter.favorite_count'), name: 'favorite-count', options: [[t('.filter.noop'), ''], [t('.filter.more_than_1'), '1'], [t('.filter.more_than_10'), '10'], [t('.filter.more_than_100'), '100'], [t('.filter.more_than_1000'), '1000']], selected: '', button_id: 'favorite-count-button'} %>
+<% end %>
+
+<%= modal_dialog(id: 'days-filter-modal', klass: 'filter-modal', title: t('.filter.modal')) do %>
+  <div class="my-5">
+    <div class="mb-1"><%= t('.filter.since_date') %></div>
+    <%= date_field_tag('filter-since-date', '', data: {button_target: '#since-date-button', noop_label: t('.filter.noop')}) %>
+  </div>
+
+  <div class="my-5">
+    <div class="mb-1"><%= t('.filter.until_date') %></div>
+    <%= date_field_tag('filter-until-date', '', data: {button_target: '#until-date-button', noop_label: t('.filter.noop')}) %>
+  </div>
+<% end %>
+
+<%= modal_dialog(id: 'entities-filter-modal', klass: 'filter-modal', title: t('.filter.modal')) do %>
+  <%= render partial: 'filter_select_tag', locals: {title: t('.filter.hashtags'), name: 'hashtags', options: [[t('.filter.noop'), ''], [t('.filter.attached'), 'true'], [t('.filter.not_attached'), 'false']], selected: '', button_id: 'hashtags-button'} %>
+  <%= render partial: 'filter_select_tag', locals: {title: t('.filter.mentions'), name: 'mentions', options: [[t('.filter.noop'), ''], [t('.filter.attached'), 'true'], [t('.filter.not_attached'), 'false']], selected: '', button_id: 'mentions-button'} %>
+  <%= render partial: 'filter_select_tag', locals: {title: t('.filter.urls'), name: 'urls', options: [[t('.filter.noop'), ''], [t('.filter.attached'), 'true'], [t('.filter.not_attached'), 'false']], selected: '', button_id: 'urls-button'} %>
+  <%= render partial: 'filter_select_tag', locals: {title: t('.filter.media'), name: 'media', options: [[t('.filter.noop'), ''], [t('.filter.attached'), 'true'], [t('.filter.not_attached'), 'false']], selected: '', button_id: 'media-button'} %>
+<% end %>
+
+<%= modal_dialog(id: 'meta-filter-modal', klass: 'filter-modal', title: t('.filter.modal')) do %>
+  <%= render partial: 'filter_select_tag', locals: {title: t('.filter.deleted'), name: 'deleted', options: [[t('.filter.included'), 'true'], [t('.filter.excluded'), 'false']], selected: 'false', button_id: 'deleted-button'} %>
+<% end %>
+
+<div class="my-5">
+  <div class="d-flex justify-content-between">
+    <div>
+      <div class="text-muted">
+        <span style="cursor: pointer;">
+          <input type="checkbox" id="select-all-deletable-tweets-checkbox" name="select-all-deletable-tweets" style="cursor: pointer;">
+          <label class="ml-1" for="select-all-deletable-tweets-checkbox" style="cursor: pointer;"><%= t('.filter.select_all') %></label>
+        </span>
+        <span id="reload-deletable-tweets-button" class="ml-3" style="cursor: pointer;">
+          <span class="text-muted"><i class="fas fa-redo"></i></span>
+          <span class="ml-1"><%= t('.filter.reload') %></span>
+        </span>
+        <span class="delete-selected-deletable-tweets-button d-none d-md-inline-block ml-3" style="cursor: pointer; visibility: hidden;">
+          <i class="fas fa-trash"></i>
+          <span class="ml-1"><%= t('.filter.trash') %></span>
+        </span>
+      </div>
+    </div>
+    <div class="text-muted">
+      <span class="current-deletable-tweets-count">0</span> / <span class="total-deletable-tweets-count">0</span>
+    </div>
+  </div>
+  <div id="deletable-tweets-selected-alert" class="alert alert-primary" style="display: none;">
+    <span id="current-tweets-selected-message"><%= t('.filter.current_tweets_selected_html', count: 0) %></span>
+    <span id="total-tweets-selected-message" style="display: none;"><%= t('.filter.total_tweets_selected_html', count: 0) %></span>
+    <span id="select-total-tweets-link"><button type="button" class="btn btn-link"><%= t('.filter.select_total_tweets_html', count: 0) %></button></span>
+  </div>
+
+  <div id="deletable-tweets-container">
+    <%= image_tag '/ajax-loader.gif', size: '16x16' %>
+  </div>
+</div>
+
+<%= render partial: 'bottom_menu', locals: {open_event: 'open-deletable-tweets-menu', close_event: 'close-deletable-tweets-menu'} %>
+
+<script>
+  $(function () {
+    $('select[name="retweet-count"]').on('change', onChange).on('change', updateOptionLabel);
+    $('select[name="favorite-count"]').on('change', onChange).on('change', updateOptionLabel);
+    $('input[name="filter-since-date"]').on('change', onChange).on('change', updateDateLabel);
+    $('input[name="filter-until-date"]').on('change', onChange).on('change', updateDateLabel);
+    $('select[name="hashtags"]').on('change', onChange).on('change', updateOptionLabel);
+    $('select[name="mentions"]').on('change', onChange).on('change', updateOptionLabel);
+    $('select[name="urls"]').on('change', onChange).on('change', updateOptionLabel);
+    $('select[name="media"]').on('change', onChange).on('change', updateOptionLabel);
+    $('select[name="deleted"]').on('change', onChange).on('change', updateOptionLabel);
+
+    function onChange() {
+      var target = $(this);
+      var val = target.val();
+      var btn = $(target.data('button-target'));
+      if (val) {
+        btn.removeClass('btn-outline-secondary').addClass('btn-outline-primary');
+      } else {
+        btn.removeClass('btn-outline-primary').addClass('btn-outline-secondary');
+      }
+    }
+
+    function updateOptionLabel() {
+      var target = $(this);
+      var btn = $(target.data('button-target'));
+      var label = target.find('option:selected').text();
+      btn.find('.label').text(label);
+    }
+
+    function updateDateLabel() {
+      var target = $(this);
+      var val = target.val();
+      var btn = $(target.data('button-target'));
+      if (val) {
+        btn.find('.label').text(val);
+      } else {
+        btn.find('.label').text(target.data('noop-label'));
+      }
+    }
+  });
+</script>
+
+<script>
+  $(function () {
+    var lastResponse;
+    var $body = $('body');
+
+    $('#open-search-deletable-tweets-tab').on('shown.bs.tab', loadDeletableTweets);
+    $('#reload-deletable-tweets-button').on('click', loadDeletableTweets);
+    $('.filter-modal').on('hidden.bs.modal', loadDeletableTweets);
+
+    $body.on('deletable-tweets-menu-closed', function () {
+      toggleCurrentDeletableTweets(false);
+      toggleAllDeletableTweets(false);
+      hideAlertMessage();
+    }).on('destroy-selected-deletable-tweets', function () {
+      var ids = collectDeletableTweetIds(true);
+
+      destroyDeletableTweets(ids, {
+        send_dm: $('input[name="search-send-dm"]').prop('checked'),
+        post_tweet: $('input[name="search-post-tweet"]').prop('checked'),
+        delete_total_tweets: $('#select-total-tweets-link').data('select-total-tweets-count'),
+        filter_params: collectFilterParams(),
+        done: function () {
+          loadDeletableTweets();
+        },
+        fail: function () {
+          showDeletableTweets(ids);
+        }
+      });
+
+      toggleCurrentDeletableTweets(false);
+      toggleAllDeletableTweets(false);
+      hideAlertMessage();
+      hideDeletableTweets(ids);
+      $body.trigger('close-deletable-tweets-menu');
+    });
+
+    $('input:checkbox[name="select-all-deletable-tweets"]').on('change', function () {
+      hideAlertMessage();
+
+      if ($(this).prop('checked')) {
+        toggleCurrentDeletableTweets(true);
+        showAlertMessage();
+        $body.trigger('open-deletable-tweets-menu');
+      } else {
+        toggleCurrentDeletableTweets(false);
+        $body.trigger('close-deletable-tweets-menu');
+      }
+
+      updateSelectedDeletableTweetsCount();
+    });
+
+    $('#select-total-tweets-link').on('click', function () {
+      totalDeletableTweetsSelected();
+      updateSelectedDeletableTweetsCount();
+    });
+
+    function updateSelectedDeletableTweetsCount(count) {
+      if (count !== 0 && !count) {
+        count = selectedDeletableTweetsCount();
+      }
+      $('.selected-deletable-tweets-count').text(count);
+    }
+
+    function resetDeletableTweetsCounts(res) {
+      $('.total-deletable-tweets-count').text(res.total);
+      $('.current-deletable-tweets-count').text(res.tweets.length);
+      $body.trigger('close-deletable-tweets-menu');
+      updateSelectedDeletableTweetsCount(0);
+    }
+
+    function resetSelectedDeletableTweetsState(res) {
+      toggleAllDeletableTweets(false);
+      hideAlertMessage();
+
+      $('input:checkbox[name="selected-deletable-tweet"]').on('change', function () {
+            var ids = collectDeletableTweetIds(true);
+
+            if (ids.length > 0) {
+              $body.trigger('open-deletable-tweets-menu');
+            } else {
+              $body.trigger('close-deletable-tweets-menu');
+            }
+
+            if (collectDeletableTweetIds(false).length === ids.length) {
+              toggleAllDeletableTweets(true);
+              showAlertMessage();
+            } else {
+              toggleAllDeletableTweets(false);
+              hideAlertMessage();
+            }
+
+            updateSelectedDeletableTweetsCount();
+          }
+      );
+    }
+
+    function collectFilterParams() {
+      return {
+        retweet_count: $('select[name="retweet-count"]').val(),
+        favorite_count: $('select[name="favorite-count"]').val(),
+        since_date: $('input[name="filter-since-date"]').val(),
+        until_date: $('input[name="filter-until-date"]').val(),
+        hashtags: $('select[name="hashtags"]').val(),
+        user_mentions: $('select[name="mentions"]').val(),
+        urls: $('select[name="urls"]').val(),
+        media: $('select[name="media"]').val(),
+        deleted: $('select[name="deleted"]').val()
+      };
+    }
+
+    function loadDeletableTweets(options) {
+      var url = '<%= raw api_v1_deletable_tweets_path(via: current_via) %>';
+      var retry = (options && options.hasOwnProperty('retry')) ? options['retry'] : 10;
+      var container = $('#deletable-tweets-container');
+      logger.log('Load tweets', retry);
+
+      $.get(url, collectFilterParams()).done(function (res) {
+        lastResponse = res;
+        container.empty();
+
+        if (res.tweets.length > 0) {
+          var template = window.templates['deletableTweet'];
+          var user = res.user;
+          var tweets = res.tweets;
+
+          for (var i = 0; i < tweets.length; i++) {
+            var tweet = tweets[i];
+            tweet.user = user;
+            var rendered = $(Mustache.render(template, tweet));
+            if (i === 0) {
+              rendered.prepend($('<hr>'));
+            }
+            rendered.append($('<hr>'));
+            container.append(rendered);
+          }
+        } else {
+          container.text(res.message || 'Not found');
+        }
+
+        resetDeletableTweetsCounts(res);
+        resetSelectedDeletableTweetsState(res);
+      }).fail(function (xhr, textStatus, errorThrown) {
+        try {
+          var res = JSON.parse(xhr.responseText);
+          if (res['retry'] && retry-- > 0) {
+            setTimeout(function () {
+              loadDeletableTweets({retry: retry});
+            }, 5000);
+          } else {
+            container.empty().html(res['message']);
+          }
+        } catch (e) {
+          showErrorMessage(xhr, textStatus, errorThrown);
+        }
+      });
+    }
+
+    function collectDeletableTweetIds(checked) {
+      var state = checked ? ':checked' : ''
+      var ids = [];
+      $('input:checkbox[name="selected-deletable-tweet"]' + state).each(function () {
+        ids.push($(this).data('id'));
+      });
+      return ids;
+    }
+
+    function toggleCurrentDeletableTweets(checked) {
+      $('input:checkbox[name="selected-deletable-tweet"]').prop('checked', checked);
+    }
+
+    function toggleAllDeletableTweets(checked) {
+      return $('input:checkbox[name="select-all-deletable-tweets"]').prop('checked', checked);
+    }
+
+    function destroyDeletableTweets(ids, options) {
+      var url = '<%= raw api_v1_deletable_tweet_bulk_destroy_path(via: current_via) %>';
+      var params = {
+        ids: ids,
+        send_dm: options['send_dm'],
+        post_tweet: options['post_tweet'],
+        delete_total_tweets: options['delete_total_tweets'],
+        filter_params: options['filter_params']
+      }
+
+      $.ajax({
+        url: url,
+        data: JSON.stringify(params),
+        type: 'DELETE',
+        contentType: 'application/json'
+      }).done(function (res) {
+        logger.log('Tweets destroyed', res);
+        options['done']();
+      }).fail(function (xhr) {
+        try {
+          var message = JSON.parse(xhr.responseText)['message'];
+          ToastMessage.info(message);
+        } catch (e) {
+          showErrorMessage(xhr);
+        }
+        options['fail']();
+      });
+    }
+
+    function hideDeletableTweets(ids) {
+      for (var i = 0; i < ids.length; i++) {
+        var elem = $('.deletable-tweet-container[data-id=' + ids[i] + ']');
+        elem.fadeOut(500, function () {
+          elem.removeClass('d-flex').hide();
+        });
+      }
+    }
+
+    function showDeletableTweets(ids) {
+      for (var i = 0; i < ids.length; i++) {
+        var elem = $('.deletable-tweet-container[data-id=' + ids[i] + ']');
+        elem.show();
+      }
+    }
+
+    function totalDeletableTweetsSelected() {
+      $('#select-total-tweets-link').data('select-total-tweets-count', lastResponse.total).hide();
+      $('#current-tweets-selected-message').hide();
+      $('#total-tweets-selected-message').show();
+    }
+
+    function showAlertMessage() {
+      $('#deletable-tweets-selected-alert').show();
+    }
+
+    function hideAlertMessage() {
+      $('#deletable-tweets-selected-alert').hide();
+      $('#select-total-tweets-link').removeData('select-total-tweets-count').show();
+      $('#current-tweets-selected-message').show();
+      $('#total-tweets-selected-message').hide();
+    }
+
+    function selectedDeletableTweetsCount() {
+      var count = $('#select-total-tweets-link').data('select-total-tweets-count');
+      if (!count) {
+        count = collectDeletableTweetIds(true).length;
+      }
+      return count;
+    }
+  });
+</script>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_08_054935) do
+ActiveRecord::Schema.define(version: 2021_05_13_175916) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -319,6 +319,14 @@ ActiveRecord::Schema.define(version: 2021_05_08_054935) do
     t.index ["created_at"], name: "index_crawler_logs_on_created_at"
   end
 
+  create_table "create_deletable_tweets_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_create_deletable_tweets_requests_on_created_at"
+    t.index ["user_id"], name: "index_create_deletable_tweets_requests_on_user_id"
+  end
+
   create_table "create_follow_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id"
     t.integer "request_id"
@@ -514,6 +522,25 @@ ActiveRecord::Schema.define(version: 2021_05_08_054935) do
     t.index ["created_at"], name: "index_credential_tokens_on_created_at"
     t.index ["token"], name: "index_credential_tokens_on_token"
     t.index ["user_id"], name: "index_credential_tokens_on_user_id", unique: true
+  end
+
+  create_table "deletable_tweets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "uid", null: false
+    t.bigint "tweet_id", null: false
+    t.integer "retweet_count"
+    t.integer "favorite_count"
+    t.datetime "tweeted_at", null: false
+    t.json "hashtags"
+    t.json "user_mentions"
+    t.json "urls"
+    t.json "media"
+    t.json "properties"
+    t.datetime "deleted_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_deletable_tweets_on_created_at"
+    t.index ["tweet_id"], name: "index_deletable_tweets_on_tweet_id"
+    t.index ["uid", "tweet_id"], name: "index_deletable_tweets_on_uid_and_tweet_id", unique: true
   end
 
   create_table "delete_favorites_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

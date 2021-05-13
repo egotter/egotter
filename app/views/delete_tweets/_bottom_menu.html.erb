@@ -1,0 +1,109 @@
+<style type="text/css">
+    #deletable-tweets-menu {
+        display: none;
+        visibility: hidden;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 0;
+        height: 0;
+        z-index: 9999;
+        background-color: #f3f3f3;
+    }
+</style>
+
+<div id="deletable-tweets-menu" class="d-flex align-items-center shadow p-3">
+  <div class="w-100">
+    <span class="badge badge-secondary"><span class="selected-deletable-tweets-count">0</span></span>
+    <span class="delete-selected-deletable-tweets-button p-3" style="cursor: pointer;">
+      <i class="fas fa-trash"></i>
+      <span class="ml-1"><%= t('.trash') %></span>
+    </span>
+  </div>
+  <div class="flex-shrink-1">
+    <button type="button" class="close">
+      <span>&times;</span>
+    </button>
+  </div>
+</div>
+
+<%= modal_dialog(id: 'delete-selected-tweets-confirmation-modal', title: t('.modal.title'), button: {positive: t('.yes'), negative: t('.no'), category: 'danger'}) do %>
+  <div><%= t('.modal.message_html', class: 'selected-deletable-tweets-count', count: 0) %></div>
+
+  <div class="my-5">
+    <div>
+      <%= check_box_tag('search-send-dm', '1', true) %>
+      <label for="search-send-dm"><%= t('.send_dm') %></label>
+    </div>
+    <div>
+      <%= check_box_tag('search-post-tweet', '1', true) %>
+      <label for="search-post-tweet"><%= t('.post_tweet') %></label>
+    </div>
+  </div>
+
+  <div class="text-danger small"><%= t('.modal.note') %></div>
+<% end %>
+
+<script>
+  $(function () {
+    var menu = $('#deletable-tweets-menu');
+    var $body = $('body');
+    var $deleteButton = $('.delete-selected-deletable-tweets-button');
+    var $modal = $('#delete-selected-tweets-confirmation-modal');
+    var isOpened = false;
+    var messages = {
+      alreadyDeleted: '<%= t('.already_deleted') %>',
+      noTweetsSelected: '<%= t('.no_tweets_selected') %>'
+    };
+
+    if (!menu.sidebar) {
+      return;
+    }
+
+    $body.on('<%= open_event %>', openMenu);
+    $body.on('<%= close_event %>', closeMenu);
+
+    menu.sidebar({side: 'bottom'});
+
+    menu.on("sidebar:opened", function () {
+      isOpened = true
+    });
+
+    menu.on("sidebar:closed", function () {
+      isOpened = false;
+    });
+
+    menu.find('button.close').on('click', closeMenu);
+
+    $deleteButton.on('click', function () {
+      if ($('select[name="deleted"]').val() === 'true') {
+        window.alert(messages['alreadyDeleted']);
+      } else if ($('input:checkbox[name="selected-deletable-tweet"]:checked').length === 0) {
+        window.alert(messages['noTweetsSelected']);
+      } else {
+        $modal.modal('show');
+      }
+    });
+
+    $modal.find('.positive').on('click', function () {
+      $body.trigger('destroy-selected-deletable-tweets');
+    });
+
+    function closeMenu() {
+      if (isOpened) {
+        $deleteButton.css({visibility: 'hidden'});
+        menu.trigger('sidebar:close');
+      }
+      $body.trigger('deletable-tweets-menu-closed');
+    }
+
+    function openMenu() {
+      menu.css({width: '100%', height: 'auto', visibility: 'visible'}).show();
+      if (!isOpened) {
+        $deleteButton.css({visibility: 'visible'});
+        menu.trigger('sidebar:toggle');
+      }
+    }
+  });
+</script>

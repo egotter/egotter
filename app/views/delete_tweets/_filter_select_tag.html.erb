@@ -1,0 +1,4 @@
+<div class="my-5">
+  <div class="mb-1"><%= title %></div>
+  <%= select_tag name, options_for_select(options, selected: selected), class: 'custom-select', data: {button_target: "##{button_id}"} %>
+</div>

@@ -3,14 +3,14 @@ module ModalHelper
     content_tag 'span', style: 'cursor : pointer;', data: {target: "##{target}", toggle: 'modal'}, &block
   end
 
-  def modal_dialog(id:, title:, body: nil, button: nil, data: nil, size: nil, footer: true, &block)
+  def modal_dialog(id:, title:, body: nil, button: nil, klass: nil, data: nil, size: nil, footer: true, &block)
     button = {positive: 'OK', category: 'primary'} unless button
     button[:category] = 'primary' unless button[:category]
     data = {} unless data
     data_attrs = data.map { |k, v| %Q(data-#{k.to_s.gsub(/_/, '-')}="#{v}") }.join(' ')
 
     <<~HTML.html_safe
-      <div class="modal fade" id="#{id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" #{data_attrs}>
+      <div class="modal #{klass} fade" id="#{id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" #{data_attrs}>
         <div class="modal-dialog #{size}" role="document">
           <div class="modal-content">
             <div class="modal-header">

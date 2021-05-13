@@ -1,3 +1,4 @@
+# TODO Remove later
 class DeleteTweetsRequestDecorator < ApplicationDecorator
   delegate_all
 

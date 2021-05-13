@@ -1,31 +1,29 @@
 <% content_for :navbar_title, t('.navbar_title') %>
 
-<% breadcrumb :delete_tweets_mypage %>
+<div class="mb-5"><%= t('.page_description_html', count: DeleteTweetsRequest::DESTROY_LIMIT) %></div>
 
-<h2 class="h4 text-center my-5"><%= t('.page_title') %></h2>
-<div class="mb-5"><%= t('.page_description', count: DeleteTweetsRequest::DESTROY_LIMIT) %></div>
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a id="open-search-deletable-tweets-tab" class="nav-link" href="#search-tab" data-toggle="tab"><%= t('delete_tweets.search.title') %></a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="#free-tab" data-toggle="tab"><%= t('delete_tweets.free.title') %></a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#premium-tab" data-toggle="tab"><%= t('delete_tweets.premium.title') %></a>
+  </li>
+</ul>
 
-<% if @processing %>
-  <%= render partial: 'processing' %>
-<% else %>
-  <%= render partial: 'free' %>
-<% end %>
-
-<%= render partial: 'premium' %>
-
-<h3 class="h5 text-center mt-5 mb-3"><%= t('.status.title') %></h3>
-<div class="text-center mb-3"><%= t('.status.description', user: current_user.screen_name) %></div>
-
-<table class="table table-bordered table-condensed">
-  <tr>
-    <% if @request %>
-      <td class="small"><%= @request.display_time %></td>
-      <td class="small"><%= @request.message.html_safe %></td>
-    <% else %>
-      <td class="small text-muted"><%= t('.status.empty_date') %></td>
-      <td class="small text-muted"><%= t('.status.no_request_description', user: current_user.screen_name) %></td>
-    <% end %>
-  </tr>
-</table>
+<div class="tab-content">
+  <div id="search-tab" class="tab-pane">
+    <%= render partial: 'search' %>
+  </div>
+  <div id="free-tab" class="tab-pane active">
+    <%= render partial: 'free', locals: {processing: @processing} %>
+  </div>
+  <div id="premium-tab" class="tab-pane">
+    <%= render partial: 'premium' %>
+  </div>
+</div>
 
 <%= render partial: 'delete_tweets/faq' %>
