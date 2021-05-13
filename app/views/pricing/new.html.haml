@@ -21,7 +21,10 @@
 %hr
 
 %h2.h4.text-center.my-5= t('.payment_methods_title')
-.my-3= t('.payment_methods_description_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')))
+.my-3
+  %p= t('.payment_methods_description')
+  %p.small= t('.other_payment_methods_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.payment_method')))
+  %p.small= t('.bulk_purchase_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')))
 
 %hr
 

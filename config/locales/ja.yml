@@ -655,13 +655,13 @@ ja:
           <li>有料プラン（無料のお試し期間あり）</li>
         </ul>
       payment_methods_title: 'プランの支払い方法'
-      payment_methods_description_html: |
-        <p>えごったーの有料プランはクレジットカードでの支払いに対応しています。</p>
-        <p>長期間の一括購入については追加の割引や銀行振り込みでの支払いにも対応しています。</p>
-        <p>
-          詳しくは <a href="%{url}" target="_blank">@egotter_cs</a> までお問い合わせください。
-          <a href="%{url}" class="btn btn-outline-primary btn-sm" target="_blank">問い合わせ</a>
-        </p>
+      payment_methods_description: 'えごったーの有料プランはクレジットカードでの支払いに対応しています。'
+      other_payment_methods_html: |
+        コンビニ決済や銀行振込での支払いを希望される方は個別にご連絡ください。
+        <a href="%{url}" class="btn btn-outline-primary btn-sm" target="_blank">問い合わせ</a>
+      bulk_purchase_html: |
+        長期間の一括購入については追加の割引や銀行振り込みでの支払いにも対応しています。
+        <a href="%{url}" class="btn btn-outline-primary btn-sm" target="_blank">問い合わせ</a>
       free_plan_title: '無料プランの内容'
       free_plan_text_html: |
         <p>えごったーを<span class="egotter-pink">無料で少しだけ使いたい</span>方に適したプランです。</p>
@@ -677,7 +677,7 @@ ja:
       basic_plan_note2: '※ 定期購入をキャンセル後に再度購入した場合は、割引の適用されない価格（%{price}円）となります。'
       basic_plan_note3: '※ 一部の機能を利用すると無料期間はその時点で終了します。その場合は返金の対象外となります。'
       basic_plan_note4_html: |
-        長期間の一括購入については追加の割引や銀行振り込みでの支払いにも対応しています。詳しくは <a href="%{url}" target="_blank">@egotter_cs</a> までお問い合わせください。
+        長期間の一括購入については追加の割引や銀行振込・コンビニ決済での支払いにも対応しています。
         <a href="%{url}" target="_blank">問い合わせ</a>
       list:
         free_plan_search_count: '検索回数 %{min}〜%{max} 回'
@@ -1763,7 +1763,17 @@ ja:
       label4: '会話を閉じる（次の通知を待つ）'
       description4: 'このボタンを押しておくと、DM通知が届きやすくなります'
   short_messages:
-    bulk_purchase: '長期間の一括購入を希望します。手続きを教えてください。支払い方法は【クレジットカード・銀行振り込み】を希望します。'
+    bulk_purchase: |
+      長期間の一括購入を希望します。期間と支払い方法の希望は下記の通りです。
+      ※ 期間と支払い方法をそれぞれ1つお選びください。
+
+      購入する期間：【3ヶ月(3%割引)・6ヶ月(5%割引)・12ヶ月(7%割引)】
+      支払い方法：【クレジットカード・銀行振込・コンビニ決済】
+    payment_method: |
+      クレジットカード以外の支払い方法を希望します。希望は下記の通りです。
+      ※ 支払い方法を1つお選びください。
+
+      支払い方法：【クレジットカード・銀行振込・コンビニ決済】
     permission_level_not_enough: 'ログインエラー報告：強制再ログインと連携アプリの削除→再登録を試しましたがログインできないままです。試した時間は【○月○日 ○時頃】です。'
     refund: '有料プランの返金を希望します。理由：'
     delete_tweets_inquiry: 'ツイート削除のお問い合わせ：'
