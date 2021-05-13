@@ -112,6 +112,7 @@ class StartDeletingTweetsTask
     else
       user = User.find_by(screen_name: @screen_name)
       request = DeleteTweetsRequest.create!(user_id: user.id, finished_at: Time.zone.now)
+      puts "request_id=#{request.id}"
 
       if @sync
         deleted_count = 0
@@ -121,17 +122,24 @@ class StartDeletingTweetsTask
           DeleteTweetWorker.new.perform(user.id, tweet.id, request_id: request.id)
 
           if (deleted_count += 1) % 1000 == 0
-            time = Time.zone.now - started_time
-            puts "total #{@deletable_tweets.size}, deleted #{deleted_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / deleted_count)}"
+            print_progress(started_time, deleted_count)
             request.update(destroy_count: deleted_count)
           end
         end
+
+        print_progress(started_time, deleted_count)
+        request.update(destroy_count: deleted_count)
       else
         @deletable_tweets.each do |tweet|
           DeleteTweetWorker.perform_async(user.id, tweet.id, request_id: request.id)
         end
       end
     end
+  end
+
+  def print_progress(started_time, deleted_count)
+    time = Time.zone.now - started_time
+    puts "total #{@deletable_tweets.size}, deleted #{deleted_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / deleted_count)}"
   end
 
   class Tweet

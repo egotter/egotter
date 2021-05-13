@@ -1,14 +1,16 @@
-<h3 id="delete-tweets-uploader" class="h5 card-title text-center mt-5 mb-3"><%= t('.title') %></h3>
+<div id="delete-tweets-uploader" class="my-5"><%= t('.description', user: current_user.screen_name) %></div>
 
 <div class="card my-3">
   <div class="card-body">
     <div class="card-text">
-      <%= t('.description', user: current_user.screen_name) %>
 
-      <%= link_to '#download-full-archive', class: 'btn btn-outline-primary btn-sm' do %>
-        <i class="far fa-question-circle"></i>
-        <%= t('.more') %>
-      <% end %>
+      <div>
+        <%= t('.how_to') %>
+        <%= link_to '#download-full-archive', class: 'btn btn-outline-primary btn-sm' do %>
+          <i class="far fa-question-circle"></i>
+          <%= t('.more') %>
+        <% end %>
+      </div>
 
       <div class="my-4">
         <div>

@@ -127,13 +127,43 @@
   </div>
 </script>
 
+<template id="deletable-tweet-template">
+  <div class="deletable-tweet-container" data-id="{{id}}">
+    <div>
+      <input type="checkbox" name="selected-deletable-tweet" data-id="{{id}}">
+      <span class="ml-3">
+        {{#user}}
+          <img loading="lazy" class="rounded-circle border" style="border-width: 1px !important;" src="{{profile_image_url}}" width="20" height="20">
+        {{/user}}
+        <span class="mx-3">
+          <span class="small text-muted"><i class="fas fa-retweet mr-1"></i>{{retweet_count}}</span>
+          <span class="small text-muted"><i class="far fa-heart ml-3 mr-1"></i>{{favorite_count}}</span>
+        </span>
+        <span class="mr-3">
+          <a href="{{url}}" class="text-muted" target="_blank">{{created_at}}</a>
+        </span>
+        <br class="d-block d-md-none">
+        <span style="word-break: break-all;">{{text}}</span>
+      </span>
+    </div>
+    <div>
+      {{#media}}
+        <a href="{{url}}" target="_blank">
+          <img loading="lazy" class="rounded border" style="border-width: 1px !important;" src="{{url}}" width="200">
+        </a>
+      {{/media}}
+    </div>
+  </div>
+</template>
+
 <script>
   $(function () {
     var templates = {
       user: $('#user-template').html(),
       userRectangle: $('#user-rectangle-template').html(),
       searchHistoryRectangle: $('#search-history-rectangle-template').html(),
-      toast: $('#toast-template').html()
+      toast: $('#toast-template').html(),
+      deletableTweet: $('#deletable-tweet-template').html()
     };
 
     window.templates = templates;

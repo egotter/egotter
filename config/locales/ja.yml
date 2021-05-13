@@ -1475,9 +1475,8 @@ ja:
         <br>
         何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
   delete_tweets:
-    new: &delete_tweets_new
-      crumb_title: 'ツイートクリーナー'
-      navbar_title: 'ツイートクリーナー🧹'
+    new:
+      navbar_title: 'ツイートクリーナー'
       footer_title: 'ツイートを一括削除'
       meta_title: 'ツイートクリーナー🧹 - ワンクリックでツイートを一括削除'
       meta_description: '黒歴史よさようなら！ ワンクリックでツイートを一括削除。%{count}万回以上利用されたえごったーに新機能が登場！ 100件/秒の速さでツイートを高速削除します。10年以上利用されているえごったーだからプライバシーも安心です。'
@@ -1486,39 +1485,71 @@ ja:
         subheader: 'ワンクリックでツイートを一括削除'
         lead_html: '100ツイート/秒の速さで高速削除！<br><span class="egotter-pink">%{count}万回</span>以上利用された安心のツールです。<br>'
     show:
-      <<: *delete_tweets_new
-      crumb_title: 'マイページ'
-      page_title: 'ツイートクリーナー'
-      page_description: |
-        ツイートクリーナーは、ツイートを簡単に素早く削除するためのツールです。
-        無料プランの場合は、最新の%{count}件まで無料で削除することができます。
-        有料プランの場合は、最大で200万件以上のツイートを削除することができます。
-      see_progress: 'ツイート削除ステータスを見る'
-      status:
-        title: 'ツイート削除ステータス'
-        description: '@%{user} のツイート削除状況です。'
-        no_request_description: '削除中の場合は、ここに進行状況が表示されます。'
-        empty_date: '○月○日'
+      navbar_title: 'ツイートクリーナー'
+      page_description_html: |
+        <p>ツイートクリーナーは、ツイートを簡単に素早く削除するためのツールです。</p>
+        <p>無料プランの場合は、最新の%{count}件まで無料で削除することができます。
+        有料プランの場合は、最大で200万件以上のツイートを削除することができます。</p>
+    search:
+      title: '検索して削除'
+      description: '「検索して削除」では、条件指定でツイートを検索し、見付かったツイートを一気に削除することができます。'
+      notice_html: '「検索して削除」は5月14日にリリースされたばかりのお試し新機能です。不具合があるかもしれません。もし不具合を見付けたら、<a href="%{url}" target="_blank">@egotter_cs</a> までご連絡いただけるとありがたいです。'
+      filter:
+        modal: '検索条件の指定'
+        retweet_count: 'リツイート数'
+        favorite_count: 'お気に入り数'
+        since_date: 'この日から'
+        until_date: 'この日まで'
+        hashtags: 'ハッシュタグ'
+        mentions: 'メンション'
+        urls: 'URL'
+        media: 'メディア'
+        deleted: '削除済み'
+        noop: '指定無し'
+        more_than_1: '1 以上'
+        more_than_10: '10 以上'
+        more_than_100: '100 以上'
+        more_than_1000: '1000 以上'
+        attached: '付いている'
+        not_attached: '付いていない'
+        included: '含める'
+        excluded: '含めない'
+        select_all: 'すべて選択'
+        reload: '再読み込み'
+        trash: '削除する'
+        current_tweets_selected_html: 'このページ内のツイート <span class="current-deletable-tweets-count">%{count}</span> 件が選択されています。'
+        select_total_tweets_html: 'ツイート <span class="total-deletable-tweets-count">%{count}</span> 件をすべて選択'
+        total_tweets_selected_html: '検索条件にマッチするツイート <span class="total-deletable-tweets-count">%{count}</span> 件すべてが選択されています。'
+    bottom_menu:
+      trash: '削除'
+      send_dm: '削除の完了後に自分へDMする'
+      post_tweet: '削除の完了後にツイートする'
+      already_deleted: '選択しているツイートは既に削除済みです。'
+      no_tweets_selected: 'ツイートが1件も選択されていません。'
+      modal:
+        title: '削除するツイートの確認'
+        message_html: '選択されている <span class="%{class}">%{count}</span> 件のツイートを削除してもよろしいですか？'
+        note: '※ ツイートの削除は取り消すことができません。'
+      'yes': '削除する'
+      'no': 'やめる'
     free:
-      title: '無料でツイートを削除する'
-      description: '無料プランの場合は、最新の%{count}件までをワンクリックで削除することができます。'
+      title: '一括で削除'
+      description: '「一括で削除」では、日付指定でツイートを一括削除することができます。最新の%{count}件までをワンクリックで削除することができます。'
+      how_to: 'ツイート削除のよくある質問についてはこちらをご覧ください。'
       more: 'よくある質問'
       since_date: 'この日付から'
       until_date: 'この日付まで'
       send_dm: '削除の完了後に自分へDMする'
       post_tweet: '削除の完了後にツイートする'
       button: '無料で直近のツイートを削除する'
+      requested: '削除リクエスト済み'
       note1: '※ ツイート削除は取り消しできません。'
       note2_html: '※ 無料で削除できるのは%{count}件までです。<a href="%{url}">理由</a>'
-    processing:
-      title: '無料でツイートを削除する'
-      description: '無料プランの場合は、最新の%{count}件までをワンクリックで削除することができます。'
-      more: 'よくある質問'
-      requested: '削除リクエスト済み'
-      note: '一定時間後に再度リクエストできます。'
+      note3: '1時間ほど経過すると再度リクエストできます。'
     premium:
-      title: '有料で完全にツイートを削除する'
-      description: '有料プランの場合は、アーカイブデータをアップロードすれば全てのツイートを削除できます。'
+      title: '完全に削除'
+      description: '「完全に削除」では、アーカイブデータをアップロードして全てのツイートを完全に削除することができます。'
+      how_to: 'アーカイブデータの取得についてはこちらをご覧ください。'
       button: 'アーカイブデータをアップロード'
       more: '手順'
       since_date: 'この日付から'
@@ -1777,6 +1808,7 @@ ja:
     permission_level_not_enough: 'ログインエラー報告：強制再ログインと連携アプリの削除→再登録を試しましたがログインできないままです。試した時間は【○月○日 ○時頃】です。'
     refund: '有料プランの返金を希望します。理由：'
     delete_tweets_inquiry: 'ツイート削除のお問い合わせ：'
+    delete_tweets_search_inquiry: 'ツイート削除の「検索して削除」に関する不具合報告：'
   directory:
     profiles:
       footer_title: プロフィール
@@ -1991,6 +2023,23 @@ ja:
       delete_tweets_requests:
         create:
           success: 'ツイート削除のリクエストに成功しました。ページを更新します。'
+      deletable_tweets:
+        index:
+          completed_html: |
+            <div class="card">
+              <div class="card-body">
+                <p>ツイートの削除は完了しています。</p>
+                <p>既に%{count}件のツイートを削除済みの場合は、古いツイートの削除をすぐに始めることができません。これは全世界共通のツイッターの制限です。</p>
+                <p>
+                  残りの古いツイートも完全に削除するには、えごったー有料プランをご活用ください。
+                  <a href="%{url}" class="btn btn-outline-primary btn-sm" target="_blank">料金プラン</a>
+                </p>
+              </div>
+            </div>
+          preparing: 'ツイートの取得に時間がかかっています。5〜30分後に再度アクセスしてください。'
+          not_found: '検索条件に該当するツイートは見付かりませんでした。'
+        destroy:
+          failed_html: '<a href="%{url}" target="_blank">このツイート</a>の削除に失敗しました。'
       delete_tweets_presigned_urls:
         create:
           fail: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをそのまま指定してください。'
@@ -2449,6 +2498,7 @@ ja:
       periodic_report_short: "%-m月%-d日 %-H時%-M分"
       delete_tweets_short: "%-H時%-M分"
       delete_tweets_long: "%-m月%-d日 %-H時%-M分"
+      deletable_tweets_long: "%-m月%-d日 %-H時%-M分"
       delete_favorites_short: "%-H時%-M分"
       delete_favorites_long: "%-m月%-d日 %-H時%-M分"
       order_long: "%-m月%-d日 %-H時%-M分"
