@@ -206,6 +206,12 @@
       toggleAllDeletableTweets(false);
       hideAlertMessage();
 
+      $('#deletable-tweets-container .tweet-text').on('click', function () {
+        var val = $(this).css('white-space');
+        var newVal = val === 'nowrap' ? 'normal' : 'nowrap';
+        $(this).css({'white-space': newVal});
+      });
+
       $('input:checkbox[name="selected-deletable-tweet"]').on('change', function () {
             var ids = collectDeletableTweetIds(true);
 
