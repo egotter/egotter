@@ -151,11 +151,13 @@
     <div class="tweet-text" style="cursor: pointer; word-break: break-all; white-space: nowrap; overflow-x: hidden; text-overflow: ellipsis;">
       {{text}}
     </div>
-    <div>
+    <div class="d-flex" style="overflow-x: scroll;">
       {{#media}}
-      <a href="{{url}}" target="_blank">
-        <img loading="lazy" class="rounded border" style="border-width: 1px !important;" src="{{url}}" width="200">
-      </a>
+      <div class="mr-3">
+        <a href="{{url}}" target="_blank">
+          <img loading="lazy" class="rounded border" style="border-width: 1px !important;" src="{{url}}" width="200">
+        </a>
+      </div>
       {{/media}}
     </div>
   </div>

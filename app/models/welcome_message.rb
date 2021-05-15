@@ -157,6 +157,7 @@ class WelcomeMessage < ApplicationRecord
           screen_name: user.screen_name,
           report_interval: user.notification_setting.report_interval,
           twitter_user: TwitterUser.latest_by(uid: user.uid),
+          stop_reports_url: support_url(via: via, og_tag: 'false', anchor: 'stop_reports'),
           timeline_url: timeline_url(user, token: token, medium: 'dm', type: 'welcome', via: via, og_tag: 'false'),
           settings_url: settings_url(via: via, og_tag: 'false'),
           support_url: support_url(via: via, og_tag: 'false'),
