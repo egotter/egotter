@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_13_175916) do
+ActiveRecord::Schema.define(version: 2021_05_16_024821) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -535,6 +535,7 @@ ActiveRecord::Schema.define(version: 2021_05_13_175916) do
     t.json "urls"
     t.json "media"
     t.json "properties"
+    t.datetime "deletion_reserved_at"
     t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -557,6 +558,22 @@ ActiveRecord::Schema.define(version: 2021_05_13_175916) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_delete_favorites_requests_on_created_at"
     t.index ["user_id"], name: "index_delete_favorites_requests_on_user_id"
+  end
+
+  create_table "delete_tweets_by_search_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "reservations_count", default: 0, null: false
+    t.integer "deletions_count", default: 0, null: false
+    t.boolean "send_dm", default: false, null: false
+    t.boolean "post_tweet", default: false, null: false
+    t.text "error_message"
+    t.json "filters"
+    t.json "tweet_ids"
+    t.datetime "finished_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_delete_tweets_by_search_requests_on_created_at"
+    t.index ["user_id"], name: "index_delete_tweets_by_search_requests_on_user_id"
   end
 
   create_table "delete_tweets_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

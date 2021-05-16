@@ -32,9 +32,10 @@ class DeleteTweetsReport
 
   class << self
     def finished_tweet(user, request)
+      deletions_count = request.respond_to?(:deletions_count) ? request.deletions_count : request.destroy_count
       template = Rails.root.join('app/views/delete_tweets/finished_tweet.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          destroy_count: request.destroy_count,
+          destroy_count: deletions_count,
           url: delete_tweets_url('delete_tweets_finished_tweet', true),
           seconds: (request.updated_at - request.created_at).to_i.to_s(:delimited),
           kaomoji: Kaomoji::KAWAII.sample
@@ -43,13 +44,14 @@ class DeleteTweetsReport
     end
 
     def finished_message(user, request)
-      if request.destroy_count > 0
+      deletions_count = request.respond_to?(:deletions_count) ? request.deletions_count : request.destroy_count
+      if deletions_count > 0
         template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
       else
         template = Rails.root.join('app/views/delete_tweets/not_deleted.ja.text.erb')
       end
       message = ERB.new(template.read).result_with_hash(
-          destroy_count: request.destroy_count,
+          destroy_count: deletions_count,
           destroy_limit: DeleteTweetsRequest::DESTROY_LIMIT,
           mypage_url: delete_tweets_mypage_url('delete_tweets_finished_dm')
       )

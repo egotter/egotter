@@ -11,7 +11,7 @@ class CreateDeletableTweets < ActiveRecord::Migration[6.0]
       t.json :urls
       t.json :media
       t.json :properties
-
+      t.datetime :deletion_reserved_at
       t.datetime :deleted_at
       t.timestamps null: false
 

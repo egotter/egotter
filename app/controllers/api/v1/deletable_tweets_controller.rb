@@ -7,6 +7,11 @@ module Api
       before_action :require_login!
       before_action :user_must_have_tweets, only: :index
 
+      rescue_from StandardError do |e|
+        logger.warn "#{e.inspect} controller=#{controller_name} action=#{action_name} user_id=#{current_user&.id}"
+        render json: {message: t('.index.internal_server_error')}, status: :internal_server_error
+      end
+
       def index
         query = filter_applied_query(params)
         total = query.size
@@ -15,8 +20,9 @@ module Api
         render json: {user: user_json, tweets: tweets_json(current_user, records), total: total, message: message}
       end
 
+      # TODO Remove later
       def destroy
-        if destroy_record(current_user, params[:id])
+        if destroy_records(current_user, [params[:id]])
           render json: {status: 'ok'}
         else
           render json: {message: t('.failed_html', url: tweet_url(current_user.screen_name, params[:id]))}, status: :not_found
@@ -24,124 +30,24 @@ module Api
       end
 
       def bulk_destroy
-        if params[:delete_total_tweets] && params[:filter_params] &&
-            params[:delete_total_tweets].to_i == filter_applied_query(params[:filter_params]).size
+        if delete_total_tweets?
           ids = filter_applied_query(params[:filter_params]).pluck(:tweet_id)
         else
-          ids = params[:ids]
-        end
-        destroy_records(current_user, ids)
-        render json: {status: 'ok', size: ids.size}
-      end
-
-      class Filter
-
-        DATE_REGEXP = /\A\d{4}-\d{2}-\d{2}\z/
-
-        def initialize(attrs)
-          @retweet_count = attrs[:retweet_count]&.to_i
-          @favorite_count = attrs[:favorite_count]&.to_i
-          @since_date = Time.zone.parse(attrs[:since_date]) if attrs[:since_date]&.match?(DATE_REGEXP)
-          @until_date = Time.zone.parse(attrs[:until_date]) if attrs[:until_date]&.match?(DATE_REGEXP)
-          @hashtags = to_bool(attrs[:hashtags])
-          @user_mentions = to_bool(attrs[:user_mentions])
-          @urls = to_bool(attrs[:urls])
-          @media = to_bool(attrs[:media])
-          @deleted = to_bool(attrs[:deleted])
+          ids = params[:ids].map(&:to_i)
         end
 
-        def apply(query)
-          if @retweet_count.present?
-            query = query.where('retweet_count >= ?', @retweet_count)
-          end
-
-          if @favorite_count.present?
-            query = query.where('favorite_count >= ?', @favorite_count)
-          end
-
-          if @since_date.present?
-            query = query.where('tweeted_at >= ?', @since_date)
-          end
-
-          if @until_date.present?
-            query = query.where('tweeted_at <= ?', @until_date)
-          end
-
-          unless @hashtags.nil?
-            if @hashtags
-              query = query.where('json_length(hashtags) > 0')
-            else
-              query = query.where('json_length(hashtags) = 0')
-            end
-          end
-
-          unless @user_mentions.nil?
-            if @user_mentions
-              query = query.where('json_length(user_mentions) > 0')
-            else
-              query = query.where('json_length(user_mentions) = 0')
-            end
-          end
-
-          unless @urls.nil?
-            if @urls
-              query = query.where('json_length(urls) > 0')
-            else
-              query = query.where('json_length(urls) = 0')
-            end
-          end
-
-          unless @media.nil?
-            if @media
-              query = query.where('json_length(media) > 0')
-            else
-              query = query.where('json_length(media) = 0')
-            end
-          end
-
-          if @deleted
-            query = query.where.not(deleted_at: nil)
-          else
-            query = query.where(deleted_at: nil)
-          end
-
-          query
-        end
-
-        private
-
-        def to_bool(val)
-          case val
-          when 'true'
-            true
-          when 'false'
-            false
-          else
-            nil
-          end
-        end
-
-        class << self
-          def from_params(params)
-            new(
-                retweet_count: params[:retweet_count],
-                favorite_count: params[:favorite_count],
-                since_date: params[:since_date],
-                until_date: params[:until_date],
-                hashtags: params[:hashtags],
-                user_mentions: params[:user_mentions],
-                urls: params[:urls],
-                media: params[:media],
-                deleted: params[:deleted],
-            )
-          end
+        if ids.any?
+          destroy_records(current_user, ids, params[:filter_params])
+          render json: {status: 'ok', size: ids.size}
+        else
+          render json: {message: t('.not_found')}, status: :not_found
         end
       end
 
       private
 
       def user_must_have_tweets
-        unless DeletableTweet.where(uid: current_user.uid, deleted_at: nil).exists?
+        unless DeletableTweet.not_deletion_reserved.not_deleted.where(uid: current_user.uid).exists?
           request = CreateDeletableTweetsRequest.create!(user_id: current_user.id)
           CreateDeletableTweetsWorker.perform_async(request.id)
           if DeletableTweet.where(uid: current_user.uid).exists?
@@ -153,9 +59,9 @@ module Api
         end
       end
 
-      def filter_applied_query(params)
-        query = DeletableTweet.where(uid: current_user.uid)
-        Filter.from_params(params).apply(query)
+      def filter_applied_query(hash)
+        query = DeletableTweet.not_deletion_reserved.where(uid: current_user.uid)
+        DeletableTweetsFilter.from_hash(hash).apply(query)
       end
 
       def user_json
@@ -183,28 +89,25 @@ module Api
         end
       end
 
-      def destroy_records(user, tweet_ids)
-        tweet_ids.each do |tweet_id|
-          destroy_record(user, tweet_id)
-        end
+      def destroy_records(user, tweet_ids, filter_params = {})
+        DeletableTweet.reserve_deletion(user, tweet_ids)
+        filter_hash = DeletableTweetsFilter.from_hash(filter_params).to_hash.merge(delete_total_tweets: params[:delete_total_tweets])
 
-        request = DeleteTweetsRequest.create(
+        request = DeleteTweetsBySearchRequest.create!(
             user_id: user.id,
-            destroy_count: tweet_ids.size,
+            reservations_count: tweet_ids.size,
             send_dm: params[:send_dm],
-            tweet: params[:post_tweet],
+            post_tweet: params[:post_tweet],
+            filters: filter_hash.delete_if { |_k, v| v.nil? },
+            tweet_ids: tweet_ids,
         )
-        request.finished!
-        SendDeleteTweetsFinishedWorker.perform_async(request.id)
+
+        request.perform
       end
 
-      def destroy_record(user, tweet_id)
-        if (record = DeletableTweet.find_by(uid: user.uid, tweet_id: tweet_id, deleted_at: nil))
-          DeleteTweetWorker.perform_async(current_user.id, record.tweet_id)
-          record.update(deleted_at: Time.zone.now)
-        else
-          false
-        end
+      def delete_total_tweets?
+        params[:delete_total_tweets] && params[:filter_params] &&
+            params[:delete_total_tweets].to_i == filter_applied_query(params[:filter_params]).size
       end
     end
   end

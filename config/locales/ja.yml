@@ -2039,8 +2039,11 @@ ja:
             </div>
           preparing: 'ツイートの取得に時間がかかっています。5〜30分後に再度アクセスしてください。'
           not_found: '検索条件に該当するツイートは見付かりませんでした。'
+          internal_server_error: 'エラーが起きました。5〜30分後に再度アクセスしてください。'
         destroy:
-          failed_html: '<a href="%{url}" target="_blank">このツイート</a>の削除に失敗しました。'
+          failed_html: '<a href="%{url}" target="_blank">このツイート</a>の削除に失敗しました。5〜30分後に再度アクセスしてください。'
+        bulk_destroy:
+          not_found: '削除対象のツイートが見付かりませんでした。5〜30分後に再度アクセスしてください。'
       delete_tweets_presigned_urls:
         create:
           fail: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをそのまま指定してください。'
