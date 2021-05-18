@@ -37,7 +37,7 @@
   の両方を <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお送りください。<br>
   <br>
 
-  分かる範囲でDMに書いてください<br>
+  分かる範囲で質問の回答をDMに書いてください。<br>
   <div class="ml-3 mb-3">
     質問1. 他のブラウザでも同じエラーが表示されますか？<br>
     質問2. <%= request.os %> は最新の状態ですか？<br>
@@ -49,13 +49,24 @@
     質問8. セキュリティの厳しいWi-Fi（例：学校、会社）を利用していませんか？
   </div>
 
-  ↓ スクリーンショットに入れてください ↓
   <div class="border my-3 p-3">
-    ブラウザ情報<br>
-    <%= request.os %> <%= request.os_version %> <%= request.device_type %> <%= request.browser %> <%= request.browser_version %><br>
+    ※ スクリーンショットに入れてください<br>
     <br>
-    広告表示判定<br>
-    <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :message}) %>
+    <div>
+      ブラウザ情報<br>
+      <%= request.os %> <%= request.os_version %> <%= request.device_type %> <%= request.browser %> <%= request.browser_version %><br>
+      <br>
+      広告表示判定<br>
+      <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :message}) %>
+    </div>
   </div>
-  ↑ スクリーンショットに入れてください ↑
+
+  <% if request.os == 'iPhone' %>
+    ※ iPhone の方は下記のスクリーンショットもお送りください
+    <div>
+      1. 設定 > プライバシー > トラッキング<br>
+      2. 設定 > Safari > プライバシーとセキュリティ(全4項目)<br>
+      3. 設定 > アプリ一覧 > 「Ad」から始まるアプリ
+    </div>
+  <% end %>
 </div>
