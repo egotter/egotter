@@ -13,11 +13,17 @@ namespace :delete_tweets do
 
   task send_dm: :environment do
     screen_name = ENV['SCREEN_NAME']
-    request_id = ENV['REQUEST_ID']
+    request_id = ENV['REQUEST_ID'] || 'auto'
+    dry_run = ENV['REQUEST_ID']
 
     if (user = User.find_by(screen_name: screen_name))
+      if request_id == 'auto'
+        request_id = DeleteTweetsRequest.order(created_at: :desc).find_by(user_id: user.id).id
+        puts "request_id=#{request_id}"
+      end
+
       report = DeleteTweetsReport.delete_completed_message(user, request_id)
-      report.deliver!
+      report.deliver! unless dry_run
       puts report.message
     else
       puts 'User not found'
