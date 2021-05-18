@@ -654,11 +654,46 @@ ja:
           <li>無料プラン（ログインしただけの状態のこと）</li>
           <li>有料プラン（無料のお試し期間あり）</li>
         </ul>
-      payment_methods_title: 'プランの支払い方法'
-      payment_methods_description: 'えごったーの有料プランはクレジットカードでの支払いに対応しています。'
-      other_payment_methods_html: |
-        コンビニ決済や銀行振込での支払いを希望される方は個別にご連絡ください。
-        <a href="%{url}" class="btn btn-outline-primary btn-sm" target="_blank">問い合わせ</a>
+      payment_method:
+        title: 'プランの支払い方法'
+        description: 'えごったーの有料プランはクレジットカードでの支払いに対応しています。'
+        others: 'コンビニ決済や銀行振込での支払いを希望される方は、こちらからご購入できます。'
+        inquiry: 'お問い合わせ'
+        modal:
+          title: 'コンビニ決済・銀行振込を希望する'
+          description: '注意事項をご確認の上、同意する方のみご購入ください。'
+          1_month:
+            title: '1ヶ月分の購入'
+            price: '%{value}円 (税込)'
+            purchase: '購入する'
+          note_html: |
+            ※ 決済手数料が発生する場合、購入者のご負担となります<br>
+            ※ 支払いの完了後、5営業日以内にプランが有効になります<br>
+            ※ お試し期間は無く、返金の対象外です
+          'yes': '閉じる'
+      bulk_purchase:
+        title: '一括購入の割引'
+        description: '長期間の一括購入については追加の割引をご提供しています。こちらからご購入できます。'
+        inquiry: 'お問い合わせ'
+        modal:
+          title: '一括購入の割引を希望する'
+          description: '注意事項をご確認の上、同意する方のみご購入ください。'
+          6_month:
+            title: '6ヶ月分の一括購入'
+            price: '%{value}円 (税込)'
+            discount_rate: '割引率：%{value}%'
+            purchase: '6ヶ月分を購入する'
+          12_month:
+            title: '12ヶ月分の一括購入'
+            price: '%{value}円 (税込)'
+            discount_rate: '割引率：%{value}%'
+            purchase: '12ヶ月分を購入する'
+          note_html: |
+            ※ 決済手数料が発生する場合、購入者のご負担となります<br>
+            ※ 支払いの完了後、5営業日以内にプランが有効になります<br>
+            ※ お試し期間は無く、返金の対象外です
+          'yes': '閉じる'
+      other_payment_methods: 'コンビニ決済や銀行振込での支払いを希望される方は個別にご連絡ください。'
       bulk_purchase_html: |
         長期間の一括購入については追加の割引や銀行振り込みでの支払いにも対応しています。
         <a href="%{url}" class="btn btn-outline-primary btn-sm" target="_blank">問い合わせ</a>
@@ -676,9 +711,6 @@ ja:
       basic_plan_note1: '※ %{old_price}円から%{new_price}円への割引は、初回購入とそこから継続した定期購入に対してのみ適用されます。'
       basic_plan_note2: '※ 定期購入をキャンセル後に再度購入した場合は、割引の適用されない価格（%{price}円）となります。'
       basic_plan_note3: '※ 一部の機能を利用すると無料期間はその時点で終了します。その場合は返金の対象外となります。'
-      basic_plan_note4_html: |
-        長期間の一括購入については追加の割引や銀行振込・コンビニ決済での支払いにも対応しています。
-        <a href="%{url}" target="_blank">問い合わせ</a>
       list:
         free_plan_search_count: '検索回数 %{min}〜%{max} 回'
         basic_plan_search_count: '検索回数 %{count} 回'

@@ -20,11 +20,19 @@
 
 %hr
 
-%h2.h4.text-center.my-5= t('.payment_methods_title')
+%h2.h4.text-center.my-5= t('.payment_method.title')
 .my-3
-  %p= t('.payment_methods_description')
-  %p.small= t('.other_payment_methods_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.payment_method')))
-  %p.small= t('.bulk_purchase_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')))
+  %p= t('.payment_method.description')
+  %p
+    = t('.payment_method.others')
+    = link_to t('.payment_method.inquiry'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#payment-method-modal', toggle: 'modal'}
+
+%hr
+
+%h2.h4.text-center.my-5= t('.bulk_purchase.title')
+.my-3
+  = t('.bulk_purchase.description')
+  = link_to t('.bulk_purchase.inquiry'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
 
 %hr
 
@@ -87,11 +95,42 @@
   - else
     = link_to t('.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
 .small.my-4
-  .mb-3= t('.basic_plan_note4_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')))
+  .mb-3
+    = t('.payment_method.others')
+    = link_to t('.payment_method.inquiry'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#payment-method-modal', toggle: 'modal'}
+  .mb-3
+    = t('.bulk_purchase.description')
+    = link_to t('.bulk_purchase.inquiry'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
 .small.text-muted.my-4
   .mb-1= t('.basic_plan_note1', old_price: Order::REGULAR_PRICE, new_price: Order::DISCOUNT_PRICE)
   .mb-1= t('.basic_plan_note2', price: Order::REGULAR_PRICE)
   .mb-1= t('.basic_plan_note3')
+
+= modal_dialog id: 'payment-method-modal', title: t('.payment_method.modal.title'), button: {positive: t('.bulk_purchase.modal.yes'), category: 'outline-secondary'} do
+  .my-3= t('.payment_method.modal.description')
+  .my-5
+    %strong.mb-1= t('.payment_method.modal.1_month.title')
+    .mb-1= t('.payment_method.modal.1_month.price', value: 660)
+    .mt-2= link_to t('.payment_method.modal.1_month.purchase'), base_shop_1_month_url, id: 'base-shop-1-month-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+  .my-3.small.text-muted= t('.payment_method.modal.note_html')
+
+= modal_dialog id: 'bulk-purchase-modal', title: t('.bulk_purchase.modal.title'), button: {positive: t('.bulk_purchase.modal.yes'), category: 'outline-secondary'} do
+  .my-3= t('.bulk_purchase.modal.description')
+  .my-5
+    %strong.mb-1= t('.bulk_purchase.modal.6_month.title')
+    -# 300 * 6 * 0.95 * 1.1 = 1881
+    .mb-1
+      = t('.bulk_purchase.modal.6_month.price', value: 1880)
+      = t('.bulk_purchase.modal.6_month.discount_rate', value: 5)
+    .mt-2= link_to t('.bulk_purchase.modal.6_month.purchase'), base_shop_6_months_url, id: 'base-shop-6-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+  .my-5
+    %strong.mb-1= t('.bulk_purchase.modal.12_month.title')
+    -# 300 * 12 * 0.90 * 1.1 = 3564
+    .mb-1
+      = t('.bulk_purchase.modal.6_month.price', value: 3550)
+      = t('.bulk_purchase.modal.6_month.discount_rate', value: 10)
+    .mt-2= link_to t('.bulk_purchase.modal.12_month.purchase'), base_shop_12_months_url, id: 'base-shop-12-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+  .my-3.small.text-muted= t('.bulk_purchase.modal.note_html')
 
 %hr
 

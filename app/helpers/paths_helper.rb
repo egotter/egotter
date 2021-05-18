@@ -277,6 +277,18 @@ module PathsHelper
     'https://twitter.com/settings/applications/185425'
   end
 
+  def base_shop_1_month_url
+    'https://egotter.thebase.in/items/44366397'
+  end
+
+  def base_shop_6_months_url
+    'https://egotter.thebase.in/items/44708302'
+  end
+
+  def base_shop_12_months_url
+    'https://egotter.thebase.in/items/44708346'
+  end
+
   def force_sign_in_path(options)
     sign_in_path(options.merge(force_login: true))
   end
