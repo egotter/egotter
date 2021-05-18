@@ -7,7 +7,7 @@ class UpdatePermissionLevelWorker
   end
 
   def unique_in
-    1.minute
+    30.seconds
   end
 
   def expire_in
@@ -21,17 +21,14 @@ class UpdatePermissionLevelWorker
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
-
-    level = PermissionLevelClient.new(user.api_client.twitter).permission_level
-    user.notification_setting.permission_level = level
-    user.notification_setting.save! if user.notification_setting.changed?
-
+    user.notification_setting.sync_permission_level
   rescue => e
     if TwitterApiStatus.unauthorized?(e)
       user.update!(authorized: false)
     elsif TwitterApiStatus.not_found?(e) || TwitterApiStatus.suspended?(e) || TwitterApiStatus.too_many_requests?(e)
+      # Do nothing
     else
-      logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
+      logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
     end
   end
 end
