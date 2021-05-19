@@ -26,6 +26,45 @@ namespace :orders do
   end
 
   task create: :environment do
-    Order.create!(user_id: ENV['USER_ID'], name: 'dummy', customer_id: 'dummy', subscription_id: 'dummy', trial_end: 14.days.since)
+    valid_months = ENV['VALID_MONTHS']
+    user = User.find(ENV['USER_ID'])
+    email = ENV['EMAIL']
+    price_id = ENV['PRICE_ID']
+    price = 0
+    order_name = "えごったー ベーシック #{valid_months}ヶ月分"
+
+    if user.has_valid_subscription?
+      raise 'The user already has a subscription.'
+    end
+
+    if (customer_id = user.valid_customer_id)
+      customer = Stripe::Customer.retrieve(customer_id)
+    else
+      customer = Stripe::Customer.create(email: email)
+    end
+    puts "customer_id=#{customer.id}"
+
+    subscription = Stripe::Subscription.create(
+        customer: customer.id,
+        items: [{price: price_id}],
+        metadata: {user_id: user.id, price: price, valid_months: valid_months},
+    )
+    puts "subscription_id=#{subscription.id}"
+
+    order = Order.create!(
+        user_id: user.id,
+        email: customer.email,
+        name: order_name,
+        price: price,
+        tax_rate: 0.1,
+        search_count: SearchCountLimitation::BASIC_PLAN,
+        follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
+        unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,
+        checkout_session_id: nil,
+        customer_id: customer.id,
+        subscription_id: subscription.id,
+        trial_end: Time.zone.now.to_i,
+    )
+    puts order.inspect
   end
 end
