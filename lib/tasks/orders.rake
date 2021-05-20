@@ -27,7 +27,7 @@ namespace :orders do
 
   task create: :environment do
     valid_months = ENV['VALID_MONTHS']
-    user = User.find(ENV['USER_ID'])
+    user = ENV['USER_ID'] ? User.find(ENV['USER_ID']) : User.find_by(screen_name: ENV['SCREEN_NAME'])
     email = ENV['EMAIL']
     price_id = ENV['PRICE_ID']
     price = 0
