@@ -1644,7 +1644,7 @@ ja:
         <br>
         %{debug_attrs}
       uploading_html:
-        ファイルをアップロード中です。ページを閉じないでそのままお待ちください。{value}<br>
+        ファイルをアップロード中です。ページを閉じないでそのままお待ちください。{percentage} ({speed}/s)<br>
         <br>
         ファイルのアップロードが途中で止まってしまう場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
         <br>

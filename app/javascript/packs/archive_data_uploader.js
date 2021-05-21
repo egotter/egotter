@@ -59,19 +59,24 @@ class ArchiveDataUploader {
 
   managedUpload(file) {
     var i18n = this.i18n;
+    var fileObj = file.getFile();
+    var startTime = new Date();
     var self = this;
 
     var onProgress = (function () {
       var value = 0;
       return function (event) {
-        if (self.completed) {
+        if (self.completed || !event.total) {
           return;
         }
 
-        var curValue = parseInt((event.loaded * 100) / event.total);
+        var curValue = Math.round(100 * event.loaded / event.total);
+
         if (curValue > value) {
           value = curValue;
-          var options = Object.assign({value: value + '%'}, file.attrs());
+          var loadedSize = Math.round(event.loaded / ((new Date() - startTime) / 1000));
+          var options = Object.assign({percentage: value + '%', speed: readableSize(loadedSize)}, file.attrs());
+          options['size'] = readableSize(options['size']);
           showMessage(i18n['uploading'], options);
         }
       };
@@ -81,8 +86,6 @@ class ArchiveDataUploader {
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
       IdentityPoolId: this.options.IdentityPoolId,
     });
-
-    var fileObj = file.getFile();
 
     self.metadata = {
       filename: fileObj.name,
@@ -190,9 +193,18 @@ function showMessage(message, options) {
   ToastMessage.info(message, {autohide: false});
 }
 
+function readableSize(size) {
+  var i = Math.floor(Math.log(size) / Math.log(1024));
+  return (size / Math.pow(1024, i)).toFixed(2) * 1 + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+}
+
+function truncatedFilename(name) {
+  return name.slice(0, 22) + '...' + name.slice(name.length - 7);
+}
+
 function escapeHtml(str) {
   if (str.length >= 30) {
-    str = str.substr(0, 30) + '...';
+    str = truncatedFilename(str);
   }
 
   var type = '';
