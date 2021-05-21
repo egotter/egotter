@@ -248,6 +248,7 @@ class User < ApplicationRecord
         access_days.where(date: 1.day.ago.in_time_zone('Tokyo').to_date).exists?
   end
 
+  # TODO trial = nil
   def has_valid_subscription?
     if instance_variable_defined?(:@has_valid_subscription)
       @has_valid_subscription

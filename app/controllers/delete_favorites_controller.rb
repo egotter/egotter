@@ -8,7 +8,7 @@ class DeleteFavoritesController < ApplicationController
   def show
     if (request = current_user.delete_favorites_requests.order(created_at: :desc).first)
       @processing = request.processing?
-      @request = DeleteFavoritesRequestDecorator.new(request)
     end
+    @max_count = DeleteFavoritesRequest::DESTROY_LIMIT
   end
 end

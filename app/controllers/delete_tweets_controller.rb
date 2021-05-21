@@ -9,5 +9,6 @@ class DeleteTweetsController < ApplicationController
     if (request = current_user.delete_tweets_requests.order(created_at: :desc).first)
       @processing = request.processing?
     end
+    @max_count = DeleteTweetsRequest::DESTROY_LIMIT
   end
 end

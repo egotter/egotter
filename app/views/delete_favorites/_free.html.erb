@@ -1,14 +1,16 @@
-<h3 class="h5 card-title text-center mt-5 mb-3"><%= t('.title') %></h3>
+<div class="my-5"><%= t('.description', user: current_user.screen_name, count: max_count) %></div>
 
 <div class="card my-3">
   <div class="card-body">
     <div class="card-text">
-      <%= t('.description', user: current_user.screen_name, count: DeleteFavoritesRequest::DESTROY_LIMIT) %>
 
-      <%= link_to '#delete-favorites-faq', class: 'btn btn-outline-primary btn-sm' do %>
-        <i class="far fa-question-circle"></i>
-        <%= t('.more') %>
-      <% end %>
+      <div>
+        <%= t('.how_to') %>
+        <%= link_to '#delete-favorites-faq', class: 'btn btn-outline-primary btn-sm' do %>
+          <i class="far fa-question-circle"></i>
+          <%= t('.more') %>
+        <% end %>
+      </div>
 
       <div class="my-4">
         <div>
@@ -33,17 +35,26 @@
       </div>
 
       <div class="text-center mt-3">
-        <div id="open-delete-favorites-modal" class="btn btn-danger" data-target="#delete-favorites-modal" data-toggle="modal">
-          <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
-          <%= t('.button') %>
-        </div>
-      </div>
+        <% if processing %>
+          <div class="btn btn-danger disabled">
+            <%= t('.requested') %>
+          </div>
 
-      <div class="text-muted small">
-        <div class="mt-1"><%= t('.note1') %></div>
-        <div class="mt-1"><%= t('.note2_html', count: DeleteFavoritesRequest::DESTROY_LIMIT, url: delete_favorites_mypage_path(anchor: 'reason-of-3200')) %></div>
-      </div>
+          <div class="text-muted small">
+            <div class="mt-1"><%= t('.note3') %></div>
+          </div>
+        <% else %>
+          <div id="open-delete-favorites-modal" class="btn btn-danger" data-target="#delete-favorites-modal" data-toggle="modal">
+            <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+            <%= t('.button') %>
+          </div>
 
+          <div class="text-muted small">
+            <div class="mt-1"><%= t('.note1') %></div>
+            <div class="mt-1"><%= t('.note2_html', count: max_count, url: delete_favorites_mypage_path(anchor: 'reason-of-3200')) %></div>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>

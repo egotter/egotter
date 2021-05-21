@@ -1,0 +1,17 @@
+<% content_for :navbar_title, t('.navbar_title') %>
+
+<div class="mb-5"><%= t('.page_description_html', count: @max_count) %></div>
+
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" href="#free-tab" data-toggle="tab"><%= t('delete_favorites.free.title') %></a>
+  </li>
+</ul>
+
+<div class="tab-content">
+  <div id="free-tab" class="tab-pane active">
+    <%= render partial: 'free', locals: {processing: @processing, max_count: @max_count} %>
+  </div>
+</div>
+
+<%= render partial: 'delete_favorites/faq' %>
