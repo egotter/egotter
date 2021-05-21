@@ -2,9 +2,11 @@ module AdsenseHelper
   AD_NG_UIDS = File.read(Rails.root.join('config/adult_ng_uids.txt')).split("\n").map(&:to_i)
 
   def ad_ng_page?
-    my_page = controller_name == 'delete_tweets' && action_name == 'show'
+    delete_tweets = controller_name == 'delete_tweets' && action_name == 'show'
+    delete_favorites = controller_name == 'delete_favorites' && action_name == 'show'
+    suspicious = controller_name == 'error_pages' && action_name == 'suspicious_access_detected'
     tokimeki = controller_name == 'tokimeki_unfollow' && action_name == 'cleanup'
-    %w(login blockers settings).include?(controller_name) || my_page || tokimeki
+    %w(login blockers settings).include?(controller_name) || delete_tweets || delete_favorites || suspicious || tokimeki
   end
 
   def ad_ng_user?(user)
