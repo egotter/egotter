@@ -1,0 +1,57 @@
+<div id="delete-favorites-uploader" class="my-5"><%= t('.description', user: current_user.screen_name) %></div>
+
+<div class="alert alert-info my-5">
+  <%= t('.notice_html') %>
+</div>
+
+<div class="card my-3">
+  <div class="card-body">
+    <div class="card-text">
+
+      <div>
+        <%= t('.how_to') %>
+        <%= link_to '#download-full-archive', class: 'btn btn-outline-primary btn-sm' do %>
+          <i class="far fa-question-circle"></i>
+          <%= t('.more') %>
+        <% end %>
+      </div>
+
+      <div class="my-4">
+        <div>
+          <label for="premium_since_date"><%= t('.since_date') %></label>
+          <%= date_field_tag('premium_since_date') %>
+        </div>
+        <div>
+          <label for="premium_until_date"><%= t('.until_date') %></label>
+          <%= date_field_tag('premium_until_date') %>
+        </div>
+      </div>
+
+      <div class="my-4">
+        <div>
+          <%= check_box_tag('premium_send_dm', '1', true, disabled: true) %>
+          <label for="premium_send_dm"><%= t('.send_dm') %></label>
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <%= link_to '#', id: 'delete-favorites-button', class: 'btn btn-outline-primary' do %>
+          <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+          <%= t('.button') %>
+        <% end %>
+      </div>
+      <div class="text-muted small">
+        <div class="mt-1"><%= t('.note1_html', url: delete_favorites_mypage_path(anchor: 'what_is_archive_data')) %></div>
+        <div class="mt-1"><%= t('.note2') %></div>
+        <div class="mt-1"><%= t('.note3') %></div>
+        <div class="mt-1"><%= t('.note4') %></div>
+      </div>
+      <%= render partial: 'delete_tweets/uploader', locals: {
+        file_id: 'delete-favorites-file',
+        button_id: 'delete-favorites-button',
+        notify_url: api_v1_delete_favorites_notifications_path,
+        bucket_name: S3::ArchiveData.delete_favorites_bucket_name,
+        identity_pool_id: S3::ArchiveData.delete_favorites_identity_pool_id} %>
+    </div>
+  </div>
+</div>

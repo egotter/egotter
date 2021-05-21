@@ -6,11 +6,17 @@
   <li class="nav-item">
     <a class="nav-link active" href="#free-tab" data-toggle="tab"><%= t('delete_favorites.free.title') %></a>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#premium-tab" data-toggle="tab"><%= t('delete_favorites.premium.title') %></a>
+  </li>
 </ul>
 
 <div class="tab-content">
   <div id="free-tab" class="tab-pane active">
     <%= render partial: 'free', locals: {processing: @processing, max_count: @max_count} %>
+  </div>
+  <div id="premium-tab" class="tab-pane">
+    <%= render partial: 'premium' %>
   </div>
 </div>
 

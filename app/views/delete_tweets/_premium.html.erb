@@ -54,7 +54,12 @@
             <div class="mt-1"><%= t('.note2') %></div>
             <div class="mt-1"><%= t('.note4') %></div>
           </div>
-          <%= render partial: 'uploader', locals: {button_id: 'delete-tweets-button'} %>
+          <%= render partial: 'uploader', locals: {
+            file_id: 'delete-tweets-file',
+            button_id: 'delete-tweets-button',
+            notify_url: api_v1_delete_tweets_notifications_path,
+            bucket_name: S3::ArchiveData.delete_tweets_bucket_name,
+            identity_pool_id: S3::ArchiveData.delete_tweets_identity_pool_id} %>
         <% end %>
       <% else %>
         <div class="text-center mt-3">

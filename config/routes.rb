@@ -60,13 +60,15 @@ Rails.application.routes.draw do
 
       resource :sneak_search_requests, only: %i(create destroy)
       resource :private_mode_settings, only: %i(create destroy)
+
       resources :delete_tweets_requests, only: %i(create)
       resources :delete_tweets_notifications, only: %i(create)
       resources :delete_tweets_presigned_urls, only: %i(create)
       resources :deletable_tweets, only: %i(index destroy)
       delete 'deletable_tweet_bulk_destroy', to: 'deletable_tweets#bulk_destroy'
+
       resources :delete_favorites_requests, only: %i(create)
-      post "delete_favorites", to: "delete_favorites#destroy"
+      resources :delete_favorites_notifications, only: %i(create)
 
       resources :checkout_sessions, only: %i(create)
       resources :customer_portal_urls, only: %i(create)

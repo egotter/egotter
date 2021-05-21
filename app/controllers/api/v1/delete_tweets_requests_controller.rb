@@ -29,13 +29,13 @@ module Api
 
       def validated_since
         if params[:since]&.match?(DATE_REGEXP)
-          Time.zone.parse("#{params[:since]} 00:00:00") - 9.hours
+          Time.zone.parse("#{params[:since]} 00:00:00 JST")
         end
       end
 
       def validated_until
         if params[:until]&.match?(DATE_REGEXP)
-          Time.zone.parse("#{params[:until]} 23:59:59") - 9.hours
+          Time.zone.parse("#{params[:until]} 23:59:59 JST")
         end
       end
     end

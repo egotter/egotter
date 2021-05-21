@@ -1,7 +1,8 @@
 class DeleteTweetsUploader {
-  constructor(btnId, inputId, options, i18n) {
+  constructor(btnId, inputId, notifyUrl, options, i18n) {
     this.$btn = $('#' + btnId);
     this.$input = $('#' + inputId);
+    this.notifyUrl = notifyUrl;
     this.options = options;
     this.i18n = i18n;
     this.errors = [];
@@ -106,8 +107,7 @@ class DeleteTweetsUploader {
   }
 
   notifyUploadCompleted(metadata) {
-    var url = '/api/v1/delete_tweets_notifications'; //  api_v1_delete_tweets_notifications_path
-    $.post(url, metadata).done(function () {
+    $.post(this.notifyUrl, metadata).done(function () {
     }).fail(showErrorMessage);
   }
 }
