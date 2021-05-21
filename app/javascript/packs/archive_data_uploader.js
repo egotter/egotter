@@ -1,4 +1,4 @@
-class DeleteTweetsUploader {
+class ArchiveDataUploader {
   constructor(btnId, inputId, notifyUrl, options, i18n) {
     this.$btn = $('#' + btnId);
     this.$input = $('#' + inputId);
@@ -112,7 +112,7 @@ class DeleteTweetsUploader {
   }
 }
 
-window.DeleteTweetsUploader = DeleteTweetsUploader;
+window.ArchiveDataUploader = ArchiveDataUploader;
 
 class ArchiveFile {
   constructor(file, i18n) {
