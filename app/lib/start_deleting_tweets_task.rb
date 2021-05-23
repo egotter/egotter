@@ -23,10 +23,15 @@ class StartDeletingTweetsTask
   private
 
   def load_tweets(file)
-    data = File.read(file).remove(/\Awindow\.YTD\.tweet\.part\d+ =/)
-    JSON.load(data).map do |hash|
-      Tweet.from_hash(hash)
-    end.sort_by!(&:created_at)
+    files = file.include?(',') ? file.split(',') : [file]
+    tweets = []
+
+    files.each do |filename|
+      data = File.read(filename).remove(/\Awindow\.YTD\.tweet\.part\d+ =/)
+      tweets.concat(JSON.load(data).map { |hash| Tweet.from_hash(hash) })
+    end
+
+    tweets.sort_by(&:created_at)
   end
 
   def validate!
@@ -110,35 +115,10 @@ class StartDeletingTweetsTask
       end
     else
       user = User.find_by(screen_name: @screen_name)
-      request = DeleteTweetsRequest.create!(user_id: user.id, finished_at: Time.zone.now)
+      request = DeleteTweetsByArchiveRequest.create!(user_id: user.id, since_date: @since, until_date: @until, reservations_count: @deletable_tweets.size)
       puts "request_id=#{request.id}"
-
-      if @sync
-        deleted_count = 0
-        started_time = Time.zone.now
-
-        @deletable_tweets.each do |tweet|
-          DeleteTweetWorker.new.perform(user.id, tweet.id, request_id: request.id)
-
-          if (deleted_count += 1) % 1000 == 0
-            print_progress(started_time, deleted_count)
-            request.update(destroy_count: deleted_count)
-          end
-        end
-
-        print_progress(started_time, deleted_count)
-        request.update(destroy_count: deleted_count)
-      else
-        @deletable_tweets.each do |tweet|
-          DeleteTweetWorker.perform_async(user.id, tweet.id, request_id: request.id)
-        end
-      end
+      request.perform(@deletable_tweets, sync: @sync)
     end
-  end
-
-  def print_progress(started_time, deleted_count)
-    time = Time.zone.now - started_time
-    puts "total #{@deletable_tweets.size}, deleted #{deleted_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / deleted_count)}"
   end
 
   class Tweet

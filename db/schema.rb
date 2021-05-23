@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_16_024821) do
+ActiveRecord::Schema.define(version: 2021_05_23_201652) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -558,6 +558,19 @@ ActiveRecord::Schema.define(version: 2021_05_16_024821) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_delete_favorites_requests_on_created_at"
     t.index ["user_id"], name: "index_delete_favorites_requests_on_user_id"
+  end
+
+  create_table "delete_tweets_by_archive_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.datetime "since_date"
+    t.datetime "until_date"
+    t.integer "reservations_count", default: 0, null: false
+    t.integer "deletions_count", default: 0, null: false
+    t.datetime "finished_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_delete_tweets_by_archive_requests_on_created_at"
+    t.index ["user_id"], name: "index_delete_tweets_by_archive_requests_on_user_id"
   end
 
   create_table "delete_tweets_by_search_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
