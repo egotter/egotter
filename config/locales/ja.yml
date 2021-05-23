@@ -1413,7 +1413,7 @@ ja:
         <br>
         どうしても解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。
     blocker_detected:
-      message_html: '@%{user} は @ego_tter をブロックしているため、全ての通知とWebサイトの利用が制限されています。'
+      message_html: '@%{user} は @ego_tter をブロックしたことがあるため、全ての通知とWebサイトの利用が制限されています。'
     not_found_user:
       message: '@%{user} は存在しないか削除済みです。'
     forbidden_user:
@@ -1841,8 +1841,10 @@ ja:
       支払い方法：【クレジットカード・銀行振込・コンビニ決済】
     permission_level_not_enough: 'ログインエラー報告：強制再ログインと連携アプリの削除→再登録を試しましたがログインできないままです。試した時間は【○月○日 ○時頃】です。'
     refund: '有料プランの返金を希望します。理由：'
+    delete_tweets_refund: 'ツイートの削除に失敗しました。有料プランの返金を希望します。理由：'
     delete_tweets_inquiry: 'ツイート削除のお問い合わせ：'
     delete_tweets_search_inquiry: 'ツイート削除の「検索して削除」に関する不具合報告：'
+    delete_tweets_max_deletion: '%{count}万件以上のツイート削除を希望します'
   directory:
     profiles:
       footer_title: プロフィール

@@ -1,191 +1,295 @@
 <% destroy_limit = DeleteTweetsRequest::DESTROY_LIMIT %>
+<% max_deletion = 1_300_000 %>
+<% limit_reason = "※ #{destroy_limit}件の制限は全世界共通のツイッターの仕組みです。どのツールでも同じ制限があります。" %>
+<%= premium_plan = %Q(#{destroy_limit}件を超えるツイートは、えごったー有料プランのユーザーであれば全て削除できます。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">もっと詳しく</a>).html_safe %>
 
 <h3 id="delete-tweets-faq" class="h5 text-center mt-5 mb-3">ツイート削除のよくある質問</h3>
 
 <% faq_section 'ツイートクリーナー 全般' do %>
   <% faq_question 'ツイートクリーナーとは何ですか？' do %>
-    ツイートを一括削除するためのツールです。<%= destroy_limit %>件までのツイートは無料で削除できます。<br>
-    <br>
-    <%= destroy_limit %>件を超えるツイートは、えごったー有料プランのユーザーであれば全て削除できます。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">もっと詳しく</a>
+    <p>たくさんのツイートを一度で削除するためのツールです。<%= destroy_limit %>件までのツイートは無料で削除できます。</p>
+    <p>日付やいいね数で条件を指定して1つずつ削除することもできます。</p>
+    <p><%= premium_plan %></p>
+    <p class="text-muted small"><%= limit_reason %></p>
   <% end %>
 
   <% faq_question 'ツイートクリーナーで何ができますか？' do %>
-    ツイートを一括削除することができます。<%= destroy_limit %>件までのツイートは無料で削除できます。<br>
-    <br>
-    <%= destroy_limit %>件を超えるツイートは、えごったー有料プランのユーザーであれば全て削除できます。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">もっと詳しく</a>
+    <p>ツイートの一括削除、日付やいいね数を指定した削除、アーカイブデータを利用した完全な削除ができます。</p>
+    <p>それぞれの方法で、<%= destroy_limit %>件までを無料で削除することができます。</p>
+    <p><%= premium_plan %></p>
+    <p class="text-muted small"><%= limit_reason %></p>
   <% end %>
 
   <% faq_question 'ツイートクリーナーは無料で使えますか？' do %>
-    使えます。<%= destroy_limit %>件までのツイートは無料プランで削除できます。<br>
-    <br>
-    試してみたい方は、<%= link_to 'ツイート削除マイページ', delete_tweets_mypage_path %>へお進みください。
+    <p>もちろん無料で使えます。<%= destroy_limit %>件までのツイートは無料プランで削除できます。</p>
+    <p><%= premium_plan %></p>
+    <p class="text-muted small"><%= limit_reason %></p>
   <% end %>
 
-  <% faq_question '他の人にRTやブックマークされたツイートも削除されますか？' do %>
-    削除されます。公式RTやブックマークされたツイートも削除対象です。<br>
-    <br>
+  <% faq_question '「一括で削除」とは何ですか？' do %>
+    <p>取得できる全てのツイートを一気に削除する機能です。</p>
+    <p>条件指定での削除と区別するためにこのような名前になっています。</p>
+  <% end %>
+
+  <% faq_question '「検索して削除」とは何ですか？' do %>
+    <p>ツイートの日付やいいね数で条件指定をしてツイートを削除する機能です。</p>
+    <p>一括での削除と区別するためにこのような名前になっています。</p>
+  <% end %>
+
+  <% faq_question '「完全に削除」とは何ですか？' do %>
+    <p>アーカイブデータを利用して現在から過去までの全てのツイートを削除する機能です。</p>
+    <p><%= premium_plan %></p>
+    <p class="text-muted small"><%= limit_reason %></p>
+  <% end %>
+<% end %>
+
+<% faq_section 'ツイート削除の条件指定' do %>
+  <% faq_question 'どのような条件を指定することができますか？' do %>
+    <p>
+      ・「一括で削除」の場合<br>
+      削除するツイートの「最初の日」と「最後の日」を指定することができます。<br>
+      <br>
+      ・「検索して削除」の場合<br>
+      リツイート数、お気に入り数、最初の日、最後の日、ハッシュタグの有無、メンションの有無、URLの有無、貼付メディアの有無を指定することができます。<br>
+      <br>
+      ・「完全に削除」の場合<br>
+      削除するツイートの「最初の日」と「最後の日」を指定することができます。
+    </p>
+  <% end %>
+
+  <% faq_question '日付の条件指定で削除できますか？' do %>
+    できます。削除するツイートの「最初の日」と「最後の日」を指定することができます。
+  <% end %>
+
+  <% faq_question '画像があるツイートだけを削除できますか？' do %>
+    できます。画像があるツイートだけを指定して選ぶことができます。
+  <% end %>
+
+  <% faq_question 'リプライの無いツイートだけを削除できますか？' do %>
+    できます。リプライが無いツイートだけを指定して選ぶことができます。
+  <% end %>
+
+  <% faq_question '他の人にRTされたツイートも削除されますか？' do %>
+    <p>RTされたツイートも削除されます。削除後はRTも見えなくなります。</p>
     ただし、引用RT（コピペしてRT）の場合は、削除することができません。
   <% end %>
 
-  <% faq_question '日付、画像の有無、リプライ等の条件指定で削除できますか？' do %>
-    削除するツイートの「最初の日」と「最後の日」を指定することができます。<br>
-    <br>
-    画像の有無やリプライ等の条件指定はできません。
-  <% end %>
-
-  <% faq_question '最大で何件までツイートを削除することができますか？' do %>
-    有料プランの場合、過去事例では30万件のツイートを約1時間で削除できました。<br>
-    <br>
-    記録更新のため、30万件を超えるツイート数の方は無料で全てのツイートを削除します。<br>
-    <br>
-    希望される方は「30万件以上のツイート削除」の旨を <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
-  <% end %>
-
-  <% faq_question '無料プランでツイートを削除する方法を教えてください' do %>
-    <%= link_to 'ツイート削除マイページ', delete_tweets_mypage_path %>へ進んだ後に、「無料で直近のツイートを削除する」と書かれた赤いボタンを押してください。<br>
-    <br>
-    ボタンを押すと確認事項が表示されます。その内容をよく読み、次の手順に進んでください。
-  <% end %>
-
-  <% faq_question '有料プランを購入しました。全てのツイートを削除する手順を教えてください', id: 'download-full-archive' do %>
-    「アーカイブデータ」を用意し、アップロードしてください。それで手順は完了です。<br>
-    <br>
-    1. 「アーカイブデータ」を<strong>ダウンロード</strong>する<br>
-    <a href="https://twitter.com/settings/download_your_data" target="_blank">ツイッター設定 > アーカイブをダウンロード</a><br>
-    から「アーカイブデータ」をダウンロードする<br>
-    <br>
-    2. 「アーカイブデータ」を<strong>アップロード</strong>する<br>
-    えごったーの <a href="#delete-tweets-uploader">アップロード機能</a> をご利用ください。<br>
-    <br>
-    「アーカイブデータ」のアップロード後に、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までDMにてご連絡ください。<br>
-    <br>
-    手順中で分からないことがありましたら、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。
+  <% faq_question '他の人にブックマークされたツイートも削除されますか？' do %>
+    削除されます。削除後は相手のブックマークからも消えます。
   <% end %>
 
   <% faq_question '「削除を待っている間にしたツイート」は削除されますか？' do %>
     削除されません。「ツイート削除の依頼より後にしたツイート」は削除せずに残しています。必要な場合はご自身で削除してください。
   <% end %>
+<% end %>
+
+<% faq_section '削除できるツイート数の制限' do %>
+  <% faq_question '最大で何件までツイートを削除することができますか？' do %>
+    <p>無料プランの場合、1ユーザーあたり、最大で<%= destroy_limit %>件までのツイートを削除できます。</p>
+    <p>有料プランの場合、1ユーザーあたり、<%= max_deletion / 10000 %>万件のツイートを削除したことがあります。</p>
+    <p>
+      記録更新のため、<%= max_deletion / 10000 %>万件を超えるツイート数の方は無料で全てのツイートを削除します。その際は @egotter_cs までご連絡ください。
+      <%= link_to 'お問い合わせ', direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_tweets_max_deletion', count: max_deletion / 10000)), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    </p>
+    <p class="text-muted small"><%= limit_reason %></p>
+  <% end %>
+
+  <% faq_question "何度も削除すれば#{destroy_limit}件を超えて削除できますか？" do %>
+    <p>
+      数ヶ月〜1年ほどかければできるようです。（保証はできません）<br>
+      <br>
+      ツイート総数が<%= destroy_limit %>件以上ある場合、無料プランで全てのツイートを削除するには下記の手順が必要です。<br>
+      <br>
+      1. <%= destroy_limit %>件のツイートをえごったーで削除する<br>
+      2. しばらくは表示されるツイートが無い状態になる<br>
+      3. 数ヶ月後、残りのツイートが表示され始める<br>
+      4. 表示されたツイートを削除し、1. に戻る
+    </p>
+    <p>えごったーの有料プランであれば、上記のような面倒な手順は不要です。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></p>
+    <p class="text-muted small"><%= limit_reason %></p>
+  <% end %>
+
+  <% faq_question "無料のままで#{destroy_limit}件を超えるツイートが削除されました" do %>
+    <p>ツイッター公式情報では通常削除できるのは<%= destroy_limit %>件までとなっているのですが、たまにそれを超えて削除されることがあるようです。</p>
+    <p>これはたまに起きるツイッターのエラーのようなもので、えごったー側で制御することはできないようです。</p>
+    <p class="text-muted small"><%= limit_reason %></p>
+  <% end %>
+
+  <% faq_question "#{destroy_limit}件より少ないツイートしか削除されません" do %>
+    <p>ツイッター公式情報では通常削除できるのは<%= destroy_limit %>件までとなっているのですが、たまにそれより少なく削除されることがあるようです。</p>
+    <p>これはたまに起きるツイッターのエラーのようなもので、えごったー側で制御することはできないようです。</p>
+    <p class="text-muted small"><%= limit_reason %></p>
+  <% end %>
+<% end %>
+
+<% faq_section '無料でツイートを削除する' do %>
+  <% faq_question '無料プランを使う方法を教えてください' do %>
+    <% if user_signed_in? %>
+      <p>@<%= current_user.screen_name %> さんは既に無料プランを利用中です。</p>
+      <p>無料プランはログインするだけで設定済みになります。</p>
+    <% else %>
+      <p>こちらからログインしてください。<%= link_to 'ログインする', sign_in_path(redirect_path: delete_tweets_mypage_path), class: 'btn btn-outline-primary btn-sm' %></p>
+      <p>無料プランはログインするだけで設定済みになります。</p>
+    <% end %>
+  <% end %>
+
+  <% faq_question '無料プランでツイートを削除する方法を教えてください' do %>
+    <p><%= link_to 'ツイート削除マイページ', delete_tweets_mypage_path %>へ進んだ後に、「無料で直近のツイートを削除する」と書かれた赤いボタンを押してください。</p>
+    ボタンを押すと確認事項が表示されます。その内容をよく読み、次の手順に進んでください。
+  <% end %>
+<% end %>
+
+<% faq_section '有料でツイートを削除する' do %>
+  <% faq_question '有料プランを購入する方法を教えてください' do %>
+    <% if user_signed_in? %>
+      <% if current_user.has_valid_subscription? %>
+        <p>@<%= current_user.screen_name %> さんは既に有料プランを購入済みです。</p>
+        <p><%= link_to 'ツイート削除マイページ', delete_tweets_mypage_path %>へ進んだ後に、「完全に削除」と書かれたタブをクリックしてください。</p>
+      <% else %>
+        <p>こちらから購入することができます。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></p>
+      <% end %>
+    <% else %>
+      <p>まず最初に、こちらからログインしてください。<%= link_to 'ログインする', sign_in_path(redirect_path: delete_tweets_mypage_path), class: 'btn btn-outline-primary btn-sm' %></p>
+      <p>有料プランはログイン後に購入することができます。</p>
+    <% end %>
+  <% end %>
+
+  <% faq_question '有料プランを購入しました。ツイート削除の次の手順を教えてください', id: 'download-full-archive' do %>
+    <p>アーカイブデータ（以下、データ）を用意し、アップロードしてください。それで手順は完了です。</p>
+    <div class="card mb-3">
+      <div class="card-body">
+        1. データを<strong>ダウンロード</strong>する<br>
+        <a href="https://twitter.com/settings/download_your_data" target="_blank">ツイッター設定 > アーカイブをダウンロード</a>
+        からダウンロードをリクエストすることができます。<br>
+        <br>
+        2. データを<strong>アップロード</strong>する<br>
+        えごったーの <%= link_to 'アップロード機能', delete_tweets_mypage_path(anchor: 'delete-tweets-uploader'), target: '_blank' %> をご利用ください。
+      </div>
+    </div>
+    <p>手順中で分からないことがありましたら、<%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID), target: '_blank' %> までお気軽にご質問ください。</p>
+    <p class="text-muted small">※ ダウンロードのリクエストは早めに行ってください。実際にダウンロードできるまでに24時間〜3日ほどかかります。</p>
+    <p class="text-muted small">※ アーカイブデータの詳細はこちらをご覧ください。<%= link_to 'アーカイブデータとは', '#what_is_archive_data' %></p>
+    <p class="text-muted small">※ データのアップロードが完了すると、<%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID), target: '_blank' %>
+      から自動でDMが届きます。</p>
+  <% end %>
 
   <% faq_question 'ツイート削除完了後に通知は届きますか？' do %>
-    届きます。無料版と有料版の両方で削除完了後にDMが届きます。<br>
-    <br>
-    削除完了の通知は @egotter_cs からDMで届きます。「DMを受け取れる設定」にしておくことを忘れないでください。
+    <p>届きます。無料版と有料版の両方でツイート削除の完了後にDMが届きます。</p>
+    <p class="text-muted small">※ 削除完了の通知は @egotter_cs からDMで届きます。「DMを受け取れる設定」にしておくことを忘れないでください。</p>
   <% end %>
 
   <% faq_question 'トライアル期間中でも全てのツイートの削除は可能ですか？' do %>
-    可能です。この場合、トライアル期間は終了しすぐに支払いが始まります。<br>
-    <br>
-    トライアル期間とは：えごったーの有料プランを初めて購入してから <%= Order::TRIAL_DAYS %>日間 のことです。この期間内のキャンセルであれば通常は支払いは発生しません。
-    ただし、この期間中に「有料プランでツイートを完全削除」をご利用いただくと、その時点からすぐに初回の支払いが発生します。
+    <p>可能です。この場合、トライアル期間は終了しすぐに支払いが始まります。</p>
+    <p class="text-muted small">
+      ※ トライアル期間とは、えごったーの有料プランを初めて購入してから <%= Order::TRIAL_DAYS %>日間 のことです。この期間内のキャンセルであれば通常は支払いは発生しません。
+      ただし、この期間中に「有料プランでツイートを完全削除」をご利用いただくと、その時点からすぐに初回の支払いが発生します。
+    </p>
   <% end %>
 
-  <% faq_question 'ツイート削除は取り消しできますか？' do %>
-    取り消しできません。一度削除されたツイートを元に戻すことはできませんのでご注意ください。
+  <% faq_question '削除を依頼した後に取り消すことは可能ですか？' do %>
+    <p>実際に削除が始まる前であれば可能です。<%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID), target: '_blank' %> にできるだけ早くご連絡ください。</p>
+    <p class="text-muted small">※ 既に削除が始まっている場合は、途中で取り消すことはできません。</p>
+  <% end %>
+
+  <% faq_question '指定した日付を変更することは可能ですか？' do %>
+    <p>実際に削除が始まる前であれば可能です。<%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID), target: '_blank' %> にできるだけ早くご連絡ください。</p>
+    <p class="text-muted small">※ 既に削除が始まっている場合は、途中で変更することはできません。</p>
+  <% end %>
+<% end %>
+
+<% faq_section 'その他' do %>
+  <% faq_question '削除済みのツイートを元に戻すことはできますか？' do %>
+    できません。一度削除されたツイートを元に戻すことはできませんのでご注意ください。
+  <% end %>
+
+  <% faq_question '削除済みのツイートを見ることはできますか？' do %>
+    <p>「一括で削除」と「完全に削除」で削除したツイートは見ることができません。</p>
+    <p>「検索して削除」では削除後の一定時間内なら削除したツイートを見れます。ただし、元に戻すことはできません。</p>
   <% end %>
 
   <% faq_question 'ツイートの削除後もツイート総数が変化しないのはなぜですか？' do %>
-    ツイッターの仕組み上、ツイート削除後もツイート総数が変化しないことがあるようです。<br>
-    <br>
-    例えば、100件のツイートがあるユーザーが全てのツイートを削除しても、ツイート数は100件と表示されたままになることがあります。
+    <p>ツイッターの仕組み上、ツイート削除後もツイート総数が変化しないことがあるようです。</p>
+    <p>例えば、100件のツイートがあるユーザーが全てのツイートを削除しても、ツイート数は100件と表示されたままになることがあります。</p>
   <% end %>
 
   <% faq_question '削除されたツイートが表示され続けるのはなぜですか？' do %>
-    ツイッターの仕組み上、削除済みのツイートがしばらくアプリに表示され続けることがあります。<br>
-    <br>
-    ページを更新したり、ツイッターアプリにログインし直すと削除済みのツイートは画面から消えます。
+    <p>ツイッターの仕組み上、削除済みのツイートがしばらくアプリに表示され続けることがあります。</p>
+    <p>ページを更新したり、ツイッターアプリにログインし直すと削除済みのツイートは画面から消えます。</p>
   <% end %>
 
   <% faq_question '古いツイートが削除されないのはなぜですか？' do %>
-    ツイッターの仕組み上、自動で削除できるのは<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。<br>
-    <br>
-    えごったーでは、<%= destroy_limit %>件を超えるツイートを安全に削除する方法を確立しています。<br>
-    <br>
-    一括で簡単に古いツイートを削除したい方は、全てのツイートを削除できるえごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a>
+    <p>ツイッターの仕組み上、自動で削除できるのは<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。</p>
+    <p>えごったーでは、アーカイブデータを使うことで<%= destroy_limit %>件を超えるツイートを安全に削除する方法を確立しています。</p>
+    <p>一括で簡単に古いツイートを削除したい方は、全てのツイートを削除できるえごったー有料プランをご利用ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></p>
   <% end %>
 
   <% faq_question '画像付きツイートが削除されないのはなぜですか？' do %>
-    ツイッターの仕組み上、ツイート数の多い/少ないに関わらず、画像付きツイートが削除されずに残ることがあります。これは世界中の全てのツールで共通の制限です。<br>
-    <br>
-    この条件に該当する方は、全てのツイートを削除できるえごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a>
+    <p>ツイッターの仕組み上、ツイート数の多い/少ないに関わらず、画像付きツイートが削除されずに残ることがあります。これは世界中の全てのツールで共通の制限です。</p>
+    <p>この条件に該当する方は、全てのツイートを削除できるえごったー有料プランをご利用ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></p>
   <% end %>
 
   <% faq_question '1回で全てのツイートが削除されないことがあるのはなぜですか？', id: 'reason-of-3200' do %>
-    ツイッターの仕組み上、自動で削除できるのは最新の<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。<br>
-    <br>
-    <%= destroy_limit %>件を超える全てのツイートの削除を希望される方は、えごったー有料プランのご利用をご検討ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a>
+    <p>ツイッターの仕組み上、自動で削除できるのは最新の<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。</p>
+    <p><%= destroy_limit %>件を超える全てのツイートの削除を希望される方は、えごったー有料プランをご利用ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></p>
   <% end %>
 
-  <% faq_question "無料のままで#{destroy_limit}件を超えるツイートが削除されました。なぜですか？" do %>
-    ツイッター公式情報では通常削除できるのは<%= destroy_limit %>件までとなっているのですが、たまに<%= destroy_limit + 1800 %>件近く削除されることがあるようです。<br>
-    <br>
-    これはたまに起きるツイッターのエラーのようなもので、えごったー側で制御することはできないようです。
+  <% faq_question 'ツイート削除に失敗した場合の返金はありますか？' do %>
+    <p>記載の手順通りに試して失敗した場合は、有料プラン1ヶ月分を返金いたします。</p>
+    <p>
+      「ツイートの削除に失敗したため返金希望」の旨を @egotter_cs までご連絡ください。
+      <%= link_to 'お問い合わせ', direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_tweets_refund')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    </p>
+    <p class="text-muted small">※ インターネットが遅い、パソコンが無い、Wi-Fiが無い等の理由は返金の対象外です。</p>
   <% end %>
 
-  <% faq_question '無料版のツイートクリーナーを何度も使えば無料で全て削除できますか？' do %>
-    数ヶ月〜1年ほどかければできるようです。<br>
-    （保証はできません）<br>
-    <br>
-    ツイート総数が<%= destroy_limit %>件以上ある場合、無料プランで全てのツイートを削除するには下記の手順が必要です。<br>
-    <br>
-    1. <%= destroy_limit %>件のツイートをえごったーで削除する<br>
-    2. しばらくは表示されるツイートが無い状態になる<br>
-    3. 数ヶ月後、残りのツイートが表示され始める<br>
-    4. 表示されたツイートを削除し、1. に戻る<br>
-    <br>
-    えごったーの有料プランであれば、上記のような面倒な手順は不要です。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a>
+  <% faq_question 'ツイートではなくいいねを削除することはできますか？' do %>
+    <%= link_to 'いいねクリーナー', delete_favorites_path, target: '_blank' %> を使えば、ツイートと同じようにいいねを一括で削除することができます。
   <% end %>
 
   <% faq_question 'ここに書いていないことを質問することはできますか？' do %>
-    サポートアカウント <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。
+    サポートアカウント <%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID), target: '_blank' %> までお気軽にご質問ください。
   <% end %>
 <% end %>
 
 <% faq_section 'アーカイブデータについて' do %>
   <% faq_question 'アーカイブデータとは何ですか？', id: 'what_is_archive_data' do %>
-    ツイッターからダウンロードできる「今までのツイートが全て入ったデータ」のことです。<br>
-    <br>
-    全てのツイートの削除をする場合は必ずこのデータを用意する必要があります。
+    <p>ツイッターからダウンロードできる「今までのツイートが全て入ったデータ」のことです。</p>
+    <p>全てのツイートの削除をする場合は必ずこのデータを用意する必要があります。</p>
   <% end %>
 
   <% faq_question 'アーカイブデータはどこにありますか？' do %>
-    <a href="https://twitter.com/settings/download_your_data" target="_blank">ツイッターの設定 > データのアーカイブをダウンロード</a> からダウンロードできます。<br>
-    <br>
-    さらに詳細は <a href="https://help.twitter.com/ja/managing-your-account/how-to-download-your-twitter-archive" target="_blank">全ツイート履歴をダウンロードする方法</a> をご覧ください。
+    <p><a href="https://twitter.com/settings/download_your_data" target="_blank">ツイッターの設定 > データのアーカイブをダウンロード</a> からダウンロードできます。</p>
+    <p>さらに詳細は <a href="https://help.twitter.com/ja/managing-your-account/how-to-download-your-twitter-archive" target="_blank">全ツイート履歴をダウンロードする方法</a>
+      をご覧ください。</p>
   <% end %>
 
   <% faq_question 'アーカイブデータのアップロード完了後に通知は届きますか？' do %>
-    届きます。アーカイブデータのアップロード完了後にDMが届きます。<br>
-    <br>
-    アップロード完了の通知は @egotter_cs からDMで届きます。「DMを受け取れる設定」にしておくことを忘れないでください。
+    <p>届きます。アーカイブデータのアップロード完了後にDMが届きます。</p>
+    <p class="text-muted small">※ アップロード完了の通知は @egotter_cs からDMで届きます。「DMを受け取れる設定」にしておくことを忘れないでください。</p>
   <% end %>
 
   <% faq_question 'アーカイブデータのアップロードにはどれくらい時間がかかりますか？' do %>
-    ツイート総数が 約10万件 未満であれば、通常は5分以内にアップロードが完了します。<br>
-    <br>
-    インターネット回線が遅いとさらに時間がかかることがあるようです。その際は、Wi-Fiを試すと早くアップロードできます。また、スマホよりはパソコンから操作した方が早く完了するようです。
+    <p>通常は5分以内にアップロードが完了します。</p>
+    <p>インターネット回線が遅いとさらに時間がかかることがあるようです。その際は、Wi-Fiを試すと早くアップロードできます。また、スマホよりはパソコンから操作した方が早く完了するようです。</p>
   <% end %>
 
-  <% faq_question 'アーカイブデータのアップロードが進まなくなりました。' do %>
+  <% faq_question 'アーカイブデータのアップロードが進まなくなりました' do %>
     スマホが速度制限を受けているとアップロードが進まなくなることがあるようです。その際は、速度制限がなくなってから試すか、Wi-Fiが使える環境でアップロードをお試しください。
   <% end %>
 
   <% faq_question 'アーカイブデータのアップロード後、削除完了までどれくらい時間がかかりますか？' do %>
-    早い場合は1時間以内に削除完了します。サーバーの負荷が高い場合は、日本時間の深夜に少しずつ削除していきます。<br>
-    <br>
-    通常は遅くとも2〜3日以内に削除が完了します。
-    それ以上時間がかかっている場合は、<a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご質問ください。
+    <p>早い場合は1時間以内に削除完了します。サーバーの負荷が高い場合は、日本時間の深夜に少しずつ削除していきます。</p>
+    <p>
+      通常は遅くとも2〜3日以内に削除が完了します。
+      それ以上時間がかかっている場合は、<%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID), target: '_blank' %> までお気軽にご質問ください。
+    </p>
+  <% end %>
+
+  <% faq_question '不要なファイルを削除してからアーカイブデータをアップロードすることはできますか？' do %>
+    <p>できる可能性はありますが、サポートや返金の対象外となります。ご自身の責任において実施してください。</p>
+    <p>この手順を実施することで、削除するツイートが指定したツイートと異なったとしても、全てご自身の責任となり、一切保証はできません。</p>
   <% end %>
 <% end %>
-
-<% faq_section '返金について' do %>
-  <% faq_question 'ツイート削除に失敗した場合の返金はありますか？' do %>
-    記載の手順通りに試して失敗した場合は、有料プラン1ヶ月分を返金いたします。<br>
-    <br>
-    その際は「ツイート削除に失敗したため返金希望」の旨を
-    <a href="<%= direct_message_url(User::EGOTTER_CS_UID, 'ツイート削除により返金を希望します：（理由をここに書いてください）') %>" target="_blank">@egotter_cs</a> までご連絡ください。
-  <% end %>
-<% end %>
-
 
 <% @faq_sections.each do |section, questions| %>
   <h3 class="h5 my-5"><%= section %></h3>
