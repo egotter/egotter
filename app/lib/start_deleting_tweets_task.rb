@@ -102,7 +102,6 @@ class StartDeletingTweetsTask
 
   def start_task!
     if @dry_run
-
       deletable_tweet_ids = @deletable_tweets.index_by(&:id)
 
       @tweets.each do |tweet|
