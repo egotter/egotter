@@ -33,7 +33,7 @@ class TwitterApiStatus
     end
 
     def unauthorized?(ex)
-      invalid_or_expired_token?(ex) || bad_authentication_data?(ex)
+      invalid_or_expired_token?(ex) || bad_authentication_data?(ex) || _unauthorized?(ex)
     end
 
     def invalid_or_expired_token?(ex)
@@ -46,6 +46,10 @@ class TwitterApiStatus
 
     def bad_authentication_data?(ex)
       ex && ex.class == Twitter::Error::BadRequest && ex.message == 'Bad Authentication data.'
+    end
+
+    def _unauthorized?(ex)
+      ex && ex.class == Twitter::Error::Unauthorized && ex.message == ''
     end
 
     def too_many_requests?(ex)
