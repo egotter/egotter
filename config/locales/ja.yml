@@ -1592,16 +1592,6 @@ ja:
       note2: 'twitter-0000-00-00-aaaaaa.zip を選択してください。'
       note3_html: 'この機能には有料プランの購入が必要です。<a href="%{url}" target="_blank">プランの詳細</a>'
       note4: 'パソコンとWi-Fiを使うと高速にアップロードできます。'
-    message:
-      finished: '%{count}件のツイートを削除しました。削除は完了しています。'
-      processing_html: |
-        %{count}件のツイートを削除しました。削除は継続中です。通常、ツイート削除は5分以内に完了します。<br>
-        <br>
-        終わるのが遅い場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。
-      failed_html: |
-        %{count}件のツイートを削除中にエラーが起きました。一定時間後に再度お試しください。<br>
-        <br>
-        何度も失敗する場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     uploader:
       debug_attrs_html:
         <div>
@@ -1723,16 +1713,6 @@ ja:
       note2: 'twitter-0000-00-00-aaaaaa.zip を選択してください。'
       note3: '日付は「元ツイートの日付」です。'
       note4: 'パソコンとWi-Fiを使うと高速にアップロードできます。'
-    message:
-      finished: '%{count}件のいいねを削除しました。削除は完了しています。'
-      processing_html: |
-        %{count}件のいいねを削除しました。削除は継続中です。通常、いいね削除は5分以内に完了します。<br>
-        <br>
-        終わるのが遅い場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。
-      failed_html: |
-        %{count}件のいいねを削除中にエラーが起きました。一定時間後に再度お試しください。<br>
-        <br>
-        何度も失敗する場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     confirmation_modal:
       title: '@%{user} のいいね削除'
       body_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のいいねを削除します。本当によろしいですか？'
@@ -2535,11 +2515,7 @@ ja:
       block_report_short: "%-m月%-d日 %-H時%-M分"
       mute_report_short: "%-m月%-d日 %-H時%-M分"
       periodic_report_short: "%-m月%-d日 %-H時%-M分"
-      delete_tweets_short: "%-H時%-M分"
-      delete_tweets_long: "%-m月%-d日 %-H時%-M分"
       deletable_tweets_long: "%-m月%-d日 %-H時%-M分"
-      delete_favorites_short: "%-H時%-M分"
-      delete_favorites_long: "%-m月%-d日 %-H時%-M分"
       order_long: "%-m月%-d日 %-H時%-M分"
       coupon_short: "%-m月%-d日 %-H時%-M分"
       profile_short: "%-m月%-d日 %-H時"
