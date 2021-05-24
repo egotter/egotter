@@ -11,7 +11,7 @@
       filesizeTooSmall: '<%= t('.filesize_too_small_html', debug_attrs: debug_attrs) %>',
       filesizeTooLarge: '<%= t('.filesize_too_large_html', debug_attrs: debug_attrs) %>',
       preparing: '<%= t('.preparing_html', url: image_path('/ajax-loader.gif'), debug_attrs: debug_attrs) %>',
-      uploading: '<%= t('.uploading_html', debug_attrs: debug_attrs) %>',
+      uploading: '<%= t('.uploading_html', url: direct_message_url(User::EGOTTER_CS_UID), debug_attrs: debug_attrs) %>',
       alertOnBeforeunload: '<%= t('.alert_on_beforeunload') %>',
       success: '<%= t('.success_html') %>',
       fail: '<%= t('.fail_html', debug_attrs: debug_attrs) %>'

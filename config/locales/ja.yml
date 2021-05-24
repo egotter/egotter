@@ -1634,10 +1634,12 @@ ja:
         <br>
         %{debug_attrs}
       uploading_html:
-        ファイルをアップロード中です。ページを閉じないでそのままお待ちください。{percentage} ({speed}/s)<br>
-        <br>
-        ファイルのアップロードが途中で止まってしまう場合は、このメッセージのスクショを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。<br>
-        <br>
+        <p>ファイルをアップロード中です。ページを閉じないでそのままお待ちください。{percentage} ({speed}/s)</p>
+        <p>ファイルのアップロードが途中で止まってしまう場合は、このメッセージのスクショを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
+        <p class="small">
+          <span class="mt-1">※ 高速なWi-Fiをお使いください。スマホ回線だと速度制限を受けることがあります</span><br>
+          <span class="mt-1">※ できればパソコンをお使いください。アップロードが何倍も早くなります</span>
+        </p>
         %{debug_attrs}
       alert_on_beforeunload: '編集中です。本当に他のページに移動しますか？'
       success_html:
