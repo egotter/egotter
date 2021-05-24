@@ -81,7 +81,7 @@ class TwitterV2Client
   def http_request(method, path)
     retries ||= 0
     request = ::Twitter::REST::Request.new(@client, method, path)
-    request.perform
+    @last_response = request.perform
   rescue => e
     if ServiceStatus.retryable_error?(e)
       if (retries -= 1) > 0
