@@ -1,6 +1,10 @@
 module Directory
   class ProfilesController < ApplicationController
 
+    rescue_from Rack::Timeout::RequestTimeoutException do |e|
+      head :request_timeout
+    end
+
     NUM_REGEXP = /\A\d{1,2}\z/
 
     def show
