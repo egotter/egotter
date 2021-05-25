@@ -154,26 +154,32 @@
     <br>
     <%= render template: 'messages/increase_search_counts', locals: {via: via} %>
   <% end %>
+
+  <% faq_question '鍵垢からのリツイートを知ることはできますか？' do %>
+    できません。自分がフォローしていない鍵アカウントから自分のツイートをいいねまたはリツイートされた時、その数字は増えますが、それが誰なのかは分からないです。
+  <% end %>
 <% end %>
 
 <% faq_section '有料プラン 全般' do %>
   <% faq_question 'えごったーの有料プランでは何ができますか？' do %>
     <p>Webサイトでの検索回数が増加し、各種の通知が高機能になります。</p>
 
-    <div>・Webサイトでの検索</div>
-    <p>検索回数が <%= SearchCountLimitation::BASIC_PLAN %>回/日 増えます。</p>
+    <dl>
+      <dt>・Webサイトでの検索</dt>
+      <dd class="mb-3">検索回数が <%= SearchCountLimitation::BASIC_PLAN %>回/日 増えます。</dd>
 
-    <div>・リムられ通知</div>
-    <p>いつでも通知を受信できます。（無料版では数時間に1回）</p>
+      <dt>・リムられ通知</dt>
+      <dd class="mb-3">いつでも通知を受信できます。（無料版では数時間に1回）</dd>
 
-    <div>・ブロック通知</div>
-    <p>ブロックされているIDが全て分かります。（無料版では頭文字だけ分かる）</p>
+      <dt>・ブロック通知</dt>
+      <dd class="mb-3">ブロックされているIDが全て分かります。（無料版では頭文字だけ分かる）</dd>
 
-    <div>・ミュート通知</div>
-    <p>ミュートされているIDが2文字目まで分かります。（無料版では頭文字だけ分かる）</p>
+      <dt>・ミュート通知</dt>
+      <dd class="mb-3">ミュートされているIDが2文字目まで分かります。（無料版では頭文字だけ分かる）</dd>
 
-    <div>・ツイートの一括削除</div>
-    <p>全てのツイートを削除可能になります。（無料版では<%= DeleteTweetsRequest::DESTROY_LIMIT %>件まで）</p>
+      <dt>・ツイートの一括削除</dt>
+      <dd class="mb-3">全てのツイートを削除可能になります。（無料版では<%= DeleteTweetsRequest::DESTROY_LIMIT %>件まで）</dd>
+    </dl>
 
     有料プランの詳細は <%= link_to '料金プラン', pricing_path(via: via), class: 'btn btn-outline-primary btn-sm', target: '_blank' %> をご覧ください。
   <% end %>
@@ -185,29 +191,60 @@
   <% end %>
 
   <% faq_question '有料プランの支払いは何に対応していますか？' do %>
-    <p>クレジットカードでの支払いに対応しています。</p>
-    <p>長期間の一括購入については追加の割引や銀行振り込みでの支払いにも対応しています。</p>
-    <p>
-      詳しくは <%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')), target: '_blank' %> までお問い合わせください。
-      <%= link_to '問い合わせ', direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
-    </p>
-  <% end %>
+    <p>クレジットカード、コンビニ決済、銀行振込に対応しています。それぞれ以下のような違いがあります。</p>
+    <dl>
+      <dt>クレジットカード（単月）</dt>
+      <dd class="mb-3">
+        標準の支払い方法です。<br>
+        支払い後すぐに有料プランが有効になります。<br>
+        購入してから <%= Order::TRIAL_DAYS %>日間 はお試し期間です。この期間に解約すれば支払いは発生しません。<br>
+        定期購読になるため、1ヶ月後に自動更新されます。
+      </dd>
 
-  <% faq_question '有料プランを銀行振込で支払いすることはできますか？' do %>
-    <p>長期間の一括購入については追加の割引や銀行振り込みでの支払いにも対応しています。</p>
+      <dt>コンビニ決済（単月）</dt>
+      <dd class="mb-3">
+        クレジットカードが無い方向けの支払い方法です。<br>
+        入金の確認後、5営業日以内に有効になります。<br>
+        お試し期間はありません。また、返金の対象外です。<br>
+        1ヶ月で自動解約されます。
+      </dd>
+
+      <dt>銀行振込（単月）</dt>
+      <dd class="mb-3">
+        クレジットカードが無い方向けの支払い方法です。<br>
+        入金の確認後、5営業日以内に有効になります。<br>
+        お試し期間はありません。また、返金の対象外です。<br>
+        1ヶ月で自動解約されます。
+      </dd>
+    </dl>
     <p>
-      詳しくは <%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')), target: '_blank' %> までお問い合わせください。
-      <%= link_to '問い合わせ', direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+      長期間の一括購入については追加の割引を受けることができます。
+      一括購入の詳細は <%= link_to '料金プラン', pricing_path(via: via), class: 'btn btn-outline-primary btn-sm', target: '_blank' %> をご覧ください。
     </p>
   <% end %>
 
   <% faq_question '有料プランをコンビニ支払いすることはできますか？' do %>
-    <p>コンビニ支払いには対応していません。</p>
-    <p>長期間の一括購入については追加の割引や銀行振り込みでの支払いにも対応しています。</p>
     <p>
-      詳しくは <%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')), target: '_blank' %> までお問い合わせください。
-      <%= link_to '問い合わせ', direct_message_url(User::EGOTTER_CS_UID, t('short_messages.bulk_purchase')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+      できます。
+      コンビニ決済の詳細は <%= link_to '料金プラン', pricing_path(via: via), class: 'btn btn-outline-primary btn-sm', target: '_blank' %> をご覧ください。
     </p>
+  <% end %>
+
+  <% faq_question '有料プランを銀行振込で支払いすることはできますか？' do %>
+    <p>
+      できます。
+      銀行振込の詳細は <%= link_to '料金プラン', pricing_path(via: via), class: 'btn btn-outline-primary btn-sm', target: '_blank' %> をご覧ください。
+    </p>
+  <% end %>
+
+  <% faq_question 'どの買い方が一番お得ですか？' do %>
+    <p>長期間の一括購入をクレジットカードで行うのが一番お得です。理由は決済手数料が一番安く済むからです。</p>
+    <p>有料プランについては <%= link_to '料金プラン', pricing_path(via: via), class: 'btn btn-outline-primary btn-sm', target: '_blank' %> をご覧ください。</p>
+  <% end %>
+
+  <% faq_question '一括購入の割引はありますか？' do %>
+    長期間の一括購入については追加の割引を受けることができます。
+    一括購入の詳細は <%= link_to '料金プラン', pricing_path(via: via), class: 'btn btn-outline-primary btn-sm', target: '_blank' %> をご覧ください。
   <% end %>
 
   <% faq_question '有料プランを他のユーザーに付け替えることはできますか？' do %>
@@ -220,7 +257,7 @@
   <% end %>
 
   <% faq_question '有料プランの返金' do %>
-    <p>特別な事情があれば有料プランの返金が可能です。</p>
+    <p>クレジットカードで単月購入の場合に限り、特別な事情があれば有料プランの返金が可能です。</p>
     <p>詳しくは <%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID, t('short_messages.refund')), target: '_blank' %> までお問い合わせください。</p>
   <% end %>
 <% end %>
