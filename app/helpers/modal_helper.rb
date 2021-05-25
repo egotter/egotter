@@ -1,8 +1,4 @@
 module ModalHelper
-  def modal_trigger(target:, &block)
-    content_tag 'span', style: 'cursor : pointer;', data: {target: "##{target}", toggle: 'modal'}, &block
-  end
-
   def modal_dialog(id:, title:, body: nil, button: nil, klass: nil, data: nil, size: nil, footer: true, &block)
     button = {positive: 'OK', category: 'primary'} unless button
     button[:category] = 'primary' unless button[:category]

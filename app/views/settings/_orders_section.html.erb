@@ -1,15 +1,35 @@
-<div class="text-center mt-5 mb-3"><%= link_to t('.see_plans'), pricing_path(via: current_via('orders_table')) %></div>
+<div class="my-5">
+  <%= alert_box do %>
+    <p>
+      <img class="rounded-circle" src="<%= current_user_icon %>" width="20" height="20">
+      <%= t('.user', user: current_user.screen_name) %>
+    </p>
+    <div><%= t('.about_plans') %></div>
+  <% end %>
+</div>
 
-<div class="text-center mb-5"><a href="#" class="btn btn-primary btn-checkout"><%= t('.purchase') %></a></div>
+<div class="my-5">
+  <%= t('.about_bulk_purchase') %>
+  <%= link_to t('.see_plans'), pricing_path(via: current_via('orders_table')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+</div>
+
+<div class="my-5">
+  <%= t('.about_purchase') %>
+  <a href="#" class="btn btn-primary btn-sm btn-checkout"><%= t('.purchase') %></a>
+</div>
+
+<hr>
 
 <% if orders.any? %>
-  <%= render partial: 'order', collection: orders, cached: true, spacer_template: 'order_ruler' %>
+  <div class="my-5">
+    <%= render partial: 'order', collection: orders, cached: true, spacer_template: 'order_ruler' %>
 
-  <%= render partial: 'modal/order_details_modal', locals: {modal_id: 'order-details-modal'} %>
+    <%= render partial: 'modal/order_details_modal', locals: {modal_id: 'order-details-modal'} %>
 
-  <%= modal_dialog id: 'cancel-order-modal', title: t('.cancel_order_modal.title'), button: {positive: t('.cancel_order_modal.yes'), category: 'danger', negative: t('.cancel_order_modal.no')} do %>
-    <%= t('.cancel_order_modal.message_html') %>
-  <% end %>
+    <%= modal_dialog id: 'cancel-order-modal', title: t('.cancel_order_modal.title'), button: {positive: t('.cancel_order_modal.yes'), category: 'danger', negative: t('.cancel_order_modal.no')} do %>
+      <%= t('.cancel_order_modal.message_html') %>
+    <% end %>
+  </div>
 
   <script>
     $(function () {
@@ -40,5 +60,5 @@
     });
   </script>
 <% else %>
-  <div class="text-center my-3"><%= t('.has_not_purchased') %></div>
+  <div class="text-center my-5"><%= t('.has_not_purchased') %></div>
 <% end %>

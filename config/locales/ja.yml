@@ -445,8 +445,12 @@ ja:
         title: "通知設定"
     orders_section:
       title: "購入履歴"
+      user: '@%{user} でログイン中です。'
+      about_plans: '購入済みの有料プランについてお問い合わせをする際は、購入したアカウントでログインしているかを事前にご確認ください。'
+      about_bulk_purchase: 'コンビニ決済や一括購入割引をご希望される方はこちらをご覧ください。'
+      see_plans: '料金プラン'
+      about_purchase: 'お試し期間（初回限定）付きのプランをクレジットカードで購入するにはこちらです。'
       purchase: '購入する'
-      see_plans: '料金プランを見る'
       cancel_order_modal:
         title: '定期購読の解約'
         message_html: |
