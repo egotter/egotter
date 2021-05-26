@@ -7,18 +7,26 @@ class DeleteTweetWorker
   #   request_id
   #   last_tweet
   def perform(user_id, tweet_id, options = {})
-    client = User.find(user_id).api_client.twitter
-    result = destroy_status!(client, tweet_id)
-
-    if result && options['request_id']
-      DeleteTweetsRequest.find(options['request_id']).increment!(:destroy_count)
+    request = DeleteTweetsRequest.find(options['request_id'])
+    if request.stopped_at
+      logger.warn "This request is stopped user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
+      return
     end
 
-    if options['request_id'] && options['last_tweet']
-      DeleteTweetsWorker.perform_async(options['request_id'])
+    client = User.find(user_id).api_client.twitter
+    destroy_status!(client, tweet_id)
+
+    request.increment!(:destroy_count)
+
+    if options['last_tweet']
+      request.finished!
+      SendDeleteTweetsFinishedWorker.perform_async(request.id)
     end
   rescue => e
-    set_error_to_request(e, options['request_id']) if options['request_id']
+    if TwitterApiStatus.your_account_suspended?(e)
+      request.update(stopped_at: Time.zone.now)
+    end
+    request.update(error_message: e.inspect)
     handle_worker_error(e, user_id: user_id, tweet_id: tweet_id, options: options)
   end
 
@@ -45,10 +53,6 @@ class DeleteTweetWorker
     else
       raise
     end
-  end
-
-  def set_error_to_request(e, request_id)
-    DeleteTweetsRequest.find(request_id).update(error_class: e.class, error_message: e.message)
   end
 
   class RetryExhausted < StandardError; end

@@ -2,19 +2,21 @@
 #
 # Table name: delete_tweets_requests
 #
-#  id            :bigint(8)        not null, primary key
-#  session_id    :string(191)
-#  user_id       :integer          not null
-#  since_date    :datetime
-#  until_date    :datetime
-#  send_dm       :boolean          default(FALSE), not null
-#  tweet         :boolean          default(FALSE), not null
-#  destroy_count :integer          default(0), not null
-#  finished_at   :datetime
-#  error_class   :string(191)      default(""), not null
-#  error_message :string(191)      default(""), not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id                 :bigint(8)        not null, primary key
+#  session_id         :string(191)
+#  user_id            :integer          not null
+#  since_date         :datetime
+#  until_date         :datetime
+#  send_dm            :boolean          default(FALSE), not null
+#  tweet              :boolean          default(FALSE), not null
+#  reservations_count :integer          default(0), not null
+#  destroy_count      :integer          default(0), not null
+#  stopped_at         :datetime
+#  finished_at        :datetime
+#  error_class        :string(191)      default(""), not null
+#  error_message      :text(65535)
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
 #
 # Indexes
 #
@@ -64,6 +66,7 @@ class DeleteTweetsRequest < ApplicationRecord
     tweets_exist!
     tweets = fetch_statuses!
     tweets = filter_statuses!(tweets)
+    update!(reservations_count: tweets.size)
     filtered_tweets_exist!(tweets)
     destroy_statuses!(tweets)
   end
