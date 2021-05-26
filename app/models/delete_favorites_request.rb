@@ -2,18 +2,20 @@
 #
 # Table name: delete_favorites_requests
 #
-#  id            :bigint(8)        not null, primary key
-#  user_id       :integer          not null
-#  since_date    :datetime
-#  until_date    :datetime
-#  send_dm       :boolean          default(FALSE), not null
-#  tweet         :boolean          default(FALSE), not null
-#  destroy_count :integer          default(0), not null
-#  finished_at   :datetime
-#  error_class   :string(191)      default(""), not null
-#  error_message :string(191)      default(""), not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id                 :bigint(8)        not null, primary key
+#  user_id            :integer          not null
+#  since_date         :datetime
+#  until_date         :datetime
+#  send_dm            :boolean          default(FALSE), not null
+#  tweet              :boolean          default(FALSE), not null
+#  reservations_count :integer          default(0), not null
+#  destroy_count      :integer          default(0), not null
+#  stopped_at         :datetime
+#  finished_at        :datetime
+#  error_class        :string(191)      default(""), not null
+#  error_message      :text(65535)
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
 #
 # Indexes
 #
@@ -60,6 +62,7 @@ class DeleteFavoritesRequest < ApplicationRecord
     favorites_exist!
     tweets = fetch_favorites!
     tweets = filter_favorites!(tweets)
+    update!(reservations_count: tweets.size)
     filtered_favorites_exist!(tweets)
     destroy_favorites!(tweets)
   end

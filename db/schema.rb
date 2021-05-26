@@ -550,10 +550,12 @@ ActiveRecord::Schema.define(version: 2021_05_23_201652) do
     t.datetime "until_date"
     t.boolean "send_dm", default: false, null: false
     t.boolean "tweet", default: false, null: false
+    t.integer "reservations_count", default: 0, null: false
     t.integer "destroy_count", default: 0, null: false
+    t.datetime "stopped_at"
     t.datetime "finished_at"
     t.string "error_class", default: "", null: false
-    t.string "error_message", default: "", null: false
+    t.text "error_message"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_delete_favorites_requests_on_created_at"
