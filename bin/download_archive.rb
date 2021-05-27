@@ -13,7 +13,7 @@ def main
   obj = s3.object(key)
   raise "File doesn't exist" unless obj.exists?
 
-  filename = obj.get.metadata['filename']
+  filename = obj.metadata['filename']
   raise 'Invalid filename' unless filename.match?(S3::ArchiveData::FILENAME_REGEXP)
 
   obj.download_file("#{out_dir}/#{filename}")
