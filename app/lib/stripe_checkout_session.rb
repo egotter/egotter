@@ -22,19 +22,30 @@ class StripeCheckoutSession
       if (customer_id = user.valid_customer_id)
         attrs[:customer] = customer_id
         attrs[:discounts] = []
-        attrs[:metadata][:price] = Order::REGULAR_PRICE
       else
         attrs[:subscription_data][:trial_period_days] = Order::TRIAL_DAYS
         attrs[:discounts] = [{coupon: Order::COUPON_ID}]
-        attrs[:metadata][:price] = Order::DISCOUNT_PRICE
       end
 
       if attrs[:discounts].empty? && user.coupons_stripe_coupon_ids.any?
         attrs[:discounts] = [{coupon: user.coupons_stripe_coupon_ids[-1]}]
-        attrs[:metadata][:price] = Order::DISCOUNT_PRICE
       end
 
+      attrs[:metadata][:price] = calculate_price(attrs)
+
       attrs
+    end
+
+    def calculate_price(attrs)
+      price_obj = Stripe::Price.retrieve(attrs[:line_items][0][:price])
+      value = price_obj.unit_amount
+
+      if attrs[:discounts].any?
+        coupon_obj = Stripe::Coupon.retrieve(attrs[:discounts][0][:coupon])
+        value -= coupon_obj.amount_off
+      end
+
+      value
     end
   end
 end

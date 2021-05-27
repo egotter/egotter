@@ -16,6 +16,8 @@ RSpec.describe StripeCheckoutSession, type: :model do
   describe '.build' do
     subject { described_class.send(:build, user) }
 
+    before { allow(described_class).to receive(:calculate_price).with(anything).and_return(123) }
+
     it { expect(subject[:customer]).to be_nil }
 
     context 'The user already has a customer_id' do
