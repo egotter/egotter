@@ -1808,6 +1808,9 @@ ja:
     order_reports:
       label1: 'DM届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
+    coupons_reports:
+      label1: 'DM届きました'
+      description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
     shared:
       label1: 'DM届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'

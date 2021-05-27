@@ -51,10 +51,20 @@ namespace :coupons do
 
   task add_stripe_coupon: :environment do
     user = ENV['USER_ID'] ? User.find(ENV['USER_ID']) : User.find_by(uid: ENV['UID'])
-    stripe_coupon_id = ENV['STRIPE_COUPON_ID']
+    coupon = Stripe::Coupon.retrieve(ENV['STRIPE_COUPON_ID'])
     expires_at = ENV['EXPIRES_AT'] ? Time.zone.parse(ENV['EXPIRES_AT']) : 7.days.since
 
     puts "user=#{user.screen_name}"
-    puts Coupon.create!(user_id: user.id, search_count: 0, stripe_coupon_id: stripe_coupon_id, expires_at: expires_at).inspect
+    puts "amount_off=#{coupon.amount_off}"
+    puts Coupon.create!(user_id: user.id, search_count: 0, stripe_coupon_id: coupon.id, expires_at: expires_at).inspect
+  end
+
+  task send_dm: :environment do
+    user = ENV['USER_ID'] ? User.find(ENV['USER_ID']) : User.find_by(screen_name: ENV['SCREEN_NAME'])
+    dry_run = ENV['DRY_RUN']
+
+    report = CouponsReport.creation_succeeded_message(user)
+    report.deliver! unless dry_run
+    puts report.message
   end
 end
