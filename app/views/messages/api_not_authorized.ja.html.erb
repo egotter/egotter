@@ -1,13 +1,13 @@
-<div class="my-3">
-  1. 「ツイッター連携が無効」とは何ですか？<br>
-  ログイン連携の取り消しや、<span class="egotter-pink">アカウントの削除</span>をするとこの状態になります。<br>
-  <br>
-  2. この状態だと何が起きますか？<br>
-  えごったーの全機能が利用できなくなります。リムられ通知もこなくなります。<br>
-  <br>
-  3. どうすれば元に戻りますか？<br>
-  <a href="<%= force_sign_in_path(via: current_via) %>" class="btn btn-outline-primary btn-sm">ログイン</a> し直してください。そうすれば元に戻ります。<br>
-  <br>
-  4. どうしても元に戻りません<br>
-  <a href="<%= twitter_web_url('egotter_cs') %>" class="btn btn-outline-primary btn-sm">@egotter_cs</a> にこのスクリーンショットをご連絡ください。
-</div>
+<dl>
+  <dt>・「ツイッター連携が無効」とは何ですか？</dt>
+  <dd class="mb-3">ログイン連携の取り消しや、<span class="egotter-pink">アカウントの削除</span>をするとこの状態になります。</dd>
+
+  <dt>・この状態だと何が起きますか？</dt>
+  <dd class="mb-3">えごったーの全機能が利用できなくなります。リムられ通知もこなくなります。</dd>
+
+  <dt>・どうすれば元に戻りますか？</dt>
+  <dd class="mb-3"><a href="<%= force_sign_in_path(via: current_via) %>" class="btn btn-outline-primary btn-sm">強制再ログイン</a> してください。そうすれば元に戻ります。</dd>
+
+  <dt>・どうしても元に戻りません</dt>
+  <dd class="mb-3"><%= t('error_pages.support_html', url1: twitter_web_url('egotter_cs'), url2: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></dd>
+</dl>

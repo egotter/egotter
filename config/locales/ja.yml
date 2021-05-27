@@ -1406,21 +1406,17 @@ ja:
         next: "次に進む"
       finish: 'お片付けはこれで終わりです！ お疲れ様でした。'
   error_pages:
+    support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url1}" target="_blank">@egotter_cs</a> までご連絡ください。<a class="btn btn-outline-primary btn-sm" href="%{url2}" target="_blank">お問い合わせ</a>'
     api_not_authorized:
       message_html: |
-        @%{user} のツイッター連携（API）が無効になっています。<br>
-        <br>
-        ログイン連携の取り消しや、<span class="egotter-pink">アカウントの削除</span>をするとこの状態になります。<br>
-        <br>
-        ログインしたいアカウントは @%{user} で合っていますか？ 合っているなら <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> をクリックしてください。<br>
-        <br>
-        他のアカウントでログインしたいですか？ もしそうなら <a class="btn btn-primary btn-sm" href="%{url}">アカウントの切り替え</a> をクリックしてください。<br>
-        <br>
-        どうしても解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> まで送ってください。
+        <p>@%{user} のツイッター連携（API）が無効になっています。</p>
+        <p>ログイン連携の取り消しや、<span class="egotter-pink">アカウントの削除</span>をするとこの状態になります。</p>
+        <p>ログインしたいアカウントは @%{user} で合っていますか？ 合っているなら <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> をクリックしてください。</p>
+        他のアカウントでログインしたいですか？ もしそうなら <a class="btn btn-primary btn-sm" href="%{url}">アカウントの切り替え</a> をクリックしてください。
     blocker_detected:
       message_html: '@%{user} は @ego_tter をブロックしたことがあるため、全ての通知とWebサイトの利用が制限されています。'
     not_found_user:
-      message: '@%{user} は存在しないか削除済みです。'
+      message: '@%{user} は存在しないか削除済みです。主な理由は下記の通りです。'
     forbidden_user:
       message: '@%{user} は凍結されています。'
     protected_user:
@@ -1429,88 +1425,49 @@ ja:
       message: '@%{user} からブロックされています。'
     adult_user:
       message_html: |
-        @%{user} はアダルトアカウントです。<br>
-        <br>
+        <p>@%{user} はアダルトアカウントです。</p>
         このアカウントを分析するには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> が必要です。
     not_signed_in:
       message_html: 'このページを見るには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> が必要です。'
     blockers_not_permitted:
       message_html: 'このページを見るには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> と <a href="%{pricing_url}" class="btn btn-primary btn-sm">有料プラン</a> の購入と トライアル期間の終了 が必要です。'
     soft_limited:
-      message_html: |
-        検索された @%{user} はフォローとフォロワーが多いため、<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> した後のみ検索できます。
+      message_html: '検索された @%{user} はフォローとフォロワーが多いため、<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> した後のみ検索できます。'
     spam_ip_detected:
-      message_html: |
-        スパム報告されているアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        普通のアクセスでこのメッセージが表示されている場合は、<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message1_html: 'スパム報告されているアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message2_html: '普通のアクセスでこのメッセージが表示されている場合は、<a href="%{url1}" target="_blank">@egotter_cs</a> までご連絡ください。<a class="btn btn-outline-primary btn-sm" href="%{url2}" target="_blank">お問い合わせ</a>'
     suspicious_access_detected:
       message_html: |
-        不審なアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
+        <p>不審なアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。</p>
         普通のアクセスでこのメッセージが表示されている場合は、<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
     twitter_user_not_persisted:
-      message_html: |
-        ログインしていないため @%{user} のTwitterデータ取得に失敗しました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message_html: 'ログインしていないため @%{user} のTwitterデータ取得に失敗しました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     too_many_api_requests:
-      message_html: |
-        検索数が多いため一時的にツイッターAPIが制限されています。最大で 15分 ほどお待ちください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message_html: '検索数が多いため一時的にツイッターAPIが制限されています。最大で 15分 ほどお待ちください。'
     too_many_searches:
-      message: '現在のプランで検索できる上限に達しました。%{count}回/日'
+      message1: '現在のプランで検索できる上限に達しました。%{count}回/日'
+      message2: 'もっとたくさん検索することもできます。お好きな方法をお選びください。'
     twitter_error:
-      message_html: |
-        Twitterの一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message_html: 'Twitterの一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_not_found:
-      message_html: |
-        Twitterの NotFound エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message_html: 'Twitterの NotFound エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_suspended:
-      message_html: |
-        Twitterの Suspended エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message_html: 'Twitterの Suspended エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_unauthorized:
-      message_html: |
-        Twitterの Unauthorized エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message_html: 'Twitterの Unauthorized エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_temporarily_locked:
-      message_html: |
-        Twitterの TemporarilyLocked エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message1_html: 'ログインに失敗しました。（Temporarily locked）'
+      message2_html: '<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_unknown:
-      message_html: |
-        Twitterの Unknown エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message_html: 'Twitterの Unknown エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     routing_error:
-      message_html: |
-        お探しのページが見つかりませんでした。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message_html: 'お探しのページが見つかりませんでした。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     internal_server_error:
-      message_html: |
-        一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message_html: '一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     request_timeout_error:
-      message_html: |
-        アクセスが多すぎてリクエストがタイムアウトしました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message_html: 'アクセスが多すぎてリクエストがタイムアウトしました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     csrf_error:
-      message_html: |
-        ページの有効期限が切れました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。<br>
-        <br>
-        何度も起きる場合は <a href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message_html: 'ページの有効期限が切れました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
   delete_tweets:
     new:
       navbar_title: 'ツイートクリーナー'
@@ -1841,6 +1798,7 @@ ja:
     delete_tweets_inquiry: 'ツイート削除のお問い合わせ：'
     delete_tweets_search_inquiry: 'ツイート削除の「検索して削除」に関する不具合報告：'
     delete_tweets_max_deletion: '%{count}万件以上のツイート削除を希望します'
+    error_inquiry: '%{name} エラーが複数回起きています。（スクリーンショットも送ってください）'
   directory:
     profiles:
       footer_title: プロフィール

@@ -1,4 +1,5 @@
-<div class="mb-3" style="min-height: 300px;"><%= t('.message_html', url: sign_in_path(via: current_via)) %></div>
+<p><%= t('.message_html', url: sign_in_path(via: current_via)) %></p>
+<p><%= t('error_pages.support_html', url1: twitter_web_url('egotter_cs'), url2: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></p>
 
 <div class="text-center">
   <a class="twitter-timeline" data-width="600" href="https://twitter.com/ego_tter?ref_src=twsrc%5Etfw">Tweets by ego_tter</a>

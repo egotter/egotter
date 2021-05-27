@@ -13,7 +13,11 @@
 </div>
 
 <% unless @search_count_limitation.count_remaining? %>
-  <%= render template: 'messages/too_many_searches', locals: {via: 'too_many_searches_search_modal'} %>
+  <div class="card">
+    <div class="card-body">
+      <%= render template: 'messages/too_many_searches', locals: {via: 'too_many_searches_search_modal'} %>
+    </div>
+  </div>
 <% end %>
 
 <h2 class="h4 text-center my-5"><%= t('.history') %></h2>
