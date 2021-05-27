@@ -1455,9 +1455,18 @@ ja:
       message_html: 'Twitterの Suspended エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_unauthorized:
       message_html: 'Twitterの Unauthorized エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+    permission_level_not_enough:
+      message_html: |
+        <p class="text-danger">ログインに失敗しました。Permission level not enough</p>
+        <p>このエラーは、えごったーをかなり昔から使っているユーザーの一部で起きます。</p>
+        <p>このエラーを起きなくするためには、まず、<a href="https://twitter.com/settings/applications/185425" target="_blank">連携アプリ</a> からえごったーを削除してください。</p>
+        <p>その後に、えごったーに <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> すればエラーは解消されます。</p>
     twitter_error_temporarily_locked:
-      message1_html: 'ログインに失敗しました。（Temporarily locked）'
-      message2_html: '<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message_html: |
+        <p class="text-danger">ログインに失敗しました。Temporarily locked</p>
+        <p>このエラーは、ツイッターから「動作が怪しいアカウント」と判定されているときに起きます。</p>
+        <p>このエラーを起きなくするためには、まず、<a href="https://twitter.com" target="_blank">twitter.com</a> にアクセスしてこの判定を解除してください。</p>
+        <p>その後に、えごったーに <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> すればエラーは解消されます。</p>
     twitter_error_unknown:
       message_html: 'Twitterの Unknown エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     routing_error:
