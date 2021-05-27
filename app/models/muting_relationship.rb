@@ -27,8 +27,7 @@ class MutingRelationship < ApplicationRecord
     def collect_uids(user_id)
       client = User.find(user_id).api_client.twitter
       options = {count: 5000, cursor: -1}
-      limit = 20000
-      call_limit = 10
+      call_limit = 12
       call_count = 0
       collection = []
 
@@ -44,7 +43,7 @@ class MutingRelationship < ApplicationRecord
 
         collection.concat(response.attrs[:ids])
 
-        if response.attrs[:next_cursor] == 0 || collection.size >= limit || call_count >= call_limit
+        if response.attrs[:next_cursor] == 0 || call_count >= call_limit
           break
         end
 

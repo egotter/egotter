@@ -10,6 +10,10 @@ class ImportMutingRelationshipsWorker
     3.minutes
   end
 
+  def delay_in
+    30.minutes + rand(12).hours
+  end
+
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
@@ -24,7 +28,7 @@ class ImportMutingRelationshipsWorker
 
     collected_uids.each_slice(1000) do |uids_array|
       User.authorized.where(uid: uids_array).each do |user|
-        CreateMuteReportWorker.perform_in(rand(30).minutes, user.id)
+        CreateMuteReportWorker.perform_in(delay_in, user.id)
       end
     end
   rescue => e
