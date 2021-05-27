@@ -8,7 +8,7 @@ class CreateDeletableTweetsWorker
   end
 
   def unique_in
-    10.minutes
+    3.minutes
   end
 
   # options:

@@ -44,6 +44,11 @@ module Api
         end
       end
 
+      def force_reload
+        DeletableTweet.where(uid: current_user.uid).delete_all
+        render json: {message: t('.success_html')}
+      end
+
       private
 
       def user_must_have_tweets

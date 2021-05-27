@@ -1,8 +1,8 @@
 <div class="my-5"><%= t('.description') %></div>
 
-<div class="alert alert-info my-5">
+<%= alert_box class: 'my-5' do %>
   <%= t('.notice_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_tweets_search_inquiry'))) %>
-</div>
+<% end %>
 
 <div class="d-flex my-3" style="overflow-x: scroll;">
   <%= render partial: 'filter_button', locals: {id: 'retweet-count-button', modal_id: 'counts-filter-modal', name: t('.filter.retweet_count'), label: t('.filter.noop')} %>
@@ -56,19 +56,32 @@
 <div class="my-5">
   <div class="d-flex justify-content-between">
     <div>
-      <div class="text-muted">
-        <span style="cursor: pointer;">
-          <input type="checkbox" id="select-all-deletable-tweets-checkbox" name="select-all-deletable-tweets" style="cursor: pointer;">
-          <label class="ml-1" for="select-all-deletable-tweets-checkbox" style="cursor: pointer;"><%= t('.filter.select_all') %></label>
-        </span>
-        <span id="reload-deletable-tweets-button" class="ml-3" style="cursor: pointer;">
+      <div class="d-flex text-muted">
+        <div class="cursor-pointer">
+          <input type="checkbox" id="select-all-deletable-tweets-checkbox" class="cursor-pointer" name="select-all-deletable-tweets">
+          <label class="cursor-pointer ml-1" for="select-all-deletable-tweets-checkbox"><%= t('.filter.select_all') %></label>
+        </div>
+        <div id="reload-deletable-tweets-button" class="cursor-pointer ml-3">
           <span class="text-muted"><i class="fas fa-redo"></i></span>
           <span class="ml-1"><%= t('.filter.reload') %></span>
-        </span>
-        <span class="delete-selected-deletable-tweets-button d-none d-md-inline-block ml-3" style="cursor: pointer; visibility: hidden;">
-          <i class="fas fa-trash"></i>
-          <span class="ml-1"><%= t('.filter.trash') %></span>
-        </span>
+        </div>
+        <div class="d-none d-md-inline-block">
+          <div class="delete-selected-deletable-tweets-button cursor-pointer ml-3" style="display: none;">
+            <i class="fas fa-trash"></i>
+            <span class="ml-1"><%= t('.filter.trash') %></span>
+          </div>
+        </div>
+        <div class="cursor-pointer ml-3">
+          <div class="dropdown">
+            <span class="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></span>
+            <div class="dropdown-menu shadow">
+              <button type="button" id="force-reload-deletable-tweets-button" class="dropdown-item">
+                <span><i class="fas fa-redo"></i></span>
+                <span class="ml-1"><%= t('.filter.force_reload') %></span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="text-muted">
@@ -140,6 +153,21 @@
     $('#open-search-deletable-tweets-tab').on('shown.bs.tab', loadDeletableTweets);
     $('#reload-deletable-tweets-button').on('click', loadDeletableTweets);
     $('.filter-modal').on('hidden.bs.modal', loadDeletableTweets);
+
+    $('#force-reload-deletable-tweets-button').on('click', function () {
+      var url = '<%= raw api_v1_deletable_tweet_force_reload_path(via: current_via) %>';
+      $.ajax({
+        url: url,
+        type: 'DELETE',
+        contentType: 'application/json'
+      }).done(function (res) {
+        logger.log('Tweets force-reloaded', res);
+        ToastMessage.info(res['message']);
+        setTimeout(function () {
+          window.location.reload();
+        }, 3000);
+      }).fail(showErrorMessage);
+    });
 
     $body.on('deletable-tweets-menu-closed', function () {
       toggleCurrentDeletableTweets(false);

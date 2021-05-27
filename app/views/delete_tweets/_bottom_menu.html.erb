@@ -16,7 +16,7 @@
 <div id="deletable-tweets-menu" class="d-flex align-items-center shadow p-3">
   <div class="w-100">
     <span class="badge badge-secondary"><span class="selected-deletable-tweets-count">0</span></span>
-    <span class="delete-selected-deletable-tweets-button p-3" style="cursor: pointer;">
+    <span class="delete-selected-deletable-tweets-button cursor-pointer p-3">
       <i class="fas fa-trash"></i>
       <span class="ml-1"><%= t('.trash') %></span>
     </span>
@@ -92,7 +92,7 @@
 
     function closeMenu() {
       if (isOpened) {
-        $deleteButton.css({visibility: 'hidden'});
+        $deleteButton.css({display: 'none'});
         menu.trigger('sidebar:close');
       }
       $body.trigger('deletable-tweets-menu-closed');
@@ -101,7 +101,7 @@
     function openMenu() {
       menu.css({width: '100%', height: 'auto', visibility: 'visible'}).show();
       if (!isOpened) {
-        $deleteButton.css({visibility: 'visible'});
+        $deleteButton.css({display: 'inline-block'});
         menu.trigger('sidebar:toggle');
       }
     }

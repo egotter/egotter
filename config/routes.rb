@@ -66,6 +66,7 @@ Rails.application.routes.draw do
       resources :delete_tweets_presigned_urls, only: %i(create)
       resources :deletable_tweets, only: %i(index destroy)
       delete 'deletable_tweet_bulk_destroy', to: 'deletable_tweets#bulk_destroy'
+      delete 'deletable_tweet_force_reload', to: 'deletable_tweets#force_reload'
 
       resources :delete_favorites_requests, only: %i(create)
       resources :delete_favorites_notifications, only: %i(create)

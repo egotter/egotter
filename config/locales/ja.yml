@@ -1530,7 +1530,9 @@ ja:
     search:
       title: '検索して削除'
       description: '「検索して削除」では、条件指定でツイートを検索し、見付かったツイートを一気に削除することができます。'
-      notice_html: '「検索して削除」は5月14日にリリースされたばかりのお試し新機能です。不具合があるかもしれません。もし不具合を見付けたら、<a href="%{url}" target="_blank">@egotter_cs</a> までご連絡いただけるとありがたいです。'
+      notice_html: |
+        <p>「検索して削除」は5月14日にリリースされたばかりのお試し新機能です。不具合があるかもしれません。</p>
+        もし不具合を見付けたら、<a href="%{url}" target="_blank">@egotter_cs</a> までご連絡いただけるとありがたいです。
       loading: 'ツイートを読み込んでいます。初回は1〜5分ほど時間がかかることがあります。'
       filter:
         modal: '検索条件の指定'
@@ -1554,6 +1556,7 @@ ja:
         excluded: '含めない'
         select_all: 'すべて選択'
         reload: '再読み込み'
+        force_reload: 'ツイートを取得し直す'
         trash: '削除する'
         current_tweets_selected_html: 'このページ内のツイート <span class="current-deletable-tweets-count">%{count}</span> 件が選択されています。'
         select_total_tweets_html: 'ツイート <span class="total-deletable-tweets-count">%{count}</span> 件をすべて選択'
@@ -2072,6 +2075,8 @@ ja:
           failed_html: '<a href="%{url}" target="_blank">このツイート</a>の削除に失敗しました。5〜30分後に再度アクセスしてください。'
         bulk_destroy:
           not_found: '削除対象のツイートが見付かりませんでした。5〜30分後に再度アクセスしてください。'
+        force_reload:
+          success_html: '<img src="/ajax-loader.gif?a=1"> ページを更新します。'
       delete_tweets_presigned_urls:
         create:
           fail: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをそのまま指定してください。'

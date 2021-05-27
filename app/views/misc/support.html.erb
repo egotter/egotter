@@ -4,19 +4,17 @@
 <p><%= t('.about_ego_tter_html', url: twitter_web_url('ego_tter')) %></p>
 <p><%= t('.about_egotter_cs_html', url: twitter_web_url('egotter_cs')) %></p>
 
-<div class="my-3">
-  <%= alert_box do %>
-    <p>
-      <% if user_signed_in? %>
-        <img class="rounded-circle" src="<%= current_user_icon %>" width="20" height="20">
-        <%= t('.user', user: current_user.screen_name) %>
-      <% else %>
-        <%= t('.visitor') %>
-      <% end %>
-    </p>
-    <div><%= t('.about_plans') %></div>
-  <% end %>
-</div>
+<%= alert_box class: 'my-3' do %>
+  <p>
+    <% if user_signed_in? %>
+      <img class="rounded-circle" src="<%= current_user_icon %>" width="20" height="20">
+      <%= t('.user', user: current_user.screen_name) %>
+    <% else %>
+      <%= t('.visitor') %>
+    <% end %>
+  </p>
+  <div><%= t('.about_plans') %></div>
+<% end %>
 
 <hr>
 
