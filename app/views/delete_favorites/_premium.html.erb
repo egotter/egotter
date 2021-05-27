@@ -1,8 +1,8 @@
 <div id="delete-favorites-uploader" class="my-5"><%= t('.description', user: current_user.screen_name) %></div>
 
-<div class="alert alert-info my-5">
+<%= alert_box class: 'my-5' do %>
   <%= t('.notice_html') %>
-</div>
+<% end %>
 
 <div class="card my-3">
   <div class="card-body">
