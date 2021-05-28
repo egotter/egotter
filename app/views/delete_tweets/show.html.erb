@@ -12,6 +12,9 @@
   <li class="nav-item">
     <a class="nav-link" href="#premium-tab" data-toggle="tab"><%= t('delete_tweets.premium.title') %></a>
   </li>
+  <li class="nav-item">
+    <a id="open-delete-tweets-history-tab" class="nav-link" href="#history-tab" data-toggle="tab"><%= t('delete_tweets.history.title') %></a>
+  </li>
 </ul>
 
 <div class="tab-content">
@@ -23,6 +26,9 @@
   </div>
   <div id="premium-tab" class="tab-pane">
     <%= render partial: 'premium' %>
+  </div>
+  <div id="history-tab" class="tab-pane">
+    <%= render partial: 'history' %>
   </div>
 </div>
 

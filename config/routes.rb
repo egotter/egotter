@@ -62,6 +62,7 @@ Rails.application.routes.draw do
       resource :private_mode_settings, only: %i(create destroy)
 
       resources :delete_tweets_requests, only: %i(create)
+      resources :delete_tweets_histories, only: %i(index)
       resources :delete_tweets_notifications, only: %i(create)
       resources :delete_tweets_presigned_urls, only: %i(create)
       resources :deletable_tweets, only: %i(index destroy)

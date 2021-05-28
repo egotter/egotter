@@ -1,0 +1,31 @@
+<div class="my-5"><%= t('.description') %></div>
+
+<table class="table small my-3">
+  <tr>
+    <td><%= t('.date') %></td>
+    <td><%= t('.type') %></td>
+    <td><%= t('.reservations') %></td>
+    <td><%= t('.deletions') %></td>
+  </tr>
+  <tbody id="delete-tweets-history-container">
+  </tbody>
+</table>
+
+<script>
+  $(function () {
+    var url = '<%= raw api_v1_delete_tweets_histories_path %>';
+    $('#open-delete-tweets-history-tab').on('shown.bs.tab', function () {
+      $.get(url).done(function (res) {
+        var requests = res.requests;
+        var container = $('#delete-tweets-history-container');
+        var template = window.templates['deleteTweetsHistory'];
+
+        for (var i = 0; i < requests.length; i++) {
+          var request = requests[i];
+          var rendered = Mustache.render(template, request);
+          container.append(rendered);
+        }
+      }).fail(showErrorMessage);
+    });
+  });
+</script>

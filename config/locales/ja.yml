@@ -1566,6 +1566,13 @@ ja:
       note2: 'twitter-0000-00-00-aaaaaa.zip を選択してください。'
       note3_html: 'この機能には有料プランの購入が必要です。<a href="%{url}" target="_blank">プランの詳細</a>'
       note4: 'パソコンとWi-Fiを使うと高速にアップロードできます。'
+    history:
+      title: '削除の履歴'
+      description: '「削除の履歴」では、これまでに実行した削除の履歴を見ることができます。'
+      date: '日付'
+      type: '種類'
+      reservations: '削除の指定'
+      deletions: '削除完了'
     uploader:
       debug_attrs_html:
         <div>
@@ -2500,6 +2507,7 @@ ja:
       block_report_short: "%-m月%-d日 %-H時%-M分"
       mute_report_short: "%-m月%-d日 %-H時%-M分"
       periodic_report_short: "%-m月%-d日 %-H時%-M分"
+      delete_tweets_long: "%-m月%-d日 %-H時%-M分"
       deletable_tweets_long: "%-m月%-d日 %-H時%-M分"
       order_long: "%-m月%-d日 %-H時%-M分"
       coupon_short: "%-m月%-d日 %-H時%-M分"

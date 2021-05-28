@@ -26,8 +26,8 @@ class DeleteTweetsTask
     # Do nothing
   rescue DeleteTweetsRequest::TemporarilyLocked => e
     # Do nothing
-  rescue DeleteTweetsRequest::RetryableError => e
-    DeleteTweetsWorker.perform_in(e.retry_in, request.id, @options)
+  rescue DeleteTweetsRequest::TooManyRequests => e
+      # Do nothing
   rescue => e
     request.send_error_message
     raise

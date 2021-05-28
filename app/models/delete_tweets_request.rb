@@ -134,12 +134,12 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def exception_handler(e, last_method = nil)
-    if e.is_a?(Error) || e.is_a?(RetryableError)
+    if e.is_a?(Error)
       raise e
     end
 
     if e.class == Twitter::Error::TooManyRequests
-      raise TooManyRequests.new(last_method, retry_in: e.rate_limit.reset_in.to_i + 1)
+      raise TooManyRequests.new(last_method.to_s)
     elsif TwitterApiStatus.unauthorized?(e)
       raise InvalidToken.new(e.message)
     elsif TwitterApiStatus.temporarily_locked?(e)
@@ -206,15 +206,6 @@ class DeleteTweetsRequest < ApplicationRecord
   class Error < StandardError
   end
 
-  class RetryableError < StandardError
-    attr_reader :retry_in
-
-    def initialize(message, retry_in:)
-      super(message)
-      @retry_in = retry_in
-    end
-  end
-
   class AlreadyFinished < Error; end
 
   class Unauthorized < Error; end
@@ -223,11 +214,9 @@ class DeleteTweetsRequest < ApplicationRecord
 
   class TweetsNotFound < Error; end
 
-  class TooManyRequests < RetryableError; end
+  class TooManyRequests < Error; end
 
   class TemporarilyLocked < Error; end
-
-  class Continue < RetryableError; end
 
   class FinishedMessageNotSent < Error; end
 

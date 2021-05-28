@@ -163,6 +163,15 @@
   </div>
 </template>
 
+<template id="delete-tweets-history-template">
+  <tr>
+    <td>{{created_at}}</td>
+    <td>{{type}}</td>
+    <td>{{reservations_count}}</td>
+    <td>{{deletions_count}}</td>
+  </tr>
+</template>
+
 <script>
   $(function () {
     var templates = {
@@ -170,7 +179,8 @@
       userRectangle: $('#user-rectangle-template').html(),
       searchHistoryRectangle: $('#search-history-rectangle-template').html(),
       toast: $('#toast-template').html(),
-      deletableTweet: $('#deletable-tweet-template').html()
+      deletableTweet: $('#deletable-tweet-template').html(),
+      deleteTweetsHistory: $('#delete-tweets-history-template').html()
     };
 
     window.templates = templates;
