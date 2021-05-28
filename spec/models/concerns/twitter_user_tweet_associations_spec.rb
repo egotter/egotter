@@ -6,7 +6,7 @@ RSpec.describe TwitterUserAssociations do
   describe '#status_tweets' do
     subject { twitter_user.status_tweets }
     it do
-      expect(twitter_user).to receive(:fetch_tweets).with(InMemory::StatusTweet, Efs::StatusTweet, S3::StatusTweet)
+      expect(twitter_user).to receive(:fetch_tweets).with(:status_tweets, InMemory::StatusTweet, Efs::StatusTweet, S3::StatusTweet)
       subject
     end
   end
@@ -14,7 +14,7 @@ RSpec.describe TwitterUserAssociations do
   describe '#favorite_tweets' do
     subject { twitter_user.favorite_tweets }
     it do
-      expect(twitter_user).to receive(:fetch_tweets).with(InMemory::FavoriteTweet, Efs::FavoriteTweet, S3::FavoriteTweet)
+      expect(twitter_user).to receive(:fetch_tweets).with(:favorite_tweets, InMemory::FavoriteTweet, Efs::FavoriteTweet, S3::FavoriteTweet)
       subject
     end
   end
@@ -22,7 +22,7 @@ RSpec.describe TwitterUserAssociations do
   describe '#mention_tweets' do
     subject { twitter_user.mention_tweets }
     it do
-      expect(twitter_user).to receive(:fetch_tweets).with(InMemory::MentionTweet, Efs::MentionTweet, S3::MentionTweet)
+      expect(twitter_user).to receive(:fetch_tweets).with(:mention_tweets, InMemory::MentionTweet, Efs::MentionTweet, S3::MentionTweet)
       subject
     end
   end
@@ -31,7 +31,7 @@ RSpec.describe TwitterUserAssociations do
     let(:memory_class) { InMemory::StatusTweet }
     let(:efs_class) { Efs::StatusTweet }
     let(:s3_class) { S3::StatusTweet }
-    subject { twitter_user.send(:fetch_tweets, memory_class, efs_class, s3_class) }
+    subject { twitter_user.send(:fetch_tweets, :method_name, memory_class, efs_class, s3_class) }
 
     context 'InMemory returns data' do
       let(:wrapper) { memory_class.new(nil) }

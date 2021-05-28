@@ -4,20 +4,20 @@ module TwitterUserTweetAssociations
   extend ActiveSupport::Concern
 
   def status_tweets
-    fetch_tweets(InMemory::StatusTweet, Efs::StatusTweet, S3::StatusTweet)
+    fetch_tweets(__method__, InMemory::StatusTweet, Efs::StatusTweet, S3::StatusTweet)
   end
 
   def favorite_tweets
-    fetch_tweets(InMemory::FavoriteTweet, Efs::FavoriteTweet, S3::FavoriteTweet)
+    fetch_tweets(__method__, InMemory::FavoriteTweet, Efs::FavoriteTweet, S3::FavoriteTweet)
   end
 
   def mention_tweets
-    fetch_tweets(InMemory::MentionTweet, Efs::MentionTweet, S3::MentionTweet)
+    fetch_tweets(__method__, InMemory::MentionTweet, Efs::MentionTweet, S3::MentionTweet)
   end
 
   private
 
-  def fetch_tweets(memory_class, efs_class, s3_class)
+  def fetch_tweets(method_name, memory_class, efs_class, s3_class)
     data = nil
     exceptions = []
 
@@ -40,7 +40,7 @@ module TwitterUserTweetAssociations
     end
 
     if data.nil?
-      Rails.logger.warn "Fetching tweets is failed. uid=#{uid} exceptions=#{exceptions.inspect}"
+      Rails.logger.warn "Fetching tweets is failed. method=#{method_name} uid=#{uid} exceptions=#{exceptions.inspect}"
       Rails.logger.info caller.join("\n")
       []
     else
