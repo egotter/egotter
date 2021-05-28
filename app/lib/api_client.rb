@@ -132,6 +132,13 @@ class ApiClient
       @api_name = nil
     end
 
+    [:user_agent, :user_token?, :credentials, :proxy, :timeouts].each do |method_name|
+      define_method(method_name) do |*args, &blk|
+        @twitter.send(method_name, *args, &blk)
+      end
+    end
+
+    # TODO List api methods
     def method_missing(method, *args, &block)
       if @twitter.respond_to?(method)
         @api_name = method
