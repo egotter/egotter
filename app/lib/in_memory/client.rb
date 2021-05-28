@@ -1,5 +1,3 @@
-# -*- SkipSchemaAnnotations
-
 module InMemory
   class Client
     def initialize(klass, hostname)
@@ -8,16 +6,12 @@ module InMemory
       @redis = Redis.client(hostname)
     end
 
-    def ttl
-      ::InMemory::TTL.send([:+, :-].shuffle[0], rand(60))
-    end
-
     def read(key)
       @redis.get(db_key(key))
     end
 
     def write(key, item)
-      @redis.setex(db_key(key), ttl, item)
+      @redis.setex(db_key(key), ::InMemory.ttl_with_random, item)
     end
 
     def delete(key)

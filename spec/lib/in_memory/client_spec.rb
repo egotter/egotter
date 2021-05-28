@@ -9,11 +9,6 @@ RSpec.describe InMemory::Client do
     instance.instance_variable_set(:@redis, redis)
   end
 
-  describe '#ttl' do
-    subject { instance.ttl }
-    it { is_expected.to be_between(1.hour - 60, 1.hour + 60) }
-  end
-
   describe '#read' do
     subject { instance.read(key) }
     before { allow(instance).to receive(:db_key).with(key).and_return('key') }
@@ -28,11 +23,10 @@ RSpec.describe InMemory::Client do
     subject { instance.write(key, 'input') }
     before do
       allow(instance).to receive(:db_key).with(key).and_return('key')
-      allow(instance).to receive(:ttl).and_return('ttl')
     end
 
     it do
-      expect(redis).to receive(:setex).with('key', 'ttl', 'input')
+      expect(redis).to receive(:setex).with('key', instance_of(Integer), 'input')
       subject
     end
   end

@@ -11,6 +11,11 @@ RSpec.describe InMemory do
     it { expect(described_class.enabled?).to be_truthy }
   end
 
+  describe '#ttl_with_random' do
+    subject { described_class.ttl_with_random }
+    it { is_expected.to be_between(1.hour - 60, 1.hour + 60) }
+  end
+
   describe '.cache_alive?' do
     subject { described_class.cache_alive?(time) }
 
