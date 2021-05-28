@@ -25,7 +25,7 @@ class CreateAnonymousMessageWorker
 
   # options:
   def perform(uid, options = {})
-    User.egotter.api_client.create_direct_message_event(uid, build_message)
+    User.egotter.api_client.create_direct_message(uid, build_message)
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"

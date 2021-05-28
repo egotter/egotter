@@ -44,7 +44,7 @@ class CreatePeriodicReportReceivedNotFollowingMessageWorker
       User.egotter.api_client.create_direct_message_event(event: event)
     else
       # CreatePeriodicReportNotFollowingMessageWorker.perform_async(user.id)
-      User.egotter.api_client.create_direct_message_event(uid, build_second_message)
+      User.egotter.api_client.create_direct_message(uid, build_second_message)
     end
   rescue => e
     unless ignorable_report_error?(e)

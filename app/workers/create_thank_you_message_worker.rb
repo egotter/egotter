@@ -20,7 +20,7 @@ class CreateThankYouMessageWorker
   # options:
   def perform(uid, options = {})
     message = TEXT.sample + Kaomoji::KAWAII.sample
-    User.egotter.api_client.create_direct_message_event(uid, message)
+    User.egotter.api_client.create_direct_message(uid, message)
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"

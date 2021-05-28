@@ -63,7 +63,7 @@ RSpec.describe MuteReport, type: :model do
     subject { described_class.send_start_message(user) }
     before { allow(described_class).to receive(:start_message).with(user).and_return('message') }
     it do
-      expect(user).to receive_message_chain(:api_client, :create_direct_message_event).with(User::EGOTTER_UID, 'message')
+      expect(user).to receive_message_chain(:api_client, :create_direct_message).with(User::EGOTTER_UID, 'message')
       subject
     end
   end

@@ -242,7 +242,7 @@ class MuteReport < ApplicationRecord
 
     def send_start_message(user)
       if PeriodicReport.messages_not_allotted?(user)
-        user.api_client.create_direct_message_event(User::EGOTTER_UID, start_message(user))
+        user.api_client.create_direct_message(User::EGOTTER_UID, start_message(user))
       end
     end
   end

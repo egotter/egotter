@@ -60,7 +60,7 @@ class SearchReport < ApplicationRecord
 
   def send_start_message
     if PeriodicReport.messages_not_allotted?(user)
-      user.api_client.create_direct_message_event(User::EGOTTER_UID, start_message)
+      user.api_client.create_direct_message(User::EGOTTER_UID, start_message)
     end
   end
 

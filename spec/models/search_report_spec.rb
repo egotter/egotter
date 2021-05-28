@@ -30,7 +30,7 @@ RSpec.describe SearchReport, type: :model do
       allow(report).to receive(:start_message).and_return('message')
     end
     it do
-      expect(user).to receive_message_chain(:api_client, :create_direct_message_event).with(User::EGOTTER_UID, 'message')
+      expect(user).to receive_message_chain(:api_client, :create_direct_message).with(User::EGOTTER_UID, 'message')
       subject
     end
   end

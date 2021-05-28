@@ -4,7 +4,7 @@ namespace :egotter_blockers do
     client = User.egotter_cs.api_client
 
     unless (user = User.find_by(uid: uid))
-      client.create_direct_message_event(uid, I18n.t('rake_tasks.egotter_blockers.user_not_found_message'))
+      client.create_direct_message(uid, I18n.t('rake_tasks.egotter_blockers.user_not_found_message'))
       puts "User not found uid=#{uid}"
       next
     end
@@ -12,7 +12,7 @@ namespace :egotter_blockers do
     puts "uid=#{uid} screen_name=#{user.screen_name}"
 
     unless (record = EgotterBlocker.find_by(uid: user.uid))
-      client.create_direct_message_event(uid, I18n.t('rake_tasks.egotter_blockers.blocker_not_found_message'))
+      client.create_direct_message(uid, I18n.t('rake_tasks.egotter_blockers.blocker_not_found_message'))
       puts "EgotterBlocker not found uid=#{uid}"
       next
     end
@@ -21,7 +21,7 @@ namespace :egotter_blockers do
       user.api_client.twitter.verify_credentials
     rescue => e
       if e.message == 'Invalid or expired token.'
-        client.create_direct_message_event(user.uid, I18n.t('rake_tasks.egotter_blockers.unauthorized_message'))
+        client.create_direct_message(user.uid, I18n.t('rake_tasks.egotter_blockers.unauthorized_message'))
         puts 'Unauthorized'
         next
       else
@@ -30,20 +30,20 @@ namespace :egotter_blockers do
     end
 
     if user.api_client.twitter.block?(User::EGOTTER_UID)
-      client.create_direct_message_event(user.uid, I18n.t('rake_tasks.egotter_blockers.still_blocking_message'))
+      client.create_direct_message(user.uid, I18n.t('rake_tasks.egotter_blockers.still_blocking_message'))
       puts 'Still blocking'
       next
     end
 
     unless user.has_valid_subscription?
-      client.create_direct_message_event(user.uid, I18n.t('rake_tasks.egotter_blockers.dont_have_subscription_message'))
+      client.create_direct_message(user.uid, I18n.t('rake_tasks.egotter_blockers.dont_have_subscription_message'))
       puts "Don't have a subscription"
       next
     end
 
     begin
       record.destroy!
-      client.create_direct_message_event(user.uid, I18n.t('rake_tasks.egotter_blockers.success_message'))
+      client.create_direct_message(user.uid, I18n.t('rake_tasks.egotter_blockers.success_message'))
       puts 'Success'
     rescue => e
       puts e.inspect

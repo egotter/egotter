@@ -70,7 +70,7 @@ class DeleteFavoritesReport
 
     def send_upload_completed_starting_message(user)
       if PeriodicReport.messages_not_allotted?(user)
-        user.api_client.create_direct_message_event(User::EGOTTER_CS_UID, upload_completed_starting_message(user))
+        user.api_client.create_direct_message(User::EGOTTER_CS_UID, upload_completed_starting_message(user))
       end
     end
 

@@ -56,7 +56,7 @@ RSpec.describe WelcomeMessage, type: :model do
     end
 
     it do
-      expect(user).to receive_message_chain(:api_client, :create_direct_message_event).with(User::EGOTTER_UID, 'message')
+      expect(user).to receive_message_chain(:api_client, :create_direct_message).with(User::EGOTTER_UID, 'message')
       subject
     end
   end

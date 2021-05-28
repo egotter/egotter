@@ -48,7 +48,7 @@ class ResetEgotterRequest < ApplicationRecord
   def send_goodbye_message
     template = Rails.root.join('app/views/reset_egotter/goodbye.ja.text.erb')
     message = ERB.new(template.read).result
-    user.api_client.create_direct_message_event(User::EGOTTER_UID, message)
+    user.api_client.create_direct_message(User::EGOTTER_UID, message)
   rescue => e
     if TwitterApiStatus.invalid_or_expired_token?(e) ||
         DirectMessageStatus.cannot_send_messages?(e) ||

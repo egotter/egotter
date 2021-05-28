@@ -68,7 +68,7 @@ class WelcomeMessage < ApplicationRecord
     message = @prefix_message + message if @prefix_message
 
     if PeriodicReport.messages_not_allotted?(user)
-      user.api_client.create_direct_message_event(User::EGOTTER_UID, message)
+      user.api_client.create_direct_message(User::EGOTTER_UID, message)
     end
   end
 
