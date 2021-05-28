@@ -30,7 +30,7 @@ class AppStat
       [
           ['Base', Redis.client],
           ['InMemory', InMemory.redis_instance],
-          ['ApiCache', ApiClient::CacheStore.redis_client]
+          ['ApiCache', ApiClientCacheStore.redis_client]
       ].map do |name, client|
         "#{name} #{client.used_memory} / #{client.used_memory_peak} / #{client.total_memory}"
       end.join("\n")

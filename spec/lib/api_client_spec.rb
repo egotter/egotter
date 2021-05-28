@@ -249,14 +249,3 @@ RSpec.describe ApiClient::RequestWithRetryHandler, type: :model do
     end
   end
 end
-
-RSpec.describe ApiClient::CacheStore, type: :model do
-  describe '.redis_client' do
-    subject { described_class.redis_client }
-    before { described_class.remove_redis_client }
-    it do
-      expect(Redis).to receive(:new).with(hash_including(db: 2))
-      subject
-    end
-  end
-end

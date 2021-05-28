@@ -1,6 +1,3 @@
-require 'active_support'
-require 'active_support/cache/redis_cache_store'
-
 require 'twitter_with_auto_pagination'
 
 class ApiClient
@@ -99,7 +96,7 @@ class ApiClient
         if options[:cache_store] == :null_store
           options[:cache_store] = ActiveSupport::Cache::NullStore.new
         else
-          options[:cache_store] = CacheStore.new
+          options[:cache_store] = ApiClientCacheStore.new
         end
         client = TwitterWithAutoPagination::Client.new(config(options))
       end
@@ -162,7 +159,6 @@ class ApiClient
     rescue => e
       @retries += 1
       handle_retryable_error(e)
-      Rails.logger.info "RequestWithRetryHandler#perform: retry #{@method}"
       retry
     end
 
@@ -177,52 +173,11 @@ class ApiClient
         if @retries > MAX_RETRIES
           raise RetryExhausted.new("#{e.inspect} method=#{@method} retries=#{@retries}")
         else
-          # Do nothing
+          Rails.logger.info "RequestWithRetryHandler#perform: This error is retryable. error=#{e.class} method=#{@method}"
         end
       else
         raise e
       end
     end
-  end
-
-  class CacheStore < ActiveSupport::Cache::RedisCacheStore
-    ERROR_HANDLER = Proc.new do |method:, returning:, exception:|
-      Rails.logger.warn "ApiClient::CacheStore: #{method} failed, returned #{returning.inspect}: #{exception.class}: #{exception.message}"
-    end
-
-    def initialize
-      super(
-          namespace: "#{Rails.env}:twitter",
-          expires_in: 20.minutes,
-          race_condition_ttl: 3.minutes,
-          redis: self.class.redis_client,
-          error_handler: ERROR_HANDLER
-      )
-    end
-
-    class << self
-      def redis_client
-        @redis_client ||= Redis.client(ENV['TWITTER_API_REDIS_HOST'], db: 2)
-      end
-
-      def remove_redis_client
-        @redis_client = nil
-      end
-    end
-
-    module Benchmark
-      %i(
-        read
-        write
-        fetch
-      ).each do |method_name|
-        define_method(method_name) do |*args, &blk|
-          ApplicationRecord.benchmark("Benchmark CacheStore##{__method__} key=#{args[0]}", level: :info) do
-            super(*args, &blk)
-          end
-        end
-      end
-    end
-    prepend Benchmark
   end
 end
