@@ -124,11 +124,7 @@ class User < ApplicationRecord
     end
 
     def find_by_token(token, secret)
-      includes(:credential_token).
-          references(:credential_token).
-          where('credential_tokens.token = ?', token).
-          where('credential_tokens.secret = ?', secret).
-          first
+      select(:id, :uid).find_by(id: CredentialToken.select(:user_id).find_by(token: token, secret: secret).user_id)
     end
 
     def api_client

@@ -4,8 +4,8 @@ class CreateDirectMessageErrorLogWorker
 
   def perform(event_args, error_class, error_message, time, options = {})
     attrs = {
-        sender_id: nil,
-        recipient_id: self.class.dig_recipient_id(event_args),
+        sender_id: options['sender_id'],
+        recipient_id: dig_recipient_id(event_args),
         error_class: error_class,
         error_message: error_message,
         properties: event_args,
@@ -18,7 +18,7 @@ class CreateDirectMessageErrorLogWorker
 
   private
 
-  def self.dig_recipient_id(args)
+  def dig_recipient_id(args)
     if args.length == 1 && args.last.is_a?(Hash)
       args.last.dig('event', 'message_create', 'target', 'recipient_id')
     elsif args.length == 2 && args.first.is_a?(Integer)

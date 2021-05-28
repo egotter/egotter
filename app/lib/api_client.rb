@@ -12,7 +12,7 @@ class ApiClient
     resp = twitter.create_direct_message_event(*args).to_h
     DirectMessage.new(event: resp)
   rescue => e
-    CreateDirectMessageErrorLogWorker.perform_async(args, e.class, e.message, Time.zone.now)
+    CreateDirectMessageErrorLogWorker.perform_async(args, e.class, e.message, Time.zone.now, sender_id: fetch_user&.uid)
     update_blocker_status(e)
     raise
   end
@@ -58,25 +58,19 @@ class ApiClient
 
   def update_blocker_status(e)
     if DirectMessageStatus.you_have_blocked?(e)
-      if (user = User.select(:id).find_by_token(@client.access_token, @client.access_token_secret))
-        CreateEgotterBlockerWorker.perform_async(user.uid)
-      end
+      CreateEgotterBlockerWorker.perform_async(fetch_user&.uid)
     end
   end
 
   def update_authorization_status(e)
     if TwitterApiStatus.unauthorized?(e)
-      if (user = User.select(:id).find_by_token(@client.access_token, @client.access_token_secret))
-        UpdateAuthorizedWorker.perform_async(user.id)
-      end
+      UpdateAuthorizedWorker.perform_async(fetch_user&.id)
     end
   end
 
   def update_lock_status(e)
     if TwitterApiStatus.temporarily_locked?(e)
-      if (user = User.select(:id).find_by_token(@client.access_token, @client.access_token_secret))
-        UpdateLockedWorker.perform_async(user.id)
-      end
+      UpdateLockedWorker.perform_async(fetch_user&.id)
     end
   end
 
@@ -90,6 +84,10 @@ class ApiClient
     if TwitterApiStatus.suspended?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
       CreateForbiddenUserWorker.perform_async(args[0], location: (caller[2][/`([^']*)'/, 1] rescue ''))
     end
+  end
+
+  def fetch_user
+    User.find_by_token(@client.access_token, @client.access_token_secret)
   end
 
   def twitter

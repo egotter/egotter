@@ -1,11 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe ApiClient, type: :model do
-  let(:client) { double('client') }
+  let(:user) { create(:user) }
+  let(:credential_token) { create(:credential_token, user_id: user.id) }
+  let(:client) { double('client', access_token: credential_token.token, access_token_secret: credential_token.secret) }
   let(:instance) { ApiClient.new(client) }
 
   describe '#create_direct_message_event' do
-    let(:client) { double('client') }
     let(:response) { {message_create: {message_data: {text: 'text'}}} }
     subject { instance.create_direct_message_event(1, 'text') }
     before { allow(instance).to receive(:twitter).and_return(client) }
@@ -63,12 +64,10 @@ RSpec.describe ApiClient, type: :model do
     subject { instance.update_blocker_status(error) }
 
     context 'token is invalid' do
-      let(:client) { double('client', access_token: 'at', access_token_secret: 'ats') }
       let(:user) { create(:user) }
       before do
         allow(DirectMessageStatus).to receive(:you_have_blocked?).with(error).and_return(true)
-        allow(User).to receive_message_chain(:select, :find_by_token).
-            with(:id).with(client.access_token, client.access_token_secret).and_return(user)
+        allow(User).to receive(:find_by_token).with(client.access_token, client.access_token_secret).and_return(user)
       end
       it do
         expect(CreateEgotterBlockerWorker).to receive(:perform_async).with(user.uid)
@@ -82,12 +81,10 @@ RSpec.describe ApiClient, type: :model do
     subject { instance.update_authorization_status(error) }
 
     context 'token is invalid' do
-      let(:client) { double('client', access_token: 'at', access_token_secret: 'ats') }
       let(:user) { create(:user) }
       before do
         allow(TwitterApiStatus).to receive(:unauthorized?).with(error).and_return(true)
-        allow(User).to receive_message_chain(:select, :find_by_token).
-            with(:id).with(client.access_token, client.access_token_secret).and_return(user)
+        allow(User).to receive(:find_by_token).with(client.access_token, client.access_token_secret).and_return(user)
       end
       it do
         expect(UpdateAuthorizedWorker).to receive(:perform_async).with(user.id)
@@ -101,12 +98,10 @@ RSpec.describe ApiClient, type: :model do
     subject { instance.update_lock_status(error) }
 
     context 'user is locked' do
-      let(:client) { double('client', access_token: 'at', access_token_secret: 'ats') }
       let(:user) { create(:user) }
       before do
         allow(TwitterApiStatus).to receive(:temporarily_locked?).with(error).and_return(true)
-        allow(User).to receive_message_chain(:select, :find_by_token).
-            with(:id).with(client.access_token, client.access_token_secret).and_return(user)
+        allow(User).to receive(:find_by_token).with(client.access_token, client.access_token_secret).and_return(user)
       end
       it do
         expect(UpdateLockedWorker).to receive(:perform_async).with(user.id)
