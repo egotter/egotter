@@ -107,7 +107,7 @@ class TwitterUserFetcher
           (e.cause && ServiceStatus.retryable_error?(e.cause))
         []
       else
-        raise
+        raise e
       end
     end
   end

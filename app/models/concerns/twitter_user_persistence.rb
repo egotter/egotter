@@ -13,19 +13,19 @@ module TwitterUserPersistence
   def perform_before_transaction!
     bm_start!
 
-    if copied_user_timeline.present?
+    if copied_user_timeline&.is_a?(Array)
       bm_record('InMemory::StatusTweet') do
         InMemory::StatusTweet.import_from(uid, copied_user_timeline)
       end
     end
 
-    if copied_favorite_tweets.present?
+    if copied_favorite_tweets&.is_a?(Array)
       bm_record('InMemory::FavoriteTweet') do
         InMemory::FavoriteTweet.import_from(uid, copied_favorite_tweets)
       end
     end
 
-    if copied_mention_tweets.present?
+    if copied_mention_tweets&.is_a?(Array)
       bm_record('InMemory::MentionTweet') do
         InMemory::MentionTweet.import_from(uid, copied_mention_tweets)
       end

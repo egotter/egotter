@@ -49,15 +49,15 @@ class PerformAfterCommitWorker
     S3::Followership.import_from!(id, uid, screen_name, follower_uids, async: true)
     S3::Profile.import_from!(id, uid, screen_name, profile, async: true)
 
-    if status_tweets.present?
+    if status_tweets&.is_a?(Array)
       S3::StatusTweet.import_from!(uid, screen_name, status_tweets)
     end
 
-    if favorite_tweets.present?
+    if favorite_tweets&.is_a?(Array)
       S3::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
     end
 
-    if mention_tweets.present?
+    if mention_tweets&.is_a?(Array)
       S3::MentionTweet.import_from!(uid, screen_name, mention_tweets)
     end
 

@@ -28,14 +28,14 @@ RSpec.describe TwitterUserPersistence do
   describe '#perform_before_transaction!' do
     subject { twitter_user.perform_before_transaction! }
     before do
-      twitter_user.copied_user_timeline = 'ut'
-      twitter_user.copied_favorite_tweets = 'ft'
-      twitter_user.copied_mention_tweets = 'mt'
+      twitter_user.copied_user_timeline = ['user_timeline']
+      twitter_user.copied_favorite_tweets = ['favorite_tweets']
+      twitter_user.copied_mention_tweets = ['mention_tweets']
     end
     it do
-      expect(InMemory::StatusTweet).to receive(:import_from).with(twitter_user.uid, 'ut')
-      expect(InMemory::FavoriteTweet).to receive(:import_from).with(twitter_user.uid, 'ft')
-      expect(InMemory::MentionTweet).to receive(:import_from).with(twitter_user.uid, 'mt')
+      expect(InMemory::StatusTweet).to receive(:import_from).with(twitter_user.uid, ['user_timeline'])
+      expect(InMemory::FavoriteTweet).to receive(:import_from).with(twitter_user.uid, ['favorite_tweets'])
+      expect(InMemory::MentionTweet).to receive(:import_from).with(twitter_user.uid, ['mention_tweets'])
       subject
     end
   end

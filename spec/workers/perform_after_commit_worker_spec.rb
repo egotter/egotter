@@ -10,9 +10,9 @@ RSpec.describe PerformAfterCommitWorker do
     let(:profile) { 'profile' }
     let(:friend_uids) { 'uids1' }
     let(:follower_uids) { 'uids2' }
-    let(:status_tweets) { 'tweet1' }
-    let(:favorite_tweets) { 'tweet1' }
-    let(:mention_tweets) { 'tweet1' }
+    let(:status_tweets) { ['status_tweets'] }
+    let(:favorite_tweets) { ['favorite_tweets'] }
+    let(:mention_tweets) { ['favorite_tweets'] }
     let(:data) do
       hash = {
           id: id,
