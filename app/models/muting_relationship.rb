@@ -26,34 +26,37 @@ class MutingRelationship < ApplicationRecord
 
     def collect_uids(user_id)
       client = User.find(user_id).api_client.twitter
+
+      uids = collect_with_cursor do |options|
+        client.muted_ids(options)
+      rescue => e
+        logger.warn "#{self}##{__method__}: #{e.inspect} user_id=#{user_id}"
+        nil
+      end
+
+      if uids.size != uids.uniq.size
+        logger.warn "#{self}##{__method__}: uids is not unique"
+        uids.uniq!
+      end
+
+      uids
+    end
+
+    def collect_with_cursor(&block)
       options = {count: 5000, cursor: -1}
-      call_limit = 12
-      call_count = 0
       collection = []
 
-      while true do
-        response = nil
-        begin
-          response = client.muted_ids(options)
-        rescue => e
-          logger.warn "#{self}##{__method__}: #{e.inspect} user_id=#{user_id}"
-        end
-
-        call_count += 1
+      12.times do
+        response = yield(options)
         break if response.nil?
 
         collection.concat(response.attrs[:ids])
 
-        if response.attrs[:next_cursor] == 0 || call_count >= call_limit
+        if response.attrs[:next_cursor] == 0
           break
         end
 
         options[:cursor] = response.attrs[:next_cursor]
-      end
-
-      if collection.size != collection.uniq.size
-        logger.warn "#{self}##{__method__}: uids is not unique"
-        collection.uniq!
       end
 
       collection
