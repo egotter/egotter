@@ -19,9 +19,6 @@ module InMemory
         data = client.read(uid)
         tweets = data ? parse_json(decompress(data), symbol_keys: false) : nil
         tweets ? new(tweets) : nil
-      rescue => e
-        Rails.logger.warn "#{self}##{__method__} failed #{e.inspect}"
-        nil
       end
 
       def delete_by(uid)
@@ -35,7 +32,7 @@ module InMemory
       private
 
       def client
-        @client ||= ::InMemory::Client.new(self, ::InMemory.redis_hostname)
+        ::InMemory::Client.new(self)
       end
     end
   end

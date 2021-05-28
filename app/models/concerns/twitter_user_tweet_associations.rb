@@ -18,21 +18,32 @@ module TwitterUserTweetAssociations
   private
 
   def fetch_tweets(memory_class, efs_class, s3_class)
-    wrapper = nil
-    start = Time.zone.now
+    data = nil
+    exceptions = []
 
-    wrapper = memory_class.find_by(uid) if InMemory.enabled? && InMemory.cache_alive?(created_at)
-    wrapper = efs_class.find_by(uid) if wrapper.nil? && Efs::Tweet.cache_alive?(created_at)
-    wrapper = s3_class.find_by(uid) if wrapper.nil?
+    begin
+      data = memory_class.find_by(uid) if InMemory.enabled? && InMemory.cache_alive?(created_at)
+    rescue => e
+      exceptions << e
+    end
 
-    time = "elapsed=#{sprintf("%.3f sec", Time.zone.now - created_at)} duration=#{sprintf("%.3f sec", Time.zone.now - start)}"
-    if wrapper.nil?
-      logger.info "#{__method__}: Failed twitter_user_id=#{id} uid=#{uid} #{time}"
-      logger.info caller.join("\n")
+    begin
+      data = efs_class.find_by(uid) if data.nil? && Efs::Tweet.cache_alive?(created_at)
+    rescue => e
+      exceptions << e
+    end
+
+    begin
+      data = s3_class.find_by(uid) if data.nil?
+    rescue => e
+      exceptions << e
+    end
+
+    if data.nil?
+      Rails.logger.error "Fetching tweets is failed. uid=#{uid} exceptions=#{exceptions.inspect}"
       []
     else
-      logger.info "#{__method__}: Found twitter_user_id=#{id} uid=#{uid} wrapper=#{wrapper.class} #{time}"
-      wrapper.tweets || []
+      data.tweets || []
     end
   end
 end

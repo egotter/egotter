@@ -31,9 +31,6 @@ module Efs
       def find_by(uid)
         obj = client.read(uid)
         obj ? new(decompress(obj)['tweets']) : nil
-      rescue => e
-        Rails.logger.warn "#{self}##{__method__} failed #{e.inspect}"
-        nil
       end
 
       def import_from!(uid, screen_name, tweets)

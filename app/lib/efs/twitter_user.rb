@@ -20,19 +20,11 @@ module Efs
     class << self
       def find_by(twitter_user_id)
         ApplicationRecord.benchmark("Benchmark Efs::TwitterUser.find_by twitter_user_id=#{twitter_user_id}", level: :info) do
-          begin
-            Timeout.timeout(5.seconds) do
-              obj = cache_client.read(cache_key(twitter_user_id))
-              obj ? new(parse_json(decompress(obj))) : nil
-            end
-          rescue Timeout::Error => e
-            Rails.logger.info { "#{self}##{__method__} timeout twitter_user_id=#{twitter_user_id}" }
-            nil
+          Timeout.timeout(5.seconds) do
+            obj = cache_client.read(cache_key(twitter_user_id))
+            obj ? new(parse_json(decompress(obj))) : nil
           end
         end
-      rescue => e
-        Rails.logger.info { "#{self}##{__method__} failed #{e.inspect} twitter_user_id=#{twitter_user_id}" }
-        nil
       end
 
       def delete_by(twitter_user_id)

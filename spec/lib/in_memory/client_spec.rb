@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe InMemory::Client do
   let(:redis) { double('redis') }
-  let(:instance) { described_class.new('klass', 'hostname') }
+  let(:instance) { described_class.new('klass') }
   let(:key) { 1 }
 
   before do

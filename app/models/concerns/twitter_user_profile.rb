@@ -114,10 +114,31 @@ module TwitterUserProfile
   end
 
   def fetch_profile
-    result = nil
-    result = InMemory::TwitterUser.find_by(id)&.profile if InMemory.enabled? && InMemory.cache_alive?(created_at) # Hash
-    result = Efs::TwitterUser.find_by(id)&.profile if result.blank? && Efs.enabled? # Hash
-    result = S3::Profile.find_by(twitter_user_id: id)&.fetch(:user_info, nil) if result.blank? # String
-    result
+    data = nil
+    exceptions = []
+
+    begin
+      data = InMemory::TwitterUser.find_by(id)&.profile if InMemory.enabled? && InMemory.cache_alive?(created_at) # Hash
+    rescue => e
+      exceptions << e
+    end
+
+    begin
+      data = Efs::TwitterUser.find_by(id)&.profile if data.blank? && Efs.enabled? # Hash
+    rescue => e
+      exceptions << e
+    end
+
+    begin
+      data = S3::Profile.find_by(twitter_user_id: id)&.fetch(:user_info, nil) if data.blank? # String
+    rescue => e
+      exceptions << e
+    end
+
+    if data.blank?
+      Rails.logger.error "Fetching profile is failed. twitter_user_id=#{id} exceptions=#{exceptions.inspect}"
+    end
+
+    data
   end
 end

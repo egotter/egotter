@@ -18,9 +18,6 @@ module InMemory
       def find_by(twitter_user_id)
         data = client.read(twitter_user_id)
         data ? new(parse_json(decompress(data))) : nil
-      rescue => e
-        Rails.logger.info { "#{self}##{__method__} failed #{e.inspect} twitter_user_id=#{twitter_user_id}" }
-        nil
       end
 
       def delete_by(twitter_user_id)
@@ -46,7 +43,7 @@ module InMemory
       private
 
       def client
-        @client ||= ::InMemory::Client.new(self, ::InMemory.redis_hostname)
+        ::InMemory::Client.new(self)
       end
     end
   end

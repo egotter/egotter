@@ -1,21 +1,31 @@
 module InMemory
   class Client
-    def initialize(klass, hostname)
+    def initialize(klass)
       @klass = klass
       @key_prefix = "#{Rails.env}:#{self.class}:#{@klass}"
-      @redis = Redis.client(hostname)
+      @redis = self.class.redis
+      @retries = 0
     end
 
     def read(key)
       @redis.get(db_key(key))
+    rescue => e
+      handle_error(e)
+      retry
     end
 
     def write(key, item)
       @redis.setex(db_key(key), ::InMemory.ttl_with_random, item)
+    rescue => e
+      handle_error(e)
+      retry
     end
 
     def delete(key)
       @redis.del(db_key(key))
+    rescue => e
+      handle_error(e)
+      retry
     end
 
     private
@@ -24,37 +34,19 @@ module InMemory
       "#{@key_prefix}:#{key}"
     end
 
-    module RescueAllRedisErrors
-      %i(
-        read
-        write
-        delete
-      ).each do |method_name|
-        define_method(method_name) do |*args, &blk|
-          super(*args, &blk)
-        rescue Redis::BaseError => e
-          Rails.logger.warn "Rescue all errors klass=#{@klass} method=#{method_name} exception=#{e.inspect} args=#{args.inspect.truncate(100)}"
-          Rails.logger.info e.backtrace.join("\n")
-          nil
-        end
+    def handle_error(e)
+      # Redis::TimeoutError
+      if e.class.to_s.downcase.include?('timeout') && (@retries += 1) <= 3
+        nil
+      else
+        raise e
       end
     end
-    prepend RescueAllRedisErrors
 
-    module Instrumentation
-      %i(
-        read
-        write
-        delete
-      ).each do |method_name|
-        define_method(method_name) do |*args, &blk|
-          message = "#{@klass} #{method_name} by #{args[0]}"
-          ApplicationRecord.benchmark(message, level: :info) do
-            method(method_name).super_method.call(*args, &blk)
-          end
-        end
+    class << self
+      def redis
+        @redis ||= Redis.client(::InMemory.redis_hostname)
       end
     end
-    prepend Instrumentation
   end
 end
