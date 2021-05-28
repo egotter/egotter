@@ -40,7 +40,7 @@ module TwitterUserTweetAssociations
     end
 
     if data.nil?
-      Rails.logger.warn "Fetching tweets is failed. method=#{method_name} uid=#{uid} exceptions=#{exceptions.inspect}"
+      Rails.logger.info "Fetching tweets is failed. method=#{method_name} uid=#{uid} exceptions=#{exceptions.inspect}"
       Rails.logger.info caller.join("\n")
       []
     else
