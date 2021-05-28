@@ -16,7 +16,7 @@ RSpec.describe DeleteTweetsTask, type: :model do
     context 'The request has already been finished' do
       before { allow(request).to receive(:finished?).and_return(true) }
       it do
-        expect(request).to receive(:update).with(error_class: described_class::AlreadyFinished)
+        expect(request).to receive(:update).with(error_message: instance_of(String))
         expect(task).not_to receive(:perform_request!)
         subject
       end
@@ -44,7 +44,7 @@ RSpec.describe DeleteTweetsTask, type: :model do
       before { allow(request).to receive(:perform!).and_raise(error) }
       it do
         expect(DeleteTweetsWorker).to receive(:perform_in).with(1, request.id, {})
-        expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
+        expect(request).to receive(:update).with(error_message: instance_of(String))
         subject
       end
     end
@@ -54,7 +54,7 @@ RSpec.describe DeleteTweetsTask, type: :model do
       before { allow(request).to receive(:perform!).and_raise(error) }
       it do
         expect(request).to receive(:send_error_message)
-        expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
+        expect(request).to receive(:update).with(error_message: instance_of(String))
         expect { subject }.to raise_error(error)
       end
     end

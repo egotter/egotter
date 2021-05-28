@@ -7,7 +7,7 @@ class DeleteTweetsTask
 
   def start!
     if @request.finished?
-      @request.update(error_class: AlreadyFinished)
+      @request.update(error_message: 'This request is already finished.')
       return
     end
 
@@ -23,7 +23,9 @@ class DeleteTweetsTask
     request.finished!
     SendDeleteTweetsFinishedWorker.perform_async(request.id)
   rescue DeleteTweetsRequest::InvalidToken => e
-    Rails.logger.info "#{e.inspect} request=#{request.inspect}"
+    # Do nothing
+  rescue DeleteTweetsRequest::TemporarilyLocked => e
+    # Do nothing
   rescue DeleteTweetsRequest::RetryableError => e
     DeleteTweetsWorker.perform_in(e.retry_in, request.id, @options)
   rescue => e
@@ -31,9 +33,7 @@ class DeleteTweetsTask
     raise
   ensure
     if e && e.class != DeleteTweetsRequest::TweetsNotFound
-      request.update(error_class: e.class, error_message: e.message)
+      request.update(error_message: e.inspect)
     end
   end
-
-  class AlreadyFinished < StandardError; end
 end

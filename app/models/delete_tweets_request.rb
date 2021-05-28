@@ -142,6 +142,8 @@ class DeleteTweetsRequest < ApplicationRecord
       raise TooManyRequests.new(last_method, retry_in: e.rate_limit.reset_in.to_i + 1)
     elsif TwitterApiStatus.unauthorized?(e)
       raise InvalidToken.new(e.message)
+    elsif TwitterApiStatus.temporarily_locked?(e)
+      raise TemporarilyLocked.new(e.message)
     elsif ServiceStatus.retryable_error?(e)
       if !@retries.nil? && @retries <= 0
         raise RetryExhausted.new("#{e.class} #{e.message}")
@@ -222,6 +224,8 @@ class DeleteTweetsRequest < ApplicationRecord
   class TweetsNotFound < Error; end
 
   class TooManyRequests < RetryableError; end
+
+  class TemporarilyLocked < Error; end
 
   class Continue < RetryableError; end
 
