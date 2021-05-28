@@ -12,7 +12,7 @@ class ApiClient
     resp = twitter.create_direct_message_event(recipient_id, message).to_h
     DirectMessage.new(event: resp)
   rescue => e
-    CreateDirectMessageErrorLogWorker.perform_async(args, e.class, e.message, Time.zone.now, sender_id: recipient_id)
+    CreateDirectMessageErrorLogWorker.perform_async([recipient_id, message], e.class, e.message, Time.zone.now, sender_id: recipient_id)
     update_blocker_status(e)
     raise
   end
