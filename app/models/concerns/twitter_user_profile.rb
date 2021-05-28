@@ -136,7 +136,8 @@ module TwitterUserProfile
     end
 
     if data.blank?
-      Rails.logger.error "Fetching profile is failed. twitter_user_id=#{id} exceptions=#{exceptions.inspect}"
+      Rails.logger.warn "Fetching profile is failed. twitter_user_id=#{id} exceptions=#{exceptions.inspect}"
+      Rails.logger.info caller.join("\n")
     end
 
     data
