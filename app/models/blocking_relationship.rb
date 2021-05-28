@@ -36,6 +36,7 @@ class BlockingRelationship < ApplicationRecord
         begin
           response = client.blocked_ids(options)
         rescue => e
+          logger.warn "#{self}##{__method__}: #{e.inspect} user_id=#{user_id}"
         end
 
         call_count += 1
@@ -51,7 +52,7 @@ class BlockingRelationship < ApplicationRecord
       end
 
       if collection.size != collection.uniq.size
-        logger.warn "#{__method__}: uids is not unique"
+        logger.warn "#{self}##{__method__}: uids is not unique"
         collection.uniq!
       end
 
