@@ -15,7 +15,7 @@ module Api
         )
 
         DeleteFavoritesWorker.perform_async(request.id, user_id: current_user.id)
-        SendDeleteFavoritesStartedWorker.perform_async(request.id, user_id: current_user.id)
+        # SendDeleteFavoritesStartedWorker.perform_async(request.id, user_id: current_user.id)
         SendDeleteFavoritesNotFinishedWorker.perform_in(30.minutes, request.id, user_id: current_user.id)
 
         track_event('Delete favorites', request_id: request.id)

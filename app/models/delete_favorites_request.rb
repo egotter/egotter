@@ -189,6 +189,7 @@ class DeleteFavoritesRequest < ApplicationRecord
   def to_message
     {
         request_id: id,
+        reservations_count: reservations_count,
         destroy_count: destroy_count,
         user_id: user.id,
         screen_name: user.screen_name,
