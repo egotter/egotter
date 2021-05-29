@@ -59,7 +59,7 @@ class FriendsGroupBuilder
     def users(uid, limit:)
       TwitterUser.creation_completed.
           where(uid: uid).
-          select(:id, :uid, :created_at).
+          select(:id, :uid, :screen_name, :created_at).
           order(created_at: :desc).
           limit(limit).
           reverse
