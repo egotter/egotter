@@ -3,7 +3,13 @@ class DeleteTweetsWorker
   include WorkerErrorHandler
   sidekiq_options queue: 'deleting_high', retry: 0, backtrace: false
 
-  # Don't check the uniqueness of the job since this worker processes the same request multiple times.
+  def unique_key(request_id, options = {})
+    request_id
+  end
+
+  def unique_in
+    3.minutes
+  end
 
   # options:
   #   user_id

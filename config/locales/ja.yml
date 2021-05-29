@@ -1571,8 +1571,8 @@ ja:
       description: '「削除の履歴」では、これまでに実行した削除の履歴を見ることができます。'
       date: '日付'
       type: '種類'
-      reservations: '削除の指定'
-      deletions: '削除完了'
+      reservations: '予約'
+      deletions: '完了'
     uploader:
       debug_attrs_html:
         <div>
@@ -2507,6 +2507,7 @@ ja:
       block_report_short: "%-m月%-d日 %-H時%-M分"
       mute_report_short: "%-m月%-d日 %-H時%-M分"
       periodic_report_short: "%-m月%-d日 %-H時%-M分"
+      delete_tweets_short: "%-H時%-M分"
       delete_tweets_long: "%-m月%-d日 %-H時%-M分"
       deletable_tweets_long: "%-m月%-d日 %-H時%-M分"
       order_long: "%-m月%-d日 %-H時%-M分"

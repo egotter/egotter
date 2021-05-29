@@ -20,16 +20,16 @@ module Api
       def to_json(requests)
         requests.map do |req|
           {
-              type: request_name(req.class),
+              type: request_type(req.class),
               reservations_count: req.reservations_count,
               deletions_count: req.respond_to?(:deletions_count) ? req.deletions_count : req.destroy_count,
-              created_at: l(req.created_at.in_time_zone('Tokyo'), format: :delete_tweets_long),
+              created_at: request_time(req.created_at),
 
           }
         end
       end
 
-      def request_name(klass)
+      def request_type(klass)
         if klass == DeleteTweetsRequest
           t('delete_tweets.free.title')
         elsif klass == DeleteTweetsBySearchRequest
@@ -38,6 +38,15 @@ module Api
           t('delete_tweets.premium.title')
         else
           t('delete_tweets.free.title')
+        end
+      end
+
+      def request_time(time)
+        time = time.in_time_zone('Tokyo')
+        if time.today?
+          l(time, format: :delete_tweets_short)
+        else
+          l(time, format: :delete_tweets_long)
         end
       end
     end

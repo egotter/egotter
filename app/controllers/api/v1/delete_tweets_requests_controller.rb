@@ -15,7 +15,7 @@ module Api
         )
 
         DeleteTweetsWorker.perform_async(request.id, user_id: current_user.id)
-        SendDeleteTweetsStartedWorker.perform_async(request.id, user_id: current_user.id)
+        # SendDeleteTweetsStartedWorker.perform_async(request.id, user_id: current_user.id)
         SendDeleteTweetsNotFinishedWorker.perform_in(30.minutes, request.id, user_id: current_user.id)
 
         track_event('Delete tweets', request_id: request.id)
