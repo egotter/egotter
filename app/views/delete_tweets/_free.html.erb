@@ -1,5 +1,9 @@
 <div class="my-5"><%= t('.description', user: current_user.screen_name, count: max_count) %></div>
 
+<%= alert_box class: 'my-5' do %>
+  <%= t('.notice_html', count: DeleteTweetsRequest::DESTROY_LIMIT) %>
+<% end %>
+
 <div class="card my-3">
   <div class="card-body">
     <div class="card-text">
