@@ -44,7 +44,6 @@ module TwitterUserUtils
     CREATE_RECORD_INTERVAL.seconds.ago < created_at
   end
 
-
   class_methods do
     def too_short_create_interval?(uid)
       exists?(uid: uid, created_at: CREATE_RECORD_INTERVAL.ago..Time.zone.now)
@@ -77,21 +76,34 @@ module TwitterUserUtils
   end
 
   def fetch_uids(method_name, memory_class, efs_class, s3_class)
-    wrapper = nil
-    start = Time.zone.now
+    data = nil
+    exceptions = []
 
-    wrapper = memory_class.find_by(id) if InMemory.enabled? && InMemory.cache_alive?(created_at)
-    wrapper = efs_class.find_by(id) if wrapper.nil? && Efs.enabled?
-    wrapper = s3_class.find_by(twitter_user_id: id) if wrapper.nil?
+    begin
+      data = memory_class.find_by(id) if InMemory.enabled? && InMemory.cache_alive?(created_at)
+    rescue => e
+      exceptions << e
+    end
 
-    time = "elapsed=#{sprintf("%.3f sec", Time.zone.now - created_at)} duration=#{sprintf("%.3f sec", Time.zone.now - start)}"
-    if wrapper.nil?
-      logger.warn "#{__method__}: Failed twitter_user_id=#{id} uid=#{uid} method=#{method_name} #{time}"
-      logger.info caller.join("\n")
+    begin
+      data = efs_class.find_by(id) if data.nil? && Efs.enabled?
+    rescue => e
+      exceptions << e
+    end
+
+    begin
+      data = s3_class.find_by(twitter_user_id: id) if data.nil?
+    rescue => e
+      exceptions << e
+    end
+
+    if data.nil?
+      Rails.logger.info "Fetching uids is failed. method=#{method_name} id=#{id} screen_name=#{screen_name} created_at=#{created_at.to_s(:db)} exceptions=#{exceptions.inspect}"
+      Rails.logger.info caller.join("\n")
+      # TODO Import collect uids or delete this record
       []
     else
-      logger.info "#{__method__}: Found twitter_user_id=#{id} uid=#{uid} method=#{method_name} wrapper=#{wrapper.class} #{time}"
-      wrapper.send(method_name) || []
+      data.send(method_name) || []
     end
   end
 end
