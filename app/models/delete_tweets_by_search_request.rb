@@ -38,32 +38,40 @@ class DeleteTweetsBySearchRequest < ApplicationRecord
   def finished!
     if finished_at.nil?
       update!(finished_at: Time.zone.now)
-      post_tweet! if post_tweet
-      send_dm! if send_dm
+      post_tweet!(true) if post_tweet
+      send_dm!(true) if send_dm
     end
   end
 
-  def post_tweet!
-    message = DeleteTweetsReport.finished_tweet(user, self).message
-    user.api_client.twitter.update(message)
-    SendMessageToSlackWorker.perform_async(:delete_tweets, "`Tweet` tweet=#{message} #{to_message}")
+  def post_tweet!(delay = false)
+    if delay
+      CreateTweetByDeleteTweetsBySearchRequestWorker.perform_in(1.minutes, id)
+    else
+      message = DeleteTweetsReport.finished_tweet(user, self).message
+      user.api_client.twitter.update(message)
+      SendMessageToSlackWorker.perform_async(:delete_tweets, "`Tweet` tweet=#{message} #{to_message}")
+    end
   rescue => e
     raise FinishedTweetNotSent.new("exception=#{e.inspect} tweet=#{message} #{to_message}")
   end
 
-  def send_dm!
-    report = DeleteTweetsReport.finished_message_from_user(user)
-    report.deliver!
+  def send_dm!(delay = false)
+    if delay
+      CreateDirectMessageByDeleteTweetsBySearchRequestWorker.perform_in(1.minutes, id)
+    else
+      report = DeleteTweetsReport.finished_message_from_user(user)
+      report.deliver!
 
-    report = DeleteTweetsReport.finished_message(user, self)
-    report.deliver!
+      report = DeleteTweetsReport.finished_message(user, self)
+      report.deliver!
+    end
   rescue => e
     unless ignorable_direct_message_error?(e)
       raise FinishedDirectMessageNotSent.new("#{e.inspect} sender_uid=#{report.sender.uid}")
     end
   end
 
-  def ignorable_direct_message_error?
+  def ignorable_direct_message_error?(e)
     DirectMessageStatus.not_following_you?(e) |
         DirectMessageStatus.cannot_send_messages?(e) ||
         DirectMessageStatus.you_have_blocked?(e)
