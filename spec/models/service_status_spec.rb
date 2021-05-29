@@ -41,6 +41,8 @@ RSpec.describe ServiceStatus, type: :model do
       expect(described_class).to receive(:service_unavailable?).with(ex)
       expect(described_class).to receive(:execution_expired?).with(ex)
       expect(described_class).to receive(:http_timeout?).with(ex)
+      expect(described_class).to receive(:could_not_parse_data?).with(ex)
+      expect(described_class).to receive(:unknown_mine_type?).with(ex)
       subject
     end
   end

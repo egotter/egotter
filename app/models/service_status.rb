@@ -23,12 +23,22 @@ class ServiceStatus
       ex && ex.class.to_s.downcase.include?('timeout')
     end
 
+    def could_not_parse_data?(ex)
+      ex && ex.class == HTTP::ConnectionError && ex.message == 'error reading from socket: Could not parse data'
+    end
+
+    def unknown_mine_type?(ex)
+      ex && ex.class == HTTP::Error && ex.message == 'Unknown MIME type: text/plain'
+    end
+
     def retryable_error?(ex)
       connection_reset_by_peer?(ex) ||
           internal_server_error?(ex) ||
           service_unavailable?(ex) ||
           execution_expired?(ex) ||
-          http_timeout?(ex)
+          http_timeout?(ex) ||
+          could_not_parse_data?(ex) ||
+          unknown_mine_type?(ex)
     end
   end
 end
