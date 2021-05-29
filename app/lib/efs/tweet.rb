@@ -15,6 +15,9 @@ module Efs
       end
     end
 
+    class TimeoutError < Timeout::Error
+    end
+
     class << self
       def key_prefix
         'not-specified'
@@ -29,8 +32,14 @@ module Efs
       end
 
       def find_by(uid)
-        obj = client.read(uid)
-        obj ? new(decompress(obj)['tweets']) : nil
+        begin
+          Timeout.timeout(3.seconds) do
+            obj = client.read(uid)
+            obj ? new(decompress(obj)['tweets']) : nil
+          end
+        rescue Timeout::Error => e
+          raise TimeoutError.new(e.message)
+        end
       end
 
       def import_from!(uid, screen_name, tweets)

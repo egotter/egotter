@@ -17,12 +17,19 @@ module Efs
       @follower_uids = attrs[:follower_uids]
     end
 
+    class TimeoutError < Timeout::Error
+    end
+
     class << self
       def find_by(twitter_user_id)
         ApplicationRecord.benchmark("Benchmark Efs::TwitterUser.find_by twitter_user_id=#{twitter_user_id}", level: :info) do
-          Timeout.timeout(5.seconds) do
-            obj = cache_client.read(cache_key(twitter_user_id))
-            obj ? new(parse_json(decompress(obj))) : nil
+          begin
+            Timeout.timeout(3.seconds) do
+              obj = cache_client.read(cache_key(twitter_user_id))
+              obj ? new(parse_json(decompress(obj))) : nil
+            end
+          rescue Timeout::Error => e
+            raise TimeoutError.new(e.message)
           end
         end
       end

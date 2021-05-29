@@ -35,7 +35,7 @@ module InMemory
     end
 
     def handle_error(e)
-      # Redis::TimeoutError
+      # Ignore Redis::TimeoutError
       if e.class.to_s.downcase.include?('timeout') && (@retries += 1) <= 3
         nil
       else
