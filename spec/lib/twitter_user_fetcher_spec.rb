@@ -4,7 +4,7 @@ RSpec.describe TwitterUserFetcher do
   let(:user) { create(:user) }
   let(:uid) { user.uid }
   let(:screen_name) { user.screen_name }
-  let(:client) { described_class::ClientWrapper.new(nil) }
+  let(:client) { double('client') }
   let(:fetch_friends) { true }
   let(:search_for_yourself) { true }
   let(:reporting) { false }
@@ -77,13 +77,14 @@ RSpec.describe TwitterUserFetcher do
 end
 
 RSpec.describe TwitterUserFetcher::ClientWrapper do
-  let(:client) { double('client') }
+  let(:twitter) { double('twitter') }
+  let(:client) { double('client', twitter: twitter) }
   let(:instance) { described_class.new(client) }
 
   describe 'friend_ids' do
     subject { instance.friend_ids(1) }
     it do
-      expect(client).to receive(:friend_ids).with(1)
+      expect(twitter).to receive(:friend_ids).with(1, count: 5000, cursor: -1)
       subject
     end
   end
@@ -91,7 +92,7 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
   describe 'follower_ids' do
     subject { instance.follower_ids(1) }
     it do
-      expect(client).to receive(:follower_ids).with(1)
+      expect(twitter).to receive(:follower_ids).with(1, count: 5000, cursor: -1)
       subject
     end
   end

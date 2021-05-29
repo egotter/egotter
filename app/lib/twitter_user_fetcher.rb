@@ -67,14 +67,19 @@ class TwitterUserFetcher
   class ClientWrapper
     def initialize(client)
       @client = client
+      @ids_client = client.twitter
     end
 
     def friend_ids(uid)
-      @client.friend_ids(uid)
+      collect_with_max_id do |options|
+        @ids_client.friend_ids(uid, options)
+      end
     end
 
     def follower_ids(uid)
-      @client.follower_ids(uid)
+      collect_with_max_id do |options|
+        @ids_client.follower_ids(uid, options)
+      end
     end
 
     def user_timeline(uid)
@@ -99,6 +104,40 @@ class TwitterUserFetcher
       @client.favorites(uid)
     rescue => e
       handle_exception(e)
+    end
+
+    private
+
+    def collect_with_max_id(&block)
+      options = {count: 5000, cursor: -1}
+      collection = []
+      calls_count = 0
+
+      50.times do
+        begin
+          raise Twitter::Error::TooManyRequests if (calls_count += 1) > 5
+          response = yield(options)
+        rescue => e
+          if TwitterApiStatus.too_many_requests?(e)
+            @ids_client = Bot.api_client.twitter
+            calls_count = 0
+            Rails.logger.info 'TwitterUserFetcher::ClientWrapper: Client is reloaded.'
+            retry
+          else
+            raise
+          end
+        end
+        break if response.nil?
+
+        attrs = response.attrs
+        collection.concat(attrs[:ids])
+
+        break if attrs[:next_cursor] == 0
+
+        options[:cursor] = attrs[:next_cursor]
+      end
+
+      collection
     end
 
     def handle_exception(e)
