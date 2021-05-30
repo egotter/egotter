@@ -9,7 +9,7 @@ class SendSentMessageWorker
     return if static_message?(options['text'])
     send_message_to_slack(recipient_uid, options['text'])
   rescue => e
-    logger.warn "Sending a message to slack is failed #{e.inspect}"
+    logger.warn "Sending a message to slack failed #{e.inspect}"
   end
 
   def static_message?(text)

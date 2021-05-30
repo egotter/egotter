@@ -40,7 +40,7 @@ module TwitterUserTweetAssociations
     end
 
     if data.nil?
-      Rails.logger.info "Fetching tweets is failed. method=#{method_name} id=#{id} screen_name=#{screen_name} created_at=#{created_at.to_s(:db)} exceptions=#{exceptions.inspect}"
+      Rails.logger.info "Fetching tweets failed. method=#{method_name} id=#{id} screen_name=#{screen_name} created_at=#{created_at.to_s(:db)} exceptions=#{exceptions.inspect}"
       Rails.logger.info caller.join("\n")
       if exceptions.empty?
         ImportEmptyTweetsWorker.perform_async(s3_class, uid, screen_name)

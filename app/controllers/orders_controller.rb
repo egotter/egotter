@@ -91,12 +91,12 @@ class OrdersController < ApplicationController
 
     if (order = Order.order(created_at: :desc).find_by(customer_id: customer_id))
       order.charge_succeeded!
-      send_message("`#{Rails.env}:charge_succeeded` success user_id=#{order.user_id} order_id=#{order.id}")
+      send_charge_succeeded_message("Success user_id=#{order.user_id} order_id=#{order.id}")
     else
-      send_message("`#{Rails.env}:charge_succeeded` order not found customer_id=#{customer_id}")
+      send_charge_succeeded_message("Order not found customer_id=#{customer_id}")
     end
   rescue => e
-    send_message("`#{Rails.env}:charge_succeeded` exception=#{e.inspect}")
+    send_charge_succeeded_message("exception=#{e.inspect}")
     raise
   end
 
@@ -106,12 +106,12 @@ class OrdersController < ApplicationController
     if (order = Order.order(created_at: :desc).find_by(customer_id: customer_id))
       order.charge_failed!
       order.cancel!
-      send_message("`#{Rails.env}:charge_failed` success user_id=#{order.user_id} order_id=#{order.id}")
+      send_charge_failed_message("Success user_id=#{order.user_id} order_id=#{order.id}")
     else
-      send_message("`#{Rails.env}:charge_failed` order not found customer_id=#{customer_id}")
+      send_charge_failed_message("Order not found customer_id=#{customer_id}")
     end
   rescue => e
-    send_message("`#{Rails.env}:charge_failed` exception=#{e.inspect}")
+    send_charge_failed_message("exception=#{e.inspect}")
     raise
   end
 
@@ -127,6 +127,18 @@ class OrdersController < ApplicationController
     SendMessageToSlackWorker.perform_async(:orders, message)
   rescue => e
     logger.warn "#{controller_name}##{action_name}: #send_message is failed exception=#{e.inspect} caller=#{caller[0][/`([^']*)'/, 1] rescue ''} message=#{message}"
+  end
+
+  def send_charge_succeeded_message(message)
+    SendMessageToSlackWorker.perform_async(:orders_charge_succeeded, "`#{Rails.env}:charge_succeeded` #{message}")
+  rescue => e
+    logger.warn "#send_charge_succeeded_message failed exception=#{e.inspect} message=#{message}"
+  end
+
+  def send_charge_failed_message(message)
+    SendMessageToSlackWorker.perform_async(:orders_charge_failed, "`#{Rails.env}:charge_failed` #{message}")
+  rescue => e
+    logger.warn "#send_charge_failed_message failed exception=#{e.inspect} message=#{message}"
   end
 
   def validate_stripe_session_id

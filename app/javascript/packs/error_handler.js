@@ -40,7 +40,7 @@ class ErrorHandler {
         console.warn('ga is not defined', eventName, eventParams);
       }
     } catch (e) {
-      console.error('Sending JS Exception to GA is failed', e);
+      console.error('Sending JS Exception to GA failed', e);
     }
   }
 
@@ -63,7 +63,7 @@ class ErrorHandler {
           console.warn('ahoy is not defined', eventName, eventParams);
         }
       } catch (e) {
-        console.error('Sending JS Exception to ahoy is failed', e);
+        console.error('Sending JS Exception to ahoy failed', e);
       }
     }
   }
