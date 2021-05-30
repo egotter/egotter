@@ -190,6 +190,7 @@ class CreateTwitterUserRequest < ApplicationRecord
       raise TooManyRequests.new("user_id=#{user_id} api_name=#{@fetcher&.api_name}")
     end
 
+    logger.info "#{self.class}##{__method__}: error_class=#{e.class} error_message=#{e.message}"
     raise Unknown.new(e.inspect)
   end
 

@@ -30,7 +30,9 @@ class MutingRelationship < ApplicationRecord
       uids = collect_with_cursor do |options|
         client.muted_ids(options)
       rescue => e
-        logger.warn "#{self}##{__method__}: #{e.inspect} user_id=#{user_id}"
+        unless TwitterApiStatus.invalid_or_expired_token?(e) || TwitterApiStatus.temporarily_locked?(e)
+          logger.warn "#{self}##{__method__}: #{e.inspect} user_id=#{user_id}"
+        end
         nil
       end
 
