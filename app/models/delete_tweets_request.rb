@@ -171,9 +171,12 @@ class DeleteTweetsRequest < ApplicationRecord
     report = DeleteTweetsReport.finished_message(user, self)
     report.deliver!
   rescue => e
-    if !DirectMessageStatus.not_following_you?(e) &&
-        !DirectMessageStatus.cannot_send_messages?(e) &&
-        !DirectMessageStatus.you_have_blocked?(e)
+    if DirectMessageStatus.not_following_you?(e) ||
+        DirectMessageStatus.cannot_send_messages?(e) ||
+        DirectMessageStatus.you_have_blocked?(e) ||
+        TwitterApiStatus.temporarily_locked?(e)
+      # Do nothing
+    else
       raise FinishedMessageNotSent.new("#{e.inspect} sender_uid=#{report.sender.uid}")
     end
   end
