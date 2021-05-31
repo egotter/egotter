@@ -67,8 +67,7 @@ def parse_params
 end
 
 def git_tag?(params)
-  !params['without-tag'] &&
-      !params['list'] && !(params['launch'] && params['role'] == 'plain') && !(params['terminate'] && params['role'] == 'plain')
+  !params['without-tag'] && !params['list'] && params['role'] != 'plain'
 end
 
 def main(params)
@@ -77,13 +76,13 @@ def main(params)
     return
   end
 
-  Deploy.logger.info "deploy started params=#{params.inspect}" unless params['list']
+  Deploy.logger.info "Deploy started params=#{params.compact.inspect}" unless params['list']
   task = Tasks::TaskBuilder.build(params)
   task.run
-  Deploy.logger.info "deploy finished params=#{params.inspect}" unless params['list']
+  Deploy.logger.info "Deploy finished params=#{params.compact.inspect}" unless params['list']
 
   if git_tag?(params)
-    system("git tag #{task.action}-#{params['role']}-#{Time.now.strftime("%Y%m%d%H%M%S")}")
+    system("git tag #{task.action}-#{params['role']}-#{Time.now.strftime("%Y-%m-%d_%H:%M:%S")}")
     system('git push origin --tags')
   end
 end

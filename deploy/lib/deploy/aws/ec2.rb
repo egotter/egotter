@@ -23,14 +23,14 @@ module Deploy
         instance.volumes.first.create_tags(tags: [{key: 'App', value: 'egotter'}, {key: 'Name', value: name}])
         instance.id
       rescue ::Aws::EC2::Errors::InvalidParameterCombination, ::Aws::EC2::Errors::InvalidParameterValue => e
-        red "#{e.inspect} values=#{launch_params.inspect}"
-        exit
+        red "Invalid params values=#{launch_params.inspect}"
+        raise
       rescue Interrupt, StandardError => e
         red "#{e.class} is raised and terminates already started instance."
         if defined?(instance) && instance
           terminate_instance(instance.id)
         end
-        exit
+        raise
       end
 
       def terminate_instance(id)
@@ -78,8 +78,7 @@ module Deploy
           end
 
           if n == max_retries - 1
-            red 'test_ssh_connection is failed'
-            exit
+            raise 'Test connection failed'
           end
         end
       end
@@ -91,8 +90,7 @@ module Deploy
           end
         end
       rescue ::Aws::Waiters::Errors::WaiterFailed => e
-        red "failed waiting for #{state}: #{e.message}"
-        exit
+        raise "Waiting for #{state} failed message=#{e.message}"
       end
     end
   end
