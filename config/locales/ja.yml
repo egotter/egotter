@@ -1447,6 +1447,10 @@ ja:
     too_many_searches:
       message1: '現在のプランで検索できる上限に達しました。%{count}回/日'
       message2: 'もっとたくさん検索することもできます。お好きな方法をお選びください。'
+    too_many_friends:
+      message_html: |
+        <p>検索したユーザーはフォロー・フォロワーがとても多いため、検索できる回数が制限されています。</p>
+        1時間ほど経ってから再度検索してみてください。
     twitter_error:
       message_html: 'Twitterの一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_not_found:

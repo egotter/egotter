@@ -10,6 +10,7 @@ class TwitterUsersController < ApplicationController
   before_action { !@self_search && !protected_search?(@twitter_user) }
   before_action { !@self_search && !blocked_search?(@twitter_user) }
   before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
+  before_action { too_many_friends?(@twitter_user) }
 
   # Polling access of waiting
   # Polling access of background-update

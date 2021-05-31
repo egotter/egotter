@@ -1,0 +1,5 @@
+<p><%= t('.message_html') %></p>
+
+<%= render(partial: 'profiles/profile_section', locals: {user: @user}) if @user %>
+
+<%= render partial: 'ad_section', locals: {screen_name: @screen_name} %>

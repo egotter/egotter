@@ -20,6 +20,7 @@ RSpec.describe SearchesController, type: :controller do
       expect(controller).to receive(:blocked_search?).with(twitter_user)
       expect(controller).to receive(:too_many_searches?).with(twitter_user)
       expect(controller).to receive(:too_many_requests?).with(twitter_user)
+      expect(controller).to receive(:too_many_friends?).with(twitter_user)
       subject
     end
 
@@ -42,6 +43,7 @@ RSpec.describe SearchesController, type: :controller do
         expect(controller).not_to receive(:blocked_search?)
         expect(controller).to receive(:too_many_searches?).with(twitter_user)
         expect(controller).to receive(:too_many_requests?).with(twitter_user)
+        expect(controller).to receive(:too_many_friends?).with(twitter_user)
         subject
       end
     end

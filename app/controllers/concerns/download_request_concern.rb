@@ -19,6 +19,7 @@ module DownloadRequestConcern
     before_action(only: :download) { !@self_search && !blocked_search?(@twitter_user) }
     before_action(only: :download) { twitter_user_persisted?(@twitter_user.uid) }
     before_action(only: :download) { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) } # Call after #twitter_user_persisted?
+    before_action(only: :download) { too_many_friends?(@twitter_user) }
   end
 
   private

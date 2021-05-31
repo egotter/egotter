@@ -323,6 +323,21 @@ module ValidationConcern
     true
   end
 
+  def too_many_friends?(twitter_user)
+    return false if from_crawler?
+    return false if current_search_histories.any? { |history| history.uid == twitter_user.uid }
+    return false unless TooManyFriendsUsers.new.exists?(current_user_id)
+
+    if request.xhr?
+      respond_with_error(:bad_request, 'too_many_friends')
+    else
+      session[:screen_name] = twitter_user.screen_name
+      redirect_to error_pages_too_many_friends_path(via: current_via(__method__))
+    end
+
+    true
+  end
+
   # TODO Rename to too_many_api_requests?
   def too_many_requests?(twitter_user)
     return false if from_crawler? || !user_signed_in?

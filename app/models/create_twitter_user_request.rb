@@ -45,6 +45,11 @@ class CreateTwitterUserRequest < ApplicationRecord
     validate_creation_interval!
     validate_twitter_user!(snapshot)
 
+    if user && SearchLimitation.warn_limit?(snapshot)
+      TooManyFriendsUsers.new.add(user.id)
+      ResetTooManyFriendsWorker.perform_in(1.hour, user.id)
+    end
+
     assemble_twitter_user(snapshot, relations)
     validate_creation_interval!
     save_twitter_user(snapshot)

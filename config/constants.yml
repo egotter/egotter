@@ -5,6 +5,7 @@ default: &default
   usage_stat_recently_created: <%= 30.minutes %>
   search_limitation:
     soft_limit: 2000
+    warn_limit: 60000
     hard_limit: 80000
   search_count_limitation:
     sign_in_bonus: 2

@@ -23,6 +23,7 @@ RSpec.describe TimelinesController, type: :controller do
       expect(controller).to receive(:twitter_db_user_persisted?).with(twitter_user.uid)
       expect(controller).to receive(:too_many_searches?).with(twitter_user).and_return(false)
       expect(controller).to receive(:too_many_requests?).with(twitter_user).and_return(false)
+      expect(controller).to receive(:too_many_friends?).with(twitter_user).and_return(false)
       expect(controller).to receive(:set_new_screen_name_if_changed)
       subject
     end
@@ -49,6 +50,7 @@ RSpec.describe TimelinesController, type: :controller do
         expect(controller).to receive(:twitter_db_user_persisted?).with(twitter_user.uid)
         expect(controller).to receive(:too_many_searches?).with(twitter_user).and_return(false)
         expect(controller).to receive(:too_many_requests?).with(twitter_user).and_return(false)
+        expect(controller).to receive(:too_many_friends?).with(twitter_user).and_return(false)
         expect(controller).to receive(:set_new_screen_name_if_changed)
         subject
       end

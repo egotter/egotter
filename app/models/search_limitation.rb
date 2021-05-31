@@ -2,6 +2,7 @@ class SearchLimitation
 
   SOFT_LIMIT = Rails.configuration.x.constants[:search_limitation][:soft_limit]
   HARD_LIMIT = Rails.configuration.x.constants[:search_limitation][:hard_limit]
+  WARN_LIMIT = Rails.configuration.x.constants[:search_limitation][:warn_limit]
 
   class << self
     def limited?(user, signed_in: false)
@@ -14,6 +15,10 @@ class SearchLimitation
 
     def hard_limited?(user)
       user[:friends_count] + user[:followers_count] > HARD_LIMIT
+    end
+
+    def warn_limit?(user)
+      user[:friends_count] + user[:followers_count] > WARN_LIMIT
     end
   end
 end
