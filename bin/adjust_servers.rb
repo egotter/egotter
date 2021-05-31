@@ -5,6 +5,8 @@ require 'uri'
 require 'json'
 require 'dotenv/load'
 
+require_relative '../deploy/lib/deploy'
+
 SETTINGS = [
     [2, 1], # 09
     [2, 1], # 10
@@ -32,50 +34,38 @@ SETTINGS = [
     [4, 1], # 08
 ]
 
-def now
-  Time.now.utc
+def current_hour
+  Time.now.utc.hour
 end
 
-# TODO Run the below task in Ruby
+def adjust_servers(role, instance_type, count)
+  prev_names = server_names(role, instance_type)
 
-def adjust_server(role, instance_type, num, dry_run)
-  params = "--adjust --role #{role} --instance-type #{instance_type} --count #{num} --without-tag"
-  cmd = "cd /var/egotter && /usr/local/bin/bundle exec bin/deploy.rb #{params}"
-  puts cmd
-  system(cmd) unless dry_run
-  params
+  if prev_names.size != count
+    post("Adjust #{role} servers count=#{count} prev=#{prev_names}")
+    Tasks::TaskBuilder.new('adjust' => true, 'role' => role, 'instance-type' => instance_type, 'count' => count, 'without-tag' => true).adjust_task.run
+
+    cur_names = server_names(role, instance_type)
+    post("`prev`=#{prev_names} `cur`=#{cur_names}")
+  end
 end
 
-def list_server(role, instance_type)
-  cmd = "cd /var/egotter && /usr/local/bin/bundle exec bin/deploy.rb --list --role #{role} --instance-type #{instance_type}"
-  `#{cmd}`.chomp
+def server_names(role, instance_type)
+  Tasks::TaskBuilder.new('list' => true, 'role' => role, 'instance-type' => instance_type).list_task.instance_names
 end
 
-# TODO Set suitable instance_type
-def adjust_web(dry_run)
-  count = SETTINGS[now.hour][0]
+def web_servers_count
+  count = SETTINGS[current_hour][0]
   count += 1 if active_users > 300
   count += 1 if active_users > 400
-  instance_type = 't3.medium'
-
-  prev = list_server('web', instance_type)
-  adjust_server('web', instance_type, count, dry_run)
-
-  cur = list_server('web', instance_type)
-  post("prev=#{prev} cur=#{cur}") if prev != cur
+  count
 end
 
-def adjust_sidekiq(dry_run)
-  count = SETTINGS[now.hour][1]
+def sidekiq_servers_count
+  count = SETTINGS[current_hour][1]
   count += 1 if remaining_creation_jobs > 1000
   count += 1 if remaining_creation_jobs > 10000
-  instance_type = 'm5.large'
-
-  prev = list_server('sidekiq', instance_type)
-  adjust_server('sidekiq', instance_type, count, dry_run)
-
-  cur = list_server('sidekiq', instance_type)
-  post("prev=#{prev} cur=#{cur}") if prev != cur
+  count
 end
 
 def post(text)
@@ -104,22 +94,22 @@ rescue => e
 end
 
 def main
-  dry_run = ENV['DRY_RUN'] == 'true'
+  role = ENV['ROLE']
 
-  case ENV['ROLE']
+  case role
   when 'web'
-    adjust_web(dry_run)
+    adjust_servers('web', 't3.medium', web_servers_count)
   when 'sidekiq'
-    adjust_sidekiq(dry_run)
+    adjust_servers('sidekiq', 'm5.large', sidekiq_servers_count)
   else
-    raise "Invalid role value=#{ENV['ROLE']}"
+    raise "Invalid role value=#{role}"
   end
+rescue => e
+  post("Adjusting servers failed role=#{role} exception=#{e.inspect}")
+  raise
 end
 
 if __FILE__ == $0
-  begin
-    main
-  rescue => e
-    post("adjust_servers: #{e.inspect}")
-  end
+  Dir.chdir('/var/egotter') if Dir.exist?('/var/egotter')
+  main
 end

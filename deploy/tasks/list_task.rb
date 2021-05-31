@@ -31,11 +31,11 @@ module Tasks
         puts instance_names.join(@delim)
       end
 
-      private
-
       def instance_names
         fetch_instances.map(&:name)
       end
+
+      private
 
       def fetch_instances
         ::Deploy::Aws::EC2.new.retrieve_instances(instance_type: @instance_type).map do |i|

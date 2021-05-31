@@ -46,9 +46,7 @@ module Tasks
         logger.info blue("success elapsed=#{sprintf("%.3f sec", elapsed)}\n")
       else
         if exception
-          logger.error red(err) unless err.empty?
-          logger.error red("fail(exit) elapsed=#{sprintf("%.3f sec", elapsed)}\n")
-          exit
+          raise "error='#{err}' command='#{cmd}' elapsed=#{sprintf("%.3f sec", elapsed)}" unless err.empty?
         else
           logger.info err unless err.empty?
           logger.error red("fail(continue) elapsed=#{sprintf("%.3f sec", elapsed)}\n")
