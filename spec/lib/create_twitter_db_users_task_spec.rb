@@ -17,7 +17,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
     it do
       expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
       expect(instance).not_to receive(:import_suspended_users)
-      expect(instance).to receive(:reject_persisted_users).with(users).and_return(users)
+      expect(instance).to receive(:reject_fresh_users).with(users).and_return(users)
       expect(instance).to receive(:import_users).with(users)
       subject
     end
@@ -27,7 +27,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
       it do
         expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
         expect(instance).to receive(:import_suspended_users).with(uids.slice(2, 3))
-        expect(instance).to receive(:reject_persisted_users).with(users).and_return(users)
+        expect(instance).to receive(:reject_fresh_users).with(users).and_return(users)
         expect(instance).to receive(:import_users).with(users)
         subject
       end
@@ -38,7 +38,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
       it do
         expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
         expect(instance).not_to receive(:import_suspended_users)
-        expect(instance).not_to receive(:reject_persisted_users)
+        expect(instance).not_to receive(:reject_fresh_users)
         expect(instance).to receive(:import_users).with(users)
         subject
       end
@@ -70,13 +70,17 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
     end
   end
 
-  describe '#reject_persisted_users' do
-    subject { instance.send(:reject_persisted_users, users) }
+  describe '#reject_fresh_users' do
+    subject { instance.send(:reject_fresh_users, users) }
     it { expect(subject.map { |u| u[:id] }).to eq(users.map { |u| u[:id] }) }
 
     context 'a user is already persisted' do
       before { create(:twitter_db_user, uid: users[0][:id]) }
       it { expect(subject.map { |u| u[:id] }).to eq(users[1..-1].map { |u| u[:id] }) }
     end
+  end
+
+  describe '#reject_persisted_users' do
+    # TODO
   end
 end

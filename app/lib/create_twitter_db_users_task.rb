@@ -13,7 +13,7 @@ class CreateTwitterDBUsersTask
       import_suspended_users(suspended_uids)
     end
 
-    users = reject_persisted_users(users) unless @force
+    users = reject_fresh_users(users) unless @force
     import_users(users) if users.any?
   end
 
@@ -60,9 +60,16 @@ class CreateTwitterDBUsersTask
     TwitterDB::User.import_by!(users: users) if users.any?
   end
 
-  def reject_persisted_users(users)
+  def reject_fresh_users(users)
     # Note: This query uses the index on uid instead of the index on updated_at.
     persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }).where('updated_at > ?', 6.hours.ago).pluck(:uid)
+    Rails.logger.info "Reject fresh users passed=#{users.size} persisted=#{persisted_uids.size}"
+    users.reject { |user| persisted_uids.include? user[:id] }
+  end
+
+  def reject_persisted_users(users)
+    # Note: This query uses the index on uid instead of the index on updated_at.
+    persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }).pluck(:uid)
     Rails.logger.info "Reject persisted users passed=#{users.size} persisted=#{persisted_uids.size}"
     users.reject { |user| persisted_uids.include? user[:id] }
   end
