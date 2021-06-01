@@ -1,34 +1,71 @@
-<div class="my-5">
-  えごったーは広告ブロッカーが有効な場合はご利用いただけません。広告ブロッカーを無効にしてご利用ください。
-</div>
+<h3 class="h5 mb-3">広告ブロッカーとは</h3>
+
+<div class="mb-5">Webサイトの広告を削除する機能のことです。えごったーは広告収益によって運営されています。今後もWebサイトの利便性を向上していくために、広告表示への協力をよろしくお願いいたします。</div>
+
+<h3 class="h5 mb-3">広告ブロッカーを使い続けたい場合</h3>
 
 <div class="mb-5">
-  1. 広告ブロッカーとは<br>
-  Webサイトの広告を削除する機能のことです。えごったーは広告収益によって運営されています。今後もWebサイトの利便性を向上していくために、広告表示への協力をよろしくお願いいたします。
-</div>
-
-<div class="mb-5">
-  2. 広告ブロッカーを使い続けたい場合<br>
   <% if user_signed_in? %>
-    下記のいずれかの方法を使えば、広告ブロッカーをそのまま利用できます。<br>
-    <br>
-    <div class="ml-3 mb-3">
-      方法1：えごったーをツイートする<br>
-      えごったーのことを1回ツイートすれば、一定の時間だけえごったーをご利用できます。
-      <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">ツイートする</a><br>
-      <br>
-      方法2：有料プランを購入する<br>
-      有料プランを購入すれば、広告ブロッカーをそのまま使えます。
-      <a class="btn btn-outline-primary btn-sm" href="<%= pricing_path(via: current_via('ad_blocker_detected')) %>" target="_blank">料金プランを見る</a>
-    </div>
+    <p>下記のいずれかの方法を使えば、広告ブロッカーをそのまま利用できます。</p>
+    <dl>
+      <dt>方法1：えごったーをツイートする</dt>
+      <dd class="mb-3">
+        えごったーのことを1回ツイートすれば、一定の時間だけえごったーをご利用できます。
+        <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">ツイートする</a>
+      </dd>
+
+      <dt>方法2：有料プランを購入する</dt>
+      <dd class="mb-3">
+        有料プランを購入すれば、広告ブロッカーをそのまま使えます。
+        <a class="btn btn-outline-primary btn-sm" href="<%= pricing_path(via: current_via('ad_blocker_detected')) %>" target="_blank">料金プランを見る</a>
+      </dd>
+    </dl>
   <% else %>
     ログインしてからえごったーWebサイトをご利用ください。
     <a class="btn btn-outline-primary btn-sm" href="<%= sign_in_path(via: current_via('ad_blocker_detected')) %>" target="_blank">ログインする</a>
   <% end %>
 </div>
 
-<div>
-  3. 広告ブロッカーを使っていない場合<br>
+<h3 class="h5 mb-3">iPhone で広告ブロッカーを解除する方法</h3>
+
+<div class="mb-5">
+  <p>Safari 以外のブラウザを使うか、広告ブロッカーをすべて削除してください。</p>
+  <dl>
+    <dt>方法1：Safari 以外のブラウザを使う</dt>
+    <dd class="mb-3">
+      Google Chrome という Safari よりも高速で安全なブラウザを使えば、このエラーが表示される可能性がとても低くなります。
+      <a href="https://apps.apple.com/jp/app/id535886823" class="btn btn-outline-primary btn-sm" target="_blank">App Store を開く</a>
+      <div class="m-3"><%= image_tag '/images/ss_chrome_browser_400.png', class: 'border', width: '200', loading: 'lazy' %></div>
+    </dd>
+
+    <dt>方法2：Safari の広告ブロック設定をオフにする</dt>
+    <dd class="mb-3">
+      <div class="my-2">
+        1. 設定 > プライバシー > トラッキング<br>「Appからのトラッキング要求を許可する」を<b>有効</b>にする
+        <div class="m-3"><%= image_tag '/images/ss_enable_app_tracking_400.png', class: 'border', width: '200', loading: 'lazy' %></div>
+      </div>
+      <div class="my-2">
+        2. 設定 > Safari<br>「サイト越えトラッキングを防ぐ」を<b>無効</b>にする
+        <div class="m-3"><%= image_tag '/images/ss_enable_site_tracking_400.png', class: 'border', width: '200', loading: 'lazy' %></div>
+      </div>
+      <div class="my-2">
+        3. 設定 > Safari<br>「すべてのCookieをブロック」を<b>無効</b>にする
+        <div class="m-3"><%= image_tag '/images/ss_enable_cookie_400.png', class: 'border', width: '200', loading: 'lazy' %></div>
+      </div>
+      <div class="my-2">
+        4. 設定 > Safari > コンテンツブロッカー<br>表示される項目を<b>すべて無効</b>にする
+        <div class="m-3"><%= image_tag '/images/ss_disable_content_blocker_400.png', class: 'border', width: '200', loading: 'lazy' %></div>
+      </div>
+      <div class="my-2">
+        5. 設定 > アプリ一覧<br>AdBlocker、AdFilter、AdGurardと似た名前のアプリを<b>すべて削除</b>する
+      </div>
+    </dd>
+  </dl>
+</div>
+
+<h3 class="h5 mb-3">広告ブロッカーを使っていない場合</h3>
+
+<div class="mb-5">
   大変お手数ですが、<br>
   <br>
   ・下記の質問の回答<br>

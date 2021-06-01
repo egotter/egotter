@@ -29,6 +29,7 @@ namespace :egotter_blockers do
       end
     end
 
+    # Twitter::Error::TooManyRequests: Rate limit exceeded
     if user.api_client.twitter.block?(User::EGOTTER_UID)
       client.create_direct_message(user.uid, I18n.t('rake_tasks.egotter_blockers.still_blocking_message'))
       puts 'Still blocking'

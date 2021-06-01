@@ -1413,6 +1413,8 @@ ja:
         <p>ログイン連携の取り消しや、<span class="egotter-pink">アカウントの削除</span>をするとこの状態になります。</p>
         <p>ログインしたいアカウントは @%{user} で合っていますか？ 合っているなら <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> をクリックしてください。</p>
         他のアカウントでログインしたいですか？ もしそうなら <a class="btn btn-primary btn-sm" href="%{url}">アカウントの切り替え</a> をクリックしてください。
+    ad_blocker_detected:
+      message: 'えごったーは広告ブロッカーが有効な場合はご利用できません。広告ブロッカーを無効にしてからご利用ください。'
     blocker_detected:
       message_html: '@%{user} は @ego_tter をブロックしたことがあるため、全ての通知とWebサイトの利用が制限されています。'
     not_found_user:
