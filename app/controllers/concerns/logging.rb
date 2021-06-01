@@ -154,6 +154,8 @@ module Logging
     event_params = request.query_parameters.dup.merge(request.request_parameters).except(:data, :locale, :utf8, :authenticity_token)
     properties = {path: request.path, params: event_params}.merge(prop)
     track_event('Order activity', properties)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} prop=#{prop}"
   end
 
   private
