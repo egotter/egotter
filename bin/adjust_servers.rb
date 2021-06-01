@@ -7,32 +7,9 @@ require 'dotenv/load'
 
 require_relative '../deploy/lib/deploy'
 
-SETTINGS = [
-    [2, 1], # 09
-    [2, 1], # 10
-    [4, 1], # 11
-    [4, 1], # 12
-    [4, 1], # 13
-    [2, 1], # 14
-    [2, 1], # 15
-    [2, 1], # 16
-    [2, 1], # 17
-    [2, 1], # 18
-    [2, 1], # 19
-    [4, 1], # 20
-    [4, 1], # 21
-    [4, 1], # 22
-    [2, 1], # 23
-    [2, 1], # 00
-    [2, 1], # 01
-    [2, 1], # 02
-    [1, 0], # 03
-    [1, 0], # 04
-    [1, 0], # 05
-    [2, 1], # 06
-    [4, 1], # 07
-    [4, 1], # 08
-]
+# From 09:00 JST to 08:00 JST
+WEB_SERVERS = [2, 2, 3, 3, 3, 2, 2, 2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 2, 3, 3]
+SIDEKIQ_SERVERS = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1]
 
 def current_hour
   Time.now.utc.hour
@@ -42,11 +19,11 @@ def adjust_servers(role, instance_type, count)
   prev_names = server_names(role, instance_type)
 
   if prev_names.size != count
-    post("Adjust #{role} servers count=#{count} prev=#{prev_names}")
+    post("Adjust #{role} servers from #{prev_names.size} to #{count} current=#{prev_names}")
     Tasks::TaskBuilder.new('adjust' => true, 'role' => role, 'instance-type' => instance_type, 'count' => count, 'without-tag' => true).adjust_task.run
 
     cur_names = server_names(role, instance_type)
-    post("`prev`=#{prev_names} `cur`=#{cur_names}")
+    post("Finish adjusting #{role} servers prev=#{prev_names} cur=#{cur_names}")
   end
 end
 
@@ -55,14 +32,13 @@ def server_names(role, instance_type)
 end
 
 def web_servers_count
-  count = SETTINGS[current_hour][0]
-  count += 1 if active_users > 300
+  count = WEB_SERVERS[current_hour]
   count += 1 if active_users > 400
   count
 end
 
 def sidekiq_servers_count
-  count = SETTINGS[current_hour][1]
+  count = SIDEKIQ_SERVERS[current_hour]
   count += 1 if remaining_creation_jobs > 1000
   count += 1 if remaining_creation_jobs > 10000
   count
@@ -105,7 +81,7 @@ def main
     raise "Invalid role value=#{role}"
   end
 rescue => e
-  post("Adjusting servers failed role=#{role} exception=#{e.inspect}")
+  post("Adjusting #{role} servers failed exception=#{e.inspect}")
   raise
 end
 
