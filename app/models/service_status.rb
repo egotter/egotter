@@ -27,6 +27,10 @@ class ServiceStatus
       ex && ex.class == HTTP::ConnectionError && ex.message == 'error reading from socket: Could not parse data'
     end
 
+    def could_not_read_response_headers?(ex)
+      ex && ex.class == HTTP::ConnectionError && ex.message == "couldn't read response headers"
+    end
+
     def unknown_mine_type?(ex)
       ex && ex.class == HTTP::Error && ex.message == 'Unknown MIME type: text/plain'
     end
@@ -38,6 +42,7 @@ class ServiceStatus
           execution_expired?(ex) ||
           http_timeout?(ex) ||
           could_not_parse_data?(ex) ||
+          could_not_read_response_headers?(ex) ||
           unknown_mine_type?(ex)
     end
   end
