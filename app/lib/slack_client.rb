@@ -26,6 +26,7 @@ class SlackClient
       delete_tweets:               ENV['SLACK_DELETE_TWEETS_URL'],
       delete_favorites:            ENV['SLACK_DELETE_FAVORITES_URL'],
       orders:                      ENV['SLACK_ORDERS_URL'],
+      orders_cs_completed:         ENV['SLACK_ORDERS_CS_COMPLETED_URL'],
       orders_charge_succeeded:     ENV['SLACK_ORDERS_CHARGE_SUCCEEDED_URL'],
       orders_charge_failed:        ENV['SLACK_ORDERS_CHARGE_FAILED_URL'],
       deploy:                      ENV['SLACK_DEPLOY_URL'],

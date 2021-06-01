@@ -69,20 +69,18 @@ class OrdersController < ApplicationController
     if user.has_valid_subscription?
       Stripe::Subscription.delete(checkout_session.subscription_id)
 
-      send_message("`#{Rails.env}:checkout_session_completed` already purchased user_id=#{user.id}")
+      send_cs_completed_message("User already have a subscription user_id=#{user.id}")
     else
       order = Order.create_by!(checkout_session)
       set_metadata_to_subscription(checkout_session.subscription_id, order_id: order.id)
 
-      SetVisitIdToOrderWorker.perform_async(order.id)
+      # SetVisitIdToOrderWorker.perform_async(order.id)
       UpdateTrialEndWorker.perform_async(order.id)
 
-      send_message("`#{Rails.env}:checkout_session_completed` success user_id=#{user.id} order_id=#{order.id}")
+      send_cs_completed_message("Success user_id=#{user.id} order_id=#{order.id}")
     end
   rescue => e
-    if order
-      send_message("`#{Rails.env}:checkout_session_completed` order may be insufficient order=#{order.inspect} exception=#{e.inspect}")
-    end
+    send_cs_completed_message("Order may be insufficient order=#{order&.inspect} exception=#{e.inspect}")
     raise
   end
 
@@ -123,10 +121,10 @@ class OrdersController < ApplicationController
     settings_path(anchor: 'orders-table', via: current_via(via))
   end
 
-  def send_message(message)
-    SendMessageToSlackWorker.perform_async(:orders, message)
+  def send_cs_completed_message(message)
+    SendMessageToSlackWorker.perform_async(:orders_cs_completed, "`#{Rails.env}:checkout_session_completed` #{message}")
   rescue => e
-    logger.warn "#{controller_name}##{action_name}: #send_message is failed exception=#{e.inspect} caller=#{caller[0][/`([^']*)'/, 1] rescue ''} message=#{message}"
+    logger.warn "#send_cs_completed_message failed exception=#{e.inspect} message=#{message}"
   end
 
   def send_charge_succeeded_message(message)
