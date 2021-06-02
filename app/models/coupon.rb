@@ -23,4 +23,20 @@ class Coupon < ApplicationRecord
   scope :not_expired, -> { where('expires_at > ?', Time.zone.now) }
   scope :has_search_count, -> { where('search_count > 0') }
   scope :has_stripe_coupon_id, -> { where('stripe_coupon_id is not null') }
+
+  class << self
+    def add_stripe_coupon!(user, stripe_coupon_id, expires_at = nil)
+      raise UserAlreadyHasSubscription.new("user_id=#{user.id}") if user.has_valid_subscription?
+      raise UserAlreadyHasCoupon.new("user_id=#{user.id}") if user.coupons_stripe_coupon_ids.any?
+
+      expires_at = 7.days.since unless expires_at
+      create!(user_id: user.id, search_count: 0, stripe_coupon_id: stripe_coupon_id, expires_at: expires_at)
+    end
+  end
+
+  class UserAlreadyHasSubscription < StandardError
+  end
+
+  class UserAlreadyHasCoupon < StandardError
+  end
 end

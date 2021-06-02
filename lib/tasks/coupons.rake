@@ -56,7 +56,7 @@ namespace :coupons do
 
     puts "user=#{user.screen_name}"
     puts "amount_off=#{coupon.amount_off}"
-    puts Coupon.create!(user_id: user.id, search_count: 0, stripe_coupon_id: coupon.id, expires_at: expires_at).inspect
+    puts Coupon.add_stripe_coupon!(user, coupon.id, expires_at).inspect
   end
 
   task send_dm: :environment do
