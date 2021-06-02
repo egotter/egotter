@@ -304,12 +304,18 @@
   <% end %>
 
   <% faq_question '有料プランを解約する方法' do %>
-    <a href="<%= settings_path(via: via) %>">設定ページ</a> から有料プランをいつでも解約することができます。
+    設定ページからプランの解約をクリックしてください。
+    <%= link_to '設定ページ', settings_path(via: via), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
   <% end %>
 
   <% faq_question '有料プランの返金' do %>
-    <p>クレジットカードで単月購入の場合に限り、特別な事情があれば有料プランの返金が可能です。</p>
-    <p>詳しくは <%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID, t('short_messages.refund')), target: '_blank' %> までお問い合わせください。</p>
+    <div>お試し期間中の場合</div>
+    <p>期間内にプランを解約すれば支払いは発生しません。</p>
+    <div>お試し期間中ではない場合</div>
+    <p>
+      クレジットカードで単月購入の場合に限り、特別な事情があれば有料プランの返金が可能です。
+      返金の理由を <%= link_to '@egotter_cs', direct_message_url(User::EGOTTER_CS_UID, t('short_messages.refund')), target: '_blank' %> までご連絡ください。
+    </p>
   <% end %>
 <% end %>
 
@@ -717,6 +723,11 @@
     <div>・ミュート通知 停止</div>
     <br>
     <p>注意：@ego_tter をブロックするとWebサイトを利用できなくなります。Webサイトを今後も利用する方は、ブロックしないようにご注意ください。</p>
+  <% end %>
+
+  <% faq_question '有料プランを解約する方法' do %>
+    設定ページからプランの解約をクリックしてください。
+    <%= link_to '設定ページ', settings_path(via: via), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
   <% end %>
 
   <% faq_question 'クレジットカード情報を削除する方法' do %>
