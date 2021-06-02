@@ -74,6 +74,7 @@ class SearchCountLimitation
   end
   memoize
 
+  # TODO Don't call external API in this method
   def current_sharing_bonus
     if @user&.authorized?
       followers = TwitterUser.latest_by(uid: @user.uid)&.followers_count

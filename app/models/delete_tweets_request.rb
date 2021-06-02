@@ -166,15 +166,18 @@ class DeleteTweetsRequest < ApplicationRecord
 
   def send_finished_message
     report = DeleteTweetsReport.finished_message_from_user(user)
-    report.deliver!
+    begin
+      report.deliver!
+    rescue => e
+      raise e unless TwitterApiStatus.temporarily_locked?(e)
+    end
 
     report = DeleteTweetsReport.finished_message(user, self)
     report.deliver!
   rescue => e
     if DirectMessageStatus.not_following_you?(e) ||
         DirectMessageStatus.cannot_send_messages?(e) ||
-        DirectMessageStatus.you_have_blocked?(e) ||
-        TwitterApiStatus.temporarily_locked?(e)
+        DirectMessageStatus.you_have_blocked?(e)
       # Do nothing
     else
       raise FinishedMessageNotSent.new("#{e.inspect} sender_uid=#{report.sender.uid}")
@@ -183,7 +186,11 @@ class DeleteTweetsRequest < ApplicationRecord
 
   def send_error_message
     report = DeleteTweetsReport.finished_message_from_user(user)
-    report.deliver!
+    begin
+      report.deliver!
+    rescue => e
+      raise e unless TwitterApiStatus.temporarily_locked?(e)
+    end
 
     report = DeleteTweetsReport.error_message(user)
     report.deliver!
