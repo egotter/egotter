@@ -48,5 +48,7 @@ class CreateDeletableTweetsRequest < ApplicationRecord
     end
 
     collection
+  rescue => e
+    raise e unless TwitterApiStatus.invalid_or_expired_token?(e)
   end
 end
