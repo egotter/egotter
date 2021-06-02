@@ -104,12 +104,12 @@ class OrdersController < ApplicationController
     if (order = Order.order(created_at: :desc).find_by(customer_id: customer_id))
       order.charge_failed!
       order.cancel!
-      send_charge_failed_message("Success user_id=#{order.user_id} order_id=#{order.id}")
+      send_charge_failed_message("Success user_id=#{order.user_id} order_id=#{order.id} customer_id=#{customer_id}")
     else
       send_charge_failed_message("Order not found customer_id=#{customer_id}")
     end
   rescue => e
-    send_charge_failed_message("exception=#{e.inspect}")
+    send_charge_failed_message("#{e.inspect} event=#{event_data.inspect}")
     raise
   end
 
