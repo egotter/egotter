@@ -17,3 +17,13 @@ a, a:hover, a:focus {
 .cursor-pointer {
   cursor: pointer;
 }
+
+.alert-box-primary {
+  border-left: 5px solid #004085;
+  background-color: #cce5ff;
+}
+
+.alert-box-danger {
+  border-left: 5px solid #721c24;
+  background-color: #f8d7da;
+}

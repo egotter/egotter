@@ -464,11 +464,14 @@ ja:
       no_payment_guranteed: '※ トライアル期間中は支払いは発生しません。'
       during_trial_period: "トライアル期間中"
       trial_period_until: '%{time}までトライアル期間中'
-      charge_failed_title: '支払い失敗により自動キャンセル済み'
-      charge_failed_description_html: |
-        <p>カードに問題が無いのに支払いに失敗することがあります。その際は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。以前の価格で定期購読を継続いたします。</p>
-        <p>支払い失敗の理由は一時的なエラーや残高不足など様々です。具体的な理由はカード発行会社に直接お問い合わせください。</p>
-      charge_failed_direct_message: 'カードに問題が無いのに支払いに失敗しました。定期購読の継続を希望します。'
+      charge_failed:
+        message1_html: |
+          <p>支払い失敗により自動キャンセル済み</p>
+          よくある支払い失敗の原因は、プリペイドカードやデビットカードの残高不足、一時的なエラーです。具体的な理由はカード発行会社に直接お問い合わせください。
+        message2_html: |
+          <p>割引クーポンの対象者です</p>
+          カードに問題が無いのに支払いに失敗している場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。以前の価格で有料プランを購入できるクーポンを付与します。
+          <a href="%{url}" class="btn btn-outline-primary btn-sm" target="_blank">問い合わせ</a>
       canceled_title: "キャンセル済み"
       canceled_description: "もう支払いは発生しません。"
       valid_title: '購読中'
@@ -1826,6 +1829,7 @@ ja:
     delete_tweets_inquiry: 'ツイート削除のお問い合わせ：'
     delete_tweets_search_inquiry: 'ツイート削除の「検索して削除」に関する不具合報告：'
     delete_tweets_max_deletion: '%{count}万件以上のツイート削除を希望します'
+    charge_failed_inquiry: 'カードに問題が無いのに支払いに失敗しました。定期購読の継続を希望します。'
     error_inquiry: '%{name} エラーが複数回起きています。（スクリーンショットも送ってください）'
   directory:
     profiles:
