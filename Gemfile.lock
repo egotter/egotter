@@ -140,7 +140,7 @@ GEM
     chartkick (3.4.2)
     coderay (1.1.3)
     concurrent-ruby (1.1.8)
-    connection_pool (2.2.3)
+    connection_pool (2.2.5)
     crass (1.0.6)
     declarative (0.0.20)
     declarative-option (0.1.0)
@@ -413,7 +413,7 @@ GEM
       tilt
     semantic_range (2.3.0)
     sexp_processor (4.15.1)
-    sidekiq (6.1.1)
+    sidekiq (6.2.1)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
