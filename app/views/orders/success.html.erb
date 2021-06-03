@@ -1,5 +1,23 @@
-<div class="card card-body mb-3">
-  <div>
-    <%= t('.message_html', url: settings_path(anchor: 'orders-table', via: current_via('message'))) %>
-  </div>
-</div>
+<h2 class="h4 text-center my-5"><%= t('.title') %></h2>
+
+<p><%= t('.message_html', url: settings_path(anchor: 'orders-table', via: current_via('message'))) %></p>
+<p><%= t('.support_html', url: twitter_web_url('egotter_cs')) %></p>
+
+<hr>
+
+<p><%= t('.description_html', url: pricing_path(via: current_via)) %></p>
+
+<h3 class="h5 mt-5 mb-3"><%= t('.search_data.title') %></h3>
+<p><%= t('.search_data.description_html', url: timeline_path(current_user, via: current_via)) %></p>
+
+<h3 class="h5 mt-5 mb-3"><%= t('.periodic_reports.title') %></h3>
+<p><%= t('.periodic_reports.description_html', url: direct_message_url(User::EGOTTER_UID, t('short_messages.receive_periodic_reports'))) %></p>
+
+<h3 class="h5 mt-5 mb-3"><%= t('.block_reports.title') %></h3>
+<p><%= t('.block_reports.description_html', url: direct_message_url(User::EGOTTER_UID, t('short_messages.receive_block_reports'))) %></p>
+
+<h3 class="h5 mt-5 mb-3"><%= t('.mute_reports.title') %></h3>
+<p><%= t('.mute_reports.description_html', url: direct_message_url(User::EGOTTER_UID, t('short_messages.receive_mute_reports'))) %></p>
+
+<h3 class="h5 mt-5 mb-3"><%= t('.delete_tweets.title') %></h3>
+<p><%= t('.delete_tweets.description_html', url: delete_tweets_mypage_path(via: current_via)) %></p>

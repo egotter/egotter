@@ -750,12 +750,25 @@ ja:
       visitor: 'あなた'
   orders:
     success:
-      message_html: |
-        ベーシックプランの購入ありがとうございます。<br>
-        <br>
-        購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます。<br>
-        <br>
-        分からないことや気になることがありますか？ <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。
+      title: '有料プランの購入が完了しました'
+      message_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a href="%{url}" target="_blank">設定ページ</a> から確認できます。'
+      support_html: '分からないことや気になることがありますか？ <a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。'
+      description_html: '有料プランが有効な間は下記の機能が使えます。ここに書かれていない有料プランの特典は <a href="%{url}" target="_blank">料金プラン</a> をご確認ください。'
+      search_data:
+        title: '検索回数の増加'
+        description_html: 'Webサイトで分析できる回数が増えます。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">分析結果を見る</a>'
+      periodic_reports:
+        title: 'リムられ通知'
+        description_html: 'いつでも好きなときに受け取ることができます。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">リムられ通知を開く</a>'
+      block_reports:
+        title: 'ブロック通知'
+        description_html: 'すべてのIDを確認することができます。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">ブロック通知を開く</a>'
+      mute_reports:
+        title: 'ミュート通知'
+        description_html: 'IDを2文字目まで確認することができます。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">ミュート通知を開く</a>'
+      delete_tweets:
+        title: 'ツイートの一括削除'
+        description_html: 'アーカイブデータを利用してすべてのツイートを一括削除できます。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">ツイートクリーナーを開く</a>'
     failure:
       message_html: |
         ベーシックプランの購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。<br>
@@ -1845,17 +1858,9 @@ ja:
       label4: '会話を閉じる（次の通知を待つ）'
       description4: 'このボタンを押しておくと、DM通知が届きやすくなります'
   short_messages:
-    bulk_purchase: |
-      長期間の一括購入を希望します。期間と支払い方法の希望は下記の通りです。
-      ※ 期間と支払い方法をそれぞれ1つお選びください。
-
-      購入する期間：【3ヶ月(3%割引)・6ヶ月(5%割引)・12ヶ月(7%割引)】
-      支払い方法：【クレジットカード・銀行振込・コンビニ決済】
-    payment_method: |
-      クレジットカード以外の支払い方法を希望します。希望は下記の通りです。
-      ※ 支払い方法を1つお選びください。
-
-      支払い方法：【クレジットカード・銀行振込・コンビニ決済】
+    receive_periodic_reports: 'リムられ通知 送信'
+    receive_block_reports: 'ブロック通知 送信'
+    receive_mute_reports: 'ミュート通知 送信'
     permission_level_not_enough: 'ログインエラー報告：強制再ログインと連携アプリの削除→再登録を試しましたがログインできないままです。試した時間は【○月○日 ○時頃】です。'
     refund: '有料プランの返金を希望します。理由：'
     delete_tweets_refund: 'ツイートの削除に失敗しました。有料プランの返金を希望します。理由：'

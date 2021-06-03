@@ -141,7 +141,7 @@ class OrdersController < ApplicationController
 
   def validate_stripe_session_id
     if params[:stripe_session_id].blank?
-      redirect_to settings_path(via: current_via('stripe_session_id_not_found'))
+      redirect_to settings_path(anchor: 'orders-table', via: current_via('stripe_session_id_not_found'))
     end
   end
 end
