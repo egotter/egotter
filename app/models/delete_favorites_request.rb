@@ -155,7 +155,11 @@ class DeleteFavoritesRequest < ApplicationRecord
     api_client.update(message)
     SendMessageToSlackWorker.perform_async(:delete_favorites, "request_id=#{id} tweet=#{message}")
   rescue => e
-    raise FinishedTweetNotSent.new("exception=#{e.inspect} user_id=#{user_id} message=#{message}")
+    if TwitterApiStatus.temporarily_locked?(e)
+      # Do nothing
+    else
+      raise FinishedTweetNotSent.new("exception=#{e.inspect} user_id=#{user_id} message=#{message}")
+    end
   end
 
   def send_finished_message
