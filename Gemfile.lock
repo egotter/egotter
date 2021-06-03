@@ -285,7 +285,7 @@ GEM
     nokogiri (1.11.7)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
-    oauth (0.5.4)
+    oauth (0.5.6)
     oj (3.10.17)
     omniauth (1.9.1)
       hashie (>= 3.4.6)
