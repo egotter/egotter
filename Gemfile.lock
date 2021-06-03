@@ -93,10 +93,6 @@ GEM
       device_detector
       geocoder (>= 1.4.5)
       safely_block (>= 0.2.1)
-    airbrake (10.0.5)
-      airbrake-ruby (~> 4.13)
-    airbrake-ruby (4.15.0)
-      rbtree3 (~> 0.5)
     annotate (3.1.1)
       activerecord (>= 3.2, < 7.0)
       rake (>= 10.4, < 14.0)
@@ -348,7 +344,6 @@ GEM
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    rbtree3 (0.6.0)
     redis (4.2.5)
     representable (3.0.4)
       declarative (< 0.1.0)
@@ -468,7 +463,6 @@ PLATFORMS
 DEPENDENCIES
   activerecord-import
   ahoy_matey
-  airbrake
   annotate
   aws-sdk-cloudwatch
   aws-sdk-dynamodb
