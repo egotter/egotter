@@ -112,7 +112,6 @@ gem 'slack-ruby-client', require: false
 group :development do
   gem 'pry-rails'
   gem 'annotate'
-  gem 'rubocop', require: false
 end
 
 group :test, :development do
