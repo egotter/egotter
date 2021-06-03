@@ -281,7 +281,7 @@ GEM
       ffi (>= 1.9.0)
     naught (1.1.0)
     newrelic_rpm (6.14.0)
-    nio4r (2.5.4)
+    nio4r (2.5.7)
     nokogiri (1.11.7)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
@@ -307,7 +307,7 @@ GEM
     pry-rails (0.3.9)
       pry (>= 0.10.4)
     public_suffix (4.0.6)
-    puma (5.1.1)
+    puma (5.3.1)
       nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
@@ -518,7 +518,7 @@ DEPENDENCIES
   omniauth-twitter
   parallel
   pry-rails
-  puma (~> 5.0)
+  puma (~> 5.3)
   rack-timeout
   rack-user_agent
   rails (~> 6.0)
