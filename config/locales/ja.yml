@@ -852,6 +852,39 @@ ja:
       title: "プライバシーポリシー"
     specified_commercial_transactions:
       title: "特定商取引法に基づく表記"
+    refund_policy:
+      title: '返金ポリシー'
+      description_html: 'えごったーの有料プランは、特別な事情がある場合は返金を行っています。気になることがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
+      user: '@%{user} でログイン中です。'
+      visitor: 'まだログインしていません。'
+      about_plans: '購入済みの有料プランについてお問い合わせをする際は、購入したアカウントでログインしているかを事前にご確認ください。'
+      trial:
+        title: 'お試し期間中の場合'
+        description: '期間内にプランを解約すれば支払いは発生しません。'
+      not_trial:
+        title: 'お試し期間中ではない場合'
+        description_html: |
+          クレジットカードで単月購入の場合に限り、特別な事情があれば有料プランの返金が可能です。
+          返金を希望する理由を <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。
+      allow_list:
+        title: '返金が認められる例'
+        list_html: |
+          <ul>
+            <li>同じものを複数個購入してしまった</li>
+            <li>単月購入から複数月購入への切り替え</li>
+            <li>未成年者の購入を法定代理人が取り消す</li>
+            <li>その他特別な事情があると認められる場合</li>
+          </ul>
+      deny_list:
+        title: '返金が認められない例'
+        list_html: |
+          <ul>
+            <li>クレジットカード以外で支払っている</li>
+            <li>複数月を一括で購入している</li>
+            <li>購入した機能を既に複数回利用している</li>
+            <li>購入から1時間以内に返金の連絡がない</li>
+            <li>その他返金に適していないと判断した場合</li>
+          </ul>
     maintenance:
       title: "メンテナンス中"
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください。"

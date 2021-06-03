@@ -4,7 +4,7 @@
 <p><%= t('.about_ego_tter_html', url: twitter_web_url('ego_tter')) %></p>
 <p><%= t('.about_egotter_cs_html', url: twitter_web_url('egotter_cs')) %></p>
 
-<%= alert_box class: 'my-3' do %>
+<%= alert_box class: 'my-4' do %>
   <p>
     <% if user_signed_in? %>
       <img class="rounded-circle" src="<%= current_user_icon %>" width="20" height="20">

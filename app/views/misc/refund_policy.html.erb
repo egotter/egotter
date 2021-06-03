@@ -1,0 +1,30 @@
+<% title t('.title') %>
+
+<h2 class="h4 text-center my-5"><%= t('.title') %></h2>
+<p><%= t('.description_html', url: twitter_web_url('egotter_cs')) %></p>
+
+<%= alert_box class: 'my-4' do %>
+  <p>
+    <% if user_signed_in? %>
+      <img class="rounded-circle" src="<%= current_user_icon %>" width="20" height="20">
+      <%= t('.user', user: current_user.screen_name) %>
+    <% else %>
+      <%= t('.visitor') %>
+    <% end %>
+  </p>
+  <div><%= t('.about_plans') %></div>
+<% end %>
+
+<hr>
+
+<h3 class="h5 mt-5 mb-3"><%= t('.trial.title') %></h3>
+<p><%= t('.trial.description') %></p>
+
+<h3 class="h5 mt-5 mb-3"><%= t('.not_trial.title') %></h3>
+<p><%= t('.not_trial.description_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.refund'))) %></p>
+
+<h4 class="h6 mt-5 mb-3"><%= t('.allow_list.title') %></h4>
+<%= t('.allow_list.list_html') %>
+
+<h4 class="h6 mt-5 mb-3"><%= t('.deny_list.title') %></h4>
+<%= t('.deny_list.list_html') %>
