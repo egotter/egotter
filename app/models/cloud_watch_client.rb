@@ -36,11 +36,12 @@ class CloudWatchClient
     )
   end
 
-  def get_active_users
+  def get_active_users(category = 'TOTAL')
+    category = 'TOTAL' unless %w(TOTAL MOBILE DESKTOP).include?(category)
     dimensions = [
         {
             name: 'rt:deviceCategory',
-            value: 'TOTAL',
+            value: category,
         },
     ]
     resp = get_metric_statistics('rt:activeUsers', namespace: 'Google Analytics', dimensions: dimensions)

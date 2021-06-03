@@ -284,6 +284,7 @@ Rails.application.routes.draw do
   end
 
   get 'app_stats', to: 'app_stats#index'
+  get 'access_stats', to: 'access_stats#index'
 
   require 'sidekiq/web'
   if Rails.env.production?
