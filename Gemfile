@@ -63,7 +63,6 @@ gem 'mecab', require: false
 gem 'natto', require: false
 gem 'twitter_with_auto_pagination'
 gem 'rack-user_agent'
-gem 'stackprof'
 gem 'haml-rails'
 gem 'twitter-text'
 gem 'draper'
