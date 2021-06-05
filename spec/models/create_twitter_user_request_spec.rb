@@ -22,16 +22,17 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   end
 
   describe 'perform!' do
+    let(:snapshot) { TwitterSnapshot.new({}) }
     subject { request.perform!('context') }
 
     it do
       expect(request).to receive(:validate_request!)
       expect(request).to receive(:validate_creation_interval!).exactly(3).times
-      expect(request).to receive(:build_snapshot).with('context').and_return(['snapshot', 'relations'])
-      expect(request).to receive(:validate_twitter_user!).with('snapshot')
-      expect(SearchLimitation).to receive(:warn_limit?).with('snapshot')
-      expect(request).to receive(:assemble_twitter_user).with('snapshot', 'relations')
-      expect(request).to receive(:save_twitter_user).with('snapshot').and_return('twitter_user')
+      expect(request).to receive(:build_snapshot).with('context').and_return([snapshot, 'relations'])
+      expect(request).to receive(:validate_twitter_user!).with(snapshot)
+      expect(SearchLimitation).to receive(:warn_limit?).with(snapshot)
+      expect(request).to receive(:assemble_twitter_user).with(snapshot, 'relations')
+      expect(request).to receive(:save_twitter_user).with(snapshot).and_return('twitter_user')
       is_expected.to eq('twitter_user')
     end
   end

@@ -1,6 +1,6 @@
 class TwitterSnapshot
   attr_accessor :user_id
-  attr_reader :friend_uids, :follower_uids, :user_timeline, :mention_tweets, :favorite_tweets
+  attr_reader :friend_uids, :follower_uids, :user_timeline, :mention_tweets, :favorite_tweets, :time
 
   def initialize(user)
     @user = user
@@ -9,6 +9,7 @@ class TwitterSnapshot
     @user_timeline = []
     @mention_tweets = []
     @favorite_tweets = []
+    @time = Time.zone.now
   end
 
   def uid
