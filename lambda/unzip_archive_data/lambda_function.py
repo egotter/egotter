@@ -24,18 +24,18 @@ def lambda_handler(event, context):
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
 
     if not re.match('^[0-9a-zA-Z_-]+$', key):
-        raise Exception('Invalid key value={0}'.format(key))
+        raise Exception(f'Invalid key value={key}')
 
     response = s3.head_object(Bucket=bucket, Key=key)
     meta_filename = response['ResponseMetadata']['HTTPHeaders']['x-amz-meta-filename']
     meta_filesize = response['ResponseMetadata']['HTTPHeaders']['x-amz-meta-filesize']
 
     if not re.match('^twitter-[0-9a-zA-Z-]+\\.zip$', meta_filename):
-        raise Exception('Invalid filename value={0}'.format(meta_filename))
+        raise Exception(f'Invalid filename value={meta_filename} key={key}')
 
     # 30 GB
     if int(meta_filesize) > 30000000000:
-        raise Exception('Invalid filesize value={0}'.format(meta_filesize))
+        raise Exception(f'Invalid filesize value={meta_filesize} key={key}')
 
     rootdir = '/mnt/data/'
     dirname = rootdir + key + '/'
