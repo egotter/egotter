@@ -44,6 +44,7 @@ RSpec.describe ServiceStatus, type: :model do
       expect(described_class).to receive(:could_not_parse_data?).with(ex)
       expect(described_class).to receive(:could_not_read_response_headers?).with(ex)
       expect(described_class).to receive(:unknown_mine_type?).with(ex)
+      expect(described_class).to receive(:tls_handshake_failure?).with(ex)
       subject
     end
   end

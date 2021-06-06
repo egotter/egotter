@@ -35,6 +35,12 @@ class ServiceStatus
       ex && ex.class == HTTP::Error && ex.message == 'Unknown MIME type: text/plain'
     end
 
+    # OpenSSL::SSL::SSLError, SSL_connect SYSCALL returned=5 errno=0 state=SSLv2/v3 read server hello A
+    # OpenSSL::SSL::SSLError, SSL_connect SYSCALL returned=5 errno=0 state=SSLv3 read server session ticket A
+    def tls_handshake_failure?(ex)
+      ex && ex.class == OpenSSL::SSL::SSLError
+    end
+
     def retryable_error?(ex)
       connection_reset_by_peer?(ex) ||
           internal_server_error?(ex) ||
@@ -43,7 +49,8 @@ class ServiceStatus
           http_timeout?(ex) ||
           could_not_parse_data?(ex) ||
           could_not_read_response_headers?(ex) ||
-          unknown_mine_type?(ex)
+          unknown_mine_type?(ex) ||
+          tls_handshake_failure?(ex)
     end
   end
 end
