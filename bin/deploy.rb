@@ -56,6 +56,7 @@ def parse_params
       'state:',
       'launch',
       'count:',
+      'interval:',
       'adjust',
       'terminate',
       'sync',

@@ -1,7 +1,8 @@
 module Tasks
   class EnumerableTask
-    def initialize(tasks)
+    def initialize(tasks, params = {})
       @tasks = tasks
+      @interval = params['interval']&.to_i || 10
     end
 
     def action
@@ -13,7 +14,12 @@ module Tasks
     end
 
     def run
-      @tasks.each(&:run)
+      @tasks.each do |task|
+        task.run
+        if @tasks[-1] != task
+          sleep @interval
+        end
+      end
     end
   end
 end
