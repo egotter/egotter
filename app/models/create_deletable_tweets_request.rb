@@ -20,12 +20,8 @@ class CreateDeletableTweetsRequest < ApplicationRecord
   def perform
     collect_tweets_with_max_id do |tweets|
       tweets = tweets.map(&:attrs)
-      DeletableTweet.from_array(tweets).each do |tweet|
-        unless tweet.save
-          logger.info "Stop updating message=#{tweet.errors.full_messages}"
-          break
-        end
-      end
+      data = DeletableTweet.from_array(tweets)
+      DeletableTweet.import data, validate: false
     end
   end
 
