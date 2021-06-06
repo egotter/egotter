@@ -1,9 +1,9 @@
 class TwitterV2Client
   def initialize(uid: nil, screen_name: nil)
     if uid
-      user = User.find_by(uid: uid)
+      user = ::User.find_by(uid: uid)
     else
-      user = User.find_by(screen_name: screen_name)
+      user = ::User.find_by(screen_name: screen_name)
     end
 
     @uid = user.uid
@@ -39,6 +39,11 @@ class TwitterV2Client
     http_delete("/2/users/#{@uid}/likes/#{tweet_id}")[:data]
   end
 
+  def liking_users(tweet_id)
+    res = fetch_users(tweet_id)
+    build_users_from_response(res)
+  end
+
   private
 
   def fetch_tweets(tweet_ids)
@@ -48,6 +53,14 @@ class TwitterV2Client
         'tweet.fields' => ['created_at', 'public_metrics', 'non_public_metrics', 'organic_metrics'].join(','),
         'user.fields' => ['id', 'name'].join(','),
         'media.fields' => ['non_public_metrics', 'organic_metrics'].join(','),
+    }.to_query
+
+    http_get(path)
+  end
+
+  def fetch_users(tweet_id)
+    path = "/2/tweets/#{tweet_id}/liking_users?" + {
+        'user.fields' => ['id', 'name'].join(','),
     }.to_query
 
     http_get(path)
@@ -68,6 +81,10 @@ class TwitterV2Client
     users = res.dig(:includes, :users).index_by { |u| u[:id] }
     res[:data].each { |t| t[:user] = users[t[:author_id]] }
     res[:data]
+  end
+
+  def build_users_from_response(res)
+    res[:data].map { |hash| User.from_hash(hash) }
   end
 
   def http_get(path)
@@ -91,6 +108,26 @@ class TwitterV2Client
       end
     else
       raise
+    end
+  end
+
+  class User
+    attr_reader :id, :name, :username
+
+    def initialize(id:, name:, username:)
+      @id = id
+      @name = name
+      @username = username
+    end
+
+    def screen_name
+      @username
+    end
+
+    class << self
+      def from_hash(hash)
+        new(id: hash[:id], name: hash[:name], username: hash[:username])
+      end
     end
   end
 
