@@ -24,15 +24,8 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
 
   def perform(tweets, sync: true)
     if sync
-      started_time = Time.zone.now
-
-      tweets.each.with_index do |tweet, i|
-        DeleteTweetByArchiveWorker.new.perform(id, tweet.id)
-
-        if i % 1000 == 0 || i == tweets.size - 1
-          print_progress(tweets, started_time, i + 1)
-        end
-      end
+      client = user.api_client.twitter
+      delete_tweets(client, tweets)
     else
       tweets.each do |tweet|
         DeleteTweetByArchiveWorker.perform_async(id, tweet.id)
@@ -44,8 +37,25 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
 
   private
 
-  def print_progress(tweets, started_time, deleted_count)
+  def delete_tweets(client, tweets)
+    started_time = Time.zone.now
+
+    tweets.each.with_index do |tweet, i|
+      delete_tweet(client, tweet)
+      increment!(:deletions_count)
+
+      if i % 1000 == 0 || i == tweets.size - 1
+        puts progress(tweets, started_time, i + 1)
+      end
+    end
+  end
+
+  def delete_tweet(client, tweet)
+    DeleteTweetWorker.new.send(:destroy_status!, client, tweet.id)
+  end
+
+  def progress(tweets, started_time, deleted_count)
     time = Time.zone.now - started_time
-    puts "total #{tweets.size}, deleted #{deleted_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / deleted_count)}"
+    "total #{tweets.size}, deleted #{deleted_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / deleted_count)}"
   end
 end
