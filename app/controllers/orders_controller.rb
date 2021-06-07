@@ -103,7 +103,7 @@ class OrdersController < ApplicationController
 
     if (order = Order.order(created_at: :desc).find_by(customer_id: customer_id))
       order.charge_failed!
-      order.cancel!
+      order.cancel!('webhook')
       send_charge_failed_message("Success user_id=#{order.user_id} order_id=#{order.id} customer_id=#{customer_id}")
     else
       send_charge_failed_message("Order not found customer_id=#{customer_id}")

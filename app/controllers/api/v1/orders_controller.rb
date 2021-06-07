@@ -24,7 +24,7 @@ module Api
 
       def cancel
         order = current_user.orders.find_by(id: params[:id])
-        order.cancel! unless order.canceled?
+        order.cancel!('user') unless order.canceled?
         send_message(order)
         render json: {message: t('.success_html', count: INTERVAL), interval: INTERVAL}
       rescue => e
