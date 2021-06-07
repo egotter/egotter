@@ -18,14 +18,23 @@ class CreateDeletableTweetsRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform
-    collect_tweets_with_max_id do |tweets|
-      tweets = tweets.map(&:attrs)
-      data = DeletableTweet.from_array(tweets)
-      DeletableTweet.import data, validate: false
+    collect_tweets_with_max_id do |tweets_resp|
+      tweets_attrs = tweets_resp.map(&:attrs)
+      tweets = DeletableTweet.from_array(tweets_attrs)
+      save_tweets(tweets)
     end
   end
 
   private
+
+  def save_tweets(tweets)
+    DeletableTweet.import tweets, validate: false
+  rescue => e
+    logger.warn "Stop bulk importing and save each tweet exception=#{e.inspect}"
+    tweets.each do |tweet|
+      tweet.save if tweet.valid?
+    end
+  end
 
   def collect_tweets_with_max_id(&block)
     collection = []
