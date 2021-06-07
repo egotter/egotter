@@ -14,7 +14,6 @@ RSpec.describe Order, type: :model do
     end
     it do
       expect(order).to receive(:save!)
-      expect(SlackClient).to receive_message_chain(:channel, :send_message).with('orders').with(instance_of(String))
       subject
     end
   end

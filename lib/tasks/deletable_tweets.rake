@@ -4,7 +4,7 @@ namespace :deletable_tweets do
     since_time = 7.days.ago
     deleted_count = 0
 
-    DeletableTweet.where('created_at < ?', since_time).find_in_batches do |tweets|
+    DeletableTweet.select(:id).where('created_at < ?', since_time).find_in_batches do |tweets|
       ids = tweets.map(&:id)
       DeletableTweet.where(id: ids).delete_all unless dry_run
       deleted_count += ids.size

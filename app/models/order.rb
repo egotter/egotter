@@ -102,10 +102,13 @@ class Order < ApplicationRecord
 
     if changed?
       save!
-      SlackClient.channel('orders').send_message("`Updated` #{id} #{saved_changes.except('updated_at').inspect}")
+      saved_changes.except('updated_at')
+    else
+      nil
     end
   rescue => e
     logger.warn "#{__method__}: #{e.inspect} order_id=#{id}"
+    {exception: e}
   end
 
   def short_name
