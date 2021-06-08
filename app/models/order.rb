@@ -78,10 +78,6 @@ class Order < ApplicationRecord
     end
   end
 
-  def save_stripe_attributes!
-    logger.warn '#save_stripe_attributes! is deprecated'
-  end
-
   def sync_stripe_attributes!
     if (customer = fetch_stripe_customer)
       self.email = customer.email
@@ -169,6 +165,7 @@ class Order < ApplicationRecord
     update!(charge_failed_at: Time.zone.now)
   end
 
+  # TODO Remove later
   class CheckoutSession
     def initialize(checkout_session)
       @checkout_session = checkout_session

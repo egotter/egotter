@@ -12,9 +12,8 @@ class OrdersController < ApplicationController
   # Callback URL for a successful payment
   def success
     checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
-    subscription_id = Order::CheckoutSession.new(checkout_session).subscription_id
 
-    unless Order.exists?(user_id: current_user.id, subscription_id: subscription_id)
+    unless Order.exists?(user_id: current_user.id, subscription_id: checkout_session.subscription)
       redirect_to orders_failure_path(via: current_via('order_not_found'))
     end
   rescue => e
