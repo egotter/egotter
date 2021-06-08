@@ -21,10 +21,11 @@ class OrdersController < ApplicationController
     redirect_to orders_failure_path(via: current_via('internal_error'))
   end
 
+  # TODO Send a message to Slack
   def failure
   end
 
-  # TODO Rename to #cancel_callback and redirect to pricing page
+  # TODO Remove later
   # Callback URL for a canceled payment
   def cancel
   end
@@ -61,20 +62,19 @@ class OrdersController < ApplicationController
 
   def process_checkout_session_completed(event_data)
     order = nil
-    checkout_session = Order::CheckoutSession.new(event_data['object'])
-    user_id = checkout_session.client_reference_id
-    user = User.find(user_id)
+    checkout_session = event_data['object']
+    user = User.find(checkout_session.client_reference_id)
 
     if user.has_valid_subscription?
-      Stripe::Subscription.delete(checkout_session.subscription_id)
+      Stripe::Subscription.delete(checkout_session.subscription)
 
       send_cs_completed_message("User already have a subscription user_id=#{user.id}")
     else
-      order = Order.create_by!(checkout_session)
-      set_metadata_to_subscription(checkout_session.subscription_id, order_id: order.id)
+      order = Order.create_by_webhook!(checkout_session)
+      SyncOrderAndSubscriptionWorker.perform_async(order.id)
 
       # SetVisitIdToOrderWorker.perform_async(order.id)
-      UpdateTrialEndWorker.perform_async(order.id)
+      # UpdateTrialEndWorker.perform_async(order.id)
 
       send_cs_completed_message("Success user_id=#{user.id} order_id=#{order.id}")
     end
@@ -110,14 +110,6 @@ class OrdersController < ApplicationController
   rescue => e
     send_charge_failed_message("#{e.inspect} event=#{event_data.inspect}")
     raise
-  end
-
-  def set_metadata_to_subscription(subscription_id, order_id:)
-    Stripe::Subscription.update(subscription_id, {metadata: {order_id: order_id}})
-  end
-
-  def after_purchase_path(via)
-    settings_path(anchor: 'orders-table', via: current_via(via))
   end
 
   def send_cs_completed_message(message)

@@ -58,13 +58,15 @@ class Order < ApplicationRecord
   end
 
   class << self
-    def create_by!(checkout_session)
+    def create_by_webhook!(checkout_session)
       # tax_rate = checkout_session.subscription.tax_percent / 100.0
       name = 'えごったー ベーシック'
 
+      # The checkout_session doesn't have an email in #customer_email and #customer_details.email
+
       create!(
           user_id: checkout_session.client_reference_id,
-          email: checkout_session.customer_email,
+          email: nil,
           name: name,
           price: checkout_session.metadata.price,
           tax_rate: 0.1,
@@ -72,8 +74,8 @@ class Order < ApplicationRecord
           follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
           unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,
           checkout_session_id: checkout_session.id,
-          customer_id: checkout_session.customer_id,
-          subscription_id: checkout_session.subscription_id
+          customer_id: checkout_session.customer,
+          subscription_id: checkout_session.subscription
       )
     end
   end
@@ -163,60 +165,5 @@ class Order < ApplicationRecord
 
   def charge_failed!
     update!(charge_failed_at: Time.zone.now)
-  end
-
-  # TODO Remove later
-  class CheckoutSession
-    def initialize(checkout_session)
-      @checkout_session = checkout_session
-    end
-
-    def id
-      @checkout_session.id
-    end
-
-    def client_reference_id
-      @checkout_session.client_reference_id
-    end
-
-    def customer_id
-      @checkout_session.customer
-    end
-
-    def subscription_id
-      @checkout_session.subscription
-    end
-
-    def subscription
-      @subscription ||= ::Stripe::Subscription.retrieve(subscription_id)
-    end
-
-    def customer_email
-      @checkout_session.customer_email
-    end
-
-    def plan_name
-      @checkout_session.display_items[0].plan.nickname
-    end
-
-    def plan_price
-      @checkout_session.display_items[0].amount
-    end
-
-    def tax_rate
-      subscription.default_tax_rates[0].percentage / 100.0
-    end
-
-    def metadata
-      @checkout_session.metadata
-    end
-
-    def created_at
-      Time.zone.at(subscription.created)
-    end
-
-    def canceled_at
-      subscription.canceled_at ? Time.zone.at(subscription.canceled_at) : nil
-    end
   end
 end

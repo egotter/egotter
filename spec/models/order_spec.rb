@@ -3,6 +3,13 @@ require 'rails_helper'
 RSpec.describe Order, type: :model do
   let(:user) { create(:user) }
 
+  describe '.create_by_webhook!' do
+    let(:metadata) { double('metadata', price: 123) }
+    let(:checkout_session) { double('checkout_session', id: 'cs_111', client_reference_id: user.id, customer_email: 'a@b.com', metadata: metadata, customer: 'cus_222', subscription: 'sub_333') }
+    subject { described_class.create_by_webhook!(checkout_session) }
+    it { expect { subject }.to change { Order.all.size }.by(1) }
+  end
+
   describe '#sync_stripe_attributes!' do
     let(:order) { create(:order, user_id: user.id) }
     let(:customer) { double('customer', email: 'a@b.com') }
