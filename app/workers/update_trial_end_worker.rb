@@ -6,7 +6,7 @@ class UpdateTrialEndWorker
   def perform(order_id, options = {})
     order = Order.find(order_id)
     order.sync_trial_end!
-    order.sync_email!
+    order.update!(email: order.fetch_stripe_customer.email)
   rescue => e
     logger.warn "#{e.inspect} order_id=#{order_id} options=#{options.inspect}"
   end

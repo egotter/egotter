@@ -119,6 +119,11 @@ class Order < ApplicationRecord
     end
   end
 
+  def fetch_stripe_customer
+    customer_id ? StripeCustomer.new(customer_id) : nil
+  end
+
+  # TODO Remove later
   def stripe_customer
     @stripe_customer ||= (customer_id ? Customer.new(::Stripe::Customer.retrieve(customer_id)) : nil)
   end
@@ -142,10 +147,6 @@ class Order < ApplicationRecord
 
   def trial?
     !trial_end.nil? && Time.zone.now < trial_end_time
-  end
-
-  def sync_email!
-    update!(email: stripe_customer.email)
   end
 
   def sync_trial_end!
@@ -181,6 +182,7 @@ class Order < ApplicationRecord
     update!(charge_failed_at: Time.zone.now)
   end
 
+  # TODO Remove later
   class Customer
     def initialize(customer)
       @customer = customer
