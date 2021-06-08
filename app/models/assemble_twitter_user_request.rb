@@ -24,25 +24,27 @@ class AssembleTwitterUserRequest < ApplicationRecord
 
   def perform!
     return unless validate_record_creation_order!
+    first_part(twitter_user.user_id, twitter_user.uid)
 
-    UpdateUsageStatWorker.perform_async(twitter_user.uid, user_id: twitter_user.user_id, location: self.class)
-    UpdateAudienceInsightWorker.perform_async(twitter_user.uid, location: self.class)
-    CreateFriendInsightWorker.perform_async(twitter_user.uid, location: self.class)
-    CreateFollowerInsightWorker.perform_async(twitter_user.uid, location: self.class)
-    CreateTopFollowerWorker.perform_async(twitter_user.id)
-    CreateTwitterUserCloseFriendsWorker.perform_async(twitter_user.id)
-
-    perform_direct
+    return unless validate_record_friends!
+    second_part
   end
 
   private
 
-  def perform_direct
-    return unless validate_record_friends!
+  def first_part(user_id, uid)
+    UpdateUsageStatWorker.perform_async(uid, user_id: user_id, location: self.class)
+    UpdateAudienceInsightWorker.perform_async(uid, location: self.class)
+    CreateFriendInsightWorker.perform_async(uid, location: self.class)
+    CreateFollowerInsightWorker.perform_async(uid, location: self.class)
+    CreateTopFollowerWorker.perform_async(twitter_user_id)
+    CreateTwitterUserCloseFriendsWorker.perform_async(twitter_user_id)
+  end
 
-    CreateTwitterUserOneSidedFriendsWorker.perform_async(twitter_user.id)
-    CreateTwitterUserInactiveFriendsWorker.perform_async(twitter_user.id)
-    CreateTwitterUserUnfriendsWorker.perform_async(twitter_user.id)
+  def second_part
+    CreateTwitterUserOneSidedFriendsWorker.perform_async(twitter_user_id)
+    CreateTwitterUserInactiveFriendsWorker.perform_async(twitter_user_id)
+    CreateTwitterUserUnfriendsWorker.perform_async(twitter_user_id)
 
     twitter_user.update(
         statuses_interval: twitter_user.calc_statuses_interval,
@@ -83,26 +85,4 @@ class AssembleTwitterUserRequest < ApplicationRecord
 
     true
   end
-
-  module Instrumentation
-    def bm(message, &block)
-      start = Time.zone.now
-      yield
-      @benchmark[message.to_s] = Time.zone.now - start if @benchmark
-    end
-
-    def perform!(*args, &blk)
-      @benchmark = {}
-      start = Time.zone.now
-
-      super
-
-      elapsed = Time.zone.now - start
-      @benchmark['sum'] = @benchmark.values.sum
-      @benchmark['elapsed'] = elapsed
-
-      logger.info "Benchmark AssembleTwitterUserRequest twitter_user_id=#{twitter_user_id} #{@benchmark.inspect}"
-    end
-  end
-  prepend Instrumentation
 end

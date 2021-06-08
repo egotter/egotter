@@ -11,6 +11,15 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
 
   describe '#perform!' do
     subject { request.perform! }
+    it do
+      expect(request).to receive(:first_part).with(user.id, twitter_user.uid)
+      expect(request).to receive(:second_part)
+      subject
+    end
+  end
+
+  describe '#first_part' do
+    subject { request.perform! }
 
     it do
       expect(UpdateUsageStatWorker).to receive(:perform_async).with(twitter_user.uid, user_id: twitter_user.user_id, location: described_class)
@@ -19,16 +28,15 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
       expect(CreateFollowerInsightWorker).to receive(:perform_async).with(twitter_user.uid, anything)
       expect(CreateTopFollowerWorker).to receive(:perform_async).with(twitter_user.id)
       expect(CreateTwitterUserCloseFriendsWorker).to receive(:perform_async).with(twitter_user.id)
-
-      expect(request).to receive(:perform_direct)
       subject
     end
   end
 
-  describe 'perform_direct' do
-    subject { request.send(:perform_direct) }
+  describe '#second_part' do
+    subject { request.send(:second_part) }
 
     it do
+      expect(CreateTwitterUserOneSidedFriendsWorker).to receive(:perform_async).with(twitter_user.id)
       expect(CreateTwitterUserInactiveFriendsWorker).to receive(:perform_async).with(twitter_user.id)
       expect(CreateTwitterUserUnfriendsWorker).to receive(:perform_async).with(twitter_user.id)
       expect(twitter_user).to receive(:update).with(any_args)
