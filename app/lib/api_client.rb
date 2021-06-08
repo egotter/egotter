@@ -18,7 +18,9 @@ class ApiClient
     resp = twitter.create_direct_message_event(*args).to_h
     DirectMessage.new(event: resp)
   rescue => e
-    CreateDirectMessageErrorLogWorker.perform_async(args, e.class, e.message, Time.zone.now, sender_id: fetch_user&.uid)
+    if (user = fetch_user)
+      CreateDirectMessageErrorLogWorker.perform_async(args, e.class, e.message, Time.zone.now, sender_id: user.uid)
+    end
     update_blocker_status(e)
     raise
   end
@@ -41,20 +43,20 @@ class ApiClient
   end
 
   def update_blocker_status(e)
-    if DirectMessageStatus.you_have_blocked?(e)
-      CreateEgotterBlockerWorker.perform_async(fetch_user&.uid)
+    if DirectMessageStatus.you_have_blocked?(e) && (user = fetch_user)
+      CreateEgotterBlockerWorker.perform_async(user.uid)
     end
   end
 
   def update_authorization_status(e)
-    if TwitterApiStatus.unauthorized?(e)
-      UpdateAuthorizedWorker.perform_async(fetch_user&.id)
+    if TwitterApiStatus.unauthorized?(e) && (user = fetch_user)
+      UpdateAuthorizedWorker.perform_async(user.id)
     end
   end
 
   def update_lock_status(e)
-    if TwitterApiStatus.temporarily_locked?(e)
-      UpdateLockedWorker.perform_async(fetch_user&.id)
+    if TwitterApiStatus.temporarily_locked?(e) && (user = fetch_user)
+      UpdateLockedWorker.perform_async(user.id)
     end
   end
 
