@@ -74,7 +74,6 @@ class OrdersController < ApplicationController
       SyncOrderAndSubscriptionWorker.perform_async(order.id)
 
       # SetVisitIdToOrderWorker.perform_async(order.id)
-      # UpdateTrialEndWorker.perform_async(order.id)
 
       send_cs_completed_message("Success user_id=#{user.id} order_id=#{order.id}")
     end
