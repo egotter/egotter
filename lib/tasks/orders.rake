@@ -18,7 +18,7 @@ namespace :orders do
 
   task print_statuses: :environment do
     Order.unexpired.find_each do |order|
-      customer = order.stripe_customer
+      customer = order.fetch_stripe_customer
 
       invoices_status = customer.invoices.map(&:status)
       invoices_paid = customer.invoices.map(&:paid)
@@ -35,7 +35,7 @@ namespace :orders do
   task invalidate_insufficient_subscriptions: :environment do
     Order.unexpired.find_each do |order|
       # TODO Confirm "c = customer.charges[0]; c.paid && !c.refunded"
-      unless order.stripe_customer.invoices[0].paid
+      unless order.fetch_stripe_customer.invoices[0].paid
         order.cancel!('batch')
       end
     end

@@ -4,6 +4,10 @@ class StripeCustomer
     @data = Stripe::Customer.retrieve(id)
   end
 
+  def id
+    @data.id
+  end
+
   def email
     @data.email
   end

@@ -83,20 +83,20 @@ class Order < ApplicationRecord
   end
 
   def sync_stripe_attributes!
-    if stripe_customer
-      self.email = stripe_customer.email
+    if (customer = fetch_stripe_customer)
+      self.email = customer.email
     end
 
-    if stripe_subscription
-      # self.name = stripe_subscription.name
-      # self.price = stripe_subscription.price
+    if (subscription = fetch_stripe_subscription)
+      # self.name = subscription.name
+      # self.price = subscription.price
 
-      if stripe_subscription.canceled_at
-        self.canceled_at = stripe_subscription.canceled_at
+      if subscription.canceled_at
+        self.canceled_at = subscription.canceled_at
       end
 
       if trial_end.nil?
-        self.trial_end = stripe_subscription.trial_end
+        self.trial_end = subscription.trial_end
       end
     end
 
@@ -125,11 +125,6 @@ class Order < ApplicationRecord
 
   def fetch_stripe_subscription
     subscription_id ? StripeSubscription.new(subscription_id) : nil
-  end
-
-  # TODO Remove later
-  def stripe_customer
-    @stripe_customer ||= (customer_id ? Customer.new(::Stripe::Customer.retrieve(customer_id)) : nil)
   end
 
   # TODO Remove later
@@ -181,29 +176,6 @@ class Order < ApplicationRecord
 
   def charge_failed!
     update!(charge_failed_at: Time.zone.now)
-  end
-
-  # TODO Remove later
-  class Customer
-    def initialize(customer)
-      @customer = customer
-    end
-
-    def email
-      @customer.email
-    end
-
-    def created_at
-      Time.zone.at(@customer.created)
-    end
-
-    def invoices(limit: 3)
-      Stripe::Invoice.list(customer: @customer, limit: limit).data
-    end
-
-    def charges(limit: 3)
-      Stripe::Charge.list(customer: @customer, limit: limit).data
-    end
   end
 
   # TODO Remove later
