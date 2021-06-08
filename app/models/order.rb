@@ -127,10 +127,6 @@ class Order < ApplicationRecord
     subscription_id ? StripeSubscription.new(subscription_id) : nil
   end
 
-  def stripe_checkout_session
-    @stripe_checkout_session ||= (checkout_session_id ? Subscription.new(::Stripe::Checkout::Session.retrieve(checkout_session_id)) : nil)
-  end
-
   # For debugging
   def purchase_failed?
     customer_id.nil? || subscription_id.nil?
@@ -171,41 +167,6 @@ class Order < ApplicationRecord
 
   def charge_failed!
     update!(charge_failed_at: Time.zone.now)
-  end
-
-  # TODO Remove later
-  class Subscription
-    def initialize(subscription)
-      @subscription = subscription
-    end
-
-    def name
-      @subscription.items.data[0].plan.nickname
-    end
-
-    def price
-      @subscription.items.data[0].plan.amount
-    end
-
-    def tax_rate
-      @subscription.default_tax_rates[0].percentage / 100.0
-    end
-
-    def trial_end
-      @subscription.trial_end
-    end
-
-    def trial?
-      Time.zone.now < Time.zone.at(@subscription.trial_end)
-    end
-
-    def created_at
-      Time.zone.at(@subscription.created)
-    end
-
-    def canceled_at
-      @subscription.canceled_at ? Time.zone.at(@subscription.canceled_at) : nil
-    end
   end
 
   class CheckoutSession
