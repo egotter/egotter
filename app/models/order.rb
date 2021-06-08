@@ -127,11 +127,6 @@ class Order < ApplicationRecord
     subscription_id ? StripeSubscription.new(subscription_id) : nil
   end
 
-  # TODO Remove later
-  def stripe_subscription
-    @stripe_subscription ||= (subscription_id ? Subscription.new(::Stripe::Subscription.retrieve(subscription_id)) : nil)
-  end
-
   def stripe_checkout_session
     @stripe_checkout_session ||= (checkout_session_id ? Subscription.new(::Stripe::Checkout::Session.retrieve(checkout_session_id)) : nil)
   end
@@ -159,12 +154,12 @@ class Order < ApplicationRecord
   end
 
   def cancel!(source = nil)
-    sub = ::Stripe::Subscription.delete(subscription_id)
-    update!(canceled_at: Subscription.new(sub).canceled_at)
+    subscription = ::Stripe::Subscription.delete(subscription_id)
+    update!(canceled_at: Time.zone.at(subscription.canceled_at))
   rescue Stripe::InvalidRequestError => e
     if e.message&.include?('No such subscription')
       logger.warn "Subscription not found but OK: exception=#{e.inspect} source=#{source}"
-      update!(canceled_at: Time.zone.now)
+      update!(canceled_at: Time.zone.now) if canceled_at.nil?
     else
       raise
     end

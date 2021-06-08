@@ -10,8 +10,7 @@ namespace :orders do
   task update_trial_end: :environment do
     Order.find_each do |order|
       if order.trial_end.nil?
-        sub = order.stripe_subscription
-        order.update(trial_end: sub.trial_end)
+        order.update(trial_end: order.fetch_stripe_subscription.trial_end)
       end
     end
   end
