@@ -123,11 +123,16 @@ class Order < ApplicationRecord
     customer_id ? StripeCustomer.new(customer_id) : nil
   end
 
+  def fetch_stripe_subscription
+    subscription_id ? StripeSubscription.new(subscription_id) : nil
+  end
+
   # TODO Remove later
   def stripe_customer
     @stripe_customer ||= (customer_id ? Customer.new(::Stripe::Customer.retrieve(customer_id)) : nil)
   end
 
+  # TODO Remove later
   def stripe_subscription
     @stripe_subscription ||= (subscription_id ? Subscription.new(::Stripe::Subscription.retrieve(subscription_id)) : nil)
   end
@@ -147,10 +152,6 @@ class Order < ApplicationRecord
 
   def trial?
     !trial_end.nil? && Time.zone.now < trial_end_time
-  end
-
-  def sync_trial_end!
-    update!(trial_end: stripe_subscription.trial_end)
   end
 
   def end_trial!
@@ -205,6 +206,7 @@ class Order < ApplicationRecord
     end
   end
 
+  # TODO Remove later
   class Subscription
     def initialize(subscription)
       @subscription = subscription

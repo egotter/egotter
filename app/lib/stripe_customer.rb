@@ -1,22 +1,22 @@
 class StripeCustomer
 
   def initialize(id)
-    @customer = Stripe::Customer.retrieve(id)
+    @data = Stripe::Customer.retrieve(id)
   end
 
   def email
-    @customer.email
+    @data.email
   end
 
   def created_at
-    Time.zone.at(@customer.created)
+    Time.zone.at(@data.created)
   end
 
   def invoices(limit: 3)
-    Stripe::Invoice.list(customer: @customer, limit: limit).data
+    Stripe::Invoice.list(customer: @data, limit: limit).data
   end
 
   def charges(limit: 3)
-    Stripe::Charge.list(customer: @customer, limit: limit).data
+    Stripe::Charge.list(customer: @data, limit: limit).data
   end
 end
