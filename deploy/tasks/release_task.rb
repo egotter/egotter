@@ -18,11 +18,12 @@ module Tasks
     class Web < Base
       def initialize(host)
         super
+        @role = 'web'
         @target_group = ::Deploy::Aws::TargetGroup.new(ENV['AWS_TARGET_GROUP'])
       end
 
       def run
-        logger.info yellow("#{@action} #{@instance.public_ip}")
+        logger.info yellow("Start #{@action} task for #{@role} server at #{@instance.public_ip}")
 
         ssh_connection_test(@instance.public_ip)
         @target_group.deregister(@instance.id)
@@ -46,16 +47,19 @@ module Tasks
         end
 
         @target_group.register(@instance.id)
+
+        logger.info yellow("Finish #{@action} task for #{@role} server at #{@instance.public_ip}")
       end
     end
 
     class Sidekiq < Base
       def initialize(host)
         super
+        @role = 'sidekiq'
       end
 
       def run
-        logger.info yellow("#{@action} #{@instance.public_ip}")
+        logger.info yellow("Start #{@action} task for #{@role} server at #{@instance.public_ip}")
 
         ssh_connection_test(@instance.public_ip)
 
@@ -85,6 +89,8 @@ module Tasks
         ].each do |cmd|
           exec_command(@instance.public_ip, cmd)
         end
+
+        logger.info yellow("Finish #{@action} task for #{@role} server at #{@instance.public_ip}")
       end
     end
   end

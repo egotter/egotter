@@ -33,34 +33,25 @@ module Tasks
         @action = :launch
         @instance = nil
         @role = nil
-        @launched = nil
-        @terminated = nil
-      end
-
-      def run
-        after_launch if @launched
-        after_terminate if @terminated
       end
 
       private
 
-      def after_launch
-        return if @role == 'plain'
-
+      def add_to_dashboard(role, instance_id)
         Dashboard.new('egotter-linux-system').
-            append_cpu_utilization(@role, @launched.id).
-            append_memory_utilization(@role, @launched.id).
-            append_cpu_credit_balance(@role, @launched.id).
-            append_disk_space_utilization(@role, @launched.id).
+            append_cpu_utilization(role, instance_id).
+            append_memory_utilization(role, instance_id).
+            append_cpu_credit_balance(role, instance_id).
+            append_disk_space_utilization(role, instance_id).
             update
       end
 
-      def after_terminate
+      def remove_from_dashboard(role, instance_id)
         Dashboard.new('egotter-linux-system').
-            remove_cpu_utilization(@role, @terminated.id).
-            remove_memory_utilization(@role, @terminated.id).
-            remove_cpu_credit_balance(@role, @terminated.id).
-            remove_disk_space_utilization(@role, @terminated.id).
+            remove_cpu_utilization(role, instance_id).
+            remove_memory_utilization(role, instance_id).
+            remove_cpu_credit_balance(role, instance_id).
+            remove_disk_space_utilization(role, instance_id).
             update
       end
 
@@ -106,18 +97,18 @@ module Tasks
         Tasks::InstallTask::Web.new(@server.id).install
 
         @target_group.register(@server.id)
-        @instance = @launched = @server
+        @instance = @server
 
         if @params['rotate']
           instance = @target_group.oldest_instance
           if instance && @target_group.deregister(instance.id)
             Tasks::UninstallTask::Web.new(instance.id).uninstall
             instance.terminate
-            @terminated = instance
+            remove_from_dashboard(@role, instance.id)
           end
         end
 
-        super
+        add_to_dashboard(@role, @server.id)
       end
     end
 
@@ -142,9 +133,8 @@ module Tasks
         append_to_ssh_config(@server.id, @server.host, @server.public_ip)
         Tasks::InstallTask::Sidekiq.new(@server.id).install
 
-        @instance = @launched = @server
-
-        super
+        @instance = @server
+        add_to_dashboard(@role, @server.id)
       end
     end
 
@@ -169,9 +159,7 @@ module Tasks
         append_to_ssh_config(@server.id, @server.host, @server.public_ip)
         Tasks::InstallTask::Plain.new(@server.id).install
 
-        @instance = @launched = @server
-
-        super
+        @instance = @server
       end
     end
   end

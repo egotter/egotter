@@ -2,7 +2,7 @@ module Tasks
   class EnumerableTask
     def initialize(tasks, params = {})
       @tasks = tasks
-      @interval = params['interval']&.to_i || 10
+      @interval = params['interval']&.to_i || 30
     end
 
     def action
@@ -17,6 +17,7 @@ module Tasks
       @tasks.each do |task|
         task.run
         if @tasks[-1] != task
+          Deploy.logger.info "Sleep #{@interval} seconds as an interval"
           sleep @interval
         end
       end
