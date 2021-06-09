@@ -39,14 +39,19 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
 
   def delete_tweets(client, tweets)
     started_time = Time.zone.now
+    total_size = tweets.size
+    processed_count = 0
 
-    tweets.each.with_index do |tweet, i|
-      delete_tweet(client, tweet)
-      increment!(:deletions_count)
+    tweets.each_slice(2) do |partial_tweets|
+      threads = partial_tweets.map { |t| Thread.new { delete_tweet(client, t) } }
+      threads.each(&:join)
 
-      if i % 1000 == 0 || i == tweets.size - 1
-        puts progress(tweets, started_time, i + 1)
+      if processed_count % 1000 == 0 || tweets[-1] == partial_tweets[-1]
+        puts progress(started_time, total_size, processed_count + partial_tweets.size)
       end
+
+      processed_count += partial_tweets.size
+      increment!(:deletions_count, partial_tweets.size)
     end
   end
 
@@ -54,8 +59,8 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
     DeleteTweetWorker.new.send(:destroy_status!, client, tweet.id)
   end
 
-  def progress(tweets, started_time, deleted_count)
+  def progress(started_time, total_count, processed_count)
     time = Time.zone.now - started_time
-    "total #{tweets.size}, deleted #{deleted_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / deleted_count)}"
+    "total #{total_count}, deleted #{processed_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / processed_count)}"
   end
 end
