@@ -24,12 +24,6 @@ class OrdersController < ApplicationController
     send_failure_message("user_id=#{current_user&.id} via=#{params[:via]}")
   end
 
-  # TODO Remove later
-  # Callback URL for a canceled payment
-  def cancel
-    logger.warn "The OrdersController#cancel is deprecated user_agent=#{request.user_agent}"
-  end
-
   def end_trial_failure
     # TODO Fix the channel name
     send_failure_message("user_id=#{current_user&.id} via=#{params[:via]}")
