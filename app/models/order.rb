@@ -166,7 +166,10 @@ class Order < ApplicationRecord
   end
 
   def charge_succeeded!
-    update!(charge_failed_at: nil)
+    unless charge_failed_at.nil?
+      logger.warn "Subscription has already failed to charge subscription_id=#{subscription_id}"
+      update!(charge_failed_at: nil)
+    end
   end
 
   def charge_failed!
