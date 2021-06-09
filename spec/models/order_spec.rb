@@ -28,15 +28,33 @@ RSpec.describe Order, type: :model do
   end
 
   describe '#cancel!' do
-    let(:order) { create(:order, user_id: user.id, subscription_id: 'sub', canceled_at: nil) }
-    let(:canceled_at) { Time.zone.now }
-    let(:subscription) { double('subscription', canceled_at: Time.zone.now) }
+    let(:order) { create(:order, user_id: user.id, subscription_id: 'sub_111', canceled_at: nil) }
+    let(:canceled_at) { Time.zone.at(Time.zone.now.to_i) }
+    let(:subscription) { double('subscription', status: 'active') }
+    let(:canceled_subscription) { double('subscription', status: 'canceled', canceled_at: canceled_at.to_i) }
     subject { order.cancel! }
-    before { allow(Stripe::Subscription).to receive(:delete).with('sub').and_return(subscription) }
+    before do
+      allow(Stripe::Subscription).to receive(:retrieve).with(order.subscription_id).and_return(subscription)
+    end
 
     it do
+      expect(Stripe::Subscription).to receive(:delete).with(order.subscription_id).and_return(canceled_subscription)
       subject
-      expect(order.canceled_at).to be_present
+      order.reload
+      expect(order.canceled_at).to eq(canceled_at)
+    end
+
+    context 'subscription has already been canceled' do
+      before do
+        allow(Stripe::Subscription).to receive(:retrieve).with(order.subscription_id).and_return(canceled_subscription)
+      end
+
+      it do
+        expect(Stripe::Subscription).not_to receive(:delete)
+        subject
+        order.reload
+        expect(order.canceled_at).to eq(canceled_at)
+      end
     end
   end
 end

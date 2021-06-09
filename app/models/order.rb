@@ -148,11 +148,17 @@ class Order < ApplicationRecord
   end
 
   def cancel!(source = nil)
-    subscription = ::Stripe::Subscription.delete(subscription_id)
-    update!(canceled_at: Time.zone.at(subscription.canceled_at))
+    subscription = Stripe::Subscription.retrieve(subscription_id)
+    if subscription.status == 'canceled'
+      logger.warn "Subscription has already been canceled subscription_id=#{subscription_id} source=#{source}"
+      update!(canceled_at: Time.zone.now) if canceled_at.nil?
+    else
+      subscription = Stripe::Subscription.delete(subscription_id)
+      update!(canceled_at: Time.zone.at(subscription.canceled_at))
+    end
   rescue Stripe::InvalidRequestError => e
     if e.message&.include?('No such subscription')
-      logger.warn "Subscription not found but OK: exception=#{e.inspect} source=#{source}"
+      logger.warn "Subscription not found but OK exception=#{e.inspect} source=#{source}"
       update!(canceled_at: Time.zone.now) if canceled_at.nil?
     else
       raise
