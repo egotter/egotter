@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
 
-  skip_before_action :current_user_not_blocker?, only: %i(success failure cancel)
+  skip_before_action :current_user_not_blocker?, only: %i(success failure end_trial_failure)
   skip_before_action :verify_authenticity_token, only: :checkout_session_completed
 
   before_action :require_login!, except: :checkout_session_completed
@@ -28,6 +28,11 @@ class OrdersController < ApplicationController
   # Callback URL for a canceled payment
   def cancel
     logger.warn "The OrdersController#cancel is deprecated user_agent=#{request.user_agent}"
+  end
+
+  def end_trial_failure
+    # TODO Fix the channel name
+    send_failure_message("user_id=#{current_user&.id} via=#{params[:via]}")
   end
 
   def checkout_session_completed

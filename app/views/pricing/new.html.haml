@@ -105,6 +105,7 @@
   .mb-1= t('.basic_plan_note1', old_price: Order::REGULAR_PRICE, new_price: Order::DISCOUNT_PRICE)
   .mb-1= t('.basic_plan_note2', price: Order::REGULAR_PRICE)
   .mb-1= t('.basic_plan_note3')
+  .mb-1= t('.basic_plan_note4')
 
 = modal_dialog id: 'payment-method-modal', title: t('.payment_method.modal.title'), button: {positive: t('.bulk_purchase.modal.yes'), category: 'outline-secondary'} do
   .my-3= t('.payment_method.modal.description')

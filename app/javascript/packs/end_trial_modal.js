@@ -6,7 +6,6 @@ class EndTrialModal {
   }
 
   init() {
-    var url = '/api/v1/orders/end_trial'; // api_v1_orders_end_trial_path
     var i18n = this.i18n;
     var self = this;
 
@@ -25,15 +24,41 @@ class EndTrialModal {
 
       ToastMessage.info(i18n['processing']);
 
-      $.post(url).done(function (res) {
-        ToastMessage.info(res.message);
-        var interval = (res.interval || 10) * 1000;
-
+      self.postEndTrial(function (res) {
         setTimeout(function () {
-          window.location.reload();
-        }, interval);
-      }).fail(showErrorMessage);
+          self.redirectPage();
+        }, (res.interval || 10) * 1000);
+      });
     });
+  }
+
+  postEndTrial(callback) {
+    var url = '/api/v1/orders/end_trial'; // api_v1_orders_end_trial_path
+
+    $.post(url).done(function (res) {
+      ToastMessage.info(res.message);
+      callback(res);
+    }).fail(showErrorMessage);
+  }
+
+  redirectPage() {
+    var url = '/api/v1/orders'; // api_v1_orders_path
+    var redirectUrl = '/orders/end_trial_failure'; // orders_end_trial_failure_path;
+
+    var redirect = function (res) {
+      if (res.subscription) {
+        window.location.reload();
+      } else {
+        window.location.href = redirectUrl;
+      }
+    };
+
+    $.get(url).done(function (res) {
+      ToastMessage.info(res.message);
+      setTimeout(function () {
+        redirect(res);
+      }, (res.interval || 10) * 1000);
+    }).fail(showErrorMessage);
   }
 
   show(button) {

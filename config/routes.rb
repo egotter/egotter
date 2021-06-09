@@ -49,6 +49,7 @@ Rails.application.routes.draw do
       post 'forbidden_users/delete', to: 'forbidden_users#delete'
       post 'periodic_report_settings', to: 'periodic_report_settings#update'
       post 'create_periodic_tweet_requests', to: 'create_periodic_tweet_requests#update'
+      get 'orders', to: 'orders#index'
       post 'orders/end_trial', to: 'orders#end_trial'
       post 'orders/cancel', to: 'orders#cancel'
       resources :share_tweets, only: %i(create)
@@ -253,6 +254,7 @@ Rails.application.routes.draw do
   resources :orders, only: %i(create)
   get 'orders/success', to: "orders#success"
   get 'orders/failure', to: "orders#failure"
+  get 'orders/end_trial_failure', to: "orders#end_trial_failure"
   get 'orders/cancel', to: "orders#cancel"
   post 'orders/checkout_session_completed', to: "orders#checkout_session_completed"
 

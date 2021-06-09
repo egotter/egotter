@@ -6,17 +6,26 @@ module Api
 
       before_action :reject_crawler
       before_action :require_login!
-      before_action :has_valid_subscription!
+      before_action :has_valid_subscription!, except: :index
 
       after_action :track_order_activity
 
       INTERVAL = 5
 
+      def index
+        if (subscription = current_user.has_valid_subscription?)
+          message = t('.success_html', count: INTERVAL)
+        else
+          message = t('.fail_html', count: INTERVAL)
+        end
+        render json: {message: message, subscription: subscription}
+      end
+
       def end_trial
         order = current_user.valid_order
         order.end_trial! if order.trial?
         send_message(order)
-        render json: {message: t('.success_html', count: INTERVAL), interval: INTERVAL}
+        render json: {message: t('.success_html'), interval: INTERVAL}
       rescue => e
         logger.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
         render json: {error: true, message: t('.fail')}, status: :unprocessable_entity
