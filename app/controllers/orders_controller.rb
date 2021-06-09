@@ -8,26 +8,26 @@ class OrdersController < ApplicationController
 
   after_action :track_order_activity
 
-  # TODO The callback action is #callback and redirect to #success or #failure
-  # Callback URL for a successful payment
   def success
     checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
 
-    unless Order.exists?(user_id: current_user.id, subscription_id: checkout_session.subscription)
+    unless current_user.orders.where(subscription_id: checkout_session.subscription).exists?
+      logger.warn "#{controller_name}##{action_name}: Order is not found user_id=#{current_user.id} checkout_session_id=#{checkout_session.id} subscription_id=#{checkout_session.subscription}"
       redirect_to orders_failure_path(via: current_via('order_not_found'))
     end
   rescue => e
-    logger.warn "#{controller_name}##{action_name}: #{e.inspect}"
+    logger.warn "#{controller_name}##{action_name}: #{e.inspect} checkout_session_id=#{params[:stripe_session_id]}"
     redirect_to orders_failure_path(via: current_via('internal_error'))
   end
 
-  # TODO Send a message to Slack
   def failure
+    send_failure_message("user_id=#{current_user&.id} via=#{params[:via]}")
   end
 
   # TODO Remove later
   # Callback URL for a canceled payment
   def cancel
+    logger.warn "The OrdersController#cancel is deprecated user_agent=#{request.user_agent}"
   end
 
   def checkout_session_completed
@@ -109,6 +109,12 @@ class OrdersController < ApplicationController
   rescue => e
     send_charge_failed_message("#{e.inspect} event=#{event_data.inspect}")
     raise
+  end
+
+  def send_failure_message(message)
+    SendMessageToSlackWorker.perform_async(:orders_failure, "`#{Rails.env}:failure` #{message}")
+  rescue => e
+    logger.warn "#send_failure_message failed exception=#{e.inspect} message=#{message}"
   end
 
   def send_cs_completed_message(message)
