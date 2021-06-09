@@ -31,6 +31,7 @@ class SlackClient
       orders_charge_succeeded:     ENV['SLACK_ORDERS_CHARGE_SUCCEEDED_URL'],
       orders_charge_failed:        ENV['SLACK_ORDERS_CHARGE_FAILED_URL'],
       orders_sync:                 ENV['SLACK_ORDERS_SYNC_URL'],
+      orders_failure:              ENV['SLACK_ORDERS_FAILURE_URL'],
       deploy:                      ENV['SLACK_DEPLOY_URL'],
   }
 
