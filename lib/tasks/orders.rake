@@ -49,14 +49,4 @@ namespace :orders do
         price_id: ENV['PRICE_ID']
     ).start!
   end
-
-  task send_dm: :environment do
-    user = ENV['USER_ID'] ? User.find(ENV['USER_ID']) : User.find_by(screen_name: ENV['SCREEN_NAME'])
-    dry_run = ENV['DRY_RUN']
-    months_count = ENV['MONTHS_COUNT']
-
-    report = OrdersReport.creation_succeeded_message(user, months_count)
-    report.deliver! unless dry_run
-    puts report.message
-  end
 end

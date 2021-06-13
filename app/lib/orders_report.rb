@@ -14,6 +14,12 @@ class OrdersReport
   end
 
   class << self
+    def starting_message(user)
+      template = Rails.root.join('app/views/orders/start.ja.text.erb')
+      message = ERB.new(template.read).result
+      new(User.egotter_cs, user, message)
+    end
+
     def creation_succeeded_message(user, months_count)
       template = Rails.root.join('app/views/orders/creation_succeeded.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(

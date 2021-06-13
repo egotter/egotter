@@ -18,6 +18,8 @@ class ActivateSubscriptionTask
   private
 
   def validate!
+    @user.api_client.twitter.verify_credentials
+
     if @user.has_valid_subscription?
       raise 'The user already has a subscription.'
     end
@@ -30,6 +32,8 @@ class ActivateSubscriptionTask
   end
 
   def start_task!
+    OrdersReport.starting_message(@user).deliver!
+
     if (customer_id = @user.valid_customer_id)
       customer = Stripe::Customer.retrieve(customer_id)
     else
@@ -59,5 +63,9 @@ class ActivateSubscriptionTask
         trial_end: Time.zone.now.to_i,
     )
     puts order.inspect
+
+    report = OrdersReport.creation_succeeded_message(@user, @months_count)
+    report.deliver!
+    puts report.message
   end
 end
