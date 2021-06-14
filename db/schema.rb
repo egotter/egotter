@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_05_014334) do
+ActiveRecord::Schema.define(version: 2021_06_14_222036) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1777,6 +1777,16 @@ ActiveRecord::Schema.define(version: 2021_06_05_014334) do
     t.index ["screen_name"], name: "index_users_on_screen_name"
     t.index ["token"], name: "index_users_on_token"
     t.index ["uid"], name: "index_users_on_uid", unique: true
+  end
+
+  create_table "violation_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "name"
+    t.json "properties"
+    t.timestamp "time", null: false
+    t.index ["name", "time"], name: "index_violation_events_on_name_and_time"
+    t.index ["time"], name: "index_violation_events_on_time"
+    t.index ["user_id"], name: "index_violation_events_on_user_id"
   end
 
   create_table "visitor_engagement_stats", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
