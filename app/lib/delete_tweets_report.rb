@@ -81,13 +81,14 @@ class DeleteTweetsReport
       ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
     end
 
-    def upload_completed_message(options = {})
+    def upload_completed_message(user, options = {})
       template = Rails.root.join('app/views/delete_tweets/upload_completed.ja.text.erb')
-      ERB.new(template.read).result_with_hash(
+      message = ERB.new(template.read).result_with_hash(
           url: delete_tweets_url('upload_completed'),
           since_date: options['since'],
           until_date: options['until'],
       )
+      new(User.egotter_cs, user, message, quick_replies: options['quick_replies'])
     end
 
     def delete_completed_message(user, deletions_count)

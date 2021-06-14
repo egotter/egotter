@@ -19,10 +19,13 @@ class CreateDeleteTweetsUploadCompletedMessageWorker
     return unless user.authorized?
 
     DeleteTweetsReport.send_upload_completed_starting_message(user)
-    message = DeleteTweetsReport.upload_completed_message(options)
-    event = DeleteTweetsReport.build_direct_message_event(user.uid, message)
-    User.egotter_cs.api_client.create_direct_message_event(event: event)
 
+    quick_replies = [
+        {label: I18n.t('quick_replies.delete_reports.label2'), description: I18n.t('quick_replies.delete_reports.description2')},
+        {label: I18n.t('quick_replies.delete_reports.label3'), description: I18n.t('quick_replies.delete_reports.description3')},
+        {label: I18n.t('quick_replies.delete_reports.label4'), description: I18n.t('quick_replies.delete_reports.description4')},
+    ]
+    DeleteTweetsReport.upload_completed_message(user, options.merge('quick_replies' => quick_replies)).deliver!
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"

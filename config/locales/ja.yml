@@ -1849,6 +1849,12 @@ ja:
     delete_reports:
       label1: 'DM届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
+      label2: 'このままでOK'
+      description2: '問題が無い場合は押しておくと安心です'
+      label3: '削除の停止'
+      description3: '削除の開始前に押すと、削除が完全に止まります'
+      label4: '日付の変更'
+      description4: 'ボタンを押した後に、再度アップロードしてください'
     order_reports:
       label1: 'DM届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'

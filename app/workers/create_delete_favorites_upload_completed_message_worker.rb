@@ -19,10 +19,7 @@ class CreateDeleteFavoritesUploadCompletedMessageWorker
     return unless user.authorized?
 
     DeleteFavoritesReport.send_upload_completed_starting_message(user)
-    message = DeleteFavoritesReport.upload_completed_message(options)
-    event = DeleteFavoritesReport.build_direct_message_event(user.uid, message)
-    User.egotter_cs.api_client.create_direct_message_event(event: event)
-
+    DeleteFavoritesReport.upload_completed_message(user, options).deliver!
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
