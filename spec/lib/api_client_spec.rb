@@ -71,6 +71,7 @@ RSpec.describe ApiClient, type: :model do
       end
       it do
         expect(CreateEgotterBlockerWorker).to receive(:perform_async).with(user.uid)
+        expect(CreateViolationEventWorker).to receive(:perform_async).with(user.id, 'Blocking egotter')
         subject
       end
     end

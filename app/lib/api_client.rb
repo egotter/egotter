@@ -45,6 +45,7 @@ class ApiClient
   def update_blocker_status(e)
     if DirectMessageStatus.you_have_blocked?(e) && (user = fetch_user)
       CreateEgotterBlockerWorker.perform_async(user.uid)
+      CreateViolationEventWorker.perform_async(user.id, 'Blocking egotter')
     end
   end
 
