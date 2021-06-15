@@ -5,10 +5,11 @@ function extractErrorMessage(xhr, textStatus, errorThrown) {
   try {
     message = JSON.parse(xhr.responseText)['message'];
   } catch (e) {
-    logger.error(e);
+    logger.warn('Parsing xhr.responseText failed', xhr.responseText, e);
   }
   if (!message) {
     message = xhr.status + ' (' + errorThrown + ')';
+    logger.warn('Set default error message', message);
   }
   return message;
 }

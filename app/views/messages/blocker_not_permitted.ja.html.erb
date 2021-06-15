@@ -2,7 +2,7 @@
   <div class="mb-3">
     Webサイトを今後も利用する場合は、有料プランの購入とブロック解除の両方が必要です。<br>
     <br>
-    両方とも完了した後に <%= twitter_web_link('egotter_cs') %> にDMで連絡してください。
+    両方とも完了した後に、下記のボタンから利用制限の解除を申請してください。
   </div>
 
   <div class="mb-3">
@@ -16,12 +16,27 @@
   </div>
 
   <div>
-    3. DMで申請する<br>
+    3. 利用制限の解除を申請する<br>
     <% if user_signed_in? && current_user.has_valid_subscription? %>
-      <% url = direct_message_url(User::EGOTTER_CS_UID, '自動入力：ブロックを解除しました。有料プランを購入します（もしくは購入済みです）。Webサイトの利用を再開してください。') %>
-      <%= link_to '@egotter_cs に解除を申請する', url, class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+      <button type="button" id="destroy-banned-user-button" class="btn btn-outline-primary btn-sm">利用制限の解除を申請する</button>
+      <script>
+        $(function () {
+          var url = '<%= raw api_v1_banned_users_destroy_path(via: current_via) %>';
+          var redirectUrl = '<%= raw root_path(via: current_via) %>';
+
+          $('#destroy-banned-user-button').on('click', function () {
+            $.ajax({url: url, type: 'DELETE'}).done(function (res) {
+              ToastMessage.info(res.message);
+              setTimeout(function () {
+                window.location.href = redirectUrl;
+              }, (res.interval || 3) * 1000);
+            }).fail(showErrorMessage);
+            return false;
+          });
+        });
+      </script>
     <% else %>
-      <%= link_to '@egotter_cs に解除を申請する', '#', class: 'btn btn-outline-primary btn-sm disabled', disabled: 'disabled' %>
+      <button type="button" class="btn btn-outline-primary btn-sm disabled" disabled="disabled">利用制限の解除を申請する</button>
       <div class="text-muted small mt-1">※ 有料プランの購入を先に済ませてください。</div>
     <% end %>
   </div>

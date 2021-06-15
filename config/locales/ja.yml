@@ -2087,6 +2087,9 @@ ja:
     root: 'トップ'
   api:
     v1:
+      banned_users:
+        destroy:
+          success_html: 'ブロック設定を解除しました。そのままでお待ちください。%{count}秒後に自動的に移動します。<img src="/ajax-loader.gif?a=1">'
       follow_requests:
         create:
           invalid_uid: '有効な uid を指定してください。'
