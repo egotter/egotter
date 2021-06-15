@@ -133,9 +133,10 @@ module ValidationConcern
     false
   end
 
+  # TODO Rename to #current_user_is_banned?
   def current_user_not_blocker?
     return true unless user_signed_in?
-    return true unless EgotterBlocker.where(uid: current_user.uid).exists?
+    return true unless current_user.banned?
 
     redirect_to error_pages_blocker_detected_path(via: current_via(__method__))
     false

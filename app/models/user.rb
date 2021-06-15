@@ -309,4 +309,8 @@ class User < ApplicationRecord
     return true unless notification_setting # For test
     notification_setting.permission_level == NotificationSetting::PROPER_PERMISSION
   end
+
+  def banned?
+    BannedUser.where(user_id: id).exists?
+  end
 end

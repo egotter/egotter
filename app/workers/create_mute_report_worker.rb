@@ -17,7 +17,7 @@ class CreateMuteReportWorker
     user = User.find(user_id)
     return unless user.authorized?
     return if already_stop_requested?(user)
-    return if EgotterBlocker.where(uid: user.uid).exists?
+    return if user.banned?
 
     if PeriodicReport.send_report_limited?(user.uid)
       retry_current_report(user_id, options)

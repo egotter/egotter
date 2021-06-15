@@ -136,10 +136,10 @@ class StartPeriodicReportsTask
     end
 
     def reject_egotter_blocker_user_ids(user_ids)
-      EgotterBlocker.select(:id, :uid).find_in_batches do |blockers|
-        users = User.select(:id).where(uid: blockers.map(&:uid))
-        user_ids -= users.map(&:id)
+      BannedUser.find_in_batches do |banned_users|
+        user_ids -= banned_users.map(&:user_id)
       end
+
       user_ids
     end
 

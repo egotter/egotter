@@ -124,6 +124,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       CreateTwitterUserRequest::NotChanged => e
     logger.info "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
   rescue => e
+    # TODO Log backtraces if the error is CreateTwitterUserRequest::Unknown
     logger.warn "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
   end
 
