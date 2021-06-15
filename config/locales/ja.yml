@@ -1472,7 +1472,7 @@ ja:
     ad_blocker_detected:
       message: 'えごったーは広告ブロッカーが有効な場合はご利用できません。広告ブロッカーを無効にしてからご利用ください。'
     blocker_detected:
-      message_html: '@%{user} は @ego_tter をブロックしたことがあるため、全ての通知とWebサイトの利用が制限されています。'
+      message_html: '@%{user} は「スパム行為を行った」または「@ego_tter をブロックした」ため、全ての通知とWebサイトの利用が制限されています。'
     not_found_user:
       message: '@%{user} は存在しないか削除済みです。主な理由は下記の通りです。'
     forbidden_user:
