@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_14_222036) do
+ActiveRecord::Schema.define(version: 2021_06_14_224944) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -203,6 +203,13 @@ ActiveRecord::Schema.define(version: 2021_06_14_222036) do
     t.index ["created_at"], name: "index_background_update_logs_on_created_at"
     t.index ["screen_name"], name: "index_background_update_logs_on_screen_name"
     t.index ["uid"], name: "index_background_update_logs_on_uid"
+  end
+
+  create_table "banned_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_banned_users_on_created_at"
+    t.index ["user_id"], name: "index_banned_users_on_user_id", unique: true
   end
 
   create_table "blacklist_words", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
