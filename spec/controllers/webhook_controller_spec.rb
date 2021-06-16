@@ -7,7 +7,7 @@ RSpec.describe WebhookController, type: :controller do
     subject { post :twitter, params: params }
 
     before do
-      allow(controller).to receive(:verified_webhook_request?).and_return(true)
+      allow(controller).to receive(:verify_webhook_request)
       allow(controller).to receive(:direct_message_event_for_egotter?).and_return(true)
     end
 

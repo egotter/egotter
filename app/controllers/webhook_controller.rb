@@ -5,28 +5,30 @@ class WebhookController < ApplicationController
 
   skip_before_action :verify_authenticity_token, only: :twitter
 
+  before_action :verify_webhook_request, only: :twitter
+
   def challenge
     render json: {response_token: crc_response}
   end
 
   def twitter
-    if verified_webhook_request?
-      if direct_message_event_for_egotter?
-        params[:direct_message_events].each do |event|
-          event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
-          ProcessWebhookEventWorker.perform_async(event)
-        end
-      elsif follow_event_for_egotter?
-        params[:follow_events].each do |event|
-          event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
-          ProcessWebhookFollowEventWorker.perform_async(event)
-        end
+    if direct_message_event_for_egotter?
+      params[:direct_message_events].each do |event|
+        event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
+        ProcessWebhookEventWorker.perform_async(event)
       end
+    elsif follow_event_for_egotter?
+      params[:follow_events].each do |event|
+        event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
+        ProcessWebhookFollowEventWorker.perform_async(event)
+      end
+    else
+      logger.info "#{controller_name}##{action_name}: Unknown webhook event"
     end
 
     head :ok
   rescue => e
-    logger.warn "#{controller_name}##{action_name} #{e.inspect}"
+    logger.warn "#{controller_name}##{action_name}: #{e.inspect}"
     head :ok
   end
 
@@ -44,9 +46,10 @@ class WebhookController < ApplicationController
     crc_digest(params[:crc_token])
   end
 
-  # NOTICE The name #verified_request? conflicts with an existing method in Rails.
-  def verified_webhook_request?
-    crc_digest(request.body.read) == request.headers[:HTTP_X_TWITTER_WEBHOOKS_SIGNATURE]
+  def verify_webhook_request
+    unless crc_digest(request.body.read) == request.headers[:HTTP_X_TWITTER_WEBHOOKS_SIGNATURE]
+      head :forbidden
+    end
   end
 
   def crc_digest(payload)
