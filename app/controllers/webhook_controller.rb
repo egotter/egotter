@@ -22,8 +22,13 @@ class WebhookController < ApplicationController
         event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
         ProcessWebhookFollowEventWorker.perform_async(event)
       end
+    elsif direct_message_event_for_egotter_cs?
+      params[:direct_message_events].each do |event|
+        event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
+        ProcessWebhookEventForEgotterCsWorker.perform_async(event)
+      end
     else
-      logger.info "#{controller_name}##{action_name}: Unknown webhook event"
+      logger.info "#{controller_name}##{action_name}: Unhandled webhook event for_user_id=#{params[:for_user_id]}"
     end
 
     head :ok
@@ -40,6 +45,10 @@ class WebhookController < ApplicationController
 
   def follow_event_for_egotter?
     params[:for_user_id].to_i == User::EGOTTER_UID && params[:follow_events]
+  end
+
+  def direct_message_event_for_egotter_cs?
+    params[:for_user_id].to_i == User::EGOTTER_CS_UID && params[:direct_message_events]
   end
 
   def crc_response
