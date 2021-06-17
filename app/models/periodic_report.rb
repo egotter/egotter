@@ -764,19 +764,19 @@ class PeriodicReport < ApplicationRecord
         quick_replies = options[:unsubscribe] ? unsubscribe_quick_reply_options : default_quick_reply_options
       end
 
-      {
+      event = {
           type: 'message_create',
           message_create: {
               target: {recipient_id: uid},
-              message_data: {
-                  text: message,
-                  quick_reply: {
-                      type: 'options',
-                      options: quick_replies
-                  }
-              }
+              message_data: {text: message}
           }
       }
+
+      if quick_replies.any?
+        event[:message_create][:message_data][:quick_reply] = {type: 'options', options: quick_replies}
+      end
+
+      event
     end
 
     def allotted_messages_will_expire_soon?(user)
