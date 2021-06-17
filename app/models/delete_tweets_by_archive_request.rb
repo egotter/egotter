@@ -22,10 +22,10 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
-  def perform(tweets, sync: true)
+  def perform(tweets, sync: true, threads: 4)
     if sync
       client = user.api_client.twitter
-      delete_tweets(client, tweets)
+      delete_tweets(client, tweets, threads)
     else
       tweets.each do |tweet|
         DeleteTweetByArchiveWorker.perform_async(id, tweet.id)
@@ -37,12 +37,12 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
 
   private
 
-  def delete_tweets(client, tweets)
+  def delete_tweets(client, tweets, threads_count)
     started_time = Time.zone.now
     total_size = tweets.size
     processed_count = 0
 
-    tweets.each_slice(2) do |partial_tweets|
+    tweets.each_slice(threads_count) do |partial_tweets|
       threads = partial_tweets.map { |t| Thread.new { delete_tweet(client, t) } }
       threads.each(&:join)
 
