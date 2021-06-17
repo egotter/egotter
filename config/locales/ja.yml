@@ -1882,6 +1882,17 @@ ja:
     delete_tweets_max_deletion: '%{count}万件以上のツイート削除を希望します'
     charge_failed_inquiry: 'カードに問題が無いのに支払いに失敗しました。定期購読の継続を希望します。'
     error_inquiry: '%{name} エラーが複数回起きています。（スクリーンショットも送ってください）'
+  email_messages:
+    shop_order_ask_id_subject: '【えごったーショップ】IDの記載を忘れていませんか？'
+    shop_order_ask_id_body: |
+      えごったーショップで購入した商品について連絡です。
+      備考欄にツイッターIDの記載がありませんでした。
+
+      【有効にするツイッターID（@your_name の部分）】をこのメールでご連絡ください。
+
+      もしこのメールにお心当たりがない場合は、お手数ですが無視して破棄してください。
+
+      えごったーサポート
   directory:
     profiles:
       footer_title: プロフィール
