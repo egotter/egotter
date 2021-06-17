@@ -371,12 +371,12 @@ RSpec.describe PeriodicReport do
 
   describe '.build_direct_message_event' do
     subject { described_class.build_direct_message_event(1, 'message') }
-    before { allow(described_class).to receive(:default_quick_reply_options).and_return('options') }
+    before { allow(described_class).to receive(:default_quick_reply_options).and_return(['options']) }
     it do
       event = subject
       expect(event[:message_create][:target][:recipient_id]).to eq(1)
       expect(event[:message_create][:message_data][:text]).to eq('message')
-      expect(event[:message_create][:message_data][:quick_reply][:options]).to eq('options')
+      expect(event[:message_create][:message_data][:quick_reply][:options]).to eq(['options'])
     end
   end
 

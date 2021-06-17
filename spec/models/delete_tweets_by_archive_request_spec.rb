@@ -11,7 +11,7 @@ RSpec.describe DeleteTweetsByArchiveRequest, type: :model do
     subject { instance.perform(tweets) }
     before { allow(user).to receive(:api_client).and_return(client) }
     it do
-      expect(instance).to receive(:delete_tweets).with(twitter, tweets)
+      expect(instance).to receive(:delete_tweets).with(twitter, tweets, 4)
       subject
     end
   end
@@ -19,7 +19,7 @@ RSpec.describe DeleteTweetsByArchiveRequest, type: :model do
   describe '#delete_tweets' do
     let(:tweets) { ['tweet1', 'tweet2'] }
     let(:client) { double('client') }
-    subject { instance.send(:delete_tweets, client, tweets) }
+    subject { instance.send(:delete_tweets, client, tweets, 1) }
     it do
       tweets.each do |tweet|
         expect(instance).to receive(:delete_tweet).with(client, tweet)
