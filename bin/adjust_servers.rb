@@ -15,12 +15,21 @@ def current_hour
   Time.now.utc.hour
 end
 
-def adjust_servers(role, instance_type, count)
+def adjust_servers(role, instance_type, count, market_type)
   prev_names = server_names(role, instance_type)
 
   if prev_names.size != count
     post("Adjust #{role} servers from #{prev_names.size} to #{count} current=#{prev_names}")
-    Tasks::TaskBuilder.new('adjust' => true, 'role' => role, 'instance-type' => instance_type, 'count' => count, 'without-tag' => true).adjust_task.run
+
+    task_params = {
+        'adjust' => true,
+        'role' => role,
+        'instance-type' => instance_type,
+        'count' => count,
+        'market-type' => market_type,
+        'without-tag' => true,
+    }
+    Tasks::TaskBuilder.new(task_params).adjust_task.run
 
     cur_names = server_names(role, instance_type)
     post("Finish adjusting #{role} servers prev=#{prev_names} cur=#{cur_names}")
@@ -70,19 +79,27 @@ rescue => e
 end
 
 def main
+  retries ||= 3
+  market_type ||= 'spot'
   role = ENV['ROLE']
 
   case role
   when 'web'
-    adjust_servers('web', 't3.medium', web_servers_count)
+    adjust_servers('web', 't3.medium', web_servers_count, market_type)
   when 'sidekiq'
-    adjust_servers('sidekiq', 'm5.large', sidekiq_servers_count)
+    adjust_servers('sidekiq', 'm5.large', sidekiq_servers_count, market_type)
   else
     raise "Invalid role value=#{role}"
   end
 rescue => e
-  post("Adjusting #{role} servers failed exception=#{e.inspect}")
-  raise
+  if e.message == 'There is no Spot capacity available that matches your request.' && (retries -= 1) > 0
+    post("Retry retries=#{retries} exception=#{e.inspect}")
+    market_type = 'not-spot'
+    retry
+  else
+    post("Adjusting #{role} servers failed exception=#{e.inspect}")
+    raise
+  end
 end
 
 if __FILE__ == $0
