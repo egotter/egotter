@@ -11,4 +11,9 @@ RSpec.describe CreatePeriodicReportReceivedMessageWorker do
       subject
     end
   end
+
+  describe '#short_message' do
+    subject { worker.send(:short_message, user.uid) }
+    it { is_expected.to be_truthy }
+  end
 end

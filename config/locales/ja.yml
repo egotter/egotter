@@ -1780,6 +1780,10 @@ ja:
       ok: "削除する"
       cancel: "キャンセル"
 
+  message_of_the_day:
+    color:
+      title: '今日のラッキーカラー'
+      default: '虹色'
   rake_tasks:
     egotter_blockers:
       user_not_found_message: 'ご連絡ありがとうございます。えごったーにログイしたことがまだないようです。#egotter'

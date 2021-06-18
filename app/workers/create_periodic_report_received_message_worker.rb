@@ -22,12 +22,14 @@ class CreatePeriodicReportReceivedMessageWorker
     #egotter
   TEXT
 
-  SIMPLE_MESSAGE = <<~TEXT
+  SIMPLE_MESSAGE = <<~ERB
     通知の送信回数が回復しました。
     ・残り送信回数：4回
     ・有効期限：24時間
+
+    <%= message %>
     #egotter
-  TEXT
+  ERB
 
   def unique_key(uid, options = {})
     uid
@@ -42,7 +44,7 @@ class CreatePeriodicReportReceivedMessageWorker
     user = User.select(:id).find_by(uid: uid)
 
     if PeriodicReportReceivedMessageConfirmation.exists?(user_id: user.id)
-      message = SIMPLE_MESSAGE
+      message = short_message(uid)
     else
       message = MESSAGE
       PeriodicReportReceivedMessageConfirmation.create(user_id: user.id)
@@ -55,6 +57,12 @@ class CreatePeriodicReportReceivedMessageWorker
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
     end
+  end
+
+  private
+
+  def short_message(uid)
+    ERB.new(SIMPLE_MESSAGE).result_with_hash(message: MessageOfTheDay.new(uid))
   end
 
   def disposable_report?

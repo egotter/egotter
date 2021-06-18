@@ -35,7 +35,7 @@ namespace :banned_users do
       end
     end
 
-    if api_user[:protected]
+    if api_user.protected
       # Twitter::Error::TooManyRequests: Rate limit exceeded
       if user.api_client.twitter.block?(User::EGOTTER_UID)
         send_dm.call(I18n.t('rake_tasks.egotter_blockers.still_blocking_message'))
