@@ -23,11 +23,12 @@ class CreatePeriodicReportReceivedMessageWorker
   TEXT
 
   SIMPLE_MESSAGE = <<~ERB
+    <%= message %>
+
     通知の送信回数が回復しました。
     ・残り送信回数：4回
     ・有効期限：24時間
 
-    <%= message %>
     #egotter
   ERB
 
