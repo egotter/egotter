@@ -17,24 +17,34 @@
 
   <div class="mb-3">
     3. 利用制限の解除を申請する<br>
-    <% if user_signed_in? && current_user.has_valid_subscription? %>
-      <button type="button" id="destroy-banned-user-button" class="btn btn-outline-primary btn-sm">利用制限の解除を申請する</button>
-      <script>
-        $(function () {
-          var url = '<%= raw api_v1_banned_users_destroy_path(via: current_via) %>';
-          var redirectUrl = '<%= raw root_path(via: current_via) %>';
+    <% if user_signed_in? %>
+      <% if current_user.has_valid_subscription? %>
+        <% if current_user.has_trial_subscription? %>
+          <button type="button" class="btn btn-outline-primary btn-sm btn-end-trial">利用制限の解除を申請する</button>
+          <div class="text-muted small mt-1">※ トライアル期間の終了を先に済ませてください。</div>
+        <% else %>
+          <button type="button" id="destroy-banned-user-button" class="btn btn-outline-primary btn-sm">利用制限の解除を申請する</button>
+          <script>
+            $(function () {
+              var url = '<%= raw api_v1_banned_users_destroy_path(via: current_via) %>';
+              var redirectUrl = '<%= raw root_path(via: current_via) %>';
 
-          $('#destroy-banned-user-button').on('click', function () {
-            $.ajax({url: url, type: 'DELETE'}).done(function (res) {
-              ToastMessage.info(res.message);
-              setTimeout(function () {
-                window.location.href = redirectUrl;
-              }, (res.interval || 3) * 1000);
-            }).fail(showErrorMessage);
-            return false;
-          });
-        });
-      </script>
+              $('#destroy-banned-user-button').on('click', function () {
+                $.ajax({url: url, type: 'DELETE'}).done(function (res) {
+                  ToastMessage.info(res.message);
+                  setTimeout(function () {
+                    window.location.href = redirectUrl;
+                  }, (res.interval || 3) * 1000);
+                }).fail(showErrorMessage);
+                return false;
+              });
+            });
+          </script>
+        <% end %>
+      <% else %>
+        <button type="button" class="btn btn-outline-primary btn-sm disabled" disabled="disabled">利用制限の解除を申請する</button>
+        <div class="text-muted small mt-1">※ 有料プランの購入を先に済ませてください。</div>
+      <% end %>
     <% else %>
       <button type="button" class="btn btn-outline-primary btn-sm disabled" disabled="disabled">利用制限の解除を申請する</button>
       <div class="text-muted small mt-1">※ 有料プランの購入を先に済ませてください。</div>

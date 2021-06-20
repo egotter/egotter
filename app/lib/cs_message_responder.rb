@@ -12,7 +12,7 @@ class CsMessageResponder < AbstractMessageResponder
     end
 
     def received_regexp
-      /開始|送信|仲良し/
+      /開始|送信|リムられ|ブロック|ミュート|仲良し/
     end
 
     def send_message
