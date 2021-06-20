@@ -92,12 +92,12 @@ def main
     raise "Invalid role value=#{role}"
   end
 rescue => e
-  if e.message == 'There is no Spot capacity available that matches your request.' && (retries -= 1) > 0
+  if e.class == Aws::EC2::Errors::InsufficientInstanceCapacity && (retries -= 1) > 0
     post("Retry retries=#{retries} exception=#{e.inspect}")
     market_type = 'not-spot'
     retry
   else
-    post("Adjusting #{role} servers failed exception=#{e.inspect}")
+    post("Adjusting #{role} servers failed retries=#{retries} exception=#{e.inspect}")
     raise
   end
 end
