@@ -9,7 +9,7 @@ module Api
       before_action :has_valid_subscription!
 
       def destroy
-        BannedUser.find_by(user_id: current_user.id).destroy
+        BannedUser.find_by(user_id: current_user.id)&.destroy
         render json: {message: t('.success_html', count: 3), interval: 3}
       end
     end

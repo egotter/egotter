@@ -1786,7 +1786,6 @@ ja:
       default: '虹色'
   rake_tasks:
     egotter_blockers:
-      user_not_found_message: 'ご連絡ありがとうございます。えごったーにログイしたことがまだないようです。#egotter'
       banned_user_not_found_message: 'ご連絡ありがとうございます。利用制限は受けていないようです。#egotter'
       unauthorized_message: 'ご連絡ありがとうございます。ツイッター連携が無効になっています。Webサイトにログイン後に再度ご連絡ください。#egotter'
       still_blocking_message: 'ご連絡ありがとうございます。今もブロック中のようです。ブロックを解除後に再度ご連絡ください。#egotter'
