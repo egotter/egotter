@@ -24,7 +24,7 @@ class CreateAccessDayWorker
     date = AccessDay.current_date
 
     unless user.access_days.exists?(date: date)
-      user.access_days.create!(date: date, time: time)
+      user.access_days.create(date: date, time: time)
     end
   end
 end

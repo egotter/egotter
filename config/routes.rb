@@ -81,6 +81,7 @@ Rails.application.routes.draw do
       resources :friend_ids, only: %i(create)
       resources :follower_ids, only: %i(create)
 
+      resources :access_days, only: %i(create)
       delete 'banned_users_destroy', to: 'banned_users#destroy'
     end
   end

@@ -2104,6 +2104,9 @@ ja:
     root: 'トップ'
   api:
     v1:
+      access_days:
+        create:
+          success: '@%{user} のアクセス履歴の確認が完了しました。'
       banned_users:
         destroy:
           success_html: '利用制限を解除しました。そのままでお待ちください。%{count}秒後に自動的に移動します。<img src="/ajax-loader.gif?a=1">'

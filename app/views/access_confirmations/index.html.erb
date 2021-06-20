@@ -18,3 +18,14 @@
 <% url = access_confirmations_path(user_token: params[:user_token], share_dialog: 1, follow_dialog: 1, sign_in_dialog: 1, purchase_dialog: 1, via: current_via('switch_account')) %>
 <div class="text-muted small my-3"><%= t('.notice2_html', url: force_sign_in_path(via: current_via('switch_account'), redirect_path: url)) %></div>
 <div class="text-muted small my-3"><%= t('.notice3_html', egotter_link: twitter_web_link('egotter_cs')) %></div>
+
+<% if user_signed_in? %>
+  <script>
+    $(function () {
+      var url = '<%= raw api_v1_access_days_path(via: current_via) %>';
+      $.post(url).done(function (res) {
+        ToastMessage.info(res.message);
+      }).fail(showErrorMessage);
+    });
+  </script>
+<% end %>
