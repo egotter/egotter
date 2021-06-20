@@ -7,6 +7,8 @@ class CreatePeriodicReportBlockerNotPermittedMessageWorker
     「スパム行為を行った」または「@ego_tter をブロックした」ため、全ての通知とWebサイトの利用が制限されています。
 
     Webサイトを今後も利用する場合は、有料プランの購入とブロックの解除が必要です。詳細はこちらのページをご覧ください。<%= url %>
+
+    ※ 利用制限の解除のために購入された売上は、全額を特定公益増進法人（例：日本赤十字社）に寄付します。
     #egotter
   ERB
 
