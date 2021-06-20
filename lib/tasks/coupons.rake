@@ -50,7 +50,7 @@ namespace :coupons do
   end
 
   task add_stripe_coupon: :environment do
-    user = ENV['USER_ID'] ? User.find(ENV['USER_ID']) : User.find_by(uid: ENV['UID'])
+    user = ENV['USER_ID'] ? User.find(ENV['USER_ID']) : User.find_by(screen_name: ENV['SCREEN_NAME'])
     coupon = Stripe::Coupon.retrieve(ENV['STRIPE_COUPON_ID'])
     expires_at = ENV['EXPIRES_AT'] ? Time.zone.parse(ENV['EXPIRES_AT']) : 7.days.since
 
