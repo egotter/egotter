@@ -25,7 +25,7 @@ sudo_cmd="sudo -u ${USER} -H bash -l -c"
 
 yum update -y
 yum groupinstall -y "Development Tools"
-yum install -y git tmux dstat htop monit tree nginx httpd-tools
+yum install -y git tmux dstat htop tree nginx httpd-tools
 yum install -y openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel
 yum install -y libidn-devel # twitter-text gem
 # set +e
@@ -118,14 +118,6 @@ yum install -y nodejs yarn
 # egotter
 cp -f ./setup/etc/init.d/egotter /etc/init.d
 
-# monit
-# [ ! -f "/etc/monit.conf.bak" ] && cp /etc/monit.conf /etc/monit.conf.bak
-# cp -f ./setup/etc/monit.conf /etc
-# chown root:root /etc/monit.conf
-# cp -f ./setup/etc/monit.d/sidekiq /etc/monit.d
-# chkconfig monit on
-# service monit stop
-
 # nginx
 [ ! -f "/etc/nginx/nginx.conf.bak" ] && cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 \cp -f ./setup/etc/nginx/nginx.conf /etc/nginx
@@ -171,7 +163,6 @@ Setup daemons:
     service nginx stop; chkconfig nginx off
     service redis stop; chkconfig redis off
     service sendmail stop; chkconfig sendmail off
-    service monit stop; chkconfig monit off
     service td-agent stop; chkconfig td-agent off
     service sidekiq stop; chkconfig --add sidekiq; chkconfig sidekiq off
 
