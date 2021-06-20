@@ -7,20 +7,24 @@ class CreateAccessDayWorker
   end
 
   def unique_in
-    1.hour
+    5.minutes
   end
 
   def perform(user_id, options = {})
     user = User.find(user_id)
-    time = Time.zone.now
-    date = time.in_time_zone('Tokyo').to_date
-
-    unless user.access_days.exists?(date: date)
-      user.access_days.create!(date: date, time: time)
-    end
+    create_record(user)
   rescue ActiveRecord::RecordNotUnique => e
     logger.info e.message.truncate(100)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
+  end
+
+  def create_record(user)
+    time = Time.zone.now
+    date = AccessDay.current_date
+
+    unless user.access_days.exists?(date: date)
+      user.access_days.create!(date: date, time: time)
+    end
   end
 end

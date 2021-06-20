@@ -54,7 +54,6 @@ module Logging
     }
 
     CreateSearchLogWorker.perform_async(attrs)
-    CreateAccessDayWorker.perform_async(current_user.id) if user_signed_in?
 
     if via_dm?
       job_options = {token: params[:token], read_at: attrs[:created_at]}
@@ -69,6 +68,13 @@ module Logging
     logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+  end
+
+  def create_access_day
+    # TODO Create a record synchronously as a workaround to "ThreadError: can't alloc thread"
+    CreateAccessDayWorker.perform_async(current_user.id) if user_signed_in?
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} user_id=#{current_user.id}"
   end
 
   def create_error_log(location, message, ex = nil)

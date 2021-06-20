@@ -22,9 +22,8 @@ class ApplicationController < ActionController::Base
 
   skip_before_action :track_ahoy_visit, if: -> { apache_bench? }
 
-  after_action do
-    create_access_log if create_access_log?
-  end
+  after_action :create_access_log, if: -> { create_access_log? }
+  after_action :create_access_day, if: -> { create_access_log? }
 
   before_action :set_locale
 

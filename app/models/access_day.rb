@@ -24,4 +24,10 @@ class AccessDay < ApplicationRecord
     words = date.split('-')
     words[1] + words[2]
   end
+
+  class << self
+    def current_date
+      Time.zone.now.in_time_zone('Tokyo').to_date
+    end
+  end
 end
