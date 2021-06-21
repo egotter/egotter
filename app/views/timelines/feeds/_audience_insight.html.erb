@@ -15,8 +15,8 @@
 <script type=text/javascript>
   $(function () {
     var series = [
-      {name: 'friends', color: '#058DC7', data: <%= raw audience_insight.chart_data(:friends).to_json %>},
-      {name: 'followers', color: '#ED561B', yAxis: 1, data: <%= raw audience_insight.chart_data(:followers).to_json %>}
+      {name: 'friends', color: '#058DC7', data: <%= raw friends_chart_data(twitter_user.uid).to_json %>},
+      {name: 'followers', color: '#ED561B', yAxis: 1, data: <%= raw followers_chart_data(twitter_user.uid).to_json %>}
     ];
     if (series[0].data.length <= 1) {
       series = AudienceInsight.Sample;

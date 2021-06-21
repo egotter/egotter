@@ -80,8 +80,11 @@ class AudienceInsight < ApplicationRecord
       data = new_friends[:data]
     when :new_followers
       data = new_followers[:data]
+    else
+      raise "Invalid name value=#{name}"
     end
 
+    # [[time, int], [time, int], ...]
     times.zip(data)
   end
 
@@ -139,6 +142,7 @@ class AudienceInsight < ApplicationRecord
       attrs = {}
       AudienceInsight::CHART_NAMES.each do |chart_name|
         bm(chart_name) do
+          # TODO Stop calculating data for friends and followers
           attrs["#{chart_name}_text"] = chart_builder.send(chart_name).to_json
         end
       end

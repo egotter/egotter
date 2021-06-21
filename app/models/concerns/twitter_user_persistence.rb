@@ -10,6 +10,7 @@ module TwitterUserPersistence
     after_create_commit :perform_after_commit
   end
 
+  # This method is called manually
   def perform_before_transaction!
     bm_start!
 
