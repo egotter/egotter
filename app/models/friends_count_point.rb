@@ -13,10 +13,19 @@
 #  index_friends_count_points_on_uid         (uid)
 #
 class FriendsCountPoint < ApplicationRecord
+  include TimeBetweenQuery
+
   validates :uid, presence: true
   validates :value, presence: true
 
   class << self
+    # Not used
+    def create_by_twitter_user(twitter_user)
+      unless where(uid: twitter_user.uid).time_between(twitter_user.created_at).exists?
+        create(uid: twitter_user.uid, value: twitter_user.friends_count, created_at: twitter_user.created_at)
+      end
+    end
+
     def import_from_twitter_users(uid)
       data = []
       TwitterUser.select(:id, :friends_count, :created_at).where(uid: uid).find_each do |record|

@@ -15,8 +15,9 @@ class PerformAfterCommitWorker
     logger.warn "The job of #{self.class} is skipped twitter_user_id=#{twitter_user_id}"
   end
 
+  # TODO Don't expire this job
   def expire_in
-    10.minutes
+    1.hour
   end
 
   def after_expire(twitter_user_id, data, options = {})

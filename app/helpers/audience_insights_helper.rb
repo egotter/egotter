@@ -14,6 +14,11 @@ module AudienceInsightsHelper
     format_chart_data_points(records)
   end
 
+  def new_followers_chart_data(uid)
+    records = NewFollowersCountPoint.where(uid: uid).order(created_at: :desc).limit(100)
+    format_chart_data_points(records)
+  end
+
   private
 
   def format_chart_data_points(records)
