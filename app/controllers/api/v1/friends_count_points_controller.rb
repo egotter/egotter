@@ -24,7 +24,7 @@ module Api
         }
         t('.index.message', options)
       rescue => e
-        t('.index.default_message', fetch_user(uid)&.screen_name)
+        t('.index.default_message', screen_name: fetch_user(uid)&.screen_name)
       end
 
       def format_time(time)
