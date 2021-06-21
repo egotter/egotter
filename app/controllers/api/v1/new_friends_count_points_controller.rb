@@ -14,6 +14,10 @@ module Api
       end
 
       def chart_message(uid, records)
+        if records.empty?
+          return t('.index.default_message', screen_name: fetch_user(uid)&.screen_name)
+        end
+
         options = {
             user: fetch_user(uid)&.screen_name,
             since_date: format_time(records[0].created_at),
