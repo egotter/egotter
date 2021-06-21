@@ -15,7 +15,7 @@ module Api
 
       def chart_message(uid, records)
         if records.empty?
-          return t('.index.default_message', screen_name: fetch_user(uid)&.screen_name)
+          return t('.index.default_message', user: fetch_user(uid)&.screen_name)
         end
 
         options = {
@@ -28,7 +28,7 @@ module Api
         }
         t('.index.message', options)
       rescue => e
-        t('.index.default_message', screen_name: fetch_user(uid)&.screen_name)
+        t('.index.default_message', user: fetch_user(uid)&.screen_name)
       end
 
       def format_time(time)
