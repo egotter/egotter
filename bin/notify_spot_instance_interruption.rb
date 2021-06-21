@@ -5,58 +5,88 @@ require 'uri'
 require 'json'
 require 'dotenv/load'
 
-def post_message(text)
-  uri = URI.parse(ENV['SLACK_NOTIFY_INTERRUPTION_URL'])
-  puts Net::HTTP.post_form(uri, payload: {text: text}.to_json).body
+class Slack
+  class << self
+    def post(text)
+      uri = URI.parse(ENV['SLACK_NOTIFY_INTERRUPTION_URL'])
+      puts Net::HTTP.post_form(uri, payload: {text: text}.to_json).body
+    end
+  end
 end
 
-def fetch_token
-  `curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 3600"`
+class App
+  def marked_to_be_terminated?
+    resp = `curl -s -H "X-aws-ec2-metadata-token: #{token}" http://169.254.169.254/latest/meta-data/spot/instance-action`
+    !resp.include?('Not Found')
+  end
+
+  def instance_id
+    @instance_id ||= `curl -s -H "X-aws-ec2-metadata-token: #{token}" http://169.254.169.254/latest/meta-data/instance-id`.chomp
+  end
+
+  def instance_name
+    @instance_name ||= `aws ec2 describe-tags --filters "Name=resource-id,Values=#{instance_id}" "Name=key,Values=Name" --region ap-northeast-1 --query="Tags[0].Value"`.gsub(/["\n]/, '')
+  end
+
+  def stop
+    if instance_name.include?('web')
+      WebProcess.new(instance_id).stop
+    elsif name.include?('sidekiq')
+      Process.new('sidekiq_misc').stop
+      Process.new('sidekiq').stop
+    end
+  end
+
+  private
+
+  def token
+    @token ||= `curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 3600"`
+  end
 end
 
-def fetch_instance_id(token)
-  `curl -s -H "X-aws-ec2-metadata-token: #{token}" http://169.254.169.254/latest/meta-data/instance-id`.chomp
-rescue => e
-  'error'
+class Process
+  def initialize(process_name)
+    @process_name = process_name
+  end
+
+  def stop
+    if `sudo status #{@process_name}`.include?('start/running')
+      `sudo stop #{@process_name}`
+    end
+  end
 end
 
-def fetch_name_tag(instance_id)
-  `aws ec2 describe-tags --filters "Name=resource-id,Values=#{instance_id}" "Name=key,Values=Name" --region ap-northeast-1 --query="Tags[0].Value"`.gsub(/["\n]/, '')
-rescue => e
-  'error'
-end
+class WebProcess
+  def initialize(instance_id)
+    @instance_id = instance_id
+  end
 
-def fetch_target_group_arn
-  `aws elbv2 describe-target-groups --region ap-northeast-1 --names egotter --query="TargetGroups[0].TargetGroupArn"`.gsub(/["\n]/, '')
-rescue => e
-  'error'
-end
+  def stop
+    deregister
+    Process.new('puma').stop
+  end
 
-def deregister_target(target_group_arn, instance_id)
-  `aws elbv2 deregister-targets --target-group-arn #{target_group_arn} --targets Id=#{instance_id} --region ap-northeast-1`
-rescue => e
-  'error'
+  private
+
+  def deregister
+    `aws elbv2 deregister-targets --target-group-arn #{target_group} --targets Id=#{@instance_id} --region ap-northeast-1`
+  end
+
+  def target_group
+    `aws elbv2 describe-target-groups --region ap-northeast-1 --names egotter --query="TargetGroups[0].TargetGroupArn"`.gsub(/["\n]/, '')
+  end
 end
 
 def main
-  token = fetch_token
-  resp = `curl -s -H "X-aws-ec2-metadata-token: #{token}" http://169.254.169.254/latest/meta-data/spot/instance-action`
+  app = App.new
+  return unless app.marked_to_be_terminated?
 
-  unless resp.include?('Not Found')
-    instance_id = fetch_instance_id(token)
-    name = fetch_name_tag(instance_id)
-    post_message("This instance is marked to be terminated id=#{instance_id} name=#{name}")
+  Slack.post("This instance is marked to be terminated app=#{app}")
 
-    if name.include?('web')
-      arn = fetch_target_group_arn
-      deregister_target(arn, instance_id)
-      post_message("An instance is deregistered id=#{instance_id} name=#{name}")
-    elsif name.include?('sidekiq')
-      `sudo stop sidekiq_misc`
-      `sudo stop sidekiq`
-      post_message("The sidekiq processes are stopped id=#{instance_id} name=#{name}")
-    end
-  end
+  app.stop
+  Slack.post("The app is stopped app=#{app}")
+rescue => e
+  Slack.post("An error occurred exception=#{e.inspect}")
 end
 
 if __FILE__ == $0
