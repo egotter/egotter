@@ -6,7 +6,7 @@
   <div id="audience-insight-friends-chart" class="my-3" style="height: 100px;"></div>
   <div id="audience-insight-followers-chart" class="my-3" style="height: 100px;"></div>
 
-  <% if audience_insight.insufficient_chart_data? %>
+  <% if FriendsCountPoint.where(uid: twitter_user.uid).size <= 1 %>
     <div class="text-center small text-muted"><%= t('timelines.feeds.sample_data_html') %></div>
   <% end %>
 

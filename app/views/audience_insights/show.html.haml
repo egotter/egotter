@@ -35,7 +35,7 @@
 
 :javascript
   function drawFriendsChart() {
-    var url = '#{raw api_v1_friends_count_points_path(uid: @insight.uid, via: current_via)}';
+    var url = '#{raw api_v1_friends_count_points_path(uid: @twitter_user.uid, via: current_via)}';
     $.get(url).done(function (res) {
       $('#friends-chart-description').text(res.message);
       new AudienceInsight().drawChart($('#friends-chart')[0], [{name: 'Friends', data: res.data}]);
@@ -43,7 +43,7 @@
   }
 
   function drawFollowersChart() {
-    var url = '#{raw api_v1_followers_count_points_path(uid: @insight.uid, via: current_via)}';
+    var url = '#{raw api_v1_followers_count_points_path(uid: @twitter_user.uid, via: current_via)}';
     $.get(url).done(function (res) {
       $('#followers-chart-description').text(res.message);
       new AudienceInsight().drawChart($('#followers-chart')[0], [{name: 'Followers', data: res.data}]);
@@ -51,7 +51,7 @@
   }
 
   function drawNewFriendsChart() {
-    var url = '#{raw api_v1_new_friends_count_points_path(uid: @insight.uid, via: current_via)}';
+    var url = '#{raw api_v1_new_friends_count_points_path(uid: @twitter_user.uid, via: current_via)}';
     $.get(url).done(function (res) {
       $('#new-friends-chart-description').text(res.message);
       new AudienceInsight().drawChart($('#new-friends-chart')[0], [{name: 'New friends', data: res.data}]);
@@ -59,7 +59,7 @@
   }
 
   function drawNewFollowersChart() {
-    var url = '#{raw api_v1_new_followers_count_points_path(uid: @insight.uid, via: current_via)}';
+    var url = '#{raw api_v1_new_followers_count_points_path(uid: @twitter_user.uid, via: current_via)}';
     $.get(url).done(function (res) {
       $('#new-followers-chart-description').text(res.message);
       new AudienceInsight().drawChart($('#new-followers-chart')[0], [{name: 'New followers', data: res.data}]);

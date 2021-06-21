@@ -14,9 +14,14 @@ module TwitterUserAssociations
 
     with_options(primary_key: :uid, foreign_key: :uid, dependent: :destroy, validate: false, autosave: false) do |obj|
       obj.has_one :usage_stat
-      obj.has_one :audience_insight
+      # obj.has_one :audience_insight
       obj.has_one :close_friends_og_image
     end
+  end
+
+  def audience_insight
+    logger.warn '#audience_insight is deprecated'
+    nil
   end
 
   class RelationshipProxy

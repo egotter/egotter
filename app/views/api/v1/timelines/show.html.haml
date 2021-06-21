@@ -2,8 +2,7 @@
 
 .my-5= feed_item :summary, twitter_user: @twitter_user
 
-- if @twitter_user.audience_insight
-  .mb-5= feed_item :audience_insight, twitter_user: @twitter_user, audience_insight: @twitter_user.audience_insight
+.mb-5= feed_item :audience_insight, twitter_user: @twitter_user
 
 .mb-5= feed_item :close_friends, feed_attrs('close_friends', @twitter_user)
 
