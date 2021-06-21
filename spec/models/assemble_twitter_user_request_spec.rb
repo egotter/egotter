@@ -39,6 +39,8 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
       expect(CreateTwitterUserOneSidedFriendsWorker).to receive(:perform_async).with(twitter_user.id)
       expect(CreateTwitterUserInactiveFriendsWorker).to receive(:perform_async).with(twitter_user.id)
       expect(CreateTwitterUserUnfriendsWorker).to receive(:perform_async).with(twitter_user.id)
+      expect(CreateTwitterUserNewFriendsWorker).to receive(:perform_async).with(twitter_user.id)
+      expect(CreateTwitterUserNewFollowersWorker).to receive(:perform_async).with(twitter_user.id)
       expect(twitter_user).to receive(:update).with(any_args)
       subject
     end
