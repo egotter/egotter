@@ -29,12 +29,7 @@ class CreateTwitterUserNewFriendsWorker
 
     if (uids = twitter_user.calc_new_friend_uids)
       twitter_user.update(new_friends_size: uids.size)
-
-      if NewFriendsCountPoint.where(uid: twitter_user.uid).exists?
-        NewFriendsCountPoint.create(uid: twitter_user.uid, value: uids.size, created_at: twitter_user.created_at)
-      else
-        NewFriendsCountPoint.import_by_uid(twitter_user.uid)
-      end
+      CreateNewFriendsCountPointWorker.perform_async(twitter_user_id)
     end
   rescue => e
     logger.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
