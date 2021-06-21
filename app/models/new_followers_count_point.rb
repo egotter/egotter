@@ -18,10 +18,11 @@ class NewFollowersCountPoint < ApplicationRecord
 
   class << self
     def import_from_twitter_users(uid)
-      data = TwitterUser.select(:id, :uid, :created_at).where(uid: uid).map do |record|
+      data = []
+      TwitterUser.select(:id, :uid, :created_at).where(uid: uid).find_each do |record|
         # TODO Fix performance issue
         # TODO Use TwitterUser#new_followers_size
-        new(uid: uid, value: record.calc_new_follower_uids.size, created_at: record.created_at)
+        data << new(uid: uid, value: record.calc_new_follower_uids.size, created_at: record.created_at)
       end
       import data, validate: false, timestamps: false
     end

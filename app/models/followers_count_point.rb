@@ -18,8 +18,9 @@ class FollowersCountPoint < ApplicationRecord
 
   class << self
     def import_from_twitter_users(uid)
-      data = TwitterUser.select(:followers_count, :created_at).where(uid: uid).map do |record|
-        new(uid: uid, value: record.followers_count, created_at: record.created_at)
+      data = []
+      TwitterUser.select(:followers_count, :created_at).where(uid: uid).find_each do |record|
+        data << new(uid: uid, value: record.followers_count, created_at: record.created_at)
       end
       import data, validate: false, timestamps: false
     end
