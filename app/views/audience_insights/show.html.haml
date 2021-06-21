@@ -11,60 +11,64 @@
 %h2.h4.text-center.my-5= t('.page_title', user: @twitter_user.screen_name)
 .mb-5= t('.page_description_html', user: @twitter_user.screen_name, friends: @twitter_user.friends_count, followers: @twitter_user.followers_count)
 
-= render partial: 'shared/search_form', locals: {track_id: 'audience_insight', via: current_via('top_input'), redirect_path: audience_insight_path(screen_name: ':screen_name')}
 = render partial: 'adsense/ad', locals: {vertical: :top}
 
 %h3.h5.text-center.my-5= t('.friends.title')
-.mb-5= t('.friends.description', user: @twitter_user.screen_name)
+#friends-chart-description.mb-5
 #friends-chart{style: 'height: 250px;'}
+.text-muted.small{style: 'margin-bottom: 120px;'}= t('.friends.note')
 
 %h3.h5.text-center.my-5= t('.followers.title')
-.mb-5= t('.followers.description', user: @twitter_user.screen_name)
+#followers-chart-description.mb-5
 #followers-chart{style: 'height: 250px;'}
+.text-muted.small{style: 'margin-bottom: 120px;'}= t('.followers.note')
 
 %h3.h5.text-center.my-5= t('.new_friends.title')
-.mb-5= t('.new_friends.description', user: @twitter_user.screen_name)
+#new-friends-chart-description.mb-5
 #new-friends-chart{style: 'height: 250px;'}
+.text-muted.small{style: 'margin-bottom: 120px;'}= t('.new_friends.note')
 
 %h3.h5.text-center.my-5= t('.new_followers.title')
-.mb-5= t('.new_followers.description', user: @twitter_user.screen_name)
+#new-followers-chart-description.mb-5
 #new-followers-chart{style: 'height: 250px;'}
-
-%table.text-center.table.table-bordered.table-condensed.my-5
-  %tr
-    %th.text-secondary Date
-    %th.text-secondary Friends
-    %th.text-secondary Followers
-  - @insight.categories.zip(@insight.friends[:data], @insight.followers[:data]).each do |date, friend, follower|
-    %tr
-      %td.text-secondary= date
-      %td.text-secondary= friend
-      %td.text-secondary= follower
-
-%table.text-center.table.table-bordered.table-condensed.my-5
-  %tr
-    %th.text-secondary Date
-    %th.text-secondary New friends
-    %th.text-secondary New followers
-  - @insight.categories.zip(@insight.new_friends[:data], @insight.new_followers[:data]).each do |date, new_friend, new_follower|
-    %tr
-      %td.text-secondary= date
-      %td.text-secondary= new_friend
-      %td.text-secondary= new_follower
+.text-muted.small{style: 'margin-bottom: 120px;'}= t('.new_followers.note')
 
 :javascript
+  function drawFriendsChart() {
+    var url = '#{raw api_v1_friends_count_points_path(uid: @insight.uid, via: current_via)}';
+    $.get(url).done(function (res) {
+      $('#friends-chart-description').text(res.message);
+      new AudienceInsight().drawChart($('#friends-chart')[0], [{name: 'Friends', data: res.data}]);
+    }).fail(showErrorMessage);
+  }
+
+  function drawFollowersChart() {
+    var url = '#{raw api_v1_followers_count_points_path(uid: @insight.uid, via: current_via)}';
+    $.get(url).done(function (res) {
+      $('#followers-chart-description').text(res.message);
+      new AudienceInsight().drawChart($('#followers-chart')[0], [{name: 'Followers', data: res.data}]);
+    }).fail(showErrorMessage);
+  }
+
+  function drawNewFriendsChart() {
+    var url = '#{raw api_v1_new_friends_count_points_path(uid: @insight.uid, via: current_via)}';
+    $.get(url).done(function (res) {
+      $('#new-friends-chart-description').text(res.message);
+      new AudienceInsight().drawChart($('#new-friends-chart')[0], [{name: 'New friends', data: res.data}]);
+    }).fail(showErrorMessage);
+  }
+
+  function drawNewFollowersChart() {
+    var url = '#{raw api_v1_new_followers_count_points_path(uid: @insight.uid, via: current_via)}';
+    $.get(url).done(function (res) {
+      $('#new-followers-chart-description').text(res.message);
+      new AudienceInsight().drawChart($('#new-followers-chart')[0], [{name: 'New followers', data: res.data}]);
+    }).fail(showErrorMessage);
+  }
+
   $(function () {
-    var insight = new AudienceInsight();
-
-    var friends = #{raw friends_chart_data(@insight.uid).to_json};
-    insight.drawChart($('#friends-chart')[0], [{name: 'friends', data: friends}]);
-
-    var followers = #{raw followers_chart_data(@insight.uid).to_json};
-    insight.drawChart($('#followers-chart')[0], [{name: 'followers', data: followers}]);
-
-    var newFriends = #{raw @insight.chart_data(:new_friends).to_json};
-    insight.drawChart($('#new-friends-chart')[0], [{name: 'new friends', data: newFriends}]);
-
-    var newFollowers = #{raw @insight.chart_data(:new_followers).to_json};
-    insight.drawChart($('#new-followers-chart')[0], [{name: 'new followers', data: newFollowers}]);
+    drawFriendsChart();
+    drawFollowersChart();
+    drawNewFriendsChart();
+    drawNewFollowersChart();
   });

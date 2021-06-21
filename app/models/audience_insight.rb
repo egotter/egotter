@@ -142,7 +142,7 @@ class AudienceInsight < ApplicationRecord
       attrs = {}
       AudienceInsight::CHART_NAMES.each do |chart_name|
         bm(chart_name) do
-          # TODO Stop calculating data for friends and followers
+          # TODO Stop calculating
           attrs["#{chart_name}_text"] = chart_builder.send(chart_name).to_json
         end
       end

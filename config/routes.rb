@@ -73,6 +73,11 @@ Rails.application.routes.draw do
       resources :delete_favorites_requests, only: %i(create)
       resources :delete_favorites_notifications, only: %i(create)
 
+      resources :friends_count_points, only: %i(index)
+      resources :followers_count_points, only: %i(index)
+      resources :new_friends_count_points, only: %i(index)
+      resources :new_followers_count_points, only: %i(index)
+
       resources :checkout_sessions, only: %i(create)
       resources :customer_portal_urls, only: %i(create)
       delete 'user_caches', to: 'user_caches#destroy'

@@ -1,7 +1,10 @@
 <div class="audience-insight-on-timeline card p-3">
   <h3 class="text-center"><%= t('timelines.feeds.audience_insights.title') %></h3>
-  <div class="text-center my-3"><%= t('timelines.feeds.audience_insights.description_html', user: twitter_user.screen_name, friends: twitter_user.friends_count, followers: twitter_user.followers_count) %></div>
-  <div class="chart-container" style="height: 200px;"></div>
+  <div class="text-center my-3"><%= t('timelines.feeds.audience_insights.description', user: twitter_user.screen_name) %></div>
+  <div id="audience-insight-followers-chart-description" class="text-center my-3"></div>
+
+  <div id="audience-insight-friends-chart" class="my-3" style="height: 100px;"></div>
+  <div id="audience-insight-followers-chart" class="my-3" style="height: 100px;"></div>
 
   <% if audience_insight.insufficient_chart_data? %>
     <div class="text-center small text-muted"><%= t('timelines.feeds.sample_data_html') %></div>
@@ -13,15 +16,32 @@
 </div>
 
 <script type=text/javascript>
+  function drawFriendsChart() {
+    var url = '<%= raw api_v1_friends_count_points_path(uid: twitter_user.uid, via: current_via) %>';
+    $.get(url).done(function (res) {
+      var data = res.data;
+      if (data.length <= 1) {
+        data = AudienceInsight.Sample[0]['data'];
+      }
+      new AudienceInsight().drawChart($('#audience-insight-friends-chart')[0], [{name: 'Friends', data: data}]);
+    }).fail(showErrorMessage);
+  }
+
+  function drawFollowersChart() {
+    var url = '<%= raw api_v1_followers_count_points_path(uid: twitter_user.uid, via: current_via) %>';
+    $.get(url).done(function (res) {
+      $('#audience-insight-followers-chart-description').text(res.message);
+      var data = res.data;
+      if (data.length <= 1) {
+        data = AudienceInsight.Sample[1]['data'];
+      }
+      new AudienceInsight().drawChart($('#audience-insight-followers-chart')[0], [{name: 'Followers', data: data}]);
+    }).fail(showErrorMessage);
+  }
+
   $(function () {
-    var series = [
-      {name: 'friends', color: '#058DC7', data: <%= raw friends_chart_data(twitter_user.uid).to_json %>},
-      {name: 'followers', color: '#ED561B', yAxis: 1, data: <%= raw followers_chart_data(twitter_user.uid).to_json %>}
-    ];
-    if (series[0].data.length <= 1) {
-      series = AudienceInsight.Sample;
-    }
-    new AudienceInsight().drawChart($('.audience-insight-on-timeline .chart-container')[0], series);
+    drawFriendsChart();
+    drawFollowersChart();
     trackPageEvents('TimelinePage events', 'AudienceInsights loaded', {dataLength: series[0].data.length});
   });
 </script>

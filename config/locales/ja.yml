@@ -213,7 +213,7 @@ ja:
         description: '@%{user} がフォローされているユーザーです。'
       audience_insights:
         title: 'オーディエンス分析'
-        description_html: '@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。<br><br>@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。'
+        description: '@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の変化が分かります。'
       close_friends:
         title: '仲良しランキング'
         description: '@%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。'
@@ -361,16 +361,16 @@ ja:
       meta_description: "@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。"
       friends:
         title: 'フォロー数'
-        description: '@%{user} のフォロー数の日次推移です。ツイッターのプロフィールに書いてあるフォロー数の変化が日付毎に分かります。'
+        note: 'ツイッターのプロフィールに書いてあるフォロー数の変化です。'
       followers:
         title: 'フォロワー数'
-        description: '@%{user} のフォロワー数の日次推移です。ツイッターのプロフィールに書いてあるフォロワー数の変化が日付毎に分かります。'
+        note: 'ツイッターのプロフィールに書いてあるフォロワー数の変化です。'
       new_friends:
         title: '新しいフォロー'
-        description: '@%{user} の新しいフォローの日次推移です。合計フォロー数が減っていても、新しい人をフォローすれば数値が増えます。例：2人リムーブした + 3人フォローした = 新しいフォローは3人'
+        note: '合計フォロー数が減っていても、新しい人をフォローすれば数値が増えます。例：2人リムーブした + 3人フォローした = 新しいフォローは3人'
       new_followers:
         title: '新しいフォロワー'
-        description: '@%{user} の新しいフォロワーの日次推移です。合計フォロワー数が減っていても、新しい人からフォローされれば数値が増えます。例：2人からリムられた + 3人からフォローされた = 新しいフォロワーは3人'
+        note: '合計フォロワー数が減っていても、新しい人からフォローされれば数値が増えます。例：2人からリムられた + 3人からフォローされた = 新しいフォロワーは3人'
   access_confirmations:
     index:
       page_title: 'ログインしてください'
@@ -2115,6 +2115,26 @@ ja:
       banned_users:
         destroy:
           success_html: '利用制限を解除しました。そのままでお待ちください。%{count}秒後に自動的に移動します。<img src="/ajax-loader.gif?a=1">'
+      friends_count_points:
+        index:
+          message: '@%{user} のフォロー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
+          increase: '増加'
+          decrease: '減少'
+          default_message: '@%{user} のフォロー数です。'
+      followers_count_points:
+        index:
+          message: '@%{user} のフォロワー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
+          increase: '増加'
+          decrease: '減少'
+          default_message: '@%{user} のフォロワー数です。'
+      new_friends_count_points:
+        index:
+          message: '@%{user} は %{since_date} から %{until_date} までの間に %{count}人 を新しくフォローしました。'
+          default_message: '@%{user} の新しいフォロー数です。'
+      new_followers_count_points:
+        index:
+          message: '@%{user} は %{since_date} から %{until_date} までの間に %{count}人 から新しくフォローされました。'
+          default_message: '@%{user} の新しいフォロワー数です。'
       follow_requests:
         create:
           invalid_uid: '有効な uid を指定してください。'
