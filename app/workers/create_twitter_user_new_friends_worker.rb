@@ -20,7 +20,7 @@ class CreateTwitterUserNewFriendsWorker
   end
 
   def _timeout_in
-    30.seconds
+    3.minutes
   end
 
   # options:
@@ -29,7 +29,12 @@ class CreateTwitterUserNewFriendsWorker
 
     if (uids = twitter_user.calc_new_friend_uids)
       twitter_user.update(new_friends_size: uids.size)
-      NewFriendsCountPoint.import_from_twitter_users(twitter_user.uid)
+
+      if NewFriendsCountPoint.where(uid: twitter_user.uid).exists?
+        NewFriendsCountPoint.create(uid: twitter_user.uid, value: uids.size, created_at: twitter_user.created_at)
+      else
+        NewFriendsCountPoint.import_from_twitter_users(twitter_user.uid)
+      end
     end
   rescue => e
     logger.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
