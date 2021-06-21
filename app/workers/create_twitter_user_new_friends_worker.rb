@@ -33,7 +33,7 @@ class CreateTwitterUserNewFriendsWorker
       if NewFriendsCountPoint.where(uid: twitter_user.uid).exists?
         NewFriendsCountPoint.create(uid: twitter_user.uid, value: uids.size, created_at: twitter_user.created_at)
       else
-        NewFriendsCountPoint.import_from_twitter_users(twitter_user.uid)
+        NewFriendsCountPoint.import_by_uid(twitter_user.uid)
       end
     end
   rescue => e

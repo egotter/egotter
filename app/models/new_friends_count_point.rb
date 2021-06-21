@@ -19,13 +19,14 @@ class NewFriendsCountPoint < ApplicationRecord
   validates :value, presence: true
 
   class << self
+    # Fast enough as confirming the record existence before fetching uids
     def create_by_twitter_user(twitter_user)
       unless where(uid: twitter_user.uid).time_between(twitter_user.created_at).exists?
         create(uid: twitter_user.uid, value: twitter_user.calc_new_friend_uids.size, created_at: twitter_user.created_at)
       end
     end
 
-    def import_from_twitter_users(uid)
+    def import_by_uid(uid)
       TwitterUser.where(uid: uid).find_each do |record|
         create_by_twitter_user(record)
       end

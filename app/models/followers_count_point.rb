@@ -19,19 +19,17 @@ class FollowersCountPoint < ApplicationRecord
   validates :value, presence: true
 
   class << self
-    # Not used
+    # Fast enough as confirming the record existence before fetching uids
     def create_by_twitter_user(twitter_user)
       unless where(uid: twitter_user.uid).time_between(twitter_user.created_at).exists?
         create(uid: twitter_user.uid, value: twitter_user.followers_count, created_at: twitter_user.created_at)
       end
     end
 
-    def import_from_twitter_users(uid)
-      data = []
-      TwitterUser.select(:id, :followers_count, :created_at).where(uid: uid).find_each do |record|
-        data << new(uid: uid, value: record.followers_count, created_at: record.created_at)
+    def import_by_uid(uid)
+      TwitterUser.where(uid: uid).find_each do |record|
+        create_by_twitter_user(record)
       end
-      import data, validate: false, timestamps: false
     end
   end
 end

@@ -14,7 +14,7 @@ class CreateFriendsCountPointWorker
   # options:
   def perform(uid, value, time, options = {})
     if !FriendsCountPoint.where(uid: uid).exists? && TwitterUser.where(uid: uid).exists?
-      FriendsCountPoint.import_from_twitter_users(uid)
+      FriendsCountPoint.import_by_uid(uid)
     else
       FriendsCountPoint.create(uid: uid, value: value, created_at: time)
     end

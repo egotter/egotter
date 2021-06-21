@@ -12,7 +12,7 @@ RSpec.describe CreateTwitterUserNewFriendsWorker do
   describe '#perform' do
     subject { worker.perform(twitter_user.id) }
     it do
-      expect(NewFriendsCountPoint).to receive(:import_from_twitter_users).with(twitter_user.uid)
+      expect(NewFriendsCountPoint).to receive(:import_by_uid).with(twitter_user.uid)
       subject
     end
   end
