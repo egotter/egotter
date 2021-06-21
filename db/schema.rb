@@ -1564,6 +1564,8 @@ ActiveRecord::Schema.define(version: 2021_06_14_224944) do
     t.integer "statuses_interval"
     t.float "follow_back_rate"
     t.float "reverse_follow_back_rate"
+    t.integer "new_friends_size"
+    t.integer "new_followers_size"
     t.integer "unfriends_size"
     t.integer "unfollowers_size"
     t.integer "mutual_unfriends_size"

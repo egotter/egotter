@@ -11,6 +11,7 @@
 #  index_egotter_blockers_on_created_at  (created_at)
 #  index_egotter_blockers_on_uid         (uid) UNIQUE
 #
+
 # TODO Remove later
 class EgotterBlocker < ApplicationRecord
   validates :uid, presence: true, uniqueness: true
