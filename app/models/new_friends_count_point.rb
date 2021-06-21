@@ -26,9 +26,13 @@ class NewFriendsCountPoint < ApplicationRecord
       end
     end
 
-    def import_by_uid(uid)
+    def import_by_uid(uid, async: false)
       TwitterUser.where(uid: uid).find_each do |record|
-        create_by_twitter_user(record)
+        if async
+          CreateNewFriendsCountPointWorker.perform_async(record.id, force: true)
+        else
+          create_by_twitter_user(record)
+        end
       end
     end
   end
