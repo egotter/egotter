@@ -3,8 +3,16 @@
   <div class="text-center my-3"><%= t('timelines.feeds.audience_insights.description', user: twitter_user.screen_name) %></div>
   <div id="audience-insight-followers-chart-description" class="text-center my-3"></div>
 
-  <div id="audience-insight-friends-chart" class="my-3" style="height: 100px;"></div>
-  <div id="audience-insight-followers-chart" class="my-3" style="height: 100px;"></div>
+  <table>
+    <tr>
+      <td style="width: 50%;"><div id="audience-insight-friends-chart" class="my-3" style="height: 100px;"></div></td>
+      <td style="width: 50%;"><div id="audience-insight-followers-chart" class="my-3" style="height: 100px;"></div></td>
+    </tr>
+    <tr>
+      <td style="width: 50%;"><div id="audience-insight-new-friends-chart" class="my-3" style="height: 100px;"></div></td>
+      <td style="width: 50%;"><div id="audience-insight-new-followers-chart" class="my-3" style="height: 100px;"></div></td>
+    </tr>
+  </table>
 
   <% if FriendsCountPoint.where(uid: twitter_user.uid).size <= 1 %>
     <div class="text-center small text-muted"><%= t('timelines.feeds.sample_data_html') %></div>
@@ -21,9 +29,9 @@
     $.get(url).done(function (res) {
       var data = res.data;
       if (data.length <= 1) {
-        data = AudienceInsight.Sample[0]['data'];
+        data = AudienceInsight.SampleData;
       }
-      new AudienceInsight().drawChart($('#audience-insight-friends-chart')[0], [{name: 'Friends', data: data}]);
+      new AudienceInsight().drawSparkLine($('#audience-insight-friends-chart')[0], [{name: 'Friends', data: data}]);
     }).fail(showErrorMessage);
   }
 
@@ -33,15 +41,39 @@
       $('#audience-insight-followers-chart-description').text(res.message);
       var data = res.data;
       if (data.length <= 1) {
-        data = AudienceInsight.Sample[1]['data'];
+        data = AudienceInsight.SampleData;
       }
-      new AudienceInsight().drawChart($('#audience-insight-followers-chart')[0], [{name: 'Followers', data: data}]);
+      new AudienceInsight().drawSparkLine($('#audience-insight-followers-chart')[0], [{name: 'Followers', data: data}]);
+    }).fail(showErrorMessage);
+  }
+
+  function drawNewFriendsChart() {
+    var url = '<%= raw api_v1_new_friends_count_points_path(uid: twitter_user.uid, via: current_via) %>';
+    $.get(url).done(function (res) {
+      var data = res.data;
+      if (data.length <= 1) {
+        data = AudienceInsight.SampleData;
+      }
+      new AudienceInsight().drawSparkLine($('#audience-insight-new-friends-chart')[0], [{name: 'New friends', data: data}]);
+    }).fail(showErrorMessage);
+  }
+
+  function drawNewFollowersChart() {
+    var url = '<%= raw api_v1_new_followers_count_points_path(uid: twitter_user.uid, via: current_via) %>';
+    $.get(url).done(function (res) {
+      var data = res.data;
+      if (data.length <= 1) {
+        data = AudienceInsight.SampleData;
+      }
+      new AudienceInsight().drawSparkLine($('#audience-insight-new-followers-chart')[0], [{name: 'New followers', data: data}]);
     }).fail(showErrorMessage);
   }
 
   $(function () {
     drawFriendsChart();
     drawFollowersChart();
-    trackPageEvents('TimelinePage events', 'AudienceInsights loaded', {dataLength: series[0].data.length});
+    drawNewFriendsChart();
+    drawNewFollowersChart();
+    trackPageEvents('TimelinePage events', 'AudienceInsights loaded', {dataLength: 0});
   });
 </script>
