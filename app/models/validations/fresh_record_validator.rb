@@ -1,5 +1,6 @@
 module Validations
   class FreshRecordValidator < ActiveModel::Validator
+    # TODO Remove this validator
     def validate(new_record)
       latest = TwitterUser.latest_by(uid: new_record.uid)
       return if latest.nil?

@@ -26,11 +26,10 @@ class CreateTwitterUserNewFriendsWorker
   # options:
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
-    records = TwitterUser.where(uid: twitter_user.uid).where('created_at <= ?', twitter_user.created_at).order(created_at: :desc).limit(2)
 
-    if records.size == 2
-      value = (records[0].friend_uids - records[1].friend_uids).size
-      twitter_user.update(new_friends_size: value)
+    if (uids = twitter_user.calc_new_friend_uids)
+      twitter_user.update(new_friends_size: uids.size)
+      NewFriendsCountPoint.import_from_twitter_users(twitter_user.uid)
     end
   rescue => e
     logger.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"

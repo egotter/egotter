@@ -165,4 +165,35 @@ RSpec.describe TwitterUserCalculator do
       subject
     end
   end
+
+  describe '#calc_new_friend_uids' do
+    subject { twitter_user.calc_new_friend_uids }
+    before do
+      record = build(:twitter_user, uid: twitter_user.uid)
+      allow(record).to receive(:friend_uids).and_return([1, 2])
+      allow(twitter_user).to receive(:next_older_record).and_return(record)
+    end
+    it { is_expected.to eq([3]) }
+  end
+
+  describe '#calc_new_follower_uids' do
+    subject { twitter_user.calc_new_follower_uids }
+    before do
+      record = build(:twitter_user, uid: twitter_user.uid)
+      allow(record).to receive(:follower_uids).and_return([2, 3])
+      allow(twitter_user).to receive(:next_older_record).and_return(record)
+    end
+    it { is_expected.to eq([4]) }
+  end
+
+  describe '#next_older_record' do
+    let(:record1) { build(:twitter_user, uid: twitter_user.uid, created_at: twitter_user.created_at - 1.hour) }
+    let(:record2) { build(:twitter_user, uid: twitter_user.uid, created_at: twitter_user.created_at + 1.hour) }
+    subject { twitter_user.send(:next_older_record) }
+    before do
+      record1.save(validate: false)
+      record2.save(validate: false)
+    end
+    it { expect(subject.id).to eq(record1.id) }
+  end
 end

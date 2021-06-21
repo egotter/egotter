@@ -45,8 +45,10 @@ class AssembleTwitterUserRequest < ApplicationRecord
     CreateTwitterUserOneSidedFriendsWorker.perform_async(twitter_user_id)
     CreateTwitterUserInactiveFriendsWorker.perform_async(twitter_user_id)
     CreateTwitterUserUnfriendsWorker.perform_async(twitter_user_id)
-    CreateTwitterUserNewFriendsWorker.perform_async(twitter_user_id)
-    CreateTwitterUserNewFollowersWorker.perform_async(twitter_user_id)
+
+    # TODO Enable later
+    # CreateTwitterUserNewFriendsWorker.perform_async(twitter_user_id)
+    # CreateTwitterUserNewFollowersWorker.perform_async(twitter_user_id)
 
     twitter_user.update(
         statuses_interval: twitter_user.calc_statuses_interval,

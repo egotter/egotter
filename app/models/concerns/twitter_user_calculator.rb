@@ -141,7 +141,31 @@ module TwitterUserCalculator
     unfriends_builder.unfollowers.flatten
   end
 
+  def calc_new_friend_uids
+    if (record = next_older_record)
+      friend_uids - record.friend_uids
+    else
+      []
+    end
+  rescue => e
+    []
+  end
+
+  def calc_new_follower_uids
+    if (record = next_older_record)
+      follower_uids - record.follower_uids
+    else
+      []
+    end
+  rescue => e
+    []
+  end
+
   private
+
+  def next_older_record
+    TwitterUser.where(uid: uid).where('created_at < ?', created_at).order(created_at: :desc).first
+  end
 
   def sort_by_count_desc(ids)
     ids.each_with_object(Hash.new(0)) { |id, memo| memo[id] += 1 }.sort_by { |_, v| -v }.map(&:first)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_14_224944) do
+ActiveRecord::Schema.define(version: 2021_06_21_114737) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -909,6 +909,22 @@ ActiveRecord::Schema.define(version: 2021_06_14_224944) do
     t.integer "sequence", null: false
     t.index ["friend_uid"], name: "index_mutual_friendships_on_friend_uid"
     t.index ["from_uid"], name: "index_mutual_friendships_on_from_uid"
+  end
+
+  create_table "new_followers_count_points", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "uid", null: false
+    t.integer "value", null: false
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_new_followers_count_points_on_created_at"
+    t.index ["uid"], name: "index_new_followers_count_points_on_uid"
+  end
+
+  create_table "new_friends_count_points", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "uid", null: false
+    t.integer "value", null: false
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_new_friends_count_points_on_created_at"
+    t.index ["uid"], name: "index_new_friends_count_points_on_uid"
   end
 
   create_table "news_reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
