@@ -93,7 +93,7 @@ def main
   end
 rescue => e
   if e.class == Aws::EC2::Errors::InsufficientInstanceCapacity && (retries -= 1) > 0
-    post("Retry retries=#{retries} exception=#{e.inspect}")
+    post("Retry adjusting #{role} servers retries=#{retries} exception=#{e.inspect}")
     market_type = 'not-spot'
     retry
   else

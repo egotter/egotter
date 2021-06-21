@@ -47,6 +47,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::CloseFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
+      logger.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
       CloseFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -55,6 +56,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::FavoriteFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
+      logger.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
       FavoriteFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -63,6 +65,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::MutualFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
+      logger.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
       MutualFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -71,6 +74,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::OneSidedFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
+      logger.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
       OneSidedFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -79,6 +83,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::OneSidedFollowership.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
+      logger.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
       OneSidedFollowership.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -87,6 +92,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::InactiveFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
+      logger.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
       InactiveFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -95,6 +101,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::InactiveFollowership.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
+      logger.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
       InactiveFollowership.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -103,6 +110,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::InactiveMutualFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
+      logger.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
       InactiveMutualFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -111,6 +119,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::MutualUnfriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
+      logger.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
       BlockFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -119,6 +128,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::Unfriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
+      logger.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
       Unfriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -127,6 +137,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::Unfollowership.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
+      logger.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
       Unfollowership.where(from_uid: uid).order(sequence: :asc)
     end
   end
