@@ -40,7 +40,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
     if worker_context == CreatePeriodicReportWorker
       if PeriodicReportReportableFlag.exists?(user_id: user_id) || TwitterUser.where(uid: user.uid).where('created_at > ?', 3.hours.ago).exists?
-        # Don't create new record
+        logger.info "Don't create new record id=#{id} user_id=#{user_id}"
       else
         create_new_twitter_user_record
       end

@@ -212,7 +212,7 @@ ja:
         title: 'フォロワー'
         description: '@%{user} がフォローされているユーザーです。'
       audience_insights:
-        title: 'オーディエンス分析'
+        title: 'フォローとフォロワーの変化'
         description: '@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の変化が分かります。'
       close_friends:
         title: '仲良しランキング'
