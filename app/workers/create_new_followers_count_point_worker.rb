@@ -1,7 +1,7 @@
 class CreateNewFollowersCountPointWorker
   include Sidekiq::Worker
   include WorkerErrorHandler
-  sidekiq_options queue: 'creating_low', retry: 0, backtrace: false
+  sidekiq_options queue: 'excluded_jobs', retry: 0, backtrace: false
 
   def unique_key(twitter_user_id, options = {})
     twitter_user_id
