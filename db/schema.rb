@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_21_114737) do
+ActiveRecord::Schema.define(version: 2021_06_22_112258) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -332,6 +332,20 @@ ActiveRecord::Schema.define(version: 2021_06_21_114737) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_create_deletable_tweets_requests_on_created_at"
     t.index ["user_id"], name: "index_create_deletable_tweets_requests_on_user_id"
+  end
+
+  create_table "create_direct_message_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "sender_id", null: false
+    t.bigint "recipient_id", null: false
+    t.text "error_message"
+    t.json "properties"
+    t.timestamp "sent_at"
+    t.timestamp "failed_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_create_direct_message_requests_on_created_at"
+    t.index ["recipient_id"], name: "index_create_direct_message_requests_on_recipient_id"
+    t.index ["sender_id"], name: "index_create_direct_message_requests_on_sender_id"
   end
 
   create_table "create_follow_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
