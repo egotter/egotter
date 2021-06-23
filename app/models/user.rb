@@ -143,7 +143,7 @@ class User < ApplicationRecord
   end
 
   def api_client(options = {})
-    opt = options.merge(access_token: credential_token.token, access_token_secret: credential_token.secret)
+    opt = options.merge(access_token: credential_token.token, access_token_secret: credential_token.secret, user: self)
     ApiClient.instance(opt)
   end
 

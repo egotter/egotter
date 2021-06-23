@@ -1,8 +1,8 @@
 class CreateCreateDirectMessageRequests < ActiveRecord::Migration[6.0]
   def change
     create_table :create_direct_message_requests do |t|
-      t.bigint :sender_id, null: false
-      t.bigint :recipient_id, null: false
+      t.bigint :sender_id
+      t.bigint :recipient_id
       t.text :error_message
       t.json :properties
       t.timestamp :sent_at

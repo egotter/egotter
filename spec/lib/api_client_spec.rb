@@ -4,7 +4,30 @@ RSpec.describe ApiClient, type: :model do
   let(:user) { create(:user) }
   let(:credential_token) { create(:credential_token, user_id: user.id) }
   let(:client) { double('client', access_token: credential_token.token, access_token_secret: credential_token.secret) }
-  let(:instance) { ApiClient.new(client) }
+  let(:instance) { ApiClient.new(client, user) }
+
+  describe '#create_direct_message' do
+    let(:request) { double('request') }
+    subject { instance.create_direct_message(1, 'text') }
+
+    it do
+      expect(client).to receive_message_chain(:twitter, :create_direct_message_event).with(1, 'text')
+      subject
+    end
+
+    context 'async is true' do
+      subject { instance.create_direct_message(1, 'text', async: true) }
+
+      before do
+        allow(CreateDirectMessageRequest).to receive(:create).with(sender_id: user.uid, recipient_id: 1, properties: {message: 'text'}).and_return(request)
+      end
+
+      it do
+        expect(request).to receive(:perform)
+        subject
+      end
+    end
+  end
 
   describe '#create_direct_message_event' do
     let(:response) { {message_create: {message_data: {text: 'text'}}} }

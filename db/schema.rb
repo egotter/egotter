@@ -335,8 +335,8 @@ ActiveRecord::Schema.define(version: 2021_06_22_112258) do
   end
 
   create_table "create_direct_message_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "sender_id", null: false
-    t.bigint "recipient_id", null: false
+    t.bigint "sender_id"
+    t.bigint "recipient_id"
     t.text "error_message"
     t.json "properties"
     t.timestamp "sent_at"

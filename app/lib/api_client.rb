@@ -1,14 +1,21 @@
 require 'twitter_with_auto_pagination'
 
 class ApiClient
-  def initialize(client)
+  def initialize(client, user = nil)
     @client = client
+    @user = user
   end
 
-  def create_direct_message(recipient_id, message)
-    resp = twitter.create_direct_message_event(recipient_id, message).to_h
-    DirectMessage.new(event: resp)
+  def create_direct_message(recipient_id, message, async: false)
+    if async
+      request = CreateDirectMessageRequest.create(sender_id: @user&.uid, recipient_id: recipient_id, properties: {message: message})
+      request.perform
+    else
+      twitter.create_direct_message_event(recipient_id, message)
+      true
+    end
   rescue => e
+    # TODO Fix recipient_id
     CreateDirectMessageErrorLogWorker.perform_async([recipient_id, message], e.class, e.message, Time.zone.now, sender_id: recipient_id)
     update_blocker_status(e)
     raise
@@ -73,6 +80,7 @@ class ApiClient
     end
   end
 
+  # TODO Use @user
   def fetch_user
     User.find_by_token(@client.access_token, @client.access_token_secret)
   end
@@ -104,7 +112,7 @@ class ApiClient
         client = TwitterWithAutoPagination::Client.new(config(options))
       end
 
-      new(client)
+      new(client, options[:user])
     end
   end
 
