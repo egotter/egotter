@@ -22,10 +22,14 @@ class App
   def stop
     if instance_name.include?('web')
       WebProcess.new(instance_id).stop
-    elsif name.include?('sidekiq')
+    elsif instance_name.include?('sidekiq')
       Process.new('sidekiq_misc').stop
       Process.new('sidekiq').stop
     end
+  end
+
+  def to_s
+    "(#{instance_id} #{instance_name})"
   end
 
   private
