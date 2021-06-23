@@ -15,6 +15,8 @@ class CreateViolationEventWorker
   def perform(user_id, name, options = {})
     ViolationEvent.create(user_id: user_id, name: name)
     BannedUser.create(user_id: user_id)
+  rescue ActiveRecord::RecordNotUnique => e
+    # Do nothing
   rescue => e
     handle_worker_error(e, user_id: user_id, name: name, **options)
   end
