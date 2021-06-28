@@ -15,6 +15,7 @@ class DeviseCreateUsers < ActiveRecord::Migration[4.2]
 
       t.index :uid, unique: true
       t.index :screen_name
+      t.index :email
       t.index :token
       t.index :created_at
     end

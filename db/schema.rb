@@ -1813,6 +1813,7 @@ ActiveRecord::Schema.define(version: 2021_06_22_112258) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_users_on_created_at"
+    t.index ["email"], name: "index_users_on_email"
     t.index ["screen_name"], name: "index_users_on_screen_name"
     t.index ["token"], name: "index_users_on_token"
     t.index ["uid"], name: "index_users_on_uid", unique: true

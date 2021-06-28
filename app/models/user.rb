@@ -18,6 +18,7 @@
 # Indexes
 #
 #  index_users_on_created_at   (created_at)
+#  index_users_on_email        (email)
 #  index_users_on_screen_name  (screen_name)
 #  index_users_on_token        (token)
 #  index_users_on_uid          (uid) UNIQUE
