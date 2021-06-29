@@ -753,22 +753,7 @@ ja:
       title: '有料プランの購入が完了しました'
       message_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a href="%{url}" target="_blank">設定ページ</a> から確認できます。'
       support_html: '分からないことや気になることがありますか？ <a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。'
-      description_html: '有料プランが有効な間は下記の機能が使えます。ここに書かれていない有料プランの特典は <a href="%{url}" target="_blank">料金プラン</a> をご確認ください。'
-      search_data:
-        title: '検索回数の増加'
-        description_html: 'Webサイトで分析できる回数が増えます。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">分析結果を見る</a>'
-      periodic_reports:
-        title: 'リムられ通知'
-        description_html: 'いつでも好きなときに受け取ることができます。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">リムられ通知を開く</a>'
-      block_reports:
-        title: 'ブロック通知'
-        description_html: 'すべてのIDを確認することができます。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">ブロック通知を開く</a>'
-      mute_reports:
-        title: 'ミュート通知'
-        description_html: 'IDを2文字目まで確認することができます。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">ミュート通知を開く</a>'
-      delete_tweets:
-        title: 'ツイートの一括削除'
-        description_html: 'アーカイブデータを利用してすべてのツイートを一括削除できます。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">ツイートクリーナーを開く</a>'
+      premium_functions_title: '有料プランで使える機能'
     failure:
       message: 'ベーシックプランの購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。'
       description_html: |
@@ -901,7 +886,8 @@ ja:
           - '複数月を一括で購入している'
           - '購入した機能を既に複数回利用している'
           - '購入から1時間以内に返金の連絡がない'
-          - '契約者が解約することを失念していた'
+          - '契約者が解約することを忘れていた'
+          - '試しにボタンを押してみた'
           - 'その他返金に適していないと判断した場合'
         note: '※ 原則として返金不可である旨は、商品ページや購入前の注意事項にも明記されています。注意事項や利用規約をよくお読みになった上で同意できる場合のみ商品をご購入ください。'
     maintenance:

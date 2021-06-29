@@ -1,0 +1,16 @@
+<p>有料プランが有効な間は下記の機能が使えます。ここに書かれていない有料プランの特典は <a href="<%= pricing_path(via: current_via) %>" target="_blank">料金プラン</a> をご確認ください。</p>
+
+<h3 class="h5 mt-5 mb-3">検索回数の増加</h3>
+<p>Webサイトで分析できる回数が増えます。<a class="btn btn-outline-primary btn-sm" href="<%= timeline_path(current_user, via: current_via) %>" target="_blank">分析結果を見る</a></p>
+
+<h3 class="h5 mt-5 mb-3">リムられ通知</h3>
+<p>いつでも好きなときに受け取ることができます。<a class="btn btn-outline-primary btn-sm" href="<%= direct_message_url(User::EGOTTER_UID, t('short_messages.receive_periodic_reports')) %>" target="_blank">リムられ通知を開く</a></p>
+
+<h3 class="h5 mt-5 mb-3">ブロック通知</h3>
+<p>すべてのIDを確認することができます。<a class="btn btn-outline-primary btn-sm" href="<%= direct_message_url(User::EGOTTER_UID, t('short_messages.receive_block_reports')) %>" target="_blank">ブロック通知を開く</a></p>
+
+<h3 class="h5 mt-5 mb-3">ミュート通知</h3>
+<p>IDを2文字目まで確認することができます。<a class="btn btn-outline-primary btn-sm" href="<%= direct_message_url(User::EGOTTER_UID, t('short_messages.receive_mute_reports')) %>" target="_blank">ミュート通知を開く</a></p>
+
+<h3 class="h5 mt-5 mb-3">ツイートの一括削除</h3>
+<p>アーカイブデータを利用してすべてのツイートを一括削除できます。<a class="btn btn-outline-primary btn-sm" href="<%= delete_tweets_mypage_path(via: current_via) %>" target="_blank">ツイートクリーナーを開く</a></p>
