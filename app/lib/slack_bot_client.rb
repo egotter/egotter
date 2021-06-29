@@ -12,8 +12,8 @@ class SlackBotClient
     end
   end
 
-  def post_message(text)
-    @client.chat_postMessage(channel: @channel, text: text)
+  def post_message(text, options = {})
+    @client.chat_postMessage({channel: @channel, text: text}.merge(options))
   end
 
   # TODO Not used
