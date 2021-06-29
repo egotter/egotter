@@ -31,7 +31,7 @@ class Servers
     if current_count != ideal_count
       res = post("Adjust #{@role} servers from #{current_count} to #{ideal_count} current=#{prev_names}")
       run_task
-      post("Finish adjusting #{@role} servers prev=#{prev_names} cur=#{servers.names}", thread_ts: res['ts'])
+      post("Finish adjusting #{@role} servers prev=#{prev_names} cur=#{names}", thread_ts: res['ts'])
     end
   end
 
