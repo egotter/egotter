@@ -1,38 +1,108 @@
 - content_for :canonical_url do
   %link{href: pricing_url, rel: 'canonical'}
 
-- breadcrumb :pricing
-
 - set_meta_tags title: t('.meta_title'), description: t('.meta_description')
 
 %h2.h4.text-center.my-5= t('.page_title')
-.my-3= t('.page_description_html')
+%p= t('.page_description')
+%p= t('.page_description_note_html', url: twitter_web_url('egotter_cs'))
 
 %hr
 
-%h2.h4.text-center.my-5= t('.benefits_title')
-.my-3= t('.benefits_description_html')
+%h2.h4.text-center.my-5= t('.benefits.title')
+%p= t('.benefits.description')
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.benefits.search.title')
+%p= t('.benefits.search.description', count: SearchCountLimitation::BASIC_PLAN)
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.benefits.periodic_reports.title')
+%p= t('.benefits.periodic_reports.description')
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.benefits.block_reports.title')
+%p= t('.benefits.block_reports.description')
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.benefits.mute_reports.title')
+%p= t('.benefits.mute_reports.description')
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.benefits.delete_tweets.title')
+%p= t('.benefits.delete_tweets.description')
 
 %hr
 
-%h2.h4.text-center.my-5= t('.plans_title')
-.my-3= t('.plans_description_html')
+%h2.h4.text-center.my-5= t('.type.title')
+%p= t('.type.description_html')
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.type.free.title')
+%p= t('.type.free.description')
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.type.basic.title')
+%p= t('.type.basic.description_html')
+
+%hr
+
+%h2.h4.text-center.my-5= t('.payment_options.title')
+%p= t('.payment_options.description')
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_options.subscription.title')
+%p
+  = t('.payment_options.subscription.description')
+  = link_to t('.payment_options.purchase'), '#', class: 'btn btn-outline-primary btn-sm btn-checkout'
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_options.one_purchase.title')
+%p
+  = t('.payment_options.one_purchase.description')
+  = link_to t('.payment_options.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#payment-method-modal', toggle: 'modal'}
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_options.bulk_purchase.title')
+%p
+  = t('.payment_options.bulk_purchase.description')
+  = link_to t('.payment_options.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
 
 %hr
 
 %h2.h4.text-center.my-5= t('.payment_method.title')
-.my-3
-  %p= t('.payment_method.description')
-  %p
-    = t('.payment_method.others')
-    = link_to t('.payment_method.inquiry'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#payment-method-modal', toggle: 'modal'}
+%p= t('.payment_method.description_html')
+
+.table-responsive
+  %table.table.table-bordered{style: 'white-space: nowrap;'}
+    %caption= t('.payment_method.table.caption')
+    %thead
+      %tr
+        %td
+        %th= t('.payment_method.table.card')
+        %th= t('.payment_method.table.convenient_store')
+        %th= t('.payment_method.table.xxx_pay')
+        %th= t('.payment_method.table.bank_transfer')
+    %tbody
+      %tr
+        %th= t('.payment_method.table.short_term')
+        %td= t('.payment_method.table.subscription')
+        %td= t('.payment_method.table.one_purchase')
+        %td= t('.payment_method.table.one_purchase')
+        %td= t('.payment_method.table.one_purchase')
+      %tr
+        %th= t('.payment_method.table.long_term')
+        %td= t('.payment_method.table.bulk_purchase')
+        %td= t('.payment_method.table.bulk_purchase')
+        %td= t('.payment_method.table.bulk_purchase')
+        %td= t('.payment_method.table.bulk_purchase')
 
 %hr
 
 %h2.h4.text-center.my-5= t('.bulk_purchase.title')
-.my-3
+%p
   = t('.bulk_purchase.description')
   = link_to t('.bulk_purchase.inquiry'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
+
+%hr
+
+%h2.h4.text-center.my-5= t('.refund.title')
+%p= t('.refund.description_html', url1: refund_policy_path(via: current_via), url2: specified_commercial_transactions_path(via: current_via))
+
+%hr
+
+%h2.h4.text-center.my-5= t('.contribution.title')
+%p= t('.contribution.description_html')
 
 %hr
 

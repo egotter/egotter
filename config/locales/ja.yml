@@ -637,34 +637,72 @@ ja:
         description_html: '【%{word}】を%{egotter_link} にDMしてください。'
   pricing:
     new:
-      crumb_title: '料金プラン'
       meta_title: '料金プラン'
       meta_description: 'えごったーの料金プランです。'
       page_title: '料金プラン'
-      page_description_html: |
-        <p>えごったーの料金はほとんど無料です。勝手に課金されることはありませんのでご安心ください。</p>
-      benefits_title: '有料プランの主な特典'
-      benefits_description_html: |
-        <p>有料プランを購入すると、大きく分けてこのような購入特典があります。</p>
-        <ul style="list-style-type: decimal;">
-          <li>ユーザー検索回数の増加</li>
-          <li>リムられ通知の送信回数の増加</li>
-          <li>ブロック通知のデータの充実</li>
-          <li>ミュート通知のデータの充実</li>
-          <li>全ツイートの一括削除</li>
-        </ul>
-      plans_title: 'プランの種類'
-      plans_description_html: |
-        <p>えごったーの利用プランは主にこの2つです。有料プランには <span class="egotter-pink">無料のお試し期間</span> があります。</p>
-        <ul style="list-style-type: decimal;">
-          <li>無料プラン（ログインしただけの状態のこと）</li>
-          <li>有料プラン（無料のお試し期間あり）</li>
-        </ul>
+      page_description: 'えごったーの料金はほとんど無料です。勝手に課金されることはありませんのでご安心ください。'
+      page_description_note_html: '分からないことや気になることは、<a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご質問ください。'
+      benefits:
+        title: '有料プランの主な特典'
+        description: '有料プランを購入すると、大きく分けてこのような購入特典があります。'
+        search:
+          title: 'ユーザー検索回数の増加'
+          description: 'Webサイトで分析できる回数が %{count}回/日 増えます。'
+        periodic_reports:
+          title: 'リムられ通知のリアルタイム更新'
+          description: '「リムーブされた」をリアルタイムに更新します。さらに、データをいつでも最新の状態で受け取ることができます。'
+        block_reports:
+          title: 'ブロック通知のデータの充実'
+          description: '「ブロックされた」のIDをすべて見ることができます。'
+        mute_reports:
+          title: 'ミュート通知のデータの充実'
+          description: '「ミュートされた」のIDを2文字目まで見ることができます。'
+        delete_tweets:
+          title: 'ツイートの完全な削除'
+          description: 'アーカイブデータを利用してすべてのツイートを一括削除できます。'
+      type:
+        title: 'プランの種類'
+        description_html: |
+          えごったーのプランは、無料プランまたは有料プランの2つがあります。<br><br>
+          無料プランのままでもほとんどの機能を使うことができます。有料プランになると、ブロック通知やミュート通知が高機能になります。
+        free:
+          title: '無料プラン'
+          description: 'ログインしただけの状態のことです。このプランに支払いはありませんのでご安心ください。'
+        basic:
+          title: '有料プラン'
+          description_html: '購入することでいくつかの機能がパワーアップします。購入方法は、毎月更新の定期購読、1ヶ月分の単体購入、複数月の一括購入があります。買い方によって価格が違います。'
+      payment_options:
+        title: '有料プランのお得な買い方'
+        description: '毎月更新の定期購読、1ヶ月分の単体購入、複数月の一括購入のどれを選ぶのかによって、価格やお試し期間の有無が変わってきます。'
+        purchase: 'この方法で購入する'
+        subscription:
+          title: '毎月更新の定期購読'
+          description: '短期間使う方にお得な購入方法です。お試し期間が付くので、この期間内に解約すれば支払いは発生しません。初回購入の場合のみ、50%オフの割引があります。支払い方法はクレジットカードのみ対応しています。'
+        one_purchase:
+          title: '1ヶ月分の単体購入'
+          description: 'クレジットカードが無い方向けの購入方法です。コンビニ払い、○○Pay、銀行振込に対応していますが、定期購読より価格が少し高いです。'
+        bulk_purchase:
+          title: '複数月の一括購入'
+          description: '長期間使う方向けのお得な購入方法です。複数月分を一括購入することで、各種の割引価格になります。'
       payment_method:
-        title: 'プランの支払い方法'
-        description: 'えごったーの有料プランはクレジットカードでの支払いに対応しています。'
-        others: 'コンビニ決済や銀行振込での支払いを希望される方は、こちらからご購入できます。'
-        inquiry: 'お問い合わせ'
+        title: '有料プランの支払い方法'
+        description_html: |
+          えごったーの有料プランは、クレジットカード・コンビニ決済・○○Pay・銀行振込に対応しています。<br><br>
+          選んだ支払い方法によって、価格やお試し期間の有無が変わってきます。<br><br>
+          利用する期間と支払い方法ごとのお得な買い方は下記の表の通りです。
+        table:
+          caption: 'お得な買い方の組み合わせ'
+          card: 'クレジットカード'
+          convenient_store: 'コンビニ決済'
+          xxx_pay: '○○Pay'
+          bank_transfer: '銀行振込'
+          short_term: '短期間'
+          long_term: '長期間'
+          subscription: '定期購読'
+          one_purchase: '単体購入'
+          bulk_purchase: '一括購入'
+        others: 'コンビニ決済や銀行振込での支払いを希望される方はこちらからご購入できます。'
+        inquiry: 'えごったーショップ'
         modal:
           title: 'コンビニ決済・銀行振込を希望する'
           description: '注意事項をご確認の上、同意する方のみご購入ください。'
@@ -680,7 +718,7 @@ ja:
       bulk_purchase:
         title: '一括購入の割引'
         description: '長期間の一括購入については追加の割引をご提供しています。こちらからご購入できます。'
-        inquiry: 'お問い合わせ'
+        inquiry: 'えごったーショップ'
         modal:
           title: '一括購入の割引を希望する'
           description: '注意事項をご確認の上、同意する方のみご購入ください。'
@@ -699,10 +737,16 @@ ja:
             ※ 支払いの完了後、5営業日以内にプランが有効になります<br>
             ※ お試し期間は無く、返金の対象外です
           'yes': '閉じる'
-      other_payment_methods: 'コンビニ決済や銀行振込での支払いを希望される方は個別にご連絡ください。'
-      bulk_purchase_html: |
-        長期間の一括購入については追加の割引や銀行振り込みでの支払いにも対応しています。
-        <a href="%{url}" class="btn btn-outline-primary btn-sm" target="_blank">問い合わせ</a>
+      refund:
+        title: '返金の決まり'
+        description_html: |
+          有料プランで支払った金額は、正当な理由があればすぐに返金します。詳しくは <a href="%{url1}">返金規定</a> をご確認ください。<br><br>
+          特定商取引法に基づく表記は <a href="%{url2}">こちら</a> です。
+      contribution:
+        title: '社会貢献'
+        description_html: |
+          えごったーの売上のうち一定の金額を、毎月、日本赤十字社を通して寄付しています。<br><br>
+          皆さんのツイッター生活を少し便利に、被災者の方々の暮らしを少しでも快適に、幅広い皆さんのお役に立てるようこれからも努力していきます。
       free_plan_title: '無料プランの内容'
       free_plan_text_html: |
         <p>えごったーを<span class="egotter-pink">無料で少しだけ使いたい</span>方に適したプランです。</p>
@@ -744,7 +788,7 @@ ja:
       plans: '料金プラン'
     current_plan:
       title: '%{user} の現在のプラン'
-      basic_plan_html: '「%{plan}」を購入済みです。<a href="%{url}" class="btn btn-outline-primary btn-sm">設定ページ</a>'
+      basic_plan_html: '「%{plan}」を購入済みです。プランの確認や解約は <a href="%{url}">設定ページ</a> から行うことができます。'
       free_plan_html: 'まだプランを購入していません。'
       visitor_html: 'まだプランを購入していません。ログインすれば、無料のまま検索回数を増やすことができます。<a href="%{url}" class="btn btn-outline-primary btn-sm">ログインする</a>'
       visitor: 'あなた'
