@@ -12,14 +12,13 @@ class CreateNewFriendsCountPointWorker
   end
 
   # options:
-  #   force
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
 
-    if options['force'] || NewFriendsCountPoint.where(uid: twitter_user.uid).exists?
+    if NewFriendsCountPoint.where(uid: twitter_user.uid).exists?
       NewFriendsCountPoint.create_by_twitter_user(twitter_user)
     else
-      NewFriendsCountPoint.import_by_uid(twitter_user.uid, async: true)
+      NewFriendsCountPoint.import_by_uid(twitter_user.uid)
     end
   rescue => e
     handle_worker_error(e, twitter_user_id: twitter_user_id, **options)
