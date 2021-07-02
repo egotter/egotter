@@ -15,7 +15,7 @@ class CreateNewFollowersCountPointWorker
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
 
-    if options['force'] || NewFollowersCountPoint.where(uid: twitter_user.uid).exists?
+    if NewFollowersCountPoint.where(uid: twitter_user.uid).exists?
       NewFollowersCountPoint.create_by_twitter_user(twitter_user)
     else
       NewFollowersCountPoint.import_by_uid(twitter_user.uid)
