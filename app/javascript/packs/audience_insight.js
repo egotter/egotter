@@ -1,5 +1,5 @@
 class AudienceInsight {
-  drawChart(renderTo, series) {
+  drawChart(renderTo, series, options) {
     var yAxis = [{
       title: {
         text: null
@@ -33,6 +33,10 @@ class AudienceInsight {
       exporting: false,
       credits: false
     };
+
+    if (options) {
+      Object.assign(chartConfig, options);
+    }
 
     Highcharts.chart(chartConfig);
   }

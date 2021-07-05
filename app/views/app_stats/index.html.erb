@@ -1,11 +1,11 @@
 <%= raw AppStat.new.to_s.gsub("\n", '<br>') %>
 
-<div id="users-chart" class="my-5"></div>
+<div id="users-chart" class="my-5" style="width: 100%; max-height: 200px;"></div>
 
 <script>
   $(function () {
     var data = <%= raw @chart_data.to_json %>;
-    var series = [{name: 'Previous users', data: data[0]}, {name: 'Current users', data: data[1]}];
-    new AudienceInsight().drawChart($('#users-chart')[0], series);
+    var series = [{data: data[0], color: '#0000ff'}, {data: data[1], color: '#cccccc'}];
+    new AudienceInsight().drawChart($('#users-chart')[0], series, {legend: {enabled: false}});
   });
 </script>
