@@ -2,6 +2,6 @@
   "name": "egotter",
   "short_name": "egotter",
   "start_url": "/",
-  "display": "standalone",
+  "display": "browser",
   "gcm_sender_id": "661436415121"
 }
