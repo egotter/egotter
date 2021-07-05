@@ -6,15 +6,6 @@ class AudienceInsight {
       }
     }];
 
-    if (series.length === 2) {
-      yAxis.push({
-        opposite: true,
-        title: {
-          text: null
-        }
-      });
-    }
-
     var chartConfig = {
       chart: {
         renderTo: renderTo
