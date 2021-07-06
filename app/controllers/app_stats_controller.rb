@@ -34,7 +34,7 @@ class AppStatsController < ApplicationController
       if now < start_time
         nil
       else
-        SearchLog.where(created_at: start_time..end_time).size
+        User.where(created_at: start_time..end_time).size
       end
     end
     values.map.with_index { |v, i| v ? values.take(i + 1).sum : nil }
