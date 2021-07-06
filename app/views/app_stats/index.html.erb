@@ -1,6 +1,7 @@
 <%= raw AppStat.new.to_s.gsub("\n", '<br>') %>
 
-<div id="users-chart" class="my-5" style="height: 100px;"></div>
+<div id="day-chart" class="my-5" style="height: 100px;"></div>
+<div id="week-chart" class="my-5" style="height: 100px;"></div>
 
 <script>
   function drawChart(id, data) {
@@ -54,12 +55,15 @@
   }
 
   $(function () {
-    var id = 'users-chart';
-    var data = <%= raw @chart_data.to_json %>;
-    if (data.error) {
-      $('#' + id).text(data.error);
-    } else {
-      drawChart(id, data);
-    }
+    var chartData = <%= raw @chart_data.to_json %>;
+    Object.keys(chartData).forEach(function (period) {
+      var data = chartData[period];
+      var id = period + '-chart';
+      if (data.error) {
+        $('#' + id).text(data.error);
+      } else {
+        drawChart(id, data);
+      }
+    });
   });
 </script>
