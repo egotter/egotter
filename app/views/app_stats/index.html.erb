@@ -2,6 +2,7 @@
 
 <div id="day-chart" class="my-5" style="height: 100px;"></div>
 <div id="week-chart" class="my-5" style="height: 100px;"></div>
+<div id="month-chart" class="my-5" style="height: 100px;"></div>
 
 <script>
   function drawChart(id, data) {
@@ -17,6 +18,9 @@
       xAxis: {
         gridLineWidth: 0.5,
         labels: {
+          style: {
+            whiteSpace: 'nowrap'
+          },
           rotation: 0,
           step: 1,
           formatter: function () {
@@ -29,9 +33,9 @@
           }
         },
         tickLength: 0,
-        tickAmount: 24,
+        tickAmount: data['categories'].length,
         min: 0,
-        max: 23
+        max: data['categories'].length - 1
       },
       yAxis: {
         title: {
