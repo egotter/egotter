@@ -1,11 +1,65 @@
 <%= raw AppStat.new.to_s.gsub("\n", '<br>') %>
 
-<div id="users-chart" class="my-5"></div>
+<div id="users-chart" class="my-5" style="height: 100px;"></div>
 
 <script>
+  function drawChart(id, data) {
+    var series = [{data: data['series'][0], color: '#cccccc'}, {data: data['series'][1], color: '#0000ff'}];
+    var config = {
+      chart: {
+        renderTo: $('#' + id)[0],
+        marginLeft: 40,
+        marginRight: 40
+      },
+      title: null,
+      series: series,
+      xAxis: {
+        gridLineWidth: 0.5,
+        labels: {
+          rotation: 0,
+          step: 1,
+          formatter: function () {
+            if (this.isFirst || this.isLast) {
+              // return Highcharts.dateFormat('%H:%M', new Date(this.value));
+              return data['categories'][this.pos];
+            } else {
+              return '';
+            }
+          }
+        },
+        tickLength: 0,
+        tickAmount: 24,
+        min: 0,
+        max: 23
+      },
+      yAxis: {
+        title: {
+          text: null
+        },
+        gridLineWidth: 0
+      },
+      legend: {enabled: false},
+      plotOptions: {
+        series: {
+          lineWidth: 1,
+          marker: {
+            enabled: false
+          }
+        }
+      },
+      exporting: false,
+      credits: false
+    }
+    Highcharts.chart(config);
+  }
+
   $(function () {
+    var id = 'users-chart';
     var data = <%= raw @chart_data.to_json %>;
-    var series = [{data: data[0], color: '#0000ff'}, {data: data[1], color: '#cccccc'}];
-    new AudienceInsight().drawChart($('#users-chart')[0], series, {legend: {enabled: false}});
+    if (data.error) {
+      $('#' + id).text(data.error);
+    } else {
+      drawChart(id, data);
+    }
   });
 </script>
