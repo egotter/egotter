@@ -43,7 +43,7 @@ class ProcessWebhookEventForEgotterCsWorker
     dm = DirectMessage.from_event(event.deep_symbolize_keys)
 
     if sent_from_user?(dm)
-      CsMessageResponder.from_dm(dm).respond
+      InquiryMessageResponder.from_dm(dm).respond
     end
   end
 

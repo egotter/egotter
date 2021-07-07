@@ -1,3 +1,4 @@
+# TODO Remove later
 class CreateCsMessageWorker
   include Sidekiq::Worker
   include ReportErrorHandler

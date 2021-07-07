@@ -1,3 +1,4 @@
+# TODO Remove later
 class CsMessageResponder < AbstractMessageResponder
 
   def processor_class
