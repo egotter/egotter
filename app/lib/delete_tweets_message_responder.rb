@@ -36,7 +36,7 @@ class DeleteTweetsMessageResponder < AbstractMessageResponder
         CreateDeleteTweetsQuestionedMessageWorker.perform_async(@uid)
       elsif @start
         if (user = validate_report_status(@uid)) &&
-            (request_token = @text.match(start_regexp)[0]) &&
+            (request_token = @text.match(start_regexp)[1]) &&
             (request = DeleteTweetsRequest.where(user_id: user.id).find_by_token(request_token))
           DeleteTweetsWorker.perform_async(request.id)
           CreateDeleteTweetsRequestStartedMessageWorker.perform_async(@uid)
