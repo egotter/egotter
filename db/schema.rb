@@ -636,6 +636,7 @@ ActiveRecord::Schema.define(version: 2021_07_08_180302) do
 
   create_table "delete_tweets_requests", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "session_id"
+    t.string "request_token"
     t.integer "user_id", null: false
     t.datetime "since_date"
     t.datetime "until_date"

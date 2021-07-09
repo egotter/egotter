@@ -2,6 +2,7 @@ class CreateDeleteTweetsRequests < ActiveRecord::Migration[5.1]
   def change
     create_table :delete_tweets_requests do |t|
       t.string   :session_id,         null: true
+      t.string   :request_token,      null: true
       t.integer  :user_id,            null: false
       t.datetime :since_date,         null: true
       t.datetime :until_date,         null: true

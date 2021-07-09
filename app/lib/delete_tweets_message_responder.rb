@@ -28,7 +28,7 @@ class DeleteTweetsMessageResponder < AbstractMessageResponder
     end
 
     def start_regexp
-      /\Aツイート削除 開始 (\w{5})\z/
+      /\Aツイート削除 開始 (\w{6})\z/
     end
 
     def send_message

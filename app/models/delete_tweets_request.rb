@@ -4,6 +4,7 @@
 #
 #  id                 :bigint(8)        not null, primary key
 #  session_id         :string(191)
+#  request_token      :string(191)
 #  user_id            :integer          not null
 #  since_date         :datetime
 #  until_date         :datetime
@@ -34,6 +35,10 @@ class DeleteTweetsRequest < ApplicationRecord
   DESTROY_LIMIT = 3200
 
   before_validation do
+    if self.request_token.nil?
+      self.request_token = SecureRandom.hex(3)
+    end
+
     if self.error_class
       self.error_class = self.error_class.truncate(150)
     end

@@ -9,7 +9,7 @@ describe DeleteTweetsMessageResponder::Processor do
     subject { instance.received? }
 
     [
-        'ツイート削除 開始 abc12'
+        'ツイート削除 開始 abc123'
     ].each do |word|
       context "text is #{word}" do
         let(:text) { word }
