@@ -9,15 +9,29 @@ describe DeleteTweetsMessageResponder::Processor do
     subject { instance.received? }
 
     [
-        'ツイ消し',
-        'つい消し',
-        '削除',
-        'クリーナー',
         'ツイート削除 開始 abc12'
     ].each do |word|
       context "text is #{word}" do
         let(:text) { word }
-        it { is_expected.to be_truthy }
+        it do
+          is_expected.to be_truthy
+          expect(instance.instance_variable_get(:@start)).to be_truthy
+        end
+      end
+    end
+
+    [
+        'ツイ消し',
+        'つい消し',
+        '削除',
+        'クリーナー',
+    ].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it do
+          is_expected.to be_truthy
+          expect(instance.instance_variable_get(:@inquiry)).to be_truthy
+        end
       end
     end
   end

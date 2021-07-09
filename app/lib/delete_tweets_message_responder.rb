@@ -14,13 +14,13 @@ class DeleteTweetsMessageResponder < AbstractMessageResponder
     def received?
       return false if @text.length > message_length
 
-      if @text.match?(inquiry_regexp)
-        @inquiry = true
-      elsif @text.match?(start_regexp)
+      if @text.match?(start_regexp)
         @start = true
+      elsif @text.match?(inquiry_regexp)
+        @inquiry = true
       end
 
-      @inquiry || @start
+      @start || @inquiry
     end
 
     def inquiry_regexp
