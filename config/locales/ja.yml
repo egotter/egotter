@@ -1916,6 +1916,7 @@ ja:
     receive_mute_reports: 'ミュート通知 送信'
     permission_level_not_enough: 'ログインエラー報告：強制再ログインと連携アプリの削除→再登録を試しましたがログインできないままです。試した時間は【○月○日 ○時頃】です。'
     refund: '有料プランの返金を希望します。理由：'
+    delete_tweets_token: 'ツイート削除 開始 %{token}'
     delete_tweets_refund: 'ツイートの削除に失敗しました。有料プランの返金を希望します。理由：'
     delete_tweets_inquiry: 'ツイート削除のお問い合わせ：'
     delete_tweets_search_inquiry: 'ツイート削除の「検索して削除」に関する不具合報告：'
@@ -2172,7 +2173,7 @@ ja:
           success_with_delay: '@%{user} のフォローをリクエストしました。凍結を防ぐために一定時間後にフォローします。'
       delete_tweets_requests:
         create:
-          success: 'ツイート削除のリクエストに成功しました。ページを更新します。'
+          success_html: 'ツイート削除の準備ができました。%{expiry}以内に <a href="%{url}" target="_blank">@ego_tter</a> へ【%{message}】というDMを送ってください。'
       deletable_tweets:
         index:
           completed_html: |

@@ -37,7 +37,7 @@ class DeleteTweetsModal {
         ToastMessage.info(res.message);
 
         setTimeout(function () {
-          window.location.reload();
+          window.open(res.url, '_blank');
         }, 3000);
       }).fail(showErrorMessage);
     });
