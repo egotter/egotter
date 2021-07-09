@@ -43,6 +43,14 @@ class DeleteTweetsRequest < ApplicationRecord
     end
   end
 
+  REQUEST_TOKEN_EXPIRY = 10.minutes
+
+  class << self
+    def find_by_token(token)
+      where('created_at > ?', REQUEST_TOKEN_EXPIRY.ago).find_by(request_token: token, finished_at: nil, error_message: nil)
+    end
+  end
+
   def finished!
     if finished_at.nil?
       update!(finished_at: Time.zone.now)
