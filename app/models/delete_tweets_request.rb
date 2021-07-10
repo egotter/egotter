@@ -12,6 +12,7 @@
 #  tweet              :boolean          default(FALSE), not null
 #  reservations_count :integer          default(0), not null
 #  destroy_count      :integer          default(0), not null
+#  started_at         :datetime
 #  stopped_at         :datetime
 #  finished_at        :datetime
 #  error_class        :string(191)      default(""), not null
