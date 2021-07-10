@@ -6,10 +6,7 @@ class DeleteTweetsTask
   end
 
   def start!
-    if @request.finished?
-      @request.update(error_message: 'This request is already finished.')
-      return
-    end
+    return if @request.started? || @request.finished?
 
     @request.update(started_at: Time.zone.now)
     perform_request!(@request)

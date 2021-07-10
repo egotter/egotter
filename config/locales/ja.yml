@@ -2174,7 +2174,7 @@ ja:
       delete_tweets_requests:
         create:
           success_html: |
-            <span class="text-danger">まだ削除は始まっていません。</span>%{expiry}以内に @ego_tter へ <a href="%{url}" target="_blank">%{message}</a> と書いたDMを送ってください。
+            削除は%{delay}後に自動で始まります。今すぐ始めてよい場合は、@ego_tter へ <a href="%{url}" target="_blank">%{message}</a> と書いたDMを送ってください。
             <a href="%{url}" class="btn btn-sm btn-outline-primary" target="_blank">DMを送る</a>
       deletable_tweets:
         index:

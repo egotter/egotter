@@ -16,7 +16,6 @@ RSpec.describe DeleteTweetsTask, type: :model do
     context 'The request has already been finished' do
       before { allow(request).to receive(:finished?).and_return(true) }
       it do
-        expect(request).to receive(:update).with(error_message: instance_of(String))
         expect(task).not_to receive(:perform_request!)
         subject
       end

@@ -49,6 +49,7 @@ class DeleteTweetsRequest < ApplicationRecord
     end
   end
 
+  START_DELAY = 3.minutes
   REQUEST_TOKEN_EXPIRY = 10.minutes
 
   class << self
@@ -67,6 +68,10 @@ class DeleteTweetsRequest < ApplicationRecord
       tweet_finished_message if tweet
       send_finished_message if send_dm
     end
+  end
+
+  def started?
+    !started_at.nil?
   end
 
   def finished?

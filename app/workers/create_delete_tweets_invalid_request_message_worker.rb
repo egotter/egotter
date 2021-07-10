@@ -17,6 +17,7 @@ class CreateDeleteTweetsInvalidRequestMessageWorker
     message = ERB.new(template.read).result_with_hash(
         delete_tweets_url: Rails.application.routes.url_helpers.delete_tweets_url(og_tag: 'false'),
         request_token: find_request_token(uid),
+        delay: DateHelper.distance_of_time_in_words(DeleteTweetsRequest::START_DELAY),
         expiry: DateHelper.distance_of_time_in_words(DeleteTweetsRequest::REQUEST_TOKEN_EXPIRY)
     )
     event = DeleteTweetsReport.build_direct_message_event(uid, message)

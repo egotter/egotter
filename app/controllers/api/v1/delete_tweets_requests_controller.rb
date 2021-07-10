@@ -14,16 +14,17 @@ module Api
             tweet: params[:tweet] == 'true',
         )
 
-        # DeleteTweetsWorker.perform_async(request.id, user_id: current_user.id)
+        DeleteTweetsWorker.perform_in(DeleteTweetsRequest::START_DELAY, request.id)
         # SendDeleteTweetsStartedWorker.perform_async(request.id, user_id: current_user.id)
         SendDeleteTweetsNotFinishedWorker.perform_in(30.minutes, request.id, user_id: current_user.id)
 
         track_event('Delete tweets', request_id: request.id)
 
         token_message = I18n.t('short_messages.delete_tweets_token', token: request.request_token)
+        delay = MessageHelper.distance_of_time_in_words(DeleteTweetsRequest::START_DELAY)
         expiry = MessageHelper.distance_of_time_in_words(DeleteTweetsRequest::REQUEST_TOKEN_EXPIRY)
         direct_message_url = MessageHelper.direct_message_url(User::EGOTTER_UID, token_message)
-        render json: {url: direct_message_url, message: t('.success_html', expiry: expiry, url: direct_message_url, message: token_message)}
+        render json: {url: direct_message_url, message: t('.success_html', delay: delay, expiry: expiry, url: direct_message_url, message: token_message)}
       end
 
       private

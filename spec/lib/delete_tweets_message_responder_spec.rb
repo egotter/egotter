@@ -84,7 +84,7 @@ describe DeleteTweetsMessageResponder::Processor do
             with(user_id: user.id).with('abc123').and_return(request)
       end
       it do
-        expect(DeleteTweetsWorker).to receive(:perform_in).with(10.seconds, request.id)
+        expect(DeleteTweetsWorker).to receive(:perform_in).with(3.seconds, request.id)
         expect(CreateDeleteTweetsRequestStartedMessageWorker).to receive(:perform_async).with(uid)
         subject
       end
