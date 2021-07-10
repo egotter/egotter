@@ -34,7 +34,7 @@ class DeleteTweetsModal {
       };
 
       $.post(url, options).done(function (res) {
-        ToastMessage.info(res.message);
+        ToastMessage.info(res.message, {autohide: false});
 
         setTimeout(function () {
           window.open(res.url, '_blank');

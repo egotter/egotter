@@ -30,11 +30,11 @@ class DeleteTweetsMessageResponder < AbstractMessageResponder
     end
 
     def start_regexp
-      /ツイート削除 開始 (\w{6})/
+      /ツイート削除(\s|　)*開始(\s|　)+(\w{6})/
     end
 
     def vague_regexp
-      /ツイート削除(\s|　)+開始/
+      /ツイート削除(\s|　)*開始/
     end
 
     def send_message

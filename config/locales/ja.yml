@@ -2173,7 +2173,9 @@ ja:
           success_with_delay: '@%{user} のフォローをリクエストしました。凍結を防ぐために一定時間後にフォローします。'
       delete_tweets_requests:
         create:
-          success_html: 'ツイート削除の準備ができました。%{expiry}以内に <a href="%{url}" target="_blank">@ego_tter</a> へ【%{message}】というDMを送ってください。'
+          success_html: |
+            <span class="text-danger">まだ削除は始まっていません。</span>%{expiry}以内に @ego_tter へ <a href="%{url}" target="_blank">%{message}</a> と書いたDMを送ってください。
+            <a href="%{url}" class="btn btn-sm btn-outline-primary" target="_blank">DMを送る</a>
       deletable_tweets:
         index:
           completed_html: |

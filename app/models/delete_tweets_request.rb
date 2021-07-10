@@ -55,6 +55,10 @@ class DeleteTweetsRequest < ApplicationRecord
     def find_by_token(token)
       where('created_at > ?', REQUEST_TOKEN_EXPIRY.ago).find_by(request_token: token, started_at: nil, finished_at: nil, error_message: nil)
     end
+
+    def find_token(user_id)
+      where('created_at > ?', REQUEST_TOKEN_EXPIRY.ago).where.not(request_token: nil).find_by(user_id: user_id, started_at: nil, finished_at: nil, error_message: nil)
+    end
   end
 
   def finished!
