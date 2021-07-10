@@ -30,7 +30,7 @@ class DeleteTweetsMessageResponder < AbstractMessageResponder
     end
 
     def start_regexp
-      /ツイート削除(\s|　)*開始(\s|　)+(\w{6})/
+      /ツイート削除(\s|　)*開始(\s|　)+(?<token>\w{6})/
     end
 
     def vague_regexp
@@ -44,7 +44,7 @@ class DeleteTweetsMessageResponder < AbstractMessageResponder
         CreateDeleteTweetsInvalidRequestMessageWorker.perform_async(@uid)
       elsif @start
         if (user = validate_report_status(@uid)) &&
-            (request_token = @text.match(start_regexp)[1]) &&
+            (request_token = @text.match(start_regexp)[:token]) &&
             (request = DeleteTweetsRequest.where(user_id: user.id).find_by_token(request_token))
           DeleteTweetsWorker.perform_in(10.seconds, request.id)
           CreateDeleteTweetsRequestStartedMessageWorker.perform_async(@uid)
