@@ -7,8 +7,14 @@ module Api
 
       def index
         # count = GoogleAnalyticsClient.new.active_users
-        count = CloudWatchClient.new.get_active_users
-        render json: {active_users: count}
+        client = CloudWatchClient.new
+
+        render json: {
+            total: client.get_active_users.to_i,
+            mobile: client.get_active_users('MOBILE').to_i,
+            desktop: client.get_active_users('DESKTOP').to_i,
+            active_users: client.get_active_users.to_i,
+        }
       end
 
       private
