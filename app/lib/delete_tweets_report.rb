@@ -37,7 +37,7 @@ class DeleteTweetsReport
       message = ERB.new(template.read).result_with_hash(
           destroy_count: deletions_count,
           url: delete_tweets_url('delete_tweets_finished_tweet', true),
-          seconds: (request.updated_at - request.created_at).to_i.to_s(:delimited),
+          seconds: (request.finished_at - request.started_at).to_i.to_s(:delimited),
           kaomoji: Kaomoji::KAWAII.sample
       )
       new(nil, nil, message)

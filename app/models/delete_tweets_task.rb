@@ -11,6 +11,7 @@ class DeleteTweetsTask
       return
     end
 
+    @request.update(started_at: Time.zone.now)
     perform_request!(@request)
   end
 
@@ -27,7 +28,7 @@ class DeleteTweetsTask
   rescue DeleteTweetsRequest::TemporarilyLocked => e
     # Do nothing
   rescue DeleteTweetsRequest::TooManyRequests => e
-      # Do nothing
+    # Do nothing
   rescue => e
     request.send_error_message
     raise
