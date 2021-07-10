@@ -9,6 +9,18 @@ describe DeleteTweetsMessageResponder::Processor do
     subject { instance.received? }
 
     [
+        'ツイート削除 開始'
+    ].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it do
+          is_expected.to be_truthy
+          expect(instance.instance_variable_get(:@vague)).to be_truthy
+        end
+      end
+    end
+
+    [
         'ツイート削除 開始 abc123'
     ].each do |word|
       context "text is #{word}" do
@@ -43,6 +55,14 @@ describe DeleteTweetsMessageResponder::Processor do
       before { instance.instance_variable_set(:@inquiry, true) }
       it do
         expect(CreateDeleteTweetsQuestionedMessageWorker).to receive(:perform_async).with(uid)
+        subject
+      end
+    end
+
+    context '@vague is set' do
+      before { instance.instance_variable_set(:@vague, true) }
+      it do
+        expect(CreateDeleteTweetsInvalidRequestMessageWorker).to receive(:perform_async).with(uid)
         subject
       end
     end

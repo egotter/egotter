@@ -6,6 +6,7 @@ RSpec.describe DeleteTweetsReport, type: :model do
 
   describe '.finished_tweet' do
     subject { described_class.finished_tweet(user, request) }
+    before { request.update(started_at: 10.seconds.ago, finished_at: 10.seconds.since) }
     it { is_expected.to be_truthy }
   end
 

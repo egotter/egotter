@@ -16,11 +16,13 @@ class DeleteTweetsMessageResponder < AbstractMessageResponder
 
       if @text.match?(start_regexp)
         @start = true
+      elsif @text.match?(vague_regexp)
+        @vague = true
       elsif @text.match?(inquiry_regexp)
         @inquiry = true
       end
 
-      @start || @inquiry
+      @start || @vague || @inquiry
     end
 
     def inquiry_regexp
@@ -28,12 +30,18 @@ class DeleteTweetsMessageResponder < AbstractMessageResponder
     end
 
     def start_regexp
-      /\Aツイート削除 開始 (\w{6})\z/
+      /ツイート削除 開始 (\w{6})/
+    end
+
+    def vague_regexp
+      /ツイート削除(\s|　)+開始/
     end
 
     def send_message
       if @inquiry
         CreateDeleteTweetsQuestionedMessageWorker.perform_async(@uid)
+      elsif @vague
+        CreateDeleteTweetsInvalidRequestMessageWorker.perform_async(@uid)
       elsif @start
         if (user = validate_report_status(@uid)) &&
             (request_token = @text.match(start_regexp)[1]) &&
