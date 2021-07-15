@@ -26,8 +26,8 @@ class NewFollowersCountPoint < ApplicationRecord
       end
     end
 
-    def import_by_uid(uid)
-      TwitterUser.where(uid: uid).find_each do |record|
+    def import_by_uid(uid, limit: 30)
+      TwitterUser.where(uid: uid).order(created_at: :desc).limit(limit).reverse.each do |record|
         create_by_twitter_user(record)
       end
     end
