@@ -58,6 +58,7 @@ class Order < ApplicationRecord
   end
 
   class << self
+    # TODO Rename to #create_by_checkout_session
     def create_by_webhook!(checkout_session)
       # tax_rate = checkout_session.subscription.tax_percent / 100.0
       name = 'えごったー ベーシック'
@@ -77,6 +78,38 @@ class Order < ApplicationRecord
           customer_id: checkout_session.customer,
           subscription_id: checkout_session.subscription
       )
+    end
+
+    def create_by_bank_transfer(user, stripe_customer)
+      price_id = ENV['STRIPE_FREE_PAYMENT_PRICE_ID']
+      price = 0
+      months_count = 1
+      order_name = "えごったー ベーシック #{months_count}ヶ月分"
+
+      subscription = Stripe::Subscription.create(
+          customer: stripe_customer.id,
+          items: [{price: price_id}],
+          metadata: {user_id: user.id, price: price, months_count: months_count},
+      )
+
+      order = Order.create!(
+          user_id: user.id,
+          email: '',
+          name: order_name,
+          price: price,
+          tax_rate: 0.1,
+          search_count: SearchCountLimitation::BASIC_PLAN,
+          follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
+          unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,
+          checkout_session_id: nil,
+          customer_id: stripe_customer.id,
+          subscription_id: subscription.id,
+          trial_end: Time.zone.now.to_i,
+      )
+
+      Stripe::Subscription.update(subscription.id, {metadata: {order_id: order.id}})
+
+      order
     end
   end
 

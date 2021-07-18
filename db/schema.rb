@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_08_180302) do
+ActiveRecord::Schema.define(version: 2021_07_16_220750) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1077,6 +1077,18 @@ ActiveRecord::Schema.define(version: 2021_07_08_180302) do
     t.string "channel", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_page_cache_logs_on_created_at"
+  end
+
+  create_table "payment_intents", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "stripe_payment_intent_id", null: false
+    t.datetime "expiry_date", null: false
+    t.datetime "succeeded_at"
+    t.datetime "canceled_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["stripe_payment_intent_id"], name: "index_payment_intents_on_stripe_payment_intent_id", unique: true
+    t.index ["user_id"], name: "index_payment_intents_on_user_id"
   end
 
   create_table "periodic_report_received_message_confirmations", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

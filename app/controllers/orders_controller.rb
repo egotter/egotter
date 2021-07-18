@@ -54,6 +54,8 @@ class OrdersController < ApplicationController
       process_charge_succeeded(event.data)
     when 'charge.failed'
       process_charge_failed(event.data)
+    when 'payment_intent.succeeded'
+      process_payment_intent_succeeded(event.data)
     else
       logger.info "Unhandled stripe webhook event type=#{event.type} value=#{event.inspect}"
     end
@@ -110,6 +112,30 @@ class OrdersController < ApplicationController
     raise
   end
 
+  def process_payment_intent_succeeded(event_data)
+    order = nil
+    stripe_payment_intent = event_data['object']
+
+    unless (payment_intent = PaymentIntent.find_by(stripe_payment_intent_id: stripe_payment_intent.id))
+      send_pi_succeeded_message("PaymentIntent not found stripe_payment_intent_id=#{stripe_payment_intent.id}")
+      return
+    end
+
+    user = payment_intent.user
+    stripe_customer = Stripe::Customer.retrieve(stripe_payment_intent.customer)
+
+    if user.has_valid_subscription?
+      send_pi_succeeded_message("User already have a subscription user_id=#{user.id}")
+    else
+      order = Order.create_by_bank_transfer(user, stripe_customer)
+      payment_intent.update(succeeded_at: Time.zone.now)
+      send_pi_succeeded_message("Success user_id=#{user.id} order_id=#{order.id}")
+    end
+  rescue => e
+    send_pi_succeeded_message("Order may be insufficient order=#{order&.inspect} exception=#{e.inspect}")
+    raise
+  end
+
   def send_failure_message(message)
     SendMessageToSlackWorker.perform_async(:orders_failure, "`#{Rails.env}:failure` #{message}")
   rescue => e
@@ -132,6 +158,12 @@ class OrdersController < ApplicationController
     SendMessageToSlackWorker.perform_async(:orders_charge_failed, "`#{Rails.env}:charge_failed` #{message}")
   rescue => e
     logger.warn "#send_charge_failed_message failed exception=#{e.inspect} message=#{message}"
+  end
+
+  def send_pi_succeeded_message(message)
+    SendMessageToSlackWorker.perform_async(:orders_pi_succeeded, "`#{Rails.env}:payment_intent_succeeded` #{message}")
+  rescue => e
+    logger.warn "#send_pi_succeeded_message failed exception=#{e.inspect} message=#{message}"
   end
 
   def validate_stripe_session_id

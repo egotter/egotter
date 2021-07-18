@@ -79,6 +79,7 @@ Rails.application.routes.draw do
       resources :new_followers_count_points, only: %i(index)
 
       resources :checkout_sessions, only: %i(create)
+      resources :payment_intents, only: %i(create)
       resources :customer_portal_urls, only: %i(create)
       delete 'user_caches', to: 'user_caches#destroy'
       delete 'user_data', to: 'user_data#destroy'

@@ -449,6 +449,15 @@ ja:
       about_bulk_purchase: 'コンビニ決済や一括購入割引をご希望される方はこちらをご覧ください。'
       see_plans: '料金プラン'
       about_purchase: 'お試し期間（初回限定）付きのプランをクレジットカードで購入するにはこちらです。'
+      bank_transfer: '銀行振込はこちら'
+      open_bank_transfer_modal: '口座を見る'
+      bank_transfer_modal:
+        title: '有料プランの支払い口座'
+        loading: '読み込み中です'
+        note1: '着金の確認から2〜3日以内に有料プランが有効になります。'
+        note2_html: '分からないことがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までお問い合わせください。'
+        error_message: 'エラーが起きました。しばらくしてから再度お試しください。'
+        'yes': '閉じる'
       purchase: '購入する'
       cancel_order_modal:
         title: '定期購読の解約'
@@ -2139,6 +2148,21 @@ ja:
     root: 'トップ'
   api:
     v1:
+      payment_intents:
+        create:
+          already_succeeded: '代金の振り込みは既に完了しています。有料プランが有効になるまでもうしばらくお待ちください。'
+          already_canceled: '代金の振り込み口座の有効期限が切れています。'
+          success: '代金の振り込み手続きが完了しました。着金の確認から2〜3日以内に有料プランが有効になります。'
+          transfer_destination_account_html: |
+            <p>代金を下記の口座へお振込ください。</p>
+            <table class="table table-bordered table-sm">
+              <tr><td>商品</td><td>有料プラン 1ヶ月分</td></tr>
+              <tr><td>金額</td><td>%{amount_remaining}円</td></tr>
+              <tr><td>銀行名</td><td>%{bank_name}</td></tr>
+              <tr><td>支店名</td><td>%{branch_name}</td></tr>
+              <tr><td>口座番号</td><td>普通 %{account_number}</td></tr>
+              <tr><td>名義人</td><td>%{account_holder_name}</td></tr>
+            </table>
       access_days:
         create:
           success: '@%{user} のアクセス履歴の確認が完了しました。'

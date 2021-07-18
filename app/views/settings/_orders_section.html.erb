@@ -16,6 +16,46 @@
   <a href="#" class="btn btn-primary btn-sm btn-checkout"><%= t('.purchase') %></a>
 </div>
 
+<% if current_user.admin? && !current_user.has_valid_subscription? %>
+  <div class="my-5">
+    <%= t('.bank_transfer') %>
+    <a href="#" class="btn btn-primary btn-sm" data-target="#bank-transfer-modal" data-toggle="modal"><%= t('.open_bank_transfer_modal') %></a>
+  </div>
+
+  <%= modal_dialog id: 'bank-transfer-modal', title: t('.bank_transfer_modal.title'), button: {positive: t('.bank_transfer_modal.yes')} do %>
+    <p class="message">
+      <%= image_tag '/ajax-loader.gif', size: '16x16' %>
+      <%= t('.bank_transfer_modal.loading') %>
+    </p>
+    <div class="text-muted small my-1"><%= t('.bank_transfer_modal.note1') %></div>
+    <div class="text-muted small my-1"><%= t('.bank_transfer_modal.note2_html', url: twitter_web_url('egotter_cs')) %></div>
+  <% end %>
+
+  <script>
+    $(function () {
+      var $modal = $('#bank-transfer-modal');
+      var url = '<%= raw api_v1_payment_intents_path(via: current_via) %>';
+      var container = $modal.find('.message');
+      var errorMessage = '<%= t('.bank_transfer_modal.error_message') %>';
+
+      $modal.on('shown.bs.modal', function (e) {
+        $.post(url).done(function (res) {
+          container.html(res.message);
+        }).fail(function (xhr) {
+          var message;
+          try {
+            message = JSON.parse(xhr.responseText)['message'];
+          } catch (e) {
+            message = errorMessage;
+          }
+          container.html(message);
+        });
+        caller = e.relatedTarget;
+      });
+    })
+  </script>
+<% end %>
+
 <hr>
 
 <% if orders.any? %>
