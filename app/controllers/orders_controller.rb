@@ -116,6 +116,8 @@ class OrdersController < ApplicationController
     order = nil
     stripe_payment_intent = event_data['object']
 
+    return unless StripePaymentIntent.intent_for_bank_transfer?(stripe_payment_intent)
+
     unless (payment_intent = PaymentIntent.find_by(stripe_payment_intent_id: stripe_payment_intent.id))
       send_pi_succeeded_message("PaymentIntent not found stripe_payment_intent_id=#{stripe_payment_intent.id}")
       return

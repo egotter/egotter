@@ -9,6 +9,14 @@ class StripePaymentIntent
       Stripe::PaymentIntent.create(build(customer_id))
     end
 
+    def intent_for_bank_transfer?(intent)
+      intent.payment_method_types[0] == 'customer_balance' &&
+          intent.payment_method_options.customer_balance.funding_type == 'bank_transfer'
+    rescue => e
+      Rails.logger.warn "#{__method__}: #{e.inspect} payment_intent_id=#{intent.id}"
+      false
+    end
+
     private
 
     def build(customer_id)
