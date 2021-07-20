@@ -14,4 +14,15 @@
 #  index_slack_messages_on_created_at  (created_at)
 #
 class SlackMessage < ApplicationRecord
+  before_validation do
+    self.channel.remove!(/^#/) if channel
+  end
+
+  def permanent_link
+    response = properties['response']
+    "https://egotter.slack.com/archives/#{response['channel']}/p#{response['ts'].remove('.')}"
+  rescue => e
+    logger.warn "#{e.inspect} id=#{id}"
+    nil
+  end
 end

@@ -1,3 +1,24 @@
 <div class="my-3">
-  <%= render(@slack_messages) || 'Not found' %>
+  <% rendered_date = {} %>
+  <% @slack_messages.each do |slack_message| %>
+    <% time = slack_message.created_at.in_time_zone('Tokyo') %>
+    <% date = time.strftime('%-m/%d') %>
+
+    <% unless rendered_date.has_key?(date) %>
+      <% rendered_date[date] = 1 %>
+      <div class="font-weight-bold"><%= date %></div>
+    <% end %>
+
+    <div class="d-flex my-1">
+      <div class="text-muted mr-1">
+        <%= time.strftime('%H') %>:<%= time.strftime('%M') %>
+      </div>
+      <div>
+        <%= link_to slack_message_path(slack_message), class: 'text-body' do %>
+          <span>#<%= slack_message.channel %></span>
+          <span><%= slack_message.message %></span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 </div>
