@@ -26,8 +26,8 @@ class PaymentIntent < ApplicationRecord
     @stripe_payment_intent
   end
 
-  scope :active, -> (user) do
-    where(user_id: user.id).where('expiry_date > ?', Time.zone.now)
+  scope :accepting_bank_transfer, -> (user) do
+    where(user_id: user.id).where('expiry_date > ?', Time.zone.now).where(succeeded_at: nil).where(canceled_at: nil)
   end
 
   def succeeded?

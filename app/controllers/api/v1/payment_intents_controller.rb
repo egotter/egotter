@@ -12,9 +12,7 @@ module Api
       after_action { SendMessageToSlackWorker.perform_async(:orders_pi_created, "`#{Rails.env}:payment_intent_created` user_id=#{current_user.id} payment_intent_id=#{@intent.id}") if @intent }
 
       def create
-        if PaymentIntent.active(current_user).exists?
-          intent = PaymentIntent.active(current_user).order(created_at: :desc).first
-        else
+        unless (intent = PaymentIntent.accepting_bank_transfer(current_user).order(created_at: :desc).first)
           intent = PaymentIntent.create_with_stripe_payment_intent(current_user)
         end
 
