@@ -1,0 +1,6 @@
+<div class="my-1">
+  <%= link_to slack_message_path(slack_message), class: 'text-body' do %>
+    <span>#<%= slack_message.channel %></span>
+    <span><%= slack_message.message %></span>
+  <% end %>
+</div>

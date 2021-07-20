@@ -307,6 +307,8 @@ Rails.application.routes.draw do
     mount Blazer::Engine, at: '/blazer'
   end
 
+  resources :slack_messages
+
   mount Ahoy::Engine => '/ahoy'
 
   match '*unmatched_route', to: 'application#not_found', via: :all
