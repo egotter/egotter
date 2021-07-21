@@ -71,7 +71,7 @@ class OrdersController < ApplicationController
 
       send_cs_completed_message("User already have a subscription user_id=#{user.id}")
     else
-      order = Order.create_by_webhook!(checkout_session)
+      order = Order.create_by_checkout_session(checkout_session)
       SyncOrderAndSubscriptionWorker.perform_async(order.id)
 
       # SetVisitIdToOrderWorker.perform_async(order.id)

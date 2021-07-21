@@ -58,8 +58,7 @@ class Order < ApplicationRecord
   end
 
   class << self
-    # TODO Rename to #create_by_checkout_session
-    def create_by_webhook!(checkout_session)
+    def create_by_checkout_session(checkout_session)
       # tax_rate = checkout_session.subscription.tax_percent / 100.0
       name = 'えごったー ベーシック'
 
