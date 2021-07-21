@@ -34,7 +34,7 @@ class OrdersController < ApplicationController
     process_webhook_event(event)
     head :ok
   rescue => e
-    logger.warn "#{controller_name}##{action_name} #{e.inspect}"
+    logger.warn "#{controller_name}##{action_name} #{e.inspect} event_id=#{event.data}"
     head :bad_request
   end
 
@@ -51,7 +51,7 @@ class OrdersController < ApplicationController
     when 'checkout.session.completed'
       process_checkout_session_completed(event.data)
     when 'charge.succeeded'
-      process_charge_succeeded(event.data)
+      process_charge_succeeded(event)
     when 'charge.failed'
       process_charge_failed(event.data)
     when 'payment_intent.succeeded'
@@ -83,18 +83,9 @@ class OrdersController < ApplicationController
     raise
   end
 
-  def process_charge_succeeded(event_data)
-    customer_id = event_data['object']['customer']
-
-    if (order = Order.order(created_at: :desc).find_by(customer_id: customer_id))
-      order.charge_succeeded!
-      send_charge_succeeded_message("Success user_id=#{order.user_id} order_id=#{order.id}")
-    else
-      send_charge_succeeded_message("Order not found customer_id=#{customer_id}")
-    end
-  rescue => e
-    send_charge_succeeded_message("exception=#{e.inspect}")
-    raise
+  def process_charge_succeeded(event)
+    customer_id = event.data.object.customer
+    ProcessStripeChargeSucceededEventWorker.perform_async(customer_id)
   end
 
   def process_charge_failed(event_data)
@@ -148,12 +139,6 @@ class OrdersController < ApplicationController
     SendMessageToSlackWorker.perform_async(:orders_cs_completed, "`#{Rails.env}:checkout_session_completed` #{message}")
   rescue => e
     logger.warn "#send_cs_completed_message failed exception=#{e.inspect} message=#{message}"
-  end
-
-  def send_charge_succeeded_message(message)
-    SendMessageToSlackWorker.perform_async(:orders_charge_succeeded, "`#{Rails.env}:charge_succeeded` #{message}")
-  rescue => e
-    logger.warn "#send_charge_succeeded_message failed exception=#{e.inspect} message=#{message}"
   end
 
   def send_charge_failed_message(message)

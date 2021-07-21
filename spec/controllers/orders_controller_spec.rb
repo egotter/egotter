@@ -35,4 +35,16 @@ RSpec.describe OrdersController, type: :controller do
       subject
     end
   end
+
+  describe '#process_charge_succeeded' do
+    let(:event) { double('event') }
+    subject { controller.send(:process_charge_succeeded, event) }
+    before do
+      allow(event).to receive_message_chain(:data, :object, :customer).and_return('cus_xxxx')
+    end
+    it do
+      expect(ProcessStripeChargeSucceededEventWorker).to receive(:perform_async).with('cus_xxxx')
+      subject
+    end
+  end
 end
