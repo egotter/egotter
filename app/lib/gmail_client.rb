@@ -18,21 +18,36 @@ class GmailClient
     @client.get_user_profile(user_id)
   end
 
-  def messages(user_id: 'me')
-    @client.list_user_messages(user_id).messages
+  def messages(user_id: 'me', from: nil, to: nil, subject: nil, limit: 3)
+    collection = []
+    next_page = nil
+    q = SearchQuery.new(from, to, subject).to_s
+
+    begin
+      options = {max_results: limit, page_token: next_page}
+      options.merge!(q: q) if q != ''
+
+      result = @client.list_user_messages(user_id, options)
+      collection += result.messages
+      break if collection.size >= limit
+      next_page = result.next_page_token
+    end while next_page
+
+    collection.map { |item| message(item.id) }
   end
 
   def message(message_id, user_id: 'me')
-    @client.get_user_message(user_id, message_id)
+    result = @client.get_user_message(user_id, message_id)
+    Mail.from_payload(result.payload, result)
   end
 
-  def send_message(from, to, subject, body)
-    message = Mail.new
+  def send_message(from, to, subject, body, thread_id: nil)
+    message = ::Mail.new
     message.from = from
     message.to = to
     message.subject = subject
     message.body = body
-    encoded_message = Google::Apis::GmailV1::Message.new(raw: message.to_s)
+    encoded_message = Google::Apis::GmailV1::Message.new(raw: message.to_s, thread_id: thread_id)
     @client.send_user_message('me', encoded_message)
   end
 
@@ -60,5 +75,59 @@ class GmailClient
     end
 
     credentials
+  end
+
+  class SearchQuery
+    def initialize(from, to, subject)
+      @from = from
+      @to = to
+      @subject = subject
+    end
+
+    def to_s
+      str = ''
+      str += "#{str} from:#{@from}" if @from
+      str += "#{str} to:#{@to}" if @to
+      str += "#{str} subject:#{@subject}" if @subject
+      str
+    end
+  end
+
+  class Mail
+    attr_accessor :subject, :body, :from, :to, :data
+
+    def initialize(subject, body, from, to, data)
+      @subject = subject
+      @body = body
+      @from = from
+      @to = to
+      @data = data
+    end
+
+    def thread_id
+      @data.thread_id
+    end
+
+    class << self
+      def from_payload(message_payload, data)
+        subject = select_header(message_payload.headers, 'Subject')
+        body = select_body(message_payload)
+        from = select_header(message_payload.headers, 'From')
+        to = select_header(message_payload.headers, 'To')
+        new(subject, body, from, to, data)
+      end
+
+      def select_header(headers, name)
+        headers.find { |h| h.name == name }&.value
+      end
+
+      def select_body(payload)
+        unless (body = payload.body.data)
+          body = payload.parts.map { |part| part.body.data }.join
+        end
+
+        body.force_encoding('UTF-8')
+      end
+    end
   end
 end
