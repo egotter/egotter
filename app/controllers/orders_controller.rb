@@ -53,7 +53,7 @@ class OrdersController < ApplicationController
     when 'charge.succeeded'
       process_charge_succeeded(event)
     when 'charge.failed'
-      process_charge_failed(event.data)
+      process_charge_failed(event)
     when 'payment_intent.succeeded'
       process_payment_intent_succeeded(event.data)
     else
@@ -88,19 +88,9 @@ class OrdersController < ApplicationController
     ProcessStripeChargeSucceededEventWorker.perform_async(customer_id)
   end
 
-  def process_charge_failed(event_data)
-    customer_id = event_data['object']['customer']
-
-    if (order = Order.order(created_at: :desc).find_by(customer_id: customer_id))
-      order.charge_failed!
-      order.cancel!('webhook')
-      send_charge_failed_message("Success user_id=#{order.user_id} order_id=#{order.id} customer_id=#{customer_id}")
-    else
-      send_charge_failed_message("Order not found customer_id=#{customer_id}")
-    end
-  rescue => e
-    send_charge_failed_message("#{e.inspect} event=#{event_data.inspect}")
-    raise
+  def process_charge_failed(event)
+    customer_id = event.data.object.customer
+    ProcessStripeChargeFailedEventWorker.perform_async(customer_id)
   end
 
   def process_payment_intent_succeeded(event_data)
@@ -139,12 +129,6 @@ class OrdersController < ApplicationController
     SendMessageToSlackWorker.perform_async(:orders_cs_completed, "`#{Rails.env}:checkout_session_completed` #{message}")
   rescue => e
     logger.warn "#send_cs_completed_message failed exception=#{e.inspect} message=#{message}"
-  end
-
-  def send_charge_failed_message(message)
-    SendMessageToSlackWorker.perform_async(:orders_charge_failed, "`#{Rails.env}:charge_failed` #{message}")
-  rescue => e
-    logger.warn "#send_charge_failed_message failed exception=#{e.inspect} message=#{message}"
   end
 
   def send_pi_succeeded_message(message)

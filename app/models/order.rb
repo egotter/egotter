@@ -58,6 +58,10 @@ class Order < ApplicationRecord
   end
 
   class << self
+    def find_by_customer_id(customer_id)
+      order(created_at: :desc).find_by(customer_id: customer_id)
+    end
+
     def create_by_checkout_session(checkout_session)
       # tax_rate = checkout_session.subscription.tax_percent / 100.0
       name = 'えごったー ベーシック'

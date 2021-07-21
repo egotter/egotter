@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ProcessStripeChargeSucceededEventWorker do
+RSpec.describe ProcessStripeChargeFailedEventWorker do
   let(:worker) { described_class.new }
   let(:customer_id) { 'cus_xxxx' }
   let(:user) { create(:user) }
@@ -16,7 +16,8 @@ RSpec.describe ProcessStripeChargeSucceededEventWorker do
       allow(Order).to receive(:find_by_customer_id).with(customer_id).and_return(order)
     end
     it do
-      expect(order).to receive(:charge_succeeded!)
+      expect(order).to receive(:charge_failed!)
+      expect(order).to receive(:cancel!).with('webhook')
       subject
     end
   end
