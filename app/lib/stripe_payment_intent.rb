@@ -13,7 +13,8 @@ class StripePaymentIntent
       intent.payment_method_types[0] == 'customer_balance' &&
           intent.payment_method_options.customer_balance.funding_type == 'bank_transfer'
     rescue => e
-      Rails.logger.warn "#{__method__}: #{e.inspect} payment_intent_id=#{intent.id}"
+      Rails.logger.warn "#{__method__}: payment_intent_id=#{intent.id} exception=#{e.inspect}"
+      Rails.logger.warn "#{__method__}: intent=#{intent.inspect}"
       false
     end
 
