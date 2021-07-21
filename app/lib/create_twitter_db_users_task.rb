@@ -44,6 +44,7 @@ class CreateTwitterDBUsersTask
     if deadlock_error?(e)
       if (retries -= 1) >= 0
         sleep(rand(2) + 1)
+        Rails.logger.info 'DEBUG: Retry deadlock'
         retry
       else
         raise RetryDeadlockExhausted.new(e.inspect)
