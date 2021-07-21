@@ -38,17 +38,10 @@ class CreateTwitterDBUsersTask
   end
 
   def import_users(users)
-    retries ||= 3
     TwitterDB::User.import_by!(users: users)
   rescue => e
     if deadlock_error?(e)
-      if (retries -= 1) >= 0
-        sleep(rand(2) + 1)
-        Rails.logger.info 'DEBUG: Retry deadlock'
-        retry
-      else
-        raise RetryDeadlockExhausted.new(e.inspect)
-      end
+      raise RetryDeadlockExhausted.new(e.inspect)
     else
       raise
     end

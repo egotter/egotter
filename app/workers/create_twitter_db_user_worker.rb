@@ -36,6 +36,9 @@ class CreateTwitterDBUserWorker
 
     user_id = (options['user_id'] && options['user_id'].to_i != -1) ? options['user_id'] : nil
     CreateTwitterDBUsersTask.new(target_uids, user_id: user_id, force: options['force_update']).start
+  rescue CreateTwitterDBUsersTask::RetryDeadlockExhausted => e
+    logger.warn "Retry: #{e.inspect.truncate(200)}"
+    CreateTwitterDBUserWorker.perform_in(3.seconds, uids, options.merge(klass: self.class, error_class: e.class))
   rescue => e
     if e.class == ApiClient::ContainStrangeUid && target_uids.size > 1
       slice_and_retry(target_uids, options)
