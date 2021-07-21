@@ -59,4 +59,16 @@ RSpec.describe OrdersController, type: :controller do
       subject
     end
   end
+
+  describe '#process_payment_intent_succeeded' do
+    let(:event) { double('event') }
+    subject { controller.send(:process_payment_intent_succeeded, event) }
+    before do
+      allow(event).to receive_message_chain(:data, :object, :id).and_return('pi_xxxx')
+    end
+    it do
+      expect(ProcessStripePaymentIntentSucceededEventWorker).to receive(:perform_async).with('pi_xxxx')
+      subject
+    end
+  end
 end

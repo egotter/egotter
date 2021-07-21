@@ -55,7 +55,7 @@ class OrdersController < ApplicationController
     when 'charge.failed'
       process_charge_failed(event)
     when 'payment_intent.succeeded'
-      process_payment_intent_succeeded(event.data)
+      process_payment_intent_succeeded(event)
     else
       logger.info "Unhandled stripe webhook event type=#{event.type} value=#{event.inspect}"
     end
@@ -93,30 +93,9 @@ class OrdersController < ApplicationController
     ProcessStripeChargeFailedEventWorker.perform_async(customer_id)
   end
 
-  def process_payment_intent_succeeded(event_data)
-    order = nil
-    stripe_payment_intent = event_data['object']
-
-    return unless StripePaymentIntent.intent_for_bank_transfer?(stripe_payment_intent)
-
-    unless (payment_intent = PaymentIntent.find_by(stripe_payment_intent_id: stripe_payment_intent.id))
-      send_pi_succeeded_message("PaymentIntent not found stripe_payment_intent_id=#{stripe_payment_intent.id}")
-      return
-    end
-
-    user = payment_intent.user
-    stripe_customer = Stripe::Customer.retrieve(stripe_payment_intent.customer)
-
-    if user.has_valid_subscription?
-      send_pi_succeeded_message("User already have a subscription user_id=#{user.id}")
-    else
-      order = Order.create_by_bank_transfer(user, stripe_customer)
-      payment_intent.update(succeeded_at: Time.zone.now)
-      send_pi_succeeded_message("Success user_id=#{user.id} order_id=#{order.id}")
-    end
-  rescue => e
-    send_pi_succeeded_message("Order may be insufficient order=#{order&.inspect} exception=#{e.inspect}")
-    raise
+  def process_payment_intent_succeeded(event)
+    stripe_payment_intent_id = event.data.object.id
+    ProcessStripePaymentIntentSucceededEventWorker.perform_async(stripe_payment_intent_id)
   end
 
   def send_failure_message(message)
@@ -129,12 +108,6 @@ class OrdersController < ApplicationController
     SendMessageToSlackWorker.perform_async(:orders_cs_completed, "`#{Rails.env}:checkout_session_completed` #{message}")
   rescue => e
     logger.warn "#send_cs_completed_message failed exception=#{e.inspect} message=#{message}"
-  end
-
-  def send_pi_succeeded_message(message)
-    SendMessageToSlackWorker.perform_async(:orders_pi_succeeded, "`#{Rails.env}:payment_intent_succeeded` #{message}")
-  rescue => e
-    logger.warn "#send_pi_succeeded_message failed exception=#{e.inspect} message=#{message}"
   end
 
   def validate_stripe_session_id
