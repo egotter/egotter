@@ -28,10 +28,33 @@ RSpec.describe OrdersController, type: :controller do
   end
 
   describe '#process_webhook_event' do
-    let(:event) { double('event', type: 'checkout.session.completed', data: 'data') }
+    let(:event) { double('event', type: type) }
     subject { controller.send(:process_webhook_event, event) }
+
+    [
+        ['checkout.session.completed', :process_checkout_session_completed],
+        ['charge.succeeded', :process_charge_succeeded],
+        ['charge.failed', :process_charge_failed],
+        ['payment_intent.succeeded', :process_payment_intent_succeeded],
+    ].each do |event_type, method_name|
+      context "type is #{event_type}" do
+        let(:type) { event_type }
+        it do
+          expect(controller).to receive(method_name).with(event)
+          subject
+        end
+      end
+    end
+  end
+
+  describe '#process_checkout_session_completed' do
+    let(:event) { double('event') }
+    subject { controller.send(:process_checkout_session_completed, event) }
+    before do
+      allow(event).to receive_message_chain(:data, :object, :id).and_return('cs_xxxx')
+    end
     it do
-      expect(controller).to receive(:process_checkout_session_completed).with('data')
+      expect(ProcessStripeCheckoutSessionCompletedEventWorker).to receive(:perform_async).with('cs_xxxx')
       subject
     end
   end

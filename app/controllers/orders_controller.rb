@@ -49,7 +49,7 @@ class OrdersController < ApplicationController
   def process_webhook_event(event)
     case event.type
     when 'checkout.session.completed'
-      process_checkout_session_completed(event.data)
+      process_checkout_session_completed(event)
     when 'charge.succeeded'
       process_charge_succeeded(event)
     when 'charge.failed'
@@ -61,26 +61,9 @@ class OrdersController < ApplicationController
     end
   end
 
-  def process_checkout_session_completed(event_data)
-    order = nil
-    checkout_session = event_data['object']
-    user = User.find(checkout_session.client_reference_id)
-
-    if user.has_valid_subscription?
-      Stripe::Subscription.delete(checkout_session.subscription)
-
-      send_cs_completed_message("User already have a subscription user_id=#{user.id}")
-    else
-      order = Order.create_by_checkout_session(checkout_session)
-      SyncOrderAndSubscriptionWorker.perform_async(order.id)
-
-      # SetVisitIdToOrderWorker.perform_async(order.id)
-
-      send_cs_completed_message("Success user_id=#{user.id} order_id=#{order.id}")
-    end
-  rescue => e
-    send_cs_completed_message("Order may be insufficient order=#{order&.inspect} exception=#{e.inspect}")
-    raise
+  def process_checkout_session_completed(event)
+    checkout_session_id = event.data.object.id
+    ProcessStripeCheckoutSessionCompletedEventWorker.perform_async(checkout_session_id)
   end
 
   def process_charge_succeeded(event)
@@ -102,12 +85,6 @@ class OrdersController < ApplicationController
     SendMessageToSlackWorker.perform_async(:orders_failure, "`#{Rails.env}:failure` #{message}")
   rescue => e
     logger.warn "#send_failure_message failed exception=#{e.inspect} message=#{message}"
-  end
-
-  def send_cs_completed_message(message)
-    SendMessageToSlackWorker.perform_async(:orders_cs_completed, "`#{Rails.env}:checkout_session_completed` #{message}")
-  rescue => e
-    logger.warn "#send_cs_completed_message failed exception=#{e.inspect} message=#{message}"
   end
 
   def validate_stripe_session_id
