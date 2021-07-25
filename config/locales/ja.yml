@@ -454,7 +454,7 @@ ja:
       bank_transfer_modal:
         title: '有料プランの支払い口座'
         loading: '読み込み中です'
-        note1: '着金の確認から2〜3日以内に有料プランが有効になります。'
+        note1: '着金の確認から2〜3営業日で購入したプランが有効になります。'
         note2_html: '分からないことがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までお問い合わせください。'
         error_message: 'エラーが起きました。しばらくしてから再度お試しください。'
         'yes': '閉じる'
@@ -2161,9 +2161,9 @@ ja:
     v1:
       payment_intents:
         create:
-          already_succeeded: '代金の振り込みは既に完了しています。有料プランが有効になるまでもうしばらくお待ちください。'
-          already_canceled: '代金の振り込み口座の有効期限が切れています。'
-          success: '代金の振り込み手続きが完了しました。着金の確認から2〜3日以内に有料プランが有効になります。'
+          already_succeeded: '代金の振り込みは既に完了しています。購入したプランが有効になるまで2〜3営業日ほどお待ちください。'
+          already_canceled: '振り込み先の有効期限が切れています。15分ほど後に再度アクセスしてください。'
+          success: '振り込み手続きが完了しました。購入したプランが有効になるまで2〜3営業日ほどお待ちください。'
           transfer_destination_account_html: |
             <p>代金を下記の口座へお振込ください。</p>
             <table class="table table-bordered table-sm">
