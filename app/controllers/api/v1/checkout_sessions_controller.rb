@@ -18,7 +18,7 @@ module Api
 
       private
 
-      def track_event
+      def log_event
         if @session
           props = {id: @session.id, customer: @session.customer, metadata: @session.metadata, referer: request.referer.to_s.truncate(200)}
           track_order_activity(checkout_session: props)
