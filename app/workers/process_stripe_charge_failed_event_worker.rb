@@ -20,6 +20,6 @@ class ProcessStripeChargeFailedEventWorker
   def send_message(message)
     SlackBotClient.channel('orders_charge_failed').post_message("`#{Rails.env}` #{message}")
   rescue => e
-    logger.warn "Failed #{e.inspect} message=#{message}"
+    logger.warn "##{__method__} failed #{e.inspect} message=#{message}"
   end
 end

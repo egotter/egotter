@@ -21,7 +21,7 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
 
     send_message("Success user_id=#{user.id} order_id=#{order.id}")
   rescue => e
-    logger.warn "#{e.inspect} stripe_payment_intent_id=#{stripe_payment_intent_id}"
+    logger.warn "#{e.inspect} checkout_session_id=#{checkout_session_id}"
   end
 
   private
@@ -40,6 +40,6 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
   def send_message(message)
     SlackBotClient.channel('orders_cs_completed').post_message("`#{Rails.env}` #{message}")
   rescue => e
-    logger.warn "Failed #{e.inspect} message=#{message}"
+    logger.warn "##{__method__} failed #{e.inspect} message=#{message}"
   end
 end
