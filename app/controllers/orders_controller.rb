@@ -21,12 +21,11 @@ class OrdersController < ApplicationController
   end
 
   def failure
-    send_failure_message("user_id=#{current_user&.id} via=#{params[:via]}")
+    send_failure_message("user_id=#{current_user&.id} referer=#{request.referer.to_s.truncate(200)}")
   end
 
   def end_trial_failure
-    # TODO Fix the channel name
-    send_failure_message("user_id=#{current_user&.id} via=#{params[:via]}")
+    send_end_trial_failure_message("user_id=#{current_user&.id} referer=#{request.referer.to_s.truncate(200)}")
   end
 
   def checkout_session_completed
@@ -82,9 +81,15 @@ class OrdersController < ApplicationController
   end
 
   def send_failure_message(message)
-    SendMessageToSlackWorker.perform_async(:orders_failure, "`#{Rails.env}:failure` #{message}")
+    SendMessageToSlackWorker.perform_async(:orders_failure, "`#{Rails.env}` #{message}")
   rescue => e
-    logger.warn "#send_failure_message failed exception=#{e.inspect} message=#{message}"
+    logger.warn "##{__method__} failed exception=#{e.inspect} message=#{message}"
+  end
+
+  def send_end_trial_failure_message(message)
+    SendMessageToSlackWorker.perform_async(:orders_end_trial_failure, "`#{Rails.env}` #{message}")
+  rescue => e
+    logger.warn "##{__method__} failed exception=#{e.inspect} message=#{message}"
   end
 
   def validate_stripe_session_id

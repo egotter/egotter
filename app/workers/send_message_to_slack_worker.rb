@@ -2,12 +2,19 @@ class SendMessageToSlackWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
+  BOT_CHANNELS = %w(
+    orders_pi_created
+    orders_pi_succeeded
+    orders_failure
+    orders_end_trial_failure
+  )
+
   # options:
   def perform(channel, text, title = nil, options = {})
     raise "Set text!" if text.blank?
     title = "`#{title}`" if title
 
-    if %w(orders_pi_created orders_pi_succeeded).include?(channel)
+    if BOT_CHANNELS.include?(channel)
       SlackBotClient.channel(channel).post_message(text)
     else
       SlackClient.channel(channel).send_message(text, title: title)
