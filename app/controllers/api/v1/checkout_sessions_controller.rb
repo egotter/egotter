@@ -8,7 +8,7 @@ module Api
       before_action :require_login!
       before_action :doesnt_have_valid_subscription!
 
-      after_action :track_event
+      after_action :log_event
       after_action :send_message
 
       def create
