@@ -60,9 +60,10 @@ class OrdersController < ApplicationController
     end
   end
 
+  # As a user is waiting to finish the checkout, this process MUST be executed synchronously
   def process_checkout_session_completed(event)
     checkout_session_id = event.data.object.id
-    ProcessStripeCheckoutSessionCompletedEventWorker.perform_async(checkout_session_id)
+    ProcessStripeCheckoutSessionCompletedEventWorker.new.perform(checkout_session_id)
   end
 
   def process_charge_succeeded(event)
