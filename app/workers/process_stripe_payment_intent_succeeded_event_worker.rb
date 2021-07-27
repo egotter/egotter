@@ -33,6 +33,7 @@ class ProcessStripePaymentIntentSucceededEventWorker
   end
 
   def send_message(message)
+    SlackMessage.create(channel: 'orders_pi_succeeded', message: message)
     SlackBotClient.channel('orders_pi_succeeded').post_message("`#{Rails.env}` #{message}")
   rescue => e
     logger.warn "Failed #{e.inspect} message=#{message}"

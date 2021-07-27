@@ -8,7 +8,9 @@ class SyncStripeAttributesWorker
     order = Order.find(order_id)
 
     if (changes = order.sync_stripe_attributes!)
-      SlackClient.channel('orders_sync').send_message("`#{Rails.env}:sync` #{order_id} #{changes}")
+      message = "#{order_id} #{changes}"
+      SlackMessage.create(channel: 'orders_sync', message: message)
+      SlackBotClient.channel('orders_sync').post_message("`#{Rails.env}` #{message}")
     end
   rescue => e
     handle_worker_error(e, order_id: order_id, options: options)

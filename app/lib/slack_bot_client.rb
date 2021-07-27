@@ -14,10 +14,10 @@ class SlackBotClient
 
   def post_message(text, options = {})
     response = @client.chat_postMessage({channel: @channel, text: text}.merge(options))
-    begin
-      SlackMessage.create(channel: @channel, message: text, properties: {response: response.slice('channel', 'ts')})
-    rescue => e
-    end
+    # begin
+    #   SlackMessage.create(channel: @channel, message: text, properties: {response: response.slice('channel', 'ts')})
+    # rescue => e
+    # end
   end
 
   # TODO Not used
@@ -47,11 +47,11 @@ class SlackBotClient
         file: Faraday::UploadIO.new(StringIO.new(text), 'text/plain'),
         initial_comment: initial_comment,
     )
-    begin
-      channel = response.file.channels[0]
-      ts = response.file.shares.public[channel][0]['ts']
-      SlackMessage.create(channel: @channel, message: initial_comment, properties: {snippet: text, response: {channel: channel, ts: ts}})
-    rescue => e
-    end
+    # begin
+    #   channel = response.file.channels[0]
+    #   ts = response.file.shares.public[channel][0]['ts']
+    #   SlackMessage.create(channel: @channel, message: initial_comment, properties: {snippet: text, response: {channel: channel, ts: ts}})
+    # rescue => e
+    # end
   end
 end

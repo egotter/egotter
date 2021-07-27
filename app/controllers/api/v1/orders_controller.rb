@@ -44,8 +44,9 @@ module Api
       private
 
       def send_message(order)
-        message = "`#{Rails.env}:#{action_name}` user_id=#{current_user.id} order_id=#{order.id} device_type=#{request.device_type} referer=#{request.referer}"
-        SendMessageToSlackWorker.perform_async(:orders, message)
+        message = "`#{action_name}` user_id=#{current_user.id} order_id=#{order.id} device_type=#{request.device_type} referer=#{request.referer}"
+        SlackMessage.create(channel: 'orders', message: message)
+        SendMessageToSlackWorker.perform_async(:orders, "`#{Rails.env}` #{message}")
       end
     end
   end

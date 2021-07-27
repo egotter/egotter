@@ -9,7 +9,7 @@ module Api
       before_action :doesnt_have_valid_subscription!
 
       after_action { track_order_activity(payment_intent: {id: @intent.id, customer: @intent.customer, metadata: @intent.metadata}) if @intent }
-      after_action { SendMessageToSlackWorker.perform_async(:orders_pi_created, "`#{Rails.env}:payment_intent_created` user_id=#{current_user.id} payment_intent_id=#{@intent.id}") if @intent }
+      after_action :send_message
 
       def create
         unless (intent = PaymentIntent.accepting_bank_transfer(current_user).order(created_at: :desc).first)
@@ -37,6 +37,18 @@ module Api
       end
 
       private
+
+      def send_message
+        if @intent
+          message = "user_id=#{current_user.id} payment_intent_id=#{@intent.id}"
+          SlackMessage.create(channel: 'orders_pi_created', message: message)
+          SendMessageToSlackWorker.perform_async(:orders_pi_created, "`#{Rails.env}` #{message}")
+        else
+          logger.warn "#{controller_name}##{action_name}: StripePaymentIntent is not found user_id=#{current_user.id}"
+        end
+      rescue => e
+        logger.warn "#{controller_name}##{action_name}: #{e.inspect} stripe_payment_intent=#{@intent&.inspect}"
+      end
 
       module MessageHelper
         # twitter_web_url

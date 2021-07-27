@@ -32,6 +32,7 @@ module Api
       def send_message
         if @session
           message = "user_id=#{current_user.id} checkout_session_id=#{@session.id} referer=#{request.referer.to_s.truncate(200)}"
+          SlackMessage.create(channel: 'orders_cs_created', message: message)
           SendMessageToSlackWorker.perform_async(:orders_cs_created, "`#{Rails.env}` #{message}")
         else
           logger.warn "#{controller_name}##{action_name}: StripeCheckoutSession is not found user_id=#{current_user.id}"

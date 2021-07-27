@@ -82,12 +82,14 @@ class OrdersController < ApplicationController
   end
 
   def send_failure_message(message)
+    SlackMessage.create(channel: 'orders_failure', message: message)
     SendMessageToSlackWorker.perform_async(:orders_failure, "`#{Rails.env}` #{message}")
   rescue => e
     logger.warn "##{__method__} failed exception=#{e.inspect} message=#{message}"
   end
 
   def send_end_trial_failure_message(message)
+    SlackMessage.create(channel: 'orders_end_trial_failure', message: message)
     SendMessageToSlackWorker.perform_async(:orders_end_trial_failure, "`#{Rails.env}` #{message}")
   rescue => e
     logger.warn "##{__method__} failed exception=#{e.inspect} message=#{message}"
