@@ -268,6 +268,7 @@ Rails.application.routes.draw do
 
   get 'webhook/twitter', to: 'webhook#challenge'
   post 'webhook/twitter', to: 'webhook#twitter'
+  post 'webhook/stripe', to: 'stripe_webhook#index'
 
   get 'adsense', to: 'adsense#new'
   get 'search_histories', to: 'search_histories#new'
