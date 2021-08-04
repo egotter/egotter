@@ -16,7 +16,7 @@ class CreateSearchReportWorker
   #   searcher_uid
   def perform(searchee_id, options = {})
     searchee = User.find(searchee_id)
-    return unless searchee.authorized?
+    return if searchee.unauthorized_or_expire_token?
     return if StopSearchReportRequest.exists?(user_id: searchee.id)
     return if searchee.banned?
     return if (searcher = User.find_by(uid: options['searcher_uid'])) && SneakSearchRequest.exists?(user_id: searcher.id)

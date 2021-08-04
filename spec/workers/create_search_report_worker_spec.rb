@@ -4,6 +4,11 @@ RSpec.describe CreateSearchReportWorker do
   let(:user) { create(:user) }
   let(:worker) { described_class.new }
 
+  before do
+    allow(User).to receive(:find).with(user.id).and_return(user)
+    allow(user).to receive(:unauthorized_or_expire_token?).and_return(false)
+  end
+
   describe '#perform' do
     let(:options) { {} }
     subject { worker.perform(user.id, options) }

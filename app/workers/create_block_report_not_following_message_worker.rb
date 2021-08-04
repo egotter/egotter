@@ -15,7 +15,7 @@ class CreateBlockReportNotFollowingMessageWorker
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
-    return unless user.authorized?
+    return if user.unauthorized_or_expire_token?
 
     BlockReport.send_start_message(user)
     message = BlockReport.not_following_message(user)

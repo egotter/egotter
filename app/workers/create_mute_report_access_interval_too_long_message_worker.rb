@@ -14,7 +14,7 @@ class CreateMuteReportAccessIntervalTooLongMessageWorker
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
-    return unless user.authorized?
+    return if user.unauthorized_or_expire_token?
 
     MuteReport.send_start_message(user)
     message = MuteReport.access_interval_too_long_message(user)
