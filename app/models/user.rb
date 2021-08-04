@@ -70,6 +70,20 @@ class User < ApplicationRecord
                      .references(:orders)
   end
 
+  def expired_token?
+    !api_client.verify_credentials
+  rescue => e
+    if TwitterApiStatus.invalid_or_expired_token?(e)
+      UpdateAuthorizedWorker.perform_async(id)
+    else
+      raise
+    end
+  end
+
+  def unauthorized_or_expire_token?
+    !authorized? || expired_token?
+  end
+
   class << self
     def egotter
       find_by(uid: EGOTTER_UID)

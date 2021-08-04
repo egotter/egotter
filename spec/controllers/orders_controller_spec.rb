@@ -54,7 +54,7 @@ RSpec.describe OrdersController, type: :controller do
       allow(event).to receive_message_chain(:data, :object, :id).and_return('cs_xxxx')
     end
     it do
-      expect(ProcessStripeCheckoutSessionCompletedEventWorker).to receive(:perform_async).with('cs_xxxx')
+      expect(ProcessStripeCheckoutSessionCompletedEventWorker).to receive_message_chain(:new, :perform).with('cs_xxxx')
       subject
     end
   end

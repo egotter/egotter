@@ -27,6 +27,39 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe '#expired_token?' do
+    let(:user) { create(:user) }
+    let(:client) { double('client') }
+    subject { user.expired_token? }
+
+    before do
+      allow(user).to receive(:api_client).and_return(client)
+    end
+
+    context 'token is not expired' do
+      before { allow(client).to receive(:verify_credentials).and_return(id: 1) }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'token is expired' do
+      let(:error) { RuntimeError.new }
+      before do
+        allow(client).to receive(:verify_credentials).and_raise(error)
+        allow(TwitterApiStatus).to receive(:invalid_or_expired_token?).with(error).and_return(true)
+      end
+      it { is_expected.to be_truthy }
+    end
+
+    context 'error is raised' do
+      let(:error) { RuntimeError.new }
+      before do
+        allow(client).to receive(:verify_credentials).and_raise(error)
+        allow(TwitterApiStatus).to receive(:invalid_or_expired_token?).with(error).and_return(false)
+      end
+      it { expect { subject }.to raise_error(error) }
+    end
+  end
+
   describe '.update_or_create_with_token!' do
     let(:values) do
       {
