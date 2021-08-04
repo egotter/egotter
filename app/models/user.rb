@@ -74,7 +74,7 @@ class User < ApplicationRecord
     !api_client.verify_credentials
   rescue => e
     if TwitterApiStatus.invalid_or_expired_token?(e)
-      UpdateAuthorizedWorker.perform_async(id)
+      true
     else
       raise
     end
