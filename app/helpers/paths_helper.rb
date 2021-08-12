@@ -278,15 +278,18 @@ module PathsHelper
   end
 
   def base_shop_1_month_url
-    'https://egotter.thebase.in/items/44366397'
+    user_id = user_signed_in? ? current_user.id : nil
+    "https://egotter.thebase.in/items/44366397?via_id=#{user_id}"
   end
 
   def base_shop_6_months_url
-    'https://egotter.thebase.in/items/44708302'
+    user_id = user_signed_in? ? current_user.id : nil
+    "https://egotter.thebase.in/items/44708302?via_id=#{user_id}"
   end
 
   def base_shop_12_months_url
-    'https://egotter.thebase.in/items/44708346'
+    user_id = user_signed_in? ? current_user.id : nil
+    "https://egotter.thebase.in/items/44708346?via_id=#{user_id}"
   end
 
   def force_sign_in_path(options)
