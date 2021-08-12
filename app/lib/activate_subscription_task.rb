@@ -32,7 +32,12 @@ class ActivateSubscriptionTask
   end
 
   def start_task!
-    OrdersReport.starting_message(@user).deliver!
+    begin
+      OrdersReport.starting_message(User.egotter_cs, @user).deliver!
+    rescue => e
+      puts "Sending starting message failed exception=#{e.inspect}"
+      OrdersReport.starting_message(@user).deliver!
+    end
 
     if (customer_id = @user.valid_customer_id)
       customer = Stripe::Customer.retrieve(customer_id)
