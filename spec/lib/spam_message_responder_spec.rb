@@ -54,10 +54,11 @@ describe SpamMessageResponder::Processor do
     before do
       instance.instance_variable_set(:@spam, true)
       instance.instance_variable_set(:@uid, 1)
+      instance.instance_variable_set(:@text, 'abc')
     end
 
     it do
-      expect(CreateViolationEventWorker).to receive(:perform_async).with(user.id, 'Spam message')
+      expect(CreateViolationEventWorker).to receive(:perform_async).with(user.id, 'Spam message', text: 'abc')
       expect(CreateWarningReportSpamDetectedMessageWorker).to receive(:perform_async).with(uid)
       subject
     end

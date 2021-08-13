@@ -30,7 +30,7 @@ class SpamMessageResponder < AbstractMessageResponder
     def send_message
       if @spam
         if (user = User.find_by(uid: @uid))
-          CreateViolationEventWorker.perform_async(user.id, 'Spam message')
+          CreateViolationEventWorker.perform_async(user.id, 'Spam message', text: @text)
         end
         CreateWarningReportSpamDetectedMessageWorker.perform_async(@uid)
       end
