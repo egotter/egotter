@@ -5,7 +5,6 @@ class ProcessWebhookEventWorker
   include Sidekiq::Worker
   prepend TimeoutableWorker
   include ScheduleTweetsConcern
-  include SpamMessageConcern
   sidekiq_options queue: 'webhook', retry: 0, backtrace: false
 
   def unique_key(event, options = {})
@@ -74,7 +73,7 @@ class ProcessWebhookEventWorker
     processed = CloseFriendsMessageResponder.from_dm(dm).respond unless processed
     processed = ThankYouMessageResponder.from_dm(dm).respond unless processed
     processed = PrettyIconMessageResponder.from_dm(dm).respond unless processed
-    processed = process_spam_message(dm) unless processed
+    processed = SpamMessageResponder.from_dm(dm).respond unless processed
     processed = QuestionMessageResponder.from_dm(dm).respond unless processed
     processed = AnonymousMessageResponder.from_dm(dm).respond unless processed
 
