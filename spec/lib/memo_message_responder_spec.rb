@@ -8,7 +8,7 @@ describe MemoMessageResponder::Processor do
   describe '#received?' do
     subject { instance.received? }
 
-    [' https://twitter.com/messages/media/111'].each do |word|
+    [' https://t.co/xxx'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it do
@@ -22,7 +22,7 @@ describe MemoMessageResponder::Processor do
   describe '#received_regexp' do
     subject { text.match?(instance.received_regexp) }
 
-    [' https://twitter.com/messages/media/111'].each do |word|
+    [' https://t.co/xxx'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
@@ -30,9 +30,9 @@ describe MemoMessageResponder::Processor do
     end
 
     [
-        'Hello https://twitter.com/messages/media/111',
-        'https://twitter.com/messages/media/111',
-        'https://twitter.com/messages/media/111 '
+        'Hello https://t.co/xxx',
+        'https://t.co/xxx',
+        'https://t.co/xxx '
     ].each do |word|
       context "text is #{word}" do
         let(:text) { word }

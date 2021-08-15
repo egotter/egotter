@@ -19,8 +19,9 @@ class MemoMessageResponder < AbstractMessageResponder
       end
     end
 
+    # https://t.co/xxxx or https://twitter.com/messages/media/00000
     def received_regexp
-      %r[\A\s+https://twitter.com/messages/media/\d+\z]
+      %r[\A\s+https://t.co/\w+\z]
     end
 
     def send_message
