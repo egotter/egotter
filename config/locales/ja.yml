@@ -749,7 +749,7 @@ ja:
       refund:
         title: '返金の決まり'
         description_html: |
-          有料プランで支払った金額は、正当な理由があればすぐに返金します。詳しくは <a href="%{url1}">返金規定</a> をご確認ください。<br><br>
+          有料プランで支払った金額は、正当な理由があればすぐに返金します。詳しくは <a href="%{url1}">返金ポリシー</a> をご確認ください。<br><br>
           特定商取引法に基づく表記は <a href="%{url2}">こちら</a> です。
       contribution:
         title: '社会貢献'
@@ -2424,8 +2424,10 @@ ja:
       note2_html: '質問やお問い合わせは <a href="%{url}" target="_blank">@egotter_cs</a> にご連絡ください。'
       'yes': 'OK'
     end_trial_modal:
-      title: 'トライアル期間の終了'
-      message_html: 'この機能を使うとトライアル期間が終了しすぐに課金を開始します。よろしいですか？'
+      title: 'お試し期間の終了と課金の開始'
+      message_html: 'この機能を使うとお試し期間が終了しすぐに<span class="text-primary">課金を開始</span>します。よろしいですか？'
+      specified_commercial_transactions: '特定商取引法に基づく表記'
+      refund_policy: '返金ポリシー'
       note1: '※ 「はい」を押すと無料期間が終わります。'
       note2: '※ 「はい」を押すと返金の対象外となります。'
       processing_html: '購入処理中です。<img src="/ajax-loader.gif?a=1">'
