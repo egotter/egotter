@@ -1,7 +1,9 @@
 <% right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html')} %>
 <%= render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options} %>
 
-<%= render partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top} %>
+<% if request.device_type == :smartphone %>
+  <%= render partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top} %>
+<% end %>
 
 <%= render partial: 'shared/about_egotter' %>
 
