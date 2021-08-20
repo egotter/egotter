@@ -24,6 +24,12 @@ class GreetingMessageResponder < AbstractMessageResponder
         @night = true
       elsif @text.match?(talk_regexp)
         @talk = true
+      elsif @text.match?(yes_regexp)
+        @yes = true
+      elsif @text.match?(sorry_regexp)
+        @sorry = true
+      elsif @text.match?(ok_regexp)
+        @ok = true
       end
     end
 
@@ -47,6 +53,18 @@ class GreetingMessageResponder < AbstractMessageResponder
       /えごったー/
     end
 
+    def yes_regexp
+      /\Aはい\z/
+    end
+
+    def sorry_regexp
+      /すいません(でした)?|ごめん(なさい)?/
+    end
+
+    def ok_regexp
+      /\A(おけ|おう)\z/
+    end
+
     def send_message
       if @morning
         CreateGreetingGoodMorningMessageWorker.perform_async(@uid)
@@ -58,6 +76,12 @@ class GreetingMessageResponder < AbstractMessageResponder
         CreateGreetingGoodNightMessageWorker.perform_async(@uid)
       elsif @talk
         CreateGreetingTalkMessageWorker.perform_async(@uid)
+      elsif @yes
+        CreateGreetingYesMessageWorker.perform_async(@uid)
+      elsif @sorry
+        CreateGreetingSorryMessageWorker.perform_async(@uid)
+      elsif @ok
+        CreateGreetingOkMessageWorker.perform_async(@uid)
       end
     end
   end

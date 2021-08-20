@@ -88,6 +88,67 @@ describe GreetingMessageResponder::Processor do
     end
   end
 
+  describe '#yes_regexp' do
+    subject { text.match?(instance.yes_regexp) }
+
+    [
+        'はい',
+    ].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    [
+        'はいはい',
+    ].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_falsey }
+      end
+    end
+  end
+
+  describe '#sorry_regexp' do
+    subject { text.match?(instance.sorry_regexp) }
+
+    [
+        'すいません',
+        'すいませんでした',
+        'ごめん',
+        'ごめんなさい',
+    ].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
+  describe '#ok_regexp' do
+    subject { text.match?(instance.ok_regexp) }
+
+    [
+        'おけ',
+        'おう',
+    ].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    [
+        'おけおけ',
+    ].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_falsey }
+      end
+    end
+  end
+
   describe '#send_message' do
     let(:user) { create(:user, uid: uid) }
     subject { instance.send_message }
@@ -129,6 +190,30 @@ describe GreetingMessageResponder::Processor do
       before { instance.instance_variable_set(:@talk, true) }
       it do
         expect(CreateGreetingTalkMessageWorker).to receive(:perform_async).with(uid)
+        subject
+      end
+    end
+
+    context '@yes is true' do
+      before { instance.instance_variable_set(:@yes, true) }
+      it do
+        expect(CreateGreetingYesMessageWorker).to receive(:perform_async).with(uid)
+        subject
+      end
+    end
+
+    context '@sorry is true' do
+      before { instance.instance_variable_set(:@sorry, true) }
+      it do
+        expect(CreateGreetingSorryMessageWorker).to receive(:perform_async).with(uid)
+        subject
+      end
+    end
+
+    context '@ok is true' do
+      before { instance.instance_variable_set(:@ok, true) }
+      it do
+        expect(CreateGreetingOkMessageWorker).to receive(:perform_async).with(uid)
         subject
       end
     end
