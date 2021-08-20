@@ -18,6 +18,7 @@ class SendReceivedMessageWorker
       /\A【?#{I18n.t('quick_replies.shared.label1')}】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label4')}】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label2')}】?\z/,
+      /\A【?アクセスしました】?\z/,
       /\A【?アクセス通知(\s|　)*届きました】?\z/,
       /\A【?#{I18n.t('quick_replies.shared.label3')}】?\z/,
       /\A【?フォロー通知(\s|　)*届きました】?\z/,
@@ -28,6 +29,7 @@ class SendReceivedMessageWorker
         BlockReportResponder::Processor.new(nil, text).received? ||
         MuteReportResponder::Processor.new(nil, text).received? ||
         SearchReportResponder::Processor.new(nil, text).received? ||
+        DeleteTweetsMessageResponder::Processor.new(nil, text).received? ||
         WelcomeReportResponder::Processor.new(nil, text).received? ||
         SpamMessageResponder::Processor.new(nil, text).received? ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
