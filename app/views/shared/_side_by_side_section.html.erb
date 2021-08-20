@@ -1,4 +1,4 @@
-<style type=text/css>
+<style type="text/css">
   /* extra small and small */
   @media (max-width: 767.98px) {
     .both-side {
@@ -27,6 +27,19 @@
       height: 100%;
     }
 
+    .left-side-inner {
+        position: relative;
+    }
+
+    .left-side-messages {
+        color: white;
+        font-size: 18px;
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
     .right-side {
       width: 50%;
       max-width: 400px;
@@ -37,9 +50,9 @@
 <div class="both-side">
   <!-- The left side of the screen-->
   <div class="left-side" style="background-image: url(<%= image_path('/egotter_big_background_840x800.png') %>); background-position: center;">
-    <div class="w-100 h-100" style="position: relative;">
-      <div style="color:white; font-size: 18px; position: absolute; top: 40%; left: 50%; transform: translateX(-50%);">
-        <div><%= t('.text021_html', count: Rails.configuration.x.constants[:usage_count] / 10000) %></div>
+    <div class="left-side-inner w-100 h-100">
+      <div class="left-side-messages">
+        <div><%= t('.text021_html') %></div>
         <div><%= t('.text022_html') %></div>
         <div><%= t('.text023_html') %></div>
       </div>

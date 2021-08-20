@@ -1993,14 +1993,14 @@ ja:
           ok: 'ログインして検索'
           cancel: '検索のみ'
     side_by_side_section:
-      text021_html: '<span style="font-size: 28px;">%{count}万回</span> 以上の利用実績'
-      text022_html: '<span style="font-size: 28px;">フォロワーが減ったら</span> 通知でお知らせ'
-      text023_html: '<span style="font-size: 28px;">無料</span> で使えます'
+      text021_html: '<span class="display-4">世界最大級</span> の利用回数'
+      text022_html: '<span class="display-4">仲良し</span> ランキング'
+      text023_html: '<span class="display-4">無料</span> で使えます'
     right_side:
       check_001: "パスワード不要"
       check_002: "ワンクリック登録"
       check_003: "気になるあの人を検索"
-      check_004_html: '今日<span class="search-count"></span>人が利用中'
+      check_004_html: '<span class="search-count"></span>人が利用中'
       check_005: "フォロワーの増減"
       check_006: "人気ランキング分析"
       or: " または "
