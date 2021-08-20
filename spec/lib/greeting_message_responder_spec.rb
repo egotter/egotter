@@ -39,6 +39,7 @@ describe GreetingMessageResponder::Processor do
 
     [
         'こんにちは',
+        'こんにちわ',
     ].each do |word|
       context "text is #{word}" do
         let(:text) { word }

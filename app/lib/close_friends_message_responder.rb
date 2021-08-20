@@ -12,7 +12,7 @@ class CloseFriendsMessageResponder < AbstractMessageResponder
     end
 
     def received_regexp
-      /仲良し|ランキング/
+      /仲[良よ]し|ランキング/
     end
 
     def send_message

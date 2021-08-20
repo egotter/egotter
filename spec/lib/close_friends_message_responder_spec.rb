@@ -8,7 +8,11 @@ describe CloseFriendsMessageResponder::Processor do
   describe '#received?' do
     subject { instance.received? }
 
-    ['仲良し', 'ランキング'].each do |word|
+    [
+        '仲良し',
+        '仲よし',
+        'ランキング'
+    ].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }

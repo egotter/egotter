@@ -63,7 +63,7 @@ class SlackClient
         type: 'context',
         elements: [
             {type: 'image', image_url: icon_url, alt_text: "@#{screen_name}"},
-            {type: 'mrkdwn', text: mrkdwn_text}
+            {type: 'mrkdwn', text: mrkdwn_text.truncate(500)}
         ],
     }
     perform_request({blocks: [block]})

@@ -32,11 +32,11 @@ class GreetingMessageResponder < AbstractMessageResponder
     end
 
     def afternoon_regexp
-      /こんにちは/
+      /こんにち[はわ]/
     end
 
     def evening_regexp
-      /こんばんは/
+      /こんばん[はわ]/
     end
 
     def night_regexp
