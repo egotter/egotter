@@ -91,6 +91,7 @@ gem 'blazer'
 
 # Google
 gem 'google-api-client', require: false
+gem 'google-cloud-language', require: false
 
 # AWS
 gem 'aws-sdk-cloudwatch', require: false
