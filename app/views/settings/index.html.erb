@@ -1,28 +1,71 @@
-<h2 class="h4 text-center my-5"><i class="far fa-address-card"></i>&nbsp;<%= t('settings.general.title') %></h2>
-<div class="container my-5"><%= render partial: 'general' %></div>
+<div class="text-primary mx-3 my-3"><%= t('.settings') %></div>
 
-<h2 class="h4 text-center my-5"><i class="fas fa-search"></i>&nbsp;<%= t('settings.search.title') %></h2>
-<div class="container my-5"><%= render partial: 'search' %></div>
-
-<h2 class="h4 text-center my-5"><i class="far fa-envelope"></i>&nbsp;<%= t('.notifications.title') %></h2>
-<div class="container tgl-buttons">
-  <%= render partial: 'periodic_report_setting' %>
+<div class="mx-3 my-3">
+  <%= link_to t('.account'), settings_account_path, class: 'text-body' %>
 </div>
 
-<h2 class="h4 text-center my-5"><i class="far fa-envelope"></i>&nbsp;<%= t('settings.block_report.title') %></h2>
-<div class="container my-5">
-  <div class="mb-5"><%= t('settings.block_report.description', user: current_user.screen_name) %></div>
-  <%= render partial: 'block_report' %>
+<hr>
+
+<div class="mx-3 my-3">
+  <%= link_to t('.periodic_report'), settings_periodic_report_path, class: 'text-body' %>
 </div>
 
-<h2 class="h4 text-center my-5"><i class="far fa-envelope"></i>&nbsp;<%= t('settings.mute_report.title') %></h2>
-<div class="container my-5">
-  <div class="mb-5"><%= t('settings.mute_report.description', user: current_user.screen_name) %></div>
-  <%= render partial: 'mute_report' %>
+<hr>
+
+<div class="mx-3 my-3">
+  <%= link_to t('.block_report'), settings_block_report_path, class: 'text-body' %>
 </div>
 
-<h2 class="h4 text-center my-5"><i class="fas fa-database"></i>&nbsp;<%= t('settings.data.title') %></h2>
-<div class="container my-5"><%= render partial: 'data' %></div>
+<hr>
 
-<h2 id="orders-table" class="h4 text-center my-5"><i class="fas fa-shopping-cart"></i>&nbsp;<%= t('settings.orders_section.title') %></h2>
-<div class="container my-5"><%= render partial: 'orders_section', locals: {orders: @orders} %></div>
+<div class="mx-3 my-3">
+  <%= link_to t('.mute_report'), settings_mute_report_path, class: 'text-body' %>
+</div>
+
+<hr>
+
+<div class="mx-3 my-3">
+  <%= link_to t('.search_report'), settings_search_report_path, class: 'text-body' %>
+</div>
+
+<hr>
+
+<div class="mx-3 my-3">
+  <%= link_to settings_sneak_search_path, class: 'text-body' do %>
+    <%= t('.sneak_search') %>
+    <span class="egotter-pink small"><%= t('.premium_only') %></span>
+  <% end %>
+</div>
+
+<hr>
+
+<div class="mx-3 my-3">
+  <%= link_to settings_private_mode_path, class: 'text-body' do %>
+    <%= t('.private_mode') %>
+    <span class="egotter-pink small"><%= t('.premium_only') %></span>
+  <% end %>
+</div>
+
+<hr>
+
+<div class="mx-3 my-3">
+  <%= link_to t('.order_history'), settings_order_history_path, class: 'text-body' %>
+</div>
+
+<hr>
+
+<div class="text-primary mx-3 my-3"><%= t('.others') %></div>
+
+<div class="mx-3 my-3">
+  <%= link_to t('.delete_tweets'), delete_tweets_path(via: current_via), class: 'text-body' %>
+</div>
+
+<hr>
+
+<div class="mx-3 my-3">
+  <%= link_to t('.delete_favorites'), delete_favorites_path(via: current_via), class: 'text-body' %>
+</div>
+
+<hr>
+
+<div class="container my-3"><%= render partial: 'data' %></div>

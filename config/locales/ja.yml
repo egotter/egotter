@@ -39,6 +39,7 @@ ja:
       get_it_on: 'Google Play で手に入れよう'
       feedback: "ご意見"
       root: 'トップページ'
+      settings: '設定'
       support: "お問い合わせ"
       faq: 'よくある質問'
       github: "Github"
@@ -438,36 +439,20 @@ ja:
       button_label: 'ツイートをダウンロード'
       see_details: 'もっと詳しく'
   settings:
-    title: "設定"
     index:
-      notifications:
-        title: "通知設定"
-    orders_section:
-      title: "購入履歴"
-      user: '@%{user} でログイン中です。'
-      about_plans: '購入済みの有料プランについてお問い合わせをする際は、購入したアカウントでログインしているかを事前にご確認ください。'
-      about_bulk_purchase: 'コンビニ決済や一括購入割引をご希望される方はこちらをご覧ください。'
-      see_plans: '料金プラン'
-      about_purchase: 'お試し期間（初回限定）付きのプランをクレジットカードで購入するにはこちらです。'
-      bank_transfer: '銀行振込はこちら'
-      open_bank_transfer_modal: '口座を見る'
-      bank_transfer_modal:
-        title: '有料プランの支払い口座'
-        loading: '読み込み中です'
-        note1: '着金の確認から2〜3営業日で購入したプランが有効になります。'
-        note2_html: '分からないことがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までお問い合わせください。'
-        error_message: 'エラーが起きました。しばらくしてから再度お試しください。'
-        'yes': '閉じる'
-      purchase: '購入する'
-      cancel_order_modal:
-        title: '定期購読の解約'
-        message_html: |
-          <p>2回目以降の購入には初回購入時の割引が適用されなくなります。</p>
-          <p>本当に現在のプランを解約しますか？</p>
-        'yes': '解約する'
-        'no': 'そのままにする'
-      canceling_html: '解約処理中です。<img src="/ajax-loader.gif?a=1">'
-      has_not_purchased: "まだ購入していません"
+      settings: '設定'
+      others: 'その他'
+      account: 'アカウント'
+      periodic_report: 'リムられ通知'
+      block_report: 'ブロック通知'
+      mute_report: 'ミュート通知'
+      search_report: '検索通知'
+      sneak_search: 'こっそり検索'
+      private_mode: 'データ非公開'
+      premium_only: '有料プラン限定'
+      delete_tweets: 'ツイートの一括削除'
+      delete_favorites: 'いいねの一括削除'
+      order_history: '購入履歴'
     order:
       no_payment_guranteed: '※ トライアル期間中は支払いは発生しません。'
       during_trial_period: "トライアル期間中"
@@ -490,11 +475,10 @@ ja:
       cancel: 'キャンセルする'
       update_payment_method: '支払い方法を更新する'
     data:
-      title: 'データ設定'
       requested: 'リクエスト済み'
       delete_caches:
-        title: 'キャッシュのリセット'
-        button: 'リセットする'
+        title: 'キャッシュの削除'
+        button: '実行する'
         note_html: '表示データのリセット<br>データ自体は消えません'
         confirmation_modal:
           title: 'キャッシュをリセットする'
@@ -503,23 +487,28 @@ ja:
           ok: 'もっと詳しく'
       delete_data:
         title: 'データの削除'
-        button: 'データを削除する'
+        button: '実行する'
         note: 'この操作は取り消しできません'
         confirmation_modal:
           title: 'データを削除する'
           body_html: |
             データの削除は有料プランのユーザーのみ行うことができます。
           ok: 'もっと詳しく'
-      delete_tweets:
-        title: "ツイート削除"
-        name: 'ツイートクリーナー'
-        note: '全ツイートの削除はこちら'
-      delete_favorites:
-        title: "いいね削除"
-        name: 'いいねクリーナー'
-        note: '全いいねの削除はこちら'
-    general:
-      title: "基本情報"
+    periodic_report_setting:
+      morning:
+        name: '朝のリムられ通知'
+        desc: '7〜8時頃に届きます'
+      afternoon:
+        name: '昼のリムられ通知'
+        desc: '12〜13時頃に届きます'
+      evening:
+        name: '夕方のリムられ通知'
+        desc: '17〜18時頃に届きます'
+      night:
+        name: '夜のリムられ通知'
+        desc: '21〜22時頃に届きます'
+    account:
+      return: '← 設定ページ'
       screen_name:
         title: 'Twitter ID'
         display: '@%{name}'
@@ -548,8 +537,6 @@ ja:
         title: 'アカウント切り替え'
         switch: '切り替える'
         note_html: '他のアカウントでログインできます'
-    search:
-      title: '検索設定'
       search_mode:
         title: '検索速度'
         fast: '高速モード'
@@ -560,90 +547,106 @@ ja:
         title: '定期ツイート'
         on_note: 'えごったーを %{min_count}-%{max_count}回/日 自動的にツイート'
         off_note_html: 'オンにすると <span class="egotter-pink">%{count}回/日</span> の検索ボーナス'
-      sneak_search_request:
-        title_html: 'こっそり検索 <span class="egotter-pink">プレミアム</span>'
-        note1: 'オンにすると、誰かを検索したときに「検索通知」が相手に届かなくなります'
-        note1_2: '※ 検索通知にIDは書かれません'
-        note2: '※ 有料プラン限定機能です'
-        purchase: '購入する'
-      private_mode_setting:
-        title_html: 'データ非公開 <span class="egotter-pink">プレミアム</span>'
-        note1: 'オンにすると、えごったーのあなたのデータが非公開になります'
-        note2: '※ 有料プラン限定機能です'
-        purchase: '購入する'
       search_count:
         title: '検索回数'
         count: '合計 %{count} 回'
         remaining: '（残り %{count} 回）'
         history: '履歴'
         note: '直近の %{days} 日が対象'
-      follow_count:
-        title: 'フォロー回数'
-        count: '合計 %{count} 回'
-        remaining: '（残り %{count} 回）'
-        history: '履歴'
-        note: '直近の %{days} 日が対象'
-      unfollow_count:
-        title: 'アンフォロー回数'
-        count: '合計 %{count} 回'
-        remaining: '（残り %{count} 回）'
-        history: '履歴'
-        note: '直近の %{days} 日が対象'
-    follow_requests:
-      title: 'フォロー 履歴'
-      return: '設定ページへ戻る'
-    unfollow_requests:
-      title: 'フォロー解除 履歴'
-      return: '設定ページへ戻る'
-    periodic_report_setting:
-      not_coming:
-        button: '通知を再開する'
-        note_html: '一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>。止まった通知はすぐに<span class="egotter-pink">再開できます</span>。'
-      revive: 'リムられ通知の再開'
-      period_of_time: '時間帯の指定'
-      period_of_time_note_html: '時間帯の指定はベータ版のお試し機能です。<span class="egotter-pink">New</span>'
-      report_timing: '通知する条件'
-      report_timing_note_html: '通知する条件の指定はベータ版のお試し機能です。<span class="egotter-pink">New</span>'
-      morning:
-        name: '朝のリムられ通知'
-        desc: '7〜8時頃に届く通知です。'
-      afternoon:
-        name: '昼のリムられ通知'
-        desc: '12〜13時頃に届く通知です。'
-      evening:
-        name: '夕方のリムられ通知'
-        desc: '17〜18時頃に届く通知です。'
-      night:
-        name: '夜のリムられ通知'
-        desc_html: '21〜22時頃に届く通知です。この通知は<span class="egotter-pink">変化があってもなくても</span>届きます。'
-      send_only_if_changed:
-        name: 'リムられたときのみ通知する'
-        desc: 'リムられに変化があったときのみ、リムられ通知が届くようになります。'
-        confirm: 'ツイッターDMの仕組み上、この設定をオンにするとリムられ通知の送信が不安定になります。それでも本当によろしいですか？'
+    periodic_report:
+      return: '← 設定ページ'
+      title: 'リムられ通知'
+      description_html: |
+        <p>フォロワーの増減を定期的にお知らせする通知です。</p>
+        リムられ通知の詳細は、<a href="%{url}">よくある質問</a> をご覧になってください。
+      stopped: 'この通知は停止中です。'
+      restart: '通知を再開する'
+      receive: '通知を受け取る'
+      stop: '通知を停止する'
     block_report:
-      title: 'ブロック通知の設定'
-      description: 'ブロックされているユーザーが見付かったときに届く通知です。'
-      manual:
-        title: 'ブロック通知の使い方'
-        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
-      receive:
-        title: 'ブロック通知を受け取る'
-        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
-      stop:
-        title: 'ブロック通知を停止する'
-        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
+      return: '← 設定ページ'
+      title: 'ブロック通知'
+      description_html: |
+        <p>ブロックされているユーザーが見付かったときに届く通知です。</p>
+        ブロック通知の詳細は、<a href="%{url}">よくある質問</a> をご覧になってください。
+      stopped: 'この通知は停止中です。'
+      restart: '通知を再開する'
+      receive: '通知を受け取る'
+      stop: '通知を停止する'
     mute_report:
-      title: 'ミュート通知の設定'
-      description: 'ミュートされているユーザーが見付かったときに届く通知です。'
-      manual:
-        title: 'ミュート通知の使い方'
-        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
-      receive:
-        title: 'ミュート通知を受け取る'
-        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
-      stop:
-        title: 'ミュート通知を停止する'
-        description_html: '【%{word}】を%{egotter_link} にDMしてください。'
+      return: '← 設定ページ'
+      title: 'ミュート通知'
+      description_html: |
+        <p>ミュートされているユーザーが見付かったときに届く通知です。</p>
+        ミュート通知の詳細は、<a href="%{url}">よくある質問</a> をご覧になってください。
+      stopped: 'この通知は停止中です。'
+      restart: '通知を再開する'
+      receive: '通知を受け取る'
+      stop: '通知を停止する'
+    search_report:
+      return: '← 設定ページ'
+      title: '検索通知'
+      description_html: |
+        <p>あなたが検索されたときに届く通知です。</p>
+        検索通知の詳細は、<a href="%{url}">よくある質問</a> をご覧になってください。
+      stopped: 'この通知は停止中です。'
+      restart: '通知を再開する'
+      receive: '通知を受け取る'
+      stop: '通知を停止する'
+    sneak_search:
+      return: '← 設定ページ'
+      title: 'こっそり検索'
+      description: 'オンにすると、誰かを検索したときに「検索通知」が相手に届かなくなります。'
+      premium_only: '有料プラン限定機能です。'
+      purchase: '購入する'
+      checkbox:
+        title: 'こっそり検索'
+        on_html: '<span class="text-primary">有効</span> になっています。'
+        off_html: '<span class="text-danger">無効</span> になっています。'
+      note_html: |
+        <p>この設定がどうなっているかに関わらず、検索通知には「誰が検索したのか」は書かれませんのでご安心ください。</p>
+        <p>検索通知の詳細は、<a href="%{url1}">よくある質問 &gt; 検索通知</a> をご覧になってください。</p>
+        こっそり検索の詳細は、<a href="%{url2}">よくある質問 &gt; こっそり検索</a> をご覧になってください。
+    private_mode:
+      return: '← 設定ページ'
+      title: 'データ非公開'
+      description: 'オンにすると、えごったーのあなたのデータが非公開になります。'
+      premium_only: '有料プラン限定機能です。'
+      purchase: '購入する'
+      checkbox:
+        title: 'データ非公開'
+        on_html: '<span class="text-primary">有効</span> になっています。'
+        off_html: '<span class="text-danger">無効</span> になっています。'
+      note_html: |
+        <p>この設定は「えごったーの中」での表示の設定です。Google検索の非表示についてはGoogleにお問い合わせください。</p>
+        データ非公開の詳細は、<a href="%{url}">よくある質問 &gt; データ非公開</a> をご覧になってください。
+    order_history:
+      return: '← 設定ページ'
+      title: '購入履歴'
+      user: '@%{user} でログイン中です。'
+      about_plans: '購入済みの有料プランについてお問い合わせをする際は、購入したアカウントでログインしているかを事前にご確認ください。'
+      about_bulk_purchase: 'コンビニ決済や一括購入割引をご希望される方はこちらをご覧ください。'
+      see_plans: '料金プラン'
+      about_purchase: 'お試し期間（初回限定）付きのプランをクレジットカードで購入するにはこちらです。'
+      bank_transfer: '銀行振込はこちら'
+      open_bank_transfer_modal: '口座を見る'
+      bank_transfer_modal:
+        title: '有料プランの支払い口座'
+        loading: '読み込み中です'
+        note1: '着金の確認から2〜3営業日で購入したプランが有効になります。'
+        note2_html: '分からないことがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までお問い合わせください。'
+        error_message: 'エラーが起きました。しばらくしてから再度お試しください。'
+        'yes': '閉じる'
+      purchase: '購入する'
+      cancel_order_modal:
+        title: '定期購読の解約'
+        message_html: |
+          <p>2回目以降の購入には初回購入時の割引が適用されなくなります。</p>
+          <p>本当に現在のプランを解約しますか？</p>
+        'yes': '解約する'
+        'no': 'そのままにする'
+      canceling_html: '解約処理中です。<img src="/ajax-loader.gif?a=1">'
+      has_not_purchased: "まだ購入していません"
   pricing:
     new:
       meta_title: '料金プラン'
@@ -1939,8 +1942,17 @@ ja:
       description4: 'このボタンを押しておくと、DM通知が届きやすくなります'
   short_messages:
     receive_periodic_reports: 'リムられ通知 送信'
+    stop_periodic_reports: 'リムられ通知 停止'
+    restart_periodic_reports: 'リムられ通知 再開'
     receive_block_reports: 'ブロック通知 送信'
+    stop_block_reports: 'ブロック通知 停止'
+    restart_block_reports: 'ブロック通知 再開'
     receive_mute_reports: 'ミュート通知 送信'
+    stop_mute_reports: 'ミュート通知 停止'
+    restart_mute_reports: 'ミュート通知 再開'
+    receive_search_reports: '検索通知 送信'
+    stop_search_reports: '検索通知 停止'
+    restart_search_reports: '検索通知 再開'
     permission_level_not_enough: 'ログインエラー報告：強制再ログインと連携アプリの削除→再登録を試しましたがログインできないままです。試した時間は【○月○日 ○時頃】です。'
     refund: '有料プランの返金を希望します。理由：'
     delete_tweets_token: 'ツイート削除 開始 %{token}'
@@ -2661,16 +2673,6 @@ ja:
         most_active_hour: "活発な時間"
         most_active_wday: "活発な曜日"
         tweets_interval: "ツイート間隔"
-      follow_request:
-        uid: "ユーザー"
-        error_class: "エラー"
-        created_at: "クリック"
-        finished_at: "完了"
-      unfollow_request:
-        uid: "ユーザー"
-        error_class: "エラー"
-        created_at: "クリック"
-        finished_at: "完了"
       audience_insight_chart_builder:
         friends: "フォロー"
         followers: "フォロワー"

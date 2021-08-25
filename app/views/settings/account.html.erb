@@ -1,3 +1,9 @@
+<div>
+  <%= link_to t('.return'), settings_path(via: current_via), class: 'text-body' %>
+</div>
+
+<hr>
+
 <div class="row">
   <div class="col-4"><%= t('.screen_name.title') %></div>
   <div class="col-8">
@@ -65,8 +71,6 @@
   </div>
 </div>
 
-<hr>
-
 <script>
   $(function () {
     $('.update-following').on('click', function () {
@@ -76,3 +80,51 @@
     });
   });
 </script>
+
+<div class="row">
+  <div class="col-4"><%= t('.search_mode.title') %></div>
+  <div class="col-8">
+    <% if current_user.search_mode.fast? %>
+      <div><%= t(".search_mode.fast") %></div>
+      <div class="text-muted small"><%= t('.search_mode.advantage_html') %></div>
+    <% else %>
+      <div><%= t(".search_mode.#{current_user.search_mode}") %></div>
+      <div class="text-muted small"><%= t('.search_mode.advise_html') %></div>
+    <% end %>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-4">
+    <%= check_box_tag :periodic_tweet, true, @create_periodic_tweet_request, {id: 'periodic_tweet', class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="periodic_tweet"></label>
+  </div>
+
+  <div class="col-8">
+    <h6><%= t('.periodic_tweet.title') %></h6>
+    <div class="text-muted small"><%= t('.periodic_tweet.off_note_html', count: SearchCountLimitation::PERIODIC_TWEET_BONUS) %></div>
+    <div class="text-muted small"><%= t('.periodic_tweet.on_note', min_count: SearchCountLimitation::PERIODIC_TWEET_MIN, max_count: SearchCountLimitation::PERIODIC_TWEET_MAX) %></div>
+  </div>
+</div>
+<script>
+  $(function () {
+    var url = '<%= api_v1_create_periodic_tweet_requests_path(via: current_via) %>';
+    new PeriodicTweetSetting('#periodic_tweet', url);
+  });
+</script>
+
+<hr>
+
+<div class="row">
+  <div class="col-4"><%= t('.search_count.title') %></div>
+  <div class="col-8">
+    <div>
+      <%= t('.search_count.count', count: @search_count_limitation.max_count) %>
+      <%= t('.search_count.remaining', count: @search_count_limitation.remaining_count) %>
+      <span><a href="#" data-target="#search-modal" data-toggle="modal"><%= t('.search_count.history') %></a></span>
+    </div>
+    <div class="text-muted small"><%= t('.search_count.note', days: SearchCountLimitation::SEARCH_COUNT_PERIOD / 1.day) %></div>
+  </div>
+</div>

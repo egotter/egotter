@@ -257,6 +257,14 @@ Rails.application.routes.draw do
   post 'tokimeki_unfollow/keep', to: 'tokimeki_unfollow#keep', as: :tokimeki_unfollow_keep
 
   resources :settings, only: :index
+  get 'settings/account', to: 'settings#account'
+  get 'settings/periodic_report', to: 'settings#periodic_report'
+  get 'settings/block_report', to: 'settings#block_report'
+  get 'settings/mute_report', to: 'settings#mute_report'
+  get 'settings/search_report', to: 'settings#search_report'
+  get 'settings/sneak_search', to: 'settings#sneak_search'
+  get 'settings/private_mode', to: 'settings#private_mode'
+  get 'settings/order_history', to: 'settings#order_history'
   resources :diagnosis, only: :index
 
   get 'pricing', to: "pricing#new"

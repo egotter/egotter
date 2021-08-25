@@ -1,3 +1,11 @@
+<div>
+  <%= link_to t('.return'), settings_path(via: current_via), class: 'text-body' %>
+</div>
+
+<hr>
+
+<div class="text-primary my-3"><%= t('.title') %></div>
+
 <%= alert_box class: 'my-5' do %>
   <p>
     <img class="rounded-circle" src="<%= current_user_icon %>" width="20" height="20">
@@ -58,9 +66,9 @@
 
 <hr>
 
-<% if orders.any? %>
+<% if @orders.any? %>
   <div class="my-5">
-    <%= render partial: 'order', collection: orders, cached: true, spacer_template: 'order_ruler' %>
+    <%= render partial: 'order', collection: @orders, cached: true, spacer_template: 'order_ruler' %>
 
     <%= render partial: 'modal/order_details_modal', locals: {modal_id: 'order-details-modal'} %>
 

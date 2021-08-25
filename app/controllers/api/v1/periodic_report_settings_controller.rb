@@ -6,7 +6,7 @@ module Api
 
       layout false
 
-      KEYS = %w(morning afternoon evening send_only_if_changed)
+      KEYS = %w(morning afternoon evening)
 
       def update
         setting = current_user.periodic_report_setting

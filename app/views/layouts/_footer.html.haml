@@ -36,13 +36,13 @@
         %a{href: 'https://twitter.com/ego_tter', target: '_blank'}= t('.feedback')
       - if user_signed_in?
         = footer_item do
-          = link_to t('settings.title'), settings_path
+          = link_to t('.settings'), settings_path(via: current_via('footer'))
       = footer_item do
         %a{href: user_url('ego_tter'), target: '_blank'}= t('.official_account')
       = footer_item do
-        = link_to t('.support'), support_path
+        = link_to t('.support'), support_path(via: current_via('footer'))
       = footer_item do
-        = link_to t('.faq'), support_path
+        = link_to t('.faq'), support_path(via: current_via('footer'))
       = footer_item do
         %a{href: 'https://github.com/ts-3156/egotter', target: '_blank'}= t('.github')
       = footer_item do

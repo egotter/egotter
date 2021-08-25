@@ -45,8 +45,6 @@ import "./delete_tweets_modal";
 import "./delete_favorites_modal";
 import "./result_pages";
 import "./settings";
-import "./sneak_search_request";
-import "./private_mode_setting";
 import "./orders";
 import "./timelines";
 import "./waiting";

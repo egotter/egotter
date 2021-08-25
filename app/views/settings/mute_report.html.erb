@@ -1,0 +1,27 @@
+<div>
+  <%= link_to t('.return'), settings_path(via: current_via), class: 'text-body' %>
+</div>
+
+<hr>
+
+<div class="text-primary my-3"><%= t('.title') %></div>
+<div class="text-muted my-3"><%= t('.description_html', url: support_path(anchor: 'what_is_mute_report')) %></div>
+
+<hr>
+
+<% if StopMuteReportRequest.exists?(user_id: current_user.id) %>
+  <div class="my-3">
+    <%= t('.stopped') %>
+    <%= link_to t('.restart'), direct_message_url(User::EGOTTER_UID, t('short_messages.restart_mute_reports')), class: 'btn btn-outline-warning', target: '_blank' %>
+  </div>
+<% else %>
+  <div class="my-3">
+    <span class="mr-5"><%= t('.receive') %></span>
+    <%= link_to t('.receive'), direct_message_url(User::EGOTTER_UID, t('short_messages.receive_mute_reports')), class: 'btn btn-outline-primary', target: '_blank' %>
+  </div>
+  <hr>
+  <div class="my-3">
+    <span class="mr-5"><%= t('.stop') %></span>
+    <%= link_to t('.stop'), direct_message_url(User::EGOTTER_UID, t('short_messages.stop_mute_reports')), class: 'btn btn-outline-danger', target: '_blank' %>
+  </div>
+<% end %>

@@ -1,0 +1,77 @@
+<div>
+  <%= link_to t('.return'), settings_path(via: current_via), class: 'text-body' %>
+</div>
+
+<hr>
+
+<div class="text-primary my-3"><%= t('.title') %></div>
+<div class="text-muted my-3">
+  <p>
+    <%= t('.premium_only') %>
+    <a href="#" class="btn btn-outline-primary btn-sm btn-checkout"><%= t('.purchase') %></a>
+  </p>
+  <%= t('.description') %>
+</div>
+<hr>
+
+
+
+<div class="d-flex">
+  <div class="mr-5">
+    <%= check_box_tag :private_mode_setting, true, @private_mode_setting, {id: 'private_mode_setting', class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="private_mode_setting"></label>
+  </div>
+
+  <div class="flex-grow-1">
+    <h6><%= t('.checkbox.title') %></h6>
+    <div class="text-muted">
+      <div id="private-mode-on" class="text-muted" style="display: <%= @sneak_search_request ? 'block' : 'none' %>;"><%= t('.checkbox.on_html') %></div>
+      <div id="private-mode-off" class="text-muted" style="display: <%= @sneak_search_request ? 'none' : 'block' %>;"><%= t('.checkbox.off_html') %></div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="text-muted small my-3">
+  <%= t('.note_html', url: support_path(anchor: 'what_is_private_mode')) %>
+</div>
+
+<% if current_user.has_valid_subscription? %>
+  <% if current_user.has_trial_subscription? %>
+    <script>
+      $(function () {
+        $('#private_mode_setting').addClass('btn-end-trial')
+      });
+    </script>
+  <% else %>
+    <script>
+      $(function () {
+        $('#private_mode_setting').on('change', function () {
+          var url = '<%= raw api_v1_private_mode_settings_path %>';
+
+          if ($(this).prop('checked')) {
+            $.post(url).done(function (res) {
+              ToastMessage.info(res.message);
+              $('#private-mode-on').show();
+              $('#private-mode-off').hide();
+            }).fail(showErrorMessage);
+          } else {
+            $.ajax({url: url, type: 'DELETE'}).done(function (res) {
+              ToastMessage.info(res.message);
+              $('#private-mode-on').hide();
+              $('#private-mode-off').show();
+            }).fail(showErrorMessage);
+          }
+        });
+      });
+    </script>
+  <% end %>
+<% else %>
+  <script>
+    $(function () {
+      // Go to the purchase page after clicking the toggle button.
+      $('#private_mode_setting').addClass('btn-checkout')
+    });
+  </script>
+<% end %>

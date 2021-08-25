@@ -1,25 +1,15 @@
 class PeriodicReportSetting {
-  constructor(url, confirmMessage) {
+  constructor(url) {
     this.url = url;
-    this.confirmMessage = confirmMessage;
     var self = this;
 
-    ['morning', 'afternoon', 'evening', 'send_only_if_changed'].forEach(function (name) {
+    ['morning', 'afternoon', 'evening'].forEach(function (name) {
       $('#' + name).on('change', function () {
         var $checkbox = $(this);
 
         var val = $checkbox.prop('checked');
         logger.log('changed', name, val);
-
-        if (name === 'send_only_if_changed' && !val) {
-          if (confirm(self.confirmMessage)) {
-            self.update(name, val);
-          } else {
-            $checkbox.prop('checked', true);
-          }
-        } else {
-          self.update(name, val);
-        }
+        self.update(name, val);
       });
     });
   }

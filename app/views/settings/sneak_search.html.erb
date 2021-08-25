@@ -1,0 +1,75 @@
+<div>
+  <%= link_to t('.return'), settings_path(via: current_via), class: 'text-body' %>
+</div>
+
+<hr>
+
+<div class="text-primary my-3"><%= t('.title') %></div>
+<div class="text-muted my-3">
+  <p>
+    <%= t('.premium_only') %>
+    <a href="#" class="btn btn-outline-primary btn-sm btn-checkout"><%= t('.purchase') %></a>
+  </p>
+  <%= t('.description') %>
+</div>
+<hr>
+
+<div class="d-flex">
+  <div class="mr-5">
+    <%= check_box_tag :sneak_search_request, true, @sneak_search_request, {id: 'sneak_search_request', class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="sneak_search_request"></label>
+  </div>
+
+  <div class="flex-grow-1">
+    <h6><%= t('.checkbox.title') %></h6>
+    <div class="text-muted">
+      <div id="sneak-search-on" class="text-muted" style="display: <%= @sneak_search_request ? 'block' : 'none' %>;"><%= t('.checkbox.on_html') %></div>
+      <div id="sneak-search-off" class="text-muted" style="display: <%= @sneak_search_request ? 'none' : 'block' %>;"><%= t('.checkbox.off_html') %></div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="text-muted small my-3">
+  <%= t('.note_html', url1: support_path(anchor: 'what_is_search_report'), url2: support_path(anchor: 'what_is_sneak_search')) %>
+</div>
+
+<% if current_user.has_valid_subscription? %>
+  <% if current_user.has_trial_subscription? %>
+    <script>
+      $(function () {
+        $('#sneak_search_request').addClass('btn-end-trial')
+      });
+    </script>
+  <% else %>
+    <script>
+      $(function () {
+        $('#sneak_search_request').on('change', function () {
+          var url = '<%= raw api_v1_sneak_search_requests_path %>';
+
+          if ($(this).prop('checked')) {
+            $.post(url).done(function (res) {
+              ToastMessage.info(res.message);
+              $('#sneak-search-on').show();
+              $('#sneak-search-off').hide();
+            }).fail(showErrorMessage);
+          } else {
+            $.ajax({url: url, type: 'DELETE'}).done(function (res) {
+              ToastMessage.info(res.message);
+              $('#sneak-search-on').hide();
+              $('#sneak-search-off').show();
+            }).fail(showErrorMessage);
+          }
+        });
+      });
+    </script>
+  <% end %>
+<% else %>
+  <script>
+    $(function () {
+      // Go to the purchase page after clicking the toggle button.
+      $('#sneak_search_request').addClass('btn-checkout')
+    });
+  </script>
+<% end %>
