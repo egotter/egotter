@@ -116,6 +116,8 @@ describe GreetingMessageResponder::Processor do
     [
         'すいません',
         'すいませんでした',
+        'すみません',
+        'すみませんでした',
         'ごめん',
         'ごめんなさい',
     ].each do |word|

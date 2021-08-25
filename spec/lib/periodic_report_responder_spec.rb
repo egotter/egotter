@@ -66,6 +66,28 @@ describe PeriodicReportResponder::Processor do
     end
   end
 
+  describe '#access_regexp' do
+    subject { text.match?(instance.access_regexp) }
+
+    ['アクセス通知届きました', 'アクセス通知 届きました', 'URLにアクセスしました', 'urlにアクセスしました'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
+  describe '#follow_regexp' do
+    subject { text.match?(instance.follow_regexp) }
+
+    ['フォロー通知届きました', 'フォロー通知 届きました', 'フォローしました', 'フォロー しました'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
   describe '#send_message' do
     let(:user) { create(:user, uid: uid) }
     subject { instance.send_message }

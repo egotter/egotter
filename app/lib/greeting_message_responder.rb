@@ -58,7 +58,7 @@ class GreetingMessageResponder < AbstractMessageResponder
     end
 
     def sorry_regexp
-      /すいません(でした)?|ごめん(なさい)?/
+      /す[い|み]ません(でした)?|ごめん(なさい)?/
     end
 
     def ok_regexp

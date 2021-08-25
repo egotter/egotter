@@ -26,9 +26,11 @@ class PeriodicReportResponder < AbstractMessageResponder
         @send = true
       elsif @text.match?(help_regexp)
         @help = true
+      elsif @text.match?(access_regexp)
+        @access = true
+      elsif @text.match?(follow_regexp)
+        @follow = true
       end
-
-      @stop || @restart || @continue || @received || @send || @help
     end
 
     def stop_regexp
@@ -55,6 +57,14 @@ class PeriodicReportResponder < AbstractMessageResponder
       /リムーブ|りむーぶ|リムられ|りむられ|(^(リム通?|通知|再開|継続|送信|停止|止めて|今すぐ(送信)?|DM|使い方)$)/
     end
 
+    def access_regexp
+      /アクセス通知(\s|　)*届きました|((URL|url)に)?アクセスしました/
+    end
+
+    def follow_regexp
+      /フォロー通知(\s|　)*届きました|フォロー(\s|　)*しました/
+    end
+
     def send_message
       user = validate_report_status(@uid)
       return unless user
@@ -77,6 +87,10 @@ class PeriodicReportResponder < AbstractMessageResponder
         send_periodic_report(user)
       elsif @help
         CreatePeriodicReportHelpMessageWorker.perform_async(user.id)
+      elsif @access
+        CreatePeriodicReportReceivedWebAccessMessageWorker.perform_async(user.uid)
+      elsif @follow
+        CreatePeriodicReportReceivedNotFollowingMessageWorker.perform_async(user.uid)
       end
     end
 

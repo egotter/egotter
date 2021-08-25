@@ -62,8 +62,6 @@ class ProcessWebhookEventWorker
     GlobalSendDirectMessageCountByUser.new.clear(dm.sender_id)
 
     processed = PeriodicReportResponder.from_dm(dm).respond
-    processed = PeriodicReportReceivedWebAccessMessageResponder.from_dm(dm).respond unless processed
-    processed = PeriodicReportReceivedNotFollowingMessageResponder.from_dm(dm).respond unless processed
     processed = BlockReportResponder.from_dm(dm).respond unless processed
     processed = MuteReportResponder.from_dm(dm).respond unless processed
     processed = SearchReportResponder.from_dm(dm).respond unless processed
