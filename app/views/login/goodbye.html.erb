@@ -26,8 +26,15 @@
 
 <div class="mt-5 mb-3"><%= t('.confirmation.description') %></div>
 
+<div class="text-center my-5">
+  <input type="checkbox" id="stop-all-reports" name="stop-all-reports" checked="checked">
+  <label for="stop-all-reports"><%= t('.confirmation.stop_reports') %></label>
+</div>
+
 <div class="d-flex text-center my-5">
-  <div class="flex-fill"><%= link_to t('.confirmation.yes'), sign_out_path(via: current_via('do_sign_out')), class: 'btn btn-outline-secondary', method: :delete %></div>
+  <div class="flex-fill">
+    <button id="sign-out-button" class="btn btn-outline-secondary"><%= t('.confirmation.yes') %></button>
+  </div>
   <div class="flex-fill"><%= link_to t('.confirmation.no'), root_path(via: current_via('cancel_sign_out')), class: 'btn btn-primary' %></div>
 </div>
 
@@ -35,3 +42,15 @@
   <div class="my-3"><%= t('.note1') %></div>
   <div class="my-3"><%= t('.note2') %></div>
 </div>
+
+<script>
+  $(function () {
+    var url = '<%= raw sign_out_path(via: current_via) %>';
+    $('#sign-out-button').on('click', function () {
+      if ($('#stop-all-reports').prop('checked')) {
+        url += '&stop_all_reports=true'
+      }
+      window.location.href = url;
+    });
+  });
+</script>

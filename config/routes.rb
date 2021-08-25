@@ -277,7 +277,7 @@ Rails.application.routes.draw do
   %i(sign_in after_sign_in after_sign_up goodbye).each do |name|
     get name, to: "login##{name}", as: name
   end
-  delete :sign_out, to: "login#sign_out", as: :sign_out
+  get :sign_out, to: "login#sign_out", as: :sign_out
   get 'welcome', to: "welcome#new"
 
   get 'search_count', to: 'search_count#new'

@@ -54,11 +54,6 @@ class ApplicationController < ActionController::Base
     request.referer.to_s.match? %r{\Ahttps?://(egotter.com|localhost:3000)/tokimeki_unfollow/cleanup}
   end
 
-  def after_sign_out_path_for(resource)
-    session[:sign_out_from] = request.protocol + request.host_with_port + sign_out_path
-    root_path(via: current_via('after_sign_out'))
-  end
-
   def respond_with_error(code, message, ex = nil)
     location = (caller[0][/`([^']*)'/, 1] rescue '')
 

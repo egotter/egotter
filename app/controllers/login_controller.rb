@@ -4,7 +4,7 @@ class LoginController < ApplicationController
   skip_before_action :current_user_has_dm_permission?
   skip_before_action :current_user_not_blocker?
 
-  before_action :require_login!, only: %i(after_sign_in after_sign_up)
+  before_action :require_login!, only: %i(after_sign_in after_sign_up sign_out)
   before_action :reject_crawler, except: :goodbye
 
   def goodbye
@@ -40,6 +40,9 @@ class LoginController < ApplicationController
   # This implementation is for logging.
   # GET /goodbye -> DELETE /sign_out -> this action
   def sign_out
+    if params[:stop_all_reports] == 'true'
+      StopAllReportsWorker.perform_async(current_user.id)
+    end
     redirect_to destroy_user_session_path
   end
 end
