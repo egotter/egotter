@@ -1,22 +1,37 @@
-<%= image_tag '/egotter_icon_400x400.jpg', style: 'max-width: 350px;', class: 'img-rounded d-block mx-auto my-3' %>
+<h2 class="h3 text-center my-5"><%= t('.page_title') %></h2>
 
-<h2 class="h3 text-center my-5"><%= t('.sign_out') %></h2>
+<div class="my-3"><%= t('.page_description_html') %></div>
 
-<div class="mb-3"><%= t('.no_tweets') %></div>
-<div class="mb-3"><%= t('.advantage_html') %></div>
-<div class="mb-3"><%= t('.disadvantage_html') %></div>
-<div class="mb-3"><%= t('.realy_sign_out') %></div>
+<hr>
 
-<div class="row text-center my-5">
-  <div class="col">
-    <%= link_to t('.button.sign_out'), sign_out_path(via: current_via('sign_out')), class: 'btn btn-outline-secondary btn-block', method: :delete %>
-  </div>
-  <div class="col">
-    <%= link_to t('.button.top_page'), root_path(via: current_via('cancel_signing_out')), class: 'btn btn-primary btn-block' %>
-  </div>
+<h3 class="h4 mt-5 mb-3" style="font-size: 18px; font-weight: bold;"><%= t('.no_tweet.title') %></h3>
+<div class="my-3"><%= t('.no_tweet.description') %></div>
+
+<h3 class="h4 mt-5 mb-3" style="font-size: 18px; font-weight: bold;"><%= t('.advantage.title') %></h3>
+<div class="my-3"><%= t('.advantage.description') %></div>
+
+<h3 class="h4 mt-5 mb-3" style="font-size: 18px; font-weight: bold;"><%= t('.disadvantage.title') %></h3>
+<div class="my-3"><%= t('.disadvantage.description') %></div>
+
+<h3 class="h4 mt-5 mb-3" style="font-size: 18px; font-weight: bold;"><%= t('.notification.title') %></h3>
+<div class="my-3"><%= t('.notification.description_html', url: support_path(anchor: 'delete_account')) %></div>
+
+<h3 class="h4 mt-5 mb-3" style="font-size: 18px; font-weight: bold;"><%= t('.subscription.title') %></h3>
+<div class="my-3"><%= t('.subscription.description_html', url: settings_path) %></div>
+
+<h3 class="h4 mt-5 mb-3" style="font-size: 18px; font-weight: bold;"><%= t('.faq.title') %></h3>
+<div class="mb-3"><%= t('.faq.description_html', url: support_path) %></div>
+
+<hr>
+
+<div class="mt-5 mb-3"><%= t('.confirmation.description') %></div>
+
+<div class="d-flex text-center my-5">
+  <div class="flex-fill"><%= link_to t('.confirmation.yes'), sign_out_path(via: current_via('do_sign_out')), class: 'btn btn-outline-secondary', method: :delete %></div>
+  <div class="flex-fill"><%= link_to t('.confirmation.no'), root_path(via: current_via('cancel_sign_out')), class: 'btn btn-primary' %></div>
 </div>
 
-<div class="text-muted small mb-3">
-  <div class="mb-1"><%= t('.note1') %></div>
-  <div><%= t('.note2') %></div>
+<div class="text-muted small">
+  <div class="my-3"><%= t('.note1') %></div>
+  <div class="my-3"><%= t('.note2') %></div>
 </div>

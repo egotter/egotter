@@ -828,18 +828,35 @@ ja:
         分からないことや気になることがありますか？ <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。
   login:
     goodbye:
+      page_title: 'ログアウト'
+      page_description_html: |
+        <p>このページでは、えごったーWebサイトからログアウトすることができます。</p>
+        注意事項をよく読み、ページ下部のログアウトボタンを押してください。
       signed_out: "既にログアウト済みです。"
-      no_tweets: "えごったーは、ユーザーの許可なくツイートすることはありませんのでご安心ください(^ ^)"
-      advantage_html: "ログインしたままであれば、<br><br>・自動更新されます<br>・データの検索が早くなります"
-      disadvantage_html: "ログアウトすると、<br><br>・検索が遅くなります<br>・鍵垢の検索はできなくなります"
-      note1: '※ 各種の通知DMは一定時間後に自動で止まります。'
+      no_tweet:
+        title: 'えごったーは勝手にツイートしません'
+        description: 'えごったーは、ユーザーの許可なくツイートすることはありませんのでご安心ください。'
+      advantage:
+        title: 'ログイン中は自動更新されます'
+        description: 'ログインしたままであれば、データが自動更新され、データの検索が早くなります。'
+      disadvantage:
+        title: 'ログアウトすると検索が遅くなります'
+        description: 'ログアウトすると、検索が遅くなり、鍵垢の検索はできなくなります。'
+      notification:
+        title: '通知の停止'
+        description_html: 'ログアウトと同時に通知を止めたい場合は、<a href="%{url}">よくある質問 &gt; 利用をやめる</a> をご覧になってください。'
+      subscription:
+        title: '有料プランの解約'
+        description_html: 'えごったーの利用をやめる場合は、事前に <a href="%{url}">設定ページ</a> から有料プランの解約を行なってください。'
+      faq:
+        title: 'その他の質問'
+        description_html: 'ここに書いていないことについては、<a href="%{url}">よくある質問</a> をご覧になってください。'
+      note1: '※ 一定期間えごったーを利用しないでいると、各種の通知DMは自動的に止まります。'
       note2: '※ 有料プランは自動で解約されません。不要な場合は事前に解約してください。'
-      sign_out: 'ログアウト'
-      button:
-        sign_out: 'ログアウトする'
-        top_page: 'トップページに戻る'
-      realy_sign_out: "それでも本当にログアウトしますか？"
-      return_to_top: "トップページに戻る"
+      confirmation:
+        description: '下記のボタンをクリックすることで、ログアウトは完了します。'
+        'yes': 'ログアウト'
+        'no': 'トップページ'
     sign_in:
       signed_in: "既にログイン済みです。"
     after_sign_up:
