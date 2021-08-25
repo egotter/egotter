@@ -111,6 +111,11 @@ class PeriodicReportResponder < AbstractMessageResponder
           CreatePeriodicReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
           return
         end
+
+        if StopPeriodicReportRequest.exists?(user_id: user.id)
+          CreatePeriodicReportStopRequestedMessageWorker.perform_async(user.id)
+          return
+        end
       end
 
       request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'user')
