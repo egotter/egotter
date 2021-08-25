@@ -229,14 +229,6 @@ class User < ApplicationRecord
     coupons.not_expired.has_stripe_coupon_id.pluck(:stripe_coupon_id).uniq
   end
 
-  def search_mode
-    if following_egotter? || has_valid_subscription?
-      ActiveSupport::StringInquirer.new('fast')
-    else
-      ActiveSupport::StringInquirer.new('slow')
-    end
-  end
-
   ADMIN_UID = 58135830
   EGOTTER_UID = 187385226
   EGOTTER_CS_UID = 216924023

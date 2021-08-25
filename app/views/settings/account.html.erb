@@ -7,10 +7,9 @@
 <div class="row">
   <div class="col-4"><%= t('.screen_name.title') %></div>
   <div class="col-8">
-    <%= t('.screen_name.display', name: current_user.screen_name) %>
+    <span class="mr-2"><%= t('.screen_name.display', name: current_user.screen_name) %></span>
     <%= link_to sign_in_path(via: current_via('update_profile'), redirect_path: settings_path), class: 'btn btn-outline-primary btn-sm' do %>
-      <%= t('.screen_name.update') %>
-      <i class="fas fa-sync"></i>
+      <%= t('.screen_name.sync') %>
     <% end %>
   </div>
 </div>
@@ -36,7 +35,7 @@
   <div class="col-4"><%= t('.following_egotter.title') %></div>
   <div class="col-8">
     <% if current_user.following_egotter? %>
-      <div><%= link_to t('.following_egotter.following'), '#', class: 'update-following btn btn-primary btn-sm disabled', disabled: true %></div>
+      <div><%= t('.following_egotter.following') %></div>
       <div class="text-muted small mt-1"><%= t('.following_egotter.fast_mode') %></div>
     <% elsif current_user.has_valid_subscription? %>
       <div><%= link_to t('.following_egotter.follow'), '#', data: {url: api_v1_follow_requests_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %></div>
@@ -81,19 +80,6 @@
   });
 </script>
 
-<div class="row">
-  <div class="col-4"><%= t('.search_mode.title') %></div>
-  <div class="col-8">
-    <% if current_user.search_mode.fast? %>
-      <div><%= t(".search_mode.fast") %></div>
-      <div class="text-muted small"><%= t('.search_mode.advantage_html') %></div>
-    <% else %>
-      <div><%= t(".search_mode.#{current_user.search_mode}") %></div>
-      <div class="text-muted small"><%= t('.search_mode.advise_html') %></div>
-    <% end %>
-  </div>
-</div>
-
 <hr>
 
 <div class="row">
@@ -104,8 +90,7 @@
 
   <div class="col-8">
     <h6><%= t('.periodic_tweet.title') %></h6>
-    <div class="text-muted small"><%= t('.periodic_tweet.off_note_html', count: SearchCountLimitation::PERIODIC_TWEET_BONUS) %></div>
-    <div class="text-muted small"><%= t('.periodic_tweet.on_note', min_count: SearchCountLimitation::PERIODIC_TWEET_MIN, max_count: SearchCountLimitation::PERIODIC_TWEET_MAX) %></div>
+    <div class="text-muted small"><%= t('.periodic_tweet.description_html', count: SearchCountLimitation::PERIODIC_TWEET_BONUS, min_count: SearchCountLimitation::PERIODIC_TWEET_MIN, max_count: SearchCountLimitation::PERIODIC_TWEET_MAX) %></div>
   </div>
 </div>
 <script>
@@ -117,13 +102,12 @@
 
 <hr>
 
-<div class="row">
+<div class="row mb-3">
   <div class="col-4"><%= t('.search_count.title') %></div>
   <div class="col-8">
     <div>
       <%= t('.search_count.count', count: @search_count_limitation.max_count) %>
       <%= t('.search_count.remaining', count: @search_count_limitation.remaining_count) %>
-      <span><a href="#" data-target="#search-modal" data-toggle="modal"><%= t('.search_count.history') %></a></span>
     </div>
     <div class="text-muted small"><%= t('.search_count.note', days: SearchCountLimitation::SEARCH_COUNT_PERIOD / 1.day) %></div>
   </div>

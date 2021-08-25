@@ -253,10 +253,6 @@ module PathsHelper
     image_url('/egotter_like_app_store_840x450.png?loc=og_image_error')
   end
 
-  def transcription_ai_url
-    'https://transcription-ai.com?via=egotter_footer&utm_source=egotter-footer&utm_medium=web&utm_campaign=egotter'
-  end
-
   def android_app_url
     'https://play.google.com/store/apps/details?id=com.egotter&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'
   end

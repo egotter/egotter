@@ -8,12 +8,12 @@ module Api
 
       def create
         SneakSearchRequest.create!(user_id: current_user.id)
-        render json: {message: t('.success_html')}
+        render json: {status: 'ok'}
       end
 
       def destroy
         SneakSearchRequest.find_by(user_id: current_user.id).destroy!
-        render json: {message: t('.success_html')}
+        render json: {status: 'ok'}
       end
     end
   end

@@ -37,14 +37,12 @@ ja:
       sign_in: "ログイン"
       sign_out: "ログアウト"
       get_it_on: 'Google Play で手に入れよう'
-      feedback: "ご意見"
       root: 'トップページ'
       settings: '設定'
       support: "お問い合わせ"
       faq: 'よくある質問'
       github: "Github"
       scheduled_tweets: 'ツイート予約投稿'
-      transcription: '文字起こしAI'
       official_account: "公式アカウント"
   searches:
     new:
@@ -512,7 +510,7 @@ ja:
       screen_name:
         title: 'Twitter ID'
         display: '@%{name}'
-        update: '更新'
+        sync: '同期する'
       authorized:
         title: 'ログイン連携'
         true: '有効'
@@ -537,28 +535,22 @@ ja:
         title: 'アカウント切り替え'
         switch: '切り替える'
         note_html: '他のアカウントでログインできます'
-      search_mode:
-        title: '検索速度'
-        fast: '高速モード'
-        slow: '低速モード'
-        advantage_html: '@ego_tter をフォロー中です<br>検索やリムられ通知が早くなります'
-        advise_html: '@ego_tter ををフォローすると<br><span class="egotter-pink">高速モード</span>になります'
       periodic_tweet:
         title: '定期ツイート'
-        on_note: 'えごったーを %{min_count}-%{max_count}回/日 自動的にツイート'
-        off_note_html: 'オンにすると <span class="egotter-pink">%{count}回/日</span> の検索ボーナス'
+        description_html: |
+          オンにすると <span class="egotter-pink">%{count}回/日</span> の検索ボーナス。
+          その代わりに、えごったーを %{min_count}-%{max_count}回/日 自動的にツイートします。
       search_count:
         title: '検索回数'
         count: '合計 %{count} 回'
         remaining: '（残り %{count} 回）'
-        history: '履歴'
         note: '直近の %{days} 日が対象'
     periodic_report:
       return: '← 設定ページ'
       title: 'リムられ通知'
       description_html: |
         <p>フォロワーの増減を定期的にお知らせする通知です。</p>
-        リムられ通知の詳細は、<a href="%{url}">よくある質問</a> をご覧になってください。
+        リムられ通知の詳細は、<a href="%{url}">よくある質問 &gt; リムられ通知</a> をご覧になってください。
       stopped: 'この通知は停止中です。'
       restart: '通知を再開する'
       receive: '通知を受け取る'
@@ -2282,16 +2274,6 @@ ja:
           success_on_html: '定期ツイートの設定を <span class="text-success">有効</span> にしました。'
           success_off_html: '定期ツイートの設定を <span class="text-danger">無効</span> にしました。'
           fail: '定期ツイートの設定に失敗しました。'
-      sneak_search_requests:
-        create:
-          success_html: 'こっそり検索の設定を <span class="text-success">有効</span> にしました。'
-        destroy:
-          success_html: 'こっそり検索の設定を <span class="text-danger">無効</span> にしました。'
-      private_mode_settings:
-        create:
-          success_html: 'データ非公開の設定を <span class="text-success">有効</span> にしました。'
-        destroy:
-          success_html: 'データ非公開の設定を <span class="text-danger">無効</span> にしました。'
       user_caches:
         destroy:
           success: 'キャッシュのリセットがリクエストされました。'
