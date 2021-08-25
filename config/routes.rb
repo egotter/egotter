@@ -286,7 +286,6 @@ Rails.application.routes.draw do
     get name, to: "login##{name}", as: name
   end
   get :sign_out, to: "login#sign_out", as: :sign_out
-  get 'welcome', to: "welcome#new"
 
   get 'search_count', to: 'search_count#new'
 
