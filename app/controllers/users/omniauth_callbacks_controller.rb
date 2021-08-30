@@ -42,11 +42,17 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
 
     sign_in user, event: :authentication
+
+    click_id = session[:sign_in_click_id] ? session.delete(:sign_in_click_id) : ''
     track_sign_in_event(
         context: save_context,
         via: session[:sign_in_via] ? session.delete(:sign_in_via) : '',
-        click_id: session[:sign_in_click_id] ? session.delete(:sign_in_click_id) : ''
+        click_id: click_id
     )
+    if save_context == :update && click_id.present?
+      track_invitation_event(user, click_id)
+    end
+
     redirect_to after_callback_path(user, save_context)
 
     @user = user
@@ -72,6 +78,16 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   private
+
+  def track_invitation_event(user, click_id)
+    properties = {
+        click_id: click_id,
+        inviter_uid: click_id.split('-')[1],
+    }.delete_if { |_, v| v.blank? }
+    Ahoy::Event.create(visit_id: current_visit.id, user_id: user.id, name: 'Invitation', properties: properties, time: Time.zone.now)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} click_id=#{click_id}"
+  end
 
   def after_callback_path(user, save_context)
     options = {redirect_path: after_callback_redirect_path(user, save_context)}
