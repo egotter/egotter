@@ -24,6 +24,11 @@
   <a href="#" class="btn btn-primary btn-sm btn-checkout"><%= t('.purchase') %></a>
 </div>
 
+<div class="my-5">
+  <%= t('.share_bonus') %>
+  <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm"><%= t('.share_bonus_button') %></a>
+</div>
+
 <% if current_user.admin? && !current_user.has_valid_subscription? %>
   <div class="my-5">
     <%= t('.bank_transfer') %>

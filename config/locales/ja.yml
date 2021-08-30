@@ -626,6 +626,8 @@ ja:
       about_bulk_purchase: 'コンビニ決済や一括購入割引をご希望される方はこちらをご覧ください。'
       see_plans: '料金プラン'
       about_purchase: 'お試し期間（初回限定）付きのプランをクレジットカードで購入するにはこちらです。'
+      share_bonus: 'ツイートで有料プランがもらえるキャンペーンを実施中！'
+      share_bonus_button: 'もっと詳しく'
       bank_transfer: '銀行振込はこちら'
       open_bank_transfer_modal: '口座を見る'
       bank_transfer_modal:
