@@ -18,7 +18,7 @@ module Api
         # SendDeleteTweetsStartedWorker.perform_async(request.id, user_id: current_user.id)
         SendDeleteTweetsNotFinishedWorker.perform_in(30.minutes, request.id, user_id: current_user.id)
 
-        track_event('Delete tweets', request_id: request.id)
+        track_event(request)
 
         token_message = I18n.t('short_messages.delete_tweets_token', token: request.request_token)
         delay = MessageHelper.distance_of_time_in_words(DeleteTweetsRequest::START_DELAY)
@@ -41,6 +41,12 @@ module Api
         if params[:until]&.match?(DATE_REGEXP)
           Time.zone.parse("#{params[:until]} 23:59:59 JST")
         end
+      end
+
+      def track_event(request)
+        ahoy.track('Delete tweets', request_id: request.id)
+      rescue => e
+        logger.warn "#{self.class}##{__method__}: #{e.inspect} request=#{request.inspect}"
       end
 
       module MessageHelper

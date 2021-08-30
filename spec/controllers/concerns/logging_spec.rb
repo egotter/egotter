@@ -17,12 +17,4 @@ RSpec.describe Logging do
       subject
     end
   end
-
-  describe '#track_event' do
-    subject { controller.track_event('name', 'properties') }
-    it do
-      expect(controller).to receive_message_chain(:ahoy, :track).with('name', 'properties')
-      subject
-    end
-  end
 end

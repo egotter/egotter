@@ -1,7 +1,7 @@
 class StripeWebhookController < ApplicationController
 
   skip_before_action :verify_authenticity_token
-  after_action :track_stripe_event
+  after_action :track_event
 
   def index
     event = construct_event
@@ -60,9 +60,9 @@ class StripeWebhookController < ApplicationController
     ProcessStripePaymentIntentSucceededEventWorker.perform_async(stripe_payment_intent_id)
   end
 
-  def track_stripe_event
+  def track_event
     event_params = (request.request_parameters).except(:data, :locale, :utf8, :authenticity_token)
-    track_event('Stripe webhook', path: request.path, params: event_params)
+    ahoy.track('Stripe webhook', path: request.path, params: event_params)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect}"
   end

@@ -142,16 +142,10 @@ module Logging
     logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
   end
 
-  def track_event(name, properties = nil)
-    ahoy.track(name, properties)
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} name=#{name} properties=#{properties.inspect}"
-  end
-
   def track_order_activity(prop = {})
     event_params = request.query_parameters.dup.merge(request.request_parameters).except(:data, :locale, :utf8, :authenticity_token)
     properties = {path: request.path, params: event_params}.merge(prop)
-    track_event('Order activity', properties)
+    ahoy.track('Order activity', properties)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} prop=#{prop}"
   end

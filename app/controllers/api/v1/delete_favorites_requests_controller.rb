@@ -18,7 +18,7 @@ module Api
         # SendDeleteFavoritesStartedWorker.perform_async(request.id, user_id: current_user.id)
         SendDeleteFavoritesNotFinishedWorker.perform_in(30.minutes, request.id, user_id: current_user.id)
 
-        track_event('Delete favorites', request_id: request.id)
+        track_event(request)
 
         render json: {message: t('.success')}
       end
@@ -37,6 +37,12 @@ module Api
         if params[:until]&.match?(DATE_REGEXP)
           Time.zone.parse("#{params[:until]} 23:59:59 JST")
         end
+      end
+
+      def track_event(request)
+        ahoy.track('Delete favorites', request_id: request.id)
+      rescue => e
+        logger.warn "#{self.class}##{__method__}: #{e.inspect} request=#{request.inspect}"
       end
     end
   end
