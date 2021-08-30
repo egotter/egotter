@@ -11,13 +11,17 @@ class ClickIdGenerator
       id&.to_s&.match?(ID_REGEXP)
     end
 
-    def count(user)
-      Ahoy::Event.select('count(distinct user_id) cnt').
-          where('time > ?', 1.month.ago).
-          where(user_id: user.id).
+    def invited_count(user)
+      invited_user_ids(user).size
+    end
+
+    def invited_user_ids(user)
+      regexp = "^invitation-\\d+-#{user ? user.uid : '\\d+'}$"
+      Ahoy::Event.select('distinct user_id').
+          where('time > ?', 2.weeks.ago).
           where(name: 'Sign up').
-          where("properties->'$.click_id' is not null")[0].
-          cnt
+          where("properties->>'$.click_id' regexp ?", regexp).
+          map(&:user_id)
     end
 
     def invitation_bonus

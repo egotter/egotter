@@ -222,7 +222,7 @@ class User < ApplicationRecord
   end
 
   def invitation_count
-    @invitation_count ||= ClickIdGenerator.count(self)
+    @invitation_count ||= ClickIdGenerator.invited_count(self)
   rescue => e
     0
   end
