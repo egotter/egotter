@@ -53,8 +53,10 @@ class PeriodicReportResponder < AbstractMessageResponder
       /(リムーブ|リムられ|リム|りむ)(通知)?(\s|　)*(今すぐ)?送信/
     end
 
+    HELP_REGEXP = Regexp.union(/リムーブ|りむーぶ|リムられ|りむられ/, /^(リム通?|通知|再開|継続|送信|停止|止めて|今すぐ(送信)?|DM|使い方)$/)
+
     def help_regexp
-      /リムーブ|りむーぶ|リムられ|りむられ|(^(リム通?|通知|再開|継続|送信|停止|止めて|今すぐ(送信)?|DM|使い方)$)/
+      HELP_REGEXP
     end
 
     def access_regexp
