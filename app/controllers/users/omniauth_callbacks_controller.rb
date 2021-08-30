@@ -44,8 +44,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     sign_in user, event: :authentication
 
     click_id = session[:sign_in_click_id] ? session.delete(:sign_in_click_id) : ''
-    track_sign_in_event(
-        context: save_context,
+    track_registration_event(
+        user,
+        save_context,
         via: session[:sign_in_via] ? session.delete(:sign_in_via) : '',
         click_id: click_id
     )
@@ -79,6 +80,18 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   private
 
+  def track_registration_event(user, context, via:, click_id: nil)
+    name = context == :create ? 'Sign up' : 'Sign in'
+    properties = {
+        via: via,
+        click_id: click_id
+    }.delete_if { |_, v| v.blank? }
+    ahoy.track(name, properties)
+    Ahoy::Event.create(visit_id: current_visit.id, user_id: user.id, name: name, properties: properties, time: Time.zone.now)
+  rescue => e
+    logger.warn "##{__method__}: #{e.inspect} user_id=#{user&.id} context=#{context} via=#{via} click_id=#{click_id}"
+  end
+
   def track_invitation_event(user, click_id)
     properties = {
         click_id: click_id,
@@ -86,7 +99,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     }.delete_if { |_, v| v.blank? }
     Ahoy::Event.create(visit_id: current_visit.id, user_id: user.id, name: 'Invitation', properties: properties, time: Time.zone.now)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} click_id=#{click_id}"
+    logger.warn "##{__method__}: #{e.inspect} click_id=#{click_id}"
   end
 
   def after_callback_path(user, save_context)

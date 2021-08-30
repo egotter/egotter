@@ -25,12 +25,4 @@ RSpec.describe Logging do
       subject
     end
   end
-
-  describe '#track_sign_in_event' do
-    subject { controller.track_sign_in_event(context: 'c', via: 'v') }
-    it do
-      expect(controller).to receive_message_chain(:ahoy, :track).with('Sign in', via: 'v')
-      subject
-    end
-  end
 end
