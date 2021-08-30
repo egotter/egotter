@@ -58,12 +58,13 @@ class SlackClient
   end
 
   def send_context_message(text, screen_name, icon_url, urls)
-    mrkdwn_text = urls.map.with_index { |url, i| "<#{url}|url#{i + 1}>" }.join(' ') + ' ' + text
+    urls_markdown = urls.map.with_index { |url, i| "<#{url}|url#{i + 1}>" }.join(' ')
+    markdown = "#{urls_markdown} #{screen_name} #{text}"
     block = {
         type: 'context',
         elements: [
             {type: 'image', image_url: icon_url, alt_text: "@#{screen_name}"},
-            {type: 'mrkdwn', text: mrkdwn_text.truncate(500)}
+            {type: 'mrkdwn', text: markdown.truncate(500)}
         ],
     }
     perform_request({blocks: [block]})

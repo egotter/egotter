@@ -48,18 +48,11 @@ class SendReceivedMessageWorker
     icon_url = user&.profile_image_url_https
     urls = [dm_url(screen_name), dm_url_by_uid(sender_uid)]
 
+    client = SlackClient.channel('received_messages')
     begin
-      SlackClient.channel('received_messages').send_context_message(text, screen_name, icon_url, urls)
+      client.send_context_message(text, screen_name, icon_url, urls)
     rescue => e
-      SlackClient.channel('received_messages').send_message("sender_uid=#{sender_uid} text=#{text}")
-    end
-
-    if recently_tweets_deleted_user?(sender_uid)
-      begin
-        SlackClient.channel('delete_tweets').send_context_message(text, screen_name, icon_url, urls)
-      rescue => e
-        SlackClient.channel('delete_tweets').send_message("sender_uid=#{sender_uid} text=#{text}")
-      end
+      client.send_message("sender_uid=#{sender_uid} text=#{text}")
     end
   end
 
@@ -69,9 +62,5 @@ class SendReceivedMessageWorker
 
   def dm_url_by_uid(uid)
     "https://twitter.com/messages/#{User::EGOTTER_UID}-#{uid}"
-  end
-
-  def recently_tweets_deleted_user?(uid)
-    (user = User.find_by(uid: uid)) && DeleteTweetsRequest.order(created_at: :desc).limit(10).pluck(:user_id).include?(user.id)
   end
 end
