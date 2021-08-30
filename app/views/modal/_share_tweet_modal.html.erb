@@ -1,16 +1,14 @@
 <%# The share modal is always embedded because it is used in settings page. %>
 <%= modal_dialog id: 'share-modal', title: t('.title_html'), button: {positive: t('.ok'), negative: t('.cancel')}, data: {url: api_v1_share_tweets_path(via: current_via('share_egotter_modal'))} do %>
-  <div class="d-flex align-items-center mb-3">
-    <%= image_tag '/egotter_plain_200x265.png', class: 'd-block', style: 'width: 100px;' %>
-    <div class="ml-3">
-      <%= t('.note_for_count_html', count: @search_count_limitation.current_sharing_bonus) %>
-    </div>
+  <div class="mb-3">
+    <%= t('.description_html', search_count: @search_count_limitation.current_sharing_bonus, invitation_count: ClickIdGenerator.invitation_bonus) %>
   </div>
   <textarea id="share-modal-textarea" rows="5" class="small" style="width: 100%; -webkit-appearance: none;"><%= ShareTweets.load.sample %></textarea>
   <div class="text-right">
     <div id="update-text" class="btn btn-outline-primary btn-sm">
       <%= t('.see_other_candidates') %>
     </div>
+    <div class="small text-muted mt-2"><%= t('.note') %></div>
   </div>
 <% end %>
 

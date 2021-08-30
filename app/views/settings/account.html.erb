@@ -55,7 +55,7 @@
     <% if current_user.sharing_count > 0 %>
       <%= t('.share.count', count: current_user.sharing_count) %>
     <% end %>
-    <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary btn-sm"><%= t('.share.see_more') %></a>
+    <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary btn-sm"><%= t('.share.button') %></a>
     <div class="text-muted small mt-1"><%= t('.share.note_html', count: @search_count_limitation.current_sharing_bonus) %></div>
   </div>
 </div>
@@ -65,7 +65,11 @@
 <div class="row">
   <div class="col-4"><%= t('.invitation.title') %></div>
   <div class="col-8">
-    <%= t('.invitation.count', count: current_user.invitation_count) %>
+    <% if current_user.invitation_count > 0 %>
+      <%= t('.invitation.count', count: fuzzy_invitation_count(current_user.invitation_count)) %>
+    <% end %>
+    <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary btn-sm"><%= t('.invitation.button') %></a>
+    <div class="text-muted small mt-1"><%= t('.invitation.note_html', count: ClickIdGenerator.invitation_bonus) %></div>
   </div>
 </div>
 

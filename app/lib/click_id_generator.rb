@@ -19,5 +19,9 @@ class ClickIdGenerator
           where("properties->'$.click_id' is not null")[0].
           cnt
     end
+
+    def invitation_bonus
+      100
+    end
   end
 end

@@ -530,11 +530,13 @@ ja:
       share:
         title: 'egotter.com をツイート'
         count: '%{count} 回'
-        see_more: '詳しく見る'
+        button: '詳しく見る'
         note_html: 'ツイート毎に %{count} 回の<span class="egotter-pink">検索ボーナス</span>付与'
       invitation:
         title: 'ツイートからの登録'
-        count: '%{count} 回'
+        count: '%{count} 人'
+        button: '詳しく見る'
+        note_html: '%{count}人 を超えたら有料プラン <span class="egotter-pink">1ヶ月分</span> をプレゼント'
       swich_account:
         title: 'アカウント切り替え'
         switch: '切り替える'
@@ -2331,13 +2333,12 @@ ja:
         ok: 'ログインする'
         cancel: 'やめておく'
     share_tweet_modal:
-      title_html: '<span class="egotter-pink">ツイート</span>で検索回数アップ'
-      note_for_count_html: |
-        えごったーのことを1度だけツイートすると、<br>
-        検索回数が <span class="egotter-pink">%{count}回分</span> 増えます。<br>
-        <br>
-        <span class="small text-muted">※テキストの最後にえごったーのURLが付きます</span>
+      title_html: '<span class="egotter-pink">ツイート</span>でボーナス'
+      description_html: |
+        <p>えごったーのことをツイートすると、検索回数が <span class="egotter-pink">%{search_count}回分</span> 増えます。</p>
+        ツイートからえごったーに登録した人が %{invitation_count}人 を超えたら、有料プラン <span class="egotter-pink">1ヶ月分</span> をプレゼント。
       see_other_candidates: '他のテキストを見る'
+      note: '※ テキストの最後にえごったーのURLが付きます'
       ok: "ツイートする"
       cancel: "やめておく"
     periodic_tweet_modal:
