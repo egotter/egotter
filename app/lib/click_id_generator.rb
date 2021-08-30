@@ -1,10 +1,10 @@
 class ClickIdGenerator
 
-  ID_REGEXP = /\Ainvitation-\d{1,30}-\d{1,30}\z/
+  ID_REGEXP = /\Ainvitation-\d{1,30}\z/
 
   class << self
     def gen(user)
-      "invitation-#{Time.zone.now.to_i}-#{user.uid}" if user
+      "invitation-#{user.uid}" if user
     end
 
     def valid?(id)
@@ -16,7 +16,7 @@ class ClickIdGenerator
     end
 
     def invited_user_ids(user)
-      regexp = "^invitation-\\d+-#{user ? user.uid : '\\d+'}$"
+      regexp = "^invitation-#{user ? user.uid : '\\d+'}$"
 
       query = Ahoy::Event.select('distinct user_id').
           where('time > ?', 2.weeks.ago).

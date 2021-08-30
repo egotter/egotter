@@ -221,8 +221,8 @@ class User < ApplicationRecord
         where(deleted_at: nil).where.not(tweet_id: nil).size
   end
 
-  def invitation_count
-    @invitation_count ||= ClickIdGenerator.invited_count(self)
+  def invited_count
+    @invited_count ||= ClickIdGenerator.invited_count(self)
   rescue => e
     0
   end
