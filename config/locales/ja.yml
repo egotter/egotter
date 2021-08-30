@@ -520,20 +520,21 @@ ja:
         false: '無効（検索停止中）'
         bonus_html: '%{count} 回分の<span class="egotter-pink">検索ボーナス</span>付与'
         update: '更新する'
-      following_egotter:
+      follow:
         title: '@ego_tter のフォロー'
         following: 'フォロー中'
         follow: 'フォローする'
         fast_mode: 'フォロー中は検索高速モード'
         paid_mode: '有料プラン中は検索高速モード'
         note_html: 'フォローすると<span class="egotter-pink">検索高速モード</span>'
-      sharing_egotter:
-        title: 'egotter.com をシェア'
+      share:
+        title: 'egotter.com をツイート'
         count: '%{count} 回'
-        true: 'OK'
-        false: 'いいえ'
         see_more: '詳しく見る'
-        promotion_html: 'ツイート毎に %{count} 回の<span class="egotter-pink">検索ボーナス</span>付与'
+        note_html: 'ツイート毎に %{count} 回の<span class="egotter-pink">検索ボーナス</span>付与'
+      invitation:
+        title: 'ツイートからの登録'
+        count: '%{count} 回'
       swich_account:
         title: 'アカウント切り替え'
         switch: '切り替える'

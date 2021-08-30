@@ -32,17 +32,17 @@
 <hr>
 
 <div class="row">
-  <div class="col-4"><%= t('.following_egotter.title') %></div>
+  <div class="col-4"><%= t('.follow.title') %></div>
   <div class="col-8">
     <% if current_user.following_egotter? %>
-      <div><%= t('.following_egotter.following') %></div>
-      <div class="text-muted small mt-1"><%= t('.following_egotter.fast_mode') %></div>
+      <div><%= t('.follow.following') %></div>
+      <div class="text-muted small mt-1"><%= t('.follow.fast_mode') %></div>
     <% elsif current_user.has_valid_subscription? %>
-      <div><%= link_to t('.following_egotter.follow'), '#', data: {url: api_v1_follow_requests_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %></div>
-      <div class="text-muted small mt-1"><%= t('.following_egotter.paid_mode') %></div>
+      <div><%= link_to t('.follow.follow'), '#', data: {url: api_v1_follow_requests_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %></div>
+      <div class="text-muted small mt-1"><%= t('.follow.paid_mode') %></div>
     <% else %>
-      <div><%= link_to t('.following_egotter.follow'), '#', data: {url: api_v1_follow_requests_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %></div>
-      <div class="text-muted small mt-1"><%= t('.following_egotter.note_html') %></div>
+      <div><%= link_to t('.follow.follow'), '#', data: {url: api_v1_follow_requests_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-sm' %></div>
+      <div class="text-muted small mt-1"><%= t('.follow.note_html') %></div>
     <% end %>
   </div>
 </div>
@@ -50,13 +50,22 @@
 <hr>
 
 <div class="row">
-  <div class="col-4"><%= t('.sharing_egotter.title') %></div>
+  <div class="col-4"><%= t('.share.title') %></div>
   <div class="col-8">
     <% if current_user.sharing_count > 0 %>
-      <%= t('.sharing_egotter.count', count: current_user.sharing_count) %>
+      <%= t('.share.count', count: current_user.sharing_count) %>
     <% end %>
-    <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary btn-sm"><%= t('.sharing_egotter.see_more') %></a>
-    <div class="text-muted small mt-1"><%= t('.sharing_egotter.promotion_html', count: @search_count_limitation.current_sharing_bonus) %></div>
+    <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary btn-sm"><%= t('.share.see_more') %></a>
+    <div class="text-muted small mt-1"><%= t('.share.note_html', count: @search_count_limitation.current_sharing_bonus) %></div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-4"><%= t('.invitation.title') %></div>
+  <div class="col-8">
+    <%= t('.invitation.count', count: current_user.invitation_count) %>
   </div>
 </div>
 

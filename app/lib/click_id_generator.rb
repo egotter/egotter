@@ -10,5 +10,14 @@ class ClickIdGenerator
     def valid?(id)
       id&.to_s&.match?(ID_REGEXP)
     end
+
+    def count(user)
+      Ahoy::Event.select('count(distinct user_id) cnt').
+          where('time > ?', 1.month.ago).
+          where(user_id: user.id).
+          where(name: 'Sign up').
+          where("properties->'$.click_id' is not null")[0].
+          cnt
+    end
   end
 end
