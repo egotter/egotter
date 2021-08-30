@@ -8,7 +8,18 @@ describe ThankYouMessageResponder::Processor do
   describe '#received?' do
     subject { instance.received? }
 
-    ['ありがとう', '有難う'].each do |word|
+    ['ありがとう'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
+  describe '#received_regexp' do
+    subject { text.match?(instance.received_regexp) }
+
+    ['ありがとう', 'おつかれ'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
