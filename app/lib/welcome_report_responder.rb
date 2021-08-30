@@ -21,8 +21,6 @@ class WelcomeReportResponder < AbstractMessageResponder
       elsif @text.match?(help_regexp)
         @help = true
       end
-
-      @received || @send || @help
     end
 
     def received_regexp
@@ -34,7 +32,7 @@ class WelcomeReportResponder < AbstractMessageResponder
     end
 
     def help_regexp
-      /初期設定/
+      /初期|設定/
     end
 
     def send_message

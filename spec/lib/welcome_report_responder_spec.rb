@@ -19,10 +19,32 @@ describe WelcomeReportResponder::Processor do
     end
   end
 
+  describe '#received_regexp' do
+    subject { text.match?(instance.received_regexp) }
+
+    ['初期設定 届きました'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
   describe '#send_regexp' do
     subject { text.match?(instance.send_regexp) }
 
     ['初期設定 開始'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
+  describe '#help_regexp' do
+    subject { text.match?(instance.help_regexp) }
+
+    ['初期', '設定'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
