@@ -148,9 +148,12 @@ module Logging
     logger.warn "#{self.class}##{__method__}: #{e.inspect} name=#{name} properties=#{properties.inspect}"
   end
 
-  def track_sign_in_event(context:, via:)
+  def track_sign_in_event(context:, via:, click_id: nil)
     name = context == :create ? 'Sign up' : 'Sign in'
-    properties = via.blank? ? nil : {via: via}
+    properties = {
+        via: via,
+        click_id: click_id
+    }.delete_if { |_, v| v.blank? }
     ahoy.track(name, properties)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} action_name=#{action_name}"

@@ -24,9 +24,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   def twitter
-    via = session[:sign_in_via] ? session.delete(:sign_in_via) : ''
-    follow = 'true' == session.delete(:sign_in_follow)
-
     save_context = nil
     begin
       user = User.update_or_create_with_token!(user_params) do |user, context|
@@ -45,11 +42,15 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
 
     sign_in user, event: :authentication
-    track_sign_in_event(context: save_context, via: via)
+    track_sign_in_event(
+        context: save_context,
+        via: session[:sign_in_via] ? session.delete(:sign_in_via) : '',
+        click_id: session[:sign_in_click_id] ? session.delete(:sign_in_click_id) : ''
+    )
     redirect_to after_callback_path(user, save_context)
 
     @user = user
-    @follow = follow
+    @follow = 'true' == session.delete(:sign_in_follow)
   end
 
   def failure
@@ -57,6 +58,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       sign_in_from
       sign_out_from
       sign_in_via
+      sign_in_click_id
       sign_in_referer
       sign_in_ab_test
       sign_in_follow
