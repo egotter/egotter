@@ -31,7 +31,7 @@ class TweetRequest < ApplicationRecord
 
   def perform!
     fulltext = text
-    fulltext += " #{self.class.share_suffix}" unless fulltext.include?('http')
+    fulltext += " #{self.class.share_suffix(user)}" unless fulltext.include?('http')
 
     tweet = create_status!(fulltext)
     update(tweet_id: tweet.id) if tweet
@@ -74,14 +74,18 @@ class TweetRequest < ApplicationRecord
   end
 
   class << self
-    def share_suffix
-      params = {
+    def share_suffix(user)
+      "#egotter #{share_url(user)}"
+    end
+
+    def share_url(user)
+      Rails.application.routes.url_helpers.root_url(
           utm_source: 'share_tweet',
-          utm_medium: 'tweet',
+          utm_medium: 'share_tweet',
           utm_campaign: 'share_tweet',
-          via: 'share_tweet'
-      }
-      '#egotter ' + Rails.application.routes.url_helpers.root_url(params)
+          via: 'share_tweet',
+          click_id: ClickIdGenerator.gen(user)
+      )
     end
   end
 

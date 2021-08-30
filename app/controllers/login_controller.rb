@@ -19,7 +19,6 @@ class LoginController < ApplicationController
     end
 
     session[:sign_in_via] = params[:via]
-    session[:sign_in_click_id] = params[:click_id]
     session[:sign_in_follow] = 'true' == params[:follow] ? 'true' : 'false'
     session[:redirect_path] = params[:redirect_path]
 

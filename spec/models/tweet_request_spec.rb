@@ -5,7 +5,7 @@ RSpec.describe TweetRequest, type: :model do
   let(:instance) { described_class.new(user: user) }
 
   describe '.share_suffix' do
-    subject { described_class.share_suffix }
+    subject { described_class.share_suffix(nil) }
     it { is_expected.to be_truthy }
   end
 

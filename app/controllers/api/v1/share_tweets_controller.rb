@@ -8,7 +8,7 @@ module Api
 
       def create
         text = params[:text]
-        text += " #{TweetRequest.share_suffix}" unless text.include?('http')
+        text += " #{TweetRequest.share_suffix(current_user)}" unless text.include?('http')
         validator = TweetRequest::TextValidator.new(text)
 
         unless validator.valid?
