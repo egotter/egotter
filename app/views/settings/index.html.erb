@@ -1,36 +1,36 @@
-<div class="text-primary mx-3 my-3"><%= t('.settings') %></div>
+<div class="text-primary m-3"><%= t('.settings') %></div>
 
-<div class="mx-3 my-3">
+<div class="m-3">
   <%= link_to t('.account'), settings_account_path, class: 'text-body' %>
 </div>
 
 <hr>
 
-<div class="mx-3 my-3">
+<div class="m-3">
   <%= link_to t('.periodic_report'), settings_periodic_report_path, class: 'text-body' %>
 </div>
 
 <hr>
 
-<div class="mx-3 my-3">
+<div class="m-3">
   <%= link_to t('.block_report'), settings_block_report_path, class: 'text-body' %>
 </div>
 
 <hr>
 
-<div class="mx-3 my-3">
+<div class="m-3">
   <%= link_to t('.mute_report'), settings_mute_report_path, class: 'text-body' %>
 </div>
 
 <hr>
 
-<div class="mx-3 my-3">
+<div class="m-3">
   <%= link_to t('.search_report'), settings_search_report_path, class: 'text-body' %>
 </div>
 
 <hr>
 
-<div class="mx-3 my-3">
+<div class="m-3">
   <%= link_to settings_sneak_search_path, class: 'text-body' do %>
     <%= t('.sneak_search') %>
     <span class="egotter-pink small"><%= t('.premium_only') %></span>
@@ -39,7 +39,7 @@
 
 <hr>
 
-<div class="mx-3 my-3">
+<div class="m-3">
   <%= link_to settings_private_mode_path, class: 'text-body' do %>
     <%= t('.private_mode') %>
     <span class="egotter-pink small"><%= t('.premium_only') %></span>
@@ -48,24 +48,31 @@
 
 <hr>
 
-<div class="mx-3 my-3">
-  <%= link_to t('.order_history'), settings_order_history_path, class: 'text-body' %>
+<div class="m-3">
+  <%= link_to settings_order_history_path, class: 'text-body' do %>
+    <%= t('.order_history.title') %>
+    <% if current_user.has_valid_subscription? %>
+      <span class="egotter-pink small"><%= t('.order_history.basic') %></span>
+    <% else %>
+      <span class="text-muted small"><%= t('.order_history.free') %></span>
+    <% end %>
+  <% end %>
 </div>
 
 <hr>
 
-<div class="text-primary mx-3 my-3"><%= t('.others') %></div>
+<div class="text-primary m-3"><%= t('.others') %></div>
 
-<div class="mx-3 my-3">
+<div class="m-3">
   <%= link_to t('.delete_tweets'), delete_tweets_path(via: current_via), class: 'text-body' %>
 </div>
 
 <hr>
 
-<div class="mx-3 my-3">
+<div class="m-3">
   <%= link_to t('.delete_favorites'), delete_favorites_path(via: current_via), class: 'text-body' %>
 </div>
 
 <hr>
 
-<div class="container my-3"><%= render partial: 'data' %></div>
+<%= render partial: 'data' %>

@@ -450,7 +450,10 @@ ja:
       premium_only: '有料プラン限定'
       delete_tweets: 'ツイートの一括削除'
       delete_favorites: 'いいねの一括削除'
-      order_history: '購入履歴'
+      order_history:
+        title: '購入履歴'
+        free: '無料プランを利用中'
+        basic: '有料プランを利用中'
     order:
       no_payment_guranteed: '※ トライアル期間中は支払いは発生しません。'
       during_trial_period: "トライアル期間中"
