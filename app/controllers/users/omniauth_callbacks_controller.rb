@@ -8,59 +8,73 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   skip_before_action :current_user_not_blocker?
 
   after_action only: :twitter do
-    if @follow
+    update_search_histories_when_signing_in(@user)
+    CreateTwitterDBUserWorker.perform_async([@user.uid], user_id: @user.id, force_update: true, enqueued_by: 'twitter callback after signing in')
+    enqueue_create_twitter_user_job_if_needed(@user.uid, user_id: @user.id)
+  end
+
+  after_action :follow_egotter, only: :twitter
+  after_action :delete_tracking_params
+
+  def twitter
+    user, save_context = create_or_update_user
+    return if performed?
+
+    sign_in user, event: :authentication
+
+    click_id = session[:sign_in_click_id]
+    track_registration_event(
+        user,
+        save_context,
+        via: session[:sign_in_via],
+        click_id: click_id
+    )
+    if save_context == :create && click_id.present?
+      track_invitation_event(user, click_id)
+    end
+
+    @user = user
+
+    redirect_to after_callback_path(user, save_context)
+  end
+
+  def failure
+    # invalid_credentials session_expired service_unavailable timeout
+    error_name = request.env['omniauth.error.type'].to_s
+    redirect_to error_pages_omniauth_failure_path(via: current_via(error_name))
+  end
+
+  private
+
+  def create_or_update_user
+    context = nil
+
+    user = User.update_or_create_with_token!(user_params) do |user, ctx|
+      if ctx == :create
+        # CreateWelcomeMessageWorker.perform_async(user.id)
+        ImportBlockingRelationshipsWorker.perform_async(user.id)
+        ImportMutingRelationshipsWorker.perform_async(user.id)
+      end
+      UpdatePermissionLevelWorker.perform_async(user.id)
+      context = ctx
+    end
+
+    [user, context]
+  rescue => e
+    logger.warn "##{__method__}: #{e.inspect} #{params.inspect}"
+    redirect_to error_pages_omniauth_failure_path(via: current_via('save_error'))
+    [nil, nil]
+  end
+
+  def follow_egotter
+    if 'true' == session[:sign_in_follow]
       request = FollowRequest.create(user_id: @user.id, uid: User::EGOTTER_UID, requested_by: 'sign_in')
       CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
       CreateEgotterFollowerWorker.perform_async(@user.id)
     end
-
-    update_search_histories_when_signing_in(@user)
-
-    CreateTwitterDBUserWorker.perform_async([@user.uid], user_id: @user.id, force_update: true, enqueued_by: 'twitter callback after signing in')
-
-    enqueue_create_twitter_user_job_if_needed(@user.uid, user_id: @user.id)
-  rescue => e
-    logger.warn "after_action: #{e.inspect}"
   end
 
-  def twitter
-    save_context = nil
-    begin
-      user = User.update_or_create_with_token!(user_params) do |user, context|
-        if context == :create
-          # CreateWelcomeMessageWorker.perform_async(user.id)
-          ImportBlockingRelationshipsWorker.perform_async(user.id)
-          ImportMutingRelationshipsWorker.perform_async(user.id)
-        end
-        UpdatePermissionLevelWorker.perform_async(user.id)
-        save_context = context
-      end
-    rescue => e
-      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
-      redirect_to error_pages_omniauth_failure_path(via: current_via('save_error'))
-      return
-    end
-
-    sign_in user, event: :authentication
-
-    click_id = session[:sign_in_click_id] ? session.delete(:sign_in_click_id) : ''
-    track_registration_event(
-        user,
-        save_context,
-        via: session[:sign_in_via] ? session.delete(:sign_in_via) : '',
-        click_id: click_id
-    )
-    if save_context == :update && click_id.present?
-      track_invitation_event(user, click_id)
-    end
-
-    redirect_to after_callback_path(user, save_context)
-
-    @user = user
-    @follow = 'true' == session.delete(:sign_in_follow)
-  end
-
-  def failure
+  def delete_tracking_params
     %i(
       sign_in_from
       sign_out_from
@@ -72,34 +86,22 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       redirect_path
       force_login
     ).each { |key| session.delete(key) }
-
-    # invalid_credentials session_expired service_unavailable timeout
-    error_name = request.env['omniauth.error.type'].to_s
-    redirect_to error_pages_omniauth_failure_path(via: current_via(error_name))
   end
-
-  private
 
   def track_registration_event(user, context, via:, click_id: nil)
     name = context == :create ? 'Sign up' : 'Sign in'
-    properties = {
-        via: via,
-        click_id: click_id
-    }.delete_if { |_, v| v.blank? }
-    ahoy.track(name, properties)
-    Ahoy::Event.create(visit_id: current_visit.id, user_id: user.id, name: name, properties: properties, time: Time.zone.now)
-  rescue => e
-    logger.warn "##{__method__}: #{e.inspect} user_id=#{user&.id} context=#{context} via=#{via} click_id=#{click_id}"
+    track_event(user, name, via: via, click_id: click_id)
   end
 
   def track_invitation_event(user, click_id)
-    properties = {
-        click_id: click_id,
-        inviter_uid: click_id.split('-')[1],
-    }.delete_if { |_, v| v.blank? }
-    Ahoy::Event.create(visit_id: current_visit.id, user_id: user.id, name: 'Invitation', properties: properties, time: Time.zone.now)
+    track_event(user, 'Invitation', click_id: click_id, inviter_uid: click_id.split('-')[1])
+  end
+
+  def track_event(user, name, properties)
+    properties = properties.delete_if { |_, v| v.blank? }
+    Ahoy::Event.create(visit_id: current_visit.id, user_id: user.id, name: name, properties: properties, time: Time.zone.now)
   rescue => e
-    logger.warn "##{__method__}: #{e.inspect} click_id=#{click_id}"
+    logger.warn "##{__method__}: #{e.inspect} user_id=#{user.id} name=#{name} properties=#{properties.inspect}"
   end
 
   def after_callback_path(user, save_context)
