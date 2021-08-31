@@ -21,16 +21,16 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     return if performed?
 
     sign_in user, event: :authentication
+    ahoy.authenticate(user)
 
     click_id = session[:sign_in_click_id]
     track_registration_event(
-        user,
         save_context,
         via: session[:sign_in_via],
         click_id: click_id
     )
     if save_context == :create && click_id.present?
-      track_invitation_event(user, click_id)
+      track_invitation_event(click_id)
     end
 
     @user = user
@@ -88,20 +88,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     ).each { |key| session.delete(key) }
   end
 
-  def track_registration_event(user, context, via:, click_id: nil)
+  def track_registration_event(context, via:, click_id: nil)
     name = context == :create ? 'Sign up' : 'Sign in'
-    track_event(user, name, via: via, click_id: click_id)
+    ahoy.track(name, {via: via, click_id: click_id}.compact.presence)
   end
 
-  def track_invitation_event(user, click_id)
-    track_event(user, 'Invitation', click_id: click_id, inviter_uid: click_id.split('-')[1])
-  end
-
-  def track_event(user, name, properties)
-    properties = properties.delete_if { |_, v| v.blank? }
-    Ahoy::Event.create(visit_id: current_visit.id, user_id: user.id, name: name, properties: properties, time: Time.zone.now)
-  rescue => e
-    logger.warn "##{__method__}: #{e.inspect} user_id=#{user.id} name=#{name} properties=#{properties.inspect}"
+  def track_invitation_event(click_id)
+    ahoy.track('Invitation', {click_id: click_id, inviter_uid: click_id.split('-')[1]}.compact.presence)
   end
 
   def after_callback_path(user, save_context)
