@@ -3,29 +3,27 @@ class OrdersController < ApplicationController
   skip_before_action :current_user_not_blocker?, only: %i(success failure end_trial_failure)
   skip_before_action :verify_authenticity_token, only: :checkout_session_completed
 
-  before_action :require_login!, except: :checkout_session_completed
-  before_action :validate_stripe_session_id, only: :success
+  before_action :require_login!, only: %i(success failure end_trial_failure)
+  before_action :set_stripe_checkout_session, only: :success
 
   after_action :track_order_activity
 
   def success
-    checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
-
-    unless current_user.orders.where(subscription_id: checkout_session.subscription).exists?
-      logger.warn "#{controller_name}##{action_name}: Order is not found user_id=#{current_user.id} checkout_session_id=#{checkout_session.id} subscription_id=#{checkout_session.subscription}"
-      redirect_to orders_failure_path(via: current_via('order_not_found'))
+    unless current_user.orders.where(subscription_id: @checkout_session.subscription).exists?
+      redirect_to orders_failure_path(via: 'order_not_found', stripe_session_id: params[:stripe_session_id])
     end
   rescue => e
     logger.warn "#{controller_name}##{action_name}: #{e.inspect} checkout_session_id=#{params[:stripe_session_id]}"
-    redirect_to orders_failure_path(via: current_via('internal_error'))
+    redirect_to orders_failure_path(via: 'internal_error', stripe_session_id: params[:stripe_session_id])
   end
 
+  # Redirecting to this action only takes place within OrdersController.
   def failure
-    send_failure_message("user_id=#{current_user&.id} referer=#{request.referer.to_s.truncate(200)}")
+    send_message(:orders_failure, stripe_session_id: params[:stripe_session_id])
   end
 
   def end_trial_failure
-    send_end_trial_failure_message("user_id=#{current_user&.id} referer=#{request.referer.to_s.truncate(200)}")
+    send_message(:orders_end_trial_failure)
   end
 
   def checkout_session_completed
@@ -81,22 +79,24 @@ class OrdersController < ApplicationController
     ProcessStripePaymentIntentSucceededEventWorker.perform_async(stripe_payment_intent_id)
   end
 
-  def send_failure_message(message)
-    SlackMessage.create(channel: 'orders_failure', message: message)
-    SendMessageToSlackWorker.perform_async(:orders_failure, "`#{Rails.env}` #{message}")
+  def send_message(channel, options = {})
+    options.merge!(
+        user_id: current_user&.id,
+        via: params[:via],
+        referer: request.referer.to_s.truncate(200)
+    )
+    message = options.map { |k, v| "#{k}=#{v}" }.join(' ')
+
+    SlackMessage.create(channel: channel, message: message)
+    SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{message}")
   rescue => e
-    logger.warn "##{__method__} failed exception=#{e.inspect} message=#{message}"
+    logger.warn "#{action_name}##{__method__}: #{e.inspect} channel=#{channel} options=#{options.inspect}"
   end
 
-  def send_end_trial_failure_message(message)
-    SlackMessage.create(channel: 'orders_end_trial_failure', message: message)
-    SendMessageToSlackWorker.perform_async(:orders_end_trial_failure, "`#{Rails.env}` #{message}")
-  rescue => e
-    logger.warn "##{__method__} failed exception=#{e.inspect} message=#{message}"
-  end
-
-  def validate_stripe_session_id
-    if params[:stripe_session_id].blank?
+  def set_stripe_checkout_session
+    if params[:stripe_session_id]
+      @checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
+    else
       redirect_to settings_order_history_path(via: current_via('stripe_session_id_not_found'))
     end
   end

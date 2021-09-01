@@ -4,6 +4,40 @@ RSpec.describe OrdersController, type: :controller do
   let(:user) { create(:user) }
   let(:order) { create(:order, user_id: user.id) }
 
+  describe 'GET #success' do
+    let(:checkout_session) { double('checkout session', id: 'cs_xxx', subscription: 'sub_xxx') }
+    subject { get :success, params: {stripe_session_id: checkout_session.id} }
+    before do
+      allow(controller).to receive(:current_user).and_return(user)
+      user.orders.create!(name: 'Test', customer_id: 'cus_xxx', subscription_id: checkout_session.subscription)
+      allow(Stripe::Checkout::Session).to receive(:retrieve).with(checkout_session.id).and_return(checkout_session)
+    end
+    it { is_expected.to have_http_status(:ok) }
+
+    context 'An exception is raised' do
+      before { allow(user).to receive(:orders).and_raise }
+      it { is_expected.to redirect_to(orders_failure_path(via: 'internal_error', stripe_session_id: checkout_session.id)) }
+    end
+  end
+
+  describe 'GET #failure' do
+    subject { get :failure, params: {} }
+    before { allow(controller).to receive(:current_user).and_return(user) }
+    it do
+      expect(controller).to receive(:send_message).with(:orders_failure, anything)
+      is_expected.to have_http_status(:ok)
+    end
+  end
+
+  describe 'GET #end_trial_failure' do
+    subject { get :end_trial_failure, params: {} }
+    before { allow(controller).to receive(:current_user).and_return(user) }
+    it do
+      expect(controller).to receive(:send_message).with(:orders_end_trial_failure)
+      is_expected.to have_http_status(:ok)
+    end
+  end
+
   describe 'POST #checkout_session_completed' do
     subject { post :checkout_session_completed, params: {} }
     it do
