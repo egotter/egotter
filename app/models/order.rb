@@ -205,7 +205,7 @@ class Order < ApplicationRecord
     if charge_failed_at.nil?
       # Do nothing
     else
-      logger.warn "Subscription has already failed to charge subscription_id=#{subscription_id}"
+      logger.warn "Subscription has already failed to charge order_id=#{id} subscription_id=#{subscription_id}"
       update!(charge_failed_at: nil)
     end
   end
