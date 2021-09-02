@@ -23,6 +23,7 @@ class StripeCheckoutSession
         attrs[:customer] = customer_id
         attrs[:discounts] = []
       else
+        attrs[:customer] = create_stripe_customer(user.id, user.email).id
         attrs[:subscription_data][:trial_period_days] = Order::TRIAL_DAYS
         attrs[:discounts] = [{coupon: Order::COUPON_ID}]
       end
@@ -34,6 +35,12 @@ class StripeCheckoutSession
       attrs[:metadata][:price] = calculate_price(attrs)
 
       attrs
+    end
+
+    def create_stripe_customer(user_id, email)
+      options = {metadata: {user_id: user_id}}
+      options[:email] = email if email&.match?(/\A[^@]+@[^@]+\z/)
+      Stripe::Customer.create(options)
     end
 
     def calculate_price(attrs)
