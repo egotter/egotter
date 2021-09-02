@@ -16,7 +16,7 @@ RSpec.describe Order, type: :model do
     let(:subscription) { double('subscription', name: 'name', price: 'price', canceled_at: nil, trial_end: Time.zone.now.to_i) }
     subject { order.sync_stripe_attributes! }
     before do
-      allow(order).to receive(:fetch_stripe_customer).and_return(customer)
+      allow(Stripe::Customer).to receive(:retrieve).with(order.customer_id).and_return(customer)
       allow(order).to receive(:fetch_stripe_subscription).and_return(subscription)
     end
     it do

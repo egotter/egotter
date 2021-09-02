@@ -117,7 +117,7 @@ class Order < ApplicationRecord
   end
 
   def sync_stripe_attributes!
-    if (customer = fetch_stripe_customer)
+    if (customer = Stripe::Customer.retrieve(customer_id)) && customer.email.present?
       self.email = customer.email
     end
 
@@ -151,10 +151,6 @@ class Order < ApplicationRecord
     else
       name
     end
-  end
-
-  def fetch_stripe_customer
-    customer_id ? StripeCustomer.new(customer_id) : nil
   end
 
   def fetch_stripe_subscription

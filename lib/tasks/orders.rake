@@ -18,14 +18,16 @@ namespace :orders do
 
   task print_statuses: :environment do
     Order.unexpired.find_each do |order|
-      customer = order.fetch_stripe_customer
+      customer = Stripe::Customer.retrieve(order.customer_id)
+      invoices = Stripe::Invoice.list(customer: customer.id, limit: 3).data
+      charges = Stripe::Charge.list(customer: customer.id, limit: 3).data
 
-      invoices_status = customer.invoices.map(&:status)
-      invoices_paid = customer.invoices.map(&:paid)
+      invoices_status = invoices.map(&:status)
+      invoices_paid = invoices.map(&:paid)
 
-      charges_status = customer.charges.map(&:status)
-      charges_paid = customer.charges.map(&:paid)
-      charges_refunded = customer.charges.map(&:refunded)
+      charges_status = charges.map(&:status)
+      charges_paid = charges.map(&:paid)
+      charges_refunded = charges.map(&:refunded)
 
       puts "id=#{order.id} customer=#{customer.id} invoices.status=#{invoices_status} invoices.paid=#{invoices_paid} charges.status=#{charges_status} charges.paid=#{charges_paid} charges.refunded=#{charges_refunded}"
     end
@@ -35,7 +37,9 @@ namespace :orders do
   task invalidate_insufficient_subscriptions: :environment do
     Order.unexpired.find_each do |order|
       # TODO Confirm "c = customer.charges[0]; c.paid && !c.refunded"
-      unless order.fetch_stripe_customer.invoices[0].paid
+      customer = Stripe::Customer.retrieve(order.customer_id)
+      invoices = Stripe::Invoice.list(customer: customer.id, limit: 3).data
+      unless invoices[0].paid
         order.cancel!('batch')
       end
     end
