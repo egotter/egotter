@@ -196,7 +196,13 @@ class DeleteTweetsRequest < ApplicationRecord
     begin
       report.deliver!
     rescue => e
-      raise e unless TwitterApiStatus.temporarily_locked?(e)
+      if TwitterApiStatus.temporarily_locked?(e)
+        # Do nothing
+      elsif DirectMessageStatus.enhance_your_calm?(e)
+        logger.warn "#{self.class}##{__method__}: #{e.inspect}"
+      else
+        raise e
+      end
     end
 
     report = DeleteTweetsReport.finished_message(user, self)
