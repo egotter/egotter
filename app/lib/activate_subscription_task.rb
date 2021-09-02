@@ -53,20 +53,7 @@ class ActivateSubscriptionTask
     )
     puts "subscription_id=#{subscription.id}"
 
-    order = Order.create!(
-        user_id: @user.id,
-        email: customer.email,
-        name: @order_name,
-        price: @price,
-        tax_rate: 0.1,
-        search_count: SearchCountLimitation::BASIC_PLAN,
-        follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
-        unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,
-        checkout_session_id: nil,
-        customer_id: customer.id,
-        subscription_id: subscription.id,
-        trial_end: Time.zone.now.to_i,
-    )
+    order = Order.create_by_shop_item(@user, @email, @order_name, @price, customer.id, subscription.id)
     puts order.inspect
 
     report = OrdersReport.creation_succeeded_message(@user, @months_count)

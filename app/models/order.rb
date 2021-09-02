@@ -83,6 +83,23 @@ class Order < ApplicationRecord
       )
     end
 
+    def create_by_shop_item(user, email, name, price, customer_id, subscription_id)
+      create!(
+          user_id: user.id,
+          email: email,
+          name: name,
+          price: price,
+          tax_rate: 0.1,
+          search_count: SearchCountLimitation::BASIC_PLAN,
+          follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
+          unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,
+          checkout_session_id: nil,
+          customer_id: customer_id,
+          subscription_id: subscription_id,
+          trial_end: Time.zone.now.to_i,
+      )
+    end
+
     def create_by_bank_transfer(user, stripe_customer)
       price_id = ENV['STRIPE_FREE_PAYMENT_PRICE_ID']
       price = 0

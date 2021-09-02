@@ -11,6 +11,15 @@ RSpec.describe Order, type: :model do
     it { expect { subject }.to change { Order.all.size }.by(1) }
   end
 
+  describe '.create_by_shop_item' do
+    subject { described_class.create_by_shop_item(user, 'a@b.com', 'name', 0, 'cus_xxx', 'sub_xxx') }
+    it { expect { subject }.to change { Order.all.size }.by(1) }
+  end
+
+  describe '.create_by_bank_transfer' do
+    # TODO
+  end
+
   describe '#sync_stripe_attributes!' do
     let(:customer) { double('customer', email: 'a@b.com') }
     let(:subscription) { double('subscription', name: 'name', price: 'price', canceled_at: nil, trial_end: Time.zone.now.to_i) }
