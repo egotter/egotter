@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_20_083537) do
+ActiveRecord::Schema.define(version: 2021_09_02_224624) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -550,6 +550,15 @@ ActiveRecord::Schema.define(version: 2021_07_20_083537) do
     t.index ["created_at"], name: "index_credential_tokens_on_created_at"
     t.index ["token"], name: "index_credential_tokens_on_token"
     t.index ["user_id"], name: "index_credential_tokens_on_user_id", unique: true
+  end
+
+  create_table "customers", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "stripe_customer_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_customers_on_created_at"
+    t.index ["user_id", "stripe_customer_id"], name: "index_customers_on_user_id_and_stripe_customer_id", unique: true
   end
 
   create_table "deletable_tweets", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
