@@ -9,16 +9,23 @@ module Api
       before_action :doesnt_have_valid_subscription!
 
       def create
-        session = StripeCheckoutSession.create(current_user)
-        track_order_activity(checkout_session_id: session.id)
-        send_message(session)
-        render json: {session_id: session.id}
+        session_id = create_session(current_user)
+        track_order_activity(id: session_id)
+        send_message(session_id)
+        render json: {session_id: session_id}
       end
 
       private
 
-      def send_message(session)
-        message = "user_id=#{current_user.id} checkout_session_id=#{session.id} via=#{params[:via]} referer=#{request.referer.to_s.truncate(200)}"
+      def create_session(user)
+        stripe_session = StripeCheckoutSession.create(user)
+        CheckoutSession.create!(user_id: user.id, stripe_checkout_session_id: stripe_session.id)
+        stripe_session.id
+      end
+
+      # TODO Remove later
+      def send_message(session_id)
+        message = "user_id=#{current_user.id} checkout_session_id=#{session_id} via=#{params[:via]} referer=#{request.referer.to_s.truncate(200)}"
         SlackMessage.create(channel: 'orders_cs_created', message: message)
         SendMessageToSlackWorker.perform_async(:orders_cs_created, "`#{Rails.env}` #{message}")
       end
