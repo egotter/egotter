@@ -283,6 +283,7 @@ class User < ApplicationRecord
     orders.unexpired.last
   end
 
+  # TODO Remove
   def valid_customer_id
     order = orders.where.not(customer_id: :nil).order(created_at: :desc).first
     order&.customer_id

@@ -30,11 +30,11 @@ class StripeCheckoutSession
     end
 
     def find_or_create_customer(user)
-      if (customer_id = user.valid_customer_id)
-        customer_id
-      else
-        create_stripe_customer(user.id, user.email).id
+      unless (customer = Customer.order(created_at: :desc).find_by(user_id: user.id))
+        stripe_customer = create_stripe_customer(user.id, user.email)
+        customer = Customer.create!(user_id: user.id, stripe_customer_id: stripe_customer.id)
       end
+      customer.stripe_customer_id
     end
 
     def create_stripe_customer(user_id, email)

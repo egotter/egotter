@@ -32,32 +32,47 @@ class ActivateSubscriptionTask
   end
 
   def start_task!
-    begin
-      OrdersReport.starting_message(User.egotter_cs, @user).deliver!
-    rescue => e
-      puts "Sending starting message failed exception=#{e.inspect}"
-      OrdersReport.starting_message(@user).deliver!
-    end
+    send_starting_message(@user)
 
-    if (customer_id = @user.valid_customer_id)
-      customer = Stripe::Customer.retrieve(customer_id)
-    else
-      customer = Stripe::Customer.create(email: @email)
-    end
-    puts "customer_id=#{customer.id}"
+    customer_id = find_or_create_customer(@user, @email)
+    puts "customer_id=#{customer_id}"
 
-    subscription = Stripe::Subscription.create(
-        customer: customer.id,
-        items: [{price: @price_id}],
-        metadata: {user_id: @user.id, price: @price, months_count: @months_count},
-    )
+    subscription = create_subscription(@user, customer_id, @price_id, @price, @months_count)
     puts "subscription_id=#{subscription.id}"
 
-    order = Order.create_by_shop_item(@user, @email, @order_name, @price, customer.id, subscription.id)
+    order = Order.create_by_shop_item(@user, @email, @order_name, @price, customer_id, subscription.id)
     puts order.inspect
 
-    report = OrdersReport.creation_succeeded_message(@user, @months_count)
-    report.deliver!
+    report = send_finishing_message(@user, @months_count)
     puts report.message
+  end
+
+  def send_starting_message(user)
+    OrdersReport.starting_message(User.egotter_cs, user).deliver!
+  rescue => e
+    puts "Sending starting message failed exception=#{e.inspect}"
+    OrdersReport.starting_message(user).deliver!
+  end
+
+  def send_finishing_message(user, months_count)
+    report = OrdersReport.creation_succeeded_message(user, months_count)
+    report.deliver!
+    report
+  end
+
+  def find_or_create_customer(user, email)
+    unless (customer = Customer.order(created_at: :desc).find_by(user_id: user.id))
+      stripe_customer = Stripe::Customer.create(email: email, metadata: {user_id: user_id})
+      customer = Customer.create!(user_id: user.id, stripe_customer_id: stripe_customer.id)
+    end
+    customer.stripe_customer_id
+  end
+
+  def create_subscription(user, customer_id, price_id, price, months_count)
+    Stripe::Subscription.create(
+        customer: customer_id,
+        items: [{price: price_id}],
+        metadata: {user_id: user.id, price: price, months_count: months_count},
+    )
   end
 end

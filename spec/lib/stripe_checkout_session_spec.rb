@@ -34,13 +34,12 @@ RSpec.describe StripeCheckoutSession, type: :model do
     subject { described_class.send(:find_or_create_customer, user) }
 
     context 'User has a customer_id' do
-      before { allow(user).to receive(:valid_customer_id).and_return('cus_xxx') }
+      before { create(:customer, user_id: user.id, stripe_customer_id: 'cus_xxx') }
       it { is_expected.to eq('cus_xxx') }
     end
 
     context "User doesn't a customer_id" do
       let(:stripe_customer) { double('stripe customer', id: 'cus_xxx') }
-      before { allow(user).to receive(:valid_customer_id).and_return(nil) }
       it do
         expect(described_class).to receive(:create_stripe_customer).with(user.id, user.email).and_return(stripe_customer)
         is_expected.to eq('cus_xxx')

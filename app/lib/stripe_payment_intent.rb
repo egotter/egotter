@@ -3,6 +3,7 @@ class StripePaymentIntent
   class << self
     def create(user)
       unless (customer_id = user.valid_customer_id)
+        # TODO Fix: Don't create a Customer at this point.
         customer_id = Stripe::Customer.create(metadata: {user_id: user.id}).id
       end
 
