@@ -1,7 +1,7 @@
 class SyncOrderSubscriptionWorker
   include Sidekiq::Worker
   include WorkerErrorHandler
-  sidekiq_options queue: 'misc', retry: 0, backtrace: false
+  sidekiq_options queue: 'misc_low', retry: 0, backtrace: false
 
   # options:
   def perform(order_id, options = {})
