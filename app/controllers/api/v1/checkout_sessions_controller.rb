@@ -8,37 +8,19 @@ module Api
       before_action :require_login!
       before_action :doesnt_have_valid_subscription!
 
-      after_action :log_event
-      after_action :send_message
-
       def create
-        @session = StripeCheckoutSession.create(current_user)
-        render json: {session_id: @session.id}
+        session = StripeCheckoutSession.create(current_user)
+        track_order_activity(checkout_session_id: session.id)
+        send_message(session)
+        render json: {session_id: session.id}
       end
 
       private
 
-      def log_event
-        if @session
-          props = {id: @session.id, customer: @session.customer, metadata: @session.metadata, referer: request.referer.to_s.truncate(200)}
-          track_order_activity(checkout_session: props)
-        else
-          logger.warn "#{controller_name}##{action_name}: StripeCheckoutSession is not found user_id=#{current_user.id}"
-        end
-      rescue => e
-        logger.warn "#{controller_name}##{action_name}: #{e.inspect} stripe_checkout_session=#{@session&.inspect}"
-      end
-
-      def send_message
-        if @session
-          message = "user_id=#{current_user.id} checkout_session_id=#{@session.id} referer=#{request.referer.to_s.truncate(200)}"
-          SlackMessage.create(channel: 'orders_cs_created', message: message)
-          SendMessageToSlackWorker.perform_async(:orders_cs_created, "`#{Rails.env}` #{message}")
-        else
-          logger.warn "#{controller_name}##{action_name}: StripeCheckoutSession is not found user_id=#{current_user.id}"
-        end
-      rescue => e
-        logger.warn "#{controller_name}##{action_name}: #{e.inspect} stripe_checkout_session=#{@session&.inspect}"
+      def send_message(session)
+        message = "user_id=#{current_user.id} checkout_session_id=#{session.id} via=#{params[:via]} referer=#{request.referer.to_s.truncate(200)}"
+        SlackMessage.create(channel: 'orders_cs_created', message: message)
+        SendMessageToSlackWorker.perform_async(:orders_cs_created, "`#{Rails.env}` #{message}")
       end
     end
   end
