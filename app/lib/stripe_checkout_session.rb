@@ -19,28 +19,44 @@ class StripeCheckoutSession
           cancel_url: ENV['STRIPE_CANCEL_URL'],
       }
 
-      if (customer_id = user.valid_customer_id)
-        attrs[:customer] = customer_id
-        attrs[:discounts] = []
-      else
-        attrs[:customer] = create_stripe_customer(user.id, user.email).id
+      attrs[:customer] = find_or_create_customer(user)
+      if apply_trial_days?(user)
         attrs[:subscription_data][:trial_period_days] = Order::TRIAL_DAYS
-        attrs[:discounts] = [{coupon: Order::COUPON_ID}]
       end
-
-      if attrs[:discounts].empty? && user.coupons_stripe_coupon_ids.any?
-        attrs[:discounts] = [{coupon: user.coupons_stripe_coupon_ids[-1]}]
-      end
-
+      attrs[:discounts] = available_discounts(user)
       attrs[:metadata][:price] = calculate_price(attrs)
 
       attrs
+    end
+
+    def find_or_create_customer(user)
+      if (customer_id = user.valid_customer_id)
+        customer_id
+      else
+        create_stripe_customer(user.id, user.email).id
+      end
     end
 
     def create_stripe_customer(user_id, email)
       options = {metadata: {user_id: user_id}}
       options[:email] = email if email&.match?(/\A[^@]+@[^@]+\z/)
       Stripe::Customer.create(options)
+    end
+
+    def apply_trial_days?(user)
+      user.orders.empty?
+    end
+
+    def available_discounts(user)
+      if user.orders.any?
+        if user.coupons_stripe_coupon_ids.any?
+          [{coupon: user.coupons_stripe_coupon_ids[-1]}]
+        else
+          []
+        end
+      else
+        [{coupon: Order::COUPON_ID}]
+      end
     end
 
     def calculate_price(attrs)
