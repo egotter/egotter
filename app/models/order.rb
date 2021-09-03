@@ -133,45 +133,12 @@ class Order < ApplicationRecord
     end
   end
 
-  def sync_stripe_attributes!
-    if (customer = Stripe::Customer.retrieve(customer_id)) && customer.email.present?
-      self.email = customer.email
-    end
-
-    if (subscription = fetch_stripe_subscription)
-      # self.name = subscription.name
-      # self.price = subscription.price
-
-      if subscription.canceled_at
-        self.canceled_at = subscription.canceled_at
-      end
-
-      if trial_end.nil?
-        self.trial_end = subscription.trial_end
-      end
-    end
-
-    if changed?
-      save!
-      saved_changes.except('updated_at')
-    else
-      nil
-    end
-  rescue => e
-    logger.warn "#{__method__}: #{e.inspect} order_id=#{id}"
-    {exception: e}
-  end
-
   def short_name
     if name.include?('（')
       name.split('（')[0]
     else
       name
     end
-  end
-
-  def fetch_stripe_subscription
-    subscription_id ? StripeSubscription.new(subscription_id) : nil
   end
 
   # For debugging

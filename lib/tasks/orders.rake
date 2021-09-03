@@ -2,17 +2,9 @@ namespace :orders do
   desc 'Update stripe attributes'
   task update_stripe_attributes: :environment do
     Order.where(canceled_at: nil).find_each.with_index do |order, i|
-      SyncStripeAttributesWorker.perform_async(order.id)
+      SyncOrderEmailWorker.perform_async(order.id)
+      SyncOrderSubscriptionWorker.perform_async(order.id)
       sleep 3 if i != 0 && i % 50 == 0
-    end
-  end
-
-  desc 'update trial_end'
-  task update_trial_end: :environment do
-    Order.find_each do |order|
-      if order.trial_end.nil?
-        order.update(trial_end: order.fetch_stripe_subscription.trial_end)
-      end
     end
   end
 

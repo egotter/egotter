@@ -20,22 +20,6 @@ RSpec.describe Order, type: :model do
     # TODO
   end
 
-  describe '#sync_stripe_attributes!' do
-    let(:customer) { double('customer', email: 'a@b.com') }
-    let(:subscription) { double('subscription', name: 'name', price: 'price', canceled_at: nil, trial_end: Time.zone.now.to_i) }
-    subject { order.sync_stripe_attributes! }
-    before do
-      allow(Stripe::Customer).to receive(:retrieve).with(order.customer_id).and_return(customer)
-      allow(order).to receive(:fetch_stripe_subscription).and_return(subscription)
-    end
-    it do
-      subject
-      order.reload
-      expect(order.email).to eq(customer.email)
-      expect(order.trial_end).to eq(subscription.trial_end)
-    end
-  end
-
   describe '#cancel!' do
     let(:order) { create(:order, user_id: user.id, subscription_id: 'sub_111', canceled_at: nil) }
     let(:canceled_at) { Time.zone.at(Time.zone.now.to_i) }
