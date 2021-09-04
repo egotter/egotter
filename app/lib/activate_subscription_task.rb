@@ -62,7 +62,7 @@ class ActivateSubscriptionTask
 
   def find_or_create_customer(user, email)
     unless (customer = Customer.order(created_at: :desc).find_by(user_id: user.id))
-      stripe_customer = Stripe::Customer.create(email: email, metadata: {user_id: user_id})
+      stripe_customer = Stripe::Customer.create(email: email, metadata: {user_id: user.id})
       customer = Customer.create!(user_id: user.id, stripe_customer_id: stripe_customer.id)
     end
     customer.stripe_customer_id
