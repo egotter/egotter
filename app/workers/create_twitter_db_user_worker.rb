@@ -44,7 +44,7 @@ class CreateTwitterDBUserWorker
       if target_uids && target_uids.size > 1
         slice_and_retry(target_uids, options)
       else
-        logger.warn "#{e.message} uids=#{target_uids.inspect} options=#{options.inspect}"
+        logger.info "#{e.message} uids=#{target_uids.inspect} options=#{options.inspect}"
       end
     else
       handle_worker_error(e, uids_size: target_uids.size, uids: target_uids, options: options)
