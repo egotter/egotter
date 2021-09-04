@@ -6,7 +6,8 @@ class OrdersController < ApplicationController
   before_action :require_login!, only: %i(success failure end_trial_failure)
   before_action :set_stripe_checkout_session, only: :success
 
-  after_action :track_order_activity
+  after_action(only: %i(success failure end_trial_failure)) { track_page_order_activity(stripe_session_id: params[:stripe_session_id]) }
+  after_action :track_webhook_order_activity, only: :checkout_session_completed
 
   def success
     unless current_user.orders.where(subscription_id: @checkout_session.subscription).exists?

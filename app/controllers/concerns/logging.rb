@@ -142,6 +142,24 @@ module Logging
     logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
   end
 
+  def track_page_order_activity(options = {})
+    properties = {
+        path: request.path,
+        via: params[:via]
+    }.merge(options).delete_if { |_, v| v.blank? }.presence
+    ahoy.track('Order activity', properties)
+  rescue => e
+    logger.warn "#{controller_name}##{action_name}: #{e.inspect} options=#{options}"
+  end
+
+  def track_webhook_order_activity
+    properties = {path: request.path, id: params[:id], type: params[:type]}
+    ahoy.track('Order activity', properties)
+  rescue => e
+    logger.warn "#{action_name}: #{e.inspect}"
+  end
+
+  # TODO Remove later
   def track_order_activity(prop = {})
     event_params = request.query_parameters.dup.merge(request.request_parameters).except(:data, :locale, :utf8, :authenticity_token)
     properties = {path: request.path, params: event_params}.merge(prop)

@@ -8,7 +8,7 @@ module Api
       before_action :require_login!
       before_action :has_valid_subscription!, except: :index
 
-      after_action :track_order_activity
+      after_action { track_page_order_activity(order_id: params[:id]) }
 
       INTERVAL = 5
 

@@ -8,11 +8,11 @@ module Api
       before_action :require_login!
       before_action :doesnt_have_valid_subscription!
 
+      after_action { track_page_order_activity(stripe_session_id: @stripe_session_id, button_id: params[:button_id]) }
+      after_action { send_message(@stripe_session_id) }
+
       def create
-        session_id = create_session(current_user)
-        track_order_activity(id: session_id)
-        send_message(session_id)
-        render json: {session_id: session_id}
+        render json: {session_id: create_session(current_user)}
       end
 
       private
@@ -20,7 +20,7 @@ module Api
       def create_session(user)
         stripe_session = StripeCheckoutSession.create(user)
         CheckoutSession.create!(user_id: user.id, stripe_checkout_session_id: stripe_session.id)
-        stripe_session.id
+        @stripe_session_id = stripe_session.id
       end
 
       # TODO Remove later
