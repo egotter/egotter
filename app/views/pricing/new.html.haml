@@ -46,7 +46,7 @@
 %h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_options.subscription.title')
 %p
   = t('.payment_options.subscription.description')
-  = link_to t('.payment_options.purchase'), '#', class: 'btn btn-outline-primary btn-sm btn-checkout'
+  = link_to t('.payment_options.purchase'), '#', id: 'btn-purchase-subscription', class: 'btn btn-outline-primary btn-sm btn-checkout'
 
 %h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_options.one_purchase.title')
 %p
@@ -161,7 +161,7 @@
     - if current_user.has_valid_subscription?
       .btn.btn-outline-primary.disabled= t('.basic_plan_purchased')
     - else
-      = link_to t('.purchase'), '#', class: 'btn btn-primary btn-lg btn-checkout'
+      = link_to t('.purchase'), '#', id: 'btn-advantages-list', class: 'btn btn-primary btn-lg btn-checkout'
   - else
     = link_to t('.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
 .small.my-4

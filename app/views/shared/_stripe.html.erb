@@ -47,22 +47,12 @@
       var eventCategory = '<%= "#{controller_name}##{action_name}" %>';
       var user = {id: '<%= current_user.id %>'};
 
-      function old_redirectToCheckout() {
-        stripe.redirectToCheckout({
-          items: [{
-            plan: "<%= Order::BASIC_PLAN_ID %>",
-            quantity: 1
-          }],
-          clientReferenceId: user.id,
-          successUrl: '<%= ENV['STRIPE_SUCCESS_URL'] %>',
-          cancelUrl: '<%= raw pricing_url(via: current_via('cancel_order')) %>'
-        }).then(function (result) {
-          logger.log(result.error.message);
-        });
-      }
-
-      function redirectToCheckout() {
+      function redirectToCheckout(buttonId) {
         var url = '<%= raw api_v1_checkout_sessions_path(via: current_via) %>';
+        if (buttonId) {
+          url += '&button_id=' + buttonId;
+        }
+
         $.post(url).done(function (res) {
           stripe.redirectToCheckout({sessionId: res.session_id}).then(function (result) {
             logger.log(result.error.message);
@@ -80,10 +70,11 @@
         });
 
         var page = window.location.href;
+        var buttonId = $(this).attr('id');
         var text = $(this).text().trim();
-        ahoy.track('CheckoutButton clicked', {page: page, text: text});
+        ahoy.track('CheckoutButton clicked', {page: page, id: buttonId, text: text});
 
-        redirectToCheckout();
+        redirectToCheckout(buttonId);
 
         return false;
       });
