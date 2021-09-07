@@ -47,6 +47,7 @@ class GmailClient
     message.to = to
     message.subject = subject
     message.body = body
+    message.content_type = 'text/plain; charset=UTF-8'
     encoded_message = Google::Apis::GmailV1::Message.new(raw: message.to_s, thread_id: thread_id)
     @client.send_user_message('me', encoded_message)
   end
