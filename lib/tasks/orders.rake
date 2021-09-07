@@ -44,6 +44,6 @@ namespace :orders do
         ENV['MONTHS_COUNT'],
         email: ENV['EMAIL'],
         price_id: ENV['PRICE_ID']
-    ).start!
+    ).start
   end
 end

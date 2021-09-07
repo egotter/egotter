@@ -10,14 +10,14 @@ class ActivateSubscriptionTask
     @order_name = "えごったー ベーシック #{@months_count}ヶ月分"
   end
 
-  def start!
-    validate!
-    start_task!
+  def start
+    validate_task
+    start_task
   end
 
   private
 
-  def validate!
+  def validate_task
     @user.api_client.twitter.verify_credentials
 
     if @user.has_valid_subscription?
@@ -31,7 +31,7 @@ class ActivateSubscriptionTask
     puts "months=#{@months_count}"
   end
 
-  def start_task!
+  def start_task
     send_starting_message(@user)
 
     customer_id = find_or_create_customer(@user, @email)
