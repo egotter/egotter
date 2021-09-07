@@ -4,10 +4,10 @@ namespace :shop_orders do
     to_addresses = ENV['TO'].split(',')
 
     to_addresses.each do |to|
-      if (users = User.select(:id, :screen_name).where(email: to))
+      if (users = User.select(:id, :screen_name).where(email: to)).any?
         puts 'Users found'
         users.each { |user| puts "id=#{user.id} screen_name=#{user.screen_name}" }
-      elsif (orders = Order.select(:id, :user_id).where(email: to))
+      elsif (orders = Order.select(:id, :user_id).where(email: to)).any?
         puts 'Orders found'
         orders.each { |order| puts "id=#{order.id} user_id=#{order.user_id} screen_name=#{order.user.screen_name}" }
       else
@@ -26,10 +26,10 @@ namespace :shop_orders do
     to_addresses = ENV['TO'].split(',')
 
     to_addresses.each do |to|
-      if (users = User.select(:id, :screen_name).where(email: to))
+      if (users = User.select(:id, :screen_name).where(email: to)).any?
         puts 'Users found'
         users.each { |user| puts "id=#{user.id} screen_name=#{user.screen_name}" }
-      elsif (orders = Order.select(:id, :user_id).where(email: to))
+      elsif (orders = Order.select(:id, :user_id).where(email: to)).any?
         puts 'Orders found'
         orders.each { |order| puts "id=#{order.id} user_id=#{order.user_id} screen_name=#{order.user.screen_name}" }
       else
