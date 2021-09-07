@@ -304,8 +304,7 @@
   <% end %>
 
   <% faq_question '有料プランを解約する方法' do %>
-    設定ページからプランの解約をクリックしてください。
-    <%= link_to '設定ページ', settings_path(via: via), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    <%= link_to '設定ページ > 購入履歴', settings_order_history_path(via: via) %> からプランの解約をクリックしてください。
   <% end %>
 
   <% faq_question '有料プランの返金' do %>
@@ -730,8 +729,7 @@
   <% end %>
 
   <% faq_question '有料プランを解約する方法' do %>
-    設定ページからプランの解約をクリックしてください。
-    <%= link_to '設定ページ', settings_path(via: via), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    <%= link_to '設定ページ > 購入履歴', settings_order_history_path(via: via) %> からプランの解約をクリックしてください。
   <% end %>
 
   <% faq_question 'クレジットカード情報を削除する方法' do %>
