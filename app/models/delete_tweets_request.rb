@@ -199,7 +199,7 @@ class DeleteTweetsRequest < ApplicationRecord
       if TwitterApiStatus.temporarily_locked?(e)
         # Do nothing
       elsif DirectMessageStatus.enhance_your_calm?(e)
-        logger.warn "#{self.class}##{__method__}: #{e.inspect}"
+        logger.warn "#{self.class}##{__method__}: #{e.inspect} id=#{id}"
       else
         raise e
       end
