@@ -139,7 +139,7 @@ RSpec.describe TwitterUserCalculator do
   end
 
   describe '#unfriends_builder' do
-    subject { twitter_user.unfriends_builder }
+    subject { twitter_user.send(:unfriends_builder) }
     it do
       expect(UnfriendsBuilder).to receive(:new).with(twitter_user.uid, end_date: twitter_user.created_at).and_return('builder')
       is_expected.to eq('builder')

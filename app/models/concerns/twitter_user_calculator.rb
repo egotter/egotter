@@ -129,10 +129,6 @@ module TwitterUserCalculator
     (calc_unfriend_uids & calc_unfollower_uids).uniq
   end
 
-  def unfriends_builder
-    @unfriends_builder ||= UnfriendsBuilder.new(uid, end_date: created_at)
-  end
-
   def calc_unfriend_uids
     unfriends_builder.unfriends.flatten
   end
@@ -162,6 +158,10 @@ module TwitterUserCalculator
   end
 
   private
+
+  def unfriends_builder
+    @unfriends_builder ||= UnfriendsBuilder.new(uid, end_date: created_at)
+  end
 
   def next_older_record
     TwitterUser.where(uid: uid).where('created_at < ?', created_at).order(created_at: :desc).first

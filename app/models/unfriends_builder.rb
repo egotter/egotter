@@ -3,11 +3,11 @@ class UnfriendsBuilder
   # TODO Decrease to avoid high loads
   DEFAULT_LIMIT = 100
 
-  def initialize(uid, start_date: nil, end_date:, limit: DEFAULT_LIMIT)
+  def initialize(uid, start_date: nil, end_date:, threads: 1, limit: DEFAULT_LIMIT)
     @users = Util.users(uid, start_date, end_date, limit: limit)
 
     # Experimental preload
-    Parallel.each(@users, in_threads: 10) do |user|
+    Parallel.each(@users, in_threads: threads) do |user|
       user.friend_uids
       user.follower_uids
     end
