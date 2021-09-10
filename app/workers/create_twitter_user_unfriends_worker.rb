@@ -25,7 +25,7 @@ class CreateTwitterUserUnfriendsWorker
   end
 
   def _timeout_in
-    30.seconds
+    60.seconds
   end
 
   # options:
