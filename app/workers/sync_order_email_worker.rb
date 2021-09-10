@@ -7,8 +7,8 @@ class SyncOrderEmailWorker
   def perform(order_id, options = {})
     order = Order.find(order_id)
 
-    if (new_email = fetch_customer_email(order.customer_id)) && order.email != new_email
-      order.update!(email: new_email)
+    if !order.email && (email = fetch_customer_email(order.customer_id))
+      order.update!(email: email)
       send_message(order_id, order.saved_change_to_email)
     end
   rescue => e

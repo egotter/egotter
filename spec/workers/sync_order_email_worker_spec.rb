@@ -20,5 +20,15 @@ RSpec.describe SyncOrderEmailWorker do
       order.reload
       expect(order.email).to eq(new_email)
     end
+
+    context 'The order has an email' do
+      before { order.email = 'info@example.com' }
+      it do
+        expect(worker).not_to receive(:send_message)
+        subject
+        order.reload
+        expect(order.email).to eq('info@example.com')
+      end
+    end
   end
 end
