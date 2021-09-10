@@ -24,19 +24,19 @@ class SyncOrderSubscriptionWorker
   def update_canceled_at(order, subscription)
     if (timestamp = subscription.canceled_at)
       order.update!(canceled_at: Time.zone.at(timestamp))
-      send_message(order.id, order.saved_change_to_canceled_at)
+      send_message(order)
     end
   end
 
   def update_trial_end(order, subscription)
     if !order.trial_end && (trial_end = subscription.trial_end)
       order.update!(trial_end: trial_end)
-      send_message(order.id, order.saved_change_to_trial_end)
+      send_message(order)
     end
   end
 
-  def send_message(order_id, changes, channel = 'orders_sync')
-    message = "#{order_id} #{changes}"
+  def send_message(order, channel = 'orders_sync')
+    message = "#{order.id} #{order.saved_changes.except('updated_at')}"
     SlackMessage.create(channel: channel, message: message)
     SlackBotClient.channel(channel).post_message("`#{Rails.env}` #{message}")
   end

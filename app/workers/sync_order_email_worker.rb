@@ -9,7 +9,7 @@ class SyncOrderEmailWorker
 
     if !order.email && (email = fetch_customer_email(order.customer_id))
       order.update!(email: email)
-      send_message(order_id, order.saved_change_to_email)
+      send_message(order)
     end
   rescue => e
     handle_worker_error(e, order_id: order_id, options: options)
@@ -21,8 +21,8 @@ class SyncOrderEmailWorker
     customer_id && (customer = Stripe::Customer.retrieve(customer_id)) && customer.email
   end
 
-  def send_message(order_id, changes, channel = 'orders_sync')
-    message = "#{order_id} #{changes}"
+  def send_message(order, channel = 'orders_sync')
+    message = "#{order.id} #{order.saved_changes.except('updated_at')}"
     SlackMessage.create(channel: channel, message: message)
     SlackBotClient.channel(channel).post_message("`#{Rails.env}` #{message}")
   end

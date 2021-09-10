@@ -15,7 +15,7 @@ RSpec.describe SyncOrderEmailWorker do
     end
 
     it do
-      expect(worker).to receive(:send_message).with(order.id, [order.email, new_email])
+      expect(worker).to receive(:send_message).with(order)
       subject
       order.reload
       expect(order.email).to eq(new_email)
@@ -29,6 +29,15 @@ RSpec.describe SyncOrderEmailWorker do
         order.reload
         expect(order.email).to eq('info@example.com')
       end
+    end
+  end
+
+  describe '#send_message' do
+    subject { worker.send(:send_message, order) }
+    it do
+      expect(SlackMessage).to receive(:create).with(channel: 'orders_sync', message: instance_of(String))
+      expect(SlackBotClient).to receive_message_chain(:channel, :post_message).with('orders_sync').with(instance_of(String))
+      subject
     end
   end
 end

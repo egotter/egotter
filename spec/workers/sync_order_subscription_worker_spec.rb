@@ -26,7 +26,7 @@ RSpec.describe SyncOrderSubscriptionWorker do
     let(:subscription) { double('subscription', canceled_at: timestamp) }
     subject { worker.send(:update_canceled_at, order, subscription) }
     it do
-      expect(worker).to receive(:send_message).with(order.id, [nil, Time.zone.at(timestamp)])
+      expect(worker).to receive(:send_message).with(order)
       subject
       order.reload
       expect(order.canceled_at).to eq(Time.zone.at(timestamp))
@@ -38,10 +38,19 @@ RSpec.describe SyncOrderSubscriptionWorker do
     let(:subscription) { double('subscription', trial_end: timestamp) }
     subject { worker.send(:update_trial_end, order, subscription) }
     it do
-      expect(worker).to receive(:send_message).with(order.id, [nil, timestamp])
+      expect(worker).to receive(:send_message).with(order)
       subject
       order.reload
       expect(order.trial_end).to eq(timestamp)
+    end
+  end
+
+  describe '#send_message' do
+    subject { worker.send(:send_message, order) }
+    it do
+      expect(SlackMessage).to receive(:create).with(channel: 'orders_sync', message: instance_of(String))
+      expect(SlackBotClient).to receive_message_chain(:channel, :post_message).with('orders_sync').with(instance_of(String))
+      subject
     end
   end
 end
