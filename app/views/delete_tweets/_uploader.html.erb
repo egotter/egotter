@@ -2,19 +2,22 @@
 
 <script src="https://sdk.amazonaws.com/js/aws-sdk-2.820.0.min.js"></script>
 
-<% debug_attrs = t('.debug_attrs_html', device_type: request.device_type, os: request.os, browser: request.browser) %>
+<% debug_message = t('.debug_message_html', device_type: request.device_type, os: request.os, browser: request.browser) %>
+<% support_message = t('.support_message_html', url: twitter_web_url('egotter_cs')) %>
+<% message_options = {support_message: support_message, debug_message: debug_message} %>
+<% cs_url = twitter_web_url('egotter_cs') %>
 <script>
   $(function () {
     var i18n = {
-      invalidFilename: '<%= t('.invalid_filename_html', debug_attrs: debug_attrs) %>',
-      invalidContentType: '<%= t('.invalid_content_type_html', debug_attrs: debug_attrs) %>',
-      filesizeTooSmall: '<%= t('.filesize_too_small_html', debug_attrs: debug_attrs) %>',
-      filesizeTooLarge: '<%= t('.filesize_too_large_html', debug_attrs: debug_attrs) %>',
-      preparing: '<%= t('.preparing_html', url: image_path('/ajax-loader.gif'), debug_attrs: debug_attrs) %>',
-      uploading: '<%= t('.uploading_html', url: direct_message_url(User::EGOTTER_CS_UID), debug_attrs: debug_attrs) %>',
+      invalidFilename: '<%= t('.invalid_filename_html', message_options) %>',
+      invalidContentType: '<%= t('.invalid_content_type_html', message_options) %>',
+      filesizeTooSmall: '<%= t('.filesize_too_small_html', message_options) %>',
+      filesizeTooLarge: '<%= t('.filesize_too_large_html', {url: cs_url}.merge(message_options)) %>',
+      preparing: '<%= t('.preparing_html', {image_url: image_path('/ajax-loader.gif'), url: cs_url}.merge(debug_message: debug_message)) %>',
+      uploading: '<%= t('.uploading_html', url: cs_url, debug_message: debug_message) %>',
       alertOnBeforeunload: '<%= t('.alert_on_beforeunload') %>',
-      success: '<%= t('.success_html') %>',
-      fail: '<%= t('.fail_html', debug_attrs: debug_attrs) %>'
+      success: '<%= t('.success_html', url: cs_url) %>',
+      fail: '<%= t('.fail_html', url: cs_url, debug_message: debug_message) %>'
     };
     var options = {
       IdentityPoolId: '<%= identity_pool_id %>',
