@@ -42,16 +42,6 @@ class StartDeletingTweetsTask
     end
     puts "user=#{user.screen_name}"
 
-    unless user.has_valid_subscription?
-      raise "The user doesn't has valid subscription user_id=#{user.id}"
-    end
-    puts "has_valid_subscription=#{user.has_valid_subscription?}"
-
-    if user.has_trial_subscription?
-      user.valid_order.end_trial!
-    end
-    puts "has_trial_subscription=#{user.has_trial_subscription?}"
-
     if @tweets.empty?
       raise "There are no tweets user_id=#{user.id}"
     end
