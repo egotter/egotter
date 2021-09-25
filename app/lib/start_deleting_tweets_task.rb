@@ -54,7 +54,8 @@ class StartDeletingTweetsTask
       tweet = user.api_client.twitter.status(tweet_ids[i])
       break
     rescue => e
-      if TweetStatus.no_status_found?(e) || TweetStatus.not_authorized?(e)
+      if TweetStatus.no_status_found?(e) || TweetStatus.not_authorized?(e) || TweetStatus.you_have_been_blocked?(e)
+        puts "Skip #{e.message} tweet_id=#{tweet_ids[i]}"
         next
       else
         raise "#{e.message} tweet_id=#{tweet_ids[i]}"

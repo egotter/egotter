@@ -17,6 +17,10 @@ class TweetStatus
       ex.class == Twitter::Error::Forbidden && ex.message == 'Sorry, you are not authorized to see this status.'
     end
 
+    def you_have_been_blocked?(ex)
+      ex.class == Twitter::Error::Unauthorized && ex.message == 'You have been blocked from the author of this tweet.'
+    end
+
     def temporarily_locked?(ex)
       ex.class == Twitter::Error::Forbidden && ex.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
     end
