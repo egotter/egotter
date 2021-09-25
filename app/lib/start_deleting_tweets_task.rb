@@ -11,7 +11,7 @@ class StartDeletingTweetsTask
     @threads = threads&.to_i || 4
   end
 
-  def start!
+  def start
     validate!
 
     puts "first_tweet=#{@tweets[0].created_at.to_s(:db)}"
@@ -19,6 +19,7 @@ class StartDeletingTweetsTask
 
     initialize_task!
     start_task!
+    send_dm
   end
 
   private
@@ -119,6 +120,15 @@ class StartDeletingTweetsTask
       request = DeleteTweetsByArchiveRequest.create!(user_id: user.id, since_date: @since, until_date: @until, reservations_count: @deletable_tweets.size)
       puts "request_id=#{request.id}"
       request.perform(@deletable_tweets, sync: @sync, threads: @threads)
+    end
+  end
+
+  def send_dm
+    if (user = User.find_by(screen_name: @screen_name))
+      request = DeleteTweetsByArchiveRequest.order(created_at: :desc).find_by(user_id: user.id)
+      report = DeleteTweetsReport.delete_completed_message(user, request.deletions_count)
+      report.deliver!
+      puts report.message
     end
   end
 
