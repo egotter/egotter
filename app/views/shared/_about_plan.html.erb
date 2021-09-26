@@ -1,0 +1,12 @@
+<%= alert_box class: 'my-4' do %>
+  <% if user_signed_in? %>
+    <img class="rounded-circle" src="<%= current_user_icon %>" width="20" height="20">
+    <%= t('.user', user: current_user.screen_name) %>
+  <% else %>
+    <%= t('.visitor') %>
+  <% end %>
+  <%= t('.description') %>
+  <% if action_name != 'order_history' && user_signed_in? && current_user.has_valid_subscription? %>
+    <%= t('.canceling_html', url: settings_order_history_path(via: current_via('plan_notice'))) %>
+  <% end %>
+<% end %>

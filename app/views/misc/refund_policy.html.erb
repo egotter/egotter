@@ -3,17 +3,7 @@
 <h2 class="h4 text-center my-5"><%= t('.title') %></h2>
 <p><%= t('.description_html', url: twitter_web_url('egotter_cs')) %></p>
 
-<%= alert_box class: 'my-4' do %>
-  <p>
-    <% if user_signed_in? %>
-      <img class="rounded-circle" src="<%= current_user_icon %>" width="20" height="20">
-      <%= t('.user', user: current_user.screen_name) %>
-    <% else %>
-      <%= t('.visitor') %>
-    <% end %>
-  </p>
-  <div><%= t('.about_plans') %></div>
-<% end %>
+<%= render partial: 'shared/about_plan' %>
 
 <hr>
 

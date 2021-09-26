@@ -621,8 +621,6 @@ ja:
     order_history:
       return: '← 設定ページ'
       title: '購入履歴'
-      user: '@%{user} でログイン中です。'
-      about_plans: '購入済みの有料プランについてお問い合わせをする際は、購入したアカウントでログインしているかを事前にご確認ください。'
       about_bulk_purchase: 'コンビニ決済や一括購入割引をご希望される方はこちらをご覧ください。'
       see_plans: '料金プラン'
       about_purchase: 'お試し期間（初回限定）付きのプランをクレジットカードで購入するにはこちらです。'
@@ -916,9 +914,6 @@ ja:
       title: "お問い合わせ"
       about_ego_tter_html: '気になることや分からないことについて、お気軽にお問い合わせください。公式アカウントは <a href="%{url}" target="_blank">@ego_tter</a> です。'
       about_egotter_cs_html: 'お返事が必要なお問い合わせについては <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
-      user: '@%{user} でログイン中です。'
-      visitor: 'まだログインしていません。'
-      about_plans: '購入済みの有料プランについてお問い合わせをする際は、購入したアカウントでログインしているかを事前にご確認ください。'
       faq: "よくあるご質問"
     faq:
       search: '@%{user} を分析する'
@@ -934,9 +929,6 @@ ja:
     refund_policy:
       title: '返金ポリシー'
       description_html: 'えごったーの有料プランは、特別な事情がある場合は返金を行っています。気になることがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
-      user: '@%{user} でログイン中です。'
-      visitor: 'まだログインしていません。'
-      about_plans: '購入済みの有料プランについてお問い合わせをする際は、購入したアカウントでログインしているかを事前にご確認ください。'
       trial:
         title: 'お試し期間中の場合'
         description: '期間内にプランを解約すれば支払いは発生しません。'
@@ -2053,6 +2045,11 @@ ja:
       need_purchase: '%{count}人 以上の結果を見るには有料プランの購入が必要です。'
       see_details: 'もっと見る'
       see_more: "もっと見る"
+    about_plan:
+      user: '@%{user} でログイン中です。'
+      visitor: 'まだログインしていません。'
+      description: '購入済みの有料プランについてお問い合わせをする際は、購入したアカウントでログインしているかを事前にご確認ください。'
+      canceling_html: 'プランの解約は <a href="%{url}">設定 &gt; 購入履歴</a> から行うことができます。'
     announcement:
       title: "お知らせ"
     features:

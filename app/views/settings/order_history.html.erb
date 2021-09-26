@@ -6,13 +6,7 @@
 
 <div class="text-primary my-3"><%= t('.title') %></div>
 
-<%= alert_box class: 'my-5' do %>
-  <p>
-    <img class="rounded-circle" src="<%= current_user_icon %>" width="20" height="20">
-    <%= t('.user', user: current_user.screen_name) %>
-  </p>
-  <div><%= t('.about_plans') %></div>
-<% end %>
+<%= render partial: 'shared/about_plan' %>
 
 <div class="my-5">
   <%= t('.about_bulk_purchase') %>
