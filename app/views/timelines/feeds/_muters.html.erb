@@ -1,4 +1,25 @@
-<div id="feed-<%= feed_name %>" class="<%= feed_name %> feed-item card p-3">
-  <h3 class="h4 text-center"><%= feed_title %></h3>
-  <div class="text-center my-3"><%= feed_description %></div>
+<div id="feed-muters" class="muters feed-item card p-3">
+  <h3 class="h4 text-center"><%= t('.title') %></h3>
+
+  <div class="text-center my-3"><%= t('.description_html', user: twitter_user.screen_name) %></div>
+
+  <% if user_signed_in? && current_user.uid == twitter_user.uid %>
+    <div class="my-3"><%= t('.text_with_count', user: twitter_user.screen_name, count: twitter_user.muters_size) %></div>
+    <% if current_user.has_valid_subscription? %>
+      <% if current_user.has_trial_subscription? %>
+        <div class="text-muted small my-3"><%= t('.note2') %></div>
+        <a href="#" class="btn btn-primary btn-end-trial"><%= t('.end_trial') %></a>
+      <% else %>
+        <a href="<%= direct_message_url(User::EGOTTER_UID, t('short_messages.receive_mute_reports')) %>" class="btn btn-primary" target="_blank">
+          <%= t('.view') %>
+          <span><%= twitter_user.muters_size %></span>
+        </a>
+      <% end %>
+    <% else %>
+      <div class="text-muted small my-3"><%= t('.note1') %></div>
+      <a href="#" id="btn-feed-muters" class="btn btn-primary btn-checkout"><%= t('.purchase') %></a>
+    <% end %>
+  <% else %>
+    <div class="text-center my-3"><%= t('.not_signed_in') %></div>
+  <% end %>
 </div>

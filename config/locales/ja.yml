@@ -256,10 +256,14 @@ ja:
         note2: 'トライアル期間を終了すれば、Twitter IDまで分かります。'
       muters:
         title: 'ミュートされている'
-        description_html: |
-          @%{user} がミュートされたユーザーを集計しています。<br>
-          <br>
-          %{count}人からミュートされているようです。
+        description_html: '@%{user} がミュートされたユーザーを集計しています。'
+        not_signed_in: 'このデータは本人のみ見ることができます。'
+        text_with_count: '@%{user} は %{count}人 からミュートされているようです。'
+        end_trial: 'トライアル期間を終了する'
+        purchase: '有料プランを購入する'
+        view: '続きを見る'
+        note1: '有料プランを購入すれば、「先頭から2文字目」まで分かります。'
+        note2: 'トライアル期間を終了すれば、「先頭から2文字目」まで分かります。'
       mutual_friends:
         title: '相互フォロー'
         description: '@%{user} が相互フォローしているユーザーです。'

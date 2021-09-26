@@ -58,10 +58,7 @@ module TimelinesHelper
     when 'blockers'
       raise 'The attributes of blockers are embedded directly'
     when 'muters'
-      attrs.merge(
-          feed_title: t('timelines.feeds.muters.title'),
-          feed_description: t('timelines.feeds.muters.description_html', user: twitter_user.screen_name, count: twitter_user.muters_size),
-      )
+      raise 'The attributes of muters are embedded directly'
     when 'mutual_friends'
       attrs.merge(
           feed_title: t('timelines.feeds.mutual_friends.title'),
