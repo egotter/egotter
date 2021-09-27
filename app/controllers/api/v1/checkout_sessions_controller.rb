@@ -19,15 +19,28 @@ module Api
 
       def create_session(user)
         stripe_session = StripeCheckoutSession.create(user)
-        CheckoutSession.create!(user_id: user.id, stripe_checkout_session_id: stripe_session.id)
+        CheckoutSession.create!(user_id: user.id, stripe_checkout_session_id: stripe_session.id, properties: {button_id: params[:button_id]})
         @stripe_session_id = stripe_session.id
       end
 
       # TODO Remove later
       def send_message(session_id)
-        message = "user_id=#{current_user.id} checkout_session_id=#{session_id} button_id=#{params[:button_id]} via=#{params[:via]} referer=#{request.referer.to_s.truncate(200)}"
+        message = tracking_message(session_id)
         SlackMessage.create(channel: 'orders_cs_created', message: message)
         SendMessageToSlackWorker.perform_async(:orders_cs_created, "`#{Rails.env}` #{message}")
+      end
+
+      def tracking_message(session_id)
+        tracking_params.merge(checkout_session_id: session_id).map { |k, v| "#{k}=#{v}" }.join(' ')
+      end
+
+      def tracking_params
+        {
+            user_id: current_user.id,
+            button_id: params[:button_id],
+            via: params[:via],
+            referer: request.referer.to_s.truncate(200),
+        }
       end
     end
   end
