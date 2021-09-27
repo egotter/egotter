@@ -1,24 +1,13 @@
-<div class="my-3">
-  <% rendered_date = {} %>
-  <% @slack_messages.each do |slack_message| %>
-    <% time = slack_message.created_at.in_time_zone('Tokyo') %>
-    <% date = time.strftime('%-m/%d') %>
+<div class="m-3">
+  <% if @channel %>
+    <h2>#<%= @channel %></h2>
+  <% end %>
 
-    <% unless rendered_date.has_key?(date) %>
-      <% rendered_date[date] = 1 %>
-      <div class="font-weight-bold"><%= date %></div>
-    <% end %>
-
-    <div class="d-flex my-1">
-      <div class="text-muted mr-1">
-        <%= time.strftime('%H') %>:<%= time.strftime('%M') %>
-      </div>
-      <div>
-        <%= link_to slack_message_path(slack_message), class: 'text-body' do %>
-          <span>#<%= slack_message.channel %></span>
-          <span><%= slack_message.message %></span>
-        <% end %>
-      </div>
-    </div>
+  <% @slack_messages_groups.each do |date, slack_messages| %>
+    <div class="font-weight-bold"><%= date %></div>
+    <table class="table-hover">
+      <%= render slack_messages %>
+    </table>
   <% end %>
 </div>
+

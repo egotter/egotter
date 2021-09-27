@@ -1,0 +1,17 @@
+<% time = slack_message.created_at.in_time_zone('Tokyo') %>
+
+<tr>
+  <td>
+    <div class="small text-muted mr-1" style="margin-top: 2px; margin-bottom: 2px;">
+      <%= time.strftime('%H') %>:<%= time.strftime('%M') %>
+    </div>
+  </td>
+  <% unless @channel %>
+    <td>
+      <div class="small text-muted mr-1">#<%= slack_message.channel %></div>
+    </td>
+  <% end %>
+  <td>
+    <div class="small" style="white-space: nowrap;"><%= slack_message.message %></div>
+  </td>
+</tr>
