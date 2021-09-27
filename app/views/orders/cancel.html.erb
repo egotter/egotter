@@ -1,5 +1,6 @@
-<div class="card card-body mb-3">
-  <div>
-    <%= t('.message_html') %>
-  </div>
-</div>
+<h2 class="h4 text-center my-5"><%= t('.title') %></h2>
+
+<p><%= t('.message') %></p>
+<p><%= t('.order_history_html', url: settings_order_history_path(via: current_via)) %></p>
+<p><%= t('.support_html', url: twitter_web_url('egotter_cs')) %></p>
+

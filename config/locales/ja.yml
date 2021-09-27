@@ -827,10 +827,10 @@ ja:
       history_html: 'これまでの購入履歴は <a href="%{url}">設定ページ</a> から確認できます。'
       support_html: '分からないことや気になることがありますか？ <a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。'
     cancel:
-      message_html: |
-        ベーシックプランの購入をキャンセルしました。<br>
-        <br>
-        分からないことや気になることがありますか？ <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。
+      title: 'プランをキャンセルしました'
+      message: 'えごったーのほとんどの機能は無料のままでも使えます。今後ともぜひご利用ください。'
+      order_history_html: 'これまでの購入履歴は <a href="%{url}">設定 &gt; 購入履歴</a> から見ることができます。'
+      support_html: '分からないことや気になることがありますか？ <a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。'
   login:
     goodbye:
       page_title: 'ログアウト'

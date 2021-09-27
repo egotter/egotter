@@ -272,6 +272,7 @@ Rails.application.routes.draw do
   get 'orders/success', to: "orders#success"
   get 'orders/failure', to: "orders#failure"
   get 'orders/end_trial_failure', to: "orders#end_trial_failure"
+  get 'orders/cancel', to: "orders#cancel"
   post 'orders/checkout_session_completed', to: "orders#checkout_session_completed"
 
   get 'webhook/twitter', to: 'webhook#challenge'

@@ -78,12 +78,13 @@
 
   <script>
     $(function () {
+      var via = '<%= current_via %>';
       var $modal = $('#cancel-order-modal');
 
       $modal.find('.positive').on('click', function () {
         $modal.data('button').addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
         var i18n = {processing: '<%= t('.canceling_html') %>'};
-        new Order($modal.data('id'), i18n).cancel();
+        new Order($modal.data('id'), i18n, via).cancel();
       });
 
       $modal.on('show.bs.modal', function (e) {

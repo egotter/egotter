@@ -1,12 +1,12 @@
 class OrdersController < ApplicationController
 
-  skip_before_action :current_user_not_blocker?, only: %i(success failure end_trial_failure)
+  skip_before_action :current_user_not_blocker?
   skip_before_action :verify_authenticity_token, only: :checkout_session_completed
 
-  before_action :require_login!, only: %i(success failure end_trial_failure)
+  before_action :require_login!, only: %i(success failure end_trial_failure cancel)
   before_action :set_stripe_checkout_session, only: :success
 
-  after_action(only: %i(success failure end_trial_failure)) { track_page_order_activity(stripe_session_id: params[:stripe_session_id]) }
+  after_action(only: %i(success failure end_trial_failure cancel)) { track_page_order_activity(stripe_session_id: params[:stripe_session_id]) }
   after_action :track_webhook_order_activity, only: :checkout_session_completed
 
   def success
@@ -25,6 +25,9 @@ class OrdersController < ApplicationController
 
   def end_trial_failure
     send_message(:orders_end_trial_failure)
+  end
+
+  def cancel
   end
 
   def checkout_session_completed

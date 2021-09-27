@@ -1,11 +1,13 @@
 class Order {
-  constructor(id, i18n) {
+  constructor(id, i18n, via) {
     this.id = id;
     this.i18n = i18n;
+    this.via = via;
   }
 
   cancel() {
-    var url = '/api/v1/orders/cancel'; // api_v1_orders_cancel_path
+    var url = '/api/v1/orders/cancel?via=' + this.via; // api_v1_orders_cancel_path
+    var redirectUrl = '/orders/cancel?via=' + this.via; // orders_cancel_path
     var id = this.id;
     var i18n = this.i18n;
 
@@ -16,7 +18,7 @@ class Order {
       var interval = (res.interval || 10) * 1000;
 
       setTimeout(function () {
-        window.location.reload();
+        window.location = redirectUrl;
       }, interval);
     }).fail(showErrorMessage);
   }
