@@ -31,7 +31,7 @@
   <% else %>
     <div id="need-purchase-description" class="mb-3" style="display: none;">
       <%= t('.need_purchase', count: api_list_users_limit) %>
-      <%= link_to t('.see_details'), '#', class: 'btn btn-primary btn-checkout btn-sm' %>
+      <%= link_to t('.see_details'), '#', id: 'btn-load-more', class: 'btn btn-primary btn-checkout btn-sm' %>
     </div>
   <% end %>
 <% else %>
