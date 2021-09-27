@@ -44,9 +44,28 @@ module Api
       private
 
       def send_message(order)
-        message = "`#{action_name}` user_id=#{current_user.id} order_id=#{order.id} device_type=#{request.device_type} referer=#{request.referer}"
-        SlackMessage.create(channel: 'orders', message: message)
-        SendMessageToSlackWorker.perform_async(:orders, "`#{Rails.env}` #{message}")
+        channel = tracking_channel
+        message = "`#{action_name}` #{tracking_params.merge(order_id: order.id)}" # TODO Remove action_name
+        SlackMessage.create(channel: channel, message: message)
+        SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{message}")
+      end
+
+      def tracking_channel
+        case action_name
+        when 'end_trial'
+          'orders_end_trial'
+        when 'cancel'
+          'orders_cancel'
+        else
+          'orders'
+        end
+      end
+
+      def tracking_params
+        {
+            user_id: current_user.id,
+            referer: request.referer.to_s.truncate(200),
+        }
       end
     end
   end

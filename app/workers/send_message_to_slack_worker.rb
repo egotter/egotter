@@ -7,6 +7,8 @@ class SendMessageToSlackWorker
     orders_pi_succeeded
     orders_failure
     orders_end_trial_failure
+    orders_cancel
+    orders_end_trial
   )
 
   # options:
@@ -14,7 +16,7 @@ class SendMessageToSlackWorker
     raise "Set text!" if text.blank?
     title = "`#{title}`" if title
 
-    if BOT_CHANNELS.include?(channel)
+    if BOT_CHANNELS.include?(channel.to_s)
       SlackBotClient.channel(channel).post_message(text)
     else
       SlackClient.channel(channel).send_message(text, title: title)
