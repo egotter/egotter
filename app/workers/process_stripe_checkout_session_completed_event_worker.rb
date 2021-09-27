@@ -7,19 +7,19 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
     checkout_session = Stripe::Checkout::Session.retrieve(checkout_session_id)
 
     unless (user = User.find_by(id: checkout_session.client_reference_id))
-      send_message("User not found checkout_session_id=#{checkout_session_id}")
+      send_message('User not found', checkout_session_id)
       return
     end
 
     if user.has_valid_subscription?
-      send_message("User already has a subscription user_id=#{user.id} checkout_session_id=#{checkout_session_id}")
+      send_message('User already has a subscription', checkout_session_id, user_id: user.id)
       return
     end
 
     order = Order.create_by_checkout_session(checkout_session)
     update_trial_end_and_email(order)
 
-    send_message("Success user_id=#{user.id} order_id=#{order.id}")
+    send_message('Success', checkout_session_id, user_id: user.id, order_id: order.id)
   rescue => e
     logger.warn "#{e.inspect} checkout_session_id=#{checkout_session_id}"
   end
@@ -37,7 +37,8 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
     order.save if order.changed?
   end
 
-  def send_message(message)
+  def send_message(msg, checkout_session_id, options = {})
+    message = "#{msg} #{checkout_session_id} #{options}"
     SlackMessage.create(channel: 'orders_cs_completed', message: message)
     SlackBotClient.channel('orders_cs_completed').post_message("`#{Rails.env}` #{message}")
   rescue => e
