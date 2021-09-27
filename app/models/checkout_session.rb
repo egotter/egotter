@@ -5,6 +5,7 @@
 #  id                         :bigint(8)        not null, primary key
 #  user_id                    :bigint(8)        not null
 #  stripe_checkout_session_id :string(191)      not null
+#  properties                 :json
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
 #

@@ -293,6 +293,7 @@ ActiveRecord::Schema.define(version: 2021_09_03_201432) do
   create_table "checkout_sessions", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "stripe_checkout_session_id", null: false
+    t.json "properties"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_checkout_sessions_on_created_at"
