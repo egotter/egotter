@@ -10,7 +10,7 @@ module Api
 
       after_action { track_page_order_activity(order_id: params[:id]) }
 
-      INTERVAL = 5
+      INTERVAL = 3
 
       def index
         if (subscription = current_user.has_valid_subscription?)
@@ -45,7 +45,7 @@ module Api
 
       def send_message(order)
         channel = tracking_channel
-        message = "`#{action_name}` #{tracking_params.merge(order_id: order.id)}" # TODO Remove action_name
+        message = "#{tracking_params.merge(order_id: order.id)}"
         SlackMessage.create(channel: channel, message: message)
         SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{message}")
       end
@@ -64,6 +64,7 @@ module Api
       def tracking_params
         {
             user_id: current_user.id,
+            button_id: params[:button_id],
             referer: request.referer.to_s.truncate(200),
         }
       end

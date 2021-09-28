@@ -23,7 +23,6 @@ module Api
         @stripe_session_id = stripe_session.id
       end
 
-      # TODO Remove later
       def send_message(session_id)
         message = tracking_message(session_id)
         SlackMessage.create(channel: 'orders_cs_created', message: message)

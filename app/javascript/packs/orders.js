@@ -13,7 +13,7 @@ class Order {
 
     ToastMessage.info(i18n['processing']);
 
-    $.post(url, {id: id, path: window.location.href}).done(function (res) {
+    $.post(url, {id: id}).done(function (res) {
       ToastMessage.info(res.message);
       var interval = (res.interval || 10) * 1000;
 

@@ -8,7 +8,7 @@
       <% if current_user.has_trial_subscription? %>
         <div class="my-3"><%= t('.text_with_count', user: twitter_user.screen_name, count: twitter_user.blockers_size) %></div>
         <div class="text-muted small my-3"><%= t('.note2') %></div>
-        <a href="#" class="btn btn-primary btn-end-trial"><%= t('.end_trial') %></a>
+        <a href="#" id="btn-blockers-end-trial" class="btn btn-primary btn-end-trial"><%= t('.end_trial') %></a>
       <% else %>
         <div id="blockers-container" class="d-flex justify-content-center flex-wrap my-5"></div>
         <a href="<%= blockers_path(via: current_via) %>" class="btn btn-primary">

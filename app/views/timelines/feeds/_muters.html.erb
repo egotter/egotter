@@ -8,7 +8,7 @@
     <% if current_user.has_valid_subscription? %>
       <% if current_user.has_trial_subscription? %>
         <div class="text-muted small my-3"><%= t('.note2') %></div>
-        <a href="#" class="btn btn-primary btn-end-trial"><%= t('.end_trial') %></a>
+        <a href="#" id="btn-muters-end-trial" class="btn btn-primary btn-end-trial"><%= t('.end_trial') %></a>
       <% else %>
         <a href="<%= direct_message_url(User::EGOTTER_UID, t('short_messages.receive_mute_reports')) %>" class="btn btn-primary" target="_blank">
           <%= t('.view') %>

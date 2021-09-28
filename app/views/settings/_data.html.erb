@@ -7,7 +7,7 @@
     <% else %>
       <% if current_user.has_valid_subscription? %>
         <% if current_user.has_trial_subscription? %>
-          <span class="btn btn-warning btn-sm btn-end-trial"><%= t('.delete_caches.button') %></span>
+          <span id="btn-delete-cache-end-trial" class="btn btn-warning btn-sm btn-end-trial"><%= t('.delete_caches.button') %></span>
         <% else %>
           <%= link_to t('.delete_caches.button'), '#', class: 'btn btn-warning btn-sm', data: {target: '#reset-cache-modal', toggle: 'modal'} %>
           <%= render partial: 'modal/reset_cache_modal', locals: {modal_id: 'reset-cache-modal'} %>
@@ -32,7 +32,7 @@
     <% else %>
       <% if current_user.has_valid_subscription? %>
         <% if current_user.has_trial_subscription? %>
-          <span class="btn btn-danger btn-sm btn-end-trial"><%= t('.delete_data.button') %></span>
+          <span id="btn-delete-data-end-trial" class="btn btn-danger btn-sm btn-end-trial"><%= t('.delete_data.button') %></span>
         <% else %>
           <%= link_to t('.delete_data.button'), '#', class: 'btn btn-danger btn-sm', data: {target: '#reset-egotter-modal', toggle: 'modal'} %>
           <%= render partial: 'modal/reset_egotter_modal', locals: {modal_id: 'reset-egotter-modal'} %>

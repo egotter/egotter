@@ -34,6 +34,9 @@ class EndTrialModal {
 
   postEndTrial(callback) {
     var url = '/api/v1/orders/end_trial'; // api_v1_orders_end_trial_path
+    if (this.button) {
+      url += '?button_id=' + this.button.id;
+    }
 
     $.post(url).done(function (res) {
       ToastMessage.info(res.message);
