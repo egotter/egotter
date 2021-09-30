@@ -7,6 +7,8 @@
 %p= t('.page_description')
 %p= t('.page_description_note_html', url: twitter_web_url('egotter_cs'))
 
+= render partial: 'shared/about_plan'
+
 %hr
 
 %h2.h4.text-center.my-5= t('.benefits.title')
@@ -103,10 +105,6 @@
 
 %h2.h4.text-center.my-5= t('.contribution.title')
 %p= t('.contribution.description_html')
-
-%hr
-
-= render partial: 'current_plan'
 
 %hr
 

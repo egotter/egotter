@@ -800,12 +800,6 @@ ja:
       sign_in: 'ログインする'
       purchase: '購入する'
       plans: '料金プラン'
-    current_plan:
-      title: '%{user} の現在のプラン'
-      basic_plan_html: '「%{plan}」を購入済みです。プランの確認や解約は <a href="%{url}">設定ページ</a> から行うことができます。'
-      free_plan_html: 'まだプランを購入していません。'
-      visitor_html: 'まだプランを購入していません。ログインすれば、無料のまま検索回数を増やすことができます。<a href="%{url}" class="btn btn-outline-primary btn-sm">ログインする</a>'
-      visitor: 'あなた'
   orders:
     success:
       title: 'プランの購入が完了しました'

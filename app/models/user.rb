@@ -289,10 +289,6 @@ class User < ApplicationRecord
     order&.customer_id
   end
 
-  def purchased_plan_name
-    valid_order.short_name
-  end
-
   def purchased_search_count
     valid_order.search_count
   end
