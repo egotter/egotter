@@ -14,6 +14,12 @@ namespace :delete_tweets do
       puts "since=#{ENV['SINCE']} until=#{ENV['UNTIL']}"
     end
 
+    if ENV['SCREEN_NAME']
+      screen_name = ENV['SCREEN_NAME']
+    else
+      screen_name = User.find_by(uid: ENV['KEY'].split('-')[0]).screen_name
+    end
+
     unless ENV['FILE']
       raise 'Specify both KEY and FILE' unless ENV['KEY']
       dir = "/efs/lambda_production/#{ENV['KEY']}"
@@ -36,7 +42,7 @@ namespace :delete_tweets do
     puts 'Continue?'
 
     if STDIN.gets.chomp == 'YES'
-      task = StartDeletingTweetsTask.new(ENV['SCREEN_NAME'], ENV['FILE'], **options)
+      task = StartDeletingTweetsTask.new(screen_name, ENV['FILE'], **options)
       task.start
     end
   end
