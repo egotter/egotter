@@ -7,6 +7,8 @@ class WebhookController < ApplicationController
 
   before_action :verify_webhook_request, only: :twitter
 
+  after_action :track_twitter_webhook, only: :twitter
+
   def challenge
     render json: {response_token: crc_response}
   end
@@ -65,5 +67,13 @@ class WebhookController < ApplicationController
     secret = ENV['TWITTER_CONSUMER_SECRET']
     digest = OpenSSL::HMAC::digest('sha256', secret, payload)
     "sha256=#{Base64.encode64(digest).strip!}"
+  end
+
+  def track_twitter_webhook
+    if params[:direct_message_events]
+      ahoy.track('Twitter webhook', for_user_id: params[:for_user_id], direct_message_events: params[:direct_message_events])
+    end
+  rescue => e
+    logger.info "#track_twitter_webhook: #{e.inspect}"
   end
 end
