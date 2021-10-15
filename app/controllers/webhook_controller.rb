@@ -71,7 +71,15 @@ class WebhookController < ApplicationController
 
   def track_twitter_webhook
     if params[:direct_message_events]
-      ahoy.track('Twitter webhook', for_user_id: params[:for_user_id], direct_message_events: params[:direct_message_events])
+      events = params[:direct_message_events].map do |event|
+        {
+            id: event[:id],
+            type: event[:type],
+            message_create: {target: event[:message_create][:target], sender_id: event[:message_create][:sender_id]},
+            created_timestamp: event[:created_timestamp]
+        }
+      end
+      ahoy.track('Twitter webhook', for_user_id: params[:for_user_id], direct_message_events: events)
     end
   rescue => e
     logger.info "#track_twitter_webhook: #{e.inspect}"
