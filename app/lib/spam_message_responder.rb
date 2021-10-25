@@ -24,7 +24,7 @@ class SpamMessageResponder < AbstractMessageResponder
     end
 
     def received_regexp2
-      /^(しね|くず|うざ|くそ|ころす|きえろ|ばか|だまれ|かえれ|こら|おい|きも|ごみ|ゴミ|バカ|ちんぽ|ちんこ|まんこ|うんち|うんこ)$/
+      /^(しね|くず|うざ|くそ|ころす|きえろ|ばか|だまれ|かえれ|こら|きも|ごみ|ゴミ|バカ|ちんぽ|ちんこ|まんこ|うんち|うんこ)$/
     end
 
     def send_message
