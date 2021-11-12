@@ -145,7 +145,12 @@ module Logging
 
   def create_webhook_log
     save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
-    save_params.delete('users') if twitter_webhook?
+    if twitter_webhook?
+      save_params['apps'] = '[FILTERED]' if save_params['apps']
+      save_params['webhook']['apps'] = '[FILTERED]' if save_params['webhook'] && save_params['webhook']['apps']
+      save_params['users'] = '[FILTERED]' if save_params['users']
+      save_params['webhook']['users'] = '[FILTERED]' if save_params['webhook'] && save_params['webhook']['users']
+    end
 
     attrs = {
         controller:  controller_name,
