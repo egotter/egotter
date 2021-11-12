@@ -3,7 +3,7 @@ class CreateSearchLogWorker
   sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
   def perform(attrs)
-    SearchLog.create!(attrs)
+    Rails.logger.silence { SearchLog.create!(attrs) }
   rescue => e
     logger.warn "#{e.inspect} attrs=#{attrs.inspect}"
   end
