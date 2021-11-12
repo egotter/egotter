@@ -27,6 +27,7 @@ module Logging
   end
 
   def create_access_log(options = {})
+    return create_webhook_log if from_webhook?
     return create_crawler_log if from_crawler?
 
     uid, screen_name = find_uid_and_screen_name
@@ -138,6 +139,24 @@ module Logging
       user_agent:  request.user_agent.to_s.truncate(180),
     }
     CreateCrawlerLogWorker.perform_async(attrs)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+  end
+
+  def create_webhook_log
+    save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+
+    attrs = {
+        controller:  controller_name,
+        action:      action_name,
+        path:        request.path.to_s.truncate(180),
+        params:      save_params.empty? ? nil : save_params,
+        ip:          request.ip,
+        method:      request.method,
+        status:      response.status,
+        user_agent:  request.user_agent.to_s.truncate(180),
+    }
+    CreateWebhookLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
   end

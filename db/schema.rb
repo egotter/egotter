@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_03_201432) do
+ActiveRecord::Schema.define(version: 2021_11_12_100143) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -2043,6 +2043,19 @@ ActiveRecord::Schema.define(version: 2021_09_03_201432) do
     t.index ["created_at"], name: "index_warning_messages_on_created_at"
     t.index ["token"], name: "index_warning_messages_on_token", unique: true
     t.index ["user_id"], name: "index_warning_messages_on_user_id"
+  end
+
+  create_table "webhook_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "controller"
+    t.string "action"
+    t.string "path"
+    t.json "params"
+    t.string "ip"
+    t.string "method"
+    t.integer "status"
+    t.string "user_agent"
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_webhook_logs_on_created_at"
   end
 
   create_table "welcome_messages", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
