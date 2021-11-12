@@ -2,7 +2,8 @@ module Api
   module V1
     class UsersController < ApplicationController
 
-      skip_before_action :verify_authenticity_token, only: %i(update_instance_id update_device_token)
+      skip_before_action :verify_authenticity_token
+      before_action :check_key, only: :invalidate_expired_credentials, if: -> { Rails.env.production? }
 
       # Android
       def update_instance_id
@@ -45,6 +46,13 @@ module Api
         end
       end
 
+      def invalidate_expired_credentials
+        User.select(:id).where(created_at: 10.days.ago..9.days.ago).find_each do |user|
+          UpdateAuthorizedWorker.perform_async(user.id)
+        end
+        render json: {status: 'ok'}
+      end
+
       private
 
       # NOTICE The name #verified_request? conflicts with an existing method in Rails.
@@ -74,7 +82,11 @@ module Api
         response
       end
 
-
+      def check_key
+        unless params['key'] == ENV['STATS_API_KEY']
+          head :forbidden
+        end
+      end
     end
   end
 end

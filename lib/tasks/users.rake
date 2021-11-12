@@ -1,4 +1,5 @@
 namespace :users do
+  # TODO Remove later
   desc 'update authorized'
   task update_authorized: :environment do
     sigint = Sigint.new.trap

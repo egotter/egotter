@@ -43,6 +43,7 @@ Rails.application.routes.draw do
 
       post 'users/update_instance_id', to: 'users#update_instance_id'
       post 'users/update_device_token', to: 'users#update_device_token'
+      post 'users/invalidate_expired_credentials', to: 'users#invalidate_expired_credentials'
       post 'bots/invalidate_expired_credentials', to: 'bots#invalidate_expired_credentials'
       post 'metrics/send_to_cloudwatch', to: 'metrics#send_to_cloudwatch'
       post 'not_found_users/delete', to: 'not_found_users#delete'
