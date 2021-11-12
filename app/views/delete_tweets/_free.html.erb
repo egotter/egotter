@@ -1,20 +1,18 @@
-<div class="my-5"><%= t('.description', user: current_user.screen_name, count: max_count) %></div>
+<div class="my-5"><%= t('.description_html', user: current_user.screen_name, count: max_count) %></div>
 
 <%= alert_box class: 'my-5' do %>
-  <%= t('.notice_html', count: DeleteTweetsRequest::DESTROY_LIMIT) %>
+  <%= t('.notice1_html', count: DeleteTweetsRequest::DESTROY_LIMIT) %>
+<% end %>
+
+<%= alert_box class: 'my-5' do %>
+  <%= t('.notice2_html', url1: pricing_path(via: current_via), url2: delete_tweets_mypage_premium_path(via: current_via)) %>
 <% end %>
 
 <div class="card my-3">
   <div class="card-body">
     <div class="card-text">
 
-      <div>
-        <%= t('.how_to') %>
-        <%= link_to '#delete-tweets-faq', class: 'btn btn-outline-primary btn-sm' do %>
-          <i class="far fa-question-circle"></i>
-          <%= t('.more') %>
-        <% end %>
-      </div>
+      <div><%= t('.how_to_html', url: '#delete-tweets-faq') %></div>
 
       <div class="my-4">
         <div>

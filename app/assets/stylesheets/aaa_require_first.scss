@@ -27,3 +27,9 @@ a, a:hover, a:focus {
   border-left: 5px solid #721c24;
   background-color: #f8d7da;
 }
+
+.oneline-tabs {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow-x: scroll;
+}
