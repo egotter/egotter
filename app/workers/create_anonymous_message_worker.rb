@@ -20,7 +20,7 @@ class CreateAnonymousMessageWorker
   end
 
   def unique_in
-    30.seconds
+    3.seconds
   end
 
   # options:

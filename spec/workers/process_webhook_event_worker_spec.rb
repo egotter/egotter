@@ -113,6 +113,25 @@ RSpec.describe ProcessWebhookEventWorker do
     it do
       expect(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received).with(dm.sender_id)
       expect(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :clear).with(dm.sender_id)
+      [
+          PeriodicReportResponder,
+          BlockReportResponder,
+          MuteReportResponder,
+          SearchReportResponder,
+          WelcomeReportResponder,
+          StopMessageResponder,
+          DeleteTweetsMessageResponder,
+          CloseFriendsMessageResponder,
+          ThankYouMessageResponder,
+          PrettyIconMessageResponder,
+          SpamMessageResponder,
+          QuestionMessageResponder,
+          AnonymousMessageResponder,
+          GreetingMessageResponder,
+          MemoMessageResponder
+      ].each do |klass|
+        expect(klass).to receive_message_chain(:from_dm, :respond).with(dm).with(no_args)
+      end
       expect(worker).to receive(:process_schedule_tweets).with(dm)
       expect(SendReceivedMessageWorker).to receive(:perform_async).with(dm.sender_id, dm_id: dm.id, text: dm.text)
       expect(SendReceivedMediaToSlackWorker).to receive(:perform_async).with(dm.to_json)
