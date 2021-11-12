@@ -1,8 +1,7 @@
 class DeleteTweetsController < ApplicationController
   before_action :require_login!, only: [:show]
 
-  # TODO Rename to #index
-  def new
+  def index
   end
 
   def show

@@ -1593,7 +1593,7 @@ ja:
     csrf_error:
       message_html: 'ページの有効期限が切れました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
   delete_tweets:
-    new:
+    index:
       navbar_title: 'ツイートクリーナー'
       footer_title: 'ツイートを一括削除'
       meta_title: 'ツイートクリーナー🧹 - ワンクリックでツイートを一括削除'
