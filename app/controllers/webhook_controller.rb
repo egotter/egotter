@@ -69,6 +69,7 @@ class WebhookController < ApplicationController
     "sha256=#{Base64.encode64(digest).strip!}"
   end
 
+  # TODO Remove later
   def track_twitter_webhook
     if params[:direct_message_events]
       events = params[:direct_message_events].map do |event|

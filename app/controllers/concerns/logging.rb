@@ -145,6 +145,7 @@ module Logging
 
   def create_webhook_log
     save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+    save_params.delete('users') if twitter_webhook?
 
     attrs = {
         controller:  controller_name,
@@ -156,6 +157,7 @@ module Logging
         status:      response.status,
         user_agent:  request.user_agent.to_s.truncate(180),
     }
+
     CreateWebhookLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
