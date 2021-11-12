@@ -65,26 +65,19 @@
           <span class="text-muted"><i class="fas fa-redo"></i></span>
           <span class="ml-1"><%= t('.filter.reload') %></span>
         </div>
-        <div class="d-none d-md-inline-block">
+        <div id="force-reload-deletable-tweets-button" class="cursor-pointer ml-3">
+          <span><i class="fas fa-sync"></i></span>
+          <span class="ml-1"><%= t('.filter.force_reload') %></span>
+        </div>
+        <div class="d-none d-md-inline-block text-danger">
           <div class="delete-selected-deletable-tweets-button cursor-pointer ml-3" style="display: none;">
             <i class="fas fa-trash"></i>
             <span class="ml-1"><%= t('.filter.trash') %></span>
           </div>
         </div>
-        <div class="cursor-pointer ml-3">
-          <div class="dropdown">
-            <span class="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></span>
-            <div class="dropdown-menu shadow">
-              <button type="button" id="force-reload-deletable-tweets-button" class="dropdown-item">
-                <span><i class="fas fa-redo"></i></span>
-                <span class="ml-1"><%= t('.filter.force_reload') %></span>
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
-    <div class="text-muted">
+    <div class="text-right text-muted">
       <span class="current-deletable-tweets-count">0</span> / <span class="total-deletable-tweets-count">0</span>
     </div>
   </div>
@@ -95,8 +88,10 @@
   </div>
 
   <div id="deletable-tweets-container">
-    <%= image_tag '/ajax-loader.gif', size: '16x16' %>
-    <%= t('.loading') %>
+    <div class="my-5">
+      <%= image_tag '/ajax-loader.gif', size: '16x16' %>
+      <%= t('.loading') %>
+    </div>
   </div>
 </div>
 
@@ -149,13 +144,29 @@
   $(function () {
     var lastResponse;
     var $body = $('body');
+    var searchTabShown = <%= delete_tweets_search_tab? %>;
 
+    if (searchTabShown) {
+      loadDeletableTweets();
+    }
     $('#open-search-deletable-tweets-tab').on('shown.bs.tab', loadDeletableTweets);
-    $('#reload-deletable-tweets-button').on('click', loadDeletableTweets);
+    $('#reload-deletable-tweets-button').on('click', function () {
+      var confirmationMessage = '<%= t('.reload_confirmation_message') %>';
+      if (!window.confirm(confirmationMessage)) {
+        return;
+      }
+      loadDeletableTweets();
+    });
     $('.filter-modal').on('hidden.bs.modal', loadDeletableTweets);
 
     $('#force-reload-deletable-tweets-button').on('click', function () {
+      var confirmationMessage = '<%= t('.force_reload_confirmation_message') %>';
+      if (!window.confirm(confirmationMessage)) {
+        return;
+      }
+
       var url = '<%= raw api_v1_deletable_tweet_force_reload_path(via: current_via) %>';
+      var redirectUrl = '<%= raw delete_tweets_mypage_search_path(via: current_via("force_reload")) %>';
       $.ajax({
         url: url,
         type: 'DELETE',
@@ -164,7 +175,7 @@
         logger.log('Tweets force-reloaded', res);
         ToastMessage.info(res['message']);
         setTimeout(function () {
-          window.location.reload();
+          window.location.href = redirectUrl;
         }, 3000);
       }).fail(showErrorMessage);
     });

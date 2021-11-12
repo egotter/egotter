@@ -1615,6 +1615,8 @@ ja:
         <p>「検索して削除」は5月14日にリリースされたばかりのお試し新機能です。不具合があるかもしれません。</p>
         もし不具合を見付けたら、<a href="%{url}" target="_blank">@egotter_cs</a> までご連絡いただけるとありがたいです。
       loading: 'ツイートを読み込んでいます。初回は1〜5分ほど時間がかかることがあります。'
+      reload_confirmation_message: 'ページ内の表示を更新します。よろしいですか？'
+      force_reload_confirmation_message: '最新のツイートを同期します。この操作には1〜5分ほど時間がかかることがあります。よろしいですか？'
       filter:
         modal: '検索条件の指定'
         retweet_count: 'リツイート数'
@@ -1636,8 +1638,8 @@ ja:
         included: '含める'
         excluded: '含めない'
         select_all: 'すべて選択'
-        reload: '再読み込み'
-        force_reload: 'ツイートを取得し直す'
+        reload: '更新'
+        force_reload: '同期'
         trash: '削除する'
         current_tweets_selected_html: 'このページ内のツイート <span class="current-deletable-tweets-count">%{count}</span> 件が選択されています。'
         select_total_tweets_html: 'ツイート <span class="total-deletable-tweets-count">%{count}</span> 件をすべて選択'

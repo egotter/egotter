@@ -4,7 +4,7 @@
 
 <ul class="nav nav-tabs oneline-tabs">
   <li class="nav-item">
-    <a id="open-search-deletable-tweets-tab" class="nav-link" href="#search-tab" data-toggle="tab"><%= t('delete_tweets.search.title') %></a>
+    <a id="open-search-deletable-tweets-tab" class="nav-link <%= class_names(active: delete_tweets_search_tab?) %>" href="#search-tab" data-toggle="tab"><%= t('delete_tweets.search.title') %></a>
   </li>
   <li class="nav-item">
     <a class="nav-link <%= class_names(active: delete_tweets_free_tab?) %>" href="#free-tab" data-toggle="tab"><%= t('delete_tweets.free.title') %></a>
@@ -18,7 +18,7 @@
 </ul>
 
 <div class="tab-content">
-  <div id="search-tab" class="tab-pane">
+  <div id="search-tab" class="tab-pane <%= class_names(active: delete_tweets_search_tab?) %>">
     <%= render partial: 'search' %>
   </div>
   <div id="free-tab" class="tab-pane <%= class_names(active: delete_tweets_free_tab?) %>">
