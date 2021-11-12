@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_12_100143) do
+ActiveRecord::Schema.define(version: 2021_11_12_173035) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1463,6 +1463,14 @@ ActiveRecord::Schema.define(version: 2021_11_12_100143) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_stop_search_report_requests_on_created_at"
     t.index ["user_id"], name: "index_stop_search_report_requests_on_user_id", unique: true
+  end
+
+  create_table "sync_deletable_tweets_requests", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_sync_deletable_tweets_requests_on_created_at"
+    t.index ["user_id"], name: "index_sync_deletable_tweets_requests_on_user_id"
   end
 
   create_table "test_messages", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

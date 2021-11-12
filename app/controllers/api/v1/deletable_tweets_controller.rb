@@ -45,6 +45,7 @@ module Api
       end
 
       def force_reload
+        SyncDeletableTweetsRequest.create!(user_id: current_user.id)
         DeletableTweet.where(uid: current_user.uid).delete_all
         render json: {message: t('.success_html')}
       end
