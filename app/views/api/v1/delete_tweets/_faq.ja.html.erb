@@ -3,8 +3,6 @@
 <% limit_reason = "※ #{destroy_limit}件の制限は全世界共通のツイッターの仕組みです。どのツールでも同じ制限があります。" %>
 <% premium_plan = %Q(#{destroy_limit}件を超えるツイートは、えごったー有料プランのユーザーであれば全て削除できます。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">もっと詳しく</a>).html_safe %>
 
-<h3 id="delete-tweets-faq" class="h5 text-center mt-5 mb-3">ツイート削除のよくある質問</h3>
-
 <% faq_section 'ツイートクリーナー 全般' do %>
   <% faq_question 'ツイートクリーナーとは何ですか？' do %>
     <p>たくさんのツイートを一度で削除するためのツールです。<%= destroy_limit %>件までのツイートは無料で削除できます。</p>

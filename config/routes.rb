@@ -63,6 +63,7 @@ Rails.application.routes.draw do
       resource :sneak_search_requests, only: %i(create destroy)
       resource :private_mode_settings, only: %i(create destroy)
 
+      get 'delete_tweets_faq', to: 'delete_tweets#faq'
       resources :delete_tweets_requests, only: %i(create)
       resources :delete_tweets_histories, only: %i(index)
       resources :delete_tweets_notifications, only: %i(create)
