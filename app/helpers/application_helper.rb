@@ -15,7 +15,7 @@ module ApplicationHelper
         (controller_name == 'one_sided_friends' && action_name == 'new') ||
         (controller_name == 'inactive_friends' && action_name == 'new') ||
         (controller_name == 'clusters' && action_name == 'new') ||
-        (controller_name == 'delete_tweets' && action_name == 'new') ||
+        (controller_name == 'delete_tweets' && action_name == 'index') ||
         (controller_name == 'delete_favorites' && action_name == 'new') ||
         (controller_name == 'personality_insights' && action_name == 'new') ||
         (controller_name == 'tokimeki_unfollow' && action_name == 'new')
@@ -58,10 +58,11 @@ module ApplicationHelper
   end
 
   def wrap_in_container?
+    delete_tweets = controller_name == 'delete_tweets' && action_name == 'index'
     settings = controller_name == 'settings' && action_name == 'index'
     trend_media = controller_name == 'trends' && action_name == 'media'
     slack_messages = controller_name == 'slack_messages'
-    !top_page? && !waiting_page? && !settings && !trend_media && !slack_messages
+    !top_page? && !waiting_page? && !delete_tweets && !settings && !trend_media && !slack_messages
   end
 
   def show_common_friends?(twitter_user)
