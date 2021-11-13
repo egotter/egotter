@@ -43,6 +43,18 @@ class Bot < ApplicationRecord
     save! if changed?
   end
 
+  def rate_limit
+    result = super
+    {
+        id: id,
+        verify_credentials: result.verify_credentials,
+        users: result.users,
+        friend_ids: result.friend_ids,
+        follower_ids: result.follower_ids,
+        search: result.search,
+    }
+  end
+
   class << self
     def current_ids
       where(authorized: true, locked: false).pluck(:id)
@@ -61,25 +73,6 @@ class Bot < ApplicationRecord
     def dump(path = 'bots.json')
       data = all.map { |b| {uid: b.uid, screen_name: b.screen_name, secret: b.secret, token: b.token} }
       File.write(path, data.to_json)
-    end
-
-    def all_rate_limit
-      processed = Queue.new
-      current_ids.each do |id|
-        bot = Bot.find(id)
-        processed << {id: bot.id, rate_limit: bot.rate_limit}
-      end
-
-      processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }.map do |p|
-        {
-            id: p[:id],
-            verify_credentials: p[:rate_limit].verify_credentials,
-            users: p[:rate_limit].users,
-            friend_ids: p[:rate_limit].friend_ids,
-            follower_ids: p[:rate_limit].follower_ids,
-            search: p[:rate_limit].search,
-        }
-      end
     end
   end
 end
