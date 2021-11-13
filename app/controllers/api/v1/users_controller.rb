@@ -47,7 +47,7 @@ module Api
       end
 
       def invalidate_expired_credentials
-        User.select(:id).where(created_at: 10.days.ago..9.days.ago).find_each do |user|
+        User.authorized_agents.select(:id).find_each do |user|
           UpdateAuthorizedWorker.perform_async(user.id)
         end
         render json: {status: 'ok'}

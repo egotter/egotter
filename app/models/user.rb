@@ -151,6 +151,10 @@ class User < ApplicationRecord
       ids = where(authorized: true, locked: false).order(created_at: :desc).limit(200).pluck(:id)
       find(ids.sample).api_client
     end
+
+    def authorized_agents
+      where(created_at: 11.days.ago..9.days.ago).where(authorized: true)
+    end
   end
 
   def to_param
