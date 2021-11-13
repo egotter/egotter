@@ -10,7 +10,6 @@
 <div class="my-5"><%= render partial: 'shared/about_egotter' %></div>
 
 <%= render partial: 'shared/review_section', locals: {kind: 'delete_tweets', divider: true} %>
-<%= render partial: 'faq_section', locals: {divider: false} %>
 
 <% if show_redirection_modal? %>
   <%= render partial: 'modal/redirection_modal', locals: {positive_url: delete_tweets_mypage_path(via: current_via('redirection_modal'))} %>

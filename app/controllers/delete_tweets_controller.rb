@@ -10,4 +10,7 @@ class DeleteTweetsController < ApplicationController
     end
     @max_count = DeleteTweetsRequest::DESTROY_LIMIT
   end
+
+  def faq
+  end
 end

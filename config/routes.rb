@@ -128,6 +128,7 @@ Rails.application.routes.draw do
   get 'l/:name', to: 'landing_pages#new'
 
   get 'delete_tweets', to: 'delete_tweets#index'
+  get 'delete_tweets/faq', to: 'delete_tweets#faq', as: :delete_tweets_faq
   get 'delete_tweets/mypage', to: 'delete_tweets#show', as: :delete_tweets_mypage
   get 'delete_tweets/mypage/search', to: 'delete_tweets#show', as: :delete_tweets_mypage_search
   get 'delete_tweets/mypage/premium', to: 'delete_tweets#show', as: :delete_tweets_mypage_premium

@@ -1595,6 +1595,7 @@ ja:
       message_html: 'ページの有効期限が切れました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
   delete_tweets:
     index:
+      navbar_title: 'ツイートクリーナー'
       footer_title: 'ツイートを一括削除'
       meta_title: '安全にツイートを削除したい？ ツイート削除の人気No.1 ツイートクリーナーでOK'
       meta_description: 'ツイートクリーナーを使うと効率的に複数ツイートを削除できます。ツイートクリーナーは世界最大のツイート削除ツールの1つです。'
@@ -1602,6 +1603,9 @@ ja:
         header: 'ツイートクリーナー'
         subheader: 'ワンクリックでツイートを一括削除'
         lead_html: '100ツイート/秒の速さで高速削除！<br><span class="egotter-pink">%{count}万回</span>以上利用された安心のツールです。<br>'
+    faq:
+      navbar_title: 'ツイートクリーナー'
+      meta_title: 'ツイートクリーナーのよくある質問'
     faq_section:
       title: 'ツイート削除のよくある質問'
     show:

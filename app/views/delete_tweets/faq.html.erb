@@ -1,0 +1,8 @@
+<% title t('.meta_title') %>
+<%= content_for :navbar_title, t('.navbar_title') %>
+
+<%= render partial: 'faq_section', locals: {divider: false} %>
+
+<% if show_redirection_modal? %>
+  <%= render partial: 'modal/redirection_modal', locals: {positive_url: delete_tweets_mypage_path(via: current_via('redirection_modal'))} %>
+<% end %>
