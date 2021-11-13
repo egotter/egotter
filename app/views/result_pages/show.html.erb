@@ -8,8 +8,13 @@
 <% title current_page_title(@twitter_user) %>
 <% set_meta_tags description: current_meta_description(@twitter_user) %>
 
-<% if remove_related_page? %>
-  <div class="mb-3"><%= render partial: 'twitter_users/bg_polling_js', locals: {twitter_user: @twitter_user} %></div>
+<% if remove_related_page? && @twitter_user.too_short_create_interval? %>
+  <script>
+    $(function () {
+      var message = '<%= t('.notice_for_update_html', url: timeline_path(@twitter_user, via: current_via('notice_for_update'))) %>';
+      ToastMessage.info(message);
+    });
+  </script>
 <% end %>
 
 <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
