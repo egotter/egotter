@@ -4,14 +4,15 @@ RSpec.describe TwitterUserFetcher do
   let(:user) { create(:user) }
   let(:uid) { user.uid }
   let(:screen_name) { user.screen_name }
-  let(:client) { double('client') }
+  let(:passed_client) { double('passed_client') }
+  let(:client) { double('client', start_bm: nil, finish_bm: nil) }
   let(:fetch_friends) { true }
   let(:search_for_yourself) { true }
   let(:reporting) { false }
-  let(:instance) { described_class.new(nil, uid, screen_name, fetch_friends, search_for_yourself, reporting) }
+  let(:instance) { described_class.new(passed_client, uid, screen_name, fetch_friends, search_for_yourself, reporting) }
 
   before do
-    allow(described_class::ClientWrapper).to receive(:new).with(anything).and_return(client)
+    allow(described_class::ClientWrapper).to receive(:new).with(passed_client).and_return(client)
   end
 
   describe '#fetch' do

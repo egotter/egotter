@@ -9,7 +9,6 @@ class TwitterUserFetcher
     @fetch_friends = fetch_friends
     @search_for_yourself = search_for_yourself
     @reporting = reporting
-    @mutex = Mutex.new
   end
 
   # Not using uniq for mentions, search_results and favorites intentionally
@@ -39,26 +38,28 @@ class TwitterUserFetcher
   def fetch_in_threads
     threads = []
     result = Queue.new
+    @client.start_bm
 
     if @fetch_friends
-      threads << Thread.new { result << [:friend_ids, bm(:friend_ids) { @client.friend_ids(@uid) }] }
-      threads << Thread.new { result << [:follower_ids, bm(:follower_ids) { @client.follower_ids(@uid) }] }
+      threads << Thread.new { result << [:friend_ids, @client.friend_ids(@uid)] }
+      threads << Thread.new { result << [:follower_ids, @client.follower_ids(@uid)] }
     end
 
     if @search_for_yourself
-      threads << Thread.new { result << [:mentions_timeline, bm(:mentions_timeline) { @client.mentions_timeline }] }
+      threads << Thread.new { result << [:mentions_timeline, @client.mentions_timeline] }
     else
-      threads << Thread.new { result << [:search, bm(:search) { @client.search(@search_query) }] }
+      threads << Thread.new { result << [:search, @client.search(@search_query)] }
     end
 
     unless @reporting
-      threads << Thread.new { result << [:user_timeline, bm(:user_timeline) { @client.user_timeline(@uid) }] }
+      threads << Thread.new { result << [:user_timeline, @client.user_timeline(@uid)] }
     end
 
-    threads << Thread.new { result << [:favorites, bm(:favorites) { @client.favorites(@uid) }] }
+    threads << Thread.new { result << [:favorites, @client.favorites(@uid)] }
 
     threads.each(&:join)
 
+    @client.finish_bm("Benchmark TwitterUserFetcher uid=#{@uid}")
     result.size.times.map { result.pop }.to_h
   end
 
@@ -71,39 +72,57 @@ class TwitterUserFetcher
     end
 
     def friend_ids(uid)
-      collect_with_max_id do |options|
-        @ids_client.friend_ids(uid, options)
+      bm(__method__) do
+        collect_with_max_id do |options|
+          @ids_client.friend_ids(uid, options)
+        end
       end
     end
 
     def follower_ids(uid)
-      collect_with_max_id do |options|
-        @ids_client.follower_ids(uid, options)
+      bm(__method__) do
+        collect_with_max_id do |options|
+          @ids_client.follower_ids(uid, options)
+        end
       end
     end
 
     def user_timeline(uid)
-      @client.user_timeline(uid, include_rts: false)
+      bm(__method__) { @client.user_timeline(uid, include_rts: false) }
     rescue => e
       handle_exception(e)
     end
 
     def mentions_timeline
-      @client.mentions_timeline
+      bm(__method__) { @client.mentions_timeline }
     rescue => e
       handle_exception(e)
     end
 
     def search(word)
-      @client.search(word)
+      bm(__method__) { @client.search(word) }
     rescue => e
       handle_exception(e)
     end
 
     def favorites(uid)
-      @client.favorites(uid)
+      bm(__method__) { @client.favorites(uid) }
     rescue => e
       handle_exception(e)
+    end
+
+    def start_bm
+      @bm = {}
+      @mutex = Mutex.new
+      @start = Time.zone.now
+    end
+
+    def finish_bm(message)
+      @bm['sum'] = @bm.values.sum
+      @bm['elapsed'] = Time.zone.now - @start
+      @bm.transform_values! { |v| sprintf("%.3f", v) }
+
+      Rails.logger.info "#{message} #{@bm.inspect}"
     end
 
     private
@@ -115,7 +134,7 @@ class TwitterUserFetcher
 
       50.times do
         begin
-          raise Twitter::Error::TooManyRequests if (calls_count += 1) > 5
+          raise Twitter::Error::TooManyRequests if (calls_count += 1) > 3
           response = yield(options)
         rescue => e
           if TwitterApiStatus.too_many_requests?(e)
@@ -149,33 +168,18 @@ class TwitterUserFetcher
         raise e
       end
     end
-  end
 
-  module Instrumentation
     def bm(message, &block)
-      start = Time.zone.now
-      result = yield
-      @mutex.synchronize do
-        @bm[message] = Time.zone.now - start if @bm
+      if @mutex && @bm
+        start = Time.zone.now
+        result = yield
+        @mutex.synchronize do
+          @bm[message] = Time.zone.now - start
+        end
+        result
+      else
+        yield
       end
-      result
-    end
-
-    def fetch_in_threads(*args, &blk)
-      @bm = {}
-      start = Time.zone.now
-
-      result = super
-
-      elapsed = Time.zone.now - start
-      @bm['sum'] = @bm.values.sum
-      @bm['elapsed'] = elapsed
-      @bm.transform_values! { |v| sprintf("%.3f", v) }
-
-      Rails.logger.info "Benchmark TwitterUserFetcher uid=#{@uid} #{@bm.inspect}"
-
-      result
     end
   end
-  prepend Instrumentation
 end
