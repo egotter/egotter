@@ -40,39 +40,4 @@
 #
 
 class SearchLog < ApplicationRecord
-  belongs_to :user, optional: true
-
-  class << self
-    def except_crawler
-      # device_type NOT IN ('crawler', 'UNKNOWN') AND session_id != '-1'
-      where.not(device_type: %w(crawler UNKNOWN), session_id: -1)
-    end
-
-    def with_login
-      where.not(user_id: -1)
-    end
-
-    def user_ids(*args)
-      except_crawler
-          .with_login
-          .where(*args)
-          .uniq
-          .pluck(:user_id)
-    end
-
-    def session_ids(*args)
-      except_crawler
-          .where(*args)
-          .uniq
-          .pluck(:session_id)
-    end
-  end
-
-  def with_login?
-    user_id != -1
-  end
-
-  def crawler?
-    device_type == 'crawler' || session_id == '-1'
-  end
 end
