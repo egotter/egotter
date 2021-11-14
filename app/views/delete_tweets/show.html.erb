@@ -15,6 +15,9 @@
   <li class="nav-item">
     <a id="delete-tweets-history-tab" class="nav-link <%= class_names(active: delete_tweets_history_tab?) %>" href="#history-tab" data-toggle="tab"><%= t('delete_tweets.history.title') %></a>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" href="<%= delete_tweets_faq_path(via: current_via('tab')) %>" target="_blank"><%= t('delete_tweets.faq.tab_title') %></a>
+  </li>
 </ul>
 
 <div class="tab-content">

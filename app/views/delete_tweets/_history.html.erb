@@ -13,8 +13,15 @@
 
 <script>
   $(function () {
-    var url = '<%= raw api_v1_delete_tweets_histories_path %>';
-    $('#delete-tweets-history-tab').on('shown.bs.tab', function () {
+    var historyTabShown = <%= delete_tweets_history_tab? %>;
+    if (historyTabShown) {
+      loadHistory();
+    }
+
+    $('#delete-tweets-history-tab').on('shown.bs.tab', loadHistory);
+
+    function loadHistory() {
+      var url = '<%= raw api_v1_delete_tweets_histories_path %>';
       $.get(url).done(function (res) {
         var requests = res.requests;
         var container = $('#delete-tweets-history-container');
@@ -26,6 +33,6 @@
           container.append(rendered);
         }
       }).fail(showErrorMessage);
-    });
+    }
   });
 </script>
