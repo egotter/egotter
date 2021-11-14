@@ -93,6 +93,10 @@ class User < ApplicationRecord
       find_by(uid: EGOTTER_CS_UID)
     end
 
+    def tweet_cleaner
+      find_by(uid: TWEET_CLEANER_UID)
+    end
+
     def admin
       find_by(uid: ADMIN_UID)
     end
@@ -242,6 +246,7 @@ class User < ApplicationRecord
   ADMIN_UID = 58135830
   EGOTTER_UID = 187385226
   EGOTTER_CS_UID = 216924023
+  TWEET_CLEANER_UID = 1392464015004114945
 
   def admin?
     uid == ADMIN_UID

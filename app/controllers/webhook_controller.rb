@@ -16,18 +16,19 @@ class WebhookController < ApplicationController
   def twitter
     if direct_message_event_for_egotter?
       params[:direct_message_events].each do |event|
-        event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
-        ProcessWebhookEventWorker.perform_async(event)
+        ProcessWebhookEventWorker.perform_async(to_hash(event))
       end
     elsif follow_event_for_egotter?
       params[:follow_events].each do |event|
-        event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
-        ProcessWebhookFollowEventWorker.perform_async(event)
+        ProcessWebhookFollowEventWorker.perform_async(to_hash(event))
       end
     elsif direct_message_event_for_egotter_cs?
       params[:direct_message_events].each do |event|
-        event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
-        ProcessWebhookEventForEgotterCsWorker.perform_async(event)
+        ProcessWebhookEventForEgotterCsWorker.perform_async(to_hash(event))
+      end
+    elsif direct_message_event_for_tweet_cleaner?
+      params[:direct_message_events].each do |event|
+        ProcessWebhookEventForTweetCleanerWorker.perform_async(to_hash(event))
       end
     else
       logger.info "#{controller_name}##{action_name}: Unhandled webhook event for_user_id=#{params[:for_user_id]}"
@@ -53,6 +54,10 @@ class WebhookController < ApplicationController
     params[:for_user_id].to_i == User::EGOTTER_CS_UID && params[:direct_message_events]
   end
 
+  def direct_message_event_for_tweet_cleaner?
+    params[:for_user_id].to_i == User::TWEET_CLEANER_UID && params[:direct_message_events]
+  end
+
   def crc_response
     crc_digest(params[:crc_token])
   end
@@ -67,6 +72,10 @@ class WebhookController < ApplicationController
     secret = ENV['TWITTER_CONSUMER_SECRET']
     digest = OpenSSL::HMAC::digest('sha256', secret, payload)
     "sha256=#{Base64.encode64(digest).strip!}"
+  end
+
+  def to_hash(event)
+    event.respond_to?(:to_unsafe_h) ? event.to_unsafe_h : event
   end
 
   # TODO Remove later
