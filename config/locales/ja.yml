@@ -1654,7 +1654,7 @@ ja:
         select_total_tweets_html: 'ツイート <span class="total-deletable-tweets-count">%{count}</span> 件をすべて選択'
         total_tweets_selected_html: '検索条件にマッチするツイート <span class="total-deletable-tweets-count">%{count}</span> 件すべてが選択されています。'
     bottom_menu:
-      trash: '削除'
+      trash: '削除する'
       send_dm: '削除の完了後に自分へDMする'
       post_tweet: '削除の完了後にツイートする'
       already_deleted: '選択しているツイートは既に削除済みです。'

@@ -41,6 +41,14 @@ module ApplicationHelper
     controller_name == 'home' && action_name == 'start'
   end
 
+  def delete_tweets_top_page?
+    controller_name == 'delete_tweets' && action_name == 'index'
+  end
+
+  def delete_tweets_page?
+    controller_name == 'delete_tweets'
+  end
+
   def show_header?
     !top_page?
   end
@@ -58,11 +66,10 @@ module ApplicationHelper
   end
 
   def wrap_in_container?
-    delete_tweets = controller_name == 'delete_tweets' && action_name == 'index'
     settings = controller_name == 'settings' && action_name == 'index'
     trend_media = controller_name == 'trends' && action_name == 'media'
     slack_messages = controller_name == 'slack_messages'
-    !top_page? && !waiting_page? && !delete_tweets && !settings && !trend_media && !slack_messages
+    !top_page? && !waiting_page? && !delete_tweets_top_page? && !settings && !trend_media && !slack_messages
   end
 
   def show_common_friends?(twitter_user)
