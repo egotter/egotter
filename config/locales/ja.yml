@@ -1606,6 +1606,7 @@ ja:
     faq:
       navbar_title: 'ツイートクリーナー'
       meta_title: 'ツイートクリーナーのよくある質問'
+      page_title: 'ツイートクリーナーのよくある質問'
     faq_section:
       title: 'ツイート削除のよくある質問'
     show:

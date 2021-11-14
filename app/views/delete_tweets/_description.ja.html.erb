@@ -59,8 +59,8 @@
       <h3 class="h5 my-5">充実のサポート</h3>
       <div>
         <% url = direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_tweets_inquiry')) %>
-        <p>ツイートクリーナーに分からないところがある場合は、<%= link_to '@egotter_cs', url, target: '_blank' %> にいつでもご質問ください。</p>
-        <p>日本語と英語のお問い合わせに対応しています。</p>
+        <p>ツイートクリーナーに分からないところがある場合は、<%= link_to '@egotter_cs', url, target: '_blank' %> にいつでもご質問ください。日本語と英語のお問い合わせに対応しています。</p>
+        <p>ツイートクリーナーの詳細については <%= link_to 'ツイートクリーナーのよくある質問', delete_tweets_faq_path(via: current_via) %> をご覧ください。</p>
       </div>
     </div>
   </div>
@@ -68,6 +68,10 @@
 
 <div class="mx-auto my-5" style="width: 300px;">
   <%= sign_in_with_twitter_link(nil, 'delete_tweets_button', class: 'btn btn-primary btn-lg w-100') %>
+</div>
+
+<div class="mx-auto my-5" style="width: 400px;">
+  <%= link_to 'ツイートクリーナーのよくある質問', delete_tweets_faq_path(via: current_via), class: 'btn btn-outline-primary btn-lg w-100' %>
 </div>
 
 <hr>
