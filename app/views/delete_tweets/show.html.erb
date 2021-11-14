@@ -4,16 +4,16 @@
 
 <ul class="nav nav-tabs oneline-tabs">
   <li class="nav-item">
-    <a id="open-search-deletable-tweets-tab" class="nav-link <%= class_names(active: delete_tweets_search_tab?) %>" href="#search-tab" data-toggle="tab"><%= t('delete_tweets.search.title') %></a>
+    <a id="delete-tweets-search-tab" class="nav-link <%= class_names(active: delete_tweets_search_tab?) %>" href="#search-tab" data-toggle="tab"><%= t('delete_tweets.search.title') %></a>
   </li>
   <li class="nav-item">
-    <a class="nav-link <%= class_names(active: delete_tweets_free_tab?) %>" href="#free-tab" data-toggle="tab"><%= t('delete_tweets.free.title') %></a>
+    <a id="delete-tweets-free-tab" class="nav-link <%= class_names(active: delete_tweets_free_tab?) %>" href="#free-tab" data-toggle="tab"><%= t('delete_tweets.free.title') %></a>
   </li>
   <li class="nav-item">
-    <a class="nav-link <%= class_names(active: delete_tweets_premium_tab?) %>" href="#premium-tab" data-toggle="tab"><%= t('delete_tweets.premium.title') %></a>
+    <a id="delete-tweets-premium-tab" class="nav-link <%= class_names(active: delete_tweets_premium_tab?) %>" href="#premium-tab" data-toggle="tab"><%= t('delete_tweets.premium.title') %></a>
   </li>
   <li class="nav-item">
-    <a id="open-delete-tweets-history-tab" class="nav-link" href="#history-tab" data-toggle="tab"><%= t('delete_tweets.history.title') %></a>
+    <a id="delete-tweets-history-tab" class="nav-link <%= class_names(active: delete_tweets_history_tab?) %>" href="#history-tab" data-toggle="tab"><%= t('delete_tweets.history.title') %></a>
   </li>
 </ul>
 
@@ -27,12 +27,36 @@
   <div id="premium-tab" class="tab-pane <%= class_names(active: delete_tweets_premium_tab?) %>">
     <%= render partial: 'premium' %>
   </div>
-  <div id="history-tab" class="tab-pane">
+  <div id="history-tab" class="tab-pane <%= class_names(active: delete_tweets_history_tab?) %>">
     <%= render partial: 'history' %>
   </div>
 </div>
 
-<%= render partial: 'faq_section', locals: {divider: false} %>
+<p class="small"><%= t('.support_html', user: 'egotter_cs', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_tweets_inquiry'))) %></p>
+<p class="small"><%= t('.faq_html', url: delete_tweets_faq_path(via: current_via)) %></p>
+
+<script>
+  $(function () {
+    var urls = [
+      '<%= raw delete_tweets_mypage_search_path %>',
+      '<%= raw delete_tweets_mypage_path %>',
+      '<%= raw delete_tweets_mypage_premium_path %>',
+      '<%= raw delete_tweets_mypage_history_path %>'
+    ];
+    $('#delete-tweets-search-tab').on('shown.bs.tab', function () {
+      window.history.replaceState(null, null, urls[0]);
+    });
+    $('#delete-tweets-free-tab').on('shown.bs.tab', function () {
+      window.history.replaceState(null, null, urls[1]);
+    });
+    $('#delete-tweets-premium-tab').on('shown.bs.tab', function () {
+      window.history.replaceState(null, null, urls[2]);
+    });
+    $('#delete-tweets-history-tab').on('shown.bs.tab', function () {
+      window.history.replaceState(null, null, urls[3]);
+    });
+  });
+</script>
 
 <!-- Event snippet for DeleteTweets sign-in conversion page -->
 <script>

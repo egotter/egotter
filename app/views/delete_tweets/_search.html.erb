@@ -1,7 +1,11 @@
 <div class="my-5"><%= t('.description') %></div>
 
 <%= alert_box class: 'my-5' do %>
-  <%= t('.notice_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_tweets_search_inquiry'))) %>
+  <%= t('.notice1_html', count: DeleteTweetsRequest::DESTROY_LIMIT) %>
+<% end %>
+
+<%= alert_box class: 'my-5' do %>
+  <%= t('.notice2_html', url1: pricing_path(via: current_via), url2: delete_tweets_mypage_premium_path(via: current_via)) %>
 <% end %>
 
 <div class="d-flex my-3" style="overflow-x: scroll;">
@@ -149,7 +153,7 @@
     if (searchTabShown) {
       loadDeletableTweets();
     }
-    $('#open-search-deletable-tweets-tab').on('shown.bs.tab', loadDeletableTweets);
+    $('#delete-tweets-search-tab').on('shown.bs.tab', loadDeletableTweets);
     $('#reload-deletable-tweets-button').on('click', function () {
       var confirmationMessage = '<%= t('.reload_confirmation_message') %>';
       if (!window.confirm(confirmationMessage)) {

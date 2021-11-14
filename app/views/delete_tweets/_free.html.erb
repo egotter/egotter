@@ -12,7 +12,7 @@
   <div class="card-body">
     <div class="card-text">
 
-      <div><%= t('.how_to_html', url: '#delete-tweets-faq') %></div>
+      <div><%= t('.how_to_html', url: delete_tweets_faq_path(via: current_via)) %></div>
 
       <div class="my-4">
         <div>
@@ -53,7 +53,7 @@
 
           <div class="text-muted small">
             <div class="mt-1"><%= t('.note1') %></div>
-            <div class="mt-1"><%= t('.note2_html', count: max_count, url: delete_tweets_mypage_path(anchor: 'reason-of-3200')) %></div>
+            <div class="mt-1"><%= t('.note2_html', count: max_count, url: delete_tweets_faq_path(anchor: 'reason-of-3200')) %></div>
           </div>
         <% end %>
       </div>

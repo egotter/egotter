@@ -14,7 +14,7 @@
 <script>
   $(function () {
     var url = '<%= raw api_v1_delete_tweets_histories_path %>';
-    $('#open-delete-tweets-history-tab').on('shown.bs.tab', function () {
+    $('#delete-tweets-history-tab').on('shown.bs.tab', function () {
       $.get(url).done(function (res) {
         var requests = res.requests;
         var container = $('#delete-tweets-history-container');
