@@ -13,62 +13,41 @@
 
 = render partial: 'adsense/ad', locals: {vertical: :top}
 
-%h3.h5.text-center.my-5= t('.friends.title')
-#friends-chart-description.mb-5
-#friends-chart{style: 'height: 250px;'}
-.text-muted.small{style: 'margin-bottom: 120px;'}= t('.friends.note')
+#friends-chart
+  %h3.h5.text-center.my-5= t('.friends.title')
+  .description.mb-5
+  .chart{style: 'height: 250px;'}
+  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.friends.note')
 
-%h3.h5.text-center.my-5= t('.followers.title')
-#followers-chart-description.mb-5
-#followers-chart{style: 'height: 250px;'}
-.text-muted.small{style: 'margin-bottom: 120px;'}= t('.followers.note')
+#followers-chart
+  %h3.h5.text-center.my-5= t('.followers.title')
+  .description.mb-5
+  .chart{style: 'height: 250px;'}
+  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.followers.note')
 
-%h3.h5.text-center.my-5= t('.new_friends.title')
-#new-friends-chart-description.mb-5
-#new-friends-chart{style: 'height: 250px;'}
-.text-muted.small{style: 'margin-bottom: 120px;'}= t('.new_friends.note')
+#new-friends-chart
+  %h3.h5.text-center.my-5= t('.new_friends.title')
+  .description.mb-5
+  .chart{style: 'height: 250px;'}
+  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.new_friends.note')
 
-%h3.h5.text-center.my-5= t('.new_followers.title')
-#new-followers-chart-description.mb-5
-#new-followers-chart{style: 'height: 250px;'}
-.text-muted.small{style: 'margin-bottom: 120px;'}= t('.new_followers.note')
+#new-followers-chart
+  %h3.h5.text-center.my-5= t('.new_followers.title')
+  .description.mb-5
+  .chart{style: 'height: 250px;'}
+  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.new_followers.note')
 
 :javascript
-  function drawFriendsChart() {
-    var url = '#{raw api_v1_friends_count_points_path(uid: @twitter_user.uid, via: current_via)}';
+  function drawAudienceChart(url, container, name) {
     $.get(url).done(function (res) {
-      $('#friends-chart-description').text(res.message);
-      new AudienceInsight().drawChart($('#friends-chart')[0], [{name: 'Friends', data: res.data}]);
-    }).fail(showErrorMessage);
-  }
-
-  function drawFollowersChart() {
-    var url = '#{raw api_v1_followers_count_points_path(uid: @twitter_user.uid, via: current_via)}';
-    $.get(url).done(function (res) {
-      $('#followers-chart-description').text(res.message);
-      new AudienceInsight().drawChart($('#followers-chart')[0], [{name: 'Followers', data: res.data}]);
-    }).fail(showErrorMessage);
-  }
-
-  function drawNewFriendsChart() {
-    var url = '#{raw api_v1_new_friends_count_points_path(uid: @twitter_user.uid, via: current_via)}';
-    $.get(url).done(function (res) {
-      $('#new-friends-chart-description').text(res.message);
-      new AudienceInsight().drawChart($('#new-friends-chart')[0], [{name: 'New friends', data: res.data}]);
-    }).fail(showErrorMessage);
-  }
-
-  function drawNewFollowersChart() {
-    var url = '#{raw api_v1_new_followers_count_points_path(uid: @twitter_user.uid, via: current_via)}';
-    $.get(url).done(function (res) {
-      $('#new-followers-chart-description').text(res.message);
-      new AudienceInsight().drawChart($('#new-followers-chart')[0], [{name: 'New followers', data: res.data}]);
+      container.find('.description').text(res.message);
+      new AudienceInsight().drawChart(container.find('.chart')[0], [{name: name, data: res.data}]);
     }).fail(showErrorMessage);
   }
 
   $(function () {
-    drawFriendsChart();
-    drawFollowersChart();
-    drawNewFriendsChart();
-    drawNewFollowersChart();
+    drawAudienceChart('#{raw api_v1_friends_count_points_path(uid: @twitter_user.uid, via: current_via)}', $('#friends-chart'), 'Friends');
+    drawAudienceChart('#{raw api_v1_followers_count_points_path(uid: @twitter_user.uid, via: current_via)}', $('#followers-chart'), 'Followers');
+    drawAudienceChart('#{raw api_v1_new_friends_count_points_path(uid: @twitter_user.uid, via: current_via)}', $('#new-friends-chart'), 'New friends');
+    drawAudienceChart('#{raw api_v1_new_followers_count_points_path(uid: @twitter_user.uid, via: current_via)}', $('#new-followers-chart'), 'New followers');
   });
