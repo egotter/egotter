@@ -39,7 +39,7 @@
         ToastMessage.info(message, {id: 'not_egotter_follower'});
         return;
       } else if (!isPremium && periodicReportStopped) {
-        var message = '<%= t('twitter_users.in_background.periodic_report_stopped_html') %>';
+        var message = '<%= t('twitter_users.in_background.periodic_report_stopped_html', url: direct_message_url(User::EGOTTER_UID, t('short_messages.restart_periodic_reports'))) %>';
         ToastMessage.info(message, {id: 'periodic_report_stopped', ttl: 300});
         return;
       }

@@ -1450,8 +1450,8 @@ ja:
       periodic_report_stopped_html: >-
         リムられ通知の有効期限が切れているため、データの自動更新が止まっています。<br>
         <br>
-        再開するには【リムられ通知 再開】と書いたDMを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に送ってください。
-        <a href="https://twitter.com/messages/compose?recipient_id=187385226&welcome_message_id=1260865386309775364" target="_blank" class="btn btn-primary">DM作成画面を開く</a>
+        再開するには【リムられ通知 再開】と書いたDMを <a href="%{url}" target="_blank">@ego_tter</a> に送ってください。
+        <a href="%{url}" target="_blank" class="btn btn-primary">DM作成画面を開く</a>
       updating_html: '@%{user} のデータを更新中 <img src="/ajax-loader-blue.gif?a=1">'
       displayed_data_is_html: >-
         表示されているデータは <b>%{time}</b> に更新されました。次の更新は「フォローまたはフォロワーに変化があったとき」です。
