@@ -13,25 +13,31 @@ RSpec.describe CreateTwitterUserTask, type: :model do
     it do
       expect(request).to receive(:perform!).with(context).and_return(twitter_user)
       expect(request).to receive(:finished!)
-      expect(task).to receive(:update_friends_and_followers).with(twitter_user, request)
+      expect(task).to receive(:update_new_friends_and_new_followers).with(twitter_user, user.id).and_return([1])
+      expect(task).to receive(:update_friends_and_followers).with(twitter_user, user.id, [1])
+      subject
+    end
+  end
+
+  describe '#update_new_friends_and_new_followers' do
+    let(:twitter_user) { instance_double(TwitterUser, uid: 1, calc_new_friend_uids: [2, 3, 4], calc_new_follower_uids: [3, 4, 5], created_at: Time.zone.now) }
+    subject { task.send(:update_new_friends_and_new_followers, twitter_user, user.id) }
+
+    it do
+      expect(CreateHighPriorityTwitterDBUserWorker).to receive(:compress_and_perform_async).
+          with([1, 2, 3, 4, 5], user_id: user.id, enqueued_by: instance_of(String))
       subject
     end
   end
 
   describe '#update_friends_and_followers' do
-    let(:twitter_user) { instance_double(TwitterUser, created_at: Time.zone.now) }
-    subject { task.send(:update_friends_and_followers, twitter_user, request) }
-
-    before do
-      allow(twitter_user).to receive(:uid).and_return(1)
-      allow(twitter_user).to receive(:friend_uids).and_return([2, 3, 4])
-      allow(twitter_user).to receive(:follower_uids).and_return([3, 4, 5])
-    end
+    let(:twitter_user) { instance_double(TwitterUser, uid: 1, friend_uids: [2, 3, 4], follower_uids: [3, 4, 5]) }
+    let(:reject_uids) { [3, 4] }
+    subject { task.send(:update_friends_and_followers, twitter_user, user.id, reject_uids) }
 
     it do
-      expect(CreateTwitterDBUserWorker).to receive(:compress).with([1, 2, 3, 4, 5]).and_return('compressed_uids')
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).
-          with('compressed_uids', user_id: request.user_id, request_id: request.id, compressed: true, enqueued_by: instance_of(String))
+      expect(CreateTwitterDBUserWorker).to receive(:compress_and_perform_async).
+          with([2, 5], user_id: user.id, enqueued_by: instance_of(String))
       subject
     end
   end
