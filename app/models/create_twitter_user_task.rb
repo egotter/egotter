@@ -14,7 +14,7 @@ class CreateTwitterUserTask
     @request.finished!
 
     new_uids = update_new_friends_and_new_followers(@twitter_user, @request.user_id)
-    update_friends_and_followers(@twitter_user, @request.user_id, new_uids)
+    update_friends_and_followers(@twitter_user, @request.user_id, new_uids) if idle_time?
 
     self
   rescue => e
@@ -37,5 +37,10 @@ class CreateTwitterUserTask
     if uids.any?
       CreateTwitterDBUserWorker.compress_and_perform_async(uids, user_id: user_id, enqueued_by: "#{self.class}##{__method__}")
     end
+  end
+
+  def idle_time?
+    hour = Time.zone.now.in_time_zone('Asia/Tokyo').hour
+    2 <= hour && hour <= 6
   end
 end

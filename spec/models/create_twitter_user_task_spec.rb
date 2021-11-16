@@ -10,6 +10,10 @@ RSpec.describe CreateTwitterUserTask, type: :model do
     let(:twitter_user) { 'twitter_user' }
     subject { task.start!(context) }
 
+    before do
+      allow(task).to receive(:idle_time?).and_return(true)
+    end
+
     it do
       expect(request).to receive(:perform!).with(context).and_return(twitter_user)
       expect(request).to receive(:finished!)
