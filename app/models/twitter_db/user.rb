@@ -110,17 +110,7 @@ module TwitterDB
         def where_and_order_by_field_each_slice(uids, inactive, caller_name = nil)
           records = where(uid: uids)
           records = records.inactive_user if !inactive.nil? && inactive
-          records = records.order_by_field(uids).to_a
-
-          # "inactive.nil?" is specified to prevent misjudgement
-          # if inactive.nil? && uids.size != records.size
-          #   missing_uids = uids - records.map(&:uid)
-          #   CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(missing_uids, enqueued_by: "#{__method__}(#{caller_name})")
-          #   logger.warn "#{__method__}: Import missing uids caller=#{caller_name} value=#{uids.inspect.truncate(100)}"
-          #   logger.info caller.join("\n")
-          # end
-
-          records
+          records.order_by_field(uids).to_a
         end
       end
 

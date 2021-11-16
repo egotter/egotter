@@ -8,7 +8,7 @@
 <% title current_page_title(@twitter_user) %>
 <% set_meta_tags description: current_meta_description(@twitter_user) %>
 
-<% if remove_related_page? && @twitter_user.too_short_create_interval? %>
+<% unless @twitter_user.too_short_create_interval? %>
   <script>
     $(function () {
       var message = '<%= t('.notice_for_update_html', url: timeline_path(@twitter_user, via: current_via('notice_for_update'))) %>';
