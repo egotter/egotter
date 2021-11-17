@@ -27,7 +27,7 @@
 
       <div class="my-4">
         <div>
-          <%= check_box_tag('send_dm', '1', true) %>
+          <%= check_box_tag('send_dm', '1', false) %>
           <label for="send_dm"><%= t('.send_dm') %></label>
           <span class="small"><%= link_to t('.send_test_message'), direct_message_url(User::EGOTTER_UID, t('.test_message')), target: '_blank' %></span>
         </div>
@@ -66,6 +66,15 @@
 
 <script>
   $(function () {
+    $('#send_dm').on('change', function () {
+      var url = '<%= raw direct_message_url(User::EGOTTER_UID, t('.test_message')) %>';
+      if ($(this).prop('checked')) {
+        setTimeout(function () {
+          window.open(url, '_blank');
+        }, 300);
+      }
+    });
+
     $('#open-delete-tweets-modal').on('click', function () {
       $('#delete-tweets-modal').data({
         since: $('#since_date').val(),

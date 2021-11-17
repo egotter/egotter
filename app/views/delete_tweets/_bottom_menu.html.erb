@@ -33,7 +33,7 @@
 
   <div class="my-5">
     <div>
-      <%= check_box_tag('search-send-dm', '1', true) %>
+      <%= check_box_tag('search-send-dm', '1', false) %>
       <label for="search-send-dm"><%= t('.send_dm') %></label>
       <span class="small"><%= link_to t('.send_test_message'), direct_message_url(User::EGOTTER_UID, t('.test_message')), target: '_blank' %></span>
     </div>
@@ -45,6 +45,19 @@
 
   <div class="text-danger small"><%= t('.modal.note') %></div>
 <% end %>
+
+<script>
+  $(function () {
+    $('#search-send-dm').on('change', function () {
+      var url = '<%= raw direct_message_url(User::EGOTTER_UID, t('.test_message')) %>';
+      if ($(this).prop('checked')) {
+        setTimeout(function () {
+          window.open(url, '_blank');
+        }, 300);
+      }
+    });
+  });
+</script>
 
 <script>
   $(function () {
