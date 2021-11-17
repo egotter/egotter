@@ -30,6 +30,8 @@ class GreetingMessageResponder < AbstractMessageResponder
         @sorry = true
       elsif @text.match?(ok_regexp)
         @ok = true
+      elsif @text.match?(test_regexp)
+        @test = true
       end
     end
 
@@ -62,7 +64,11 @@ class GreetingMessageResponder < AbstractMessageResponder
     end
 
     def ok_regexp
-      /\A(おけ|おう)\z/
+      /\A(おけ|おう|OK|ok)\z/
+    end
+
+    def test_regexp
+      /\ADM送信テスト\z/
     end
 
     def send_message
@@ -81,6 +87,8 @@ class GreetingMessageResponder < AbstractMessageResponder
       elsif @sorry
         CreateGreetingSorryMessageWorker.perform_async(@uid)
       elsif @ok
+        CreateGreetingOkMessageWorker.perform_async(@uid)
+      elsif @test
         CreateGreetingOkMessageWorker.perform_async(@uid)
       end
     end
