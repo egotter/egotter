@@ -8,6 +8,16 @@ class PeriodicReportReportableFlag
       store.exist?("reportable:#{user_id}")
     end
 
+    # For debug
+    def keys
+      store.redis.keys("#{Rails.env}:#{self}:reportable:*")
+    end
+
+    # For debug
+    def size
+      keys.size
+    end
+
     private
 
     def store
