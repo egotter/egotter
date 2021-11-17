@@ -68,7 +68,7 @@ class GreetingMessageResponder < AbstractMessageResponder
     end
 
     def test_regexp
-      /\ADM送信テスト\z/
+      /DM送信テスト/
     end
 
     def send_message

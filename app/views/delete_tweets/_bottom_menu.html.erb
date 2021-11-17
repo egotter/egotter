@@ -35,6 +35,7 @@
     <div>
       <%= check_box_tag('search-send-dm', '1', true) %>
       <label for="search-send-dm"><%= t('.send_dm') %></label>
+      <span class="small"><%= link_to t('.send_test_message'), direct_message_url(User::EGOTTER_UID, t('.test_message')), target: '_blank' %></span>
     </div>
     <div>
       <%= check_box_tag('search-post-tweet', '1', true) %>

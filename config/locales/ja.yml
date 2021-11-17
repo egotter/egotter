@@ -1656,6 +1656,8 @@ ja:
     bottom_menu:
       trash: '削除する'
       send_dm: '削除の完了後に自分へDMする'
+      send_test_message: 'DMのテスト'
+      test_message: 'DM送信テスト ※そのまま送信'
       post_tweet: '削除の完了後にツイートする'
       already_deleted: '選択しているツイートは既に削除済みです。'
       no_tweets_selected: 'ツイートが1件も選択されていません。'
