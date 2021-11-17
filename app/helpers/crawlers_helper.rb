@@ -50,6 +50,7 @@ module CrawlersHelper
       'Jooblebot',
       'SBooksNet',
       'AdsBot-Google-Mobile',
+      'Google-adstxt',
       'FlipboardProxy',
       'HeartRails_Capture',
       'Mail.RU_Bot',
@@ -88,6 +89,9 @@ module CrawlersHelper
       'AHC/2.1',
       'admantx-ussy04/3.1',
       'Google-Apps-Script',
+      'scpitspi-rs',
+      'Anthill',
+      'jp.loilo.LoiLoNoteSchool',
   ]
   CRAWLERS_REGEXP = Regexp.union(CRAWLER_WORDS)
 
@@ -103,6 +107,8 @@ module CrawlersHelper
       'help@dataminr.com',
       'www.logicad.com',
       'newspaper/0.2.8',
+      'Dispatch/1.2.0',
+      'Mozilla/5.0 (compatible;)',
       '',
   ]
   CRAWLER_FULL_NAMES_REGEXP = Regexp.new('\A(' + CRAWLER_FULL_NAMES.map { |name| name.gsub('(', '\(').gsub(')', '\)').gsub('.', '\.') }.join('|') + ')\z')
@@ -114,5 +120,13 @@ module CrawlersHelper
 
   def maybe_bot?
     !user_signed_in? && via_dm? && %i(SymbianOS BlackBerry Linux UNKNOWN).include?(request.os)
+  end
+
+  def suspicious_user_agent?
+    request.user_agent.to_s.match?(/FreeBSD|NetBSD|OpenBSD|SymbOS|SunOS/)
+  end
+
+  def suspicious_referer?
+    request.referer.to_s.blank? && request.device_type == :pc
   end
 end

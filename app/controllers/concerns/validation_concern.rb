@@ -33,12 +33,12 @@ module ValidationConcern
   end
 
   def reject_spam_access!
-    return unless !user_signed_in? && request.referer.blank? && request.device_type == :pc
-
-    if request.xhr?
-      head :forbidden
-    else
-      redirect_to error_pages_suspicious_access_detected_path(via: current_via(__method__))
+    if !user_signed_in? && (suspicious_user_agent? || suspicious_referer?)
+      if request.xhr?
+        head :forbidden
+      else
+        redirect_to error_pages_suspicious_access_detected_path(via: current_via(__method__))
+      end
     end
   end
 
