@@ -124,7 +124,8 @@ module Tasks
 
       def precompile
         backend('RAILS_ENV=production bundle exec rake assets:precompile')
-        backend('RAILS_ENV=production bundle exec rake assets:sync:download')
+        backend('RAILS_ENV=production bundle exec rake assets:upload')
+        backend('RAILS_ENV=production bundle exec rake assets:download')
         self
       end
 

@@ -152,7 +152,7 @@ Create .env:
 
 Precompile assets:
 
-    RAILS_ENV=production bundle exec rake assets:precompile
+    RAILS_ENV=production bundle exec rake assets:precompile assets:upload
 
 Write crontab:
 

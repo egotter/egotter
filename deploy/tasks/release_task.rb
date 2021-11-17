@@ -35,7 +35,7 @@ module Tasks
             'bundle config set path ".bundle"',
             'bundle config set without "test development"',
             'bundle check || bundle install',
-            'RAILS_ENV=production bundle exec rake assets:precompile',
+            'RAILS_ENV=production bundle exec rake assets:precompile assets:upload',
             'sudo cp ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf',
             'sudo cp ./setup/etc/init.d/puma /etc/init.d/',
             'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
