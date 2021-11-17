@@ -870,30 +870,6 @@ ActiveRecord::Schema.define(version: 2021_11_12_173035) do
     t.index ["from_uid"], name: "index_inactive_mutual_friendships_on_from_uid"
   end
 
-  create_table "jobs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "track_id", default: -1, null: false
-    t.integer "user_id", default: -1, null: false
-    t.bigint "uid", default: -1, null: false
-    t.string "screen_name", default: "", null: false
-    t.integer "twitter_user_id", default: -1, null: false
-    t.bigint "client_uid", default: -1, null: false
-    t.string "jid", default: "", null: false
-    t.string "parent_jid", default: "", null: false
-    t.string "worker_class", default: "", null: false
-    t.string "error_class", default: "", null: false
-    t.string "error_message", default: "", null: false
-    t.datetime "enqueued_at"
-    t.datetime "started_at"
-    t.datetime "finished_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_jobs_on_created_at"
-    t.index ["jid"], name: "index_jobs_on_jid"
-    t.index ["screen_name"], name: "index_jobs_on_screen_name"
-    t.index ["track_id"], name: "index_jobs_on_track_id"
-    t.index ["uid"], name: "index_jobs_on_uid"
-  end
-
   create_table "mentions", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "uid", null: false
     t.string "screen_name", null: false
