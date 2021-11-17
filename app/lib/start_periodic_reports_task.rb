@@ -42,8 +42,9 @@ class StartPeriodicReportsTask
   end
 
   def create_jobs(requests)
+    seconds = (requests.size / 400 + 1) * 60 # Send 400 messages/minute
     requests.each do |request|
-      CreatePeriodicReportWorker.perform_async(request.id, user_id: request.user_id)
+      CreatePeriodicReportWorker.perform_in(rand(seconds), request.id, user_id: request.user_id)
     end
   end
 

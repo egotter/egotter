@@ -53,7 +53,7 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     subject { described_class.new.create_jobs(requests) }
     it do
       requests.each do |request|
-        expect(CreatePeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: request.user_id)
+        expect(CreatePeriodicReportWorker).to receive(:perform_in).with(instance_of(Integer), request.id, user_id: request.user_id)
       end
       subject
     end
