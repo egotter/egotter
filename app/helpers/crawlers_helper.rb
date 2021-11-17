@@ -87,6 +87,7 @@ module CrawlersHelper
       'Clipbox/2.2.5',
       'AHC/2.1',
       'admantx-ussy04/3.1',
+      'Google-Apps-Script',
   ]
   CRAWLERS_REGEXP = Regexp.union(CRAWLER_WORDS)
 
