@@ -9,7 +9,10 @@ Bundler.require(*Rails.groups)
 module Egotter
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 6.1
+
+    # Disable generating a Link header to prevent the ab command from failing
+    config.action_view.preload_links_header = false
 
     # Configuration for the application, engines, and railties goes here.
     #
