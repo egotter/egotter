@@ -8,24 +8,35 @@
   <%= t('.notice2_html', url1: pricing_path(via: current_via), url2: delete_tweets_mypage_premium_path(via: current_via)) %>
 <% end %>
 
-<div class="d-flex my-3" style="overflow-x: scroll;">
-  <%= render partial: 'filter_button', locals: {id: 'retweet-count-button', modal_id: 'counts-filter-modal', name: t('.filter.retweet_count'), label: t('.filter.noop')} %>
-  <%= render partial: 'filter_button', locals: {id: 'favorite-count-button', modal_id: 'counts-filter-modal', name: t('.filter.favorite_count'), label: t('.filter.noop')} %>
-</div>
+<strong><%= t('.filter.date_buttons') %></strong>
 
-<div class="d-flex my-3" style="overflow-x: scroll;">
+<div class="d-flex mt-1 mb-3" style="overflow-x: scroll;">
   <%= render partial: 'filter_button', locals: {id: 'since-date-button', modal_id: 'days-filter-modal', name: t('.filter.since_date'), label: t('.filter.noop')} %>
   <%= render partial: 'filter_button', locals: {id: 'until-date-button', modal_id: 'days-filter-modal', name: t('.filter.until_date'), label: t('.filter.noop')} %>
 </div>
 
-<div class="d-flex my-3" style="overflow-x: scroll;">
+<strong><%= t('.filter.popularity_buttons') %></strong>
+
+<div class="d-flex mt-1 mb-3" style="overflow-x: scroll;">
+  <%= render partial: 'filter_button', locals: {id: 'retweet-count-button', modal_id: 'counts-filter-modal', name: t('.filter.retweet_count'), label: t('.filter.noop')} %>
+  <%= render partial: 'filter_button', locals: {id: 'favorite-count-button', modal_id: 'counts-filter-modal', name: t('.filter.favorite_count'), label: t('.filter.noop')} %>
+</div>
+
+<strong><%= t('.filter.content_buttons') %></strong>
+
+<div class="d-flex mt-1 mb-2" style="overflow-x: scroll;">
   <%= render partial: 'filter_button', locals: {id: 'hashtags-button', modal_id: 'entities-filter-modal', name: t('.filter.hashtags'), label: t('.filter.noop')} %>
   <%= render partial: 'filter_button', locals: {id: 'mentions-button', modal_id: 'entities-filter-modal', name: t('.filter.mentions'), label: t('.filter.noop')} %>
+</div>
+
+<div class="d-flex mt-1 mb-3" style="overflow-x: scroll;">
   <%= render partial: 'filter_button', locals: {id: 'urls-button', modal_id: 'entities-filter-modal', name: t('.filter.urls'), label: t('.filter.noop')} %>
   <%= render partial: 'filter_button', locals: {id: 'media-button', modal_id: 'entities-filter-modal', name: t('.filter.media'), label: t('.filter.noop')} %>
 </div>
 
-<div class="d-flex my-3" style="overflow-x: scroll;">
+<strong><%= t('.filter.deletion_button') %></strong>
+
+<div class="d-flex mt-1 mb-3" style="overflow-x: scroll;">
   <%= render partial: 'filter_button', locals: {id: 'deleted-button', modal_id: 'meta-filter-modal', button_class: 'btn-outline-primary', name: t('.filter.deleted'), label: t('.filter.excluded')} %>
 </div>
 
