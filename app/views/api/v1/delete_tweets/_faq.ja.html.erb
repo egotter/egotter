@@ -1,5 +1,5 @@
 <% destroy_limit = DeleteTweetsRequest::DESTROY_LIMIT %>
-<% max_deletion = 1_300_000 %>
+<% max_deletion = DeleteTweetsRequest::MAX_DELETION %>
 <% limit_reason = "※ #{destroy_limit}件の制限は全世界共通のツイッターの仕組みです。どのツールでも同じ制限があります。" %>
 <% premium_plan = %Q(#{destroy_limit}件を超えるツイートは、<a href="#{pricing_path(via: current_via)}">えごったー有料プラン</a> のユーザーであれば全て削除できます。).html_safe %>
 

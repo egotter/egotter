@@ -34,6 +34,7 @@ class DeleteTweetsRequest < ApplicationRecord
   attr_reader :retry_in
 
   DESTROY_LIMIT = 3200
+  MAX_DELETION = 1_300_000
 
   before_validation do
     if self.request_token.nil?
