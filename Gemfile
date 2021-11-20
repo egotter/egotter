@@ -104,7 +104,6 @@ gem 'ddtrace', github: 'egotter/dd-trace-rb', branch: '0.34-stable', require: fa
 gem 'slack-ruby-client', require: false
 
 group :development do
-  gem 'pry-rails'
   gem 'annotate'
 end
 
