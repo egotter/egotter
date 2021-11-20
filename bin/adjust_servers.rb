@@ -103,31 +103,49 @@ def post(text, thread_ts: nil)
   Slack::Web::Client.new.chat_postMessage({channel: 'deploy', text: text, thread_ts: thread_ts})
 end
 
-def main
-  retries ||= 3
-  market_type ||= 'spot'
-  role = ENV['ROLE']
+def App
+  def initialize(role)
+    @role = role
+  end
 
-  case role
-  when 'web'
-    Servers.new(role, 't3.medium', market_type).adjust
-  when 'sidekiq'
-    Servers.new(role, 'm5.large', market_type).adjust
-  else
-    raise "Invalid role value=#{role}"
+  def run
+    retries ||= 3
+    market_type ||= 'spot'
+
+    case @role
+    when 'web'
+      Servers.new(@role, 't3.medium', market_type).adjust
+    when 'sidekiq'
+      Servers.new(@role, 'm5.large', market_type).adjust
+    else
+      raise "Invalid role value=#{@role}"
+    end
+  rescue => e
+    if e.class == Aws::EC2::Errors::InsufficientInstanceCapacity && (retries -= 1) > 0
+      post("Retry adjusting #{@role} servers retries=#{retries} exception=#{e.inspect}")
+      market_type = 'not-spot'
+      retry
+    else
+      post("Adjusting #{@role} servers failed retries=#{retries} exception=#{e.inspect}")
+      raise
+    end
   end
-rescue => e
-  if e.class == Aws::EC2::Errors::InsufficientInstanceCapacity && (retries -= 1) > 0
-    post("Retry adjusting #{role} servers retries=#{retries} exception=#{e.inspect}")
-    market_type = 'not-spot'
-    retry
-  else
-    post("Adjusting #{role} servers failed retries=#{retries} exception=#{e.inspect}")
-    raise
+end
+
+def main(role)
+  lockfile = "deploy-#{role}.pid"
+  if File.exist?(lockfile)
+    post('Another deployment is already running')
+    return
   end
+  File.write(lockfile, Process.pid)
+
+  App.new(role).run
+ensure
+  File.delete(lockfile) if File.exist?(lockfile)
 end
 
 if __FILE__ == $0
   Dir.chdir('/var/egotter') if Dir.exist?('/var/egotter')
-  main
+  main(ENV['ROLE'])
 end
