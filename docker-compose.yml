@@ -5,6 +5,8 @@
 version: "3"
 
 services:
+  redis:
+    image: redis
   web:
     build: .
     working_dir: /home/root/egotter
@@ -22,5 +24,8 @@ services:
     volumes:
       - bundle:/usr/local/bundle
       - .:/home/root/egotter:cached
+      - ~/.aws:/root/.aws
+    depends_on:
+      - redis
 volumes:
   bundle:
