@@ -15,10 +15,9 @@
 
 <div id="deletable-tweets-menu" class="d-flex align-items-center shadow p-3">
   <div class="w-100">
-    <span class="badge badge-secondary"><span class="selected-deletable-tweets-count">0</span></span>
     <span class="delete-selected-deletable-tweets-button cursor-pointer p-3">
-      <i class="fas fa-trash"></i>
-      <span class="ml-1"><%= t('.trash') %></span>
+      <i class="fas fa-trash mr-2"></i>
+      <span class="selected-deletable-tweets-count">0</span><span class="ml-1"><%= t('.trash') %></span>
     </span>
   </div>
   <div class="flex-shrink-1">
@@ -64,6 +63,8 @@
     var menu = $('#deletable-tweets-menu');
     var $body = $('body');
     var $deleteButton = $('.delete-selected-deletable-tweets-button');
+    var $reloadButton = $('#reload-deletable-tweets-button');
+    var $forceReloadButton = $('#force-reload-deletable-tweets-button');
     var $modal = $('#delete-selected-tweets-confirmation-modal');
     var isOpened = false;
     var messages = {
@@ -106,6 +107,8 @@
 
     function closeMenu() {
       if (isOpened) {
+        $reloadButton.show();
+        $forceReloadButton.show();
         $deleteButton.css({display: 'none'});
         menu.trigger('sidebar:close');
       }
@@ -115,6 +118,8 @@
     function openMenu() {
       menu.css({width: '100%', height: 'auto', visibility: 'visible'}).show();
       if (!isOpened) {
+        $reloadButton.hide();
+        $forceReloadButton.hide();
         $deleteButton.css({display: 'inline-block'});
         menu.trigger('sidebar:toggle');
       }

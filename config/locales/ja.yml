@@ -1658,7 +1658,7 @@ ja:
         select_total_tweets_html: 'ツイート <span class="total-deletable-tweets-count">%{count}</span> 件をすべて選択'
         total_tweets_selected_html: '検索条件にマッチするツイート <span class="total-deletable-tweets-count">%{count}</span> 件すべてが選択されています。'
     bottom_menu:
-      trash: '削除する'
+      trash: '件のツイートを削除する'
       send_dm: '完了後に自分へDMする'
       send_test_message: 'DMのテスト'
       test_message: 'DM送信テスト ※そのまま送信'
