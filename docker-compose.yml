@@ -1,0 +1,26 @@
+# docker-compose build --no-cache
+# docker-compose up
+# docker-compose run --rm app bundle install --path /usr/local/bundle
+
+version: "3"
+
+services:
+  web:
+    build: .
+    working_dir: /home/root/egotter
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - bundle:/usr/local/bundle
+      - .:/home/root/egotter:cached
+      - ~/.aws:/root/.aws
+    ports:
+      - "3000:3000"
+  sidekiq:
+    build: .
+    working_dir: /home/root/egotter
+    command: bundle exec sidekiq -C config/sidekiq_dev.yml
+    volumes:
+      - bundle:/usr/local/bundle
+      - .:/home/root/egotter:cached
+volumes:
+  bundle:
