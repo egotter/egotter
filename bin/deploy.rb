@@ -83,7 +83,7 @@ def main(params)
     return
   end
 
-  if File.exist?(lockfile)
+  if !params['list'] && File.exist?(lockfile)
     puts 'Another deployment is already running'
     return
   end
