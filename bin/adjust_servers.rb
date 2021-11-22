@@ -103,7 +103,7 @@ def post(text, thread_ts: nil)
   Slack::Web::Client.new.chat_postMessage({channel: 'deploy', text: text, thread_ts: thread_ts})
 end
 
-def App
+class App
   def initialize(role)
     @role = role
   end
