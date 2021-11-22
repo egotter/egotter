@@ -15,4 +15,6 @@ HOME=/
 # *  *  *  *  * user-name command to be executed
 
 */5 * * * * root /root/aws-scripts-mon/mon-put-instance-data.pl --mem-util --disk-space-util --disk-path=/ --from-cron
+* * * * * root /var/egotter/bin/record_used_ports_count.sh
+* * * * * root /var/egotter/bin/record_dropped_conn_count.sh
 20 19 * * * root /bin/rm /var/egotter/tmp/cache/*
