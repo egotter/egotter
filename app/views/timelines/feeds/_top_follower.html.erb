@@ -15,8 +15,10 @@
       var errorMessage = '<%= t('.loading_error', user: twitter_user.screen_name) %>';
       new ProfileLoader(url, '#top-follower-container', errorMessage);
       trackPageEvents('TimelinePage events', 'TopFollower loaded');
+
+      var btn = $(this);
       setTimeout(function () {
-        $(this).hide();
+        btn.hide();
       }, 3000);
     });
   });

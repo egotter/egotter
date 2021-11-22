@@ -135,7 +135,7 @@ end
 def main(role)
   lockfile = "deploy-#{role}.pid"
   if File.exist?(lockfile)
-    post('Another deployment is already running')
+    post("Another deployment is already running role=#{role}")
     return
   end
   File.write(lockfile, Process.pid)
