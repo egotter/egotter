@@ -26,8 +26,20 @@ class WordCloud
   private
 
   def natto_parse(text)
-    dicdir = `#{ENV['MECAB_CONFIG'] || 'mecab-config'} --dicdir`.chomp + '/mecab-ipadic-neologd/'
-    Natto::MeCab.new(dicdir: dicdir).parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
+    Natto::MeCab.new(dicdir: dic_path).parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
+  end
+
+  # Check mecab-config --dicdir
+  def dic_path
+    [
+        '/usr/lib64/mecab/dic/mecab-ipadic-neologd/', # Latest instance
+        '/usr/local/lib/mecab/dic/mecab-ipadic-neologd/', # Old instance
+        '/var/lib/mecab/dic/ipadic-utf8/', # Docker instance
+        `mecab-config --dicdir`.chomp + '/mecab-ipadic-neologd/',
+        `mecab-config --dicdir`.chomp + '/ipadic/',
+    ].each do |path|
+      return path if File.exist?(path)
+    end
   end
 
   def parse(text)

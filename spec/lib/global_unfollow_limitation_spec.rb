@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe GlobalUnfollowLimitation, type: :model do
   let(:instance) { described_class.new }
 
-  before { Redis.new.flushall }
+  before { Redis.new(host: ENV['REDIS_HOST']).flushall }
 
   describe '#limit_start' do
     subject { instance.limit_start }
