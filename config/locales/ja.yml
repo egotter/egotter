@@ -234,6 +234,7 @@ ja:
       top_follower:
         title: "トップフォロワー"
         description: '@%{user} のフォロワーの中でもっともフォロワー数が多いユーザーです。'
+        load: '読み込む'
         loading_error: '@%{user} のトップフォロワーの読み込みに失敗しました'
       unfriends:
         title: 'リムーブした'

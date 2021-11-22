@@ -2,14 +2,22 @@
   <h3 class="h4 text-center"><%= feed_title %></h3>
   <div class="text-center my-3"><%= feed_description %></div>
 
-  <div id="top-follower-container">
+  <div id="top-follower-container" style="min-height: 200px;">
   </div>
+
+  <button id="load-top-follower" class="btn btn-primary"><%= t('.load') %></button>
 </div>
 
 <script>
   $(function () {
-    var url = '<%= raw api_v1_profiles_path(uid: twitter_user.top_follower.uid, expanded: false, via: current_via('top_follower')) %>';
-    var errorMessage = '<%= t('.loading_error', user: twitter_user.screen_name) %>';
-    new ProfileLoader(url, '#top-follower-container', errorMessage);
+    $('#load-top-follower').on('click', function () {
+      var url = '<%= raw api_v1_profiles_path(uid: twitter_user.top_follower.uid, expanded: false, via: current_via('top_follower')) %>';
+      var errorMessage = '<%= t('.loading_error', user: twitter_user.screen_name) %>';
+      new ProfileLoader(url, '#top-follower-container', errorMessage);
+      trackPageEvents('TimelinePage events', 'TopFollower loaded');
+      setTimeout(function () {
+        $(this).hide();
+      }, 3000);
+    });
   });
 </script>
