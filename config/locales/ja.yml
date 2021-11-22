@@ -1927,6 +1927,11 @@ ja:
     coupons_reports:
       label1: 'DM届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
+    inquiry_response_reports:
+      label1: '解決しました'
+      description1: '回答が不要な場合は押してください'
+      label2: '回答を待ってます'
+      description2: '回答が必要な場合は押してください'
     shared:
       label1: 'DM届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'

@@ -4,6 +4,10 @@ class CreateInquiryMessageWorker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   MESSAGE = <<~ERB
+    送り先を間違えていませんか？ 通知の送信コマンドは @ego_tter に送ってください。
+
+    --------
+
     ご連絡ありがとうございます。えごったーサポートです。
     (ง •̀_•́)ง
 
@@ -14,8 +18,6 @@ class CreateInquiryMessageWorker
 
     回答が必要な質問の場合は、そのままでしばらくお待ちください。数日中に回答いたします。
     (๑•ᴗ•๑)
-
-    --------
 
     ・仲良しランキング
     自分のIDをえごったーで検索してください。その検索結果の中に仲良しランキングもあります。<%= timeline_url %>
@@ -52,8 +54,8 @@ class CreateInquiryMessageWorker
   # options:
   def perform(uid, options = {})
     user = User.find_by(uid: uid)
-    # TODO Add quick-reply buttons
-    User.egotter_cs.api_client.create_direct_message(uid, build_message(user))
+    event = InquiryResponseReport.build_direct_message_event(uid, build_message(user))
+    User.egotter_cs.api_client.create_direct_message_event(event: event)
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
