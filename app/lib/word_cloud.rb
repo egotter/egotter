@@ -25,6 +25,8 @@ class WordCloud
 
   private
 
+  # neologd installed: ばなな -> ばなな
+  # not installed: ばなな -> ば, な, な
   def natto_parse(text)
     Natto::MeCab.new(dicdir: dic_path).parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
   end
@@ -42,6 +44,7 @@ class WordCloud
     end
   end
 
+  # Deprecated
   def parse(text)
     mecab_tagger.parse(truncate_text(text)).split("\n").map { |l| l.split("\t") }
   end
