@@ -230,6 +230,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
 
     class DummyUser
+      attr_accessor :account_status
+
       def screen_name
         'deleted'
       end
