@@ -43,6 +43,8 @@ module Tasks
     class LaunchParams < ::Hash
       def initialize(params)
         self[:launch_template] = {launch_template_id: params['launch-template'] || ENV['AWS_LAUNCH_TEMPLATE']}
+        self[:launch_template][:version] = params['launch-template-version'] if params['launch-template-version']
+
         if params['market-type'].nil? || params['market-type'] == 'spot'
           self[:instance_market_options] = {market_type: 'spot'}
         end

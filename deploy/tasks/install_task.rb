@@ -226,7 +226,7 @@ module Tasks
       end
 
       def update_bashrc
-        backend("sed -i -e 's/web3/#{@name}/g' ~/.bashrc")
+        backend("sed -i -e 's/_HOSTNAME_/#{@name}/g' ~/.bashrc")
         self
       end
 
