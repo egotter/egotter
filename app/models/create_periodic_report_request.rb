@@ -216,12 +216,11 @@ class CreatePeriodicReportRequest < ApplicationRecord
         Rails.logger.warn "#{self.class}##{__method__}: Import missing uids request=#{@request.slice(:id, :user_id, :requested_by, :created_at)} uids_size=#{target_uids.size} users_size=#{users.size} uids=#{target_uids} missing_uids=#{missing_uids}"
         CreateHighPriorityTwitterDBUserWorker.perform_async(missing_uids, user_id: @request.user_id, enqueued_by: "#{self.class}##{__method__}")
 
-        dummy = DummyUser.new
         users = uids.map do |uid|
           if (index = users.index { |user| user.uid == uid })
             users[index]
           else
-            dummy
+            DummyUser.new(uid)
           end
         end
       end
@@ -232,8 +231,20 @@ class CreatePeriodicReportRequest < ApplicationRecord
     class DummyUser
       attr_accessor :account_status
 
+      def initialize(uid)
+        @uid = uid
+      end
+
+      def uid
+        @uid
+      end
+
       def screen_name
         'deleted'
+      end
+
+      def slice(*keys)
+        {'uid' => @uid, 'screen_name' => screen_name, 'account_status' => account_status}
       end
     end
 
