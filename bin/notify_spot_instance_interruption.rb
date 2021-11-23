@@ -62,17 +62,24 @@ class App
   class WebProcess
     def initialize(instance_id)
       @instance_id = instance_id
+      @target_group = target_group
     end
 
     def stop
       deregister
+      wait_until_deregistered
+      sleep(10) # TODO Remove this line if the #wait_until_deregistered works correctly
       Process.new('puma').stop
     end
 
     private
 
     def deregister
-      `aws elbv2 deregister-targets --target-group-arn #{target_group} --targets Id=#{@instance_id} --region ap-northeast-1`
+      `aws elbv2 deregister-targets --target-group-arn #{@target_group} --targets Id=#{@instance_id} --region ap-northeast-1`
+    end
+
+    def wait_until_deregistered
+      `aws elbv2 wait target-deregistered --target-group-arn #{@target_group} --targets Id=#{@instance_id} --region ap-northeast-1`
     end
 
     def target_group
