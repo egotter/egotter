@@ -43,6 +43,7 @@ RUN rm /tmp/pubkey.gpg
 # RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install
 
 RUN echo "export PS1='\[\e[36;1m\][\w]\$\[\e[m\] '" >>~/.bashrc
+RUN echo "alias be='bundle exec'" >>~/.bashrc
 
 #RUN apt install -y locales
 #RUN locale-gen ja_JP.UTF-8
