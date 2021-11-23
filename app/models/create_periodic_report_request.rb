@@ -129,15 +129,14 @@ class CreatePeriodicReportRequest < ApplicationRecord
   end
 
   def report_options_builder
-    @report_options_builder ||= ReportOptionsBuilder.new(self, true)
+    @report_options_builder ||= ReportOptionsBuilder.new(self)
   end
 
   class ReportOptionsBuilder
     PERIOD_START = 1.day
 
-    def initialize(request, create_record)
+    def initialize(request)
       @request = request
-      @create_record = create_record
 
       @start_date = PERIOD_START.ago
       @end_date = Time.zone.now
@@ -184,12 +183,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
           worker_context: @request.worker_context,
       }
 
-      if @create_record
-        record = PeriodicReport.create!(user_id: @request.user.id, token: PeriodicReport.generate_token, message_id: '', properties: properties)
-        {periodic_report_id: record.id, request_id: @request.id}
-      else
-        properties
-      end
+      record = PeriodicReport.create!(user_id: @request.user.id, token: PeriodicReport.generate_token, message_id: '', properties: properties)
+      {periodic_report_id: record.id, request_id: @request.id}
     end
 
     private

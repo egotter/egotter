@@ -189,15 +189,9 @@ end
 RSpec.describe CreatePeriodicReportRequest::ReportOptionsBuilder, type: :model do
   let(:user) { create(:user) }
   let(:request) { CreatePeriodicReportRequest.create(user_id: user.id) }
-  let(:create_record_flag) { false }
-  let(:instance) { described_class.new(request, create_record_flag) }
+  let(:instance) { described_class.new(request) }
   describe '#build' do
     subject { instance.build }
     it { is_expected.to be_truthy }
-
-    context 'create_record_flag is true' do
-      let(:create_record_flag) { true }
-      it { is_expected.to be_truthy }
-    end
   end
 end

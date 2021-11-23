@@ -63,12 +63,8 @@ class PeriodicReport < ApplicationRecord
     #   new_followers
     #   worker_context
     def periodic_message(user_id, options = {})
-      if options[:periodic_report_id]
-        report = find(options[:periodic_report_id])
-        options = report.properties.symbolize_keys!
-      else
-        report = new(user: User.find(user_id), token: generate_token)
-      end
+      report = find(options[:periodic_report_id])
+      options = report.properties.symbolize_keys!
 
       report.message = build_report_message(report.user, report.token, options)
       report
