@@ -215,9 +215,24 @@ class CreatePeriodicReportRequest < ApplicationRecord
         missing_uids = target_uids - users.map(&:uid)
         Rails.logger.warn "#{self.class}##{__method__}: Import missing uids request=#{@request.slice(:id, :user_id, :requested_by, :created_at)} uids_size=#{target_uids.size} users_size=#{users.size} uids=#{target_uids} missing_uids=#{missing_uids}"
         CreateHighPriorityTwitterDBUserWorker.perform_async(missing_uids, user_id: @request.user_id, enqueued_by: "#{self.class}##{__method__}")
+
+        dummy = DummyUser.new
+        users = uids.map do |uid|
+          if (index = users.index { |user| user.uid == uid })
+            users[index]
+          else
+            dummy
+          end
+        end
       end
 
       users
+    end
+
+    class DummyUser
+      def screen_name
+        'deleted'
+      end
     end
 
     def attach_status(users)

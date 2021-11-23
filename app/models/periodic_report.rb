@@ -395,8 +395,15 @@ class PeriodicReport < ApplicationRecord
       encrypted_names = encrypt_indicator_names(screen_names)
 
       screen_names.map.with_index do |screen_name, i|
-        status = account_statuses.find { |s| s['screen_name'] == screen_name }&.fetch('account_status', nil)
-        status = " #{translate_account_status(status)}" if status
+        if screen_name == 'suspended'
+          status = " #{I18n.t('periodic_report.account_status.suspended')}"
+        elsif screen_name == 'deleted'
+          status = " #{I18n.t('periodic_report.account_status.not_found')}"
+        else
+          status = account_statuses.find { |s| s['screen_name'] == screen_name }&.fetch('account_status', nil)
+          status = " #{translate_account_status(status)}" if status
+        end
+
         if add_atmark || i < 1
           name_label = "@#{screen_name}"
         else
