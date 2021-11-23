@@ -98,7 +98,7 @@ gem 'aws-sdk-elasticloadbalancingv2', require: false
 
 # Datadog APM
 gem 'dogstatsd-ruby', require: false
-gem 'ddtrace', github: 'egotter/dd-trace-rb', branch: '0.34-stable', require: false
+gem 'ddtrace', require: false
 
 # Slack
 gem 'slack-ruby-client', require: false

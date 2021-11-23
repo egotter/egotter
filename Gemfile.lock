@@ -1,12 +1,4 @@
 GIT
-  remote: https://github.com/egotter/dd-trace-rb.git
-  revision: 995a86caa09b57ff9b562495a585719bafe2dfd4
-  branch: 0.34-stable
-  specs:
-    ddtrace (0.34.2)
-      msgpack
-
-GIT
   remote: https://github.com/egotter/twitter.git
   revision: 7411e9bb8f2dda6a16e2e145074f8fd2c57478ea
   specs:
@@ -139,6 +131,10 @@ GEM
     concurrent-ruby (1.1.9)
     connection_pool (2.2.5)
     crass (1.0.6)
+    ddtrace (0.54.0)
+      debase-ruby_core_source (= 0.10.12)
+      msgpack
+    debase-ruby_core_source (0.10.12)
     declarative (0.0.20)
     device_detector (1.0.6)
     devise (4.7.3)
@@ -148,7 +144,7 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.4.4)
-    dogstatsd-ruby (4.8.1)
+    dogstatsd-ruby (5.3.2)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.7.6)
@@ -286,7 +282,7 @@ GEM
     mini_mime (1.1.2)
     mini_portile2 (2.6.1)
     minitest (5.14.4)
-    msgpack (1.3.3)
+    msgpack (1.4.2)
     multi_json (1.15.0)
     multipart-post (2.1.1)
     mustermann (1.1.1)
@@ -486,7 +482,7 @@ DEPENDENCIES
   aws-sdk-elasticloadbalancingv2
   aws-sdk-s3
   blazer
-  ddtrace!
+  ddtrace
   devise
   dogstatsd-ruby
   dotenv-rails
