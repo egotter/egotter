@@ -38,21 +38,11 @@ module Tasks
       private
 
       def add_to_dashboard(role, instance_id)
-        Dashboard.new('egotter-linux-system').
-            append_cpu_utilization(role, instance_id).
-            append_memory_utilization(role, instance_id).
-            append_cpu_credit_balance(role, instance_id).
-            append_disk_space_utilization(role, instance_id).
-            update
+        Dashboard.new('egotter-linux-system').append_all(role, instance_id).update
       end
 
       def remove_from_dashboard(role, instance_id)
-        Dashboard.new('egotter-linux-system').
-            remove_cpu_utilization(role, instance_id).
-            remove_memory_utilization(role, instance_id).
-            remove_cpu_credit_balance(role, instance_id).
-            remove_disk_space_utilization(role, instance_id).
-            update
+        Dashboard.new('egotter-linux-system').remove_all(role, instance_id).update
       end
 
       def append_to_ssh_config(id, host, public_ip)

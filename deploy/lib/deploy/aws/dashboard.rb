@@ -11,6 +11,13 @@ class Dashboard
     @changes = []
   end
 
+  def append_all(role, instance_id)
+    append_cpu_utilization(role, instance_id).
+        append_memory_utilization(role, instance_id).
+        append_cpu_credit_balance(role, instance_id).
+        append_disk_space_utilization(role, instance_id)
+  end
+
   def append_cpu_utilization(role, instance_id)
     append_instance("CPUUtilization#{role_suffix(role)}", 'AWS/EC2', ['...', instance_id])
   end
@@ -25,6 +32,13 @@ class Dashboard
 
   def append_disk_space_utilization(role, instance_id)
     append_instance("DiskSpaceUtilization#{role_suffix(role)}", 'System/Linux', ['...', instance_id, '.', '.'])
+  end
+
+  def remove_all(role, instance_id)
+    remove_cpu_utilization(role, instance_id).
+        remove_memory_utilization(role, instance_id).
+        remove_cpu_credit_balance(role, instance_id).
+        remove_disk_space_utilization(role, instance_id)
   end
 
   def remove_cpu_utilization(role, instance_id)
