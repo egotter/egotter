@@ -1,4 +1,0 @@
-init_config:
-
-instances:
-  - pid_file: /home/ec2-user/egotter/tmp/pids/unicorn.pid
