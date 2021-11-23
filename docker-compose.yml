@@ -1,6 +1,7 @@
 # docker-compose build --no-cache
 # docker-compose up
 # docker-compose run --rm web bundle install --path /usr/local/bundle
+# docker-compose run --rm web yarn install --modules-folder /usr/local/node_modules
 
 version: "3"
 
@@ -13,6 +14,7 @@ services:
     command: bundle exec rails s -p 3000 -b '0.0.0.0'
     volumes:
       - bundle:/usr/local/bundle
+      - node_modules:/usr/local/node_modules
       - .:/home/root/egotter:cached
       - ~/.aws:/root/.aws
     ports:
@@ -29,3 +31,4 @@ services:
       - redis
 volumes:
   bundle:
+  node_modules:
