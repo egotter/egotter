@@ -11,25 +11,25 @@ STDOUT.sync = true
 def print_help
   puts <<~'TEXT'
     Usage:
-      egotter.rb --release --role web --hosts aaa,bbb,ccc
-      egotter.rb --release --role web --hosts aaa,bbb,ccc --git-tag
-      egotter.rb --release --role sidekiq --hosts aaa,bbb,ccc
-      egotter.rb --release --role sidekiq --hosts aaa,bbb,ccc --git-tag
+      deploy.rb --release --role web --hosts aaa,bbb,ccc
+      deploy.rb --release --role web --hosts aaa,bbb,ccc --git-tag
+      deploy.rb --release --role sidekiq --hosts aaa,bbb,ccc
+      deploy.rb --release --role sidekiq --hosts aaa,bbb,ccc --git-tag
 
-      egotter.rb --launch --role web
-      egotter.rb --launch --role web --rotate
-      egotter.rb --launch --role web --rotate --count 3
-      egotter.rb --launch --role sidekiq --instance-type m5.large
+      deploy.rb --launch --role web
+      deploy.rb --launch --role web --rotate
+      deploy.rb --launch --role web --rotate --count 3
+      deploy.rb --launch --role sidekiq --instance-type m5.large
 
-      egotter.rb --sync --role web --instance-id i-0000
-      egotter.rb --sync --role sidekiq --instance-id i-0000
+      deploy.rb --sync --role web --instance-id i-0000
+      deploy.rb --sync --role sidekiq --instance-id i-0000
 
-      egotter.rb --list --role web
-      egotter.rb --list --role sidekiq
+      deploy.rb --list --role web
+      deploy.rb --list --role sidekiq
 
-      egotter.rb --terminate --role web
-      egotter.rb --terminate --role web --count 3
-      egotter.rb --terminate --role sidekiq --instance-id i-0000
+      deploy.rb --terminate --role web
+      deploy.rb --terminate --role web --count 3
+      deploy.rb --terminate --role sidekiq --instance-id i-0000
   TEXT
 end
 

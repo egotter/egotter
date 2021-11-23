@@ -140,6 +140,7 @@ module Tasks
 
         upload_file('./setup/etc/crontab', '/etc/crontab')
         backend('sudo chown root:root /etc/crontab')
+        backend('sudo chmod 644 /etc/crontab')
 
         upload_file('./setup/var/spool/cron/ec2-user', '/var/spool/cron/ec2-user')
         backend('sudo chown ec2-user:ec2-user /var/spool/cron/ec2-user')
