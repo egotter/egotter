@@ -20,15 +20,6 @@ RSpec.describe PeriodicReport do
       end
       it { is_expected.to be_truthy }
     end
-
-    context 'periodic_report_id is not passed' do
-      before do
-        allow(described_class).to receive(:generate_token).and_return('token')
-        allow(described_class).to receive(:new).with(user: user, token: 'token').and_call_original
-        allow(described_class).to receive(:build_report_message).with(user, 'token', options).and_return('message')
-      end
-      it { is_expected.to be_truthy }
-    end
   end
 
   describe '.build_report_message' do
