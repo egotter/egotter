@@ -27,16 +27,4 @@ RSpec.describe WebhookController, type: :controller do
     end
     it { is_expected.to be_truthy }
   end
-
-  describe '#track_twitter_webhook' do
-    let(:events) do
-      [{id: 123, type: 'ttt', message_create: {target: 't', sender_id: 's'}, created_timestamp: Time.zone.now.to_i}]
-    end
-    subject { controller.send(:track_twitter_webhook) }
-    before do
-      allow(controller.params).to receive(:[]).with(:direct_message_events).and_return(events)
-      allow(controller.params).to receive(:[]).with(:for_user_id).and_return(111)
-    end
-    it { is_expected.to be_truthy }
-  end
 end

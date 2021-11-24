@@ -7,8 +7,6 @@ class WebhookController < ApplicationController
 
   before_action :verify_webhook_request, only: :twitter
 
-  after_action :track_twitter_webhook, only: :twitter
-
   def challenge
     render json: {response_token: crc_response}
   end
@@ -76,22 +74,5 @@ class WebhookController < ApplicationController
 
   def to_hash(event)
     event.respond_to?(:to_unsafe_h) ? event.to_unsafe_h : event
-  end
-
-  # TODO Remove later
-  def track_twitter_webhook
-    if params[:direct_message_events]
-      events = params[:direct_message_events].map do |event|
-        {
-            id: event[:id],
-            type: event[:type],
-            message_create: {target: event[:message_create][:target], sender_id: event[:message_create][:sender_id]},
-            created_timestamp: event[:created_timestamp]
-        }
-      end
-      ahoy.track('Twitter webhook', for_user_id: params[:for_user_id], direct_message_events: events)
-    end
-  rescue => e
-    logger.info "#track_twitter_webhook: #{e.inspect}"
   end
 end
