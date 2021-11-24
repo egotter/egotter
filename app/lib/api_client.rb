@@ -18,17 +18,19 @@ class ApiClient
     # TODO Fix recipient_id
     CreateDirectMessageErrorLogWorker.perform_async([recipient_id, message], e.class, e.message, Time.zone.now, sender_id: recipient_id)
     update_blocker_status(e)
+    Rails.logger.warn "Sending a DM failed method=#{__method__} user_id=#{@user&.id} recipient_id=#{recipient_id} message=#{message}"
     raise
   end
 
-  def create_direct_message_event(*args)
-    resp = twitter.create_direct_message_event(*args).to_h
+  def create_direct_message_event(event:)
+    resp = twitter.create_direct_message_event(event: event).to_h
     DirectMessage.new(event: resp)
   rescue => e
     if (user = fetch_user)
-      CreateDirectMessageErrorLogWorker.perform_async(args, e.class, e.message, Time.zone.now, sender_id: user.uid)
+      CreateDirectMessageErrorLogWorker.perform_async({event: event}, e.class, e.message, Time.zone.now, sender_id: user.uid)
     end
     update_blocker_status(e)
+    Rails.logger.warn "Sending a DM failed method=#{__method__} user_id=#{@user&.id} event=#{event.inspect}"
     raise
   end
 

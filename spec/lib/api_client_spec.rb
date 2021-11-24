@@ -30,12 +30,23 @@ RSpec.describe ApiClient, type: :model do
   end
 
   describe '#create_direct_message_event' do
+    let(:event) do
+      {
+          type: 'message_create',
+          message_create: {
+              target: {recipient_id: 1},
+              message_data: {
+                  text: 'text'
+              }
+          }
+      }
+    end
     let(:response) { {message_create: {message_data: {text: 'text'}}} }
-    subject { instance.create_direct_message_event(1, 'text') }
+    subject { instance.create_direct_message_event(event: event) }
     before { allow(instance).to receive(:twitter).and_return(client) }
 
     it do
-      expect(client).to receive(:create_direct_message_event).with(1, 'text').and_return(response)
+      expect(client).to receive(:create_direct_message_event).with(event: event).and_return(response)
       expect(DirectMessage).to receive(:new).with(event: response).and_return('dm')
       is_expected.to eq('dm')
     end
