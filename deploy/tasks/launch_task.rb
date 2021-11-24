@@ -75,6 +75,7 @@ module Tasks
       def launch_instance(index = nil)
         az = @target_group.availability_zone_with_fewest_instances
         params = @params.merge('availability-zone' => az, 'instance-index' => index)
+        params['instance-type'] = 't3.medium' unless params['instance-type']
         @server = Tasks::LaunchInstanceTask::Web.new(params).launch
       end
 
@@ -112,6 +113,7 @@ module Tasks
       def launch_instance(index = nil)
         az = 'ap-northeast-1b'
         params = @params.merge('availability-zone' => az, 'instance-index' => index)
+        params['instance-type'] = 'm5.large' unless params['instance-type']
         @server = Tasks::LaunchInstanceTask::Sidekiq.new(params).launch
       end
 
@@ -138,6 +140,7 @@ module Tasks
       def launch_instance(index = nil)
         az = 'ap-northeast-1b'
         params = @params.merge('availability-zone' => az, 'instance-index' => index)
+        params['instance-type'] = 't3.medium' unless params['instance-type']
         @server = Tasks::LaunchInstanceTask::Plain.new(params).launch
       end
 
