@@ -41,9 +41,7 @@
     = render partial: 'shared/ad_block_detector' if root_page? || timeline_page? || profile_page?
     = render partial: 'shared/cognite_mode_detector' if timeline_page? || profile_page?
     = render partial: 'shared/onesignal' if user_signed_in? && !delete_tweets_page?
-
-    :javascript
-      ahoy.trackAll();
+    = render partial: 'shared/ahoy'
 
   %body
     = javascript_include_tag "/adsense.js?t=#{Time.zone.now.to_i}"
