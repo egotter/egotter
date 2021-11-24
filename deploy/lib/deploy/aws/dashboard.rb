@@ -109,7 +109,7 @@ class Dashboard
 
   def update
     if @changes.any?
-      @changes.each { |change| logger.info change.inspect }
+      @changes.each { |change| logger.info "Dashboard updated: #{(change[0] rescue nil)}" }
       put_dashboard(@name, @dashboard_body)
     end
   end
