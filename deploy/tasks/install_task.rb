@@ -90,6 +90,11 @@ module Tasks
         exec_command(cmd, exception: exception)
       end
 
+      def update_bashrc
+        backend("sed -i -e 's/_HOSTNAME_/#{@name}/g' ~/.bashrc")
+        self
+      end
+
       def install_td_agent(src)
         options = {
             name: @name,
@@ -167,11 +172,18 @@ module Tasks
         self
       end
 
-      def update_datadog
-        tmp_file = '/var/egotter/datadog.sidekiq.conf.yaml.tmp'
-        run_rsync('./setup/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml', tmp_file)
-        backend('test -e "/etc/datadog-agent/conf.d/sidekiq.d" || sudo mkdir /etc/datadog-agent/conf.d/sidekiq.d')
-        backend("sudo mv #{tmp_file} /etc/datadog-agent/conf.d/sidekiq.d/conf.yaml")
+      def update_datadog(role = nil)
+        if role == 'web'
+          backend('sudo rm /etc/datadog-agent/conf.d/nginx.d/conf.yaml')
+        elsif role == 'sidekiq'
+          tmp_file = '/var/egotter/datadog.sidekiq.conf.yaml.tmp'
+          run_rsync('./setup/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml', tmp_file)
+          backend('test -e "/etc/datadog-agent/conf.d/sidekiq.d" || sudo mkdir /etc/datadog-agent/conf.d/sidekiq.d')
+          backend("sudo mv #{tmp_file} /etc/datadog-agent/conf.d/sidekiq.d/conf.yaml")
+        else
+          # Do nothing
+        end
+
         self
       end
 
@@ -205,6 +217,7 @@ module Tasks
             update_env.
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
+            update_datadog('web').
             precompile.
             update_egotter.
             update_crontab.
@@ -223,11 +236,6 @@ module Tasks
 
       def update_env
         upload_env('env/web.env.enc')
-      end
-
-      def update_bashrc
-        backend("sed -i -e 's/_HOSTNAME_/#{@name}/g' ~/.bashrc")
-        self
       end
 
       def restart_processes
@@ -260,7 +268,7 @@ module Tasks
             update_env.
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
-            update_datadog.
+            update_datadog('sidekiq').
             update_egotter.
             update_crontab.
             update_sidekiq.
@@ -278,11 +286,6 @@ module Tasks
 
       def update_env
         upload_env('env/sidekiq.env.enc')
-      end
-
-      def update_bashrc
-        backend("sed -i -e 's/web3/#{@name}/g' ~/.bashrc")
-        self
       end
 
       def restart_processes
@@ -323,6 +326,7 @@ module Tasks
         update_misc.
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
+            update_datadog.
             update_egotter.
             update_crontab.
             update_nginx.
