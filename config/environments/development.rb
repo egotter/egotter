@@ -75,7 +75,6 @@ Rails.application.configure do
   # config.action_cable.disable_request_forgery_protection = true
 
   config.log_formatter = ::Logger::Formatter.new
-  config.log_tags = [:request_id]
   Rails.application.routes.default_url_options[:protocol] = 'https'
   Rails.application.routes.default_url_options[:host] = 'egotter.com'
 end
