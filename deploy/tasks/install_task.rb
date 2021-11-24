@@ -240,10 +240,10 @@ module Tasks
 
       def restart_processes
         [
+            'sudo restart datadog-agent',
             'sudo service td-agent restart',
             'sudo service nginx restart',
             'sudo start puma && sleep 10',
-            'sudo restart datadog-agent',
             'ab -n 50 -c 2 http://localhost:80/',
         ].each do |cmd|
           backend(cmd)
@@ -290,12 +290,12 @@ module Tasks
 
       def restart_processes
         [
+            'sudo restart datadog-agent',
             'sudo service td-agent restart',
             'sudo service nginx stop || :',
             'sudo stop puma || :',
             'sudo start sidekiq',
             'sudo start sidekiq_misc',
-            'sudo restart datadog-agent',
         ].each do |cmd|
           backend(cmd)
         end
@@ -344,10 +344,10 @@ module Tasks
 
       def stop_processes
         [
+            'sudo restart datadog-agent',
             'sudo service td-agent stop || :',
             'sudo service nginx stop || :',
             'sudo stop puma || :',
-            'sudo restart datadog-agent',
             'sudo stop sidekiq || :',
             'sudo stop sidekiq_misc || :',
         ].each do |cmd|
