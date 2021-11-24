@@ -23,9 +23,9 @@ common: &default_settings
   # debug.
   log_level: info
 
-  rules.ignore_url_regexes: []
   disable_samplers: true
   browser_monitoring.auto_instrument: false
+  distributed_tracing.enabled: false
 
 # Environment-specific settings are in this section.
 # RAILS_ENV or RACK_ENV (as appropriate) is used to determine the environment.
