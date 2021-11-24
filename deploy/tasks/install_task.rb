@@ -173,8 +173,10 @@ module Tasks
       end
 
       def update_datadog(role = nil)
+        backend('sudo rm /etc/datadog-agent/conf.d/nginx.d/conf.yaml')
+
         if role == 'web'
-          backend('sudo rm /etc/datadog-agent/conf.d/nginx.d/conf.yaml')
+          # Do nothing
         elsif role == 'sidekiq'
           tmp_file = '/var/egotter/datadog.sidekiq.conf.yaml.tmp'
           run_rsync('./setup/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml', tmp_file)
