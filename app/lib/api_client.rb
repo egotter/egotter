@@ -15,10 +15,13 @@ class ApiClient
       true
     end
   rescue => e
-    # TODO Fix recipient_id
-    CreateDirectMessageErrorLogWorker.perform_async([recipient_id, message], e.class, e.message, Time.zone.now, sender_id: recipient_id)
+    CreateDirectMessageErrorLogWorker.perform_async([recipient_id, message], e.class, e.message, Time.zone.now, sender_id: @user&.uid)
     update_blocker_status(e)
-    Rails.logger.warn "Sending a DM failed method=#{__method__} user_id=#{@user&.id} recipient_id=#{recipient_id} message=#{message}"
+
+    if e.class == ApiClient::RetryExhausted
+      Rails.logger.warn "Sending a DM failed method=#{__method__} user_id=#{@user&.id} recipient_id=#{recipient_id} message=#{message}"
+    end
+
     raise
   end
 
@@ -26,11 +29,13 @@ class ApiClient
     resp = twitter.create_direct_message_event(event: event).to_h
     DirectMessage.new(event: resp)
   rescue => e
-    if (user = fetch_user)
-      CreateDirectMessageErrorLogWorker.perform_async({event: event}, e.class, e.message, Time.zone.now, sender_id: user.uid)
-    end
+    CreateDirectMessageErrorLogWorker.perform_async({event: event}, e.class, e.message, Time.zone.now, sender_id: @user&.uid)
     update_blocker_status(e)
-    Rails.logger.warn "Sending a DM failed method=#{__method__} user_id=#{@user&.id} event=#{event.inspect}"
+
+    if e.class == ApiClient::RetryExhausted
+      Rails.logger.warn "Sending a DM failed method=#{__method__} user_id=#{@user&.id} event=#{event.inspect}"
+    end
+
     raise
   end
 
