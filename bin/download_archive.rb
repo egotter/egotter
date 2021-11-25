@@ -3,6 +3,7 @@
 require 'aws-sdk-s3'
 require_relative '../app/lib/s3/archive_data'
 
+# BUCKET=[VALUE] KEY=[VALUE] bundle exec ruby bin/download_archive.rb
 def main
   region = ENV['REGION'] || 'ap-northeast-1'
   bucket = ENV['BUCKET']
