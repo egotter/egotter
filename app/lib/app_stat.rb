@@ -18,9 +18,9 @@ class AppStat
           "SendDirectMessageCount #{GlobalSendDirectMessageCount.new.size}",
           "ActiveSendDirectMessageCount #{GlobalActiveSendDirectMessageCount.new.size}",
           "PassiveSendDirectMessageCount #{GlobalPassiveSendDirectMessageCount.new.size}",
-          "SendDirectMessageFromEgotterCount #{GlobalSendDirectMessageFromEgotterCount.new.size}",
-          "ActiveSendDirectMessageFromEgotterCount #{GlobalActiveSendDirectMessageFromEgotterCount.new.size}",
-          "PassiveSendDirectMessageFromEgotterCount #{GlobalPassiveSendDirectMessageFromEgotterCount.new.size}",
+          "SendDirectMessageFromEgotterCount #{GlobalSendDirectMessageFromEgotterCount.new.size} (#{Ahoy::Event.dm_from_egotter.where('time > ?', 1.day.ago).size})",
+          "ActiveSendDirectMessageFromEgotterCount #{GlobalActiveSendDirectMessageFromEgotterCount.new.size} (#{Ahoy::Event.active_dm_from_egotter.where('time > ?', 1.day.ago).size})",
+          "PassiveSendDirectMessageFromEgotterCount #{GlobalPassiveSendDirectMessageFromEgotterCount.new.size} (#{Ahoy::Event.passive_dm_from_egotter.where('time > ?', 1.day.ago).size})",
       ].join("\n")
     end
   end
