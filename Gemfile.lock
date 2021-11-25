@@ -452,7 +452,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.7)
-    unique_job (0.2.1)
+    unique_job (0.4.0)
       redis
       sidekiq (> 6.0, < 7.0)
     warden (1.2.9)
@@ -520,7 +520,7 @@ DEPENDENCIES
   twitter!
   twitter-text
   twitter_with_auto_pagination
-  unique_job
+  unique_job (= 0.4.0)
   webpacker (~> 5.0)
 
 BUNDLED WITH
