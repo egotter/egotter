@@ -1,3 +1,4 @@
+# TODO Remove later
 class GlobalActiveSendDirectMessageFromEgotterCount < ::Egotter::AsyncSortedSet
 
   def initialize

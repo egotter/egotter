@@ -57,7 +57,8 @@ module Egotter
 
         GlobalSendDirectMessageCount.new.increment
         if recipient_uid != User::EGOTTER_UID
-          GlobalSendDirectMessageFromEgotterCount.new.increment
+          GlobalSendDirectMessageFromEgotterCount.new.increment # TODO Remove later
+          CreateAhoyEventWorker.perform_async(name: 'Send DM from egotter', recipient_uid: recipient_uid, time: Time.zone.now)
           GlobalSendDirectMessageCountByUser.new.increment(recipient_uid)
         end
 
@@ -65,13 +66,15 @@ module Egotter
           GlobalPassiveSendDirectMessageCount.new.increment
 
           if recipient_uid != User::EGOTTER_UID
-            GlobalPassiveSendDirectMessageFromEgotterCount.new.increment
+            GlobalPassiveSendDirectMessageFromEgotterCount.new.increment # TODO Remove later
+            CreateAhoyEventWorker.perform_async(name: 'Send passive DM from egotter', recipient_uid: recipient_uid, time: Time.zone.now)
           end
         else
           GlobalActiveSendDirectMessageCount.new.increment
 
           if recipient_uid != User::EGOTTER_UID
-            GlobalActiveSendDirectMessageFromEgotterCount.new.increment
+            GlobalActiveSendDirectMessageFromEgotterCount.new.increment # TODO Remove later
+            CreateAhoyEventWorker.perform_async(name: 'Send active DM from egotter', recipient_uid: recipient_uid, time: Time.zone.now)
           end
         end
 
