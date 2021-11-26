@@ -6,7 +6,6 @@ RSpec.describe SortedSetCleanupWorker do
   describe '#perform' do
     subject { worker.perform(class_str) }
     [
-        CallCreateDirectMessageEventCount,
         GlobalActiveSendDirectMessageCount,
         GlobalActiveSendDirectMessageFromEgotterCount,
         GlobalDirectMessageReceivedFlag,
