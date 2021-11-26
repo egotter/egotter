@@ -4,7 +4,7 @@ RSpec.describe UniqueJob::JobHistory do
   let(:instance) { described_class.new(Class, Class, 1.minute) }
   let(:redis) { described_class.redis }
 
-  before { Redis.client.flushdb }
+  before { Redis.new(host: ENV['REDIS_HOST']).flushall }
 
   describe '#ttl' do
     subject { instance.ttl(val) }

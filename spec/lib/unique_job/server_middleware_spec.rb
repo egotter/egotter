@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe UniqueJob::ServerMiddleware do
-  let(:middleware) { described_class.new }
+  let(:middleware) { described_class.new(host: ENV['REDIS_HOST'], db: 1) }
 
   describe '#call' do
     let(:msg) { {'args' => 'args'} }
@@ -20,7 +20,7 @@ RSpec.describe UniqueJob::ServerMiddleware do
       include Sidekiq::Worker
       sidekiq_options queue: 'test', retry: 0, backtrace: false
 
-      @@count = 0
+      @@perform_count = 0
       @@callback_count = 0
 
       def unique_key(*args)
@@ -36,18 +36,18 @@ RSpec.describe UniqueJob::ServerMiddleware do
       end
 
       def perform(*args)
-        @@count += 1
+        @@perform_count += 1
       end
     end
 
     before do
       Sidekiq::Testing.server_middleware do |chain|
-        chain.add UniqueJob::ServerMiddleware
+        chain.add UniqueJob::ServerMiddleware, {host: ENV['REDIS_HOST'], db: 1}
       end
 
-      Redis.client.flushdb
+      Redis.new(host: ENV['REDIS_HOST']).flushall
       TestServerWorker.clear
-      TestServerWorker.class_variable_set(:@@count, 0)
+      TestServerWorker.class_variable_set(:@@perform_count, 0)
       TestServerWorker.class_variable_set(:@@callback_count, 0)
     end
 
@@ -66,7 +66,7 @@ RSpec.describe UniqueJob::ServerMiddleware do
 
       TestServerWorker.drain
       expect(TestServerWorker.jobs.size).to eq(0)
-      expect(TestServerWorker.class_variable_get(:@@count)).to eq(1)
+      expect(TestServerWorker.class_variable_get(:@@perform_count)).to eq(1)
       expect(TestServerWorker.class_variable_get(:@@callback_count)).to eq(1)
     end
 
@@ -79,7 +79,7 @@ RSpec.describe UniqueJob::ServerMiddleware do
 
         TestServerWorker.drain
         expect(TestServerWorker.jobs.size).to eq(0)
-        expect(TestServerWorker.class_variable_get(:@@count)).to eq(1)
+        expect(TestServerWorker.class_variable_get(:@@perform_count)).to eq(1)
         expect(TestServerWorker.class_variable_get(:@@callback_count)).to eq(0)
 
         UniqueJob::JobHistory.new(TestServerWorker, UniqueJob::ClientMiddleware, nil).delete_all
@@ -90,7 +90,7 @@ RSpec.describe UniqueJob::ServerMiddleware do
 
         TestServerWorker.drain
         expect(TestServerWorker.jobs.size).to eq(0)
-        expect(TestServerWorker.class_variable_get(:@@count)).to eq(2)
+        expect(TestServerWorker.class_variable_get(:@@perform_count)).to eq(2)
         expect(TestServerWorker.class_variable_get(:@@callback_count)).to eq(0)
       end
     end

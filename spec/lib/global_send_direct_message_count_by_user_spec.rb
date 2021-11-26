@@ -4,7 +4,7 @@ RSpec.describe GlobalSendDirectMessageCountByUser do
   let(:instance) { described_class.new }
   let(:uid) { 1 }
 
-  before { Redis.client.flushdb }
+  before { Redis.new(host: ENV['REDIS_HOST']).flushall }
 
   describe '#increment' do
     subject { instance.increment(uid) }

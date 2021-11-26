@@ -6,7 +6,7 @@ RSpec.describe ExpireJob::Middleware do
       include Sidekiq::Worker
       sidekiq_options queue: 'test', retry: 0, backtrace: false
 
-      @@count = 0
+      @@perform_count = 0
       @@callback_count = 0
 
       def expire_in
@@ -18,7 +18,7 @@ RSpec.describe ExpireJob::Middleware do
       end
 
       def perform(*args)
-        @@count += 1
+        @@perform_count += 1
       end
     end
 
@@ -27,9 +27,9 @@ RSpec.describe ExpireJob::Middleware do
         chain.add ExpireJob::Middleware
       end
 
-      Redis.client.flushdb
+      Redis.new(host: ENV['REDIS_HOST']).flushall
       TestExpireWorker.clear
-      TestExpireWorker.class_variable_set(:@@count, 0)
+      TestExpireWorker.class_variable_set(:@@perform_count, 0)
       TestExpireWorker.class_variable_set(:@@callback_count, 0)
     end
 
@@ -44,7 +44,7 @@ RSpec.describe ExpireJob::Middleware do
 
       TestExpireWorker.drain
       expect(TestExpireWorker.jobs.size).to eq(0)
-      expect(TestExpireWorker.class_variable_get(:@@count)).to eq(1)
+      expect(TestExpireWorker.class_variable_get(:@@perform_count)).to eq(1)
       expect(TestExpireWorker.class_variable_get(:@@callback_count)).to eq(1)
     end
 
@@ -59,7 +59,7 @@ RSpec.describe ExpireJob::Middleware do
 
         TestExpireWorker.drain
         expect(TestExpireWorker.jobs.size).to eq(0)
-        expect(TestExpireWorker.class_variable_get(:@@count)).to eq(0)
+        expect(TestExpireWorker.class_variable_get(:@@perform_count)).to eq(0)
         expect(TestExpireWorker.class_variable_get(:@@callback_count)).to eq(1)
       end
     end

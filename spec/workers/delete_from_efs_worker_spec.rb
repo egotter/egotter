@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe DeleteFromEfsWorker do
   describe '.remove_and_perform_in' do
     before do
-      Redis.client.flushdb
+      Redis.new(host: ENV['REDIS_HOST']).flushall
       described_class.clear
     end
 

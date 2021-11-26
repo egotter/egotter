@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe UniqueJob::ClientMiddleware do
-  let(:middleware) { described_class.new }
+  let(:middleware) { described_class.new(host: ENV['REDIS_HOST'], db: 1) }
 
   class Worker
   end
@@ -51,7 +51,7 @@ RSpec.describe UniqueJob::ClientMiddleware do
     end
 
     before do
-      Redis.client.flushdb
+      Redis.new(host: ENV['REDIS_HOST']).flushall
       TestClientWorker.clear
       TestClientWorker.class_variable_set(:@@callback_count, 0)
     end

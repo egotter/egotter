@@ -6,7 +6,7 @@ RSpec.describe TimeoutJob::Middleware do
       include Sidekiq::Worker
       sidekiq_options queue: 'test', retry: 0, backtrace: false
 
-      @@count = 0
+      @@perform_count = 0
       @@callback_count = 0
 
       def timeout_in
@@ -19,7 +19,7 @@ RSpec.describe TimeoutJob::Middleware do
 
       def perform(*args)
         sleep 1
-        @@count += 1
+        @@perform_count += 1
       end
     end
 
@@ -28,9 +28,9 @@ RSpec.describe TimeoutJob::Middleware do
         chain.add TimeoutJob::Middleware
       end
 
-      Redis.client.flushdb
+      Redis.new(host: ENV['REDIS_HOST']).flushall
       TestTimeoutWorker.clear
-      TestTimeoutWorker.class_variable_set(:@@count, 0)
+      TestTimeoutWorker.class_variable_set(:@@perform_count, 0)
       TestTimeoutWorker.class_variable_set(:@@callback_count, 0)
     end
 
@@ -41,7 +41,7 @@ RSpec.describe TimeoutJob::Middleware do
       expect(TestTimeoutWorker.jobs.size).to eq(1)
 
       TestTimeoutWorker.drain
-      expect(TestTimeoutWorker.class_variable_get(:@@count)).to eq(0)
+      expect(TestTimeoutWorker.class_variable_get(:@@perform_count)).to eq(0)
       expect(TestTimeoutWorker.class_variable_get(:@@callback_count)).to eq(1)
     end
   end
