@@ -5,7 +5,6 @@ module SearchRequestConcern
   include ValidationConcern
 
   included do
-    around_action :disable_newrelic_tracer_for_crawlers, only: :show
     before_action(only: :show) { head :forbidden if twitter_dm_crawler? }
     before_action(only: :show) { valid_screen_name? }
     before_action(only: :show) { not_found_screen_name? }

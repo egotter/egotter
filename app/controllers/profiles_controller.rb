@@ -1,6 +1,5 @@
 class ProfilesController < ApplicationController
 
-  around_action :disable_newrelic_tracer_for_crawlers
   before_action { head :forbidden if twitter_dm_crawler? }
   before_action :reject_spam_access!
   before_action :valid_screen_name?

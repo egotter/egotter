@@ -291,7 +291,6 @@ GEM
     natto (1.2.0)
       ffi (>= 1.9.0)
     naught (1.1.0)
-    newrelic_rpm (8.1.0)
     nio4r (2.5.8)
     nokogiri (1.12.5)
       mini_portile2 (~> 2.6.1)
@@ -500,7 +499,6 @@ DEPENDENCIES
   meta-tags
   mysql2 (>= 0.4.4)
   natto
-  newrelic_rpm
   oj
   omniauth-twitter
   parallel

@@ -53,7 +53,6 @@ gem 'hashie'
 gem 'twitter', github: 'egotter/twitter'
 gem 'parallel'
 gem 'activerecord-import'
-gem 'newrelic_rpm'
 gem 'rack-timeout'
 gem 'meta-tags'
 gem 'mecab', require: false
