@@ -26,6 +26,18 @@ class Ahoy::Event < ApplicationRecord
   belongs_to :user, optional: true
 
   class << self
+    def total_dm
+      where(name: 'Send DM')
+    end
+
+    def passive_dm
+      where(name: 'Send passive DM')
+    end
+
+    def active_dm
+      where(name: 'Send active DM')
+    end
+
     def dm_from_egotter
       where(name: 'Send DM from egotter')
     end
