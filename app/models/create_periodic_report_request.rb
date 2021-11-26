@@ -151,9 +151,9 @@ class CreatePeriodicReportRequest < ApplicationRecord
       last_user = TwitterUser.find_by(id: @unfriends_builder.last_user&.id)
       latest_user = TwitterUser.latest_by(uid: @request.user.uid)
 
-      unfriends = fetch_users(unfriend_uids)
-      unfollowers = fetch_users(unfollower_uids)
-      total_unfollowers = fetch_users(total_unfollower_uids, limit: 5)
+      unfriends = fetch_users(unfriend_uids, context: 'unfriend')
+      unfollowers = fetch_users(unfollower_uids, context: 'unfollower')
+      total_unfollowers = fetch_users(total_unfollower_uids, limit: 5, context: 'total_unfollower')
       account_statuses = attach_status(unfriends + unfollowers + total_unfollowers).map { |s| s.slice(:uid, :screen_name, :account_status) }
 
       new_friend_uids = @new_friends_builder.new_friends.flatten.take(10)
@@ -205,7 +205,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       end
     end
 
-    def fetch_users(uids, limit: 10)
+    def fetch_users(uids, limit: 10, context: nil)
       target_uids = uids.take(limit)
       return [] if target_uids.empty?
 
@@ -213,7 +213,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
       if target_uids.size != users.size
         missing_uids = target_uids - users.map(&:uid)
-        Rails.logger.warn "#{self.class}##{__method__}: Import missing uids request=#{@request.slice(:id, :user_id, :requested_by, :created_at)} uids_size=#{target_uids.size} users_size=#{users.size} uids=#{target_uids} missing_uids=#{missing_uids}"
+        Rails.logger.warn "#{self.class}##{__method__}: Import missing uids request=#{@request.slice(:id, :user_id, :requested_by, :created_at)} context=#{context} uids_size=#{target_uids.size} users_size=#{users.size} uids=#{target_uids} missing_uids=#{missing_uids}"
         CreateHighPriorityTwitterDBUserWorker.perform_async(missing_uids, user_id: @request.user_id, enqueued_by: "#{self.class}##{__method__}")
 
         users = uids.map do |uid|
