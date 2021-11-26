@@ -75,7 +75,7 @@ gem 'omniauth-twitter'
 
 # Sidekiq
 gem 'sidekiq', '< 7'
-gem 'unique_job', '0.4.0'
+gem 'unique_job', '0.4.2'
 gem 'expire_job', '0.1.5.pre'
 gem 'timeout_job'
 gem 'sinatra', require: false
