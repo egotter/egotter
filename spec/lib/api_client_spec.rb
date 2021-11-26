@@ -47,7 +47,7 @@ RSpec.describe ApiClient, type: :model do
 
     it do
       expect(client).to receive(:create_direct_message_event).with(event: event).and_return(response)
-      expect(DirectMessage).to receive(:new).with(event: response).and_return('dm')
+      expect(DirectMessageWrapper).to receive(:new).with(event: response).and_return('dm')
       is_expected.to eq('dm')
     end
 

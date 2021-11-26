@@ -11,12 +11,12 @@ class TwitterV1DirectMessageClient
 
   def direct_message(id)
     event = @client.direct_message_event(id)
-    DirectMessage.from_event(event.to_h)
+    DirectMessageWrapper.from_event(event.to_h)
   end
 
   def direct_messages(*args)
     events = @client.direct_messages_events(*args)
-    events.map { |e| DirectMessage.from_event(e.to_h) }
+    events.map { |e| DirectMessageWrapper.from_event(e.to_h) }
   end
 end
 

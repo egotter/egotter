@@ -5,7 +5,7 @@ class SendReceivedMediaToSlackWorker
   # options:
   def perform(response, options = {})
     res = JSON.parse(response, symbolize_names: true)
-    dm = DirectMessage.from_response(res)
+    dm = DirectMessageWrapper.from_response(res)
 
     if dm.media_url
       client = User.egotter.api_client.twitter

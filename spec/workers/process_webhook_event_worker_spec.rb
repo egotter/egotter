@@ -39,7 +39,7 @@ RSpec.describe ProcessWebhookEventWorker do
   describe '#process_direct_message_event' do
     shared_context 'correct event is passed' do
       let(:dm) { double('dm', sender_id: 1, recipient_id: 2, text: 'text') }
-      before { allow(DirectMessage).to receive(:new).with(anything).and_return(dm) }
+      before { allow(DirectMessageWrapper).to receive(:new).with(anything).and_return(dm) }
     end
 
     shared_context 'skip processing messages' do

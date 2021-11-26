@@ -40,7 +40,7 @@ class ProcessWebhookEventForEgotterCsWorker
   end
 
   def process_direct_message_event(event)
-    dm = DirectMessage.from_event(event.deep_symbolize_keys)
+    dm = DirectMessageWrapper.from_event(event.deep_symbolize_keys)
 
     if sent_from_user?(dm)
       PremiumPlanMessageResponder.from_dm(dm).respond ||
