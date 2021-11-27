@@ -1,12 +1,15 @@
 class CreateTwitterDBUsersTask
 
+  # TODO Remove :force option
   def initialize(uids, user_id: nil, force: false)
     @uids = uids.uniq.map(&:to_i)
     @client = user_id ? User.find(user_id).api_client : Bot.api_client
     @force = force
+    Rails.logger.info "CreateTwitterDBUsersTask: The :force option is true" if @force
   end
 
   def start
+    @uids = reject_fresh_uids(@uids)
     users = fetch_users(@client, @uids)
 
     if @uids.size != users.size && (suspended_uids = @uids - users.map { |u| u[:id] }).any?
@@ -54,8 +57,15 @@ class CreateTwitterDBUsersTask
     TwitterDB::User.import_by!(users: users) if users.any?
   end
 
+  # Note: This query uses the index on uid instead of the index on updated_at.
+  def reject_fresh_uids(uids)
+    fresh_uids = TwitterDB::User.where(uid: uids).where('updated_at > ?', 6.hours.ago).pluck(:uid)
+    Rails.logger.info "Reject fresh uids passed=#{uids.size} persisted=#{fresh_uids.size}"
+    uids.reject { |uid| fresh_uids.include? uid }
+  end
+
+  # Note: This query uses the index on uid instead of the index on updated_at.
   def reject_fresh_users(users)
-    # Note: This query uses the index on uid instead of the index on updated_at.
     persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }).where('updated_at > ?', 6.hours.ago).pluck(:uid)
     Rails.logger.info "Reject fresh users passed=#{users.size} persisted=#{persisted_uids.size}"
     users.reject { |user| persisted_uids.include? user[:id] }

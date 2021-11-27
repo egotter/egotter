@@ -15,6 +15,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
     subject { instance.start }
 
     it do
+      expect(instance).to receive(:reject_fresh_uids).with(uids).and_return(uids)
       expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
       expect(instance).not_to receive(:import_suspended_users)
       expect(instance).to receive(:reject_fresh_users).with(users).and_return(users)
@@ -67,6 +68,16 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
     it do
       expect(TwitterDB::User).to receive(:import_by!).with(users: users)
       subject
+    end
+  end
+
+  describe '#reject_fresh_uids' do
+    subject { instance.send(:reject_fresh_uids, uids) }
+    it { is_expected.to eq(uids) }
+
+    context 'a user is already persisted' do
+      before { create(:twitter_db_user, uid: uids[0]) }
+      it { is_expected.to eq(uids[1..-1]) }
     end
   end
 
