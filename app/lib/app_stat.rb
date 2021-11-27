@@ -11,8 +11,6 @@ class AppStat
   class DirectMessageStat
     def to_s
       [
-          "TotalDirectMessageSentFlag #{GlobalTotalDirectMessageSentFlag.new.size}",
-          "TotalDirectMessageReceivedFlag #{GlobalTotalDirectMessageReceivedFlag.new.size}",
           "DirectMessageSentFlag #{GlobalDirectMessageSentFlag.new.size}",
           "DirectMessageReceivedFlag #{GlobalDirectMessageReceivedFlag.new.size}",
           "SendDirectMessageCount #{Ahoy::Event.total_dm.where('time > ?', 1.day.ago).size}",

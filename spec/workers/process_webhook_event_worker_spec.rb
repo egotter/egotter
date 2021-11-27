@@ -87,20 +87,7 @@ RSpec.describe ProcessWebhookEventWorker do
       include_context 'skip processing messages'
       before { allow(worker).to receive(:message_from_user?).with(dm).and_return(true) }
       it do
-        expect(GlobalTotalDirectMessageReceivedFlag).to receive_message_chain(:new, :received).with(dm.sender_id)
-        subject
-      end
-    end
-
-    context 'message_from_egotter? returns true' do
-      include_context 'correct event is passed'
-      include_context 'skip processing messages'
-      before do
-        allow(worker).to receive(:message_from_user?).with(dm).and_return(false)
-        allow(worker).to receive(:message_from_egotter?).with(dm).and_return(true)
-      end
-      it do
-        expect(GlobalTotalDirectMessageSentFlag).to receive_message_chain(:new, :received).with(dm.recipient_id)
+        expect(CreateDirectMessageReceiveLogWorker).to receive(:perform_async).with(sender_id: dm.sender_id, recipient_id: dm.recipient_id, message: dm.text)
         subject
       end
     end
