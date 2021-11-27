@@ -9,9 +9,11 @@ class CreateTwitterDBUsersTask
   end
 
   def start
+    initial_uids = @uids
     @debug_message = "uids=#{@uids.size}"
 
     @uids = reject_fresh_uids(@uids)
+    stale_uids = @uids
     @debug_message += ", stale_uids=#{@uids.size}"
     return if @uids.empty?
 
@@ -26,7 +28,13 @@ class CreateTwitterDBUsersTask
     return if users.empty?
 
     users = reject_fresh_users(users) unless @force
-    @debug_message += ", stale_users=#{users.size}"
+
+    @debug_message += ", import_users=#{users.size}"
+    if users.empty?
+      @debug_message += ", initial_uids=#{initial_uids.join(',')}"
+      @debug_message += ", stale_uids=#{stale_uids.join(',')}"
+    end
+
     import_users(users) if users.any?
   end
 
