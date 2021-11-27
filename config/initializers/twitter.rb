@@ -43,37 +43,9 @@ module Egotter
         rescue ::Twitter::Error::EnhanceYourCalm => e
           GlobalDirectMessageLimitation.new.limit_start
           raise
-        else
-          set_global_direct_message_flags(recipient_uid)
         end
 
         result
-      end
-
-      def set_global_direct_message_flags(recipient_uid)
-        CreateAhoyEventWorker.perform_async('Send DM', {recipient_uid: recipient_uid}, Time.zone.now)
-
-        if recipient_uid != User::EGOTTER_UID
-          CreateAhoyEventWorker.perform_async('Send DM from egotter', {recipient_uid: recipient_uid}, Time.zone.now)
-          GlobalSendDirectMessageCountByUser.new.increment(recipient_uid)
-        end
-
-        if GlobalDirectMessageReceivedFlag.new.exists?(recipient_uid)
-          CreateAhoyEventWorker.perform_async('Send passive DM', {recipient_uid: recipient_uid}, Time.zone.now)
-
-          if recipient_uid != User::EGOTTER_UID
-            CreateAhoyEventWorker.perform_async('Send passive DM from egotter', {recipient_uid: recipient_uid}, Time.zone.now)
-          end
-        else
-          CreateAhoyEventWorker.perform_async('Send active DM', {recipient_uid: recipient_uid}, Time.zone.now)
-
-          if recipient_uid != User::EGOTTER_UID
-            CreateAhoyEventWorker.perform_async('Send active DM from egotter', {recipient_uid: recipient_uid}, Time.zone.now)
-          end
-        end
-
-      rescue => e
-        Rails.logger.warn "counting in #{__method__} #{e.inspect}"
       end
 
       def dig_recipient_uid(args)

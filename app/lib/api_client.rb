@@ -12,6 +12,8 @@ class ApiClient
       request.perform
     else
       twitter.create_direct_message_event(recipient_id, message)
+      GlobalSendDirectMessageCountByUser.new.increment(recipient_id) if recipient_id != User::EGOTTER_UID
+      CreateDirectMessageEventWorker.perform_async(@user&.uid, recipient_id, nil, Time.zone.now)
       CreateDirectMessageSendLogWorker.perform_async(sender_id: @user&.uid, recipient_id: recipient_id, message: message)
       true
     end
@@ -29,6 +31,8 @@ class ApiClient
   def create_direct_message_event(event:)
     resp = twitter.create_direct_message_event(event: event).to_h
     dm = DirectMessageWrapper.new(event: resp)
+    GlobalSendDirectMessageCountByUser.new.increment(dm.recipient_id) if dm.recipient_id != User::EGOTTER_UID
+    CreateDirectMessageEventWorker.perform_async(dm.sender_id, dm.recipient_id, nil, Time.zone.now)
     CreateDirectMessageSendLogWorker.perform_async(sender_id: dm.sender_id, recipient_id: dm.recipient_id, message: dm.text)
     dm
   rescue => e
