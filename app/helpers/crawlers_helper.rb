@@ -100,6 +100,7 @@ module CrawlersHelper
       'bingbot',
       'CriteoBot',
       'Slackbot',
+      'um-LN/1.0',
   ]
   CRAWLERS_REGEXP = Regexp.union(CRAWLER_WORDS)
 
