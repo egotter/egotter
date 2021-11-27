@@ -9,19 +9,27 @@ class CreateTwitterDBUsersTask
   end
 
   def start
+    message = "uids=#{@uids.size}"
+
     @uids = reject_fresh_uids(@uids)
+    message += ", stale_uids=#{@uids.size}"
     return if @uids.empty?
 
     users = fetch_users(@client, @uids)
+    message += ", users=#{users.size}"
 
     if @uids.size != users.size && (suspended_uids = @uids - users.map { |u| u[:id] }).any?
       import_suspended_users(suspended_uids)
+      message += ", suspended_uids=#{suspended_uids.size}"
     end
 
     return if users.empty?
 
     users = reject_fresh_users(users) unless @force
+    message += ", stale_users=#{users.size}"
     import_users(users) if users.any?
+
+    Rails.logger.info "CreateTwitterDBUsersTask: #{message}"
   end
 
   private
