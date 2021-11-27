@@ -10,11 +10,15 @@ class CreateTwitterDBUsersTask
 
   def start
     @uids = reject_fresh_uids(@uids)
+    return if @uids.empty?
+
     users = fetch_users(@client, @uids)
 
     if @uids.size != users.size && (suspended_uids = @uids - users.map { |u| u[:id] }).any?
       import_suspended_users(suspended_uids)
     end
+
+    return if users.empty?
 
     users = reject_fresh_users(users) unless @force
     import_users(users) if users.any?
