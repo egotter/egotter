@@ -19,7 +19,9 @@ class ApplicationController < ActionController::Base
   before_action :current_user_has_dm_permission?, if: -> { controller_name != 'error_pages' }
   before_action :current_user_not_blocker?, if: -> { controller_name != 'error_pages' }
 
-  skip_before_action :track_ahoy_visit, if: -> { from_webhook? || twitter_crawler? || google_crawler? || apache_bench? }
+  skip_before_action :track_ahoy_visit, if: -> do
+    from_webhook? || twitter_crawler? || google_crawler? || from_crawler? || apache_bench?
+  end
 
   after_action :create_access_log, if: -> { create_access_log? }
   after_action :create_access_day, if: -> { create_access_log? }

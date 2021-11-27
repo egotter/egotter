@@ -97,6 +97,8 @@ module CrawlersHelper
       'scpitspi-rs',
       'Anthill',
       'jp.loilo.LoiLoNoteSchool',
+      'bingbot',
+      'CriteoBot',
   ]
   CRAWLERS_REGEXP = Regexp.union(CRAWLER_WORDS)
 
