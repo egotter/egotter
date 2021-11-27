@@ -21,7 +21,7 @@ module CrawlersHelper
   end
 
   def twitter_crawler?
-    request.from_crawler? && request.browser == 'twitter'
+    request.user_agent.to_s.match?(/^Twitterbot/) || (request.from_crawler? && request.browser == 'twitter')
   end
 
   def twitter_dm_crawler?
