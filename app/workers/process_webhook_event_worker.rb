@@ -44,6 +44,12 @@ class ProcessWebhookEventWorker
   def process_direct_message_event(event)
     dm = DirectMessageWrapper.new(event: event.deep_symbolize_keys)
 
+    # begin
+    #   CreateDirectMessageReceiveLogWorker.perform_async(sender_id: dm.sender_id, recipient_id: dm.recipient_id, message: dm.text)
+    # rescue => e
+    #   logger.warn "CreateDirectMessageReceiveLogWorker failed exception=#{e.inspect}"
+    # end
+
     if sent_from_user?(dm)
       process_message_from_user(dm)
     elsif sent_from_egotter?(dm)
