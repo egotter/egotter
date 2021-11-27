@@ -15,12 +15,12 @@ class AppStat
           "TotalDirectMessageReceivedFlag #{GlobalTotalDirectMessageReceivedFlag.new.size}",
           "DirectMessageSentFlag #{GlobalDirectMessageSentFlag.new.size}",
           "DirectMessageReceivedFlag #{GlobalDirectMessageReceivedFlag.new.size}",
-          "SendDirectMessageCount #{GlobalSendDirectMessageCount.new.size} (#{Ahoy::Event.total_dm.where('time > ?', 1.day.ago).size})",
-          "ActiveSendDirectMessageCount #{GlobalActiveSendDirectMessageCount.new.size} (#{Ahoy::Event.active_dm.where('time > ?', 1.day.ago).size})",
-          "PassiveSendDirectMessageCount #{GlobalPassiveSendDirectMessageCount.new.size} (#{Ahoy::Event.passive_dm.where('time > ?', 1.day.ago).size})",
-          "SendDirectMessageFromEgotterCount #{GlobalSendDirectMessageFromEgotterCount.new.size} (#{Ahoy::Event.dm_from_egotter.where('time > ?', 1.day.ago).size})",
-          "ActiveSendDirectMessageFromEgotterCount #{GlobalActiveSendDirectMessageFromEgotterCount.new.size} (#{Ahoy::Event.active_dm_from_egotter.where('time > ?', 1.day.ago).size})",
-          "PassiveSendDirectMessageFromEgotterCount #{GlobalPassiveSendDirectMessageFromEgotterCount.new.size} (#{Ahoy::Event.passive_dm_from_egotter.where('time > ?', 1.day.ago).size})",
+          "SendDirectMessageCount #{Ahoy::Event.total_dm.where('time > ?', 1.day.ago).size}",
+          "ActiveSendDirectMessageCount #{Ahoy::Event.active_dm.where('time > ?', 1.day.ago).size}",
+          "PassiveSendDirectMessageCount #{Ahoy::Event.passive_dm.where('time > ?', 1.day.ago).size}",
+          "SendDirectMessageFromEgotterCount #{Ahoy::Event.dm_from_egotter.where('time > ?', 1.day.ago).size}",
+          "ActiveSendDirectMessageFromEgotterCount #{Ahoy::Event.active_dm_from_egotter.where('time > ?', 1.day.ago).size}",
+          "PassiveSendDirectMessageFromEgotterCount #{Ahoy::Event.passive_dm_from_egotter.where('time > ?', 1.day.ago).size}",
       ].join("\n")
     end
   end

@@ -51,29 +51,29 @@ module Egotter
       end
 
       def set_global_direct_message_flags(recipient_uid)
-        GlobalSendDirectMessageCount.new.increment # TODO Remove later
+        # GlobalSendDirectMessageCount.new.increment # TODO Remove later
         CreateAhoyEventWorker.perform_async('Send DM', {recipient_uid: recipient_uid}, Time.zone.now)
 
         if recipient_uid != User::EGOTTER_UID
-          GlobalSendDirectMessageFromEgotterCount.new.increment # TODO Remove later
+          # GlobalSendDirectMessageFromEgotterCount.new.increment # TODO Remove later
           CreateAhoyEventWorker.perform_async('Send DM from egotter', {recipient_uid: recipient_uid}, Time.zone.now)
           GlobalSendDirectMessageCountByUser.new.increment(recipient_uid)
         end
 
         if GlobalDirectMessageReceivedFlag.new.exists?(recipient_uid)
-          GlobalPassiveSendDirectMessageCount.new.increment # TODO Remove later
+          # GlobalPassiveSendDirectMessageCount.new.increment # TODO Remove later
           CreateAhoyEventWorker.perform_async('Send passive DM', {recipient_uid: recipient_uid}, Time.zone.now)
 
           if recipient_uid != User::EGOTTER_UID
-            GlobalPassiveSendDirectMessageFromEgotterCount.new.increment # TODO Remove later
+            # GlobalPassiveSendDirectMessageFromEgotterCount.new.increment # TODO Remove later
             CreateAhoyEventWorker.perform_async('Send passive DM from egotter', {recipient_uid: recipient_uid}, Time.zone.now)
           end
         else
-          GlobalActiveSendDirectMessageCount.new.increment # TODO Remove later
+          # GlobalActiveSendDirectMessageCount.new.increment # TODO Remove later
           CreateAhoyEventWorker.perform_async('Send active DM', {recipient_uid: recipient_uid}, Time.zone.now)
 
           if recipient_uid != User::EGOTTER_UID
-            GlobalActiveSendDirectMessageFromEgotterCount.new.increment # TODO Remove later
+            # GlobalActiveSendDirectMessageFromEgotterCount.new.increment # TODO Remove later
             CreateAhoyEventWorker.perform_async('Send active DM from egotter', {recipient_uid: recipient_uid}, Time.zone.now)
           end
         end
