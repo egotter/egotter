@@ -43,7 +43,6 @@ class ProcessWebhookEventWorker
 
   def process_direct_message_event(event)
     dm = DirectMessageWrapper.new(event: event.deep_symbolize_keys)
-    CreateDirectMessageReceiveLogWorker.perform_async(sender_id: dm.sender_id, recipient_id: dm.recipient_id, message: dm.text)
 
     if sent_from_user?(dm)
       process_message_from_user(dm)
@@ -52,9 +51,9 @@ class ProcessWebhookEventWorker
     end
 
     if message_from_user?(dm)
-      GlobalTotalDirectMessageReceivedFlag.new.received(dm.sender_id)
+      CreateDirectMessageReceiveLogWorker.perform_async(sender_id: dm.sender_id, recipient_id: dm.recipient_id, message: dm.text)
     elsif message_from_egotter?(dm)
-      GlobalTotalDirectMessageSentFlag.new.received(dm.recipient_id)
+      # Do nothing
     end
   end
 
