@@ -35,7 +35,10 @@ class CreateTwitterDBUserWorker
     end
 
     user_id = (options['user_id'] && options['user_id'].to_i != -1) ? options['user_id'] : nil
-    CreateTwitterDBUsersTask.new(target_uids, user_id: user_id, force: options['force_update']).start
+
+    task = CreateTwitterDBUsersTask.new(target_uids, user_id: user_id, force: options['force_update'])
+    task.start
+    Rails.logger.info "CreateTwitterDBUsersTask: DEBUG user_id=#{user_id} #{task.debug_message}"
   rescue CreateTwitterDBUsersTask::RetryDeadlockExhausted => e
     logger.info "Retry deadlock error: #{e.inspect.truncate(200)}"
     CreateTwitterDBUserWorker.perform_in(3.seconds, uids, options.merge(klass: self.class, error_class: e.class))

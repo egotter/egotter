@@ -1,35 +1,33 @@
 class CreateTwitterDBUsersTask
+  attr_reader :debug_message
 
-  # TODO Remove :force option
   def initialize(uids, user_id: nil, force: false)
     @uids = uids.uniq.map(&:to_i)
     @client = user_id ? User.find(user_id).api_client : Bot.api_client
     @force = force
-    Rails.logger.info "CreateTwitterDBUsersTask: The :force option is true" if @force
+    @debug_message = ''
   end
 
   def start
-    message = "uids=#{@uids.size}"
+    @debug_message = "uids=#{@uids.size}"
 
     @uids = reject_fresh_uids(@uids)
-    message += ", stale_uids=#{@uids.size}"
+    @debug_message += ", stale_uids=#{@uids.size}"
     return if @uids.empty?
 
     users = fetch_users(@client, @uids)
-    message += ", users=#{users.size}"
+    @debug_message += ", users=#{users.size}"
 
     if @uids.size != users.size && (suspended_uids = @uids - users.map { |u| u[:id] }).any?
       import_suspended_users(suspended_uids)
-      message += ", suspended_uids=#{suspended_uids.size}"
+      @debug_message += ", suspended_uids=#{suspended_uids.size}"
     end
 
     return if users.empty?
 
     users = reject_fresh_users(users) unless @force
-    message += ", stale_users=#{users.size}"
+    @debug_message += ", stale_users=#{users.size}"
     import_users(users) if users.any?
-
-    Rails.logger.info "CreateTwitterDBUsersTask: #{message}"
   end
 
   private
