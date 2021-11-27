@@ -99,6 +99,7 @@ module CrawlersHelper
       'jp.loilo.LoiLoNoteSchool',
       'bingbot',
       'CriteoBot',
+      'Slackbot',
   ]
   CRAWLERS_REGEXP = Regexp.union(CRAWLER_WORDS)
 
