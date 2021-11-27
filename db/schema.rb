@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_27_120538) do
+ActiveRecord::Schema.define(version: 2021_11_27_122006) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -694,6 +694,16 @@ ActiveRecord::Schema.define(version: 2021_11_27_120538) do
     t.index ["created_at"], name: "index_direct_message_receive_logs_on_created_at"
     t.index ["recipient_id"], name: "index_direct_message_receive_logs_on_recipient_id"
     t.index ["sender_id"], name: "index_direct_message_receive_logs_on_sender_id"
+  end
+
+  create_table "direct_message_send_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "sender_id"
+    t.bigint "recipient_id"
+    t.text "message"
+    t.datetime "created_at", null: false
+    t.index ["created_at"], name: "index_direct_message_send_logs_on_created_at"
+    t.index ["recipient_id"], name: "index_direct_message_send_logs_on_recipient_id"
+    t.index ["sender_id"], name: "index_direct_message_send_logs_on_sender_id"
   end
 
   create_table "egotter_blockers", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
