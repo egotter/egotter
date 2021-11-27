@@ -42,13 +42,15 @@ RSpec.describe ApiClient, type: :model do
       }
     end
     let(:response) { {message_create: {message_data: {text: 'text'}}} }
+    let(:dm) { double('dm', sender_id: 10, recipient_id: 1, text: 'text') }
     subject { instance.create_direct_message_event(event: event) }
+
     before { allow(instance).to receive(:twitter).and_return(client) }
 
     it do
       expect(client).to receive(:create_direct_message_event).with(event: event).and_return(response)
-      expect(DirectMessageWrapper).to receive(:new).with(event: response).and_return('dm')
-      is_expected.to eq('dm')
+      expect(DirectMessageWrapper).to receive(:new).with(event: response).and_return(dm)
+      is_expected.to eq(dm)
     end
 
     context 'an exception is raised' do
