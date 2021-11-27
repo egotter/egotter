@@ -10,15 +10,23 @@ class AppStat
 
   class DirectMessageStat
     def to_s
+      dm_count = {
+          total: Ahoy::Event.total_dm.where('time > ?', 1.day.ago).size,
+          active: Ahoy::Event.active_dm.where('time > ?', 1.day.ago).size,
+          passive: Ahoy::Event.passive_dm.where('time > ?', 1.day.ago).size,
+      }
+
+      dm_from_egotter = {
+          total: Ahoy::Event.dm_from_egotter.where('time > ?', 1.day.ago).size,
+          active: Ahoy::Event.active_dm_from_egotter.where('time > ?', 1.day.ago).size,
+          passive: Ahoy::Event.passive_dm_from_egotter.where('time > ?', 1.day.ago).size,
+      }
+
       [
           "DirectMessageSentFlag #{GlobalDirectMessageSentFlag.new.size}",
           "DirectMessageReceivedFlag #{GlobalDirectMessageReceivedFlag.new.size}",
-          "SendDirectMessageCount #{Ahoy::Event.total_dm.where('time > ?', 1.day.ago).size}",
-          "ActiveSendDirectMessageCount #{Ahoy::Event.active_dm.where('time > ?', 1.day.ago).size}",
-          "PassiveSendDirectMessageCount #{Ahoy::Event.passive_dm.where('time > ?', 1.day.ago).size}",
-          "SendDirectMessageFromEgotterCount #{Ahoy::Event.dm_from_egotter.where('time > ?', 1.day.ago).size}",
-          "ActiveSendDirectMessageFromEgotterCount #{Ahoy::Event.active_dm_from_egotter.where('time > ?', 1.day.ago).size}",
-          "PassiveSendDirectMessageFromEgotterCount #{Ahoy::Event.passive_dm_from_egotter.where('time > ?', 1.day.ago).size}",
+          "SendDirectMessageCount #{dm_count[:total]} (active #{dm_count[:active]} passive #{dm_count[:passive]})",
+          "SendDirectMessageFromEgotterCount #{dm_from_egotter[:total]} (active #{dm_from_egotter[:active]} passive #{dm_from_egotter[:passive]})",
       ].join("\n")
     end
   end
