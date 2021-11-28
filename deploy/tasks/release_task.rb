@@ -10,6 +10,7 @@ module Tasks
       attr_reader :action
 
       def initialize(host)
+        @instance_name = host
         @action = :release
         @instance = ::Deploy::Aws::Instance.retrieve_by(name: host)
       end
@@ -23,7 +24,7 @@ module Tasks
       end
 
       def run
-        logger.info yellow("Start #{@action} task for #{@role} server at #{@instance.public_ip}")
+        logger.info yellow("Start #{@action} task for #{@role} server at #{@instance_name}(#{@instance.public_ip})")
 
         ssh_connection_test(@instance.public_ip)
         @target_group.deregister(@instance.id)
@@ -48,7 +49,7 @@ module Tasks
 
         @target_group.register(@instance.id)
 
-        logger.info yellow("Finish #{@action} task for #{@role} server at #{@instance.public_ip}")
+        logger.info yellow("Finish #{@action} task for #{@role} server at #{@instance_name}(#{@instance.public_ip})")
       end
     end
 
@@ -59,7 +60,7 @@ module Tasks
       end
 
       def run
-        logger.info yellow("Start #{@action} task for #{@role} server at #{@instance.public_ip}")
+        logger.info yellow("Start #{@action} task for #{@role} server at #{@instance_name}(#{@instance.public_ip})")
 
         ssh_connection_test(@instance.public_ip)
 

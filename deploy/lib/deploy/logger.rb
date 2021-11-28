@@ -7,12 +7,18 @@ module Deploy
       def logger(file = nil)
         console = ActiveSupport::Logger.new(STDOUT)
         console.level = ::Logger::INFO
-        console.formatter = ::Logger::Formatter.new
+        console.datetime_format = '%Y-%m-%d %H:%M:%S'
+        console.formatter = Proc.new do |severity, timestamp, _, msg|
+          "#{timestamp} #{severity} -- #{msg}\n"
+        end
 
         if file
           log = ActiveSupport::Logger.new(file)
           log.level = ::Logger::INFO
-          log.formatter = ::Logger::Formatter.new
+          log.datetime_format = '%Y-%m-%d %H:%M:%S'
+          console.formatter = Proc.new do |severity, timestamp, _, msg|
+            "#{timestamp} #{severity} -- #{msg}\n"
+          end
           console.extend ActiveSupport::Logger.broadcast(log)
         end
 
