@@ -8,11 +8,16 @@ class ExtractUpdateTargetUidsFromTwitterUserWorker
     twitter_user = TwitterUser.find(twitter_user_id)
 
     if (missing_friend_uids = fetch_missing_uids(twitter_user.friend_uids)).any?
-      logger.info "#{self.class}: missing friend uids found twitter_user_id=#{twitter_user_id} size=#{missing_friend_uids.size}"
+      logger.info "#{self.class}: missing friend uids found twitter_user_id=#{twitter_user_id} size=#{missing_friend_uids.size} uids=#{missing_friend_uids.inspect}"
     end
 
     if (missing_follower_uids = fetch_missing_uids(twitter_user.follower_uids)).any?
-      logger.info "#{self.class}: missing follower uids found twitter_user_id=#{twitter_user_id} size=#{missing_follower_uids.size}"
+      logger.info "#{self.class}: missing follower uids found twitter_user_id=#{twitter_user_id} size=#{missing_follower_uids.size} uids=#{missing_follower_uids.inspect}"
+    end
+
+    target_uids = (missing_friend_uids + missing_follower_uids).uniq
+    if target_uids.any?
+      CreateTwitterDBUserWorker.compress_and_perform_async(target_uids, user_id: twitter_user.user_id, enqueued_by: self.class)
     end
   rescue => e
     handle_worker_error(e, twitter_user_id: twitter_user_id, **options)
