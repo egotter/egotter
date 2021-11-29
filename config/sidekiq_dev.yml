@@ -19,6 +19,7 @@
   - CreateSignedInTwitterUserWorker
   - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
+  - ImportTwitterDBUserWorker
   - CreateTwitterUserWorker
   - CreateReportTwitterUserWorker
   - AssembleTwitterUserWorker

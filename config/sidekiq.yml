@@ -15,4 +15,5 @@
   - WriteToS3Worker
   - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
+  - ImportTwitterDBUserWorker
   - CreateReportTwitterUserWorker

@@ -22,5 +22,6 @@
   - report_high
   - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
+  - ImportTwitterDBUserWorker
   - report_low
   - CreateReportTwitterUserWorker
