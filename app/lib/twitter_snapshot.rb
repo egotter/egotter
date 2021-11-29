@@ -72,7 +72,7 @@ class TwitterSnapshot
     @favorite_tweets = value.map { |tweet| collect_tweet_attrs(tweet) } if value&.any?
   end
 
-  def copy
+  def copy_attrs
     TwitterUser.new(
         user_id: user_id,
         uid: uid,
@@ -88,6 +88,11 @@ class TwitterSnapshot
         copied_mention_tweets: mention_tweets,
         copied_favorite_tweets: favorite_tweets
     )
+  end
+
+  def copy
+    Rails.logger.warn "#{self.class}##{__method__} is deprecated"
+    copy_attrs
   end
 
   def too_little_friends?

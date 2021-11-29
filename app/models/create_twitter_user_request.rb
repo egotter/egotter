@@ -136,7 +136,7 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   def save_twitter_user(snapshot)
-    twitter_user = snapshot.copy
+    twitter_user = snapshot.copy_attrs
     twitter_user.perform_before_transaction!
     twitter_user.save!
     update(twitter_user_id: twitter_user.id)
