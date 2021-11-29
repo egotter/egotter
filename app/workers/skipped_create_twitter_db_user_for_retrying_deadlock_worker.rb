@@ -7,14 +7,19 @@ class SkippedCreateTwitterDBUserForRetryingDeadlockWorker
   end
 
   class << self
-    def restart_jobs(limit: 100)
+    def restart_jobs(limit: 100, sync: true)
       processed = 0
 
       Sidekiq::Queue.new(self).each do |job|
-        CreateTwitterDBUserWorker.perform_async(*job.args)
-        job.delete
+        if sync
+          CreateTwitterDBUserWorker.new.perform(*job.args)
+        else
+          CreateTwitterDBUserWorker.perform_async(*job.args)
+        end
 
+        job.delete
         processed += 1
+
         break if processed >= limit
       end
     end
