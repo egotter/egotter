@@ -1,3 +1,4 @@
+# TODO Update -> Create
 class ExtractUpdateTargetUidsFromTwitterUserWorker
   include Sidekiq::Worker
   include WorkerErrorHandler
