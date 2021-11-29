@@ -10,7 +10,7 @@ class CreateTwitterDBUserWorker
   end
 
   def unique_in
-    10.minutes
+    10.seconds
   end
 
   def after_skip(uids, options = {})
