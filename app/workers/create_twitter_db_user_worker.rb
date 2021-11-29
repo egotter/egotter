@@ -13,6 +13,10 @@ class CreateTwitterDBUserWorker
     10.minutes
   end
 
+  def after_skip(uids, options = {})
+    SkippedCreateTwitterDBUserWorker.perform_async(uids, options)
+  end
+
   def _timeout_in
     10.seconds
   end
