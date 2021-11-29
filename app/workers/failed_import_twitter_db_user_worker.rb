@@ -7,7 +7,7 @@ class FailedImportTwitterDBUserWorker
   end
 
   class << self
-    def restart_failed_jobs(limit: 100)
+    def restart_jobs(limit: 100)
       processed = 0
 
       Sidekiq::Queue.new(self).each do |job|
