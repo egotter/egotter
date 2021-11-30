@@ -9,6 +9,7 @@ RSpec.describe CreateSignedInTwitterUserWorker do
     it do
       expect(SkippedCreateSignedInTwitterUserWorker).to receive(:perform_async).with(request.id, {})
       subject
+      expect(request.reload.status_message).to eq('Skipped')
     end
   end
 
