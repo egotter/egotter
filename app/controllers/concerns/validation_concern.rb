@@ -109,7 +109,7 @@ module ValidationConcern
       CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
       logger.info "#{__method__}: Not enqueued user_id=#{current_user.id} controller=#{controller_path} action=#{action_name}"
     else
-      logger.info "#{__method__}: Enqueued user_id=#{current_user.id} controller=#{controller_path} action=#{action_name}"
+      logger.info "#{__method__}: Enqueued user_id=#{current_user&.id} controller=#{controller_path} action=#{action_name}"
     end
 
     TwitterDB::User.exists?(uid: uid)
