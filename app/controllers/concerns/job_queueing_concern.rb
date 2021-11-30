@@ -64,7 +64,7 @@ module JobQueueingConcern
   def enqueue_update_authorized
     return if from_crawler?
     return unless user_signed_in?
-    UpdateAuthorizedWorker.perform_async(current_user.id)
+    UpdateUserAttrsWorker.perform_async(current_user.id)
     CreateTwitterDBUserWorker.perform_async([current_user.uid], user_id: current_user.id, enqueued_by: current_via(__method__))
   end
 

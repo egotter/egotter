@@ -1,3 +1,4 @@
+# TODO Remove later
 class UpdateAuthorizedWorker
   include Sidekiq::Worker
   include WorkerErrorHandler
@@ -21,18 +22,6 @@ class UpdateAuthorizedWorker
 
   # options:
   def perform(user_id, options = {})
-    user = User.find(user_id)
-    t_user = user.api_client.verify_credentials
-
-    user.screen_name = t_user[:screen_name]
-    user.save! if user.changed?
-  rescue => e
-    if TwitterApiStatus.unauthorized?(e)
-      user.update!(authorized: false)
-    elsif TwitterApiStatus.not_found?(e) || TwitterApiStatus.suspended?(e) || TwitterApiStatus.too_many_requests?(e)
-      # Do nothing
-    else
-      handle_worker_error(e, user_id: user_id, **options)
-    end
+    UpdateUserAttrsWorker.new.perform(user_id, options)
   end
 end

@@ -124,7 +124,7 @@ RSpec.describe ApiClient, type: :model do
         allow(User).to receive(:find_by_token).with(client.access_token, client.access_token_secret).and_return(user)
       end
       it do
-        expect(UpdateAuthorizedWorker).to receive(:perform_async).with(user.id)
+        expect(UpdateUserAttrsWorker).to receive(:perform_async).with(user.id)
         subject
       end
     end

@@ -72,7 +72,7 @@ class ApiClient
 
   def update_authorization_status(e)
     if TwitterApiStatus.unauthorized?(e) && (user = fetch_user)
-      UpdateAuthorizedWorker.perform_async(user.id)
+      UpdateUserAttrsWorker.perform_async(user.id)
     end
   end
 
