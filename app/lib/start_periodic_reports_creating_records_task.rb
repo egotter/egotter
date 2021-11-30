@@ -1,8 +1,9 @@
 class StartPeriodicReportsCreatingRecordsTask
   attr_reader :user_ids
 
-  def initialize(user_ids: nil)
+  def initialize(user_ids: nil, period: nil)
     @user_ids = user_ids
+    @period = period || 'none'
   end
 
   def start!
@@ -20,11 +21,12 @@ class StartPeriodicReportsCreatingRecordsTask
 
   def create_requests(user_ids)
     max_id = CreateTwitterUserRequest.maximum(:id) || 0
+    requested_by = "batch(#{@period})"
 
     user_ids.each_slice(1000) do |ids_array|
       requests = User.where(id: ids_array).select(:id, :uid).map do |user|
         CreateTwitterUserRequest.new(
-            requested_by: 'batch',
+            requested_by: requested_by,
             user_id: user.id,
             uid: user.uid)
       end
@@ -32,12 +34,12 @@ class StartPeriodicReportsCreatingRecordsTask
       CreateTwitterUserRequest.import requests, validate: false
     end
 
-    CreateTwitterUserRequest.where('id > ?', max_id).where(requested_by: 'batch').select(:id, :user_id)
+    CreateTwitterUserRequest.where('id > ?', max_id).where(requested_by: requested_by).select(:id, :user_id)
   end
 
   def create_jobs(requests)
     requests.each do |request|
-      CreateReportTwitterUserWorker.perform_async(request.id)
+      CreateReportTwitterUserWorker.perform_async(request.id, period: @period)
     end
   end
 

@@ -12,13 +12,13 @@ RUBY='/var/egotter/bin/cron/ruby.sh'
 #  * * * * * /bin/sh -c "$RUBY bin/delete_forbidden_users.rb"
 
 # PeriodicReport(morning)
-# 20 20 * * * /bin/sh -c "$RAKE periodic_reports:create_records"
+# 20 20 * * * /bin/sh -c "PERIOD=morning $RAKE periodic_reports:create_records"
 # 30 22 * * * /bin/sh -c "$RAKE periodic_reports:send_messages:morning"
 # PeriodicReport(afternoon)
-# 20  0 * * * /bin/sh -c "$RAKE periodic_reports:create_records"
+# 20  0 * * * /bin/sh -c "PERIOD=afternoon $RAKE periodic_reports:create_records"
 # 30  2 * * * /bin/sh -c "$RAKE periodic_reports:send_messages:afternoon"
 # PeriodicReport(night)
-# 20  9 * * * /bin/sh -c "$RAKE periodic_reports:create_records"
+# 20  9 * * * /bin/sh -c "PERIOD=night $RAKE periodic_reports:create_records"
 # 30 11 * * * /bin/sh -c "$RAKE periodic_reports:send_messages:night"
 
 */10 * * * * /bin/sh -c "DRY_RUN=true ROLE=web $RUBY bin/adjust_servers.rb"

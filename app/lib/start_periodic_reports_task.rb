@@ -1,6 +1,8 @@
 class StartPeriodicReportsTask
 
-  def initialize(user_ids: nil, start_date: nil, end_date: nil, limit: 5000)
+  def initialize(period: nil, user_ids: nil, start_date: nil, end_date: nil, limit: 5000)
+    @period = period || 'none'
+
     if user_ids.present?
       @user_ids = self.class.reject_stop_requested_user_ids(user_ids)
     end
@@ -32,13 +34,14 @@ class StartPeriodicReportsTask
 
   def create_requests(user_ids)
     max_id = CreatePeriodicReportRequest.maximum(:id) || 0
+    requested_by = "batch(#{@period})"
 
-    requests = user_ids.map { |user_id| CreatePeriodicReportRequest.new(user_id: user_id, requested_by: 'batch') }
+    requests = user_ids.map { |user_id| CreatePeriodicReportRequest.new(user_id: user_id, requested_by: requested_by) }
     requests.each_slice(1000) do |data|
       CreatePeriodicReportRequest.import data, validate: false
     end
 
-    CreatePeriodicReportRequest.where('id > ?', max_id).where(requested_by: 'batch').select(:id, :user_id)
+    CreatePeriodicReportRequest.where('id > ?', max_id).where(requested_by: requested_by).select(:id, :user_id)
   end
 
   def create_jobs(requests)

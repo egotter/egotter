@@ -53,7 +53,7 @@ namespace :periodic_reports do
   end
 
   task create_records: :environment do
-    task = StartPeriodicReportsCreatingRecordsTask.new
+    task = StartPeriodicReportsCreatingRecordsTask.new(period: ENV['PERIOD'])
     task.start!
     puts "user_ids=#{task.user_ids.size}"
   end
@@ -62,21 +62,21 @@ namespace :periodic_reports do
     desc 'Send morning messages'
     task morning: :environment do |task|
       user_ids = StartPeriodicReportsTask.morning_user_ids
-      StartPeriodicReportsTask.new(user_ids: user_ids).start!
+      StartPeriodicReportsTask.new(user_ids: user_ids, period: 'morning').start!
       puts "user_ids=#{user_ids.size} task_name=#{task.name}"
     end
 
     desc 'Send afternoon messages'
     task afternoon: :environment do |task|
       user_ids = StartPeriodicReportsTask.afternoon_user_ids
-      StartPeriodicReportsTask.new(user_ids: user_ids).start!
+      StartPeriodicReportsTask.new(user_ids: user_ids, period: 'afternoon').start!
       puts "user_ids=#{user_ids.size} task_name=#{task.name}"
     end
 
     desc 'Send night messages'
     task night: :environment do |task|
       user_ids = StartPeriodicReportsTask.night_user_ids
-      StartPeriodicReportsTask.new(user_ids: user_ids).start!
+      StartPeriodicReportsTask.new(user_ids: user_ids, period: 'night').start!
       puts "user_ids=#{user_ids.size} task_name=#{task.name}"
     end
   end
