@@ -107,6 +107,9 @@ module ValidationConcern
     if user_signed_in? && !TwitterDBUsersUpdatedFlag.on?([uid])
       TwitterDBUsersUpdatedFlag.on([uid])
       CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
+      logger.info "#{__method__}: Not enqueued user_id=#{current_user.id} controller=#{controller_path} action=#{action_name}"
+    else
+      logger.info "#{__method__}: Enqueued user_id=#{current_user.id} controller=#{controller_path} action=#{action_name}"
     end
 
     TwitterDB::User.exists?(uid: uid)
@@ -252,11 +255,13 @@ module ValidationConcern
   def timeline_readable?(screen_name)
     search_request_validator.timeline_readable?(screen_name)
   end
+
   private :timeline_readable?
 
   def search_yourself?(twitter_user)
     user_signed_in? && current_user.uid == twitter_user.uid
   end
+
   private :search_yourself?
 
   def protected_search?(twitter_user)
@@ -360,5 +365,6 @@ module ValidationConcern
   def search_request_validator
     @search_request_validator ||= SearchRequestValidator.new(request_context_client, current_user)
   end
+
   private :search_request_validator
 end
