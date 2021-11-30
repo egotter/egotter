@@ -68,8 +68,8 @@ module JobQueueingConcern
     user = current_user
     UpdateUserAttrsWorker.perform_async(user.id)
 
-    unless UserAttrsUpdatedFlag.on?(user.id)
-      UserAttrsUpdatedFlag.on(user.id)
+    unless TwitterDBUsersUpdatedFlag.on?([user.uid])
+      TwitterDBUsersUpdatedFlag.on([user.uid])
       CreateTwitterDBUserWorker.perform_async([user.uid], user_id: user.id, enqueued_by: current_via(__method__))
     end
   end
