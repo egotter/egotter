@@ -104,17 +104,12 @@ module ValidationConcern
 
   # Memo: This method should be called only with a request to the page, not a request to the API
   def twitter_db_user_persisted?(uid)
-    result = ::TwitterDB::User.exists?(uid: uid)
-
-    if !from_crawler? && user_signed_in?
-      if result
-        CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, force_update: current_user.uid == uid, enqueued_by: current_via(__method__))
-      else
-        CreateHighPriorityTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, force_update: current_user.uid == uid, enqueued_by: current_via(__method__))
-      end
+    if user_signed_in? && !TwitterDBUsersUpdatedFlag.on?([uid])
+      TwitterDBUsersUpdatedFlag.on([uid])
+      CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
     end
 
-    result
+    TwitterDB::User.exists?(uid: uid)
   end
 
   def current_user_authorized?

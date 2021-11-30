@@ -4,10 +4,14 @@ class TwitterDBUsersUpdatedFlag
   class << self
     def on(uids)
       redis.setex(key(uids), ttl, true)
+    rescue => e
+      nil
     end
 
     def on?(uids)
       redis.exists?(key(uids))
+    rescue => e
+      false
     end
 
     def key(val)
