@@ -44,6 +44,7 @@ module Tasks
 
       if @params['hosts'] == 'auto'
         hosts = list_task.instance_names
+        logger.info "Hosts detected automatically: #{hosts.join(',')}"
       else
         hosts = @params['hosts'].split(',')
       end
