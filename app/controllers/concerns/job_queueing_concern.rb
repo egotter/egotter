@@ -64,8 +64,14 @@ module JobQueueingConcern
   def enqueue_update_authorized
     return if from_crawler?
     return unless user_signed_in?
-    UpdateUserAttrsWorker.perform_async(current_user.id)
-    CreateTwitterDBUserWorker.perform_async([current_user.uid], user_id: current_user.id, enqueued_by: current_via(__method__))
+
+    user = current_user
+
+    unless UserAttrsUpdatedFlag.on?(user.id)
+      UserAttrsUpdatedFlag.on(user.id)
+      UpdateUserAttrsWorker.perform_async(user.id)
+      CreateTwitterDBUserWorker.perform_async([user.uid], user_id: user.id, enqueued_by: current_via(__method__))
+    end
   end
 
   def enqueue_update_egotter_friendship
