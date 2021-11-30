@@ -41,7 +41,12 @@ module Tasks
     # Install latest applications on a server that is already running
     def release_task
       role = @params['role']
-      hosts = @params['hosts'].split(',')
+
+      if @params['hosts'] == 'auto'
+        hosts = list_task.instance_names
+      else
+        hosts = @params['hosts'].split(',')
+      end
 
       if role == 'web'
         if hosts.size > 1
