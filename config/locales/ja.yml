@@ -1963,7 +1963,6 @@ ja:
     delete_tweets_max_deletion: '%{count}万件以上のツイート削除を希望します'
     charge_failed_inquiry: 'カードに問題が無いのに支払いに失敗しました。定期購読の継続を希望します。'
     error_inquiry: '%{name} エラーが複数回起きています。（スクリーンショットも送ってください）'
-    recovery_message: 'リクエストの処理に失敗しました…！お手数ですが再度お試しください。3回以上連続して起きる場合は @egotter_cs にご連絡ください。#egotter'
   email_messages:
     shop_order_ask_id_subject: '【えごったーショップ】IDの記載を忘れていませんか？'
     shop_order_ask_id_body: |
