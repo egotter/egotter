@@ -274,15 +274,6 @@ class PeriodicReport < ApplicationRecord
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
     end
 
-    def cannot_send_messages_message
-      template = Rails.root.join('app/views/periodic_reports/cannot_send_messages.ja.text.erb')
-      message = ERB.new(template.read).result_with_hash(
-          support_url: support_url(campaign_params('cannot_send_messages_support')),
-      )
-
-      new(user: nil, message: message, token: nil)
-    end
-
     def unauthorized_message
       template = Rails.root.join('app/views/periodic_reports/unauthorized.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(

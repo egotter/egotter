@@ -65,9 +65,7 @@ class CreatePeriodicReportMessageWorker
   end
 
   def send_direct_message(user, options)
-    handle_weird_error(user) do
-      PeriodicReport.periodic_message(user.id, options).deliver!
-    end
+    PeriodicReport.periodic_message(user.id, options).deliver!
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
       retry_current_report(user.id, options, exception: e)
@@ -76,26 +74,5 @@ class CreatePeriodicReportMessageWorker
     else
       raise
     end
-  end
-
-  def send_message_from_egotter(uid, message, options = {})
-    event = PeriodicReport.build_direct_message_event(uid, message, options)
-    User.egotter.api_client.create_direct_message_event(event: event)
-  end
-
-  # TODO Remove later
-  def handle_weird_error(user)
-    yield
-  rescue => e
-    if weird_error?(e, user)
-      logger.info { "#{__method__} #{e.inspect} user_id=#{user.id}" }
-      send_message_from_egotter(user.uid, PeriodicReport.cannot_send_messages_message.message)
-    else
-      raise
-    end
-  end
-
-  def weird_error?(e, user)
-    DirectMessageStatus.cannot_send_messages?(e) && PeriodicReport.messages_allotted?(user)
   end
 end

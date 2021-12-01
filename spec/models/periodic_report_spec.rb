@@ -150,11 +150,6 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
-  describe '.cannot_send_messages_message' do
-    subject { described_class.cannot_send_messages_message }
-    it { is_expected.to be_truthy }
-  end
-
   describe '.unauthorized_message' do
     subject { described_class.unauthorized_message }
     it { is_expected.to be_truthy }
