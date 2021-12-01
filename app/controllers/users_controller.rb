@@ -1,9 +1,11 @@
+# TODO Remove later
 class UsersController < ApplicationController
   before_action :require_login!
 
   after_action { CreateTwitterDBUserWorker.perform_async([current_user.uid], user_id: current_user.id, enqueued_by: 'UsersController') }
 
   def update
+    logger.info "UsersController#update is deprecated user_id=#{current_user.id} referer=#{request.referer}"
     user = fetch_user
 
     if user
