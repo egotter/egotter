@@ -3,6 +3,9 @@ require 'rails_helper'
 describe ValidationConcern, type: :controller do
   controller ApplicationController do
     include ValidationConcern
+
+    def update_twitter_db_user
+    end
   end
 
   let(:user) { create(:user) }
@@ -121,14 +124,14 @@ describe ValidationConcern, type: :controller do
     subject { controller.twitter_db_user_persisted?(user.uid) }
 
     before do
-      allow(TwitterDB::User).to receive(:exists?).with(uid: user.uid).and_return(true)
       allow(controller).to receive(:user_signed_in?).and_return(true)
       allow(controller).to receive(:current_user).and_return(user)
     end
 
     it do
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with(any_args)
-      is_expected.to be_truthy
+      expect(controller).to receive(:update_twitter_db_user)
+      allow(TwitterDB::User).to receive(:exists?).with(uid: user.uid).and_return('result')
+      is_expected.to eq('result')
     end
   end
 
