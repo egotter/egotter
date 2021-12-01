@@ -107,6 +107,7 @@ module ValidationConcern
     if user_signed_in? && !TwitterDBUsersUpdatedFlag.on?([uid])
       TwitterDBUsersUpdatedFlag.on([uid])
       CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
+      logger.info "CreateTwitterDBUserWorker is enqueued user_id=#{current_user.id} controller=#{controller_path} action=#{action_name} method=#{__method__}"
     end
 
     TwitterDB::User.exists?(uid: uid)

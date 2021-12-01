@@ -71,6 +71,7 @@ module JobQueueingConcern
     unless TwitterDBUsersUpdatedFlag.on?([user.uid])
       TwitterDBUsersUpdatedFlag.on([user.uid])
       CreateTwitterDBUserWorker.perform_async([user.uid], user_id: user.id, enqueued_by: current_via(__method__))
+      logger.info "CreateTwitterDBUserWorker is enqueued user_id=#{user.id} controller=#{controller_path} action=#{action_name} method=#{__method__}"
     end
   end
 
