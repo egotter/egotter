@@ -104,12 +104,7 @@ module ValidationConcern
 
   # Memo: This method should be called only with a request to the page, not a request to the API
   def twitter_db_user_persisted?(uid)
-    if user_signed_in? && !TwitterDBUsersUpdatedFlag.on?([uid])
-      TwitterDBUsersUpdatedFlag.on([uid])
-      CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
-      logger.info "CreateTwitterDBUserWorker is enqueued user_id=#{current_user.id} controller=#{controller_path} action=#{action_name} method=#{__method__}"
-    end
-
+    update_twitter_db_user
     TwitterDB::User.exists?(uid: uid)
   end
 

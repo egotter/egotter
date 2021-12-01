@@ -65,13 +65,16 @@ module JobQueueingConcern
     return if from_crawler?
     return unless user_signed_in?
 
-    user = current_user
-    UpdateUserAttrsWorker.perform_async(user.id)
+    UpdateUserAttrsWorker.perform_async(current_user.id)
+    update_twitter_db_user
+  end
 
-    unless TwitterDBUsersUpdatedFlag.on?([user.uid])
+  def update_twitter_db_user
+    if user_signed_in? && !TwitterDBUsersUpdatedFlag.on?([current_user.uid])
+      user = current_user
       TwitterDBUsersUpdatedFlag.on([user.uid])
       CreateTwitterDBUserWorker.perform_async([user.uid], user_id: user.id, enqueued_by: current_via(__method__))
-      logger.info "CreateTwitterDBUserWorker is enqueued user_id=#{user.id} controller=#{controller_path} action=#{action_name} method=#{__method__}"
+      logger.info "CreateTwitterDBUserWorker is enqueued user_id=#{user.id} controller=#{controller_path} action=#{action_name}"
     end
   end
 

@@ -9,7 +9,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   after_action only: :twitter do
     update_search_histories_when_signing_in(@user)
-    update_twitter_db_user(@user)
+    update_twitter_db_user
     enqueue_create_twitter_user_job_if_needed(@user.uid, user_id: @user.id)
   end
 
@@ -140,14 +140,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         token: values.credentials.token,
         email: values.info.email,
     }.compact
-  end
-
-  def update_twitter_db_user(user)
-    unless TwitterDBUsersUpdatedFlag.on?([user.uid])
-      TwitterDBUsersUpdatedFlag.on([user.uid])
-      CreateTwitterDBUserWorker.perform_async([user.uid], user_id: user.id, enqueued_by: current_via(__method__))
-      logger.info "CreateTwitterDBUserWorker is enqueued user_id=#{user.id} controller=#{controller_path} action=#{action_name} method=#{__method__}"
-    end
   end
 end
 
