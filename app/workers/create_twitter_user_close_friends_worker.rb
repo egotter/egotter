@@ -47,17 +47,19 @@ class CreateTwitterUserCloseFriendsWorker
   def import_close_friends(twitter_user, user)
     uids = twitter_user.calc_uids_for(S3::CloseFriendship, login_user: user)
     S3::CloseFriendship.import_from!(twitter_user.uid, uids)
-    if uids.any?
-      CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: twitter_user.user_id, enqueued_by: 'CloseFriends')
-      # CreateCloseFriendsOgImageWorker.perform_async(twitter_user.uid, uids: uids, force: true)
-    end
+    update_twitter_db_users(uids, twitter_user.user_id)
   end
 
   def import_favorite_friends(twitter_user, user)
     uids = twitter_user.calc_uids_for(S3::FavoriteFriendship, login_user: user)
     S3::FavoriteFriendship.import_from!(twitter_user.uid, uids)
-    if uids.any?
-      CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: twitter_user.user_id, enqueued_by: 'FavoriteFriends')
+    update_twitter_db_users(uids, twitter_user.user_id)
+  end
+
+  def update_twitter_db_users(uids, user_id)
+    if uids.any? && !TwitterDBUsersUpdatedFlag.on?(uids)
+      TwitterDBUsersUpdatedFlag.on(uids)
+      CreateHighPriorityTwitterDBUserWorker.compress_and_perform_async(uids, user_id: user_id)
     end
   end
 end

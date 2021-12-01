@@ -37,18 +37,8 @@ RSpec.describe CreateTwitterUserCloseFriendsWorker do
     end
     it do
       expect(S3::CloseFriendship).to receive(:import_from!).with(twitter_user.uid, uids)
-      expect(CreateHighPriorityTwitterDBUserWorker).to receive(:compress_and_perform_async).with(uids, user_id: twitter_user.user_id, enqueued_by: instance_of(String))
-      # expect(CreateCloseFriendsOgImageWorker).to receive(:perform_async).with(twitter_user.uid, uids: uids, force: true)
+      expect(worker).to receive(:update_twitter_db_users).with(uids, twitter_user.user_id)
       subject
-    end
-
-    context 'uids is empty' do
-      let(:uids) { [] }
-      it do
-        expect(CreateHighPriorityTwitterDBUserWorker).not_to receive(:compress_and_perform_async)
-        # expect(CreateCloseFriendsOgImageWorker).not_to receive(:perform_async)
-        subject
-      end
     end
   end
 
@@ -60,16 +50,18 @@ RSpec.describe CreateTwitterUserCloseFriendsWorker do
     end
     it do
       expect(S3::FavoriteFriendship).to receive(:import_from!).with(twitter_user.uid, uids)
-      expect(CreateHighPriorityTwitterDBUserWorker).to receive(:compress_and_perform_async).with(uids, user_id: twitter_user.user_id, enqueued_by: instance_of(String))
+      expect(worker).to receive(:update_twitter_db_users).with(uids, twitter_user.user_id)
       subject
     end
+  end
 
-    context 'uids is empty' do
-      let(:uids) { [] }
-      it do
-        expect(CreateHighPriorityTwitterDBUserWorker).not_to receive(:compress_and_perform_async)
-        subject
-      end
+  describe '#update_twitter_db_users' do
+    let(:uids) { [1] }
+    subject { worker.send(:update_twitter_db_users, uids, user.id) }
+    before { Redis.client.flushall }
+    it do
+      expect(CreateHighPriorityTwitterDBUserWorker).to receive(:compress_and_perform_async).with(uids, user_id: user.id)
+      subject
     end
   end
 end
