@@ -5,6 +5,7 @@ module ValidationConcern
   include AlertMessagesConcern
   include PathsHelper
   include SearchHistoriesHelper
+  include JobQueueingConcern
 
   included do
 
