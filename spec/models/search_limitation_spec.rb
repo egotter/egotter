@@ -46,15 +46,15 @@ RSpec.describe SearchLimitation, type: :model do
     subject { described_class.hard_limited?(twitter_user) }
 
     context 'friends_count + followers_count > 150000' do
-      let(:friends_count) { 75000 }
-      let(:followers_count) { 75001 }
+      let(:friends_count) { 85000 }
+      let(:followers_count) { 85001 }
       it { expect(friends_count + followers_count).to be > SearchLimitation::HARD_LIMIT }
       it { is_expected.to be_truthy }
     end
 
     context 'friends_count + followers_count <= 150000' do
-      let(:friends_count) { 75000 }
-      let(:followers_count) { 75000 }
+      let(:friends_count) { 85000 }
+      let(:followers_count) { 85000 }
       it { expect(friends_count + followers_count).to be <= SearchLimitation::HARD_LIMIT }
       it { is_expected.to be_falsey }
     end
