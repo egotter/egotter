@@ -1725,8 +1725,6 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.string "token", null: false
     t.string "secret", null: false
     t.string "email", default: "", null: false
-    t.datetime "first_sign_in_at"
-    t.datetime "last_sign_in_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_users_on_created_at"
