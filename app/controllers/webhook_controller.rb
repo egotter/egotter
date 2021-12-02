@@ -24,6 +24,10 @@ class WebhookController < ApplicationController
       params[:direct_message_events].each do |event|
         ProcessWebhookEventForEgotterCsWorker.perform_async(to_hash(event))
       end
+    elsif direct_message_event_for_egotter_ai?
+      params[:direct_message_events].each do |event|
+        ProcessWebhookEventForEgotterAiWorker.perform_async(to_hash(event))
+      end
     elsif direct_message_event_for_tweet_cleaner?
       params[:direct_message_events].each do |event|
         ProcessWebhookEventForTweetCleanerWorker.perform_async(to_hash(event))
@@ -50,6 +54,10 @@ class WebhookController < ApplicationController
 
   def direct_message_event_for_egotter_cs?
     params[:for_user_id].to_i == User::EGOTTER_CS_UID && params[:direct_message_events]
+  end
+
+  def direct_message_event_for_egotter_ai?
+    params[:for_user_id].to_i == User::EGOTTER_AI_UID && params[:direct_message_events]
   end
 
   def direct_message_event_for_tweet_cleaner?
