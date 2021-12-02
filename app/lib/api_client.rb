@@ -39,10 +39,6 @@ class ApiClient
     CreateDirectMessageErrorLogWorker.perform_async({event: event}, e.class, e.message, Time.zone.now, sender_id: @user&.uid)
     update_blocker_status(e)
 
-    if DirectMessageStatus.cannot_send_messages?(e)
-      Rails.logger.info "Cannot send messages method=#{__method__} user_id=#{@user&.id} event=#{event.inspect}"
-    end
-
     if e.class == ApiClient::RetryExhausted
       Rails.logger.warn "Sending DM failed method=#{__method__} user_id=#{@user&.id} event=#{event.inspect}"
       begin
