@@ -52,10 +52,15 @@ class CreateInquiryMessageWorker
   end
 
   # options:
+  #   from_uid
   def perform(uid, options = {})
     user = User.find_by(uid: uid)
     event = InquiryResponseReport.build_direct_message_event(uid, build_message(user))
-    User.egotter_cs.api_client.create_direct_message_event(event: event)
+
+    unless options['from_uid'] && (sender = User.find_by(uid: options['from_uid']))
+      sender = User.egotter_cs
+    end
+    sender.api_client.create_direct_message_event(event: event)
   rescue => e
     unless ignorable_report_error?(e)
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"

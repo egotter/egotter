@@ -35,7 +35,7 @@ class ProcessWebhookEventForEgotterAiWorker
     dm = DirectMessageWrapper.from_event(event.deep_symbolize_keys)
 
     if sent_from_user?(dm)
-      InquiryMessageResponder.from_dm(dm).respond
+      AiInquiryMessageResponder.from_dm(dm).respond
     end
   end
 
