@@ -131,13 +131,6 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '.find_by_token' do
-    let(:user) { create(:user, with_credential_token: true) }
-    let(:credential) { user.credential_token }
-    subject { User.find_by_token(credential.token, credential.secret) }
-    it { expect(subject.id).to eq(user.id) }
-  end
-
   describe '.api_client' do
     let(:user) { create(:user, with_credential_token: true) }
     it 'returns ApiClient' do

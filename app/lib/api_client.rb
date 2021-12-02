@@ -72,21 +72,21 @@ class ApiClient
   end
 
   def update_blocker_status(e)
-    if DirectMessageStatus.you_have_blocked?(e) && (user = fetch_user)
-      CreateEgotterBlockerWorker.perform_async(user.uid)
-      CreateViolationEventWorker.perform_async(user.id, 'Blocking egotter')
+    if DirectMessageStatus.you_have_blocked?(e) && @user
+      CreateEgotterBlockerWorker.perform_async(@user.uid)
+      CreateViolationEventWorker.perform_async(@user.id, 'Blocking egotter')
     end
   end
 
   def update_authorization_status(e)
-    if TwitterApiStatus.unauthorized?(e) && (user = fetch_user)
-      UpdateUserAttrsWorker.perform_async(user.id)
+    if TwitterApiStatus.unauthorized?(e) && @user
+      UpdateUserAttrsWorker.perform_async(@user.id)
     end
   end
 
   def update_lock_status(e)
-    if TwitterApiStatus.temporarily_locked?(e) && (user = fetch_user)
-      UpdateLockedWorker.perform_async(user.id)
+    if TwitterApiStatus.temporarily_locked?(e) && @user
+      UpdateLockedWorker.perform_async(@user.id)
     end
   end
 
@@ -100,11 +100,6 @@ class ApiClient
     if TwitterApiStatus.suspended?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
       CreateForbiddenUserWorker.perform_async(args[0], location: (caller[2][/`([^']*)'/, 1] rescue ''))
     end
-  end
-
-  # TODO Use @user
-  def fetch_user
-    User.find_by_token(@client.access_token, @client.access_token_secret)
   end
 
   def twitter

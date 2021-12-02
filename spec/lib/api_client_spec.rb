@@ -99,17 +99,15 @@ RSpec.describe ApiClient, type: :model do
     let(:error) { RuntimeError.new('error') }
     subject { instance.update_blocker_status(error) }
 
-    context 'token is invalid' do
-      let(:user) { create(:user) }
-      before do
-        allow(DirectMessageStatus).to receive(:you_have_blocked?).with(error).and_return(true)
-        allow(User).to receive(:find_by_token).with(client.access_token, client.access_token_secret).and_return(user)
-      end
-      it do
-        expect(CreateEgotterBlockerWorker).to receive(:perform_async).with(user.uid)
-        expect(CreateViolationEventWorker).to receive(:perform_async).with(user.id, 'Blocking egotter')
-        subject
-      end
+    before do
+      instance.instance_variable_set(:@user, user)
+      allow(DirectMessageStatus).to receive(:you_have_blocked?).with(error).and_return(true)
+    end
+
+    it do
+      expect(CreateEgotterBlockerWorker).to receive(:perform_async).with(user.uid)
+      expect(CreateViolationEventWorker).to receive(:perform_async).with(user.id, 'Blocking egotter')
+      subject
     end
   end
 
@@ -117,16 +115,14 @@ RSpec.describe ApiClient, type: :model do
     let(:error) { RuntimeError.new('error') }
     subject { instance.update_authorization_status(error) }
 
-    context 'token is invalid' do
-      let(:user) { create(:user) }
-      before do
-        allow(TwitterApiStatus).to receive(:unauthorized?).with(error).and_return(true)
-        allow(User).to receive(:find_by_token).with(client.access_token, client.access_token_secret).and_return(user)
-      end
-      it do
-        expect(UpdateUserAttrsWorker).to receive(:perform_async).with(user.id)
-        subject
-      end
+    before do
+      instance.instance_variable_set(:@user, user)
+      allow(TwitterApiStatus).to receive(:unauthorized?).with(error).and_return(true)
+    end
+
+    it do
+      expect(UpdateUserAttrsWorker).to receive(:perform_async).with(user.id)
+      subject
     end
   end
 
@@ -134,16 +130,14 @@ RSpec.describe ApiClient, type: :model do
     let(:error) { RuntimeError.new('error') }
     subject { instance.update_lock_status(error) }
 
-    context 'user is locked' do
-      let(:user) { create(:user) }
-      before do
-        allow(TwitterApiStatus).to receive(:temporarily_locked?).with(error).and_return(true)
-        allow(User).to receive(:find_by_token).with(client.access_token, client.access_token_secret).and_return(user)
-      end
-      it do
-        expect(UpdateLockedWorker).to receive(:perform_async).with(user.id)
-        subject
-      end
+    before do
+      instance.instance_variable_set(:@user, user)
+      allow(TwitterApiStatus).to receive(:temporarily_locked?).with(error).and_return(true)
+    end
+
+    it do
+      expect(UpdateLockedWorker).to receive(:perform_async).with(user.id)
+      subject
     end
   end
 

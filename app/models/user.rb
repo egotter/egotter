@@ -140,15 +140,6 @@ class User < ApplicationRecord
       user
     end
 
-    def find_by_token(token, secret)
-      if (credential = CredentialToken.select(:user_id).find_by(token: token, secret: secret))
-        select(:id, :uid).find_by(id: credential.user_id)
-      else
-        logger.warn "#{__method__}: CredentialToken is not found token_prefix=#{token.split('-')[0]}"
-        nil
-      end
-    end
-
     def api_client
       ids = where(authorized: true, locked: false).order(created_at: :desc).limit(200).pluck(:id)
       find(ids.sample).api_client
