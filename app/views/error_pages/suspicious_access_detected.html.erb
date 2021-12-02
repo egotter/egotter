@@ -1,1 +1,8 @@
-<div class="mb-3" style="min-height: 300px;"><%= t('.message_html', url: sign_in_path(via: current_via)) %></div>
+<p><%= t('.message1_html', url: sign_in_path(via: current_via)) %></p>
+<p><%= t('.message2_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></p>
+
+<div>OS: <%= request.os %></div>
+<div>OS version: <%= request.os_version %></div>
+<div>Device type: <%= request.device_type %></div>
+<div>Browser: <%= request.browser %></div>
+<div>Browser version: <%= request.browser_version %></div>

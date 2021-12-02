@@ -1548,11 +1548,10 @@ ja:
       message_html: '検索された @%{user} はフォローとフォロワーが多いため、<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> した後のみ検索できます。'
     spam_ip_detected:
       message1_html: 'スパム報告されているアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
-      message2_html: '普通のアクセスでこのメッセージが表示されている場合は、<a href="%{url1}" target="_blank">@egotter_cs</a> までご連絡ください。<a class="btn btn-outline-primary btn-sm" href="%{url2}" target="_blank">お問い合わせ</a>'
+      message2_html: '普通のアクセスでこのメッセージが表示されている場合は、@egotter_cs までご連絡ください。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">連絡する</a>'
     suspicious_access_detected:
-      message_html: |
-        <p>不審なアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。</p>
-        普通のアクセスでこのメッセージが表示されている場合は、<a class="btn btn-outline-primary btn-sm" href="https://twitter.com/egotter_cs" target="_blank">@egotter_cs</a> までご連絡ください。
+      message1_html: '不審なアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message2_html: '普通のアクセスでこのメッセージが表示されている場合は、@egotter_cs までご連絡ください。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">連絡する</a>'
     twitter_user_not_persisted:
       message_html: 'ログインしていないため @%{user} のTwitterデータ取得に失敗しました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     too_many_api_requests:
