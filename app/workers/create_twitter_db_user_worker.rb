@@ -55,7 +55,7 @@ class CreateTwitterDBUserWorker
         logger.info "#{e.message} uids=#{target_uids.inspect} options=#{options.inspect}"
       end
     else
-      handle_worker_error(e, uids_size: target_uids.size, uids: target_uids, options: options)
+      handle_worker_error(e, uids_size: target_uids.size, options: options)
       FailedCreateTwitterDBUserWorker.perform_async(target_uids, options.merge(klass: self.class, error_class: e.class))
     end
   end
