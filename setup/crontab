@@ -24,4 +24,4 @@ RUBY='/var/egotter/bin/cron/ruby.sh'
 */10 * * * * /bin/sh -c "DRY_RUN=true ROLE=web $RUBY bin/adjust_servers.rb"
 */10 * * * * /bin/sh -c "DRY_RUN=true ROLE=sidekiq $RUBY bin/adjust_servers.rb"
 
-0 * * * * /bin/sh -c "TRENDS=3 MAX_TWEETS=10000 $RAKE 'trends:save'"
+0 * * * * /bin/sh -c "$RAKE trends:save"

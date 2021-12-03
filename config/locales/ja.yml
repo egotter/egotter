@@ -1530,6 +1530,9 @@ ja:
       note: '※ 利用制限の解除のために購入された売上は、全額を特定公益増進法人（例：日本赤十字社）に寄付します。'
     not_found_user:
       message: '@%{user} は存在しないか削除済みです。主な理由は下記の通りです。'
+      trends:
+        title: 'ツイッタートレンド'
+        rank: '%{n}位'
     forbidden_user:
       message: '@%{user} は凍結されています。'
     protected_user:

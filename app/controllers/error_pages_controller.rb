@@ -29,7 +29,13 @@ class ErrorPagesController < ApplicationController
 
   def soft_limited; end
 
-  def not_found_user; end
+  def not_found_user
+    begin
+      @trends = Trend.japan.top_10.where(time: Time.zone.now.change(min: 0, sec: 0)).limit(10)
+    rescue => e
+      logger.warn "#{controller_name}##{action_name}: #{e.inspect}"
+    end
+  end
 
   def forbidden_user; end
 
