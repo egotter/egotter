@@ -1,6 +1,12 @@
 module Api
   module V1
     class NewFriendsCountPointsController < ApplicationController
+
+      rescue_from Rack::Timeout::RequestTimeoutException do |e|
+        logger.warn "#{e.message} user_id=#{current_user&.id} controller=#{controller_path} action=#{action_name}"
+        head :request_timeout unless performed?
+      end
+
       def index
         records = NewFriendsCountPoint.where(uid: params[:uid]).order(created_at: :desc).limit(100).reverse
         data = records.map { |r| [r.created_at.to_i * 1000, r.value] }
