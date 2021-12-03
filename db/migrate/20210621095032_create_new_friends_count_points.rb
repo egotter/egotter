@@ -7,6 +7,7 @@ class CreateNewFriendsCountPoints < ActiveRecord::Migration[6.0]
 
       t.index :uid
       t.index :created_at
+      t.index %i(uid created_at)
     end
   end
 end

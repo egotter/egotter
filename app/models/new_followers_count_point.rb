@@ -9,8 +9,9 @@
 #
 # Indexes
 #
-#  index_new_followers_count_points_on_created_at  (created_at)
-#  index_new_followers_count_points_on_uid         (uid)
+#  index_new_followers_count_points_on_created_at          (created_at)
+#  index_new_followers_count_points_on_uid                 (uid)
+#  index_new_followers_count_points_on_uid_and_created_at  (uid,created_at)
 #
 class NewFollowersCountPoint < ApplicationRecord
   include TimeBetweenQuery

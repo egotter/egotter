@@ -781,6 +781,7 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.integer "value", null: false
     t.timestamp "created_at", null: false
     t.index ["created_at"], name: "index_followers_count_points_on_created_at"
+    t.index ["uid", "created_at"], name: "index_followers_count_points_on_uid_and_created_at"
     t.index ["uid"], name: "index_followers_count_points_on_uid"
   end
 
@@ -827,6 +828,7 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.integer "value", null: false
     t.timestamp "created_at", null: false
     t.index ["created_at"], name: "index_friends_count_points_on_created_at"
+    t.index ["uid", "created_at"], name: "index_friends_count_points_on_uid_and_created_at"
     t.index ["uid"], name: "index_friends_count_points_on_uid"
   end
 
@@ -837,14 +839,6 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.index ["friend_uid"], name: "index_friendships_on_friend_uid"
     t.index ["from_id", "friend_uid"], name: "index_friendships_on_from_id_and_friend_uid", unique: true
     t.index ["from_id"], name: "index_friendships_on_from_id"
-  end
-
-  create_table "gauges", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "name"
-    t.string "label"
-    t.integer "value"
-    t.datetime "time"
-    t.index ["time"], name: "index_gauges_on_time"
   end
 
   create_table "global_messages", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -954,6 +948,7 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.integer "value", null: false
     t.timestamp "created_at", null: false
     t.index ["created_at"], name: "index_new_followers_count_points_on_created_at"
+    t.index ["uid", "created_at"], name: "index_new_followers_count_points_on_uid_and_created_at"
     t.index ["uid"], name: "index_new_followers_count_points_on_uid"
   end
 
@@ -962,6 +957,7 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.integer "value", null: false
     t.timestamp "created_at", null: false
     t.index ["created_at"], name: "index_new_friends_count_points_on_created_at"
+    t.index ["uid", "created_at"], name: "index_new_friends_count_points_on_uid_and_created_at"
     t.index ["uid"], name: "index_new_friends_count_points_on_uid"
   end
 
