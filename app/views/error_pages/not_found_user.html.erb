@@ -14,7 +14,7 @@
   <div class="my-3"><%= t('.trends.title') %></div>
 
   <% @trends.each do |trend| %>
-    <div><%= t('.trends.rank', n: trend.rank) %>. <%= trend.name %></div>
+    <div><%= t('.trends.rank', n: trend.rank) %>. <%= trend.name %> <%= link_to t('.trends.link'), twitter_search_url(trend.name), target: '_blank', rel: 'nofollow' %></div>
     <% if (tweet = trend.properties['tweet']) %>
       <%= render partial: 'twitter/plain_oembed_tweet', locals: {text: trend.name, url: tweet_url('user', tweet['id'])} %>
     <% end %>

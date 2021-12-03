@@ -1533,6 +1533,7 @@ ja:
       trends:
         title: 'ツイッタートレンド'
         rank: '%{n}位'
+        link: 'ツイッターで見る'
     forbidden_user:
       message: '@%{user} は凍結されています。'
     protected_user:

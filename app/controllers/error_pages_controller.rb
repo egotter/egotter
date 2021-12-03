@@ -31,7 +31,7 @@ class ErrorPagesController < ApplicationController
 
   def not_found_user
     begin
-      @trends = Trend.japan.top_10.where(time: Time.zone.now.change(min: 0, sec: 0)).limit(10)
+      @trends = Trend.japan.top_n(50).where(time: Time.zone.now.change(min: 0, sec: 0)).limit(50)
     rescue => e
       logger.warn "#{controller_name}##{action_name}: #{e.inspect}"
     end

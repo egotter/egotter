@@ -17,6 +17,10 @@ module TwitterHelper
     "https://twitter.com/messages/compose?recipient_id=#{uid}#{text}"
   end
 
+  def twitter_search_url(query)
+    "https://twitter.com/search?q=#{URI.encode(query)}"
+  end
+
   def direct_message_link(uid, screen_name, text = nil)
     link_to '@' + screen_name, direct_message_url(uid, text), target: '_blank'
   end

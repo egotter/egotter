@@ -9,6 +9,7 @@ class DeleteAhoyRecordsTask
   def start
     total = @klass.where(@column => @start_time..@end_time).size
     puts "Delete #{total} records"
+    return if total == 0
 
     sigint = Sigint.new.trap
     count = 0
