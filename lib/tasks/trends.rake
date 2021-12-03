@@ -1,12 +1,6 @@
 namespace :trends do
-  task save_latest_trends: :environment do |task|
-    logger = TaskLogger.logger
-    logger.info "task=#{task.name} start"
-
-    trends = Trend.fetch_trends
-    Trend.import trends
-    logger.info "task=#{task.name} import=#{trends.size}"
-    logger.info "task=#{task.name} finish"
+  task save: :environment do |task|
+    Trend.import Trend.fetch_trends
   end
 
   task update_trend_insights: :environment do |task|
