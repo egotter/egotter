@@ -99,6 +99,7 @@ RSpec.describe User, type: :model do
       expect(user.secret).to eq('secret') if user.respond_to?(:secret)
       expect(user.credential_token.token).to eq('token')
       expect(user.credential_token.secret).to eq('secret')
+      expect(user.notification_setting.permission_level).to eq('read-write-directmessages')
     end
   end
 
