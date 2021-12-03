@@ -91,15 +91,14 @@ RSpec.describe User, type: :model do
   describe '.create_with_token' do
     subject { described_class.create_with_token(123, 'screen_name', 'a@b.com', 'token', 'secret') }
     it do
-      is_expected.to satisfy do |user|
-        user.uid == 123 &&
-            user.screen_name == 'screen_name' &&
-            user.email == 'a@b.com' &&
-            user.token == 'token' &&
-            user.secret == 'secret' &&
-            user.credential_token.token == 'token' &&
-            user.credential_token.secret == 'secret'
-      end
+      user = subject
+      expect(user.uid).to eq(123)
+      expect(user.screen_name).to eq('screen_name')
+      expect(user.email).to eq('a@b.com')
+      expect(user.token).to eq('token') if user.respond_to?(:token)
+      expect(user.secret).to eq('secret') if user.respond_to?(:secret)
+      expect(user.credential_token.token).to eq('token')
+      expect(user.credential_token.secret).to eq('secret')
     end
   end
 
@@ -109,15 +108,14 @@ RSpec.describe User, type: :model do
     let(:email) { 'a@b.com' }
     subject { described_class.update_with_token(persisted_user.uid, screen_name, email, 'token', 'secret') }
     it do
-      is_expected.to satisfy do |user|
-        user.uid == persisted_user.uid &&
-            user.screen_name == screen_name &&
-            user.email == email &&
-            user.token == 'token' &&
-            user.secret == 'secret' &&
-            user.credential_token.token == 'token' &&
-            user.credential_token.secret == 'secret'
-      end
+      user = subject
+      expect(user.uid).to eq(persisted_user.uid)
+      expect(user.screen_name).to eq(screen_name)
+      expect(user.email).to eq(email)
+      expect(user.token).to eq('token') if user.respond_to?(:token)
+      expect(user.secret).to eq('secret') if user.respond_to?(:secret)
+      expect(user.credential_token.token).to eq('token')
+      expect(user.credential_token.secret).to eq('secret')
     end
 
     context 'screen_name is nil' do
