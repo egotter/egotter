@@ -1,18 +1,13 @@
 class StripeWebhookController < ApplicationController
 
   skip_before_action :verify_authenticity_token
-  after_action :track_event
 
   def index
     event = construct_event
     process_event(event)
     head :ok
   rescue => e
-    begin
-      logger.warn "#{controller_name}##{action_name} #{e.inspect} event=#{event.data}"
-    rescue => ee
-      logger.warn "#{controller_name}##{action_name} exception=#{ee.inspect} parent_exception=#{e.inspect}"
-    end
+    logger.warn "#{controller_name}##{action_name} #{e.inspect} event_id=#{event.id}"
     head :bad_request
   end
 
@@ -27,7 +22,7 @@ class StripeWebhookController < ApplicationController
   def process_event(event)
     case event.type
     when 'checkout.session.completed'
-      process_checkout_session_completed(event)
+      process_cs_completed(event)
     when 'charge.succeeded'
       process_charge_succeeded(event)
     when 'charge.failed'
@@ -40,7 +35,7 @@ class StripeWebhookController < ApplicationController
   end
 
   # As a user is waiting to finish the checkout, this process MUST be executed synchronously
-  def process_checkout_session_completed(event)
+  def process_cs_completed(event)
     checkout_session_id = event.data.object.id
     ProcessStripeCheckoutSessionCompletedEventWorker.new.perform(checkout_session_id)
   end
@@ -58,12 +53,5 @@ class StripeWebhookController < ApplicationController
   def process_payment_intent_succeeded(event)
     stripe_payment_intent_id = event.data.object.id
     ProcessStripePaymentIntentSucceededEventWorker.perform_async(stripe_payment_intent_id)
-  end
-
-  def track_event
-    event_params = (request.request_parameters).except(:data, :locale, :utf8, :authenticity_token)
-    ahoy.track('Stripe webhook', path: request.path, params: event_params)
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect}"
   end
 end

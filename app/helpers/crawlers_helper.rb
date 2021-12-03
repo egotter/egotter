@@ -13,7 +13,7 @@ module CrawlersHelper
   end
 
   def stripe_webhook?
-    request.user_agent.to_s.match?(/\AStripe/) && controller_name == 'orders' && action_name == 'checkout_session_completed'
+    request.user_agent.to_s.match?(/\AStripe/) && (controller_name == 'orders' || controller_name == 'stripe_webhook')
   end
 
   def twitter_webhook?
