@@ -1,6 +1,19 @@
 namespace :trends do
   task save: :environment do |task|
+    max_id = Trend.maximum(:id)
     Trend.import Trend.fetch_trends
+
+    client = User.admin.api_client.twitter
+
+    Trend.japan.top_10.where('id > ?', max_id).limit(10).each do |trend|
+      response = client.search(trend.name, count: 1, result_type: 'recent', include_entities: false)
+      statuses = response.attrs[:statuses]
+      next if statuses.empty?
+
+      props = trend.properties || {}
+      props[:tweet] = {id: statuses[0][:id], text: statuses[0][:text]}
+      trend.update(properties: props)
+    end
   end
 
   task update_trend_insights: :environment do |task|
