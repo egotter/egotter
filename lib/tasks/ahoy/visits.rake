@@ -5,16 +5,21 @@ namespace :ahoy do
       end_time = Time.zone.parse(ENV['UNTIL'])
 
       query = Ahoy::Visit.where(started_at: start_time..end_time).select(:id)
-      puts "Delete #{query.size} records"
+      total = query.size
+      puts "Delete #{total} records"
 
       sigint = Sigint.new.trap
+      count = 0
 
       query.find_in_batches do |records|
         Ahoy::Visit.where(id: records.map(&:id)).delete_all
-        print '.'
+        count += records.size
+        print "\r#{(100 * count.to_f / total).round(1)}%"
 
         return if sigint.trapped?
       end
+
+      puts ''
     end
   end
 end
