@@ -23,7 +23,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe 'perform!' do
     let(:snapshot) { TwitterSnapshot.new({}) }
-    let(:twitter_user) { build(:twitter_user) }
+    let(:twitter_user) { create(:twitter_user) }
     subject { request.perform!('context') }
 
     it do
@@ -34,6 +34,9 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
       expect(SearchLimitation).to receive(:warn_limit?).with(snapshot)
       expect(request).to receive(:assemble_twitter_user).with(snapshot, 'relations')
       expect(request).to receive(:save_twitter_user).with(snapshot).and_return(twitter_user)
+      expect(CreateTwitterUserNewFriendsWorker).to receive(:perform_async).with(twitter_user.id)
+      expect(CreateTwitterUserNewFollowersWorker).to receive(:perform_async).with(twitter_user.id)
+      expect(ExtractUpdateTargetUidsFromTwitterUserWorker).to receive(:perform_in).with(5.minutes, twitter_user.id)
       is_expected.to eq(twitter_user)
     end
   end

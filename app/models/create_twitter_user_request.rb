@@ -57,6 +57,9 @@ class CreateTwitterUserRequest < ApplicationRecord
     assemble_twitter_user(snapshot, relations)
     validate_creation_interval!
     twitter_user = save_twitter_user(snapshot)
+
+    CreateTwitterUserNewFriendsWorker.perform_async(twitter_user.id)
+    CreateTwitterUserNewFollowersWorker.perform_async(twitter_user.id)
     ExtractUpdateTargetUidsFromTwitterUserWorker.perform_in(5.minutes, twitter_user.id)
 
     twitter_user
