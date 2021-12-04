@@ -29,10 +29,15 @@ class ExtractMissingUidsFromTwitterUserWorker
   end
 
   def fetch_missing_uids(uids)
-    persisted_uids = []
+    uids = uids.uniq
+    missing_uids = []
+
     uids.each_slice(1000) do |uids_array|
-      persisted_uids << TwitterDB::User.where(uid: uids_array).pluck(:uid)
+      if uids_array.size != TwitterDB::User.where(uid: uids_array).size
+        missing_uids << uids_array - TwitterDB::User.where(uid: uids_array).pluck(:uid)
+      end
     end
-    uids - persisted_uids.flatten
+
+    missing_uids.flatten
   end
 end
