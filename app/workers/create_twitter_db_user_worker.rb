@@ -51,17 +51,15 @@ class CreateTwitterDBUserWorker
     logger.info "Retry retryable error: #{e.inspect.truncate(200)}"
     delay = rand(20) + 15
     CreateTwitterDBUserForRetryableErrorWorker.perform_in(delay, uids, options.merge(klass: self.class, error_class: e.class))
-  rescue => e
-    if e.class == ApiClient::ContainStrangeUid
-      if target_uids && target_uids.size > 1
-        slice_and_retry(target_uids, options)
-      else
-        logger.info "#{e.message} uids=#{target_uids.inspect} options=#{options.inspect}"
-      end
+  rescue ApiClient::ContainStrangeUid => e
+    if target_uids && target_uids.size > 1
+      slice_and_retry(target_uids, options)
     else
-      handle_worker_error(e, uids_size: target_uids.size, options: options)
-      FailedCreateTwitterDBUserWorker.perform_async(target_uids, options.merge(klass: self.class, error_class: e.class))
+      logger.info "#{e.message} uids=#{target_uids.inspect} options=#{options.inspect}"
     end
+  rescue => e
+    handle_worker_error(e, uids_size: target_uids.size, options: options)
+    FailedCreateTwitterDBUserWorker.perform_async(target_uids, options.merge(klass: self.class, error_class: e.class))
   end
 
   private
