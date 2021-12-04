@@ -17,18 +17,21 @@ module TwitterUserPersistence
     if copied_user_timeline&.is_a?(Array)
       bm_record('InMemory::StatusTweet') do
         InMemory::StatusTweet.import_from(uid, copied_user_timeline)
+        InMemory::StatusTweet.connected_to(:secondary) { InMemory::StatusTweet.import_from(uid, copied_user_timeline) }
       end
     end
 
     if copied_favorite_tweets&.is_a?(Array)
       bm_record('InMemory::FavoriteTweet') do
         InMemory::FavoriteTweet.import_from(uid, copied_favorite_tweets)
+        InMemory::FavoriteTweet.connected_to(:secondary) { InMemory::FavoriteTweet.import_from(uid, copied_favorite_tweets) }
       end
     end
 
     if copied_mention_tweets&.is_a?(Array)
       bm_record('InMemory::MentionTweet') do
         InMemory::MentionTweet.import_from(uid, copied_mention_tweets)
+        InMemory::MentionTweet.connected_to(:secondary) { InMemory::MentionTweet.import_from(uid, copied_mention_tweets) }
       end
     end
   ensure
@@ -41,6 +44,7 @@ module TwitterUserPersistence
 
     bm_record('InMemory::TwitterUser') do
       InMemory::TwitterUser.import_from(id, uid, screen_name, profile_text, copied_friend_uids, copied_follower_uids)
+      InMemory::TwitterUser.connected_to(:secondary) { InMemory::TwitterUser.import_from(id, uid, screen_name, profile_text, copied_friend_uids, copied_follower_uids) }
     end
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(120)} twitter_user=#{self.inspect}"

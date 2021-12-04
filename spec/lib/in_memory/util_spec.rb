@@ -18,4 +18,15 @@ RSpec.describe InMemory::Util do
     subject { klass.decompress(data) }
     it { is_expected.to eq('abc') }
   end
+
+  describe '.connected_to' do
+    let(:name) { 'tmp name' }
+    it do
+      expect(klass.connection_name).not_to eq(name)
+      klass.connected_to(name) do
+        expect(klass.connection_name).to eq(name)
+      end
+      expect(klass.connection_name).not_to eq(name)
+    end
+  end
 end

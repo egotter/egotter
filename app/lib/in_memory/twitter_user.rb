@@ -39,12 +39,6 @@ module InMemory
       def import_from_twitter_user(twitter_user)
         import_from(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.send(:profile), twitter_user.friend_uids, twitter_user.follower_uids)
       end
-
-      private
-
-      def client
-        ::InMemory::Client.new(self)
-      end
     end
   end
 end

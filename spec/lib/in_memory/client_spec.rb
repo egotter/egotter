@@ -2,12 +2,8 @@ require 'rails_helper'
 
 RSpec.describe InMemory::Client do
   let(:redis) { double('redis') }
-  let(:instance) { described_class.new('klass') }
+  let(:instance) { described_class.new(redis, 'namespace') }
   let(:key) { 1 }
-
-  before do
-    instance.instance_variable_set(:@redis, redis)
-  end
 
   describe '#read' do
     subject { instance.read(key) }
@@ -16,6 +12,22 @@ RSpec.describe InMemory::Client do
     it do
       expect(redis).to receive(:get).with('key').and_return('output')
       is_expected.to eq('output')
+    end
+
+    context 'Redis::TimeoutError is raised' do
+      before { allow(redis).to receive(:get).with(anything).and_raise(Redis::TimeoutError) }
+      it do
+        expect { subject }.to raise_error(Redis::TimeoutError)
+        expect(instance.instance_variable_get(:@retries)).to eq(4)
+      end
+    end
+
+    context 'RuntimeError is raised' do
+      before { allow(redis).to receive(:get).with(anything).and_raise(RuntimeError) }
+      it do
+        expect { subject }.to raise_error(RuntimeError)
+        expect(instance.instance_variable_get(:@retries)).to eq(0)
+      end
     end
   end
 
@@ -43,7 +55,7 @@ RSpec.describe InMemory::Client do
 
   describe '#db_key' do
     subject { instance.send(:db_key, 1) }
-    it { is_expected.to eq('test:InMemory::Client:klass:1') }
+    it { is_expected.to eq('test:InMemory::Client:namespace:1') }
   end
 
   context 'Invalid hostname is passed' do

@@ -8,6 +8,9 @@ version: "3"
 services:
   redis:
     image: redis
+  redis2:
+    image: redis
+    hostname: redis2
   web:
     build: .
     working_dir: /home/root/egotter

@@ -35,7 +35,8 @@ class AppStat
     def to_s
       [
           ['Base', Redis.client],
-          ['InMemory', InMemory.redis_instance],
+          ['InMemory', Redis.client(ENV['IN_MEMORY_REDIS_HOST'])],
+          ['InMemory(replica)', Redis.client(ENV['IN_MEMORY_REDIS_HOST_REPLICA'])],
           ['ApiCache', ApiClientCacheStore.redis_client]
       ].map do |name, client|
         "#{name} #{client.used_memory} / #{client.used_memory_peak} / #{client.total_memory}"

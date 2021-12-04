@@ -28,12 +28,6 @@ module InMemory
       def import_from(uid, tweets)
         client.write(uid, compress(tweets.to_json))
       end
-
-      private
-
-      def client
-        ::InMemory::Client.new(self)
-      end
     end
   end
 end

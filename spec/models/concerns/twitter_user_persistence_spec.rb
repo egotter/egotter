@@ -33,9 +33,9 @@ RSpec.describe TwitterUserPersistence do
       twitter_user.copied_mention_tweets = ['mention_tweets']
     end
     it do
-      expect(InMemory::StatusTweet).to receive(:import_from).with(twitter_user.uid, ['user_timeline'])
-      expect(InMemory::FavoriteTweet).to receive(:import_from).with(twitter_user.uid, ['favorite_tweets'])
-      expect(InMemory::MentionTweet).to receive(:import_from).with(twitter_user.uid, ['mention_tweets'])
+      expect(InMemory::StatusTweet).to receive(:import_from).with(twitter_user.uid, ['user_timeline']).twice
+      expect(InMemory::FavoriteTweet).to receive(:import_from).with(twitter_user.uid, ['favorite_tweets']).twice
+      expect(InMemory::MentionTweet).to receive(:import_from).with(twitter_user.uid, ['mention_tweets']).twice
       subject
     end
   end
@@ -52,7 +52,7 @@ RSpec.describe TwitterUserPersistence do
 
     it do
       values = twitter_user.slice(:id, :uid, :screen_name, :profile_text, :copied_friend_uids, :copied_follower_uids).values
-      expect(InMemory::TwitterUser).to receive(:import_from).with(*values)
+      expect(InMemory::TwitterUser).to receive(:import_from).with(*values).twice
       subject
     end
 

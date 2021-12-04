@@ -1,31 +1,27 @@
 module InMemory
   class Client
-    def initialize(klass)
-      @klass = klass
-      @key_prefix = "#{Rails.env}:#{self.class}:#{@klass}"
-      @redis = self.class.redis
+    def initialize(redis, namespace)
+      @key_prefix = "#{Rails.env}:#{self.class}:#{namespace}"
+      @redis = redis
       @retries = 0
     end
 
     def read(key)
       @redis.get(db_key(key))
     rescue => e
-      handle_error(e)
-      retry
+      (timeout?(e) && !retry_exhausted?) ? retry : raise
     end
 
     def write(key, item)
       @redis.setex(db_key(key), ::InMemory.ttl_with_random, item)
     rescue => e
-      handle_error(e)
-      retry
+      (timeout?(e) && !retry_exhausted?) ? retry : raise
     end
 
     def delete(key)
       @redis.del(db_key(key))
     rescue => e
-      handle_error(e)
-      retry
+      (timeout?(e) && !retry_exhausted?) ? retry : raise
     end
 
     private
@@ -34,19 +30,12 @@ module InMemory
       "#{@key_prefix}:#{key}"
     end
 
-    def handle_error(e)
-      # Ignore Redis::TimeoutError
-      if e.class.to_s.downcase.include?('timeout') && (@retries += 1) <= 3
-        nil
-      else
-        raise e
-      end
+    def timeout?(e)
+      e.class.to_s.downcase.include?('timeout')
     end
 
-    class << self
-      def redis
-        @redis ||= Redis.client(::InMemory.redis_hostname)
-      end
+    def retry_exhausted?
+      (@retries += 1) > 3
     end
   end
 end
