@@ -22,7 +22,7 @@ class FollowersCountPoint < ApplicationRecord
   class << self
     # Fast enough as confirming the record existence before fetching uids
     def create_by_twitter_user(twitter_user)
-      unless where(uid: twitter_user.uid).time_between(twitter_user.created_at).exists?
+      unless where(uid: twitter_user.uid).time_within(twitter_user.created_at, 3.minutes).exists?
         create(uid: twitter_user.uid, value: twitter_user.followers_count, created_at: twitter_user.created_at)
       end
     end
