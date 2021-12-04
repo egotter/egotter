@@ -29,11 +29,20 @@ class CreateTwitterUserNewFollowersWorker
 
     if (uids = twitter_user.calc_new_follower_uids)
       twitter_user.update(new_followers_size: uids.size)
-      CreateTwitterDBUserWorker.compress_and_perform_async(uids, user_id: twitter_user.user_id, enqueued_by: self.class) if uids.any?
+      update_twitter_db_users(uids, twitter_user.user_id)
       CreateNewFollowersCountPointWorker.perform_async(twitter_user_id)
     end
   rescue => e
     logger.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
+  end
+
+  private
+
+  def update_twitter_db_users(uids, user_id)
+    unless TwitterDBUsersUpdatedFlag.on?(uids)
+      TwitterDBUsersUpdatedFlag.on(uids)
+      CreateTwitterDBUserWorker.compress_and_perform_async(uids, user_id: user_id, enqueued_by: self.class)
+    end
   end
 end
