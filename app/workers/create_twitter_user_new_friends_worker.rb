@@ -29,7 +29,7 @@ class CreateTwitterUserNewFriendsWorker
 
     if (uids = twitter_user.calc_new_friend_uids)
       twitter_user.update(new_friends_size: uids.size)
-      CreateTwitterDBUserWorker.perform_async(uids, user_id: twitter_user.user_id, enqueued_by: self.class)
+      CreateTwitterDBUserWorker.perform_async(uids, user_id: twitter_user.user_id, enqueued_by: self.class) if uids.any?
       CreateNewFriendsCountPointWorker.perform_async(twitter_user_id)
     end
   rescue => e
