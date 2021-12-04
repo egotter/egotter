@@ -60,7 +60,7 @@ class CreateTwitterUserRequest < ApplicationRecord
 
     CreateTwitterUserNewFriendsWorker.perform_async(twitter_user.id)
     CreateTwitterUserNewFollowersWorker.perform_async(twitter_user.id)
-    ExtractMissingUidsFromTwitterUserWorker.perform_in(5.minutes, twitter_user.id)
+    ExtractMissingUidsFromTwitterUserWorker.perform_async(twitter_user.id)
 
     twitter_user
   end
