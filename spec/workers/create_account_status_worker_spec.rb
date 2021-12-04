@@ -25,7 +25,7 @@ RSpec.describe CreateAccountStatusWorker do
     it do
       expect(worker).to receive(:detect_status).with('client', user, screen_name).and_return([1, 2, 3])
       expect(cache).to receive(:write).with(screen_name, 1, 2, 3)
-      expect(CreateHighPriorityTwitterDBUserWorker).to receive(:perform_async).with([2], user_id: user.id)
+      expect(CreateHighPriorityTwitterDBUserWorker).to receive(:perform_async).with([2], user_id: user.id, enqueued_by: worker.class)
       subject
     end
   end
