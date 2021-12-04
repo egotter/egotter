@@ -27,6 +27,7 @@ echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >>/etc/rc.local
 
 sed -i -e 's/LimitNOFILE=10240/LimitNOFILE=65536/g' /etc/systemd/system/redis.service.d/limit.conf
 
+# Redis 6.2.6 or later has changed the path to the redis.conf to /etc/redis/redis.conf
 [ ! -f "/etc/redis.conf.bak" ] && cp /etc/redis.conf /etc/redis.conf.bak
 \cp -f ./setup/etc/redis.conf /etc
 
