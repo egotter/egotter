@@ -22,10 +22,7 @@ class ExtractMissingUidsFromTwitterUserWorker
       logger.info "#{self.class}: missing follower uids found twitter_user_id=#{twitter_user.id} size=#{missing_follower_uids.size} uids=#{missing_follower_uids.take(10).inspect}"
     end
 
-    target_uids = (missing_friend_uids + missing_follower_uids).uniq
-    if target_uids.any?
-      CreateTwitterDBUserWorker.compress_and_perform_async(target_uids, user_id: twitter_user.user_id, enqueued_by: self.class)
-    end
+    update_twitter_db_users((missing_friend_uids + missing_follower_uids).uniq, twitter_user.user_id)
   end
 
   def fetch_missing_uids(uids)
@@ -39,5 +36,12 @@ class ExtractMissingUidsFromTwitterUserWorker
     end
 
     missing_uids.flatten
+  end
+
+  def update_twitter_db_users(uids, user_id)
+    if uids.any? && !TwitterDBUsersUpdatedFlag.on?(uids)
+      TwitterDBUsersUpdatedFlag.on(uids)
+      CreateTwitterDBUserWorker.compress_and_perform_async(uids, user_id: user_id, enqueued_by: "#{self.class} size=#{uids.size}")
+    end
   end
 end
