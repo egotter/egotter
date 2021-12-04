@@ -25,4 +25,5 @@
   - CreateTwitterDBUserForRetryingDeadlockWorker
   - ImportTwitterDBUserWorker
   - report_low
+  - retry_low
   - CreateReportTwitterUserWorker

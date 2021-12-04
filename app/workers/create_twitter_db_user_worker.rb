@@ -47,6 +47,10 @@ class CreateTwitterDBUserWorker
     logger.info "Retry deadlock error: #{e.inspect.truncate(200)}"
     delay = rand(20) + 15
     CreateTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, uids, options.merge(klass: self.class, error_class: e.class))
+  rescue ApiClient::RetryExhausted => e
+    logger.info "Retry retryable error: #{e.inspect.truncate(200)}"
+    delay = rand(20) + 15
+    CreateTwitterDBUserForRetryableErrorWorker.perform_in(delay, uids, options.merge(klass: self.class, error_class: e.class))
   rescue => e
     if e.class == ApiClient::ContainStrangeUid
       if target_uids && target_uids.size > 1
