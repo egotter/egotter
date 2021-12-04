@@ -1506,27 +1506,6 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.index ["uid"], name: "index_tokimeki_users_on_uid", unique: true
   end
 
-  create_table "tracks", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "session_id", default: "", null: false
-    t.integer "user_id", default: -1, null: false
-    t.bigint "uid", default: -1, null: false
-    t.string "screen_name", default: "", null: false
-    t.string "controller", default: "", null: false
-    t.string "action", default: "", null: false
-    t.boolean "auto", default: false, null: false
-    t.string "via", default: "", null: false
-    t.string "device_type", default: "", null: false
-    t.string "os", default: "", null: false
-    t.string "browser", default: "", null: false
-    t.string "user_agent", default: "", null: false
-    t.string "referer", default: "", null: false
-    t.string "referral", default: "", null: false
-    t.string "channel", default: "", null: false
-    t.string "medium", default: "", null: false
-    t.datetime "created_at", null: false
-    t.index ["created_at"], name: "index_tracks_on_created_at"
-  end
-
   create_table "trend_insights", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "trend_id", null: false
     t.json "words_count"
@@ -1718,8 +1697,8 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.string "screen_name", null: false
     t.boolean "authorized", default: true, null: false
     t.boolean "locked", default: false, null: false
-    t.string "token", null: false
-    t.string "secret", null: false
+    t.string "token"
+    t.string "secret"
     t.string "email", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
