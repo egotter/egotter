@@ -33,7 +33,7 @@ class CreateAccountStatusWorker
     status, uid, is_follower = detect_status(user.api_client, user, screen_name)
     cache.write(screen_name, status, uid, is_follower)
 
-    CreateHighPriorityTwitterDBUserWorker.perform_async([uid], user_id: user.id) if uid
+    CreateHighPriorityTwitterDBUserWorker.perform_async([uid], user_id: user.id, enqueued_by: self.class) if uid
   rescue => e
     logger.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
