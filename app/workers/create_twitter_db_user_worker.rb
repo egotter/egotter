@@ -78,9 +78,13 @@ class CreateTwitterDBUserWorker
           compress_and_perform_async(uids_array, options)
         end
       else
-        uids = compress(uids)
-        options[:compressed] = true
-        perform_async(uids, options)
+        if uids.size > 10
+          uids = compress(uids)
+          options[:compressed] = true
+          perform_async(uids, options)
+        else
+          perform_async(uids, options)
+        end
       end
     end
 
