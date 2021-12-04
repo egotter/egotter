@@ -9,5 +9,5 @@
   <dd class="mb-3"><a href="<%= force_sign_in_path(via: current_via) %>" class="btn btn-outline-primary btn-sm">強制再ログイン</a> してください。そうすれば元に戻ります。</dd>
 
   <dt>・どうしても元に戻りません</dt>
-  <dd class="mb-3"><%= t('error_pages.support_html', url1: twitter_web_url('egotter_cs'), url2: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></dd>
+  <dd class="mb-3"><%= t('error_pages.support_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></dd>
 </dl>

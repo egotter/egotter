@@ -1514,7 +1514,7 @@ ja:
         next: "次に進む"
       finish: 'お片付けはこれで終わりです！ お疲れ様でした。'
   error_pages:
-    support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url1}" target="_blank">@egotter_cs</a> までご連絡ください。<a class="btn btn-outline-primary btn-sm" href="%{url2}" target="_blank">お問い合わせ</a>'
+    support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
     api_not_authorized:
       message_html: |
         <p>@%{user} のツイッター連携（API）が無効になっています。</p>
@@ -1559,14 +1559,14 @@ ja:
     twitter_user_not_persisted:
       message_html: 'ログインしていないため @%{user} のTwitterデータ取得に失敗しました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     too_many_api_requests:
-      message_html: '検索数が多いため一時的にツイッターAPIが制限されています。最大で 15分 ほどお待ちください。'
+      message1: '検索数が多いため、一時的にツイッターAPIがお休み中です。最大で 15分 ほどお待ちください。%{kaomoji}'
+      message2: '次の検索まで最大で 15分 ほどお待ちください。'
     too_many_searches:
       message1: '現在のプランで検索できる上限に達しました。%{count}回/日'
       message2: 'もっとたくさん検索することもできます。お好きな方法をお選びください。'
     too_many_friends:
-      message_html: |
-        <p>検索したユーザーはフォロー・フォロワーがとても多いため、検索できる回数が制限されています。</p>
-        1時間ほど経ってから再度検索してみてください。
+      message1: 'これまでに検索したユーザーのフォロー・フォロワーがとても多いため、検索を一時的にお休み中です。%{kaomoji}'
+      message2: '次の検索まで最大で 15分 ほどお待ちください。'
     twitter_error:
       message_html: 'Twitterの一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_not_found:
