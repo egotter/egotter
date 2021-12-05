@@ -3,7 +3,7 @@ class SearchRequest
     @store = ActiveSupport::Cache::RedisCacheStore.new(
         namespace: "#{Rails.env}:search_request",
         expires_in: 10.minutes,
-        redis: self.class.redis_instance
+        redis: self.class.redis
     )
   end
 
@@ -16,8 +16,15 @@ class SearchRequest
   end
 
   class << self
-    def redis_instance
-      @redis_instance ||= Redis.client
+    MX = Mutex.new
+
+    def redis
+      MX.synchronize do
+        unless @redis
+          @redis = Redis.client
+        end
+      end
+      @redis
     end
   end
 end
