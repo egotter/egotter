@@ -961,27 +961,6 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.index ["screen_name"], name: "index_not_found_users_on_screen_name", unique: true
   end
 
-  create_table "notification_messages", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.string "uid", null: false
-    t.string "screen_name", null: false
-    t.boolean "read", default: false, null: false
-    t.datetime "read_at"
-    t.string "message_id", default: "", null: false
-    t.text "message", null: false
-    t.string "context", default: "", null: false
-    t.string "medium", default: "", null: false
-    t.string "token", default: "", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_notification_messages_on_created_at"
-    t.index ["message_id"], name: "index_notification_messages_on_message_id"
-    t.index ["screen_name"], name: "index_notification_messages_on_screen_name"
-    t.index ["token"], name: "index_notification_messages_on_token"
-    t.index ["uid"], name: "index_notification_messages_on_uid"
-    t.index ["user_id"], name: "index_notification_messages_on_user_id"
-  end
-
   create_table "notification_settings", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.boolean "email", default: true, null: false
