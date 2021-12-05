@@ -5,6 +5,7 @@ class CreateDirectMessageReceiveLogWorker
 
   # options:
   def perform(attrs, options = {})
+    attrs['automated'] = attrs['message']&.include?('#egotter')
     DirectMessageReceiveLog.create!(attrs)
   rescue => e
     handle_worker_error(e, attrs: attrs, **options)
