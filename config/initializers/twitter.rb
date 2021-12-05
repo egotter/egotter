@@ -13,12 +13,14 @@ module Egotter
         super
       ensure
         CallCreateFriendshipCount.new.increment
+        CreateTwitterApiLogWorker.perform_async(name: __method__)
       end
 
       def unfollow(*args)
         super
       ensure
         CallDestroyFriendshipCount.new.increment
+        CreateTwitterApiLogWorker.perform_async(name: __method__)
       end
 
       def user_timeline(*args)

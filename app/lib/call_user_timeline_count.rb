@@ -1,3 +1,4 @@
+# TODO Remove later
 class CallUserTimelineCount < ::Egotter::SortedSet
 
   def initialize

@@ -46,12 +46,14 @@ class AppStat
 
   class TwitterApiStat
     def to_s
-      follow_limited = GlobalFollowLimitation.new.limited?
-      unfollow_limited = GlobalUnfollowLimitation.new.limited?
+      timeline_count = TwitterApiLog.where('created_at > ?', 1.day.ago).where(name: 'user_timeline').size
+      follow_count = TwitterApiLog.where('created_at > ?', 1.day.ago).where(name: 'follow!').size
+      unfollow_count = TwitterApiLog.where('created_at > ?', 1.day.ago).where(name: 'unfollow').size
+
       [
-          "UserTimeline #{CallUserTimelineCount.new.size} (#{TwitterApiLog.where('created_at > ?', 1.day.ago).where(name: 'user_timeline').size})",
-          "CreateFriendship(#{follow_limited}) #{CallCreateFriendshipCount.new.size} (400 per user; 1000 per app)",
-          "DestroyFriendship(#{unfollow_limited}) #{CallDestroyFriendshipCount.new.size} (800 - 900 per day)",
+          "user_timeline #{CallUserTimelineCount.new.size} (#{timeline_count})",
+          "follow! #{CallCreateFriendshipCount.new.size} (#{follow_count}) (400 per user; 1000 per app)",
+          "unfollow #{CallDestroyFriendshipCount.new.size} (#{unfollow_count}) (800 - 900 per day)",
       ].join("\n")
     end
   end

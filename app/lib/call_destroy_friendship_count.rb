@@ -1,3 +1,4 @@
+# TODO Remove later
 class CallDestroyFriendshipCount < ::Egotter::SortedSet
 
   def initialize
