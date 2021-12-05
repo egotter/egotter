@@ -25,7 +25,7 @@ namespace :notification_settings do
           puts "#{e.class} #{e.message}"
           retry
         rescue => e
-          if e.message == 'Invalid or expired token.'
+          if e.message == 'Invalid or expired token'
             user.authorized = false
             red.call('.')
           else

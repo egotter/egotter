@@ -38,13 +38,13 @@ RSpec.describe TwitterApiStatus, type: :model do
   end
 
   describe '.unauthorized?' do
-    let(:ex) { Twitter::Error::Unauthorized.new("Invalid or expired token.") }
+    let(:ex) { Twitter::Error::Unauthorized.new("Invalid or expired token") }
     subject { described_class.unauthorized?(ex) }
     it { is_expected.to be_truthy }
   end
 
   describe '.invalid_or_expired_token?' do
-    let(:ex) { Twitter::Error::Unauthorized.new("Invalid or expired token.") }
+    let(:ex) { Twitter::Error::Unauthorized.new("Invalid or expired token") }
     subject { described_class.invalid_or_expired_token?(ex) }
     it { is_expected.to be_truthy }
   end

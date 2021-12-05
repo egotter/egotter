@@ -41,7 +41,7 @@ class AccountStatus
 
     def invalid_or_expired_token?(ex)
       Rails.logger.warn "#{self}##{__method__} is deprecated"
-      ex && ex.class == Twitter::Error::Unauthorized && ex.message == 'Invalid or expired token.'
+      ex && ex.class == Twitter::Error::Unauthorized && ex.message == 'Invalid or expired token'
     end
 
     def could_not_authenticate_you?(ex)

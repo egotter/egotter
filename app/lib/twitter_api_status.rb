@@ -37,7 +37,7 @@ class TwitterApiStatus
     end
 
     def invalid_or_expired_token?(ex)
-      ex && ex.class == Twitter::Error::Unauthorized && ex.message == 'Invalid or expired token.'
+      ex && ex.class == Twitter::Error::Unauthorized && ex.message.include?('Invalid or expired token')
     end
 
     def could_not_authenticate_you?(ex)
