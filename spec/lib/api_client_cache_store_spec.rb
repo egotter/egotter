@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe ApiClientCacheStore, type: :model do
-  describe '.redis_client' do
-    subject { described_class.redis_client }
+  describe '.redis' do
+    subject { described_class.redis }
     before do
-      if described_class.instance_variable_defined?(:@redis_client)
-        described_class.remove_instance_variable(:@redis_client)
+      if described_class.instance_variable_defined?(:@redis)
+        described_class.remove_instance_variable(:@redis)
       end
     end
     it do

@@ -11,26 +11,21 @@ class ApiClientCacheStore < ActiveSupport::Cache::RedisCacheStore
         namespace: "#{Rails.env}:twitter",
         expires_in: 20.minutes,
         race_condition_ttl: 3.minutes,
-        redis: self.class.redis_client,
+        redis: self.class.redis,
         error_handler: ERROR_HANDLER
     )
   end
 
-  %i(
-    read
-    write
-    fetch
-  ).each do |method_name|
-    define_method(method_name) do |*args, &blk|
-      ApplicationRecord.benchmark("Benchmark ApiClientCacheStore##{__method__} key=#{args[0]}", level: :info) do
-        super(*args, &blk)
-      end
-    end
-  end
+  MX = Mutex.new
 
   class << self
-    def redis_client
-      @redis_client ||= Redis.client(ENV['TWITTER_API_REDIS_HOST'], db: 2)
+    def redis
+      MX.synchronize do
+        unless @redis
+          @redis = Redis.client(ENV['TWITTER_API_REDIS_HOST'], db: 2)
+        end
+      end
+      @redis
     end
   end
 end
