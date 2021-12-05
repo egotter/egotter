@@ -5,7 +5,7 @@ module UsersHelper
     else
       return (@current_user_friend_uids = []) unless user_signed_in?
 
-      twitter_user = TwitterUser.where('friends_count < 5000').latest_by(uid: current_user.uid)
+      twitter_user = TwitterUser.with_delay.where('friends_count < 5000').latest_by(uid: current_user.uid)
       return (@current_user_friend_uids = []) unless twitter_user
 
       @current_user_friend_uids = twitter_user.friend_uids
@@ -19,7 +19,7 @@ module UsersHelper
       return (@current_user_follower_uids = []) unless user_signed_in?
 
       # To increase the efficiency of query execution, followers_count is excluded from the query.
-      twitter_user = TwitterUser.latest_by(uid: current_user.uid)
+      twitter_user = TwitterUser.with_delay.latest_by(uid: current_user.uid)
       return (@current_user_follower_uids = []) if !twitter_user || twitter_user.followers_count >= 5000
 
       @current_user_follower_uids = twitter_user.follower_uids
