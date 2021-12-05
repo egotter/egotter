@@ -3,7 +3,7 @@ module Egotter
     attr_reader :key
 
     def initialize(redis = nil)
-      @redis = redis || self.class.redis_instance
+      @redis = redis || self.class.redis
       @key = nil
       @ttl = nil
     end
@@ -57,8 +57,15 @@ module Egotter
     end
 
     class << self
-      def redis_instance
-        @redis_instance ||= Redis.client
+      MX = Mutex.new
+
+      def redis
+        MX.synchronize do
+          unless @redis
+            @redis = Redis.client
+          end
+        end
+        @redis
       end
     end
 
