@@ -121,7 +121,7 @@ class User < ApplicationRecord
 
       transaction do
         user.save!
-        user.create_notification_setting!(report_interval: NotificationSetting::DEFAULT_REPORT_INTERVAL, permission_level: NotificationSetting::PROPER_PERMISSION)
+        user.create_notification_setting!(report_interval: 12.hours, permission_level: NotificationSetting::PROPER_PERMISSION)
         user.create_periodic_report_setting!
         user.create_credential_token!(token: token, secret: secret)
       end
