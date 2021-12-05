@@ -700,6 +700,7 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
   create_table "direct_message_send_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "sender_id"
     t.bigint "recipient_id"
+    t.boolean "automated"
     t.text "message"
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_direct_message_send_logs_on_created_at"

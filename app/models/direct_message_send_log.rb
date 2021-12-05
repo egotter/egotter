@@ -5,6 +5,7 @@
 #  id           :bigint(8)        not null, primary key
 #  sender_id    :bigint(8)
 #  recipient_id :bigint(8)
+#  automated    :boolean
 #  message      :text(65535)
 #  created_at   :datetime         not null
 #

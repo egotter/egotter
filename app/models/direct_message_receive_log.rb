@@ -18,17 +18,17 @@
 class DirectMessageReceiveLog < ApplicationRecord
   class << self
     def message_received?(uid)
-      where('created_at > ?', 1.day.ago).where(sender_id: uid, recipient_id: User::EGOTTER_UID).exists?
+      where('created_at > ?', 1.day.ago).where(sender_id: uid, recipient_id: User::EGOTTER_UID, automated: false).exists?
     end
 
     def remaining_time(uid)
-      if (record = where('created_at > ?', 1.day.ago).where(sender_id: uid, recipient_id: User::EGOTTER_UID).order(created_at: :desc).first)
+      if (record = where('created_at > ?', 1.day.ago).where(sender_id: uid, recipient_id: User::EGOTTER_UID, automated: false).order(created_at: :desc).first)
         1.day - (Time.zone.now - record.created_at)
       end
     end
 
     def received_sender_ids
-      select('distinct sender_id uid').where('created_at > ?', 1.day.ago).where(recipient_id: User::EGOTTER_UID).map(&:uid)
+      select('distinct sender_id uid').where('created_at > ?', 1.day.ago).where(recipient_id: User::EGOTTER_UID, automated: false).map(&:uid)
     end
   end
 end
