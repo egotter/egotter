@@ -23,8 +23,12 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe 'perform!' do
     let(:snapshot) { TwitterSnapshot.new({}) }
-    let(:twitter_user) { create(:twitter_user) }
+    let(:twitter_user) { create(:twitter_user, user_id: create(:user).id) }
     subject { request.perform!('context') }
+    before do
+      snapshot.friend_uids = [1, 2, 3]
+      snapshot.follower_uids = [3, 4, 5]
+    end
 
     it do
       expect(request).to receive(:validate_request!)
@@ -34,9 +38,9 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
       expect(SearchLimitation).to receive(:warn_limit?).with(snapshot)
       expect(request).to receive(:assemble_twitter_user).with(snapshot, 'relations')
       expect(request).to receive(:save_twitter_user).with(snapshot).and_return(twitter_user)
+      expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with([1, 2, 3, 3, 4, 5], twitter_user.user_id)
       expect(CreateTwitterUserNewFriendsWorker).to receive(:perform_async).with(twitter_user.id)
       expect(CreateTwitterUserNewFollowersWorker).to receive(:perform_async).with(twitter_user.id)
-      expect(ExtractMissingUidsFromTwitterUserWorker).to receive(:perform_async).with(twitter_user.id)
       is_expected.to eq(twitter_user)
     end
   end

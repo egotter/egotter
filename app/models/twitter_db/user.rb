@@ -108,9 +108,11 @@ module TwitterDB
         private
 
         def where_and_order_by_field_each_slice(uids, inactive, caller_name = nil)
-          records = where(uid: uids)
-          records = records.inactive_user if !inactive.nil? && inactive
-          records.order_by_field(uids).to_a
+          Rails.logger.silence do
+            records = where(uid: uids)
+            records = records.inactive_user if !inactive.nil? && inactive
+            records.order_by_field(uids).to_a
+          end
         end
       end
 
