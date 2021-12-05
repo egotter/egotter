@@ -1,7 +1,7 @@
 class GlobalSendDirectMessageCountByUser
 
   def initialize
-    @redis = self.class.redis_instance
+    @redis = self.class.redis
     @key = "#{Rails.env}:#{self.class}"
   end
 
@@ -43,8 +43,15 @@ class GlobalSendDirectMessageCountByUser
   end
 
   class << self
-    def redis_instance
-      @redis_instance ||= Redis.client
+    MX = Mutex.new
+
+    def redis
+      MX.synchronize do
+        unless @redis
+          @redis = Redis.client
+        end
+      end
+      @redis
     end
   end
 
