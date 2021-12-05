@@ -65,8 +65,4 @@ class CreatePeriodicReportReceivedMessageWorker
   def short_message(uid)
     ERB.new(SIMPLE_MESSAGE).result_with_hash(message: MessageOfTheDay.new(uid))
   end
-
-  def disposable_report?
-    true
-  end
 end

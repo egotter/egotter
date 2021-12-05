@@ -17,6 +17,7 @@ module ReportErrorHandler
         DirectMessageStatus.not_following_you?(e)
   end
 
+  # TODO Remove later
   def disposable_report?
     false
   end
