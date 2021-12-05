@@ -25,8 +25,8 @@ RSpec.describe TwitterUserPersistence do
     end
   end
 
-  describe '#perform_before_transaction!' do
-    subject { twitter_user.perform_before_transaction! }
+  describe '#perform_before_transaction' do
+    subject { twitter_user.perform_before_transaction }
     before do
       twitter_user.copied_user_timeline = ['user_timeline']
       twitter_user.copied_favorite_tweets = ['favorite_tweets']

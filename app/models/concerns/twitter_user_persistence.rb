@@ -10,7 +10,7 @@ module TwitterUserPersistence
   end
 
   # This method is called manually
-  def perform_before_transaction!
+  def perform_before_transaction
     if copied_user_timeline&.is_a?(Array)
       InMemory::StatusTweet.import_from(uid, copied_user_timeline)
     end
