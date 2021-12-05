@@ -34,8 +34,8 @@ class AppStat
   class RedisStat
     def to_s
       [
-          ['Base', Redis.client],
-          ['InMemory', Redis.client(ENV['IN_MEMORY_REDIS_HOST'])],
+          ['Base', RedisClient.new],
+          ['InMemory', RedisClient.new(host: ENV['IN_MEMORY_REDIS_HOST'])],
           ['ApiCache', ApiClientCacheStore.redis]
       ].map do |name, client|
         info = client.info rescue {}

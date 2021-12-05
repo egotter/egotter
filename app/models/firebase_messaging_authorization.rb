@@ -26,7 +26,7 @@ class FirebaseMessagingAuthorization
 
   class << self
     def redis_instance
-      @redis_instance ||= Redis.client
+      @redis_instance ||= RedisClient.new
     end
   end
 end

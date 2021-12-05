@@ -88,7 +88,7 @@ class AccountStatus
       @store = ActiveSupport::Cache::RedisCacheStore.new(
           namespace: "#{Rails.env}:account_status",
           expires_in: 3.minutes,
-          redis: Redis.client
+          redis: RedisClient.new
       )
     end
 

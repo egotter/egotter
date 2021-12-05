@@ -44,7 +44,7 @@ class TrendMediaCache
   end
 
   def self.redis
-    @redis ||= Redis.client(ENV['REDIS_HOST'], db: 4)
+    @redis ||= RedisClient.new(host: ENV['REDIS_HOST'], db: 4)
   end
 
   class Tweet

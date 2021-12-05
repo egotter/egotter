@@ -58,7 +58,7 @@ RSpec.describe CreateTwitterUserCloseFriendsWorker do
   describe '#update_twitter_db_users' do
     let(:uids) { [1] }
     subject { worker.send(:update_twitter_db_users, uids, user.id) }
-    before { Redis.client.flushall }
+    before { RedisClient.new.flushall }
     it do
       expect(CreateHighPriorityTwitterDBUserWorker).to receive(:compress_and_perform_async).with(uids, user_id: user.id, enqueued_by: worker.class)
       subject

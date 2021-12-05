@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe DirectMessageSendCounter, type: :model do
   let(:uid) { 1 }
 
-  before { Redis.client.flushall }
+  before { RedisClient.new.flushall }
 
   describe '.increment' do
     it do

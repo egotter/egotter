@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Egotter::AsyncSortedSet do
-  let(:redis_instance) { Redis.client }
+  let(:redis_instance) { RedisClient.new }
   let(:instance) { described_class.new(redis_instance) }
   let(:default_ttl) { 60 }
 

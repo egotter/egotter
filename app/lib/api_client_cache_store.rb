@@ -22,7 +22,7 @@ class ApiClientCacheStore < ActiveSupport::Cache::RedisCacheStore
     def redis
       MX.synchronize do
         unless @redis
-          @redis = Redis.client(ENV['TWITTER_API_REDIS_HOST'], db: 2)
+          @redis = RedisClient.new(host: ENV['TWITTER_API_REDIS_HOST'], db: 2)
         end
       end
       @redis

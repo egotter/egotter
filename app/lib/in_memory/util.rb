@@ -33,8 +33,8 @@ module InMemory
       MX.synchronize do
         unless @connections
           @connections = {
-              primary: Redis.client(ENV['IN_MEMORY_REDIS_HOST_REPLICA']),
-              secondary: Redis.client(ENV['IN_MEMORY_REDIS_HOST_REPLICA']),
+              primary: RedisClient.new(host: ENV['IN_MEMORY_REDIS_HOST_REPLICA']),
+              secondary: RedisClient.new(host: ENV['IN_MEMORY_REDIS_HOST_REPLICA']),
           }
         end
       end

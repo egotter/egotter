@@ -27,7 +27,7 @@ class TwitterDBUsersUpdatedFlag
     def redis
       MX.synchronize do
         unless @redis
-          @redis = Redis.client
+          @redis = RedisClient.new
         end
       end
       @redis

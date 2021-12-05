@@ -60,7 +60,7 @@ RSpec.describe InMemory::Client do
 
   context 'Invalid hostname is passed' do
     # TODO If you don't specify a timeout, sometimes it might take a long time.
-    let(:redis) { Redis.client('invalid hostname', connect_timeout: 0.1) }
+    let(:redis) { RedisClient.new(host: 'invalid hostname', connect_timeout: 0.1) }
 
     [
         [:read, [1]],

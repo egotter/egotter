@@ -8,7 +8,7 @@ class SearchedTweets
 
   class << self
     def instance
-      new(Redis.client)
+      new(RedisClient.new)
     end
 
     def ttl(word)

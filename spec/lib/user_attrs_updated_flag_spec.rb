@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe UserAttrsUpdatedFlag, type: :model do
   let(:user_id) { 1 }
 
-  before { Redis.client.flushall }
+  before { RedisClient.new.flushall }
 
   describe '.on' do
     subject { described_class.on(user_id) }
