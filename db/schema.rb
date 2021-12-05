@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_27_122006) do
+ActiveRecord::Schema.define(version: 2021_12_05_095035) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1501,6 +1501,13 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_tweet_requests_on_created_at"
     t.index ["user_id"], name: "index_tweet_requests_on_user_id"
+  end
+
+  create_table "twitter_api_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_twitter_api_logs_on_created_at"
+    t.index ["name"], name: "index_twitter_api_logs_on_name"
   end
 
   create_table "twitter_db_favorites", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

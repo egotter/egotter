@@ -25,6 +25,7 @@ module Egotter
         super
       ensure
         CallUserTimelineCount.new.increment
+        CreateTwitterApiLogWorker.perform_async(name: __method__)
       end
 
       def create_direct_message_event(*args)
