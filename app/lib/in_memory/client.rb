@@ -9,18 +9,21 @@ module InMemory
     def read(key)
       @redis.get(db_key(key))
     rescue => e
+      error_handler(__method__, e)
       (timeout?(e) && !retry_exhausted?) ? retry : raise
     end
 
     def write(key, item)
       @redis.setex(db_key(key), ::InMemory.ttl_with_random, item)
     rescue => e
+      error_handler(__method__, e)
       (timeout?(e) && !retry_exhausted?) ? retry : raise
     end
 
     def delete(key)
       @redis.del(db_key(key))
     rescue => e
+      error_handler(__method__, e)
       (timeout?(e) && !retry_exhausted?) ? retry : raise
     end
 
@@ -28,6 +31,10 @@ module InMemory
 
     def db_key(key)
       "#{@key_prefix}:#{key}"
+    end
+
+    def error_handler(method, e)
+      Rails.logger.info "InMemory::Client: Failed method=#{method} exception=#{e.inspect}"
     end
 
     def timeout?(e)
