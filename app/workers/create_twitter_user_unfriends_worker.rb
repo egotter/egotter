@@ -36,9 +36,7 @@ class CreateTwitterUserUnfriendsWorker
     import_uids(S3::Unfollowership, twitter_user)
     import_uids(S3::MutualUnfriendship, twitter_user)
 
-    Unfriendship.delete_by_uid(twitter_user.uid)
-    Unfollowership.delete_by_uid(twitter_user.uid)
-    BlockFriendship.delete_by_uid(twitter_user.uid)
+    DeleteUnfriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
     logger.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
