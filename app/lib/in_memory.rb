@@ -1,4 +1,3 @@
-# -*- SkipSchemaAnnotations
 module InMemory
   TTL = 1.hour
 

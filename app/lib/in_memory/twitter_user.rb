@@ -1,5 +1,3 @@
-# -*- SkipSchemaAnnotations
-
 module InMemory
   class TwitterUser
     extend ::InMemory::Util

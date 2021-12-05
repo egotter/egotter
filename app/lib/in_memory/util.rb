@@ -1,5 +1,3 @@
-# -*- SkipSchemaAnnotations
-
 module InMemory
   module Util
     def parse_json(text, symbol_keys: true)
