@@ -378,23 +378,6 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.index ["user_id"], name: "index_create_follow_logs_on_user_id"
   end
 
-  create_table "create_notification_message_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.string "uid", null: false
-    t.string "screen_name", null: false
-    t.boolean "status", default: false, null: false
-    t.string "reason", default: "", null: false
-    t.text "message", null: false
-    t.string "context", default: "", null: false
-    t.string "medium", default: "", null: false
-    t.datetime "created_at", null: false
-    t.index ["created_at"], name: "index_create_notification_message_logs_on_created_at"
-    t.index ["screen_name"], name: "index_create_notification_message_logs_on_screen_name"
-    t.index ["uid"], name: "index_create_notification_message_logs_on_uid"
-    t.index ["user_id", "status"], name: "index_create_notification_message_logs_on_user_id_and_status"
-    t.index ["user_id"], name: "index_create_notification_message_logs_on_user_id"
-  end
-
   create_table "create_periodic_report_requests", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "requested_by"
