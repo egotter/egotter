@@ -16,8 +16,15 @@ class UserAttrsUpdatedFlag
       1.hour
     end
 
+    MX = Mutex.new
+
     def redis
-      @redis ||= Redis.client
+      MX.synchronize do
+        unless @redis
+          @redis = Redis.client
+        end
+      end
+      @redis
     end
   end
 end

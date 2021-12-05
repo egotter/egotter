@@ -16,9 +16,9 @@ class ApiClientCacheStore < ActiveSupport::Cache::RedisCacheStore
     )
   end
 
-  MX = Mutex.new
-
   class << self
+    MX = Mutex.new
+
     def redis
       MX.synchronize do
         unless @redis
