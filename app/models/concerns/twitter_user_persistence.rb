@@ -7,7 +7,6 @@ module TwitterUserPersistence
     attr_accessor :copied_friend_uids, :copied_follower_uids, :copied_user_timeline, :copied_mention_tweets, :copied_favorite_tweets
 
     after_create :perform_before_commit
-    after_create_commit :perform_after_commit
   end
 
   # This method is called manually
@@ -34,6 +33,7 @@ module TwitterUserPersistence
     raise ActiveRecord::Rollback
   end
 
+  # This method is called manually
   def perform_after_commit
     data = {
         id: id,

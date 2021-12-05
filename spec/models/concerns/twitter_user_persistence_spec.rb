@@ -8,7 +8,7 @@ RSpec.describe TwitterUserPersistence do
       subject { twitter_user.save!(validate: false) }
       it do
         expect(twitter_user).to receive(:perform_before_commit)
-        expect(twitter_user).to receive(:perform_after_commit)
+        # expect(twitter_user).to receive(:perform_after_commit)
         subject
         expect(twitter_user.persisted?).to be_truthy
       end

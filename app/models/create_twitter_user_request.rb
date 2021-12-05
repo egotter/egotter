@@ -121,11 +121,11 @@ class CreateTwitterUserRequest < ApplicationRecord
     end
   end
 
-  def assemble_twitter_user(twitter_user, relations)
-    twitter_user.user_timeline = relations[:user_timeline]
-    twitter_user.mention_tweets = collect_mention_tweets(relations[:mentions_timeline], relations[:search], twitter_user.screen_name)
-    twitter_user.favorite_tweets = relations[:favorites]
-    twitter_user.user_id = user_id
+  def assemble_twitter_user(snapshot, relations)
+    snapshot.user_timeline = relations[:user_timeline]
+    snapshot.mention_tweets = collect_mention_tweets(relations[:mentions_timeline], relations[:search], snapshot.screen_name)
+    snapshot.favorite_tweets = relations[:favorites]
+    snapshot.user_id = user_id
   end
 
   def collect_mention_tweets(mentions, searched_tweets, screen_name)
@@ -142,6 +142,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     twitter_user = snapshot.copy_attrs
     twitter_user.perform_before_transaction!
     twitter_user.save!
+    twitter_user.perform_after_commit
     update(twitter_user_id: twitter_user.id)
     twitter_user
   end
