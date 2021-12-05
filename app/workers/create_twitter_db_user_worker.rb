@@ -22,7 +22,6 @@ class CreateTwitterDBUserWorker
   end
 
   # options:
-  #   compressed
   #   force_update
   #   user_id
   #   enqueued_by
@@ -77,14 +76,10 @@ class CreateTwitterDBUserWorker
         uids.each_slice(100) do |uids_array|
           compress_and_perform_async(uids_array, options)
         end
+      elsif uids.size > 10
+        perform_async(compress(uids), options)
       else
-        if uids.size > 10
-          uids = compress(uids)
-          options[:compressed] = true
-          perform_async(uids, options)
-        else
-          perform_async(uids, options)
-        end
+        perform_async(uids, options)
       end
     end
 

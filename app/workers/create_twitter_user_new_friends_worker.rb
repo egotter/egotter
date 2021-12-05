@@ -42,7 +42,7 @@ class CreateTwitterUserNewFriendsWorker
   def update_twitter_db_users(uids, user_id)
     if uids.any? && !TwitterDBUsersUpdatedFlag.on?(uids)
       TwitterDBUsersUpdatedFlag.on(uids)
-      CreateTwitterDBUserWorker.compress_and_perform_async(uids, user_id: user_id, enqueued_by: "#{self.class} size=#{uids.size}")
+      CreateTwitterDBUserWorker.compress_and_perform_async(uids, user_id: user_id, enqueued_by: self.class)
     end
   end
 end

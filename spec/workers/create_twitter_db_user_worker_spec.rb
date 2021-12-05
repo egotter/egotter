@@ -12,12 +12,19 @@ RSpec.describe CreateTwitterDBUserWorker do
     let(:options) { {} }
     subject { described_class.compress_and_perform_async(uids, options) }
 
+    context 'uids.size is 5' do
+      let(:uids) { (1..5).to_a }
+      it do
+        expect(described_class).to receive(:perform_async).with(uids, options)
+        subject
+      end
+    end
+
     context 'uids.size is 50' do
       let(:uids) { (1..50).to_a }
       let(:compressed_uids) { described_class.compress((1..50).to_a) }
-      let(:new_options) { {compressed: true} }
       it do
-        expect(described_class).to receive(:perform_async).with(compressed_uids, new_options)
+        expect(described_class).to receive(:perform_async).with(compressed_uids, options)
         subject
       end
     end
@@ -26,10 +33,9 @@ RSpec.describe CreateTwitterDBUserWorker do
       let(:uids) { (1..150).to_a }
       let(:compressed_uids1) { described_class.compress((1..100).to_a) }
       let(:compressed_uids2) { described_class.compress((101..150).to_a) }
-      let(:new_options) { {compressed: true} }
       it do
-        expect(described_class).to receive(:perform_async).with(compressed_uids1, new_options)
-        expect(described_class).to receive(:perform_async).with(compressed_uids2, new_options)
+        expect(described_class).to receive(:perform_async).with(compressed_uids1, options)
+        expect(described_class).to receive(:perform_async).with(compressed_uids2, options)
         subject
       end
     end
