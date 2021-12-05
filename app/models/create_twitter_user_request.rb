@@ -59,10 +59,14 @@ class CreateTwitterUserRequest < ApplicationRecord
     twitter_user = save_twitter_user(snapshot)
 
     CreateTwitterDBUsersForMissingUidsWorker.perform_async(snapshot.friend_uids + snapshot.follower_uids, twitter_user.user_id)
-    CreateTwitterUserNewFriendsWorker.perform_async(twitter_user.id)
-    CreateTwitterUserNewFollowersWorker.perform_async(twitter_user.id)
+    CreateTwitterUserNewFriendsWorker.perform_in(delay_for_importing, twitter_user.id)
+    CreateTwitterUserNewFollowersWorker.perform_in(delay_for_importing, twitter_user.id)
 
     twitter_user
+  end
+
+  def delay_for_importing
+    5.seconds
   end
 
   private

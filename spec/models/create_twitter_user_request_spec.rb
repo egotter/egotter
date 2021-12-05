@@ -39,8 +39,8 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
       expect(request).to receive(:assemble_twitter_user).with(snapshot, 'relations')
       expect(request).to receive(:save_twitter_user).with(snapshot).and_return(twitter_user)
       expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with([1, 2, 3, 3, 4, 5], twitter_user.user_id)
-      expect(CreateTwitterUserNewFriendsWorker).to receive(:perform_async).with(twitter_user.id)
-      expect(CreateTwitterUserNewFollowersWorker).to receive(:perform_async).with(twitter_user.id)
+      expect(CreateTwitterUserNewFriendsWorker).to receive(:perform_in).with(5.seconds, twitter_user.id)
+      expect(CreateTwitterUserNewFollowersWorker).to receive(:perform_in).with(5.seconds, twitter_user.id)
       is_expected.to eq(twitter_user)
     end
   end
