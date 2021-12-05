@@ -1,3 +1,4 @@
+# TODO Remove later
 class GlobalSendDirectMessageCountByUser
 
   def initialize
