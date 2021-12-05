@@ -689,6 +689,7 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
   create_table "direct_message_receive_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "sender_id"
     t.bigint "recipient_id"
+    t.boolean "automated"
     t.text "message"
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_direct_message_receive_logs_on_created_at"
@@ -704,13 +705,6 @@ ActiveRecord::Schema.define(version: 2021_11_27_122006) do
     t.index ["created_at"], name: "index_direct_message_send_logs_on_created_at"
     t.index ["recipient_id"], name: "index_direct_message_send_logs_on_recipient_id"
     t.index ["sender_id"], name: "index_direct_message_send_logs_on_sender_id"
-  end
-
-  create_table "egotter_blockers", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "uid", null: false
-    t.timestamp "created_at", null: false
-    t.index ["created_at"], name: "index_egotter_blockers_on_created_at"
-    t.index ["uid"], name: "index_egotter_blockers_on_uid", unique: true
   end
 
   create_table "egotter_followers", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
