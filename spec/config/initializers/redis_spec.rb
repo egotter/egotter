@@ -28,14 +28,4 @@ RSpec.describe Redis do
       end
     end
   end
-
-  describe '#fetch' do
-    let(:client) { Redis.client }
-    before { client.flushdb }
-    it do
-      expect(client.fetch('key')).to be_nil
-      client.set('key', 'data')
-      expect(client.fetch('key')).to eq('data')
-    end
-  end
 end

@@ -24,18 +24,4 @@ class Redis
       new(options)
     end
   end
-
-  def fetch(key, ttl: TTL)
-    if block_given?
-      if exists(key)
-        get(key)
-      else
-        block_result = yield
-        setex(key, ttl, block_result)
-        block_result
-      end
-    else
-      get(key)
-    end
-  end
 end
