@@ -34,7 +34,7 @@ class Redis
           driver: :hiredis
       }.merge(options)
 
-      Rails.logger.debug { "Initialize Redis options=#{options} caller=#{caller[0][/`([^']*)'/, 1] rescue ''}" }
+      Rails.logger.debug { "Initialize Redis options=#{options}" }
 
       new(options)
     end
