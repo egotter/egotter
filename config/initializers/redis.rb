@@ -2,21 +2,6 @@ require 'redis'
 require 'hiredis'
 
 class Redis
-  def info_cache
-    @info_cache ||= info
-  end
-  def used_memory
-    info_cache['used_memory_rss_human']
-  end
-
-  def used_memory_peak
-    info_cache['used_memory_peak_human']
-  end
-
-  def total_memory
-    info_cache['total_system_memory_human']
-  end
-
   HOST = ENV['REDIS_HOST']
   TTL = 3.days
   CONNECT_TIMEOUT = 0.2
