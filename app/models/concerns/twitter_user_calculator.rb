@@ -138,7 +138,7 @@ module TwitterUserCalculator
   end
 
   def calc_new_friend_uids
-    if (record = next_older_record)
+    if (record = previous_version)
       friend_uids - record.friend_uids
     else
       []
@@ -148,7 +148,7 @@ module TwitterUserCalculator
   end
 
   def calc_new_follower_uids
-    if (record = next_older_record)
+    if (record = previous_version)
       follower_uids - record.follower_uids
     else
       []
@@ -157,14 +157,19 @@ module TwitterUserCalculator
     []
   end
 
+  def previous_version
+    TwitterUser.where(uid: uid).where('created_at < ?', created_at).order(created_at: :desc).first
+  end
+
+  # For debugging
+  def next_version
+    TwitterUser.where(uid: uid).where('created_at > ?', created_at).order(created_at: :asc).first
+  end
+
   private
 
   def unfriends_builder
     @unfriends_builder ||= UnfriendsBuilder.new(uid, end_date: created_at)
-  end
-
-  def next_older_record
-    TwitterUser.where(uid: uid).where('created_at < ?', created_at).order(created_at: :desc).first
   end
 
   def sort_by_count_desc(ids)
