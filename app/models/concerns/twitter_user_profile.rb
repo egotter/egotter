@@ -136,7 +136,7 @@ module TwitterUserProfile
     end
 
     if data.blank?
-      Airbag.warn "Fetching profile failed. id=#{id} screen_name=#{screen_name} created_at=#{created_at.to_s(:db)} exceptions=#{exceptions.inspect}"
+      Airbag.warn "Fetching data failed. method=#{__method__} id=#{id} screen_name=#{screen_name} created_at=#{created_at.to_s(:db)} exceptions=#{exceptions.inspect}"
       Airbag.info caller.join("\n")
     end
 
