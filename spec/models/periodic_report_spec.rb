@@ -443,6 +443,7 @@ RSpec.describe PeriodicReport do
 
   describe 'send_report_limited?' do
     subject { described_class.send_report_limited?(user.uid) }
+    before { RedisClient.new.flushall }
     it { is_expected.to be_falsey }
   end
 end
