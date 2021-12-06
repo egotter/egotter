@@ -49,7 +49,7 @@ class CreateTwitterUserWorker
     notify(request.user, request.uid)
 
     assemble_request = AssembleTwitterUserRequest.create!(twitter_user: task.twitter_user)
-    AssembleTwitterUserWorker.perform_in(request.delay_for_importing, assemble_request.id)
+    AssembleTwitterUserWorker.perform_in(request.delay_for_importing, assemble_request.id, requested_by: self.class)
   rescue CreateTwitterUserRequest::Error => e
     # Do nothing
   rescue => e
