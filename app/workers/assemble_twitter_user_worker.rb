@@ -11,16 +11,16 @@ class AssembleTwitterUserWorker
     5.minutes
   end
 
-  def after_skip(*args)
-    Airbag.info "The job of #{self.class} is skipped args=#{args.inspect}"
+  def after_skip(request_id, options = {})
+    SkippedAssembleTwitterUserWorker.perform_async(request_id, options)
   end
 
   def expire_in
     30.seconds
   end
 
-  def after_expire(*args)
-    Airbag.warn "The job of #{self.class} is expired args=#{args.inspect}"
+  def after_expire(request_id, options = {})
+    ExpiredAssembleTwitterUserWorker.perform_async(request_id, options)
   end
 
   def _timeout_in
@@ -28,7 +28,6 @@ class AssembleTwitterUserWorker
   end
 
   def after_timeout(request_id, options = {})
-    Airbag.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} request_id=#{request_id} options=#{options.inspect}"
     TimedOutAssembleTwitterUserWorker.perform_async(request_id, options)
   end
 
