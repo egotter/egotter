@@ -6,6 +6,6 @@ class CreateTweetsWorker
     tweets = User.admin.api_client.search(keyword, count: 10).take(10)
     SearchedTweets.set(keyword, tweets.to_json)
   rescue => e
-    logger.warn "#{self.class}: #{e.class} #{e.message} #{keyword}"
+    Airbag.warn "#{self.class}: #{e.class} #{e.message} #{keyword}"
   end
 end

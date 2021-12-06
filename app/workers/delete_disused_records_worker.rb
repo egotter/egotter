@@ -16,7 +16,7 @@ class DeleteDisusedRecordsWorker
     Unfollowership.delete_by_uid(uid)
     BlockFriendship.delete_by_uid(uid)
   rescue => e
-    logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 end

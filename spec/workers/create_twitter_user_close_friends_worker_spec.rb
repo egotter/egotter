@@ -13,7 +13,7 @@ RSpec.describe CreateTwitterUserCloseFriendsWorker do
   describe '#after_skip' do
     subject { worker.after_skip(twitter_user.id) }
     it do
-      expect(worker.logger).to receive(:warn).with(instance_of(String))
+      expect(Airbag).to receive(:warn).with(instance_of(String))
       subject
     end
   end

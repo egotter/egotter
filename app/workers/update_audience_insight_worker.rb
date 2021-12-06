@@ -40,8 +40,8 @@ class UpdateAudienceInsightWorker
     if e.class == ActiveRecord::RecordNotUnique
       # Do nothing
     else
-      logger.warn "#{e.inspect} uid=#{uid} options=#{options}"
-      logger.info e.backtrace.join("\n")
+      Airbag.warn "#{e.inspect} uid=#{uid} options=#{options}"
+      Airbag.info e.backtrace.join("\n")
     end
   end
 end

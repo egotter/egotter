@@ -12,9 +12,9 @@ class UpdateSearchReportWorker
     if report.created_at < Time.zone.now - 5.seconds
       report.update!(read_at: attrs['read_at'])
     else
-      logger.info "Too fast read #{report.id} #{attrs}"
+      Airbag.info "Too fast read #{report.id} #{attrs}"
     end
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{attrs}"
+    Airbag.warn "#{e.class} #{e.message} #{attrs}"
   end
 end

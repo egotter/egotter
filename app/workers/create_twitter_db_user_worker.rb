@@ -29,32 +29,32 @@ class CreateTwitterDBUserWorker
     target_uids = uids.is_a?(String) ? decompress(uids) : uids
 
     if target_uids.empty?
-      logger.warn "the size of uids is 0 options=#{options.inspect}"
+      Airbag.warn "the size of uids is 0 options=#{options.inspect}"
       return
     end
 
     if target_uids.size > 100
-      logger.warn "the size of uids is greater than 100 options=#{options.inspect}"
+      Airbag.warn "the size of uids is greater than 100 options=#{options.inspect}"
     end
 
     user_id = (options['user_id'] && options['user_id'].to_i != -1) ? options['user_id'] : nil
 
     task = CreateTwitterDBUsersTask.new(target_uids, user_id: user_id, force: options['force_update'])
     task.start
-    Rails.logger.info "CreateTwitterDBUsersTask: DEBUG enqueued_by=#{options['enqueued_by']} user_id=#{user_id} #{task.debug_message}"
+    Airbag.info "CreateTwitterDBUsersTask: DEBUG enqueued_by=#{options['enqueued_by']} user_id=#{user_id} #{task.debug_message}"
   rescue CreateTwitterDBUsersTask::RetryDeadlockExhausted => e
-    logger.info "Retry deadlock error: #{e.inspect.truncate(200)}"
+    Airbag.info "Retry deadlock error: #{e.inspect.truncate(200)}"
     delay = rand(20) + 15
     CreateTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, uids, options.merge(klass: self.class, error_class: e.class))
   rescue ApiClient::RetryExhausted => e
-    logger.info "Retry retryable error: #{e.inspect.truncate(200)}"
+    Airbag.info "Retry retryable error: #{e.inspect.truncate(200)}"
     delay = rand(20) + 15
     CreateTwitterDBUserForRetryableErrorWorker.perform_in(delay, uids, options.merge(klass: self.class, error_class: e.class))
   rescue ApiClient::ContainStrangeUid => e
     if target_uids && target_uids.size > 1
       slice_and_retry(target_uids, options)
     else
-      logger.info "#{e.message} uids=#{target_uids.inspect} options=#{options.inspect}"
+      Airbag.info "#{e.message} uids=#{target_uids.inspect} options=#{options.inspect}"
     end
   rescue => e
     handle_worker_error(e, uids_size: target_uids.size, options: options)

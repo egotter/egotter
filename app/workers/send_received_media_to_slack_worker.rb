@@ -21,7 +21,7 @@ class SendReceivedMediaToSlackWorker
       end
     end
   rescue => e
-    logger.warn "#{e.inspect} response=#{response.inspect.truncate(100)}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} response=#{response.inspect.truncate(100)}"
+    Airbag.info e.backtrace.join("\n")
   end
 end

@@ -37,7 +37,7 @@ class CreateSearchReportReceivedMessageWorker
     User.egotter.api_client.create_direct_message_event(event: event)
   rescue => e
     unless ignorable_report_error?(e)
-      logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
+      Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
     end
   end
 end

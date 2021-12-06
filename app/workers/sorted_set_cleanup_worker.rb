@@ -14,7 +14,7 @@ class SortedSetCleanupWorker
   def perform(klass, options = {})
     klass.constantize.new.sync_mode.cleanup
   rescue => e
-    logger.warn "#{e.inspect} klass=#{klass} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} klass=#{klass} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 end

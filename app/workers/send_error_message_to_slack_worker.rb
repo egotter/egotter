@@ -7,7 +7,7 @@ class SendErrorMessageToSlackWorker
     channel = options['channel'] || 'general'
     SlackBotClient.channel(channel).upload_snippet(backtrace, initial_comment: error_message)
   rescue => e
-    logger.warn "#{e.inspect} error_message=#{error_message} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} error_message=#{error_message} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 end

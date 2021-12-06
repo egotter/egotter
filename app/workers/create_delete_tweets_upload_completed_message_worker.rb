@@ -28,7 +28,7 @@ class CreateDeleteTweetsUploadCompletedMessageWorker
     DeleteTweetsReport.upload_completed_message(user, options.merge('quick_replies' => quick_replies)).deliver!
   rescue => e
     unless ignorable_report_error?(e)
-      logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
+      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
     end
   end
 end

@@ -13,7 +13,7 @@ class CreateDirectMessageErrorLogWorker
     }
     DirectMessageErrorLog.create!(attrs)
   rescue => e
-    logger.warn "#{e.inspect} event_args=#{event_args.inspect} error_class=#{error_class} error_message=#{error_message} time=#{time}"
+    Airbag.warn "#{e.inspect} event_args=#{event_args.inspect} error_class=#{error_class} error_message=#{error_message} time=#{time}"
   end
 
   private

@@ -21,8 +21,8 @@ class CreateTopFollowerWorker
       twitter_user.update(top_follower_uid: top_follower.uid)
     end
   rescue => e
-    logger.warn "#{e.inspect} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 
   private

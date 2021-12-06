@@ -22,6 +22,6 @@ class SendMessageToSlackWorker
       SlackClient.channel(channel).send_message(text, title: title)
     end
   rescue => e
-    logger.warn "#{e.inspect} channel=#{channel} text=#{text} title=#{title} options=#{options.inspect}"
+    Airbag.warn "#{e.inspect} channel=#{channel} text=#{text} title=#{title} options=#{options.inspect}"
   end
 end

@@ -13,6 +13,6 @@ class UpdateWelcomeMessageWorker
       report.update!(read_at: attrs['read_at'])
     end
   rescue => e
-    logger.warn "#{self.class}: #{e.class} #{e.message} #{attrs.inspect}"
+    Airbag.warn "#{self.class}: #{e.class} #{e.message} #{attrs.inspect}"
   end
 end

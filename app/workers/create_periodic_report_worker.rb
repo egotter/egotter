@@ -23,7 +23,7 @@ class CreatePeriodicReportWorker
       CreatePeriodicReportRequestIntervalTooShortMessageWorker.perform_in(waiting_time, request.user_id)
     end
 
-    logger.info "The job of #{self.class} is skipped request_id=#{request_id} options=#{options.inspect}"
+    Airbag.info "The job of #{self.class} is skipped request_id=#{request_id} options=#{options.inspect}"
   end
 
   def _timeout_in(*args)
@@ -31,7 +31,7 @@ class CreatePeriodicReportWorker
   end
 
   def after_timeout(request_id, options = {})
-    logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} request_id=#{request_id} options=#{options.inspect}"
+    Airbag.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} request_id=#{request_id} options=#{options.inspect}"
     CreatePeriodicReportRequest.find(request_id).append_status('timeout').save
   end
 
@@ -49,8 +49,8 @@ class CreatePeriodicReportWorker
 
     do_perform(request, options)
   rescue => e
-    logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 
   private

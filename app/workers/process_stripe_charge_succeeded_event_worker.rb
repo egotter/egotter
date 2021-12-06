@@ -11,7 +11,7 @@ class ProcessStripeChargeSucceededEventWorker
       send_message("Order not found customer_id=#{customer_id}")
     end
   rescue => e
-    logger.warn "#{e.inspect} customer_id=#{customer_id}"
+    Airbag.warn "#{e.inspect} customer_id=#{customer_id}"
   end
 
   private
@@ -20,6 +20,6 @@ class ProcessStripeChargeSucceededEventWorker
     SlackMessage.create(channel: 'orders_charge_succeeded', message: message)
     SlackBotClient.channel('orders_charge_succeeded').post_message("`#{Rails.env}` #{message}")
   rescue => e
-    logger.warn "##{__method__} failed #{e.inspect} message=#{message}"
+    Airbag.warn "##{__method__} failed #{e.inspect} message=#{message}"
   end
 end

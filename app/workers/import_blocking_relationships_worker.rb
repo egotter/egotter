@@ -36,8 +36,8 @@ class ImportBlockingRelationshipsWorker
         TwitterApiStatus.temporarily_locked?(e)
       # Do nothing
     else
-      logger.warn "#{e.inspect.truncate(200)} user_id=#{user_id} options=#{options.inspect}"
-      logger.info e.backtrace.join("\n")
+      Airbag.warn "#{e.inspect.truncate(200)} user_id=#{user_id} options=#{options.inspect}"
+      Airbag.info e.backtrace.join("\n")
     end
   end
 end

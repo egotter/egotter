@@ -4,18 +4,9 @@ RSpec.describe WorkerErrorHandler do
   let(:dummy_class) do
     Class.new do
       include WorkerErrorHandler
-
-      def logger=(l)
-        @logger = l
-      end
-
-      def logger
-        @logger
-      end
     end
   end
   let(:instance) { dummy_class.new }
-  let(:logger) { Logger.new(STDOUT) }
 
   let(:nested_error) do
     err = nil
@@ -31,10 +22,6 @@ RSpec.describe WorkerErrorHandler do
     err
   end
 
-  before do
-    instance.logger = logger
-  end
-
   describe '#handle_worker_error' do
     subject { instance.handle_worker_error(nested_error, a: 1) }
     it do
@@ -47,8 +34,8 @@ RSpec.describe WorkerErrorHandler do
   describe '#_print_exception' do
     subject { instance.send(:_print_exception, nested_error, {}) }
     it do
-      expect(logger).to receive(:warn).with(instance_of(String)).exactly(2).times
-      expect(logger).to receive(:info).with(instance_of(String)).exactly(2).times
+      expect(Airbag).to receive(:warn).with(instance_of(String)).exactly(2).times
+      expect(Airbag).to receive(:info).with(instance_of(String)).exactly(2).times
       subject
     end
   end

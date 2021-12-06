@@ -16,7 +16,7 @@ class CreateTweetCleanerMessageWorker
     User.tweet_cleaner.api_client.create_direct_message(uid, 'OK ' + Kaomoji::KAWAII.sample)
   rescue => e
     unless ignorable_report_error?(e)
-      logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
+      Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
     end
   end
 end

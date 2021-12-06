@@ -19,7 +19,7 @@ class CreatePeriodicReportMessageWorker
   end
 
   def after_skip(*args)
-    logger.warn "The job of #{self.class} is skipped args=#{args.inspect}"
+    Airbag.warn "The job of #{self.class} is skipped args=#{args.inspect}"
   end
 
   def _timeout_in
@@ -51,8 +51,8 @@ class CreatePeriodicReportMessageWorker
     send_push_message(user, options)
     send_direct_message(user, options)
   rescue => e
-    logger.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
+    Airbag.info e.backtrace.join("\n")
   end
 
   def send_push_message(user, options)
@@ -61,7 +61,7 @@ class CreatePeriodicReportMessageWorker
     message = PeriodicReport.periodic_push_message(user.id, options)
     CreatePushNotificationWorker.perform_async(user.id, '', message, request_id: options[:request_id])
   rescue => e
-    logger.warn "I can't send a push-notification #{e.inspect} user_id=#{user.id} request_id=#{options[:request_id]}"
+    Airbag.warn "I can't send a push-notification #{e.inspect} user_id=#{user.id} request_id=#{options[:request_id]}"
   end
 
   def send_direct_message(user, options)
@@ -70,7 +70,7 @@ class CreatePeriodicReportMessageWorker
     if DirectMessageStatus.enhance_your_calm?(e)
       retry_current_report(user.id, options, exception: e)
     elsif ignorable_report_error?(e)
-      logger.info "#{e.class} #{e.message} user_id=#{user.id} options=#{options}"
+      Airbag.info "#{e.class} #{e.message} user_id=#{user.id} options=#{options}"
     else
       raise
     end

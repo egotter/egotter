@@ -22,17 +22,17 @@ class ImportTwitterDBUserWorker
     users = compressed_users.is_a?(String) ? decompress(compressed_users) : compressed_users
 
     if users.empty?
-      logger.warn "The users is empty options=#{options.inspect}"
+      Airbag.warn "The users is empty options=#{options.inspect}"
       return
     end
 
     if users.size > 100
-      logger.warn "More than 100 users are passed size=#{users.size} options=#{options.inspect}"
+      Airbag.warn "More than 100 users are passed size=#{users.size} options=#{options.inspect}"
     end
 
     import_users(users)
   rescue Deadlocked => e
-    logger.info "exception=#{e.inspect} cause=#{e.cause&.inspect&.truncate(200)}"
+    Airbag.info "exception=#{e.inspect} cause=#{e.cause&.inspect&.truncate(200)}"
     FailedImportTwitterDBUserWorker.perform_async(users, options.merge(error_class: e.class))
   rescue => e
     handle_worker_error(e, users: users.size, options: options)

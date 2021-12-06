@@ -12,7 +12,7 @@ class AssembleTwitterUserWorker
   end
 
   def after_skip(*args)
-    logger.info "The job of #{self.class} is skipped args=#{args.inspect}"
+    Airbag.info "The job of #{self.class} is skipped args=#{args.inspect}"
   end
 
   def expire_in
@@ -20,7 +20,7 @@ class AssembleTwitterUserWorker
   end
 
   def after_expire(*args)
-    logger.warn "The job of #{self.class} is expired args=#{args.inspect}"
+    Airbag.warn "The job of #{self.class} is expired args=#{args.inspect}"
   end
 
   def _timeout_in
@@ -28,7 +28,7 @@ class AssembleTwitterUserWorker
   end
 
   def after_timeout(request_id, options = {})
-    logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} request_id=#{request_id} options=#{options.inspect}"
+    Airbag.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} request_id=#{request_id} options=#{options.inspect}"
     TimedOutAssembleTwitterUserWorker.perform_async(request_id, options)
   end
 
@@ -38,7 +38,7 @@ class AssembleTwitterUserWorker
     request.perform!
     request.finished!
   rescue => e
-    logger.warn "#{e.class} #{e.message.truncate(100)} request_id=#{request_id} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.class} #{e.message.truncate(100)} request_id=#{request_id} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 end

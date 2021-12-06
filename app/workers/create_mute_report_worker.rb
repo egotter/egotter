@@ -48,7 +48,7 @@ class CreateMuteReportWorker
     elsif ignorable_report_error?(e)
       # Do nothing
     else
-      logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
+      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
     end
   end
 

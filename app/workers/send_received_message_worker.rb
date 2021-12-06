@@ -9,8 +9,8 @@ class SendReceivedMessageWorker
     return if dont_send_message?(options['text'])
     send_message(sender_uid, options['text'])
   rescue => e
-    logger.warn "sender_uid=#{sender_uid} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "sender_uid=#{sender_uid} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 
   QUICK_REPLIES = [

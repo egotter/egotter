@@ -5,6 +5,6 @@ class CreateCrawlerLogWorker
   def perform(attrs)
     Rails.logger.silence { CrawlerLog.create!(attrs) }
   rescue => e
-    logger.warn "#{self.class}: #{e.class} #{e.message} #{attrs.inspect}"
+    Airbag.warn "#{self.class}: #{e.class} #{e.message} #{attrs.inspect}"
   end
 end

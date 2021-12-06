@@ -35,8 +35,8 @@ class CreateAccountStatusWorker
 
     CreateHighPriorityTwitterDBUserWorker.perform_async([uid], user_id: user.id, enqueued_by: self.class) if uid
   rescue => e
-    logger.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 
   private
@@ -51,7 +51,7 @@ class CreateAccountStatusWorker
 
       is_follower = client.friendship?(api_user[:id], user.uid)
     rescue => e
-      logger.info "#{self.class}##{__method__}: #{e.inspect} screen_name=#{screen_name}"
+      Airbag.info "#{self.class}##{__method__}: #{e.inspect} screen_name=#{screen_name}"
       error = e
     end
 

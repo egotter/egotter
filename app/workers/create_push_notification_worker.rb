@@ -13,7 +13,7 @@ class CreatePushNotificationWorker
   end
 
   def after_skip(*args)
-    logger.info "The job of #{self.class} is skipped args=#{args.inspect}"
+    Airbag.info "The job of #{self.class} is skipped args=#{args.inspect}"
   end
 
   def _timeout_in
@@ -32,16 +32,16 @@ class CreatePushNotificationWorker
 
     if res.has_key?('error')
       if requested_entity_not_found?(res)
-        logger.info "response=#{res}"
+        Airbag.info "response=#{res}"
       else
-        logger.warn "response=#{res}"
+        Airbag.warn "response=#{res}"
       end
     else
-      logger.info res
+      Airbag.info res
     end
 
   rescue => e
-    logger.warn "#{e.inspect} #{user_id} #{title} #{body} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
+    Airbag.warn "#{e.inspect} #{user_id} #{title} #{body} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
   end
 
   private

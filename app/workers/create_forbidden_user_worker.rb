@@ -17,6 +17,6 @@ class CreateForbiddenUserWorker
   rescue ActiveRecord::RecordNotUnique => e
     # Do nothing
   rescue => e
-    logger.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
+    Airbag.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
   end
 end

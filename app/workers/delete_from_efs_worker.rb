@@ -12,8 +12,8 @@ class DeleteFromEfsWorker
   def perform(params, options = {})
     params['klass'].constantize.delete(uid: params['key'])
   rescue => e
-    logger.warn "#{e.class}: #{e.message.truncate(100)} #{params.inspect} #{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.class}: #{e.message.truncate(100)} #{params.inspect} #{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 
   class << self

@@ -49,7 +49,7 @@ class SendMetricsToCloudWatchWorker
       send(type)
     end
   rescue => e
-    logger.warn "#{e.inspect} type=#{type}"
+    Airbag.warn "#{e.inspect} type=#{type}"
   end
 
   def send_sidekiq_metrics
@@ -302,8 +302,8 @@ class SendMetricsToCloudWatchWorker
         client = Aws::CloudWatch::Client.new(region: CloudWatchClient::REGION)
 
         @metrics.each do |namespace, metric_data|
-          logger.info "Send #{metric_data.size} metrics to #{namespace}"
-          # logger.info metric_data.inspect
+          Airbag.info "Send #{metric_data.size} metrics to #{namespace}"
+          # Airbag.info metric_data.inspect
 
           metric_data.each_slice(20).each do |data|
             params = {

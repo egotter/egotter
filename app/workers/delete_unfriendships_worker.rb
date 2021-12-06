@@ -16,6 +16,6 @@ class DeleteUnfriendshipsWorker
     Unfollowership.delete_by_uid(uid)
     BlockFriendship.delete_by_uid(uid)
   rescue => e
-    logger.warn "#{e.inspect.truncate(100)} uid=#{uid} options=#{options.inspect}"
+    Airbag.warn "#{e.inspect.truncate(100)} uid=#{uid} options=#{options.inspect}"
   end
 end

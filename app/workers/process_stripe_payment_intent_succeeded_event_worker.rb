@@ -14,7 +14,7 @@ class ProcessStripePaymentIntentSucceededEventWorker
 
     create_order(stripe_payment_intent, payment_intent)
   rescue => e
-    logger.warn "#{e.inspect} stripe_payment_intent_id=#{stripe_payment_intent_id}"
+    Airbag.warn "#{e.inspect} stripe_payment_intent_id=#{stripe_payment_intent_id}"
   end
 
   private
@@ -36,6 +36,6 @@ class ProcessStripePaymentIntentSucceededEventWorker
     SlackMessage.create(channel: 'orders_pi_succeeded', message: message)
     SlackBotClient.channel('orders_pi_succeeded').post_message("`#{Rails.env}` #{message}")
   rescue => e
-    logger.warn "Failed #{e.inspect} message=#{message}"
+    Airbag.warn "Failed #{e.inspect} message=#{message}"
   end
 end

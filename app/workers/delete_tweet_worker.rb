@@ -9,7 +9,7 @@ class DeleteTweetWorker
   def perform(user_id, tweet_id, options = {})
     request = DeleteTweetsRequest.find(options['request_id'])
     if request.stopped_at
-      logger.warn "This request is stopped user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
+      Airbag.warn "This request is stopped user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
       return
     end
 

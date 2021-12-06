@@ -12,7 +12,7 @@ class ResetCacheWorker
   end
 
   def after_timeout(request_id, options = {})
-    logger.warn "Timeout #{timeout_in} #{request_id}"
+    Airbag.warn "Timeout #{timeout_in} #{request_id}"
   end
 
   def perform(request_id, options = {})

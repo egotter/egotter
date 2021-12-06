@@ -12,7 +12,7 @@ class ResetEgotterWorker
   end
 
   def after_skip(request_id, options = {})
-    logger.warn "Skipped #{request_id}"
+    Airbag.warn "Skipped #{request_id}"
   end
 
   def timeout_in
@@ -20,7 +20,7 @@ class ResetEgotterWorker
   end
 
   def after_timeout(request_id, options = {})
-    logger.warn "Timeout #{timeout_in} #{request_id}"
+    Airbag.warn "Timeout #{timeout_in} #{request_id}"
     ResetEgotterWorker.perform_in(retry_in, request_id, options)
   end
 

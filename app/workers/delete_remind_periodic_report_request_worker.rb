@@ -23,6 +23,6 @@ class DeleteRemindPeriodicReportRequestWorker
 
     RemindPeriodicReportRequest.find_by(user_id: user_id)&.destroy
   rescue => e
-    logger.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
+    Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
   end
 end

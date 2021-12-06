@@ -16,7 +16,7 @@ class ProcessWebhookEventWorker
   end
 
   def after_skip(*args)
-    logger.info "The job of #{self.class} is skipped digest=#{digest(args[0])} args=#{args.inspect}"
+    Airbag.info "The job of #{self.class} is skipped digest=#{digest(args[0])} args=#{args.inspect}"
   end
 
   def _timeout_in
@@ -26,13 +26,13 @@ class ProcessWebhookEventWorker
   # options:
   def perform(event, options = {})
     unless event['type'] == 'message_create'
-      logger.info "event is not message_create event_type=#{event['type']}"
+      Airbag.info "event is not message_create event_type=#{event['type']}"
       return
     end
 
     process_direct_message_event(event)
   rescue => e
-    logger.warn "#{e.inspect} event=#{event.inspect}"
+    Airbag.warn "#{e.inspect} event=#{event.inspect}"
   end
 
   private
@@ -80,7 +80,7 @@ class ProcessWebhookEventWorker
     processed = MemoMessageResponder.from_dm(dm).respond unless processed
 
     unless processed
-      logger.info { "#{__method__} dm is ignored #{dm.text}" }
+      Airbag.info { "#{__method__} dm is ignored #{dm.text}" }
     end
 
     SendReceivedMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text)

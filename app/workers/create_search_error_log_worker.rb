@@ -5,6 +5,6 @@ class CreateSearchErrorLogWorker
   def perform(attrs)
     SearchErrorLog.create!(attrs)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{attrs.inspect}"
+    Airbag.warn "#{e.class} #{e.message} #{attrs.inspect}"
   end
 end

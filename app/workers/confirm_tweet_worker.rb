@@ -17,7 +17,7 @@ class ConfirmTweetWorker
         ConfirmTweetWorker.perform_in(confirm_in(options['confirm_count']), request_id, options)
       end
     rescue => e
-      logger.info e.inspect
+      Airbag.info e.inspect
       request.update(deleted_at: Time.zone.now)
       SendCreateTweetDeletedWorker.perform_async(request.id)
     end

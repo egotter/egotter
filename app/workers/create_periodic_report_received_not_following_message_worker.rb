@@ -48,7 +48,7 @@ class CreatePeriodicReportReceivedNotFollowingMessageWorker
     end
   rescue => e
     unless ignorable_report_error?(e)
-      logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
+      Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
     end
   end
 

@@ -16,11 +16,11 @@ class WriteToS3Worker
     retry_count = 0 unless retry_count
 
     if retry_count < retry_limit
-      logger.info "Retry later #{params.inspect.truncate(50)} #{options}"
+      Airbag.info "Retry later #{params.inspect.truncate(50)} #{options}"
       options['retry_count'] = retry_count + 1
       WriteToS3Worker.perform_in(retry_in, params, options)
     else
-      logger.warn "Retry exhausted: Timeout #{timeout_in} seconds #{params.inspect.truncate(50)} #{options}"
+      Airbag.warn "Retry exhausted: Timeout #{timeout_in} seconds #{params.inspect.truncate(50)} #{options}"
     end
   end
 
@@ -49,8 +49,8 @@ class WriteToS3Worker
     if e.message.downcase.match?(/timeout|limit/)
       after_timeout(params, options)
     else
-      logger.warn "#{e.class}: #{e.message.truncate(100)} #{params.inspect.truncate(50)} #{options.inspect}"
-      logger.info e.backtrace.join("\n")
+      Airbag.warn "#{e.class}: #{e.message.truncate(100)} #{params.inspect.truncate(50)} #{options.inspect}"
+      Airbag.info e.backtrace.join("\n")
     end
   end
 end

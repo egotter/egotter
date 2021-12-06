@@ -12,7 +12,7 @@ class PerformAfterCommitWorker
   end
 
   def after_skip(twitter_user_id, data, options = {})
-    logger.warn "The job of #{self.class} is skipped twitter_user_id=#{twitter_user_id}"
+    Airbag.warn "The job of #{self.class} is skipped twitter_user_id=#{twitter_user_id}"
   end
 
   # TODO Don't expire this job
@@ -21,7 +21,7 @@ class PerformAfterCommitWorker
   end
 
   def after_expire(twitter_user_id, data, options = {})
-    logger.warn "The job of #{self.class} is expired twitter_user_id=#{twitter_user_id}"
+    Airbag.warn "The job of #{self.class} is expired twitter_user_id=#{twitter_user_id}"
   end
 
   def _timeout_in
@@ -64,7 +64,7 @@ class PerformAfterCommitWorker
 
     TwitterUser.find(twitter_user_id).update(cache_created_at: Time.zone.now)
   rescue => e
-    logger.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id}"
+    Airbag.info e.backtrace.join("\n")
   end
 end

@@ -20,13 +20,13 @@ class ProcessWebhookEventForEgotterAiWorker
   # options:
   def perform(event, options = {})
     unless event['type'] == 'message_create'
-      logger.info "event is not message_create event_type=#{event['type']}"
+      Airbag.info "event is not message_create event_type=#{event['type']}"
       return
     end
 
     process_direct_message_event(event)
   rescue => e
-    logger.warn "#{e.inspect} event=#{event.inspect}"
+    Airbag.warn "#{e.inspect} event=#{event.inspect}"
   end
 
   private

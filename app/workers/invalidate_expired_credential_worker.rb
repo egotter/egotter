@@ -35,6 +35,6 @@ class InvalidateExpiredCredentialWorker
 
   def notify(message)
     SlackClient.channel('bot').send_message(message)
-    logger.warn message
+    Airbag.warn message
   end
 end

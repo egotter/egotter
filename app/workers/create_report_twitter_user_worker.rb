@@ -23,7 +23,7 @@ class CreateReportTwitterUserWorker < CreateTwitterUserWorker
     task.start!(:reporting)
   rescue CreateTwitterUserRequest::Unknown => e
     # Suppress redundant message: CreateTwitterUserRequest::Unknown -> ApiClient::RetryExhausted -> HTTP::TimeoutError: execution expired
-    logger.warn "#{e.inspect.truncate(200)} request_id=#{request_id} options=#{options}"
+    Airbag.warn "#{e.inspect.truncate(200)} request_id=#{request_id} options=#{options}"
   rescue CreateTwitterUserRequest::Error => e
     # Do nothing
   rescue => e

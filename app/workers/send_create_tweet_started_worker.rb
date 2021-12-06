@@ -8,7 +8,7 @@ class SendCreateTweetStartedWorker
     request = TweetRequest.find(request_id)
     SendMessageToSlackWorker.perform_async(:tweet, "`Started` #{request.to_message(via: options['via'])}")
   rescue => e
-    logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 end

@@ -15,6 +15,6 @@ class DeleteForbiddenUsersWorker
       ForbiddenUser.where(id: users.map(&:id)).delete_all
     end
   rescue => e
-    logger.warn "#{e.inspect} options=#{options.inspect}"
+    Airbag.warn "#{e.inspect} options=#{options.inspect}"
   end
 end

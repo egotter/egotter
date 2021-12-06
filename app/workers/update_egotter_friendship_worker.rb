@@ -35,8 +35,8 @@ class UpdateEgotterFriendshipWorker
     elsif ServiceStatus.connection_reset_by_peer?(e)
       retry
     else
-      logger.warn "#{e.inspect} user_id=#{user_id} api_name=#{client&.api_name} options=#{options.inspect}"
-      logger.info e.backtrace.join("\n")
+      Airbag.warn "#{e.inspect} user_id=#{user_id} api_name=#{client&.api_name} options=#{options.inspect}"
+      Airbag.info e.backtrace.join("\n")
     end
   end
 

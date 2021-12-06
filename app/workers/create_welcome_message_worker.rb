@@ -25,8 +25,8 @@ class CreateWelcomeMessageWorker
 
     send_direct_message(user, options)
   rescue => e
-    logger.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
+    Airbag.info e.backtrace.join("\n")
   end
 
   def send_direct_message(user, options)

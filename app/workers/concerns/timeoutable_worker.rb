@@ -16,7 +16,7 @@ module TimeoutableWorker
       if respond_to?(:after_timeout)
         after_timeout(*args)
       else
-        logger.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} args=#{args.inspect.truncate(100)}"
+        Airbag.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} args=#{args.inspect.truncate(100)}"
       end
     end
 

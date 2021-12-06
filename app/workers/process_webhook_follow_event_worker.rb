@@ -14,7 +14,7 @@ class ProcessWebhookFollowEventWorker
   end
 
   def after_skip(*args)
-    logger.info "The job of #{self.class} is skipped args=#{args.inspect}"
+    Airbag.info "The job of #{self.class} is skipped args=#{args.inspect}"
   end
 
   def _timeout_in
@@ -28,10 +28,10 @@ class ProcessWebhookFollowEventWorker
     elsif event['type'] == 'unfollow'
       EgotterFollower.delete_uids([event['source']['id']])
     else
-      logger.info "event is not follow event_type=#{event['type']}"
+      Airbag.info "event is not follow event_type=#{event['type']}"
       return
     end
   rescue => e
-    logger.warn "#{e.inspect} event=#{event.inspect}"
+    Airbag.warn "#{e.inspect} event=#{event.inspect}"
   end
 end

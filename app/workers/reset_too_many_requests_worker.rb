@@ -5,6 +5,6 @@ class ResetTooManyRequestsWorker
   def perform(user_id)
     TooManyRequestsUsers.new.delete(user_id)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{user_id}"
+    Airbag.warn "#{e.class} #{e.message} #{user_id}"
   end
 end

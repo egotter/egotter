@@ -32,19 +32,19 @@ class CreateFollowWorker
       FollowRequest::Unauthorized,
       FollowRequest::CanNotFollowYourself,
       FollowRequest::TemporarilyLocked => e
-    logger.info "Skip #{e.inspect}"
+    Airbag.info "Skip #{e.inspect}"
   rescue FollowRequest::TooManyFollows, FollowRequest::ServiceUnavailable => e
-    logger.warn "Retry later #{e.class}"
+    Airbag.warn "Retry later #{e.class}"
     CreateFollowWorker.perform_in(retry_in, request_id, options)
 
   rescue FollowRequest::RetryableError => e
     CreateFollowWorker.perform_async(request_id, options)
 
   rescue FollowRequest::Error => e
-    logger.warn "Don't care. #{e.inspect} request_id=#{request_id} options=#{options.inspect}"
+    Airbag.warn "Don't care. #{e.inspect} request_id=#{request_id} options=#{options.inspect}"
 
   rescue => e
-    logger.warn "Don't retry. #{e.class} #{e.message} request_id=#{request_id} options=#{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "Don't retry. #{e.class} #{e.message} request_id=#{request_id} options=#{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
+    Airbag.info e.backtrace.join("\n")
   end
 end

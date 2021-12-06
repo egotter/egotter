@@ -33,7 +33,7 @@ class CreateSearchReportWorker
     elsif ignorable_report_error?(e)
       # Do nothing
     else
-      logger.warn "#{e.inspect} searchee_id=#{searchee_id} options=#{options.inspect}"
+      Airbag.warn "#{e.inspect} searchee_id=#{searchee_id} options=#{options.inspect}"
     end
   end
 end

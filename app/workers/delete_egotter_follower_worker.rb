@@ -16,6 +16,6 @@ class DeleteEgotterFollowerWorker
       EgotterFollower.find_by(uid: user.uid).destroy!
     end
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
+    Airbag.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
   end
 end

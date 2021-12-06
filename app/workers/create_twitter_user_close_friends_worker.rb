@@ -13,7 +13,7 @@ class CreateTwitterUserCloseFriendsWorker
 
   def after_skip(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
-    logger.warn "The job of #{self.class} is skipped twitter_user_id=#{twitter_user_id} created_at=#{twitter_user.created_at}"
+    Airbag.warn "The job of #{self.class} is skipped twitter_user_id=#{twitter_user_id} created_at=#{twitter_user.created_at}"
   end
 
   def expire_in
@@ -21,7 +21,7 @@ class CreateTwitterUserCloseFriendsWorker
   end
 
   def after_expire(*args)
-    logger.warn "The job of #{self.class} is expired args=#{args.inspect}"
+    Airbag.warn "The job of #{self.class} is expired args=#{args.inspect}"
   end
 
   def _timeout_in
@@ -38,8 +38,8 @@ class CreateTwitterUserCloseFriendsWorker
     CloseFriendship.delete_by_uid(twitter_user.uid)
     FavoriteFriendship.delete_by_uid(twitter_user.uid)
   rescue => e
-    logger.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 
   private

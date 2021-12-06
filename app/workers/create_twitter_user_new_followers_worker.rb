@@ -16,7 +16,7 @@ class CreateTwitterUserNewFollowersWorker
   end
 
   def after_expire(*args)
-    logger.warn "The job of #{self.class} is expired args=#{args.inspect}"
+    Airbag.warn "The job of #{self.class} is expired args=#{args.inspect}"
   end
 
   def _timeout_in
@@ -33,8 +33,8 @@ class CreateTwitterUserNewFollowersWorker
       CreateNewFollowersCountPointWorker.perform_async(twitter_user_id)
     end
   rescue => e
-    logger.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 
   private

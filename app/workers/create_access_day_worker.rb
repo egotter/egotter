@@ -14,9 +14,9 @@ class CreateAccessDayWorker
     user = User.find(user_id)
     create_record(user)
   rescue ActiveRecord::RecordNotUnique => e
-    logger.info e.message.truncate(100)
+    Airbag.info e.message.truncate(100)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
+    Airbag.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
   end
 
   def create_record(user)

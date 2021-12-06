@@ -25,8 +25,8 @@ class SendMetricsToSlackWorker
   def do_perform(step)
     send(step)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{step}"
-    logger.info e.backtrace.join("\n")
+    Airbag.warn "#{e.class} #{e.message} #{step}"
+    Airbag.info e.backtrace.join("\n")
   end
 
   def send_table_metrics

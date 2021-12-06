@@ -36,7 +36,7 @@ class CreatePremiumPlanMessageWorker
     User.egotter_cs.api_client.create_direct_message(uid, build_message)
   rescue => e
     unless ignorable_report_error?(e)
-      logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
+      Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
     end
   end
 
