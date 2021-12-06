@@ -52,7 +52,7 @@ class AppStat
 
       [
           "user_timeline #{timeline_count}",
-          "follow! #{CallCreateFriendshipCount.new.size} (#{follow_count}) (400 per user; 1000 per app)",
+          "follow! #{follow_count} (400 per user; 1000 per app)",
           "unfollow #{unfollow_count} (800 - 900 per day)",
       ].join("\n")
     end

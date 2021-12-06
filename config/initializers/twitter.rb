@@ -3,8 +3,6 @@ require 'twitter'
 # It is necessary to load the classes first because they may be called in Thread.
 require_relative '../../app/lib/egotter/sorted_set'
 require_relative '../../app/lib/egotter/async_sorted_set'
-require_relative '../../app/lib/call_create_friendship_count'
-require_relative '../../app/lib/call_user_timeline_count'
 
 module Egotter
   module Twitter
@@ -12,7 +10,6 @@ module Egotter
       def follow!(*args)
         super
       ensure
-        CallCreateFriendshipCount.new.increment
         CreateTwitterApiLogWorker.perform_async(name: __method__)
       end
 
