@@ -6,23 +6,10 @@ RSpec.describe UserAttrsUpdatedFlag, type: :model do
   before { RedisClient.new.flushall }
 
   describe '.on' do
-    subject { described_class.on(user_id) }
     it do
+      expect(described_class.on?(user_id)).to be_falsey
       described_class.on(user_id)
       expect(described_class.on?(user_id)).to be_truthy
     end
-  end
-
-  describe '.on?' do
-    subject { described_class.on?(user_id) }
-    it do
-      described_class.on(user_id)
-      expect(subject).to be_truthy
-    end
-  end
-
-  describe '.key' do
-    subject { described_class.key(user_id) }
-    it { is_expected.to eq("test:UserAttrsUpdatedFlag:#{user_id}") }
   end
 end

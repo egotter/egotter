@@ -1,30 +1,33 @@
+require 'singleton'
+
 class UserAttrsUpdatedFlag
+  include Singleton
+
+  TTL = 1.hour
+
+  def initialize
+    @redis = RedisClient.new
+  end
+
+  def on(user_id)
+    @redis.setex(key(user_id), TTL, true)
+  end
+
+  def on?(user_id)
+    @redis.exists?(key(user_id))
+  end
+
+  def key(val)
+    "#{Rails.env}:UserAttrsUpdatedFlag:#{val}"
+  end
+
   class << self
     def on(user_id)
-      redis.setex(key(user_id), ttl, true)
+      instance.on(user_id)
     end
 
     def on?(user_id)
-      redis.exists?(key(user_id))
-    end
-
-    def key(val)
-      "#{Rails.env}:#{self}:#{val}"
-    end
-
-    def ttl
-      1.hour
-    end
-
-    MX = Mutex.new
-
-    def redis
-      MX.synchronize do
-        unless @redis
-          @redis = RedisClient.new
-        end
-      end
-      @redis
+      instance.on?(user_id)
     end
   end
 end
