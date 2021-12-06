@@ -1,34 +1,37 @@
+require 'singleton'
+
 class TwitterUserUpdatedFlag
+  include Singleton
+
+  TTL = 30.minutes
+
+  def initialize
+    @redis = RedisClient.new
+  end
+
+  def on(uid)
+    @redis.setex(key(uid), TTL, true)
+  rescue => e
+    nil
+  end
+
+  def on?(uid)
+    @redis.exists?(key(uid))
+  rescue => e
+    false
+  end
+
+  def key(val)
+    "#{Rails.env}:TwitterUserUpdatedFlag:#{val}"
+  end
+
   class << self
     def on(uid)
-      redis.setex(key(uid), ttl, true)
-    rescue => e
-      nil
+      instance.on(uid)
     end
 
     def on?(uid)
-      redis.exists?(key(uid))
-    rescue => e
-      false
-    end
-
-    def key(val)
-      "#{Rails.env}:#{self}:#{val}"
-    end
-
-    def ttl
-      30.minutes
-    end
-
-    MX = Mutex.new
-
-    def redis
-      MX.synchronize do
-        unless @redis
-          @redis = RedisClient.new
-        end
-      end
-      @redis
+      instance.on?(uid)
     end
   end
 end
