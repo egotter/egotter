@@ -15,39 +15,35 @@ module InMemory
     end
 
     def connected_to(name, &block)
-      old_name = @connection_name
-      @connection_name = name
+      old_name = @conn_name
+      @conn_name = name
       yield
     ensure
-      @connection_name = old_name
-    end
-
-    # For testing
-    def connection_name
-      @connection_name
-    end
-
-    MX = Mutex.new
-
-    def connection
-      MX.synchronize do
-        unless @connections
-          @connections = {
-              primary: RedisClient.new(host: ENV['IN_MEMORY_REDIS_HOST']),
-              secondary: RedisClient.new(host: ENV['IN_MEMORY_REDIS_HOST_REPLICA']),
-          }
-        end
-      end
-
-      if [:primary, :secondary].include?(@connection_name)
-        @connections[@connection_name]
-      else
-        @connections[:primary]
-      end
+      @conn_name = old_name
     end
 
     def client
-      ::InMemory::Client.new(connection, self)
+      conn = ConnectionPool.instance.get(@conn_name)
+      ::InMemory::Client.new(conn, self)
+    end
+
+    class ConnectionPool
+      include Singleton
+
+      def initialize
+        @connections = {
+            primary: RedisClient.new(host: ENV['IN_MEMORY_REDIS_HOST']),
+            secondary: RedisClient.new(host: ENV['IN_MEMORY_REDIS_HOST_REPLICA']),
+        }
+      end
+
+      def get(name)
+        if [:primary, :secondary].include?(name)
+          @connections[name]
+        else
+          @connections[:primary]
+        end
+      end
     end
   end
 end

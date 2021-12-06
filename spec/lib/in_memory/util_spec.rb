@@ -22,11 +22,11 @@ RSpec.describe InMemory::Util do
   describe '.connected_to' do
     let(:name) { 'tmp name' }
     it do
-      expect(klass.connection_name).not_to eq(name)
+      expect(klass.instance_variable_get(:@conn_name)).to be_nil
       klass.connected_to(name) do
-        expect(klass.connection_name).to eq(name)
+        expect(klass.instance_variable_get(:@conn_name)).to eq(name)
       end
-      expect(klass.connection_name).not_to eq(name)
+      expect(klass.instance_variable_get(:@conn_name)).to be_nil
     end
   end
 end
