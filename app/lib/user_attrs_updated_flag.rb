@@ -1,3 +1,4 @@
+require 'forwardable'
 require 'singleton'
 
 class UserAttrsUpdatedFlag
@@ -22,12 +23,7 @@ class UserAttrsUpdatedFlag
   end
 
   class << self
-    def on(user_id)
-      instance.on(user_id)
-    end
-
-    def on?(user_id)
-      instance.on?(user_id)
-    end
+    extend Forwardable
+    def_delegators :instance, :on, :on?
   end
 end

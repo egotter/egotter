@@ -1,3 +1,4 @@
+require 'forwardable'
 require 'singleton'
 
 class TwitterUserUpdatedFlag
@@ -26,12 +27,7 @@ class TwitterUserUpdatedFlag
   end
 
   class << self
-    def on(uid)
-      instance.on(uid)
-    end
-
-    def on?(uid)
-      instance.on?(uid)
-    end
+    extend Forwardable
+    def_delegators :instance, :on, :on?
   end
 end

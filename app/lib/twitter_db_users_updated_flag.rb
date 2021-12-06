@@ -1,3 +1,4 @@
+require 'forwardable'
 require 'singleton'
 require 'digest/md5'
 
@@ -27,12 +28,7 @@ class TwitterDBUsersUpdatedFlag
   end
 
   class << self
-    def on(uids)
-      instance.on(uids)
-    end
-
-    def on?(uids)
-      instance.on?(uids)
-    end
+    extend Forwardable
+    def_delegators :instance, :on, :on?
   end
 end
