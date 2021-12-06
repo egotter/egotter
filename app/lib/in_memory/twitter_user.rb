@@ -14,8 +14,11 @@ module InMemory
 
     class << self
       def find_by(twitter_user_id)
-        data = client.read(twitter_user_id)
-        data ? new(parse_json(decompress(data))) : nil
+        # For temporary debugging
+        ApplicationRecord.benchmark("Benchmark #{self}.#{__method__} twitter_user_id=#{twitter_user_id}") do
+          data = client.read(twitter_user_id)
+          data ? new(parse_json(decompress(data))) : nil
+        end
       end
 
       def delete_by(twitter_user_id)

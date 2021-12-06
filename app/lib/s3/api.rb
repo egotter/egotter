@@ -8,8 +8,11 @@ module S3
     end
 
     def find_by(twitter_user_id:)
-      result = find_by_current_scope(payload_key, :twitter_user_id, twitter_user_id)
-      result ? new(result) : nil
+      # For temporary debugging
+      ApplicationRecord.benchmark("Benchmark #{self}.#{__method__} twitter_user_id=#{twitter_user_id}") do
+        result = find_by_current_scope(payload_key, :twitter_user_id, twitter_user_id)
+        result ? new(result) : nil
+      end
     end
 
     def delete_by(twitter_user_id:)

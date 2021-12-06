@@ -22,7 +22,8 @@ module Efs
 
     class << self
       def find_by(twitter_user_id)
-        ApplicationRecord.benchmark("Benchmark Efs::TwitterUser.find_by twitter_user_id=#{twitter_user_id}", level: :info) do
+        # For temporary debugging
+        ApplicationRecord.benchmark("Benchmark #{self}.#{__method__} twitter_user_id=#{twitter_user_id}") do
           begin
             Timeout.timeout(3.seconds) do
               obj = cache_client.read(cache_key(twitter_user_id))

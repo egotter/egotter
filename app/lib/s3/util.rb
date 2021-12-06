@@ -88,14 +88,7 @@ module S3
 
     def fetch(key)
       raise 'key is nil' if key.nil?
-
-      start = Time.zone.now
-      result = client.get_object(bucket: bucket_name, key: key.to_s).body.read
-
-      time = sprintf("%.1f", Time.zone.now - start)
-      Rails.logger.debug { "#{self} Fetch by #{key}#{' HIT' if result} (#{time}ms)" }
-
-      result
+      client.get_object(bucket: bucket_name, key: key.to_s).body.read
     end
 
     def delete(key, async: true)
