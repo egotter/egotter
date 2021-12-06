@@ -47,7 +47,7 @@ class CloudWatchClient
     resp = get_metric_statistics('rt:activeUsers', namespace: 'Google Analytics', dimensions: dimensions)
     resp.datapoints[0].average
   rescue => e
-    Rails.logger.warn "#{__method__}: #{e.inspect}"
+    Airbag.warn "#{__method__}: #{e.inspect}"
     -1
   end
 
@@ -61,7 +61,7 @@ class CloudWatchClient
     resp = get_metric_statistics('BurstBalance', namespace: 'AWS/RDS', dimensions: dimensions)
     resp.datapoints[0].average
   rescue => e
-    Rails.logger.warn "#{__method__}: #{e.inspect}"
+    Airbag.warn "#{__method__}: #{e.inspect}"
     -1
   end
 

@@ -15,7 +15,7 @@ module Api
           render json: {found: false}, status: :not_found
         end
       rescue => e
-        logger.warn "#{__method__} #{e.inspect} params=#{params.inspect}"
+        Airbag.warn "#{__method__} #{e.inspect} params=#{params.inspect}"
         render json: {found: false}, status: :internal_server_error
       end
 

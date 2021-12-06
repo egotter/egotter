@@ -98,8 +98,8 @@ module TwitterUserUtils
     end
 
     if data.nil?
-      Rails.logger.info "Fetching uids failed. method=#{method_name} id=#{id} screen_name=#{screen_name} created_at=#{created_at.to_s(:db)} exceptions=#{exceptions.inspect}"
-      Rails.logger.info caller.join("\n")
+      Airbag.info "Fetching uids failed. method=#{method_name} id=#{id} screen_name=#{screen_name} created_at=#{created_at.to_s(:db)} exceptions=#{exceptions.inspect}"
+      Airbag.info caller.join("\n")
       # TODO Import collect uids or delete this record
       []
     else

@@ -7,7 +7,7 @@ class StripeWebhookController < ApplicationController
     process_event(event)
     head :ok
   rescue => e
-    logger.warn "#{controller_name}##{action_name} #{e.inspect} event_id=#{event.id}"
+    Airbag.warn "#{controller_name}##{action_name} #{e.inspect} event_id=#{event.id}"
     head :bad_request
   end
 
@@ -30,7 +30,7 @@ class StripeWebhookController < ApplicationController
     when 'payment_intent.succeeded'
       process_payment_intent_succeeded(event)
     else
-      logger.info "Unhandled stripe webhook event type=#{event.type} value=#{event.inspect}"
+      Airbag.info "Unhandled stripe webhook event type=#{event.type} value=#{event.inspect}"
     end
   end
 

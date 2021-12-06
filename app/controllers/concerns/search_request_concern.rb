@@ -11,7 +11,7 @@ module SearchRequestConcern
     before_action(only: :show) { forbidden_screen_name? }
     before_action(only: :show) do
       if skip_search_request_check?
-        logger.info "Maybe too many retries of #search_request_cache_exists? screen_name=#{params[:screen_name]} elapsed_time=#{params[:elapsed_time]}"
+        Airbag.info "Maybe too many retries of #search_request_cache_exists? screen_name=#{params[:screen_name]} elapsed_time=#{params[:elapsed_time]}"
       else
         if check_search_request_cache_controller?
           search_request_cache_exists?(params[:screen_name])

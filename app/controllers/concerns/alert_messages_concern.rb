@@ -28,7 +28,7 @@ module AlertMessagesConcern
 
   def unknown_alert_message(ex)
     reason = (ex.class.name.demodulize.underscore rescue 'exception')
-    logger.info "#{self.class}##{__method__} #{ex.inspect} reason=#{reason}"
+    Airbag.info "#{self.class}##{__method__} #{ex.inspect} reason=#{reason}"
 
     # Show a sign-in button whether current user is signed in or not.
     url = sign_in_path(via: current_via('unknown_alert_message'))

@@ -27,7 +27,7 @@ module Api
         send_message(order)
         render json: {message: t('.success_html'), interval: INTERVAL}
       rescue => e
-        logger.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
+        Airbag.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
         render json: {error: true, message: t('.fail')}, status: :unprocessable_entity
       end
 
@@ -37,7 +37,7 @@ module Api
         send_message(order)
         render json: {message: t('.success_html', count: INTERVAL), interval: INTERVAL}
       rescue => e
-        logger.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
+        Airbag.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
         render json: {error: true, message: t('.fail')}, status: :unprocessable_entity
       end
 

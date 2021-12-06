@@ -75,7 +75,7 @@ module TwitterUserProfile
       nil
     end
   rescue => e
-    logger.info "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{time}]"
+    Airbag.info "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{time}]"
     nil
   end
 
@@ -136,8 +136,8 @@ module TwitterUserProfile
     end
 
     if data.blank?
-      Rails.logger.warn "Fetching profile failed. id=#{id} screen_name=#{screen_name} created_at=#{created_at.to_s(:db)} exceptions=#{exceptions.inspect}"
-      Rails.logger.info caller.join("\n")
+      Airbag.warn "Fetching profile failed. id=#{id} screen_name=#{screen_name} created_at=#{created_at.to_s(:db)} exceptions=#{exceptions.inspect}"
+      Airbag.info caller.join("\n")
     end
 
     data

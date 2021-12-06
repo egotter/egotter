@@ -165,7 +165,7 @@ class AudienceInsight < ApplicationRecord
 
         @benchmark['sum'] = @benchmark.values.sum
         @benchmark['elapsed'] = Time.zone.now - start
-        Rails.logger.info "Benchmark AudienceInsight::Builder #{@benchmark.inspect}"
+        Airbag.info "Benchmark AudienceInsight::Builder #{@benchmark.inspect}"
 
         result
       end

@@ -98,11 +98,11 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   def validate_twitter_user!(twitter_user)
     if twitter_user.friend_uids.any? { |uid| uid.nil? || uid == 0 }
-      Rails.logger.warn "#{self.class}##{__method__} friend_uids includes nil or 0 user_id=#{user_id} uid=#{uid}"
+      Airbag.warn "#{self.class}##{__method__} friend_uids includes nil or 0 user_id=#{user_id} uid=#{uid}"
     end
 
     if twitter_user.follower_uids.any? { |uid| uid.nil? || uid == 0 }
-      Rails.logger.warn "#{self.class}##{__method__} follower_uids includes nil or 0 user_id=#{user_id} uid=#{uid}"
+      Airbag.warn "#{self.class}##{__method__} follower_uids includes nil or 0 user_id=#{user_id} uid=#{uid}"
     end
 
     if TwitterUser.exists?(uid: uid)
@@ -210,7 +210,7 @@ class CreateTwitterUserRequest < ApplicationRecord
       raise TooManyRequests.new("user_id=#{user_id} api_name=#{@fetcher&.api_name}")
     end
 
-    logger.info "#{self.class}##{__method__}: error_class=#{e.class} error_message=#{e.message}"
+    Airbag.info "#{self.class}##{__method__}: error_class=#{e.class} error_message=#{e.message}"
     raise Unknown.new(e.inspect)
   end
 
@@ -249,7 +249,7 @@ class CreateTwitterUserRequest < ApplicationRecord
       @bm_perform['elapsed'] = elapsed
       @bm_perform.transform_values! { |v| sprintf("%.3f", v) }
 
-      Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{@bm_perform.inspect}"
+      Airbag.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{@bm_perform.inspect}"
 
       result
     end

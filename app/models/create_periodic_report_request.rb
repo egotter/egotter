@@ -40,7 +40,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
     if worker_context == CreatePeriodicReportWorker # TODO Replace by requested_by == 'batch'
       if PeriodicReportReportableFlag.exists?(user_id: user_id) || TwitterUser.where(uid: user.uid).where('created_at > ?', 3.hours.ago).exists?
-        logger.info "Don't create new record id=#{id} user_id=#{user_id}"
+        Airbag.info "Don't create new record id=#{id} user_id=#{user_id}"
       else
         create_new_twitter_user_record
       end
@@ -100,7 +100,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       @bm_perform[:elapsed] = elapsed
       @bm_perform.transform_values! { |v| sprintf("%.3f", v) }
 
-      Rails.logger.info "Benchmark CreatePeriodicReportRequest user_id=#{user_id} request_id=#{id} #{@bm_perform.inspect}"
+      Airbag.info "Benchmark CreatePeriodicReportRequest user_id=#{user_id} request_id=#{id} #{@bm_perform.inspect}"
 
       result
     end
@@ -122,10 +122,10 @@ class CreatePeriodicReportRequest < ApplicationRecord
       CreateTwitterUserRequest::SoftSuspended,
       CreateTwitterUserRequest::TemporarilyLocked,
       CreateTwitterUserRequest::NotChanged => e
-    logger.info "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
+    Airbag.info "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
   rescue => e
     # TODO Log backtraces if the error is CreateTwitterUserRequest::Unknown
-    logger.warn "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
+    Airbag.warn "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
   end
 
   def report_options_builder
@@ -213,7 +213,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
       if target_uids.size != users.size
         missing_uids = target_uids - users.map(&:uid)
-        Rails.logger.warn "#{self.class}##{__method__}: Import missing uids request=#{@request.slice(:id, :user_id, :requested_by, :created_at)} context=#{context} uids_size=#{target_uids.size} users_size=#{users.size} uids=#{target_uids} missing_uids=#{missing_uids}"
+        Airbag.warn "#{self.class}##{__method__}: Import missing uids request=#{@request.slice(:id, :user_id, :requested_by, :created_at)} context=#{context} uids_size=#{target_uids.size} users_size=#{users.size} uids=#{target_uids} missing_uids=#{missing_uids}"
         CreateHighPriorityTwitterDBUserWorker.perform_async(missing_uids, user_id: @request.user_id, enqueued_by: "#{self.class}##{__method__}")
 
         users = uids.map do |uid|
@@ -278,7 +278,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
       users
     rescue => e
-      Rails.logger.warn "#{self.class}##{__method__}: #{e.inspect} request=#{@request.inspect}"
+      Airbag.warn "#{self.class}##{__method__}: #{e.inspect} request=#{@request.inspect}"
       []
     end
   end

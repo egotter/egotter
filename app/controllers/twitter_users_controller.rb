@@ -60,8 +60,8 @@ class TwitterUsersController < ApplicationController
         end
       end
     rescue => e
-      Rails.logger.warn "#{self.class}##{__method__} #{e.inspect} #{previous_twitter_user&.id} #{current_twitter_user.id}"
-      Rails.logger.info e.backtrace.join("\n")
+      Airbag.warn "#{self.class}##{__method__} #{e.inspect} #{previous_twitter_user&.id} #{current_twitter_user.id}"
+      Airbag.info e.backtrace.join("\n")
       I18n.t('twitter_users.show.update_is_coming_with_error', user: screen_name)
     end
   end

@@ -8,7 +8,7 @@ module Api
       before_action :user_must_have_tweets, only: :index
 
       rescue_from StandardError do |e|
-        logger.warn "#{e.inspect} controller=#{controller_name} action=#{action_name} user_id=#{current_user&.id}"
+        Airbag.warn "#{e.inspect} controller=#{controller_name} action=#{action_name} user_id=#{current_user&.id}"
         render json: {message: t('.index.internal_server_error')}, status: :internal_server_error
       end
 

@@ -22,7 +22,7 @@ class DeleteFavoritesTask
     request.finished!
     SendDeleteFavoritesFinishedWorker.perform_async(request.id)
   rescue DeleteFavoritesRequest::InvalidToken => e
-    Rails.logger.info "#{e.inspect} request=#{request.inspect}"
+    Airbag.info "#{e.inspect} request=#{request.inspect}"
   rescue DeleteFavoritesRequest::RetryableError => e
     DeleteFavoritesWorker.perform_in(e.retry_in, request.id, @options)
   rescue => e

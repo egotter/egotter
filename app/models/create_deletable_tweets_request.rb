@@ -30,7 +30,7 @@ class CreateDeletableTweetsRequest < ApplicationRecord
   def save_tweets(tweets)
     DeletableTweet.import tweets, validate: false
   rescue => e
-    logger.warn "Stop bulk importing and save each tweet exception=#{e.inspect}"
+    Airbag.warn "Stop bulk importing and save each tweet exception=#{e.inspect}"
     tweets.each do |tweet|
       tweet.save if tweet.valid?
     end

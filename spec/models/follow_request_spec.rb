@@ -105,7 +105,7 @@ RSpec.describe FollowRequest, type: :model do
     end
 
     it do
-      expect(request.logger).to receive(:warn).with(any_args).and_call_original
+      expect(Airbag).to receive(:warn).with(any_args).and_call_original
       expect(subject).to be_falsey
     end
   end

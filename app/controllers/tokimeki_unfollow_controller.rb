@@ -7,7 +7,7 @@ class TokimekiUnfollowController < ApplicationController
     if TwitterApiStatus.unauthorized?(ex)
       redirect_to error_pages_twitter_error_unauthorized_path(via: current_via('unauthorized'))
     else
-      logger.warn "#{controller_name}##{action_name} #{current_user_id} #{ex.inspect}"
+      Airbag.warn "#{controller_name}##{action_name} #{current_user_id} #{ex.inspect}"
       redirect_to tokimeki_unfollow_top_path(via: current_via('something_error')), alert: unknown_alert_message(ex)
     end
   end

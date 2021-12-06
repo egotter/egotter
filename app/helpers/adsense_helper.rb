@@ -12,7 +12,7 @@ module AdsenseHelper
   def ad_ng_user?(user)
     user && (ad_ng_uid?(user.uid) || ad_ng_name?(user) || ad_ng_description?(user) || ad_ng_location?(user))
   rescue => e
-    logger.warn "#{__method__}: Unhandled exception #{e.inspect}"
+    Airbag.warn "#{__method__}: Unhandled exception #{e.inspect}"
     false
   end
 
@@ -255,7 +255,7 @@ module AdsenseHelper
     if slot
       slot
     else
-      logger.info "#{__method__}: Ad ID is not found #{user_signed_in?} #{controller} #{action} #{position} #{request.original_fullpath}"
+      Airbag.info "#{__method__}: Ad ID is not found #{user_signed_in?} #{controller} #{action} #{position} #{request.original_fullpath}"
       user_signed_in? ? USER_OTHERS : GUEST_OTHERS
     end
   end
@@ -560,7 +560,7 @@ module AdsenseHelper
     if slot
       slot
     else
-      logger.info "#{__method__}: Ad ID is not found #{user_signed_in?} #{controller} #{action} #{position} #{request.original_fullpath}"
+      Airbag.info "#{__method__}: Ad ID is not found #{user_signed_in?} #{controller} #{action} #{position} #{request.original_fullpath}"
       user_signed_in? ? USER_OTHERS_RESP : GUEST_OTHERS_RESP
     end
   end

@@ -34,7 +34,7 @@ module InMemory
     end
 
     def error_handler(method, e)
-      Rails.logger.info "InMemory::Client: Failed method=#{method} exception=#{e.inspect}"
+      Airbag.info "InMemory::Client: Failed method=#{method} exception=#{e.inspect}"
     end
 
     def timeout?(e)

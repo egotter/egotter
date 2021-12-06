@@ -22,7 +22,7 @@ class SlackMessage < ApplicationRecord
     response = properties['response']
     "https://egotter.slack.com/archives/#{response['channel']}/p#{response['ts'].remove('.')}"
   rescue => e
-    logger.warn "#{e.inspect} id=#{id}"
+    Airbag.warn "#{e.inspect} id=#{id}"
     nil
   end
 end

@@ -3,7 +3,7 @@ module Api
     class FriendsCountPointsController < ApplicationController
 
       rescue_from Rack::Timeout::RequestTimeoutException do |e|
-        logger.warn "#{e.message} user_id=#{current_user&.id} controller=#{controller_path} action=#{action_name}"
+        Airbag.warn "#{e.message} user_id=#{current_user&.id} controller=#{controller_path} action=#{action_name}"
         head :request_timeout unless performed?
       end
 

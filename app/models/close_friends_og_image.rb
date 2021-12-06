@@ -276,11 +276,11 @@ class CloseFriendsOgImage < ApplicationRecord
         sleep(rand(2) + 1)
         retry
       else
-        Rails.logger.info "#{self.class}##{__method__}: #{e.inspect} url=#{url}"
+        Airbag.info "#{self.class}##{__method__}: #{e.inspect} url=#{url}"
         ''
       end
     rescue => e
-      Rails.logger.info "#{self.class}##{__method__}: #{e.inspect} url=#{url}"
+      Airbag.info "#{self.class}##{__method__}: #{e.inspect} url=#{url}"
       ''
     end
 

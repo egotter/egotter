@@ -33,12 +33,12 @@ class WebhookController < ApplicationController
         ProcessWebhookEventForTweetCleanerWorker.perform_async(to_hash(event))
       end
     else
-      logger.info "#{controller_name}##{action_name}: Unhandled webhook event for_user_id=#{params[:for_user_id]}"
+      Airbag.info "#{controller_name}##{action_name}: Unhandled webhook event for_user_id=#{params[:for_user_id]}"
     end
 
     head :ok
   rescue => e
-    logger.warn "#{controller_name}##{action_name}: #{e.inspect}"
+    Airbag.warn "#{controller_name}##{action_name}: #{e.inspect}"
     head :ok
   end
 

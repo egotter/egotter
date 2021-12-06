@@ -66,16 +66,16 @@ module Logging
       end
     end
   rescue Encoding::UndefinedConversionError => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
   end
 
   def create_access_day
     # TODO Create a record synchronously as a workaround to "ThreadError: can't alloc thread"
     CreateAccessDayWorker.perform_async(current_user.id) if user_signed_in?
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} user_id=#{current_user.id}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} user_id=#{current_user.id}"
   end
 
   def create_error_log(location, message, ex = nil)
@@ -119,7 +119,7 @@ module Logging
 
     CreateSearchErrorLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
   end
 
   def create_crawler_log
@@ -140,7 +140,7 @@ module Logging
     }
     CreateCrawlerLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
   end
 
   def create_webhook_log
@@ -164,7 +164,7 @@ module Logging
 
     CreateWebhookLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
   end
 
   def track_page_order_activity(options = {})
@@ -174,14 +174,14 @@ module Logging
     }.merge(options).delete_if { |_, v| v.blank? }.presence
     ahoy.track('Order activity', properties)
   rescue => e
-    logger.warn "#{controller_name}##{action_name}: #{e.inspect} options=#{options}"
+    Airbag.warn "#{controller_name}##{action_name}: #{e.inspect} options=#{options}"
   end
 
   def track_webhook_order_activity
     properties = {path: request.path, id: params[:id], type: params[:type]}
     ahoy.track('Order activity', properties)
   rescue => e
-    logger.warn "#{action_name}: #{e.inspect}"
+    Airbag.warn "#{action_name}: #{e.inspect}"
   end
 
   # TODO Remove later
@@ -190,7 +190,7 @@ module Logging
     properties = {path: request.path, params: event_params}.merge(prop)
     ahoy.track('Order activity', properties)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} prop=#{prop}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} prop=#{prop}"
   end
 
   private

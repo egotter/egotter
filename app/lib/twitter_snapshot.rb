@@ -91,7 +91,7 @@ class TwitterSnapshot
   end
 
   def copy
-    Rails.logger.warn "#{self.class}##{__method__} is deprecated"
+    Airbag.warn "#{self.class}##{__method__} is deprecated"
     copy_attrs
   end
 

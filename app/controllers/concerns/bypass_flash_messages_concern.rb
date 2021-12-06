@@ -11,7 +11,7 @@ module BypassFlashMessagesConcern
           flash.now[:notice] = bypassed_notice_message
           @bypassed_notice_message_set = true
         rescue => e
-          logger.warn "Cannot create bypassed message for #{session[:bypassed_notice_message]} #{e.inspect} user_id=#{current_user&.id} controller=#{controller_name} action=#{action_name}"
+          Airbag.warn "Cannot create bypassed message for #{session[:bypassed_notice_message]} #{e.inspect} user_id=#{current_user&.id} controller=#{controller_name} action=#{action_name}"
         ensure
           session.delete(:bypassed_notice_message)
           session.delete(:bypassed_notice_message_params)
@@ -30,7 +30,7 @@ module BypassFlashMessagesConcern
     if BYPASSED_MESSAGE_KEYS.include?(key)
       session[:bypassed_notice_message] = key
     else
-      logger.warn "#{__method__}: invalid key value=#{key}"
+      Airbag.warn "#{__method__}: invalid key value=#{key}"
     end
   end
 

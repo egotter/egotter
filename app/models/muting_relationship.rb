@@ -31,13 +31,13 @@ class MutingRelationship < ApplicationRecord
         client.muted_ids(options)
       rescue => e
         unless TwitterApiStatus.invalid_or_expired_token?(e) || TwitterApiStatus.temporarily_locked?(e)
-          logger.warn "#{self}##{__method__}: #{e.inspect} user_id=#{user_id}"
+          Airbag.warn "#{self}##{__method__}: #{e.inspect} user_id=#{user_id}"
         end
         nil
       end
 
       if uids.size != uids.uniq.size
-        logger.warn "#{self}##{__method__}: uids is not unique"
+        Airbag.warn "#{self}##{__method__}: uids is not unique"
         uids.uniq!
       end
 

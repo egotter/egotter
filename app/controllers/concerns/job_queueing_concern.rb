@@ -37,7 +37,7 @@ module JobQueueingConcern
     end
 
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} uid=#{uid} user_id=#{user_id} controller_name=#{controller_name}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} uid=#{uid} user_id=#{user_id} controller_name=#{controller_name}"
   end
 
   # TODO Update the data as priority if the user searches for yourself
@@ -61,7 +61,7 @@ module JobQueueingConcern
 
     AssembleTwitterUserWorker.perform_async(request.id, requested_by: controller_name, debug_info: debug_info)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.inspect} twitter_user=#{twitter_user.inspect} controller_name=#{controller_name}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} twitter_user=#{twitter_user.inspect} controller_name=#{controller_name}"
   end
 
   def enqueue_update_authorized
@@ -77,7 +77,7 @@ module JobQueueingConcern
       user = current_user
       TwitterDBUsersUpdatedFlag.on([user.uid])
       CreateTwitterDBUserWorker.perform_async([user.uid], user_id: user.id, enqueued_by: current_via(__method__))
-      logger.info "CreateTwitterDBUserWorker is enqueued user_id=#{user.id} controller=#{controller_path} action=#{action_name}"
+      Airbag.info "CreateTwitterDBUserWorker is enqueued user_id=#{user.id} controller=#{controller_path} action=#{action_name}"
     end
   end
 

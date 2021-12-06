@@ -58,7 +58,7 @@ class PeriodicReportValidator
       @request.user.api_client.verify_credentials
       true
     rescue => e
-      logger.info "#{self.class}##{__method__} #{e.inspect} request=#{@request.inspect}"
+      Airbag.info "#{self.class}##{__method__} #{e.inspect} request=#{@request.inspect}"
       @request.update(status: 'unauthorized')
 
       false
@@ -101,7 +101,7 @@ class PeriodicReportValidator
 
       false
     rescue => e
-      logger.info "#{self.class}##{__method__} #{e.inspect} request=#{@request.inspect}"
+      Airbag.info "#{self.class}##{__method__} #{e.inspect} request=#{@request.inspect}"
       true
     end
 

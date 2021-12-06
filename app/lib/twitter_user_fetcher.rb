@@ -122,7 +122,7 @@ class TwitterUserFetcher
       @bm['elapsed'] = Time.zone.now - @start
       @bm.transform_values! { |v| sprintf("%.3f", v) }
 
-      Rails.logger.info "#{message} #{@bm.inspect}"
+      Airbag.info "#{message} #{@bm.inspect}"
     end
 
     private
@@ -140,7 +140,7 @@ class TwitterUserFetcher
           if TwitterApiStatus.too_many_requests?(e)
             @ids_client = Bot.api_client.twitter
             calls_count = 0
-            Rails.logger.info 'TwitterUserFetcher::ClientWrapper: Client is reloaded.'
+            Airbag.info 'TwitterUserFetcher::ClientWrapper: Client is reloaded.'
             retry
           else
             raise

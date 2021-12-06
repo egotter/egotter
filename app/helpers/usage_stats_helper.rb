@@ -34,7 +34,7 @@ module UsageStatsHelper
 
     t('searches.usage_stats.usage_time', user: tu.screen_name, total: total, avg: avg, level: level, url: usage_stat_url(screen_name: tu.screen_name))
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{stats.inspect} #{tu.inspect}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{stats.inspect} #{tu.inspect}"
     ''
   end
 end

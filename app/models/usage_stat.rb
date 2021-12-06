@@ -69,7 +69,7 @@ class UsageStat < ApplicationRecord
       mutual_friends_rate:       twitter_user.mutual_friends_rate
     }
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid}"
     Hash.new(0)
   end
 
@@ -104,7 +104,7 @@ class UsageStat < ApplicationRecord
       breakdown:              breakdown
     }
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid}"
     Hash.new(0)
   end
 

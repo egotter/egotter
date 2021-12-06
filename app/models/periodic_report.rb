@@ -206,7 +206,7 @@ class PeriodicReport < ApplicationRecord
 
       ttl = GlobalDirectMessageReceivedFlag.new.remaining(user.uid)
       if ttl.nil? || ttl <= 0
-        logger.warn "#{self}##{__method__} remaining ttl is nil or less than 0 user_id=#{user_id}"
+        Airbag.warn "#{self}##{__method__} remaining ttl is nil or less than 0 user_id=#{user_id}"
         ttl = 5.minutes + rand(300)
       end
 
@@ -438,7 +438,7 @@ class PeriodicReport < ApplicationRecord
       ].join('-')
 
     rescue => e
-      logger.warn "#{self}##{__method__} #{e.inspect} user_id=#{user.id}"
+      Airbag.warn "#{self}##{__method__} #{e.inspect} user_id=#{user.id}"
       "#{rand(10000)}-er"
     end
 
@@ -461,7 +461,7 @@ class PeriodicReport < ApplicationRecord
       when CreatePeriodicReportWorker.name
         'b'
       else
-        logger.info "worker_context_text: unknown context is passed value=#{context}"
+        Airbag.info "worker_context_text: unknown context is passed value=#{context}"
         'un'
       end
     end
@@ -607,7 +607,7 @@ class PeriodicReport < ApplicationRecord
         DirectMessageStatus.cannot_find_specified_user?(e)
       # Do nothing
     else
-      logger.warn "#{self.class}##{__method__} sending remind message is failed #{e.inspect} user_id=#{user_id}"
+      Airbag.warn "#{self.class}##{__method__} sending remind message is failed #{e.inspect} user_id=#{user_id}"
     end
   end
 

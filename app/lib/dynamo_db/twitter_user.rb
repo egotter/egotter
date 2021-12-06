@@ -28,7 +28,7 @@ module DynamoDB
         item = client.read(twitter_user_id).item
         item && item['json'] ? new(parse_json(decompress(item['json']))) : nil
       rescue => e
-        Rails.logger.warn "#{self}##{__method__} failed #{e.inspect}"
+        Airbag.warn "#{self}##{__method__} failed #{e.inspect}"
         nil
       end
 

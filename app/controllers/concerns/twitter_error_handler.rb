@@ -13,8 +13,8 @@ module TwitterErrorHandler
   private
 
   def handle_twitter_error_unauthorized(ex)
-    logger.warn "#{__method__} #{ex.class} #{ex.message.truncate(100)} #{request_details.inspect}"
-    logger.info ex.backtrace.join("\n")
+    Airbag.warn "#{__method__} #{ex.class} #{ex.message.truncate(100)} #{request_details.inspect}"
+    Airbag.info ex.backtrace.join("\n")
 
     if request.xhr?
       head :internal_server_error

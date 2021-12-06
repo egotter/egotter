@@ -3,7 +3,7 @@ require 'active_support/cache/redis_cache_store'
 
 class ApiClientCacheStore < ActiveSupport::Cache::RedisCacheStore
   ERROR_HANDLER = Proc.new do |method:, returning:, exception:|
-    Rails.logger.warn "ApiClient::CacheStore: #{method} failed, returned #{returning.inspect}: #{exception.class}: #{exception.message}"
+    Airbag.warn "ApiClient::CacheStore: #{method} failed, returned #{returning.inspect}: #{exception.class}: #{exception.message}"
   end
 
   def initialize

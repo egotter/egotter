@@ -61,7 +61,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     [user, context]
   rescue => e
-    logger.warn "##{__method__}: #{e.inspect} #{params.inspect}"
+    Airbag.warn "##{__method__}: #{e.inspect} #{params.inspect}"
     redirect_to error_pages_omniauth_failure_path(via: current_via('save_error'))
     [nil, nil]
   end

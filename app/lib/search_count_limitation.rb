@@ -51,7 +51,7 @@ class SearchCountLimitation
   def remaining_count
     [0, max_count - current_count].max
   rescue => e
-    Rails.logger.warn "##{__method__} Maybe invalid session_id class=#{@session_id.class} inspect=#{@session_id.inspect}"
+    Airbag.warn "##{__method__} Maybe invalid session_id class=#{@session_id.class} inspect=#{@session_id.inspect}"
     raise
   end
   memoize
@@ -90,8 +90,8 @@ class SearchCountLimitation
     else SHARING_BONUS + 3
     end
   rescue => e
-    Rails.logger.warn "##{__method__} #{e.inspect} user_id=#{@user&.id}"
-    Rails.logger.info e.backtrace.join("\n")
+    Airbag.warn "##{__method__} #{e.inspect} user_id=#{@user&.id}"
+    Airbag.info e.backtrace.join("\n")
     SHARING_BONUS
   end
   memoize

@@ -28,7 +28,7 @@ module DynamoDB
         tweets = item && item['json'] ? parse_json(decompress(item['json'])) : nil
         tweets ? array_from(tweets[:tweets]) : []
       rescue => e
-        Rails.logger.warn "#{self}##{__method__} failed #{e.inspect}"
+        Airbag.warn "#{self}##{__method__} failed #{e.inspect}"
         []
       end
 

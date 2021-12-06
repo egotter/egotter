@@ -35,7 +35,7 @@ class PublicTweetsController < ApplicationController
       []
     end
   rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message} #{keyword}"
+    Airbag.warn "#{__method__}: #{e.class} #{e.message} #{keyword}"
     []
   end
 end

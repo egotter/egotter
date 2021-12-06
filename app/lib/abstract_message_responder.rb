@@ -15,7 +15,7 @@ class AbstractMessageResponder
 
     false
   rescue => e
-    Rails.logger.warn e.inspect
+    Airbag.warn e.inspect
     false
   end
 

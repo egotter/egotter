@@ -110,7 +110,7 @@ class User < ApplicationRecord
 
       user
     rescue => e
-      logger.warn "#{self}##{__method__}: #{e.class} #{e.message} #{e.respond_to?(:record) ? e.record.inspect : 'NONE'} #{values.inspect}"
+      Airbag.warn "#{self}##{__method__}: #{e.class} #{e.message} #{e.respond_to?(:record) ? e.record.inspect : 'NONE'} #{values.inspect}"
       raise e
     end
 
@@ -190,14 +190,14 @@ class User < ApplicationRecord
         elsif req.class == UnfollowRequest
           uids.subtract([req.uid])
         else
-          logger.warn "#{__method__} Invalid #{req.inspect}"
+          Airbag.warn "#{__method__} Invalid #{req.inspect}"
         end
       end
 
       @current_friend_uids = uids.to_a
     end
   rescue => e
-    logger.warn "#{__method__} #{e.class} #{e.message}"
+    Airbag.warn "#{__method__} #{e.class} #{e.message}"
     []
   end
 

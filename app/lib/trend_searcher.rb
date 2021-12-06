@@ -28,7 +28,7 @@ class TrendSearcher
   CLIENT_LOADER = Proc.new do
     User.api_client.tap { |c| c.twitter.verify_credentials }
   rescue => e
-    Rails.logger.info "Change client exception=#{e.inspect}"
+    Airbag.info "Change client exception=#{e.inspect}"
     Bot.api_client
   end
 
@@ -79,12 +79,12 @@ class TrendSearcher
     end
 
     def id
-      Rails.logger.warn '#id is deprecated'
+      Airbag.warn '#id is deprecated'
       tweet_id
     end
 
     def created_at
-      Rails.logger.warn '#created_at is deprecated'
+      Airbag.warn '#created_at is deprecated'
       tweeted_at
     end
 

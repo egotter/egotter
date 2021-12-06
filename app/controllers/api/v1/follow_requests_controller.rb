@@ -6,7 +6,7 @@ module Api
       before_action :require_login!
       before_action do
         unless valid_uid?(params[:uid], only_validation: true)
-          logger.warn "#{controller_name}##{action_name}: invalid uid value=#{params[:uid]} referer=#{request.referer}"
+          Airbag.warn "#{controller_name}##{action_name}: invalid uid value=#{params[:uid]} referer=#{request.referer}"
           render json: {message: t('.create.invalid_uid')}, status: :bad_request
         end
       end

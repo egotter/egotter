@@ -56,7 +56,7 @@ class TwitterUserDecorator < ApplicationDecorator
       location
     end
   rescue => e
-    logger.warn "#{__method__}: Unhandled exception #{e.inspect} location=#{location}"
+    Airbag.warn "#{__method__}: Unhandled exception #{e.inspect} location=#{location}"
     location
   end
 
@@ -87,7 +87,7 @@ class TwitterUserDecorator < ApplicationDecorator
       description
     end
   rescue => e
-    logger.warn "#{__method__}: Unhandled exception #{e.inspect} description=#{description}"
+    Airbag.warn "#{__method__}: Unhandled exception #{e.inspect} description=#{description}"
     description
   end
 
@@ -304,7 +304,7 @@ class TwitterUserDecorator < ApplicationDecorator
       name
     end
   rescue => e
-    logger.warn "#{__method__}: Unhandled exception #{e.inspect} name=#{name}"
+    Airbag.warn "#{__method__}: Unhandled exception #{e.inspect} name=#{name}"
     name
   end
 

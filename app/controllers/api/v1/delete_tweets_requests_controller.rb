@@ -46,7 +46,7 @@ module Api
       def track_event(request)
         ahoy.track('Delete tweets', request_id: request.id)
       rescue => e
-        logger.warn "#{self.class}##{__method__}: #{e.inspect} request=#{request.inspect}"
+        Airbag.warn "#{self.class}##{__method__}: #{e.inspect} request=#{request.inspect}"
       end
 
       module MessageHelper

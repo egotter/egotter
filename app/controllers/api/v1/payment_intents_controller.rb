@@ -21,10 +21,10 @@ module Api
         if intent.succeeded?
           response_json = {message: t('.already_succeeded', url: support_url)}
         elsif intent.canceled?
-          logger.warn "Canceled PaymentIntent is selected payment_intent_id=#{intent.id}"
+          Airbag.warn "Canceled PaymentIntent is selected payment_intent_id=#{intent.id}"
           response_json = {message: t('.already_canceled', url: support_url)}
         elsif intent.payment_status == 'succeeded'
-          logger.warn "Succeeded PaymentIntent is selected payment_intent_id=#{intent.id}"
+          Airbag.warn "Succeeded PaymentIntent is selected payment_intent_id=#{intent.id}"
           response_json = {message: t('.success', url: support_url)}
         elsif intent.payment_status == 'requires_action'
           response_json = {message: t('.transfer_destination_account_html', {url: support_url}.merge(intent.transfer_destination_account))}
@@ -44,10 +44,10 @@ module Api
           SlackMessage.create(channel: 'orders_pi_created', message: message)
           SendMessageToSlackWorker.perform_async(:orders_pi_created, "`#{Rails.env}` #{message}")
         else
-          logger.warn "#{controller_name}##{action_name}: StripePaymentIntent is not found user_id=#{current_user.id}"
+          Airbag.warn "#{controller_name}##{action_name}: StripePaymentIntent is not found user_id=#{current_user.id}"
         end
       rescue => e
-        logger.warn "#{controller_name}##{action_name}: #{e.inspect} stripe_payment_intent=#{@intent&.inspect}"
+        Airbag.warn "#{controller_name}##{action_name}: #{e.inspect} stripe_payment_intent=#{@intent&.inspect}"
       end
 
       module MessageHelper

@@ -69,7 +69,7 @@ class CreateTwitterDBUsersTask
   end
 
   def import_suspended_users(uids)
-    Rails.logger.info "Import suspended uids size=#{uids.size} ids=#{uids.inspect}"
+    Airbag.info "Import suspended uids size=#{uids.size} ids=#{uids.inspect}"
     users = uids.map { |uid| Hashie::Mash.new(id: uid, screen_name: 'suspended', description: '') }
     users = reject_persisted_users(users)
     TwitterDB::User.import_by!(users: users) if users.any?
@@ -78,21 +78,21 @@ class CreateTwitterDBUsersTask
   # Note: This query uses the index on uid instead of the index on updated_at.
   def reject_fresh_uids(uids)
     fresh_uids = TwitterDB::User.where(uid: uids).where('updated_at > ?', 6.hours.ago).pluck(:uid)
-    Rails.logger.info "Reject fresh uids passed=#{uids.size} persisted=#{fresh_uids.size}"
+    Airbag.info "Reject fresh uids passed=#{uids.size} persisted=#{fresh_uids.size}"
     uids.reject { |uid| fresh_uids.include? uid }
   end
 
   # Note: This query uses the index on uid instead of the index on updated_at.
   def reject_fresh_users(users)
     persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }).where('updated_at > ?', 6.hours.ago).pluck(:uid)
-    Rails.logger.info "Reject fresh users passed=#{users.size} persisted=#{persisted_uids.size}"
+    Airbag.info "Reject fresh users passed=#{users.size} persisted=#{persisted_uids.size}"
     users.reject { |user| persisted_uids.include? user[:id] }
   end
 
   def reject_persisted_users(users)
     # Note: This query uses the index on uid instead of the index on updated_at.
     persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }).pluck(:uid)
-    Rails.logger.info "Reject persisted users passed=#{users.size} persisted=#{persisted_uids.size}"
+    Airbag.info "Reject persisted users passed=#{users.size} persisted=#{persisted_uids.size}"
     users.reject { |user| persisted_uids.include? user[:id] }
   end
 

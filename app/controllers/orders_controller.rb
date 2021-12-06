@@ -14,7 +14,7 @@ class OrdersController < ApplicationController
       redirect_to orders_failure_path(via: 'order_not_found', stripe_session_id: params[:stripe_session_id])
     end
   rescue => e
-    logger.warn "#{controller_name}##{action_name}: #{e.inspect} checkout_session_id=#{params[:stripe_session_id]}"
+    Airbag.warn "#{controller_name}##{action_name}: #{e.inspect} checkout_session_id=#{params[:stripe_session_id]}"
     redirect_to orders_failure_path(via: 'internal_error', stripe_session_id: params[:stripe_session_id])
   end
 
@@ -35,7 +35,7 @@ class OrdersController < ApplicationController
     process_webhook_event(event)
     head :ok
   rescue => e
-    logger.warn "#{controller_name}##{action_name} #{e.inspect} event_id=#{event.data}"
+    Airbag.warn "#{controller_name}##{action_name} #{e.inspect} event_id=#{event.data}"
     head :bad_request
   end
 
@@ -58,7 +58,7 @@ class OrdersController < ApplicationController
     when 'payment_intent.succeeded'
       process_payment_intent_succeeded(event)
     else
-      logger.info "Unhandled stripe webhook event type=#{event.type} value=#{event.inspect}"
+      Airbag.info "Unhandled stripe webhook event type=#{event.type} value=#{event.inspect}"
     end
   end
 
@@ -94,7 +94,7 @@ class OrdersController < ApplicationController
     SlackMessage.create(channel: channel, message: message)
     SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{message}")
   rescue => e
-    logger.warn "#{action_name}##{__method__}: #{e.inspect} channel=#{channel} options=#{options.inspect}"
+    Airbag.warn "#{action_name}##{__method__}: #{e.inspect} channel=#{channel} options=#{options.inspect}"
   end
 
   def set_stripe_checkout_session

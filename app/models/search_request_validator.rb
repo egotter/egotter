@@ -24,7 +24,7 @@ class SearchRequestValidator
           @client.user_timeline(screen_name, count: 1)
         end
       rescue Timeout::Error => e
-        logger.info { "#{self.class}##{__method__} timeout screen_name=#{screen_name}" }
+        Airbag.info { "#{self.class}##{__method__} timeout screen_name=#{screen_name}" }
       end
     end
 
@@ -48,7 +48,7 @@ class SearchRequestValidator
           @client.user_timeline(screen_name, count: 1)
         end
       rescue Timeout::Error => e
-        logger.info { "#{self.class}##{__method__} timeout screen_name=#{screen_name}" }
+        Airbag.info { "#{self.class}##{__method__} timeout screen_name=#{screen_name}" }
       end
     end
 
