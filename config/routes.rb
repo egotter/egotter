@@ -303,13 +303,11 @@ Rails.application.routes.draw do
 
   namespace :api, {format: 'json'} do
     namespace :v1 do
-      get 'report_stats', to: 'report_stats#index'
       get 'access_stats', to: 'access_stats#index'
     end
   end
 
   get 'app_stats', to: 'app_stats#index'
-  get 'access_stats', to: 'access_stats#index'
 
   require 'sidekiq/web'
   if Rails.env.production?

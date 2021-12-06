@@ -1,3 +1,33 @@
+<% title '0 0 0' %>
+
+<div class="h1">
+  Total <span id="total-count">0</span>
+  Mobile <span id="mobile-count">0</span>
+  Desktop <span id="desktop-count">0</span>
+</div>
+<div class="h1">
+</div>
+<div class="h1">
+</div>
+
+<script>
+  function updateView() {
+    var url = '<%= raw api_v1_access_stats_path(key: ENV['STATS_API_KEY']) %>';
+    $.get(url, function (res) {
+      console.log(res);
+      $('#total-count').text(res['total']);
+      $('#mobile-count').text(res['mobile']);
+      $('#desktop-count').text(res['desktop']);
+      $('title').text(res['desktop'] + ' ' + res['mobile'] + ' ' + res['desktop']);
+    });
+  }
+
+  $(function () {
+    updateView();
+    setInterval(updateView, 10 * 1000);
+  });
+</script>
+
 <%= raw AppStat.new.to_s.gsub("\n", '<br>') %>
 
 <div id="day-chart" class="my-5" style="height: 100px;"></div>
