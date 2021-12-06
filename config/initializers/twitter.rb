@@ -19,7 +19,6 @@ module Egotter
       def unfollow(*args)
         super
       ensure
-        CallDestroyFriendshipCount.new.increment
         CreateTwitterApiLogWorker.perform_async(name: __method__)
       end
 
