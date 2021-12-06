@@ -51,7 +51,7 @@ class AppStat
       unfollow_count = TwitterApiLog.where('created_at > ?', 1.day.ago).where(name: 'unfollow').size
 
       [
-          "user_timeline #{CallUserTimelineCount.new.size} (#{timeline_count})",
+          "user_timeline #{timeline_count}",
           "follow! #{CallCreateFriendshipCount.new.size} (#{follow_count}) (400 per user; 1000 per app)",
           "unfollow #{CallDestroyFriendshipCount.new.size} (#{unfollow_count}) (800 - 900 per day)",
       ].join("\n")

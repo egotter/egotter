@@ -26,7 +26,6 @@ module Egotter
       def user_timeline(*args)
         super
       ensure
-        CallUserTimelineCount.new.increment
         CreateTwitterApiLogWorker.perform_async(name: __method__)
       end
 
