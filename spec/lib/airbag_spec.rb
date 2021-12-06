@@ -14,13 +14,13 @@ RSpec.describe Airbag, type: :model do
   end
 
   describe '.log' do
+    let(:logger) { double('logger') }
     let(:level) { 'level' }
     let(:message) { 'abc' }
     subject { described_class.log(level, message) }
+    before { allow(described_class).to receive(:logger).and_return(logger) }
     it do
-      expect(Rails.logger).to receive(:add).with(level) do |*args, &blk|
-        expect(blk.call).to eq("[Airbag] #{message}")
-      end
+      expect(logger).to receive(:add).with(level, message)
       subject
     end
   end
