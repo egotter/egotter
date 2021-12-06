@@ -11,11 +11,11 @@ RSpec.describe TwitterUserUtils do
     end
 
     context 'twitter_user is persisted' do
-      before do
-        twitter_user.save!
-        twitter_user.instance_variable_set(:@persisted_friend_uids, 'result')
+      before { twitter_user.save! }
+      it do
+        expect(twitter_user).to receive(:fetch_uids).with(:friend_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Friendship).and_return('result')
+        is_expected.to eq('result')
       end
-      it { is_expected.to eq('result') }
     end
   end
 
@@ -27,27 +27,11 @@ RSpec.describe TwitterUserUtils do
     end
 
     context 'twitter_user is persisted' do
-      before do
-        twitter_user.save!
-        twitter_user.instance_variable_set(:@persisted_follower_uids, 'result')
+      before { twitter_user.save! }
+      it do
+        expect(twitter_user).to receive(:fetch_uids).with(:follower_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Followership).and_return('result')
+        is_expected.to eq('result')
       end
-      it { is_expected.to eq('result') }
-    end
-  end
-
-  describe '#fetch_friend_uids' do
-    subject { twitter_user.send(:fetch_friend_uids) }
-    it do
-      expect(twitter_user).to receive(:fetch_uids).with(:friend_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Friendship)
-      subject
-    end
-  end
-
-  describe '#fetch_follower_uids' do
-    subject { twitter_user.send(:fetch_follower_uids) }
-    it do
-      expect(twitter_user).to receive(:fetch_uids).with(:follower_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Followership)
-      subject
     end
   end
 

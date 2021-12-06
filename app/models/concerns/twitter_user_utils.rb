@@ -21,7 +21,7 @@ module TwitterUserUtils
     if instance_variable_defined?(:@persisted_friend_uids)
       @persisted_friend_uids
     else
-      @persisted_friend_uids = fetch_friend_uids
+      @persisted_friend_uids = fetch_uids(:friend_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Friendship)
     end
   end
 
@@ -33,7 +33,7 @@ module TwitterUserUtils
     if instance_variable_defined?(:@persisted_follower_uids)
       @persisted_follower_uids
     else
-      @persisted_follower_uids = fetch_follower_uids
+      @persisted_follower_uids = fetch_uids(:follower_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Followership)
     end
   end
 
@@ -66,14 +66,6 @@ module TwitterUserUtils
   end
 
   private
-
-  def fetch_friend_uids
-    fetch_uids(:friend_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Friendship)
-  end
-
-  def fetch_follower_uids
-    fetch_uids(:follower_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Followership)
-  end
 
   def fetch_uids(method_name, memory_class, efs_class, s3_class)
     data = nil
