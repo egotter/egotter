@@ -19,20 +19,23 @@ class Airbag
     MX = Mutex.new
 
     def logger
-      MX.synchronize do
-        unless @logger
-          @logger = ActiveSupport::Logger.new('log/airbag.log')
-          @logger.level = Logger::INFO
-          @logger.datetime_format = '%Y-%m-%d %H:%M:%S'
-          @logger.formatter = Proc.new do |severity, timestamp, _, msg|
-            "[#{timestamp}] #{severity} -- [Airbag] #{msg}\n"
-          end
-
-          app_logger = Sidekiq.server? ? Sidekiq.logger : Rails.logger
-          @logger.extend ActiveSupport::Logger.broadcast(app_logger)
+      unless @logger
+        MX.synchronize do
+          @logger = Logger.new
         end
       end
       @logger
+    end
+  end
+
+  class Logger < ::Logger
+    def initialize
+      super('log/airbag.log')
+      self.level = Logger::INFO
+      self.datetime_format = '%Y-%m-%d %H:%M:%S'
+      self.formatter = Proc.new do |severity, timestamp, _, msg|
+        "#{severity[0]}, [#{timestamp}] #{severity} -- [Airbag] #{msg}\n"
+      end
     end
   end
 end
