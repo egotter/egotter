@@ -125,7 +125,7 @@ class ApiClient
         if options[:cache_store] == :null_store
           options[:cache_store] = ActiveSupport::Cache::NullStore.new
         else
-          options[:cache_store] = ApiClientCacheStore.new
+          options[:cache_store] = ApiClientCacheStore.instance
         end
         client = TwitterWithAutoPagination::Client.new(config(options))
       end

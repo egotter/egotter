@@ -36,7 +36,7 @@ class AppStat
       [
           ['Base', RedisClient.new],
           ['InMemory', RedisClient.new(host: ENV['IN_MEMORY_REDIS_HOST'])],
-          ['ApiCache', ApiClientCacheStore.redis]
+          ['ApiCache', ApiClientCacheStore.instance.redis]
       ].map do |name, client|
         info = client.info rescue {}
         "#{name} used=#{info['used_memory_rss_human']} peak=#{info['used_memory_peak_human']} total=#{info['total_system_memory_human']}"
