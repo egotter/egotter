@@ -816,7 +816,7 @@ class PeriodicReport < ApplicationRecord
 
     def send_report_limited?(uid)
       !GlobalDirectMessageReceivedFlag.new.exists?(uid) &&
-          GlobalDirectMessageLimitation.new.limited?
+          DirectMessageLimitedFlag.on?
     end
   end
 end

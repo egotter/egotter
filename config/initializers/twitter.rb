@@ -29,9 +29,9 @@ module Egotter
         recipient_uid = dig_recipient_uid(args)
 
         if !GlobalDirectMessageReceivedFlag.new.exists?(recipient_uid) &&
-            GlobalDirectMessageLimitation.new.limited?
+            DirectMessageLimitedFlag.on?
           message_text = dig_message_text(args).inspect.truncate(100)
-          error_message = "Sending DMs is rate-limited start_time=#{GlobalDirectMessageLimitation.new.limit_started_at} text=#{message_text}"
+          error_message = "Sending DMs is rate-limited remaining=#{DirectMessageLimitedFlag.remaining} text=#{message_text}"
           raise ::Twitter::Error::EnhanceYourCalm.new(error_message)
         end
 
@@ -39,7 +39,7 @@ module Egotter
         begin
           result = super
         rescue ::Twitter::Error::EnhanceYourCalm => e
-          GlobalDirectMessageLimitation.new.limit_start
+          DirectMessageLimitedFlag.on
           raise
         end
 
