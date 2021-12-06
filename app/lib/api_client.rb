@@ -42,9 +42,9 @@ class ApiClient
     update_blocker_status(e)
 
     if e.class == ApiClient::RetryExhausted
-      Rails.logger.warn "Sending DM failed method=#{__method__} user_id=#{@user&.id} event=#{event.inspect}"
+      failed_dm = DirectMessageWrapper.from_event(event)
+      Rails.logger.warn "Sending DM failed method=#{__method__} user_id=#{@user&.id} recipient_id=#{failed_dm.recipient_id} message=#{failed_dm.text&.truncate(100)}"
       begin
-        failed_dm = DirectMessageWrapper.from_event(event)
         if failed_dm.recipient_id != User::EGOTTER_UID
           twitter.create_direct_message_event(failed_dm.recipient_id, I18n.t('short_messages.recovery_message'))
         end
