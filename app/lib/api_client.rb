@@ -212,7 +212,7 @@ class ApiClient
         if @retries > MAX_RETRIES
           raise RetryExhausted.new("#{e.inspect} method=#{@method} retries=#{@retries}")
         else
-          Rails.logger.info "RequestWithRetryHandler#perform: This error is retryable. error=#{e.class} method=#{@method}"
+          Airbag.info { "RequestWithRetryHandler#perform: This error is retryable. error=#{e.class} method=#{@method}" }
         end
       else
         raise e

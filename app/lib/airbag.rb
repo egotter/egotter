@@ -1,10 +1,18 @@
 class Airbag
   class << self
+    def info(message = nil, &block)
+      log(Logger::INFO, message, &block)
+    end
+
     def warn(message = nil, &block)
+      log(Logger::WARN, message, &block)
+    end
+
+    def log(level, message = nil, &block)
       if block_given?
-        logger.warn { "[Airbag] #{yield}" }
+        logger.add(level) { "[Airbag] #{yield}" }
       else
-        logger.warn { "[Airbag] #{message}" }
+        logger.add(level) { "[Airbag] #{message}" }
       end
     end
 
