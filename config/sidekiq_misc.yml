@@ -22,7 +22,6 @@
   - report_high
   - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
-  - CreateTwitterDBUserForRetryingDeadlockWorker
   - ImportTwitterDBUserWorker
   - report_low
   - retry_low

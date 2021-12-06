@@ -15,15 +15,14 @@
   - creating_low
   - deleting_low
   - report_high
+  - AssembleTwitterUserWorker
   - CreateHighPriorityTwitterUserWorker
   - CreateSignedInTwitterUserWorker
   - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
-  - CreateTwitterDBUserForRetryingDeadlockWorker
   - ImportTwitterDBUserWorker
   - CreateTwitterUserWorker
   - CreateReportTwitterUserWorker
-  - AssembleTwitterUserWorker
   - WriteToS3Worker
   - follow
   - unfollow

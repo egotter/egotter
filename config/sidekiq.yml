@@ -8,13 +8,12 @@
   - <%= 'WORKER_' + ENV.fetch("WORKER_INDEX") { "NOINDEX" } %>
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
+  - AssembleTwitterUserWorker
   - CreateHighPriorityTwitterUserWorker
   - CreateSignedInTwitterUserWorker
   - CreateTwitterUserWorker
-  - AssembleTwitterUserWorker
   - WriteToS3Worker
   - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
-  - CreateTwitterDBUserForRetryingDeadlockWorker
   - ImportTwitterDBUserWorker
   - CreateReportTwitterUserWorker
