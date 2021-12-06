@@ -1,3 +1,5 @@
+require 'singleton'
+
 class Airbag
   class << self
     def info(message = nil, &block)
@@ -16,19 +18,14 @@ class Airbag
       end
     end
 
-    MX = Mutex.new
-
     def logger
-      unless @logger
-        MX.synchronize do
-          @logger = Logger.new
-        end
-      end
-      @logger
+      @logger ||= Logger.instance
     end
   end
 
   class Logger < ::Logger
+    include Singleton
+
     def initialize
       super('log/airbag.log')
       self.level = Logger::INFO
