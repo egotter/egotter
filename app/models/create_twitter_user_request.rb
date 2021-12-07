@@ -218,44 +218,6 @@ class CreateTwitterUserRequest < ApplicationRecord
     @client ||= user ? user.api_client : Bot.api_client
   end
 
-  module Instrumentation
-    %i(
-      fetch_user
-      build_snapshot
-      fetch_relations
-      diff_values_empty?
-      save_twitter_user
-    ).each do |method_name|
-      define_method(method_name) do |*args, &blk|
-        bm_perform(method_name) { method(method_name).super_method.call(*args, &blk) }
-      end
-    end
-
-    def bm_perform(message, &block)
-      start = Time.zone.now
-      result = yield
-      @bm_perform[message] = Time.zone.now - start if @bm_perform
-      result
-    end
-
-    def perform!(*args, &blk)
-      @bm_perform = {}
-      start = Time.zone.now
-
-      result = super
-
-      elapsed = Time.zone.now - start
-      @bm_perform['sum'] = @bm_perform.values.sum
-      @bm_perform['elapsed'] = elapsed
-      @bm_perform.transform_values! { |v| sprintf("%.3f", v) }
-
-      Airbag.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{@bm_perform.inspect}"
-
-      result
-    end
-  end
-  prepend Instrumentation
-
   class Error < StandardError; end
 
   class Unauthorized < Error; end
