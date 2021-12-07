@@ -71,7 +71,7 @@ def main(twitter_user_id)
   user = TwitterUser.find_by(id: twitter_user_id) || TwitterUser.last
   prev_user = user.previous_version
 
-  puts "twitter_user_id=#{user.id} uid=#{user.uid} screen_name=#{user.screen_name} records=#{TwitterUser.where(uid: user.uid).size}"
+  puts "twitter_user_id=#{user.id} uid=#{user.uid} screen_name=#{user.screen_name} records=#{TwitterUser.where(uid: user.uid).size} created_at=[#{user.created_at.to_s(:db)}]"
   puts ''
   check(user)
 end
