@@ -120,22 +120,4 @@ class SearchCountLimitation
         end
     condition.merge(created_at: SEARCH_COUNT_PERIOD.seconds.ago..Time.zone.now)
   end
-
-  module Instrumentation
-    %i(
-        max_count
-        remaining_count
-        count_remaining?
-        current_count
-        count_reset_in
-        current_sharing_bonus
-      ).each do |method_name|
-      define_method(method_name) do |*args, &blk|
-        ApplicationRecord.benchmark("Benchmark #{self.class}##{method_name}", level: :info) do
-          method(method_name).super_method.call(*args, &blk)
-        end
-      end
-    end
-  end
-  prepend Instrumentation
 end
