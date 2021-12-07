@@ -28,21 +28,5 @@ module S3
         super("class=#{klass} method=#{method}")
       end
     end
-
-    module Instrumentation
-      %i(
-        read
-        write
-        delete
-      ).each do |method_name|
-        define_method(method_name) do |*args, &blk|
-          message = "#{@klass} #{method_name} by #{args[0]}"
-          ApplicationRecord.benchmark(message, level: :info) do
-            method(method_name).super_method.call(*args, &blk)
-          end
-        end
-      end
-    end
-    prepend Instrumentation
   end
 end
