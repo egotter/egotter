@@ -25,6 +25,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
 
     before do
       allow(User).to receive(:find).with(user.id).and_return(user)
+      allow(PeriodicReport).to receive(:send_report_limited?).with(user.uid).and_return(false)
     end
 
     it do

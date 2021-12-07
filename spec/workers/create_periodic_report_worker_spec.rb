@@ -51,6 +51,7 @@ RSpec.describe CreatePeriodicReportWorker do
 
   describe '#perform' do
     subject { worker.perform(request.id, {}) }
+    before { allow(PeriodicReport).to receive(:send_report_limited?).with(user.uid).and_return(false) }
 
     it do
       expect(worker).to receive(:do_perform).with(request, {})
