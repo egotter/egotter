@@ -20,11 +20,9 @@ class EgotterFollower < ApplicationRecord
 
   class << self
     def collect_uids(uid = User::EGOTTER_UID)
-      benchmark("collect_uids uid=#{uid}") do
-        collect_with_max_id do |options|
-          client = Bot.api_client.twitter
-          client.follower_ids(uid, options)
-        end
+      collect_with_max_id do |options|
+        client = Bot.api_client.twitter
+        client.follower_ids(uid, options)
       end
     end
 
@@ -50,36 +48,20 @@ class EgotterFollower < ApplicationRecord
     def import_uids(uids)
       uids.each_slice(1000).with_index do |uids_array, i|
         time = Time.zone.now
-        data = uids_array.map { |uid| [uid, time, time] }
-        benchmark("import_uids chunk=#{i} uids=#{uids_array.size}") do
-          if where(uid: uids_array).size != uids_array.size
-            import %i(uid created_at updated_at), data, on_duplicate_key_update: %i(uid updated_at), validate: false, timestamps: false
-          end
+        if where(uid: uids_array).size != uids_array.size
+          data = uids_array.map { |uid| [uid, time, time] }
+          import %i(uid created_at updated_at), data, on_duplicate_key_update: %i(uid updated_at), validate: false, timestamps: false
         end
       end
     end
 
     def filter_unnecessary_uids(uids)
-      benchmark("filter_unnecessary_uids uids=#{uids.size}") do
-        pluck(:uid) - uids
-      end
+      pluck(:uid) - uids
     end
 
     def delete_uids(uids)
       uids.each_slice(1000).with_index do |uids_array, i|
-        benchmark("delete_uids chunk=#{i} uids=#{uids_array.size}") do
-          where(uid: uids_array).delete_all
-        end
-      end
-    end
-
-    def benchmark(message, &block)
-      super(message) do
-        if Rails.env.production?
-          Rails.logger.silence(&block)
-        else
-          yield
-        end
+        where(uid: uids_array).delete_all
       end
     end
   end

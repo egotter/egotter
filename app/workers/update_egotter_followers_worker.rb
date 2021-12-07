@@ -22,19 +22,11 @@ class UpdateEgotterFollowersWorker
 
   # options:
   def perform(options = {})
-    uids = benchmark('collect_uids') { EgotterFollower.collect_uids }
-    benchmark('import_uids') { EgotterFollower.import_uids(uids) }
-    uids = benchmark('filter_unnecessary_uids') { EgotterFollower.filter_unnecessary_uids(uids) }
-    benchmark('delete_uids') { EgotterFollower.delete_uids(uids) }
+    uids = EgotterFollower.collect_uids
+    EgotterFollower.import_uids(uids)
+    uids = EgotterFollower.filter_unnecessary_uids(uids)
+    EgotterFollower.delete_uids(uids)
   rescue => e
     handle_worker_error(e, **options)
-  end
-
-  private
-
-  def benchmark(message, &block)
-    ApplicationRecord.benchmark("Benchmark UpdateEgotterFollowersWorker #{message}", level: :info) do
-      yield
-    end
   end
 end
