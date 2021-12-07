@@ -1,5 +1,4 @@
-# -*- SkipSchemaAnnotations
-
+# TODO Remove later
 module Efs
   class FavoriteTweet < Tweet
     class << self

@@ -1,62 +1,70 @@
 require 'rails_helper'
 
 RSpec.describe Efs::TwitterUser do
-  let(:client) { spy('client') }
-
-  before do
-    allow(described_class).to receive(:cache_client).and_return(client)
-  end
-
   describe '.find_by' do
     let(:twitter_user_id) { 123 }
-    let(:cache_key) { "efs_twitter_user_cache:#{twitter_user_id}" }
-    let(:twitter_user) { attributes_for(:twitter_user, with_relations: false) }
-    let(:read_result) { Zlib::Deflate.deflate(twitter_user.to_json) }
     subject { described_class.find_by(twitter_user_id) }
 
-    before { allow(client).to receive(:read).with(cache_key).and_return(read_result) }
-
     it do
-      is_expected.to satisfy do |result|
-        result.uid == twitter_user[:uid] &&
-            result.screen_name == twitter_user[:screen_name] &&
-            result.profile == twitter_user[:profile] &&
-            result.friend_uids == twitter_user[:friend_uids] &&
-            result.follower_uids == twitter_user[:follower_uids]
-      end
+      expect(described_class.client).to receive(:read).with(twitter_user_id).and_return('raw_data')
+      expect(described_class).to receive(:unpack).with('raw_data').and_return('data')
+      expect(described_class).to receive(:new).with('data')
+      subject
     end
   end
 
   describe '.delete_by' do
     let(:twitter_user_id) { 123 }
-    let(:cache_key) { "efs_twitter_user_cache:#{twitter_user_id}" }
     subject { described_class.delete_by(twitter_user_id) }
     it do
-      expect(client).to receive(:delete).with(cache_key)
+      expect(described_class.client).to receive(:delete).with(twitter_user_id)
+      subject
+    end
+  end
+
+  describe '.exists?' do
+    let(:twitter_user_id) { 123 }
+    subject { described_class.exists?(twitter_user_id) }
+    it do
+      expect(described_class.client).to receive(:exist?).with(twitter_user_id)
       subject
     end
   end
 
   describe '.import_from!' do
-    let(:twitter_user) { create(:twitter_user) }
-    let(:cache_key) { "efs_twitter_user_cache:#{twitter_user.id}" }
-    let(:payload) do
+    let(:twitter_user_id) { 123 }
+    let(:data) do
       {
-          twitter_user_id: twitter_user.id,
-          uid: twitter_user.uid,
-          screen_name: twitter_user.screen_name,
+          twitter_user_id: twitter_user_id,
+          uid: 456,
+          screen_name: 'name',
           profile: {dummy: true},
-          friend_uids: 'friend_uids',
-          follower_uids: 'follower_uids',
-      }.to_json
+          friend_uids: [1, 2, 3],
+          follower_uids: [4, 5, 6],
+      }
     end
-    subject { described_class.import_from!(twitter_user.id, twitter_user.uid, twitter_user.screen_name, '{"dummy": true}', 'friend_uids', 'follower_uids') }
+    subject { described_class.import_from!(*data.values) }
 
-    before do
-      allow(described_class).to receive(:compress).with(payload).and_return('compressed')
-      allow(client).to receive(:write).with(cache_key, 'compressed').and_return('result')
+    it do
+      expect(described_class).to receive(:pack).with(data).and_return('payload')
+      expect(described_class.client).to receive(:write).with(twitter_user_id, 'payload')
+      subject
     end
+  end
 
-    it { is_expected.to eq('result') }
+  describe '.pack' do
+    let(:data) { {a: 1, b: 2} }
+    subject { described_class.pack(data) }
+    it { is_expected.to eq(Zlib::Deflate.deflate(data.to_json)) }
+  end
+
+  describe '.unpack' do
+    let(:raw_data) { Zlib::Deflate.deflate({a: 1, b: 2}.to_json) }
+    subject { described_class.unpack(raw_data) }
+    it do
+      data = subject
+      expect(data[:a]).to eq(1)
+      expect(data[:b]).to eq(2)
+    end
   end
 end

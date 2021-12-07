@@ -1,5 +1,4 @@
-# -*- SkipSchemaAnnotations
-
+# TODO Remove later
 module Efs
   class Client
     def initialize(key_prefix, klass, mounted_dir = nil)

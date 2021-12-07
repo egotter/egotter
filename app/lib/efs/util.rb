@@ -1,5 +1,3 @@
-# -*- SkipSchemaAnnotations
-
 module Efs
   module Util
     def parse_json(text)
