@@ -32,9 +32,10 @@ class CreateTwitterUserUnfriendsWorker
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
 
-    import_uids(S3::Unfriendship, twitter_user)
-    import_uids(S3::Unfollowership, twitter_user)
-    import_uids(S3::MutualUnfriendship, twitter_user)
+    imported_uids = import_uids(S3::Unfriendship, twitter_user) +
+        import_uids(S3::Unfollowership, twitter_user) +
+        import_uids(S3::MutualUnfriendship, twitter_user)
+    update_twitter_db_users(imported_uids.uniq, twitter_user.user_id)
 
     DeleteUnfriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
@@ -48,5 +49,13 @@ class CreateTwitterUserUnfriendsWorker
     uids = twitter_user.calc_uids_for(klass)
     klass.import_from!(twitter_user.uid, uids)
     twitter_user.update_counter_cache_for(klass, uids.size)
+    uids
+  end
+
+  def update_twitter_db_users(uids, user_id)
+    if uids.any? && !TwitterDBUsersUpdatedFlag.on?(uids)
+      TwitterDBUsersUpdatedFlag.on(uids)
+      CreateTwitterDBUserWorker.compress_and_perform_async(uids, user_id: user_id, enqueued_by: self.class)
+    end
   end
 end
