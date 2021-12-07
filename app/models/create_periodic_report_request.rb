@@ -70,43 +70,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
     update(status: 'message_skipped') unless jid
   end
 
-  module Instrumentation
-    %i(
-      create_new_twitter_user_record
-      send_report?
-      report_options_builder
-      send_report!
-    ).each do |method_name|
-      define_method(method_name) do |*args, &blk|
-        bm_perform(method_name) { method(method_name).super_method.call(*args, &blk) }
-      end
-    end
-
-    def bm_perform(message, &block)
-      start = Time.zone.now
-      result = yield
-      @bm_perform[message] = Time.zone.now - start if @bm_perform
-      result
-    end
-
-    def perform!(*args, &blk)
-      @bm_perform = {}
-      start = Time.zone.now
-
-      result = super
-
-      elapsed = Time.zone.now - start
-      @bm_perform[:sum] = @bm_perform.values.sum
-      @bm_perform[:elapsed] = elapsed
-      @bm_perform.transform_values! { |v| sprintf("%.3f", v) }
-
-      Airbag.info "Benchmark CreatePeriodicReportRequest user_id=#{user_id} request_id=#{id} #{@bm_perform.inspect}"
-
-      result
-    end
-  end
-  prepend Instrumentation
-
   def create_new_twitter_user_record
     request = CreateTwitterUserRequest.create(
         requested_by: self.class,
