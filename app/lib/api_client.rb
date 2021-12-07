@@ -192,9 +192,7 @@ class ApiClient
     end
 
     def perform(&block)
-      ApplicationRecord.benchmark("Benchmark RequestWithRetryHandler#perform method=#{@method}", level: :info) do
-        yield
-      end
+      yield
     rescue => e
       @retries += 1
       handle_retryable_error(e)

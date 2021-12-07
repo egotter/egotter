@@ -1,4 +1,16 @@
 Rails.application.reloader.to_prepare do
+  ApiClient::RequestWithRetryHandler.prepend(Module.new do
+    %i(
+        perform
+      ).each do |method_name|
+      define_method(method_name) do |*args, &blk|
+        ApplicationRecord.benchmark("Benchmark #{self.class}##{method_name} name=#{@method}", level: :debug) do
+          method(method_name).super_method.call(*args, &blk)
+        end
+      end
+    end
+  end)
+
   InMemory::TwitterUser.singleton_class.prepend(Module.new do
     %i(
         find_by
