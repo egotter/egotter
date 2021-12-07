@@ -65,21 +65,4 @@ namespace :trends do
     end
     logger.info "task=#{task.name} finish"
   end
-
-  task create_media_cache: :environment do |task|
-    logger = TaskLogger.logger
-    logger.info "task=#{task.name} start"
-
-    ids = ENV['TREND_ID'].split(',')
-    Trend.where(id: ids).each do |trend|
-      tweets = TrendMediaCache.new.fetch(trend.id) do
-        trend.imported_tweets.
-            map { |t| t.retweeted_status ? t.retweeted_status : t }.
-            select(&:media_url).
-            uniq!(&:tweet_id)
-      end
-      logger.info "task=#{task.name} name=#{trend.name} tweets=#{tweets.size}"
-    end
-    logger.info "task=#{task.name} finish"
-  end
 end

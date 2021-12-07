@@ -26,10 +26,6 @@ Rails.application.routes.draw do
       get "follower_insights/profiles_count", to: "follower_insights#profiles_count"
       get "follower_insights/locations_count", to: "follower_insights#locations_count"
       get "follower_insights/tweet_times", to: "follower_insights#tweet_times"
-      get "trends/words_count", to: "trends#words_count"
-      get "trends/profile_words_count", to: "trends#profile_words_count"
-      get "trends/times_count", to: "trends#times_count"
-      get "trends/users_count", to: "trends#users_count"
 
       get "timelines", to: "timelines#show"
       get "summaries", to: "summaries#show"
@@ -176,11 +172,6 @@ Rails.application.routes.draw do
   resources 'access_confirmations', only: %i(index)
   resources 'follow_confirmations', only: %i(index)
   resources 'blockers', only: %i(index)
-  resources 'trends', only: %i(index)
-  get 'trends/:id/tweets', to: 'trends#tweets', as: 'trend_tweets'
-  get 'trends/:id/media', to: 'trends#media', as: 'trend_media'
-  get 'trends/:id', to: 'trends#show', as: 'trend'
-  get 'trends/:id/download_tweets', to: 'trends#download_tweets', as: 'trend_download_tweets'
 
   get 'blocking_or_blocked/:screen_name', to: redirect("/mutual_unfriends/%{screen_name}?via=routing")
 

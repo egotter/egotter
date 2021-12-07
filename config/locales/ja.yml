@@ -405,42 +405,6 @@ ja:
       switch_account_html: 'または <a href="%{url}" class="btn btn-outline-secondary btn-sm">アカウントを切り換える</a>'
     button:
       label: '@%{user} をフォローしました'
-  trends:
-    index: &trends_index
-      navbar_title: 'Twitterトレンド'
-      crumb_title: 'Twitterトレンド'
-      page_title: '日本のTwitterトレンド'
-      rank_html: '%{rank}. %{link} <span class="text-muted small">%{tweets}ツイート</span>'
-    show:
-      <<: *trends_index
-    tweets:
-      <<: *trends_index
-    media:
-      <<: *trends_index
-      page_title: '%{name}で投稿されたイラスト'
-    trend:
-      tweets_count: '%{count}件のツイート'
-      trend_rank: 'トレンド%{count}位'
-      trend_details_html: |
-        %{time} の日本ツイッタートレンド %{rank}位<br>
-        %{users} 人のユーザーが %{tweets} 件ツイートしています。
-      chart_title: 'ツイート数'
-      words_chart_title: '「%{name}」のワードクラウド'
-      profile_words_chart_title: '「%{name}」のプロフィールワードクラウド'
-      times_chart_title: '「%{name}」のツイート数'
-      times_chart_notice: '検索して見付かったツイートを集計しています。ツイッター公式のトレンド数とは一致しないことがあります。'
-      users_chart_title: 'ツイート数が多いユーザー'
-      download_tweets_title: '「%{name}」ツイートのダウンロード'
-      word_cloud_title: '「%{name}」のワードクラウド'
-      tweet_title: '「%{name}」を含むツイート'
-      latest_tweets_title: '「%{name}」を含む最新のツイート'
-      oldest_tweets_title: '「%{name}」を含むもっとも古いツイート'
-      see_more: 'もっと見る'
-    download_tweets:
-      description: '「%{name}」の先頭 100件のツイートをダウンロードできます。有料プランのユーザーは全てのツイートをダウンロードできます。'
-      description_premium: '有料プランを購入済みです。「%{name}」の全てのツイートをダウンロードできます。'
-      button_label: 'ツイートをダウンロード'
-      see_details: 'もっと詳しく'
   settings:
     index:
       settings: '設定'
@@ -2531,8 +2495,6 @@ ja:
     data:
       note1: "有料プランのユーザーのみ %{count}人目以降 をダウンロードできます\n%{url}"
       note2: "%{count}人 を超えるユーザーのダウンロードについては個別にお問い合わせください\n%{url}"
-      trend_tweets_note1: "有料プランのユーザーのみ %{count}ツイート以降 をダウンロードできます\n%{url}"
-      trend_tweets_note2: "%{count}ツイート を超えるダウンロードについては個別にお問い合わせください\n%{url}"
   dictionary:
     honorific: "さん"
   before_sign_in:
