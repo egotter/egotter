@@ -19,9 +19,10 @@ module S3
       @payload_key = key
     end
 
+    MX = Mutex.new
+
     def client
-      @m ||= Mutex.new
-      @m.synchronize do
+      MX.synchronize do
         @client ||= Aws::S3::Client.new(region: REGION, retry_limit: 4, http_open_timeout: 3, http_read_timeout: 3)
       end
     end
