@@ -7,7 +7,6 @@ RSpec.describe SortedSetCleanupWorker do
     subject { worker.perform(class_str) }
     [
         GlobalDirectMessageReceivedFlag,
-        GlobalDirectMessageSentFlag,
     ].each do |klass|
       context "#{klass} is passed" do
         let(:class_str) { klass.to_s }

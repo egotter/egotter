@@ -88,7 +88,6 @@ class ProcessWebhookEventWorker
   end
 
   def process_message_from_egotter(dm)
-    GlobalDirectMessageSentFlag.new.received(dm.recipient_id)
     SendSentMessageWorker.perform_async(dm.recipient_id, dm_id: dm.id, text: dm.text)
   end
 

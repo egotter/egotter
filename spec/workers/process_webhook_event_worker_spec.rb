@@ -131,7 +131,6 @@ RSpec.describe ProcessWebhookEventWorker do
     subject { worker.send(:process_message_from_egotter, dm) }
 
     it do
-      expect(GlobalDirectMessageSentFlag).to receive_message_chain(:new, :received).with(dm.recipient_id)
       expect(SendSentMessageWorker).to receive(:perform_async).with(dm.recipient_id, dm_id: dm.id, text: dm.text)
       subject
     end

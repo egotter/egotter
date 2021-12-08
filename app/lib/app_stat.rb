@@ -23,7 +23,7 @@ class AppStat
       }
 
       [
-          "DirectMessageSentFlag #{GlobalDirectMessageSentFlag.new.size} (#{DirectMessageSendLog.sent_messages_count})",
+          "DirectMessageSentFlag #{DirectMessageSendLog.sent_messages_count}",
           "DirectMessageReceivedFlag #{GlobalDirectMessageReceivedFlag.new.size}",
           "SendDirectMessageCount #{dm_count[:total]} (active #{dm_count[:active]} passive #{dm_count[:passive]})",
           "SendDirectMessageFromEgotterCount #{dm_from_egotter[:total]} (active #{dm_from_egotter[:active]} passive #{dm_from_egotter[:passive]})",
