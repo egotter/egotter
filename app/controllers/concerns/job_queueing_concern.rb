@@ -69,15 +69,13 @@ module JobQueueingConcern
     return unless user_signed_in?
 
     UpdateUserAttrsWorker.perform_async(current_user.id)
-    update_twitter_db_user
+    update_twitter_db_user(current_user.uid)
   end
 
-  def update_twitter_db_user
-    if user_signed_in? && !TwitterDBUsersUpdatedFlag.on?([current_user.uid])
-      user = current_user
-      TwitterDBUsersUpdatedFlag.on([user.uid])
-      CreateTwitterDBUserWorker.perform_async([user.uid], user_id: user.id, enqueued_by: current_via(__method__))
-      Airbag.info "CreateTwitterDBUserWorker is enqueued user_id=#{user.id} controller=#{controller_path} action=#{action_name}"
+  def update_twitter_db_user(uid)
+    if user_signed_in? && !TwitterDBUsersUpdatedFlag.on?([uid])
+      TwitterDBUsersUpdatedFlag.on([uid])
+      CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
     end
   end
 

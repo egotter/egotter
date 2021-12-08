@@ -3,9 +3,7 @@ require 'rails_helper'
 describe ValidationConcern, type: :controller do
   controller ApplicationController do
     include ValidationConcern
-
-    def update_twitter_db_user
-    end
+    include JobQueueingConcern # for #update_twitter_db_user
   end
 
   let(:user) { create(:user) }
@@ -123,14 +121,9 @@ describe ValidationConcern, type: :controller do
     let(:user) { create(:user) }
     subject { controller.twitter_db_user_persisted?(user.uid) }
 
-    before do
-      allow(controller).to receive(:user_signed_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(user)
-    end
-
     it do
-      expect(controller).to receive(:update_twitter_db_user)
-      allow(TwitterDB::User).to receive(:exists?).with(uid: user.uid).and_return('result')
+      expect(controller).to receive(:update_twitter_db_user).with(user.uid)
+      expect(TwitterDB::User).to receive(:exists?).with(uid: user.uid).and_return('result')
       is_expected.to eq('result')
     end
   end

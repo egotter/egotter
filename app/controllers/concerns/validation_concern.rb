@@ -105,7 +105,7 @@ module ValidationConcern
 
   # Memo: This method should be called only with a request to the page, not a request to the API
   def twitter_db_user_persisted?(uid)
-    update_twitter_db_user
+    update_twitter_db_user(uid)
     TwitterDB::User.exists?(uid: uid)
   end
 
