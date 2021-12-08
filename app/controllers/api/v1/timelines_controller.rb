@@ -12,7 +12,6 @@ module Api
       before_action { valid_uid?(params[:uid]) }
       before_action { twitter_user_persisted?(params[:uid]) }
       before_action { @twitter_user = TwitterUser.with_delay.latest_by(uid: params[:uid]) }
-      before_action { !protected_search?(@twitter_user) }
 
       include JobQueueingConcern
       include SearchHistoriesConcern
