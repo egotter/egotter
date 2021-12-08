@@ -7,19 +7,8 @@ module DownloadRequestConcern
   included do
     before_action(only: :download) { head :forbidden if twitter_dm_crawler? }
     before_action :valid_screen_name?, only: :download
-    before_action :not_found_screen_name?, only: :download
-    before_action :forbidden_screen_name?, only: :download
-    before_action(only: :download) { @self_search = current_user_search_for_yourself?(params[:screen_name]) }
-    before_action(only: :download) { !@self_search && not_found_twitter_user?(params[:screen_name]) }
-    before_action(only: :download) { !@self_search && forbidden_twitter_user?(params[:screen_name]) }
-    before_action(only: :download) { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
-    before_action(only: :download) { private_mode_specified?(@twitter_user) }
-    before_action(only: :download) { search_limitation_soft_limited?(@twitter_user) }
-    before_action(only: :download) { !@self_search && !protected_search?(@twitter_user) }
-    before_action(only: :download) { !@self_search && !blocked_search?(@twitter_user) }
-    before_action(only: :download) { twitter_user_persisted?(@twitter_user.uid) }
-    before_action(only: :download) { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) } # Call after #twitter_user_persisted?
-    before_action(only: :download) { too_many_friends?(@twitter_user) }
+    before_action(only: :download) { head :forbidden unless SearchRequest.request_for(current_user&.id, screen_name: params[:screen_name]) }
+    before_action(only: :download) { @twitter_user = TwitterUser.with_delay.latest_by(uid: params[:screen_name]) }
   end
 
   private
