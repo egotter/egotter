@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe DirectMessageLimitedFlag, type: :model do
   before { RedisClient.new.flushall }
+  after { RedisClient.new.flushall }
 
   describe '.on' do
     it do
