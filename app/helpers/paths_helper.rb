@@ -281,4 +281,39 @@ module PathsHelper
     via += "/#{suffix}" if suffix
     via
   end
+
+  def redirect_path_for_search_request(request)
+    via = current_via
+
+    case request.status
+    when 'not found'
+      error_pages_not_found_user_path(via: via)
+    when 'suspended'
+      error_pages_twitter_error_suspended_path(via: via)
+    when 'unauthorized'
+      error_pages_twitter_error_unauthorized_path(via: via)
+    when 'temporarily locked'
+      error_pages_twitter_error_temporarily_locked_path(via: via)
+    when 'protected'
+      error_pages_protected_user_path(via: via)
+    when 'blocked'
+      error_pages_you_have_blocked_path(via: via)
+    when 'soft limit'
+      error_pages_soft_limited_path(via: via)
+    when 'protected account'
+      error_pages_protected_user_path(via: via)
+    when 'private mode'
+      flash[:alert] = t('before_sign_in.private_mode_specified')
+      root_path(via: via)
+    when 'too many searches'
+      error_pages_too_many_searches_path(via: via)
+    when 'too many friends'
+      error_pages_too_many_friends_path(via: via)
+    when 'unknown'
+      error_pages_twitter_error_unknown_path(via: via)
+    else
+      logger.warn "#{__method__}: Invalid SearchRequest#status value=#{request.status}"
+      error_pages_twitter_error_unknown_path(via: via)
+    end
+  end
 end
