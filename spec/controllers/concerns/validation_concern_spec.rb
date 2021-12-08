@@ -8,11 +8,6 @@ describe ValidationConcern, type: :controller do
 
   let(:user) { create(:user) }
   let(:client) { double('client') }
-  let(:search_request_validator) { SearchRequestValidator.new(client, user) }
-
-  before do
-    allow(controller).to receive(:search_request_validator).and_return(search_request_validator)
-  end
 
   shared_context 'user is signed in' do
     before do
@@ -203,28 +198,6 @@ describe ValidationConcern, type: :controller do
     end
   end
 
-  describe '#not_found_twitter_user?' do
-    let(:screen_name) { 'screen_name' }
-    subject { controller.not_found_twitter_user?(screen_name) }
-
-    context 'screen_name is found' do
-      before { allow(client).to receive(:user).with(screen_name).and_return('user') }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'screen_name is not found' do
-      before do
-        allow(client).to receive(:user).with(screen_name).and_raise
-        allow(TwitterApiStatus).to receive(:not_found?).with(anything).and_return(true)
-        allow(controller).to receive(:error_pages_not_found_user_path).with(anything).and_return('path')
-      end
-      it do
-        expect(controller).to receive(:redirect_to).with('path')
-        is_expected.to be_truthy
-      end
-    end
-  end
-
   describe '#forbidden_screen_name?' do
     let(:screen_name) { 'screen_name' }
     subject { controller.forbidden_screen_name?(screen_name) }
@@ -242,136 +215,6 @@ describe ValidationConcern, type: :controller do
         expect(controller).to receive(:redirect_to).with('path')
         is_expected.to be_truthy
       end
-    end
-  end
-
-  describe '#forbidden_twitter_user?' do
-    let(:screen_name) { 'screen_name' }
-    subject { controller.forbidden_twitter_user?(screen_name) }
-
-    context 'screen_name is forbidden' do
-      before do
-        allow(client).to receive(:user).with(screen_name).and_raise
-        allow(TwitterApiStatus).to receive(:suspended?).with(anything).and_return(true)
-        allow(controller).to receive(:error_pages_forbidden_user_path).with(anything).and_return('path')
-      end
-      it do
-        expect(controller).to receive(:redirect_to).with('path')
-        is_expected.to be_truthy
-      end
-    end
-
-    context 'screen_name is not forbidden' do
-      before { allow(client).to receive(:user).with(screen_name).and_return({this_is_user: true}) }
-      it { is_expected.to be_falsey }
-    end
-  end
-
-  describe '#protected_search?' do
-    let(:twitter_user) { build(:twitter_user, with_relations: false) }
-    subject { controller.protected_search?(twitter_user) }
-
-    context 'the user is not protected' do
-      before { allow(controller).to receive(:protected_user?).with(anything).and_return(false) }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'the user is protected' do
-      before { allow(controller).to receive(:protected_user?).with(anything).and_return(true) }
-
-      context 'the user is searching yourself' do
-        before { allow(controller).to receive(:search_yourself?).with(anything).and_return(true) }
-        it { is_expected.to be_falsey }
-      end
-
-      context 'the user is not searching yourself' do
-        before { allow(controller).to receive(:search_yourself?).with(anything).and_return(false) }
-
-        context 'the timeline is readable' do
-          before { allow(controller).to receive(:timeline_readable?).with(anything).and_return(true) }
-          it { is_expected.to be_falsey }
-        end
-
-        context 'the timeline is not readable' do
-          before do
-            allow(controller).to receive(:timeline_readable?).with(anything).and_return(false)
-            allow(controller).to receive(:error_pages_protected_user_path).with(any_args).and_return('path')
-          end
-          it do
-            expect(controller).to receive(:redirect_to).with('path')
-            is_expected.to be_truthy
-          end
-        end
-      end
-    end
-  end
-
-  describe '#protected_user?' do
-    let(:screen_name) { 'screen_name' }
-    subject { controller.protected_user?(screen_name) }
-
-    context 'user is signed in' do
-      include_context 'user is signed in'
-      it do
-        expect(search_request_validator).to receive(:protected_user?).with(screen_name).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-
-    context 'user is not signed in' do
-      include_context 'user is not signed in'
-      it do
-        expect(search_request_validator).to receive(:protected_user?).with(screen_name).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-  end
-
-  describe '#blocked_search?' do
-    let(:twitter_user) { build(:twitter_user, with_relations: false) }
-    subject { controller.blocked_search?(twitter_user) }
-
-    before do
-      allow(controller).to receive(:user_signed_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(user)
-    end
-
-    context 'user is blocked' do
-      before do
-        allow(controller).to receive(:blocked_user?).with(any_args).and_return(true)
-        allow(controller).to receive(:error_pages_you_have_blocked_path).with(any_args).and_return('path')
-      end
-      it do
-        expect(controller).to receive(:redirect_to).with('path')
-        is_expected.to be_truthy
-      end
-    end
-
-    context 'user is not blocked' do
-      before { allow(controller).to receive(:blocked_user?).with(any_args).and_return(false) }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'error is raised' do
-      before do
-        allow(controller).to receive(:blocked_user?).with(any_args).and_raise('error')
-        allow(controller).to receive(:error_pages_twitter_error_unknown_path).with(any_args).and_return('path')
-      end
-      it do
-        expect(controller).to receive(:redirect_to).with('path')
-        is_expected.to be_falsey
-      end
-    end
-  end
-
-  describe '#blocked_user?' do
-    let(:screen_name) { 'screen_name' }
-    let(:uid) { 1 }
-    subject { controller.blocked_user?(screen_name, uid) }
-
-    it do
-      expect(search_request_validator).to receive(:blocked_user?).with(screen_name, uid).and_return('result')
-      is_expected.to eq('result')
     end
   end
 
@@ -414,51 +257,6 @@ describe ValidationConcern, type: :controller do
           is_expected.to be_falsey
         end
       end
-    end
-  end
-
-  describe '#current_user_search_for_yourself?' do
-    let(:screen_name) { 'screen_name' }
-    subject { controller.current_user_search_for_yourself?(screen_name) }
-
-    before do
-      allow(controller.params).to receive(:[]).with(:screen_name).and_return(screen_name)
-    end
-
-    context 'user is signed in' do
-      include_context 'user is signed in'
-      it do
-        expect(search_request_validator).to receive(:search_for_yourself?).with(screen_name).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-
-    context 'user is not signed in' do
-      include_context 'user is not signed in'
-      it { is_expected.to be_falsey }
-    end
-  end
-
-  describe '#user_requested_self_search_by_uid?' do
-    # This value is passed from params, so it's String
-    let(:uid) { '1' }
-    subject { controller.user_requested_self_search_by_uid?(uid) }
-
-    before do
-      allow(controller.params).to receive(:[]).with(:uid).and_return(uid)
-    end
-
-    context 'user is signed in' do
-      include_context 'user is signed in'
-      it do
-        expect(search_request_validator).to receive(:user_requested_self_search_by_uid?).with(uid).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-
-    context 'user is not signed in' do
-      include_context 'user is not signed in'
-      it { is_expected.to be_falsey }
     end
   end
 end

@@ -65,6 +65,7 @@ class ErrorPagesController < ApplicationController
 
   def omniauth_failure; end
 
+  # TODO Remove later
   def too_many_api_requests; end
 
   def twitter_error; end

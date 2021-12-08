@@ -72,17 +72,4 @@ Rails.application.reloader.to_prepare do
       end
     end
   end)
-
-  SearchRequestValidator.prepend(Module.new do
-    %i(
-        blocked_user?
-        timeline_readable?
-      ).each do |method_name|
-      define_method(method_name) do |*args, &blk|
-        Airbag.benchmark("Benchmark #{self.class}##{method_name} screen_name=#{args[0]}", slow_duration: 50) do
-          method(method_name).super_method.call(*args, &blk)
-        end
-      end
-    end
-  end)
 end

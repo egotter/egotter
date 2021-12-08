@@ -7,16 +7,6 @@ module AlertMessagesConcern
   included do
   end
 
-  def too_many_requests_message(reset_in = 30)
-    if user_signed_in?
-      reset_in ||= rate_limit_reset_in
-      t('after_sign_in.too_many_requests_with_reset_in', seconds: sprintf('%d', reset_in))
-    else
-      url = sign_in_path(via: current_via('too_many_requests_message'))
-      t('before_sign_in.too_many_requests_html', url: url)
-    end
-  end
-
   def unknown_alert_message(ex)
     reason = (ex.class.name.demodulize.underscore rescue 'exception')
     Airbag.info "#{self.class}##{__method__} #{ex.inspect} reason=#{reason}"

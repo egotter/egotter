@@ -1,6 +1,7 @@
 require 'forwardable'
 require 'singleton'
 
+# TODO Remove later
 class TimelineReadableFlag
   include Singleton
 

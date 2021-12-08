@@ -2498,7 +2498,6 @@ ja:
   dictionary:
     honorific: "さん"
   before_sign_in:
-    too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     something_wrong_with_error_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。（%{error}）'
     ajax:
       need_login_html: 'この操作を行うためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
@@ -2506,17 +2505,6 @@ ja:
     ad_blocker_detected_with_count: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。%{seconds}秒後にトップページへ移動します。'
     private_mode_specified: 'データが見付かりませんでした。'
   after_sign_in:
-    too_many_requests_with_reset_in: >
-      一時的なエラーが起きました。ツイッターAPIが回復するまで %{seconds}秒 ほど待ってください。<br>
-      <br>
-      1. これは何？<br>
-      検索数が多いときに起きるツイッターAPIの制限です。少し待てば回復します。<br>
-      <br>
-      2. どうやったら直るの？<br>
-      あと %{seconds}秒 ほど待てば自然に直ります。<br>
-      <br>
-      3. どうして起きたの？<br>
-      検索数が多かったり、検索したユーザーのフォロー＋フォロワー数が多いと起きます。
     tokimeki_unfollow_too_many_friends: 'フォロー数が 10,000人 を超えている場合は、ときめきアンフォローをご利用いただくことができません。'
     must_have_order: 'まだ有料プランを購入していません。有料プランを購入後にお試しください。'
     must_have_valid_subscription: 'まだ有料プランを購入していません。有料プランを購入後にお試しください。'
