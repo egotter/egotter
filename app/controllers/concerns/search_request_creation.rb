@@ -38,5 +38,6 @@ module SearchRequestCreation
     end
     before_action(only: :show) { twitter_user_persisted?(@twitter_user.uid) }
     before_action(only: :show) { twitter_db_user_persisted?(@twitter_user.uid) } # Not redirected
+    before_action(only: :show) { @twitter_user = TwitterUser.with_delay.latest_by(uid: @twitter_user.uid) }
   end
 end
