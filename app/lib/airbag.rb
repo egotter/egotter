@@ -18,6 +18,22 @@ class Airbag
       end
     end
 
+    # options:
+    #   level, silence, slow_duration
+    def benchmark(message = "Benchmarking", options = {})
+      options[:level] ||= :info
+      options[:slow_duration] ||= 100
+
+      result = nil
+      ms = Benchmark.ms { result = options[:silence] ? logger.silence { yield } : yield }
+
+      if ms > options[:slow_duration]
+        logger.public_send(options[:level], "%s (%.1fms)" % [message, ms])
+      end
+
+      result
+    end
+
     def logger
       @logger ||= Logger.instance
     end
