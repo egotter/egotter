@@ -9,7 +9,6 @@ RSpec.describe Api::V1::TimelinesController, type: :controller do
     allow(controller).to receive(:valid_uid?).with(twitter_user.uid.to_s)
     allow(controller).to receive(:twitter_user_persisted?).with(twitter_user.uid.to_s)
     allow(TwitterUser).to receive(:latest_by).with(uid: twitter_user.uid.to_s).and_return(twitter_user)
-    allow(controller).to receive(:protected_search?).with(any_args).and_return(false)
   end
 
   describe 'GET #show' do

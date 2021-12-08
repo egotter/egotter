@@ -6,10 +6,8 @@ RSpec.describe Api::V1::SummariesController, type: :controller do
   before do
     request.headers['HTTP_X_CSRF_TOKEN'] = 'token'
     allow(controller).to receive(:valid_uid?).with(twitter_user.uid.to_s)
-    allow(controller).to receive(:twitter_user_persisted?).with(twitter_user.uid.to_s)
+    allow(SearchRequest).to receive(:request_for).with(nil, uid: twitter_user.uid.to_s).and_return('request')
     allow(TwitterUser).to receive(:latest_by).with(uid: twitter_user.uid.to_s).and_return(twitter_user)
-    allow(controller).to receive(:protected_search?).with(any_args).and_return(false)
-    allow(controller).to receive(:blocked_search?).with(any_args).and_return(false)
   end
 
   describe 'GET #show' do
