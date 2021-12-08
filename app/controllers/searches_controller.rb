@@ -9,8 +9,7 @@ class SearchesController < ApplicationController
   before_action :not_found_screen_name?
   before_action :forbidden_screen_name?
   before_action do
-    request = SearchRequest.where('created_at > ?', 10.minutes.ago).
-        where(user_id: current_user&.id, screen_name: params[:screen_name]).order(created_at: :desc).first
+    request = SearchRequest.request_for(current_user&.id, params[:screen_name])
 
     if request
       if request.ok?

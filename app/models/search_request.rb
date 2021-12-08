@@ -121,4 +121,12 @@ class SearchRequest < ApplicationRecord
   def ok?
     status == 'ok'
   end
+
+  class << self
+    def request_for(user_id, screen_name)
+      where('created_at > ?', 10.minutes.ago).
+          where(user_id: user_id, screen_name: screen_name).
+          where.not(status: nil).order(created_at: :desc).first
+    end
+  end
 end
