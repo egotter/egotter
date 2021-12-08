@@ -1,4 +1,4 @@
-class CreateSearchRequestWorker
+class CreateSearchRequestCacheWorker
   include Sidekiq::Worker
   prepend TimeoutableWorker
   sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
@@ -33,7 +33,7 @@ class CreateSearchRequestWorker
       user = client.user(screen_name)
     rescue => e
     ensure
-      SearchRequest.write(screen_name)
+      SearchRequestCache.write(screen_name)
     end
 
     if user

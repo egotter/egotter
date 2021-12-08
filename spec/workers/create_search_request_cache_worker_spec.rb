@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CreateSearchRequestWorker do
+RSpec.describe CreateSearchRequestCacheWorker do
   let(:screen_name) { 'name' }
   let(:worker) { described_class.new }
 
@@ -15,7 +15,7 @@ RSpec.describe CreateSearchRequestWorker do
     before { allow(Bot).to receive(:api_client).and_return(client) }
     it do
       expect(client).to receive(:user).with(screen_name).and_return({id: 1})
-      expect(SearchRequest).to receive_message_chain(:new, :write).with(screen_name)
+      expect(SearchRequestCache).to receive_message_chain(:new, :write).with(screen_name)
       expect(client).to receive(:user).with(1)
       subject
     end

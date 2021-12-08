@@ -135,10 +135,10 @@ module ValidationConcern
   end
 
   def search_request_cache_exists?(screen_name)
-    if SearchRequest.exists?(screen_name)
+    if SearchRequestCache.exists?(screen_name)
       true
     else
-      CreateSearchRequestWorker.perform_async(screen_name, user_id: current_user&.id)
+      CreateSearchRequestCacheWorker.perform_async(screen_name, user_id: current_user&.id)
       redirect_to timeline_waiting_path(screen_name: screen_name, redirect_path: redirect_path_for_after_waiting(screen_name), via: current_via(__method__))
       false
     end

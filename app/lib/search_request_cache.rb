@@ -1,7 +1,7 @@
 require 'forwardable'
 require 'singleton'
 
-class SearchRequest
+class SearchRequestCache
   include Singleton
 
   def initialize
