@@ -1,8 +1,5 @@
 require 'singleton'
 
-require 'active_support'
-require 'active_support/cache/file_store'
-
 module Efs
   class TwitterUser
     extend ::Efs::Util
