@@ -226,16 +226,33 @@ module ValidationConcern
     end
   end
 
-  def blocked_user?(screen_name)
-    search_request_validator.blocked_user?(screen_name)
+  def blocked_user?(screen_name, uid = nil)
+    search_request_validator.blocked_user?(screen_name, uid)
   end
 
   def blocked_search?(twitter_user)
-    return false if search_yourself?(twitter_user)
-    return false unless blocked_user?(twitter_user.screen_name)
+    return false unless user_signed_in?
+    return false if current_user.uid == twitter_user.uid
+
+    user = current_user
+    message = "blocked_search?: Readable flag is [%s] user_id=#{user.id} uid=#{twitter_user.uid} controller=#{controller_path} action=#{action_name}"
+
+    if TimelineReadableFlag.on?(user.id, twitter_user.uid)
+      Airbag.info { message % ['on'] }
+      return false
+    elsif TimelineReadableFlag.off?(user.id, twitter_user.uid)
+      Airbag.info { message % ['off'] }
+      session[:screen_name] = twitter_user.screen_name
+      redirect_to error_pages_you_have_blocked_path(via: current_via("#{__method__}/flag_off"))
+      return true
+    else
+      Airbag.info { message % ['not set'] }
+    end
+
+    return false unless blocked_user?(twitter_user.screen_name, twitter_user.uid)
 
     session[:screen_name] = twitter_user.screen_name
-    redirect_to error_pages_you_have_blocked_path(via: current_via(__method__))
+    redirect_to error_pages_you_have_blocked_path(via: current_via("#{__method__}/api"))
     true
   rescue => e
     redirect_to error_pages_twitter_error_unknown_path(via: current_via(__method__))
@@ -252,6 +269,7 @@ module ValidationConcern
 
   private :timeline_readable?
 
+  # TODO Remove later
   def search_yourself?(twitter_user)
     user_signed_in? && current_user.uid == twitter_user.uid
   end

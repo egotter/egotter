@@ -15,7 +15,7 @@ class SearchRequestValidator
     user_signed_in? && @user.uid == uid.to_i
   end
 
-  def blocked_user?(screen_name)
+  def blocked_user?(screen_name, uid = nil)
     return false unless user_signed_in?
 
     begin
@@ -23,12 +23,12 @@ class SearchRequestValidator
         @client.user_timeline(screen_name, count: 1)
       end
     rescue Timeout::Error => e
-      Airbag.info { "#{self.class}##{__method__} timeout screen_name=#{screen_name}" }
+      Airbag.info { "#{self.class}##{__method__} timeout uid=#{uid} screen_name=#{screen_name}" }
     end
 
     false
   rescue => e
-    logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
+    logger.debug { "#{self.class}##{__method__} #{e.inspect} uid=#{uid} screen_name=#{screen_name}" }
     TwitterApiStatus.blocked?(e)
   end
 

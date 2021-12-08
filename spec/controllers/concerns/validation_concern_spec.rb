@@ -335,24 +335,17 @@ describe ValidationConcern, type: :controller do
   end
 
   describe '#blocked_search?' do
-    shared_context 'blocked_user? returns true' do
-      before { allow(controller).to receive(:blocked_user?).with(anything).and_return(true) }
-    end
-
-    shared_context 'blocked_user? returns false' do
-      before { allow(controller).to receive(:blocked_user?).with(anything).and_return(false) }
-    end
-
-    shared_context 'blocked_user? raises an error' do
-      before { allow(controller).to receive(:blocked_user?).with(anything).and_raise('error') }
-    end
-
     let(:twitter_user) { build(:twitter_user, with_relations: false) }
     subject { controller.blocked_search?(twitter_user) }
 
-    context 'blocked_user? returns true' do
-      include_context 'blocked_user? returns true'
+    before do
+      allow(controller).to receive(:user_signed_in?).and_return(true)
+      allow(controller).to receive(:current_user).and_return(user)
+    end
+
+    context 'user is blocked' do
       before do
+        allow(controller).to receive(:blocked_user?).with(any_args).and_return(true)
         allow(controller).to receive(:error_pages_you_have_blocked_path).with(any_args).and_return('path')
       end
       it do
@@ -361,14 +354,14 @@ describe ValidationConcern, type: :controller do
       end
     end
 
-    context 'blocked_user? returns false' do
-      include_context 'blocked_user? returns false'
+    context 'user is not blocked' do
+      before { allow(controller).to receive(:blocked_user?).with(any_args).and_return(false) }
       it { is_expected.to be_falsey }
     end
 
-    context 'blocked_user? raises an error' do
-      include_context 'blocked_user? raises an error'
+    context 'error is raised' do
       before do
+        allow(controller).to receive(:blocked_user?).with(any_args).and_raise('error')
         allow(controller).to receive(:error_pages_twitter_error_unknown_path).with(any_args).and_return('path')
       end
       it do
@@ -380,22 +373,12 @@ describe ValidationConcern, type: :controller do
 
   describe '#blocked_user?' do
     let(:screen_name) { 'screen_name' }
-    subject { controller.blocked_user?(screen_name) }
+    let(:uid) { 1 }
+    subject { controller.blocked_user?(screen_name, uid) }
 
-    context 'user is signed in' do
-      include_context 'user is signed in'
-      it do
-        expect(search_request_validator).to receive(:blocked_user?).with(screen_name).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-
-    context 'user is not signed in' do
-      include_context 'user is not signed in'
-      it do
-        expect(search_request_validator).to receive(:blocked_user?).with(screen_name).and_return('result')
-        is_expected.to eq('result')
-      end
+    it do
+      expect(search_request_validator).to receive(:blocked_user?).with(screen_name, uid).and_return('result')
+      is_expected.to eq('result')
     end
   end
 

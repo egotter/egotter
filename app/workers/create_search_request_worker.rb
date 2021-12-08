@@ -36,6 +36,8 @@ class CreateSearchRequestWorker
       SearchRequest.new.write(screen_name)
     end
 
+    create_timeline_readable_cache(client, options['user_id'], user[:id])
+
     if user
       begin
         # Speculative execution for API requests
@@ -47,5 +49,23 @@ class CreateSearchRequestWorker
   rescue => e
     Airbag.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}"
     Airbag.info e.backtrace.join("\n")
+  end
+
+  private
+
+  def create_timeline_readable_cache(client, user_id, uid)
+    return if user_id.nil? || user_id == -1
+
+    Timeout.timeout(3.seconds) do
+      client.user_timeline(uid, count: 1)
+    end
+    TimelineReadableFlag.on(user_id, uid)
+  rescue => e
+    if TwitterApiStatus.blocked?(e)
+      TimelineReadableFlag.off(user_id, uid)
+    else
+      Airbag.info { "#{self.class}##{__method__} #{e.inspect} user_id=#{user_id} uid=#{uid}" }
+      TimelineReadableFlag.clear(user_id, uid)
+    end
   end
 end
