@@ -1319,6 +1319,7 @@ ActiveRecord::Schema.define(version: 2021_12_08_172311) do
     t.text "error_message"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_search_requests_on_created_at"
     t.index ["uid"], name: "index_search_requests_on_uid"
     t.index ["user_id"], name: "index_search_requests_on_user_id"
   end

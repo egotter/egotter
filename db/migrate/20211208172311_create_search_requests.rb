@@ -13,6 +13,7 @@ class CreateSearchRequests < ActiveRecord::Migration[6.1]
 
       t.index :user_id
       t.index :uid
+      t.index :created_at
     end
   end
 end

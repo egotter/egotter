@@ -15,8 +15,9 @@
 #
 # Indexes
 #
-#  index_search_requests_on_uid      (uid)
-#  index_search_requests_on_user_id  (user_id)
+#  index_search_requests_on_created_at  (created_at)
+#  index_search_requests_on_uid         (uid)
+#  index_search_requests_on_user_id     (user_id)
 #
 class SearchRequest < ApplicationRecord
   ERROR_DETECTOR = lambda do |e|
