@@ -5,24 +5,25 @@ class CreateDirectMessageEventWorker
 
   # options:
   def perform(sender_id, recipient_id, message, time, options = {})
-    props = {sender_id: sender_id, recipient_id: recipient_id}
-    CreateAhoyEventWorker.perform_async('Send DM', props, time)
+    props = {sender_id: sender_id, recipient_id: recipient_id, time: time}
+
+    CreateDirectMessageEventLogWorker.perform_async({name: 'Send DM'}.merge(props))
 
     if recipient_id != User::EGOTTER_UID
-      CreateAhoyEventWorker.perform_async('Send DM from egotter', props, time)
+      CreateDirectMessageEventLogWorker.perform_async({name: 'Send DM from egotter'}.merge(props))
     end
 
     if GlobalDirectMessageReceivedFlag.new.exists?(recipient_id)
-      CreateAhoyEventWorker.perform_async('Send passive DM', props, time)
+      CreateDirectMessageEventLogWorker.perform_async({name: 'Send passive DM'}.merge(props))
 
       if recipient_id != User::EGOTTER_UID
-        CreateAhoyEventWorker.perform_async('Send passive DM from egotter', props, time)
+        CreateDirectMessageEventLogWorker.perform_async({name: 'Send passive DM from egotter'}.merge(props))
       end
     else
-      CreateAhoyEventWorker.perform_async('Send active DM', props, time)
+      CreateDirectMessageEventLogWorker.perform_async({name: 'Send active DM'}.merge(props))
 
       if recipient_id != User::EGOTTER_UID
-        CreateAhoyEventWorker.perform_async('Send active DM from egotter', props, time)
+        CreateDirectMessageEventLogWorker.perform_async({name: 'Send active DM from egotter'}.merge(props))
       end
     end
   rescue => e

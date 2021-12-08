@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_08_172311) do
+ActiveRecord::Schema.define(version: 2021_12_08_224146) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -667,6 +667,15 @@ ActiveRecord::Schema.define(version: 2021_12_08_172311) do
     t.index ["created_at"], name: "index_direct_message_error_logs_on_created_at"
     t.index ["recipient_id"], name: "index_direct_message_error_logs_on_recipient_id"
     t.index ["sender_id"], name: "index_direct_message_error_logs_on_sender_id"
+  end
+
+  create_table "direct_message_event_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.bigint "sender_id"
+    t.bigint "recipient_id"
+    t.timestamp "time", null: false
+    t.index ["name", "time"], name: "index_direct_message_event_logs_on_name_and_time"
+    t.index ["time"], name: "index_direct_message_event_logs_on_time"
   end
 
   create_table "direct_message_receive_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

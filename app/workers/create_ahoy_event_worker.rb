@@ -1,3 +1,4 @@
+# TODO Remove later
 class CreateAhoyEventWorker
   include Sidekiq::Worker
   include WorkerErrorHandler
