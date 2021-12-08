@@ -17,7 +17,7 @@ module SearchRequestCreation
   end
 
   def find_or_create_search_request
-    request = SearchRequest.request_for(current_user&.id, params[:screen_name])
+    request = SearchRequest.request_for(current_user&.id, screen_name: params[:screen_name])
 
     if request
       if request.ok?
@@ -27,6 +27,7 @@ module SearchRequestCreation
         redirect_to redirect_path_for_search_request(request)
       end
     else
+      # TODO Prevent from creating duplicate records
       request = SearchRequest.create!(
           user_id: current_user&.id,
           uid: nil,
@@ -35,6 +36,7 @@ module SearchRequestCreation
       )
       CreateSearchRequestWorker.perform_async(request.id)
 
+      # TODO Prevent from redirecting many times
       @screen_name = request.screen_name
       @user = TwitterDB::User.find_by(screen_name: request.screen_name)
       self.sidebar_disabled = true

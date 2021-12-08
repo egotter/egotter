@@ -123,9 +123,11 @@ class SearchRequest < ApplicationRecord
   end
 
   class << self
-    def request_for(user_id, screen_name)
+    def request_for(user_id, uid: nil, screen_name: nil)
+      condition = uid ? {uid: uid} : {screen_name: screen_name}
       where('created_at > ?', 10.minutes.ago).
-          where(user_id: user_id, screen_name: screen_name).
+          where(user_id: user_id).
+          where(condition).
           where.not(status: nil).order(created_at: :desc).first
     end
   end

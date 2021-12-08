@@ -2,15 +2,10 @@ class TwitterUsersController < ApplicationController
   include JobQueueingConcern
 
   before_action :reject_crawler
+  before_action :require_login!
   before_action { valid_uid?(params[:uid]) }
-  before_action { @self_search = user_requested_self_search_by_uid?(params[:uid]) }
-  before_action { @twitter_user = build_twitter_user_by_uid(params[:uid]) }
-  before_action { private_mode_specified?(@twitter_user) }
-  before_action { search_limitation_soft_limited?(@twitter_user) }
-  before_action { !@self_search && !protected_search?(@twitter_user) }
-  before_action { !@self_search && !blocked_search?(@twitter_user) }
-  before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
-  before_action { too_many_friends?(@twitter_user) }
+  before_action { head :forbidden unless SearchRequest.request_for(current_user.id, uid: params[:uid]) }
+  before_action { @twitter_user = TwitterUser.latest_by(uid: params[:uid]) }
 
   # Polling access of waiting
   # Polling access of background-update
