@@ -1323,20 +1323,6 @@ ActiveRecord::Schema.define(version: 2021_12_08_172311) do
     t.index ["user_id"], name: "index_search_requests_on_user_id"
   end
 
-  create_table "search_results", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "uid", null: false
-    t.string "screen_name", null: false
-    t.text "status_info", null: false
-    t.integer "from_id", null: false
-    t.string "query", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_search_results_on_created_at"
-    t.index ["from_id"], name: "index_search_results_on_from_id"
-    t.index ["screen_name"], name: "index_search_results_on_screen_name"
-    t.index ["uid"], name: "index_search_results_on_uid"
-  end
-
   create_table "sign_in_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "session_id", default: "", null: false
     t.integer "user_id", default: -1, null: false
