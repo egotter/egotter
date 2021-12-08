@@ -80,6 +80,10 @@ class DeletableTweet < ApplicationRecord
       not_deleted.not_deletion_reserved.where(uid: user.uid, tweet_id: tweet_ids).update_all(deletion_reserved_at: Time.zone.now)
     end
 
+    def from_response(response)
+      from_array(response.map(&:attrs))
+    end
+
     def from_array(array)
       array.map { |hash| from_hash(hash) }
     end

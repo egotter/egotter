@@ -18,9 +18,8 @@ class CreateDeletableTweetsRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform
-    collect_tweets_with_max_id do |tweets_resp|
-      tweets_attrs = tweets_resp.map(&:attrs)
-      tweets = DeletableTweet.from_array(tweets_attrs)
+    collect_tweets_with_max_id do |response|
+      tweets = DeletableTweet.from_response(response)
       save_tweets(tweets)
     end
   end
