@@ -35,18 +35,7 @@ class SearchesController < ApplicationController
   rescue => e
     logger.warn "Debug SearchRequest #{e.inspect}"
   end
-  # TODO Remove start
-  # before_action { @self_search = current_user_search_for_yourself?(params[:screen_name]) }
-  # before_action { !@self_search && not_found_twitter_user?(params[:screen_name]) }
-  # before_action { !@self_search && forbidden_twitter_user?(params[:screen_name]) }
-  # before_action { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
-  # before_action { private_mode_specified?(@twitter_user) }
-  # before_action { search_limitation_soft_limited?(@twitter_user) }
-  # before_action { !@self_search && !protected_search?(@twitter_user) }
-  # before_action { !@self_search && !blocked_search?(@twitter_user) }
-  # before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
-  # before_action { too_many_friends?(@twitter_user) }
-  # TODO Remove end
+
   before_action { create_search_history(@twitter_user) }
 
   def create

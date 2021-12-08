@@ -177,36 +177,6 @@ module PathsHelper
     end.html_safe
   end
 
-  def redirect_path_for_after_waiting(screen_name)
-    options = {
-        screen_name: screen_name,
-        follow_dialog: params[:follow_dialog],
-        sign_in_dialog: params[:sign_in_dialog],
-        share_dialog: params[:share_dialog],
-        purchase_dialog: params[:purchase_dialog],
-        via: current_via,
-    }.compact
-
-    case controller_path
-    when 'timelines'
-      timeline_path(options)
-    when 'close_friends'
-      close_friend_path(options)
-    when 'unfriends'
-      unfriend_path(options)
-    when 'unfollowers'
-      unfollower_path(options)
-    when 'mutual_unfriends'
-      mutual_unfriend_path(options)
-    when 'replying'
-      replying_path(options)
-    when 'replied'
-      replied_path(options)
-    else
-      raise "#{__method__} Invalid controller_path value=#{controller_path}"
-    end
-  end
-
   def sign_in_and_timeline_path(twitter_user, via:, follow: false)
     via = current_via(via)
     sign_in_path(follow: follow, via: via, redirect_path: timeline_path(twitter_user, via: via))

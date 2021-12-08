@@ -7,15 +7,6 @@ module AlertMessagesConcern
   included do
   end
 
-  def screen_name_changed_message(screen_name)
-    if user_signed_in?
-      t('after_sign_in.screen_name_changed_html', user: screen_name, screen_name: screen_name)
-    else
-      url = sign_in_path(via: current_via('screen_name_changed'))
-      t('before_sign_in.screen_name_changed_html', user: screen_name, url: url)
-    end
-  end
-
   def too_many_requests_message(reset_in = 30)
     if user_signed_in?
       reset_in ||= rate_limit_reset_in
