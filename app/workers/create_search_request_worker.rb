@@ -36,7 +36,9 @@ class CreateSearchRequestWorker
       SearchRequest.write(screen_name)
     end
 
-    create_timeline_readable_cache(client, options['user_id'], user[:id])
+    if user
+      create_timeline_readable_cache(client, options['user_id'], user[:id])
+    end
 
     if user
       begin
