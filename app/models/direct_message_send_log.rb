@@ -17,4 +17,9 @@
 #  index_direct_message_send_logs_on_sender_id_and_automated  (sender_id,automated)
 #
 class DirectMessageSendLog < ApplicationRecord
+  class << self
+    def sent_messages_count
+      where('created_at > ?', 1.day.ago).where(sender_id: User::EGOTTER_UID, automated: false).select('distinct recipient_id').count
+    end
+  end
 end
