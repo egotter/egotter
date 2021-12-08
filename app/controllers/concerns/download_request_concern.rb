@@ -8,7 +8,7 @@ module DownloadRequestConcern
     before_action(only: :download) { head :forbidden if twitter_dm_crawler? }
     before_action :valid_screen_name?, only: :download
     before_action(only: :download) { head :forbidden unless SearchRequest.request_for(current_user&.id, screen_name: params[:screen_name]) }
-    before_action(only: :download) { @twitter_user = TwitterUser.with_delay.latest_by(uid: params[:screen_name]) }
+    before_action(only: :download) { @twitter_user = TwitterUser.with_delay.latest_by(screen_name: params[:screen_name]) }
   end
 
   private
