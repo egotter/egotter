@@ -11,9 +11,10 @@
 #
 # Indexes
 #
-#  index_direct_message_send_logs_on_created_at    (created_at)
-#  index_direct_message_send_logs_on_recipient_id  (recipient_id)
-#  index_direct_message_send_logs_on_sender_id     (sender_id)
+#  index_direct_message_send_logs_on_created_at               (created_at)
+#  index_direct_message_send_logs_on_recipient_id             (recipient_id)
+#  index_direct_message_send_logs_on_sender_id                (sender_id)
+#  index_direct_message_send_logs_on_sender_id_and_automated  (sender_id,automated)
 #
 class DirectMessageSendLog < ApplicationRecord
 end

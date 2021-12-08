@@ -7,6 +7,8 @@ class CreateDirectMessageSendLogs < ActiveRecord::Migration[6.1]
       t.text :message
 
       t.datetime :created_at, null: false, index: true
+
+      t.index [:sender_id, :automated]
     end
   end
 end

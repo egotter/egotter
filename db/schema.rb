@@ -688,6 +688,7 @@ ActiveRecord::Schema.define(version: 2021_12_05_095035) do
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_direct_message_send_logs_on_created_at"
     t.index ["recipient_id"], name: "index_direct_message_send_logs_on_recipient_id"
+    t.index ["sender_id", "automated"], name: "index_direct_message_send_logs_on_sender_id_and_automated"
     t.index ["sender_id"], name: "index_direct_message_send_logs_on_sender_id"
   end
 
