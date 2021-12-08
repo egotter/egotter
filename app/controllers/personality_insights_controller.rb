@@ -1,5 +1,5 @@
 class PersonalityInsightsController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
 
   before_action :require_signed_in, only: :show
   before_action :set_insight, only: :show

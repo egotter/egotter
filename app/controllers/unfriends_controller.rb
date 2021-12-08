@@ -2,7 +2,7 @@ class UnfriendsController < ApplicationController
 
   before_action :reject_spam_access!, except: :new
 
-  include SearchRequestConcern
+  include SearchRequestCreation
   include DownloadRequestConcern
   include JobQueueingConcern
 

@@ -1,5 +1,5 @@
 class FriendsController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
   include DownloadRequestConcern
 
   def new

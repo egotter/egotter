@@ -1,5 +1,5 @@
 class FollowersController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
   include DownloadRequestConcern
 
   def show

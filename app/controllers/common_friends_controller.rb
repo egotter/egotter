@@ -1,5 +1,5 @@
 class CommonFriendsController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
 
   before_action(only: :show) { require_login! }
   before_action(only: :show) { twitter_user_persisted?(current_user.uid) }

@@ -1,6 +1,6 @@
 # TODO Rename to ReplyingFriendsController
 class ReplyingController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
 
   def show
     @active_tab = 0

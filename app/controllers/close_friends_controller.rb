@@ -1,5 +1,5 @@
 class CloseFriendsController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
 
   def new
   end

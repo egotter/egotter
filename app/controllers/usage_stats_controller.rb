@@ -1,5 +1,5 @@
 class UsageStatsController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
 
   before_action(only: :show) do
     unless set_stat

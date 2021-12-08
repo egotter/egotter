@@ -1,5 +1,5 @@
 class TokimekiUnfollowController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
 
   before_action :require_login!, only: %i(cleanup unfollow keep)
 

@@ -1,5 +1,5 @@
 class ReplyingAndRepliedController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
 
   def show
     @active_tab = 2

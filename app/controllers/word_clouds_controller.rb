@@ -1,5 +1,5 @@
 class WordCloudsController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
 
   def show
   end

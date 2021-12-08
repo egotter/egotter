@@ -1,5 +1,5 @@
 class FavoriteFriendsController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
 
   def show
     @active_tab = 1

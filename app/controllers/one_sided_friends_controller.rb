@@ -1,5 +1,5 @@
 class OneSidedFriendsController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
   include DownloadRequestConcern
 
   def new

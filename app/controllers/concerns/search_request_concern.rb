@@ -1,5 +1,6 @@
 require 'active_support/concern'
 
+# TODO Remove later
 module SearchRequestConcern
   extend ActiveSupport::Concern
   include ValidationConcern

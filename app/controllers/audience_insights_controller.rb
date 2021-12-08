@@ -1,5 +1,5 @@
 class AudienceInsightsController < ApplicationController
-  include SearchRequestConcern
+  include SearchRequestCreation
 
   def show
   end
