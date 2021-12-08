@@ -309,6 +309,8 @@ module PathsHelper
       error_pages_too_many_searches_path(via: via)
     when 'too many friends'
       error_pages_too_many_friends_path(via: via)
+    when 'adult account'
+      error_pages_adult_user_path(via: via)
     when 'unknown'
       error_pages_twitter_error_unknown_path(via: via)
     else

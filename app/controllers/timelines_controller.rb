@@ -3,7 +3,7 @@ class TimelinesController < ApplicationController
   before_action :reject_spam_access!
 
   include JobQueueingConcern
-  include SearchRequestConcern
+  include SearchRequestCreation
   include SanitizationConcern
 
   before_action :valid_screen_name?, only: :waiting
