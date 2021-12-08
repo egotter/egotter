@@ -135,7 +135,7 @@ module ValidationConcern
   end
 
   def search_request_cache_exists?(screen_name)
-    if SearchRequest.new.exists?(screen_name)
+    if SearchRequest.exists?(screen_name)
       true
     else
       CreateSearchRequestWorker.perform_async(screen_name, user_id: current_user&.id)

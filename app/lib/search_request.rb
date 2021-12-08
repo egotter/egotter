@@ -1,9 +1,14 @@
+require 'forwardable'
+require 'singleton'
+
 class SearchRequest
+  include Singleton
+
   def initialize
     @store = ActiveSupport::Cache::RedisCacheStore.new(
         namespace: "#{Rails.env}:search_request",
         expires_in: 10.minutes,
-        redis: self.class.redis
+        redis: RedisClient.new
     )
   end
 
@@ -16,15 +21,7 @@ class SearchRequest
   end
 
   class << self
-    MX = Mutex.new
-
-    def redis
-      MX.synchronize do
-        unless @redis
-          @redis = RedisClient.new
-        end
-      end
-      @redis
-    end
+    extend Forwardable
+    def_delegators :instance, :exists?, :write
   end
 end

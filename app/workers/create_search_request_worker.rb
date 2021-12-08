@@ -33,7 +33,7 @@ class CreateSearchRequestWorker
       user = client.user(screen_name)
     rescue => e
     ensure
-      SearchRequest.new.write(screen_name)
+      SearchRequest.write(screen_name)
     end
 
     create_timeline_readable_cache(client, options['user_id'], user[:id])
