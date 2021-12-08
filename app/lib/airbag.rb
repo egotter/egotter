@@ -37,6 +37,10 @@ class Airbag
     def logger
       @logger ||= Logger.instance
     end
+
+    def disable!
+      @logger = ::Logger.new(nil)
+    end
   end
 
   class Logger < ::Logger

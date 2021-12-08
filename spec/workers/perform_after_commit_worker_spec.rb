@@ -4,8 +4,9 @@ RSpec.describe PerformAfterCommitWorker do
   let(:worker) { described_class.new }
 
   describe '#perform' do
-    let(:id) { 1 }
-    let(:uid) { 2 }
+    let(:twitter_user) { create(:twitter_user) }
+    let(:id) { twitter_user.id }
+    let(:uid) { twitter_user.uid }
     let(:screen_name) { 'name' }
     let(:profile) { 'profile' }
     let(:friend_uids) { 'uids1' }
