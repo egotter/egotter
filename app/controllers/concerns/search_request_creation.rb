@@ -16,8 +16,9 @@ module SearchRequestCreation
     before_action(only: :show) { @twitter_user = TwitterUser.with_delay.latest_by(uid: @twitter_user.uid) }
   end
 
-  def find_or_create_search_request
-    request = SearchRequest.request_for(current_user&.id, screen_name: params[:screen_name])
+  def find_or_create_search_request(screen_name = nil)
+    screen_name = params[:screen_name] unless screen_name
+    request = SearchRequest.request_for(current_user&.id, screen_name: screen_name)
 
     if request
       if request.ok?
@@ -31,7 +32,7 @@ module SearchRequestCreation
       request = SearchRequest.create!(
           user_id: current_user&.id,
           uid: nil,
-          screen_name: params[:screen_name],
+          screen_name: screen_name,
           properties: {remaining_count: @search_count_limitation.remaining_count, search_histories: current_search_histories.map(&:uid)}
       )
       CreateSearchRequestWorker.perform_async(request.id)
