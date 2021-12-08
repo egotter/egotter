@@ -18,14 +18,12 @@ class SearchRequestValidator
   def blocked_user?(screen_name)
     return false unless user_signed_in?
 
-    ApplicationRecord.benchmark("Benchmark SearchRequestValidator#blocked_user? screen_name=#{screen_name}", level: :info) do
-      begin
-        Timeout.timeout(5.seconds) do
-          @client.user_timeline(screen_name, count: 1)
-        end
-      rescue Timeout::Error => e
-        Airbag.info { "#{self.class}##{__method__} timeout screen_name=#{screen_name}" }
+    begin
+      Timeout.timeout(5.seconds) do
+        @client.user_timeline(screen_name, count: 1)
       end
+    rescue Timeout::Error => e
+      Airbag.info { "#{self.class}##{__method__} timeout screen_name=#{screen_name}" }
     end
 
     false
@@ -42,14 +40,12 @@ class SearchRequestValidator
   end
 
   def timeline_readable?(screen_name)
-    ApplicationRecord.benchmark("Benchmark SearchRequestValidator#timeline_readable? screen_name=#{screen_name}", level: :info) do
-      begin
-        Timeout.timeout(5.seconds) do
-          @client.user_timeline(screen_name, count: 1)
-        end
-      rescue Timeout::Error => e
-        Airbag.info { "#{self.class}##{__method__} timeout screen_name=#{screen_name}" }
+    begin
+      Timeout.timeout(5.seconds) do
+        @client.user_timeline(screen_name, count: 1)
       end
+    rescue Timeout::Error => e
+      Airbag.info { "#{self.class}##{__method__} timeout screen_name=#{screen_name}" }
     end
 
     true
