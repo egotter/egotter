@@ -78,7 +78,7 @@
       if (!res || !res.users || res.users.length <= 0) {
         box.find('.result-not-found').show();
         if (!fromCrawler) {
-          trackPageEvents('TimelinePage events', feedName + ' loaded', {dataLength: 0});
+          // trackPageEvents('TimelinePage events', feedName + ' loaded', {dataLength: 0});
         }
       } else {
         var template = window.templates['user'];
@@ -93,7 +93,7 @@
         box.find('.show-result').show();
 
         if (!fromCrawler) {
-          trackPageEvents('TimelinePage events', feedName + ' loaded', {dataLength: res.users.length});
+          // trackPageEvents('TimelinePage events', feedName + ' loaded', {dataLength: res.users.length});
         }
       }
     }

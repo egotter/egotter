@@ -22,7 +22,7 @@
 
     $.get(url).done(function (res) {
       new Heart('<%= container_id %>', 0, <%= heart_offset_y %>, <%= width %>, <%= height - heart_offset_y %>, <%= image_width %>, res.users).draw();
-      trackPageEvents('TimelinePage events', 'CloseFriends loaded', {dataLength: res.users.length});
+      // trackPageEvents('TimelinePage events', 'CloseFriends loaded', {dataLength: res.users.length});
     }).fail(showErrorMessage);
   });
 </script>

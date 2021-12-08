@@ -14,7 +14,7 @@
       var url = '<%= raw api_v1_profiles_path(uid: twitter_user.top_follower.uid, expanded: false, via: current_via('top_follower')) %>';
       var errorMessage = '<%= t('.loading_error', user: twitter_user.screen_name) %>';
       new ProfileLoader(url, '#top-follower-container', errorMessage);
-      trackPageEvents('TimelinePage events', 'TopFollower loaded');
+      // trackPageEvents('TimelinePage events', 'TopFollower loaded');
 
       var btn = $(this);
       setTimeout(function () {
