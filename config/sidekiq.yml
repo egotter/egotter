@@ -9,7 +9,6 @@
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
   - AssembleTwitterUserWorker
-  - CreateHighPriorityTwitterUserWorker
   - CreateSignedInTwitterUserWorker
   - CreateTwitterUserWorker
   - WriteToS3Worker
