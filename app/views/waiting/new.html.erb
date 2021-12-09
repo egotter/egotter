@@ -1,7 +1,7 @@
 <div class="container">
   <div class="text-center my-3">
     <div id="waiting-msg">
-      <%= t('.analyzing', user: @twitter_user.name) %>&nbsp;<%= image_tag '/ajax-loader-blue.gif' %>
+      <%= t('.analyzing', user: @screen_name) %>&nbsp;<%= image_tag '/ajax-loader-blue.gif' %>
     </div>
 
     <div id="finished-msg" style="display: none;">
@@ -19,7 +19,7 @@
 
   <div class="buttons row" style="display: none;">
     <div class="col-12 col-sm-12 col-md-4 text-center mb-3">
-      <%= link_to t('.retry_search_by', user: @twitter_user.screen_name), timeline_path(@twitter_user, via: current_via('waiting_retry')), class: 'btn btn-lg btn-outline-primary' %>
+      <%= link_to t('.retry_search_by', user: @screen_name), timeline_path(screen_name: @screen_name, via: current_via('waiting_retry')), class: 'btn btn-lg btn-outline-primary' %>
     </div>
 
     <div class="col-12 col-sm-12 col-md-4 text-center mb-3">
@@ -34,18 +34,19 @@
   <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
 
   <div class="mt-1 mb-3">
-    <%= render(partial: 'profiles/twitter_button', locals: {screen_name: @twitter_user.screen_name, location: 'top'}) %>
+    <%= render(partial: 'profiles/twitter_button', locals: {screen_name: @screen_name, location: 'top'}) %>
   </div>
 
-  <div class="mb-3">
-    <%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: true} %>
-  </div>
+  <% if @user %>
+    <div class="mb-3">
+      <%= render partial: 'shared/profile_section', locals: {twitter_user: @user, expanded: true} %>
+    </div>
+  <% end %>
 </div>
 
 <script>
-  var pollPath = "<%= twitter_user_path(uid: @twitter_user.uid, via: current_via) %>";
+  var pollPath = "<%= twitter_user_path(uid: @uid, via: current_via) %>";
   var redirectPath = "<%= @redirect_path %>";
-  var signedIn = <%= user_signed_in? %>;
   var state = null;
 
   trackPageEvents('WaitingPage events', 'Page loaded');
