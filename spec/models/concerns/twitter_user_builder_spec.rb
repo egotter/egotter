@@ -1,56 +1,34 @@
 require 'rails_helper'
 
 RSpec.describe TwitterUserBuilder do
-  describe '.build_by' do
-    let(:user) do
-      {
-          id: 1,
-          screen_name: 'sn',
-          followers_count: 456,
-          friends_count: 123,
-      }
+  let(:klass) do
+    Class.new do
+      include TwitterUserBuilder
+      attr_accessor :uid, :screen_name, :friends_count, :followers_count, :profile_text
+
+      def initialize(options)
+        options.each { |k, v| instance_variable_set(:"@#{k}", v) }
+      end
     end
-    subject { TwitterUser.build_by(user: user) }
+  end
 
-    it { is_expected.to be_a_kind_of(TwitterUser) }
-
+  describe '.from_api_user' do
+    let(:user) { {id: 1, screen_name: 'sn', friends_count: 123, followers_count: 456} }
+    subject { klass.from_api_user(user) }
+    before { allow(klass).to receive(:filter_save_keys).with(user).and_return('filtered') }
     it do
-      is_expected.to have_attributes(
-                         uid: user[:id],
-                         screen_name: user[:screen_name],
-                         friends_count: user[:friends_count],
-                         followers_count: user[:followers_count])
-      expect(subject.profile_text).to match(user.to_json)
+      result = subject
+      expect(result.uid).to eq(user[:id])
+      expect(result.screen_name).to eq(user[:screen_name])
+      expect(result.friends_count).to eq(user[:friends_count])
+      expect(result.followers_count).to eq(user[:followers_count])
+      expect(result.profile_text).to eq('filtered')
     end
   end
 
   describe '.filter_save_keys' do
-    subject { TwitterUser.send(:filter_save_keys, user) }
-    let(:result) { {id: 1}.to_json }
-
-    it do
-      expect(TwitterUser.methods).not_to include(:filter_save_keys)
-      expect(TwitterUser.new.methods).not_to include(:filter_save_keys)
-    end
-
-    context 'With symbol key' do
-      let(:user) { {id: 1} }
-      it { is_expected.to eq(result) }
-    end
-
-    context 'With string key' do
-      let(:user) { {'id' => 1} }
-      it { is_expected.to eq(result) }
-    end
-
-    context 'With Hashie::Mash with symbol key' do
-      let(:user) { Hashie::Mash.new(id: 1) }
-      it { is_expected.to eq(result) }
-    end
-
-    context 'With Hashie::Mash with string key' do
-      let(:user) { Hashie::Mash.new('id' => 1) }
-      it { is_expected.to eq(result) }
-    end
+    let(:hash) { {'id' => 1, 'name' => 'name', 'hello' => 'ok'} }
+    subject { klass.send(:filter_save_keys, hash) }
+    it { is_expected.to eq(hash.slice('id', 'name').to_json) }
   end
 end

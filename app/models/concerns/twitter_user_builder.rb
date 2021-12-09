@@ -4,7 +4,7 @@ module TwitterUserBuilder
   extend ActiveSupport::Concern
 
   class_methods do
-    def build_by(user:)
+    def from_api_user(user)
       new(
           uid: user[:id],
           screen_name: user[:screen_name],
@@ -16,8 +16,8 @@ module TwitterUserBuilder
 
     private
 
-    def filter_save_keys(user)
-      user.symbolize_keys.slice(*TwitterUserProfile::SAVE_KEYS).to_json
+    def filter_save_keys(hash)
+      hash.symbolize_keys.slice(*TwitterUserProfile::SAVE_KEYS).to_json
     end
   end
 end
