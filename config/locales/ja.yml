@@ -1401,8 +1401,8 @@ ja:
         データの更新に失敗しました。大半のエラーは一時的なものです。5〜10分ほど後に再度お試しください。
         <a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>
       polling_stopped_html: >-
-        フォロー・フォロワーに変化はありませんでした。表示されているデータは <b>%{time}</b> に更新されたものです。
-        <a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>
+        データは最新です。フォロー・フォロワーに変化があるとページが更新されます。次は %{min}分 ほど後にアクセスしてみてください。
+        <a href="%{url}" class="btn btn-outline-primary btn-sm">ページを更新する</a>
       profile_not_found_html: >-
         プロフィールを更新中です。10〜30秒後にページを更新してください。
         <a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>
@@ -1416,9 +1416,8 @@ ja:
         <a href="%{url}" target="_blank" class="btn btn-primary">DM作成画面を開く</a>
       updating_html: '@%{user} のデータを更新中 <img src="/ajax-loader-blue.gif?a=1">'
       displayed_data_is_html: >-
-        表示されているデータは <b>%{time}</b> に更新されました。次の更新は「フォローまたはフォロワーに変化があったとき」です。
-        <a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>
-      before: '前'
+        データは最新です。フォロー・フォロワーに変化があるとページが更新されます。次は %{min}分 ほど後にアクセスしてみてください。
+        <a href="%{url}" class="btn btn-outline-primary btn-sm">ページを更新する</a>
       soft_limited_html: >-
         @%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。
         <a href="%{url}" class="btn btn-outline-primary">ログインする</a>

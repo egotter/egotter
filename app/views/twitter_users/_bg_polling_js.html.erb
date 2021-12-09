@@ -84,7 +84,7 @@
         });
       }, function failed(reason) {
         if (reason === 'stopped') {
-          var message = '<%= t('twitter_users.in_background.polling_stopped_html', url: timeline_path(twitter_user, via: current_via('polling_stopped')), time: time_ago_in_words_ja(twitter_user.created_at)) %>';
+          var message = '<%= t('twitter_users.in_background.polling_stopped_html', url: timeline_path(twitter_user, via: current_via('polling_stopped')), min: (TwitterUser::CREATE_RECORD_INTERVAL / 1.minute)) %>';
           ToastMessage.info(message);
         } else {
           var message = '<%= t('twitter_users.in_background.failed_html', url: timeline_path(twitter_user, via: current_via('polling_failed'))) %>';
@@ -94,8 +94,8 @@
       ToastMessage.info('<%= t('twitter_users.in_background.updating_html', user: twitter_user.screen_name) %>');
     } else {
       logger.log("Job is not started.");
-      var message = '<%= t('twitter_users.in_background.displayed_data_is_html', url: timeline_path(twitter_user, via: current_via('job_not_started')), time: time_ago_in_words_ja(twitter_user.created_at)) %>';
-      ToastMessage.info(message, {id: 'job_not_started-<%= twitter_user.created_at.to_i %>', ttl: 60});
+      var message = '<%= t('twitter_users.in_background.displayed_data_is_html', url: timeline_path(twitter_user, via: current_via('job_not_started')), min: (TwitterUser::CREATE_RECORD_INTERVAL / 1.minute)) %>';
+      ToastMessage.info(message, {ttl: 60});
     }
   });
 </script>
