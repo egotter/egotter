@@ -1,42 +1,33 @@
 require 'rails_helper'
 
-RSpec.describe JobQueueingConcern do
-  let(:instance) { double('Instance') }
+RSpec.describe JobQueueingConcern, type: :controller do
+  controller ApplicationController do
+    include JobQueueingConcern
+  end
+
+  let(:user) { create(:user) }
 
   before do
-    instance.extend JobQueueingConcern
+    RedisClient.new.flushall
+    allow(controller).to receive(:user_signed_in?).and_return(true)
+    allow(controller).to receive(:current_user).and_return(user)
+  end
+
+  after do
+    RedisClient.new.flushall
   end
 
   describe '#enqueue_create_twitter_user_job_if_needed' do
-    let(:user) { create(:user) }
-    subject { instance.enqueue_create_twitter_user_job_if_needed(user.uid, user_id: user.id) }
-    before do
-      allow(instance).to receive(:from_crawler?).and_return(false)
-      allow(instance).to receive(:user_signed_in?).and_return(true)
-      allow(instance).to receive(:current_user).and_return(user)
-      allow(instance).to receive(:controller_name).and_return('controller')
-      allow(instance).to receive(:controller_path).and_return('controller')
-      allow(instance).to receive(:action_name).and_return('action')
-      allow(instance).to receive(:egotter_visit_id).and_return('visit_id')
-      allow(instance).to receive(:current_visit).and_return(nil)
-    end
+    subject { controller.enqueue_create_twitter_user_job_if_needed(user.uid) }
     it do
-      expect(CreateSignedInTwitterUserWorker).to receive(:perform_async).with(any_args).and_return('jid')
-      is_expected.to eq('jid')
+      expect(CreateSignedInTwitterUserWorker).to receive(:perform_async).with(any_args)
+      subject
     end
   end
 
   describe '#enqueue_assemble_twitter_user' do
-    let(:user) { create(:user) }
     let(:twitter_user) { create(:twitter_user, created_at: 1.minute.ago) }
-    subject { instance.enqueue_assemble_twitter_user(twitter_user) }
-    before do
-      allow(instance).to receive(:from_crawler?)
-      allow(instance).to receive(:user_signed_in?).and_return(true)
-      allow(instance).to receive(:current_user).and_return(user)
-      allow(instance).to receive(:controller_name).and_return('name')
-      allow(instance).to receive(:controller_path).and_return('name')
-    end
+    subject { controller.enqueue_assemble_twitter_user(twitter_user) }
     it do
       expect(AssembleTwitterUserWorker).to receive(:perform_async).with(any_args)
       subject

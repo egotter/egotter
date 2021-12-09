@@ -18,6 +18,7 @@ module SearchRequestCreation
 
   def find_or_create_search_request(screen_name = nil)
     screen_name = params[:screen_name] unless screen_name
+    # TODO Save visitor_token
     request = SearchRequest.request_for(current_user&.id, screen_name: screen_name)
 
     if request

@@ -3,10 +3,9 @@ require 'active_support/concern'
 module JobQueueingConcern
   extend ActiveSupport::Concern
 
-  def enqueue_create_twitter_user_job_if_needed(uid, user_id:, force: false)
-    return if from_crawler?
-    return if !force && !user_signed_in?
-    return if user_signed_in? && RateLimitExceededFlag.on?(current_user.id)
+  def enqueue_create_twitter_user_job_if_needed(uid)
+    return unless user_signed_in?
+    return if RateLimitExceededFlag.on?(current_user.id)
     return if TwitterUserUpdatedFlag.on?(uid)
     return if TwitterUser.too_short_create_interval?(uid)
     return if CreateTwitterUserRequest.too_short_request_interval?(uid)
@@ -15,43 +14,24 @@ module JobQueueingConcern
 
     request = CreateTwitterUserRequest.create(
         requested_by: controller_path,
-        session_id: egotter_visit_id,
-        user_id: user_id,
-        uid: uid,
-        ahoy_visit_id: current_visit&.id)
+        user_id: current_user.id,
+        uid: uid)
 
-    if user_signed_in?
-      CreateSignedInTwitterUserWorker.perform_async(request.id, requested_by: controller_path)
-    else
-      CreateTwitterUserWorker.perform_async(request.id, requested_by: controller_path)
-    end
-
+    CreateSignedInTwitterUserWorker.perform_async(request.id, requested_by: controller_path)
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} uid=#{uid} user_id=#{user_id} controller_name=#{controller_name}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} user_id=#{current_user.id} uid=#{uid} controller=#{controller_path}"
   end
 
   # TODO Update the data as priority if the user searches for yourself
   def enqueue_assemble_twitter_user(twitter_user)
+    return unless user_signed_in?
     return if twitter_user.created_at > 10.seconds.ago
     return if twitter_user.assembled_at.present?
-    return if from_crawler?
-    return unless user_signed_in?
 
     request = AssembleTwitterUserRequest.create(twitter_user: twitter_user, requested_by: controller_path)
-
-    debug_info = {
-        user_id: current_user.id,
-        search_for_yourself: current_user.uid == twitter_user.uid,
-        twitter_user_id: twitter_user.id,
-        uid: twitter_user.uid,
-        friends_count: twitter_user.friends_count,
-        followers_count: twitter_user.followers_count,
-        created_at: twitter_user.created_at,
-    }
-
-    AssembleTwitterUserWorker.perform_async(request.id, requested_by: controller_name, debug_info: debug_info)
+    AssembleTwitterUserWorker.perform_async(request.id, requested_by: controller_path)
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} twitter_user=#{twitter_user.inspect} controller_name=#{controller_name}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} twitter_user_id=#{twitter_user.id} controller=#{controller_path}"
   end
 
   def enqueue_update_authorized
