@@ -229,7 +229,7 @@ Rails.application.routes.draw do
   get 'personality_insights', to: 'personality_insights#new', as: :personality_insights_top
 
   resources :searches, only: %i(create), param: :screen_name
-  get 'waiting/:uid', to: 'waiting#new', as: :waiting
+  get 'waiting', to: 'waiting#index', as: :waiting
 
   resources :twitter_users, only: %i(show), param: :uid
   get 'twitter_users/:uid/changes', to: 'twitter_users#changes', as: :twitter_users_changes

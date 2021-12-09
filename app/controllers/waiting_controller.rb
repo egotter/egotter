@@ -29,7 +29,7 @@ class WaitingController < ApplicationController
     set_redirect_path(@screen_name)
   end
 
-  def new
+  def index
   end
 
   private
