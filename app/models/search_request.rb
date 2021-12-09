@@ -107,7 +107,7 @@ class SearchRequest < ApplicationRecord
       return
     end
 
-    if user && (TooManyFriendsUsers.new.exists?(user.id) || TooManyFriendsSearchedFlag.on?(user.id))
+    if user && TooManyFriendsSearchedFlag.on?(user.id)
       update(status: 'too many friends')
     end
 
