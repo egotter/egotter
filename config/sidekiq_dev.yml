@@ -16,7 +16,6 @@
   - deleting_low
   - report_high
   - AssembleTwitterUserWorker
-  - CreateSignedInTwitterUserWorker
   - CreateHighPriorityTwitterDBUserWorker
   - CreateTwitterDBUserWorker
   - ImportTwitterDBUserWorker
