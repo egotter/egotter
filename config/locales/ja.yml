@@ -65,7 +65,7 @@ ja:
       usage_active_time: ".%{user} がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
       usage_kind: ".%{user} のツイートのうち、%{mentions}%はメンション、%{media}%は画像付き、%{urls}%はリンク付き、%{hashtags}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
   waiting:
-    new:
+    index:
       analyzing: "@%{user} のデータを分析中"
       finished: "分析が完了しました。ページを移動します"
       retry_search_by: "@%{user} で再度検索"
