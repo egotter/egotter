@@ -20,20 +20,10 @@ module JobQueueingConcern
         uid: uid,
         ahoy_visit_id: current_visit&.id)
 
-    debug_info = {
-        search_for_yourself: current_user&.uid == uid,
-        controller: controller_path,
-        action: action_name,
-        user_id: user_id,
-        uid: uid
-    }
-
-    if controller_name == 'searches' && user_signed_in?
-      CreateHighPriorityTwitterUserWorker.perform_async(request.id, debug_info: debug_info)
-    elsif user_signed_in?
-      CreateSignedInTwitterUserWorker.perform_async(request.id, debug_info: debug_info)
+    if user_signed_in?
+      CreateSignedInTwitterUserWorker.perform_async(request.id, requested_by: controller_path)
     else
-      CreateTwitterUserWorker.perform_async(request.id, debug_info: debug_info)
+      CreateTwitterUserWorker.perform_async(request.id, requested_by: controller_path)
     end
 
   rescue => e

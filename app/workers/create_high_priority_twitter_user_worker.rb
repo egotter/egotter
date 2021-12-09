@@ -1,4 +1,4 @@
-# I want to print this class name to sidekiq.log.
+# TODO Remove later
 class CreateHighPriorityTwitterUserWorker < CreateTwitterUserWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: 0, backtrace: false
