@@ -19,9 +19,6 @@ default: &default
   create_follow_limitation:
     anonymous: 2
     basic_plan: 100
-  create_unfollow_limitation:
-    anonymous: 2
-    basic_plan: 20
 development:
   <<: *default
   usage_stat_recently_created: <%= 1.minute %>

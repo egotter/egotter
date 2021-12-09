@@ -1436,11 +1436,6 @@ ja:
       cannot_follow_yourself: '自分をフォローすることはできません。'
       success: '@%{user} のフォローに成功しました。残りのフォロー回数は %{count}回 です。'
       retry_later: '@%{user} のフォローをリクエストしました。凍結を防ぐために一定時間後にフォローします。'
-  unfollows:
-    create:
-      cannot_unfollow_yourself: '自分をフォロー解除することはできません。'
-      success: '@%{user} のフォロー解除に成功しました。残りのフォロー解除回数は %{count}回 です。'
-      retry_later: '@%{user} のフォロー解除をリクエストしました。凍結を防ぐために一定時間後にフォロー解除します。'
   error_pages:
     support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
     api_not_authorized:
