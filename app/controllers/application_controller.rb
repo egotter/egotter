@@ -4,7 +4,6 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
   include InternalServerErrorHandler
   include RoutingErrorHandler
-  include TwitterErrorHandler
   include ApiClientConcern
   include UsersConcern
   include CrawlersHelper
