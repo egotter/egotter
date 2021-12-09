@@ -15,19 +15,21 @@ module JobQueueingConcern
     request = CreateTwitterUserRequest.create(user_id: current_user.id, uid: uid, requested_by: controller_path)
     CreateTwitterUserWorker.perform_async(request.id, requested_by: controller_path)
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} user_id=#{current_user.id} uid=#{uid} controller=#{controller_path}"
+    Airbag.warn "#{__method__}: #{e.inspect} user_id=#{current_user.id} uid=#{uid} controller=#{controller_path}"
   end
 
-  # TODO Update the data as priority if the user searches for yourself
   def request_assembling_twitter_user(twitter_user)
     return unless user_signed_in?
+    return if TwitterUserAssembledFlag.on?(twitter_user.uid)
     return if twitter_user.created_at > 10.seconds.ago
     return if twitter_user.assembled_at.present?
+
+    TwitterUserAssembledFlag.on(twitter_user.uid)
 
     request = AssembleTwitterUserRequest.create(twitter_user: twitter_user, requested_by: controller_path)
     AssembleTwitterUserWorker.perform_async(request.id, requested_by: controller_path)
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} twitter_user_id=#{twitter_user.id} controller=#{controller_path}"
+    Airbag.warn "##{__method__}: #{e.inspect} twitter_user_id=#{twitter_user.id} controller=#{controller_path}"
   end
 
   def enqueue_update_authorized
