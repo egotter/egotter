@@ -11,6 +11,7 @@
 #
 # Indexes
 #
+#  index_direct_message_receive_logs_on_acrs          (automated,created_at,recipient_id,sender_id)
 #  index_direct_message_receive_logs_on_created_at    (created_at)
 #  index_direct_message_receive_logs_on_recipient_id  (recipient_id)
 #  index_direct_message_receive_logs_on_sender_id     (sender_id)
