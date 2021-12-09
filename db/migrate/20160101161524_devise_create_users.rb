@@ -5,8 +5,8 @@ class DeviseCreateUsers < ActiveRecord::Migration[4.2]
       t.string   :screen_name, null: false
       t.boolean  :authorized,  null: false, default: true
       t.boolean  :locked,      null: false, default: false
-      t.string   :token,       null: false
-      t.string   :secret,      null: false
+      t.string   :token,       null: true
+      t.string   :secret,      null: true
       t.string   :email,       null: false, default: ''
 
       t.timestamps null: false

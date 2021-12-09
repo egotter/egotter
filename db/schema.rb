@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 2021_12_08_224146) do
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "date", null: false
-    t.datetime "time"
+    t.timestamp "time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "date"], name: "index_access_days_on_user_id_and_date", unique: true
