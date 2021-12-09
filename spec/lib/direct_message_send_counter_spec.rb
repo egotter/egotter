@@ -13,4 +13,12 @@ RSpec.describe DirectMessageSendCounter, type: :model do
       expect(described_class.ttl(uid)).to be_between(1.day - 10.seconds, 1.day + 10.seconds)
     end
   end
+
+  describe '.messages_left?' do
+    it do
+      expect(described_class.messages_left?(uid)).to be_truthy
+      4.times { described_class.increment(uid) }
+      expect(described_class.messages_left?(uid)).to be_falsey
+    end
+  end
 end

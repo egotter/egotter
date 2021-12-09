@@ -118,7 +118,7 @@ class PeriodicReportValidator
       user = @request.user
       return true unless PeriodicReport.messages_allotted?(user)
 
-      if PeriodicReport.allotted_messages_left?(user, count: 3)
+      if DirectMessageSendCounter.messages_left?(user.uid)
         true
       else
         @request.update(status: 'soft_limited')

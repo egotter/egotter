@@ -778,10 +778,6 @@ class PeriodicReport < ApplicationRecord
       remaining_ttl && remaining_ttl < REMAINING_TTL_HARD_LIMIT
     end
 
-    def allotted_messages_left?(user, count: 4)
-      DirectMessageSendCounter.count(user.uid) <= count
-    end
-
     def messages_allotted?(user)
       GlobalDirectMessageReceivedFlag.new.received?(user.uid)
     end
@@ -811,7 +807,7 @@ class PeriodicReport < ApplicationRecord
     end
 
     def messages_not_allotted?(user)
-      !messages_allotted?(user) || !allotted_messages_left?(user)
+      !messages_allotted?(user) || !DirectMessageSendCounter.messages_left?(user.uid)
     end
 
     def send_report_limited?(uid)

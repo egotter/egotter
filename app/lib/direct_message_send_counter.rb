@@ -43,5 +43,9 @@ class DirectMessageSendCounter
   class << self
     extend Forwardable
     def_delegators :instance, :increment, :count, :clear, :ttl
+
+    def messages_left?(uid)
+      count(uid) <= 3
+    end
   end
 end

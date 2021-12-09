@@ -149,13 +149,13 @@ RSpec.describe PeriodicReportValidator::AllottedMessagesCountValidator, type: :m
     context 'messages are allotted' do
       before { allow(PeriodicReport).to receive(:messages_allotted?).with(user).and_return(true) }
 
-      context 'allotted_messages_left? returns true' do
-        before { allow(PeriodicReport).to receive(:allotted_messages_left?).with(user, count: 3).and_return(true) }
+      context 'messages_left? returns true' do
+        before { allow(DirectMessageSendCounter).to receive(:messages_left?).with(user.uid).and_return(true) }
         it { is_expected.to be_truthy }
       end
 
-      context 'allotted_messages_left? returns false' do
-        before { allow(PeriodicReport).to receive(:allotted_messages_left?).with(user, count: 3).and_return(false) }
+      context 'messages_left? returns false' do
+        before { allow(DirectMessageSendCounter).to receive(:messages_left?).with(user.uid).and_return(false) }
         it { is_expected.to be_falsey }
       end
     end
