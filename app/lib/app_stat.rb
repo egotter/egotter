@@ -11,15 +11,15 @@ class AppStat
   class DirectMessageStat
     def to_s
       dm_count = {
-          total: Ahoy::Event.total_dm.where('time > ?', 1.day.ago).size,
-          active: Ahoy::Event.active_dm.where('time > ?', 1.day.ago).size,
-          passive: Ahoy::Event.passive_dm.where('time > ?', 1.day.ago).size,
+          total: DirectMessageEventLog.total_dm.where('time > ?', 1.day.ago).size,
+          active: DirectMessageEventLog.active_dm.where('time > ?', 1.day.ago).size,
+          passive: DirectMessageEventLog.passive_dm.where('time > ?', 1.day.ago).size,
       }
 
       dm_from_egotter = {
-          total: Ahoy::Event.dm_from_egotter.where('time > ?', 1.day.ago).size,
-          active: Ahoy::Event.active_dm_from_egotter.where('time > ?', 1.day.ago).size,
-          passive: Ahoy::Event.passive_dm_from_egotter.where('time > ?', 1.day.ago).size,
+          total: DirectMessageEventLog.dm_from_egotter.where('time > ?', 1.day.ago).size,
+          active: DirectMessageEventLog.active_dm_from_egotter.where('time > ?', 1.day.ago).size,
+          passive: DirectMessageEventLog.passive_dm_from_egotter.where('time > ?', 1.day.ago).size,
       }
 
       [
