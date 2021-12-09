@@ -1,9 +1,5 @@
 require 'twitter'
 
-# It is necessary to load the classes first because they may be called in Thread.
-require_relative '../../app/lib/egotter/sorted_set'
-require_relative '../../app/lib/egotter/async_sorted_set'
-
 module Egotter
   module Twitter
     module Measurement
