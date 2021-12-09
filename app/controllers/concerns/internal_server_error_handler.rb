@@ -2,7 +2,6 @@ require 'active_support/concern'
 
 module InternalServerErrorHandler
   extend ActiveSupport::Concern
-  include DebugConcern
 
   included do
     rescue_from StandardError, with: :handle_general_error
