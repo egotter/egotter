@@ -237,7 +237,6 @@ class SendMetricsToCloudWatchWorker
         ResetCacheRequest,
         ResetEgotterRequest,
         TweetRequest,
-        UnfollowRequest,
     ].each do |klass|
       options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Duration', value: duration.inspect}]}
 
