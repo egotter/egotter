@@ -20,6 +20,7 @@ services:
       - node_modules:/usr/local/node_modules
       - .:/home/root/egotter:cached
       - ~/.aws:/root/.aws
+      - /tmp/mysql.sock:/tmp/mysql.sock
     ports:
       - "3000:3000"
   sidekiq:
@@ -30,6 +31,7 @@ services:
       - bundle:/usr/local/bundle
       - .:/home/root/egotter:cached
       - ~/.aws:/root/.aws
+      - /tmp/mysql.sock:/tmp/mysql.sock
     depends_on:
       - redis
 volumes:
