@@ -7,7 +7,6 @@ class ApplicationController < ActionController::Base
   include TwitterErrorHandler
   include ApiClientConcern
   include UsersConcern
-  include TwitterUsersConcern
   include CrawlersHelper
   include SessionsConcern
   include ValidationConcern
