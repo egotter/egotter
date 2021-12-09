@@ -1,3 +1,4 @@
+# TODO Remove later
 class SortedSetCleanupWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false

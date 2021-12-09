@@ -1,3 +1,4 @@
+# TODO Remove later
 class GlobalDirectMessageReceivedFlag < ::Egotter::AsyncSortedSet
 
   def initialize

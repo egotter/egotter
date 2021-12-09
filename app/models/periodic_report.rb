@@ -778,6 +778,7 @@ class PeriodicReport < ApplicationRecord
       remaining_ttl && remaining_ttl < REMAINING_TTL_HARD_LIMIT
     end
 
+    # TODO Remove later
     def messages_allotted?(user)
       DirectMessageReceiveLog.message_received?(user.uid)
     end
