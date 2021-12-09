@@ -388,12 +388,12 @@ RSpec.describe PeriodicReport do
     subject { described_class.allotted_messages_left?(user) }
 
     context 'Sending DMs count is less than or equal to 4' do
-      before { allow(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :count).with(user.uid).and_return(4) }
+      before { allow(DirectMessageSendCounter).to receive(:count).with(user.uid).and_return(4) }
       it { is_expected.to be_truthy }
     end
 
     context 'Sending DMs count is greater than 3' do
-      before { allow(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :count).with(user.uid).and_return(5) }
+      before { allow(DirectMessageSendCounter).to receive_message_chain(:count).with(user.uid).and_return(5) }
       it { is_expected.to be_falsey }
     end
   end

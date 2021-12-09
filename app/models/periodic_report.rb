@@ -433,7 +433,7 @@ class PeriodicReport < ApplicationRecord
           remaining_ttl_text(GlobalDirectMessageReceivedFlag.new.remaining(user.uid)),
           setting.period_flags,
           access_day ? access_day.short_date : '0000',
-          GlobalSendDirectMessageCountByUser.new.count(user.uid),
+          DirectMessageSendCounter.count(user.uid),
           worker_context_text(worker_context)
       ].join('-')
 
@@ -779,7 +779,7 @@ class PeriodicReport < ApplicationRecord
     end
 
     def allotted_messages_left?(user, count: 4)
-      GlobalSendDirectMessageCountByUser.new.count(user.uid) <= count
+      DirectMessageSendCounter.count(user.uid) <= count
     end
 
     def messages_allotted?(user)
