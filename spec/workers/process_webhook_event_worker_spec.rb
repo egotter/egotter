@@ -98,7 +98,6 @@ RSpec.describe ProcessWebhookEventWorker do
     subject { worker.send(:process_message_from_user, dm) }
 
     it do
-      expect(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received).with(dm.sender_id)
       expect(DirectMessageSendCounter).to receive(:clear).with(dm.sender_id)
       [
           PeriodicReportResponder,
