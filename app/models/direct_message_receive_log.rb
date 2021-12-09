@@ -15,9 +15,11 @@
 #  index_direct_message_receive_logs_on_created_at    (created_at)
 #  index_direct_message_receive_logs_on_recipient_id  (recipient_id)
 #  index_direct_message_receive_logs_on_sender_id     (sender_id)
+#  index_direct_message_receive_logs_on_srac          (sender_id,recipient_id,automated,created_at)
 #
 class DirectMessageReceiveLog < ApplicationRecord
   class << self
+    # Index: index_direct_message_receive_logs_on_srac
     def message_received?(uid)
       where('created_at > ?', 1.day.ago).where(sender_id: uid, recipient_id: User::EGOTTER_UID, automated: false).exists?
     end
@@ -28,6 +30,7 @@ class DirectMessageReceiveLog < ApplicationRecord
       end
     end
 
+    # Index: index_direct_message_receive_logs_on_acrs
     def received_sender_ids
       select('distinct sender_id uid').where('created_at > ?', 1.day.ago).where(recipient_id: User::EGOTTER_UID, automated: false).map(&:uid)
     end

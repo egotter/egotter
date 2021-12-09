@@ -687,6 +687,7 @@ ActiveRecord::Schema.define(version: 2021_12_08_224146) do
     t.index ["automated", "created_at", "recipient_id", "sender_id"], name: "index_direct_message_receive_logs_on_acrs"
     t.index ["created_at"], name: "index_direct_message_receive_logs_on_created_at"
     t.index ["recipient_id"], name: "index_direct_message_receive_logs_on_recipient_id"
+    t.index ["sender_id", "recipient_id", "automated", "created_at"], name: "index_direct_message_receive_logs_on_srac"
     t.index ["sender_id"], name: "index_direct_message_receive_logs_on_sender_id"
   end
 

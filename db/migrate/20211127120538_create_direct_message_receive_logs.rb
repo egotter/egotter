@@ -9,6 +9,7 @@ class CreateDirectMessageReceiveLogs < ActiveRecord::Migration[6.1]
       t.datetime :created_at, null: false, index: true
 
       t.index [:automated, :created_at, :recipient_id, :sender_id], name: 'index_direct_message_receive_logs_on_acrs'
+      t.index [:sender_id, :recipient_id, :automated, :created_at], name: 'index_direct_message_receive_logs_on_srac'
     end
   end
 end
