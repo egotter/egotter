@@ -62,8 +62,6 @@ module Efs
         obj ? parse_json(decompress(obj)) : nil
       end
 
-      # TODO Use Efs::Client
-
       class Client
         include Singleton
 
