@@ -5,7 +5,6 @@ module Api
       before_action :reject_spam_access!
 
       include ApiRequestConcern
-      include AccountStatusesHelper
       include UsersHelper
       include ApiLimitationHelper
 
@@ -96,6 +95,13 @@ module Api
 
       def remove_related_page?
         %w(unfriends unfollowers mutual_unfriends blockers).include?(controller_name)
+      end
+
+      def collect_suspended_uids(client, uids)
+        users = client.users(uids).select { |user| !user[:suspended] }
+        uids - users.map { |u| u[:id] }
+      rescue => e
+        TwitterApiStatus.no_user_matches?(e) ? uids : []
       end
 
       def update_twitter_db_users(uids)
