@@ -2,7 +2,6 @@ require 'active_support/concern'
 
 module InternalServerErrorHandler
   extend ActiveSupport::Concern
-  include AlertMessagesConcern
   include DebugConcern
 
   included do

@@ -2,7 +2,6 @@ require 'active_support/concern'
 
 module BypassFlashMessagesConcern
   extend ActiveSupport::Concern
-  include AlertMessagesConcern
 
   included do
     before_action do
