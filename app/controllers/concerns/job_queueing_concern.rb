@@ -3,7 +3,7 @@ require 'active_support/concern'
 module JobQueueingConcern
   extend ActiveSupport::Concern
 
-  def enqueue_create_twitter_user_job_if_needed(uid)
+  def request_creating_twitter_user(uid)
     return unless user_signed_in?
     return if RateLimitExceededFlag.on?(current_user.id)
     return if TwitterUserUpdatedFlag.on?(uid)
@@ -23,7 +23,7 @@ module JobQueueingConcern
   end
 
   # TODO Update the data as priority if the user searches for yourself
-  def enqueue_assemble_twitter_user(twitter_user)
+  def request_assembling_twitter_user(twitter_user)
     return unless user_signed_in?
     return if twitter_user.created_at > 10.seconds.ago
     return if twitter_user.assembled_at.present?

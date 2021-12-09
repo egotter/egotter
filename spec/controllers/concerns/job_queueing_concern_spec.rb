@@ -17,17 +17,17 @@ RSpec.describe JobQueueingConcern, type: :controller do
     RedisClient.new.flushall
   end
 
-  describe '#enqueue_create_twitter_user_job_if_needed' do
-    subject { controller.enqueue_create_twitter_user_job_if_needed(user.uid) }
+  describe '#request_creating_twitter_user' do
+    subject { controller.request_creating_twitter_user(user.uid) }
     it do
       expect(CreateSignedInTwitterUserWorker).to receive(:perform_async).with(any_args)
       subject
     end
   end
 
-  describe '#enqueue_assemble_twitter_user' do
+  describe '#request_assembling_twitter_user' do
     let(:twitter_user) { create(:twitter_user, created_at: 1.minute.ago) }
-    subject { controller.enqueue_assemble_twitter_user(twitter_user) }
+    subject { controller.request_assembling_twitter_user(twitter_user) }
     it do
       expect(AssembleTwitterUserWorker).to receive(:perform_async).with(any_args)
       subject

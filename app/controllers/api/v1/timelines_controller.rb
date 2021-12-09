@@ -19,8 +19,8 @@ module Api
       before_action do
         create_search_history(@twitter_user)
         if user_signed_in?
-          @jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid)
-          enqueue_assemble_twitter_user(@twitter_user)
+          @jid = request_creating_twitter_user(@twitter_user.uid)
+          request_assembling_twitter_user(@twitter_user)
         end
       end
 

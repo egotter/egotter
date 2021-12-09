@@ -21,7 +21,7 @@ class SearchesController < ApplicationController
       redirect_to redirect_path
     else
       if user_signed_in?
-        enqueue_create_twitter_user_job_if_needed(@twitter_user.uid)
+        request_creating_twitter_user(@twitter_user.uid)
         redirect_to waiting_path(screen_name: @twitter_user.screen_name, redirect_path: redirect_path, via: current_via)
       else
         session[:screen_name] = @twitter_user.screen_name

@@ -10,7 +10,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   after_action only: :twitter do
     update_search_histories_when_signing_in(@user)
     update_twitter_db_user(@user.uid)
-    enqueue_create_twitter_user_job_if_needed(@user.uid)
+    request_creating_twitter_user(@user.uid)
   end
 
   after_action :follow_egotter, only: :twitter
