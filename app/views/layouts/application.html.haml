@@ -72,8 +72,6 @@
     = render partial: 'modal/search_modal' unless top_page?
 
     - if user_signed_in?
-      = render partial: 'modal/create_follow_modal'
-      = render partial: 'modal/create_unfollow_modal'
       = render partial: 'modal/periodic_tweet_modal'
       = render partial: 'modal/open_twitter_modal'
       - if current_user.has_valid_subscription?

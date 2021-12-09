@@ -7,7 +7,6 @@ module SanitizationConcern
       /searches
       /timelines
       /clusters
-      /tokimeki_unfollow
       /delete_tweets
       /settings
       /start

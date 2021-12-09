@@ -248,10 +248,11 @@ Rails.application.routes.draw do
 
   resources :unfollows, only: %i(create)
 
-  get 'tokimeki_unfollow', to: 'tokimeki_unfollow#new', as: :tokimeki_unfollow_top
-  get 'tokimeki_unfollow/cleanup', to: 'tokimeki_unfollow#cleanup', as: :tokimeki_unfollow_cleanup
-  post 'tokimeki_unfollow/unfollow', to: 'tokimeki_unfollow#unfollow', as: :tokimeki_unfollow_unfollow
-  post 'tokimeki_unfollow/keep', to: 'tokimeki_unfollow#keep', as: :tokimeki_unfollow_keep
+  # TODO Remove
+  get 'tokimeki_unfollow', to: redirect('/')
+  get 'tokimeki_unfollow/cleanup', to: redirect('/')
+  post 'tokimeki_unfollow/unfollow', to: redirect('/')
+  post 'tokimeki_unfollow/keep', to: redirect('/')
 
   resources :settings, only: :index
   get 'settings/account', to: 'settings#account'

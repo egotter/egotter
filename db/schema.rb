@@ -1446,34 +1446,6 @@ ActiveRecord::Schema.define(version: 2021_12_08_224146) do
     t.index ["user_id"], name: "index_test_messages_on_user_id"
   end
 
-  create_table "tokimeki_friendships", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "user_uid", null: false
-    t.bigint "friend_uid", null: false
-    t.integer "sequence", null: false
-    t.index ["friend_uid"], name: "index_tokimeki_friendships_on_friend_uid"
-    t.index ["user_uid", "friend_uid"], name: "index_tokimeki_friendships_on_user_uid_and_friend_uid", unique: true
-    t.index ["user_uid"], name: "index_tokimeki_friendships_on_user_uid"
-  end
-
-  create_table "tokimeki_unfriendships", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "user_uid", null: false
-    t.bigint "friend_uid", null: false
-    t.integer "sequence", null: false
-    t.index ["friend_uid"], name: "index_tokimeki_unfriendships_on_friend_uid"
-    t.index ["user_uid"], name: "index_tokimeki_unfriendships_on_user_uid"
-  end
-
-  create_table "tokimeki_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "uid", null: false
-    t.string "screen_name", null: false
-    t.integer "friends_count", default: 0, null: false
-    t.integer "processed_count", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_tokimeki_users_on_created_at"
-    t.index ["uid"], name: "index_tokimeki_users_on_uid", unique: true
-  end
-
   create_table "trend_insights", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "trend_id", null: false
     t.json "words_count"
@@ -1735,5 +1707,4 @@ ActiveRecord::Schema.define(version: 2021_12_08_224146) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "tokimeki_friendships", "tokimeki_users", column: "user_uid", primary_key: "uid"
 end

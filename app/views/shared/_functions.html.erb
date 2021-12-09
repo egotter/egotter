@@ -36,13 +36,6 @@
 } %>
 
 <%= render partial: 'shared/function_section', locals: {
-  title: (title = t('.tokimeki_unfollow.title')),
-  description: t('.tokimeki_unfollow.description_html', title: title),
-  image: '/egotter_tokimeki_unfollow_with_text_400x453.png',
-  url: tokimeki_unfollow_top_path(via: current_via('functions'))
-} %>
-
-<%= render partial: 'shared/function_section', locals: {
   title: (title = t('.delete_tweets.title')),
   description: t('.delete_tweets.description_html', title: title),
   image: '/egotter_delete_tweets_with_text_400x453.png',

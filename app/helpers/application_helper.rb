@@ -17,8 +17,7 @@ module ApplicationHelper
         (controller_name == 'clusters' && action_name == 'new') ||
         (controller_name == 'delete_tweets' && action_name == 'index') ||
         (controller_name == 'delete_favorites' && action_name == 'new') ||
-        (controller_name == 'personality_insights' && action_name == 'new') ||
-        (controller_name == 'tokimeki_unfollow' && action_name == 'new')
+        (controller_name == 'personality_insights' && action_name == 'new')
   end
 
   def waiting_page?
@@ -54,7 +53,7 @@ module ApplicationHelper
   end
 
   def show_sidebar?
-    !sidebar_disabled? && @twitter_user && !waiting_page? && controller_name != 'tokimeki_unfollow'
+    !sidebar_disabled? && @twitter_user && !waiting_page?
   end
 
   def sidebar_disabled?

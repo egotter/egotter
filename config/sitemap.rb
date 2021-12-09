@@ -14,7 +14,6 @@ do_create = Proc.new do
     obj.add inactive_friends_top_path
     obj.add friends_top_path
     obj.add clusters_top_path
-    obj.add tokimeki_unfollow_top_path
     obj.add delete_tweets_path
     obj.add pricing_path
   end

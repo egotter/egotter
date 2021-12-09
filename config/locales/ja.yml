@@ -1441,39 +1441,6 @@ ja:
       cannot_unfollow_yourself: '自分をフォロー解除することはできません。'
       success: '@%{user} のフォロー解除に成功しました。残りのフォロー解除回数は %{count}回 です。'
       retry_later: '@%{user} のフォロー解除をリクエストしました。凍結を防ぐために一定時間後にフォロー解除します。'
-  tokimeki_unfollow:
-    new:
-      navbar_title: 'ときめきアンフォロー✨'
-      plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
-      simple_title: 'ときめきアンフォロー✨'
-      footer_title: 'ときめきアンフォロー✨'
-      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。%{count}万人以上が利用するえごったーに新機能が登場！"
-      right_side:
-        header: 'ときめきアンフォロー'
-        subheader: 'あなたは今のタイムラインにときめきますか？'
-        lead_html: 'ときめきアンフォローでタイムラインを整理しましょう。<br><span class="egotter-pink">%{count}万人</span>以上が利用するえごったーに新機能が登場！'
-      text001_html: 'あなたは今のタイムラインにときめきますか？'
-      text002_html: '最初は良いと思ってフォローしたけど、今はときめかない・・・そんな時は、相手に感謝しつつアンフォローしましょう。'
-      text003_html: '今はもうときめかなくなったフォローを解除する。それは、新たな門出ともいえる儀式なのです。ぜひその門出を祝福してあげてください。'
-      continue: '続きから始める'
-      disclaimer: 'このツールは、実在するお掃除コンサルタントの考え方を参考にしていますが、ご本人の見解を代表するものではございません。'
-    cleanup:
-      navbar_title: 'ときめきアンフォロー✨'
-      plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
-      simple_title: 'ときめきアンフォロー✨'
-      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。%{count}万人以上が利用するえごったーに新機能が登場！"
-      text001_html: 'あなたは今も、<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんに心がときめいていますか？✨'
-      next_is_html: '次は%{number}人目、<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんです。🙂'
-      how_to_continue_html: '途中から再開する場合は、再度同じURL <a href="%{url}" class="btn btn-primary">ときめきアンフォロー</a> にアクセスしてください。'
-      unfollow: 'フォローを外す'
-      after_unfollow_html: 'アンフォローは別れではなく旅立ちです。😀<br><br><a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんのこれまでの全てのツイートに感謝して、次に進みましょう。残りは %{remaining} 人です。'
-      keep: 'キープする'
-      after_keep_html: 'あなたがときめいたのなら私も嬉しいです。😁<br><br><a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんへのときめき、これからも続くといいですね。残りは %{remaining} 人です。'
-      after_unfollow_modal:
-        next: "次に進む"
-      after_keep_modal:
-        next: "次に進む"
-      finish: 'お片付けはこれで終わりです！ お疲れ様でした。'
   error_pages:
     support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
     api_not_authorized:
@@ -2118,13 +2085,6 @@ ja:
 
           <p><span class="egotter-pink">%{title}</span>を使うと、人には内緒にしていたはずの興味・趣味が丸分かりになります。</p>
           <p><span class="egotter-pink">%{title}</span>で興味のあるクラスタを見付けた後は、同じクラスタに入っている他のユーザーを簡単に見付けることができます。</p>
-      tokimeki_unfollow:
-        title: 'ときめきアンフォロー'
-        description_html: |
-          <p>ときめきアンフォローとは、<span class="egotter-pink">昔はときめいていたけど、今はそうでもない</span>ユーザーのフォローを解除する機能のことです。</p>
-          <p>今はもうときめかなくなったフォローを解除する。それは、<span class="egotter-pink">新たな門出</span>ともいえる儀式なのです。ぜひその門出を祝福してあげてください。</p>
-          <p><span class="egotter-pink">%{title}</span>を使うと、フォローの中から、ときめかなくなったユーザーを簡単に見付けることができます。</p>
-          <p><span class="egotter-pink">%{title}</span>でときめかなくなったユーザーを見付けた後は、相手に感謝しつつ、フォロー解除しましょう。</p>
       delete_tweets:
         title: 'ツイートクリーナー'
         description_html: |
@@ -2348,7 +2308,6 @@ ja:
         clusters: 'クラスタ分析'
         delete_tweets: 'ツイート削除マイページ'
         delete_favorites: 'いいね削除マイページ'
-        tokimeki_unfollow: 'ときめきアンフォローの続き'
         personality_insights: 'ツイッター性格診断'
         default: '分析結果'
       body_html: |
@@ -2365,30 +2324,6 @@ ja:
       title_html: '@<span class="screen-name"></span> をツイッターで開く'
       'yes': 'ツイッターで開く'
       'no': 'やめておく'
-    create_follow_modal:
-      warning:
-        message_html: |
-          1日にフォローできる上限を超えました。ベーシックプランを購入して制限を解除しますか？<br>
-          <br>
-          今なら <span class="egotter-pink">最初の%{days}日間は無料</span> です。
-        ok: "はい"
-        cancel: "いいえ"
-        see_pricing: "料金プランを見る"
-        purchase: '購入する'
-        purchased: '購入済み'
-        login: 'ログインする'
-    create_unfollow_modal:
-      warning:
-        message_html: |
-          1日にフォロー解除できる上限を超えました。ベーシックプランを購入して制限を解除しますか？<br>
-          <br>
-          今なら <span class="egotter-pink">最初の%{days}日間は無料</span> です。
-        ok: "はい"
-        cancel: "いいえ"
-        see_pricing: "料金プランを見る"
-        purchase: '購入する'
-        purchased: '購入済み'
-        login: 'ログインする'
     order_details_modal:
       title: '購入の詳細'
       order_created_at: '購入した日時：'
@@ -2488,7 +2423,6 @@ ja:
     ad_blocker_detected_with_count: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。%{seconds}秒後にトップページへ移動します。'
     private_mode_specified: 'データが見付かりませんでした。'
   after_sign_in:
-    tokimeki_unfollow_too_many_friends: 'フォロー数が 10,000人 を超えている場合は、ときめきアンフォローをご利用いただくことができません。'
     must_have_order: 'まだ有料プランを購入していません。有料プランを購入後にお試しください。'
     must_have_valid_subscription: 'まだ有料プランを購入していません。有料プランを購入後にお試しください。'
     already_have_valid_subscription: '有料プランを購入済みです。'

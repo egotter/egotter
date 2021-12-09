@@ -15,8 +15,6 @@ module RedirectionModalsHelper
       t('modal.redirection_modal.page_names.delete_tweets')
     when 'delete_favorites'
       t('modal.redirection_modal.page_names.delete_favorites')
-    when 'tokimeki_unfollow'
-      t('modal.redirection_modal.page_names.tokimeki_unfollow')
     when 'personality_insights'
       t('modal.redirection_modal.page_names.personality_insights')
     else

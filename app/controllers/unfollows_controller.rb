@@ -1,3 +1,4 @@
+# TODO Remove later
 class UnfollowsController < ApplicationController
   include JobQueueingConcern
 
@@ -12,7 +13,7 @@ class UnfollowsController < ApplicationController
   end
 
   before_action do
-    if !referer_is_tokimeki_unfollow? && CreateUnfollowLimitation.remaining_count(current_user) <= 0
+    if CreateUnfollowLimitation.remaining_count(current_user) <= 0
       render json: RateLimit.new(current_user).to_h, status: :too_many_requests
     end
   end

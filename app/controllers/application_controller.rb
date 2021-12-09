@@ -51,10 +51,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def referer_is_tokimeki_unfollow?
-    request.referer.to_s.match? %r{\Ahttps?://(egotter.com|localhost:3000)/tokimeki_unfollow/cleanup}
-  end
-
   def respond_with_error(code, message, ex = nil)
     location = (caller[0][/`([^']*)'/, 1] rescue '')
 
