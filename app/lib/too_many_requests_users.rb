@@ -1,3 +1,4 @@
+# TODO Remove later
 class TooManyRequestsUsers < ::Egotter::SortedSet
   def initialize
     super(nil)

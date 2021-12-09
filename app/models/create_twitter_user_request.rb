@@ -204,6 +204,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     if TwitterApiStatus.too_many_requests?(e)
       if user
         TooManyRequestsUsers.new.add(user.id)
+        RateLimitExceededFlag.on(user.id)
         ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user.id)
       end
       raise TooManyRequests.new("user_id=#{user_id} api_name=#{@fetcher&.api_name}")

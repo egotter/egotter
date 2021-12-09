@@ -52,6 +52,7 @@ class TwitterApiStatus
       ex && ex.class == Twitter::Error::Unauthorized && ex.message == ''
     end
 
+    # TODO Rename to #rate_limit_exceeded?
     def too_many_requests?(ex)
       # Sometimes the 'Rate limit exceeded' message is not set
       ex && ex.class == Twitter::Error::TooManyRequests
