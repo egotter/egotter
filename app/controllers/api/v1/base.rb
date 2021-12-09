@@ -97,6 +97,10 @@ module Api
         %w(unfriends unfollowers mutual_unfriends blockers).include?(controller_name)
       end
 
+      def request_context_client
+        @request_context_client ||= (user_signed_in? ? current_user.api_client : Bot.api_client)
+      end
+
       def collect_suspended_uids(client, uids)
         users = client.users(uids).select { |user| !user[:suspended] }
         uids - users.map { |u| u[:id] }
