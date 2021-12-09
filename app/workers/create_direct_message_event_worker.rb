@@ -13,7 +13,7 @@ class CreateDirectMessageEventWorker
       CreateDirectMessageEventLogWorker.perform_async({name: 'Send DM from egotter'}.merge(props))
     end
 
-    if GlobalDirectMessageReceivedFlag.new.exists?(recipient_id)
+    if DirectMessageReceiveLog.message_received?(recipient_id)
       CreateDirectMessageEventLogWorker.perform_async({name: 'Send passive DM'}.merge(props))
 
       if recipient_id != User::EGOTTER_UID

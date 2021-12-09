@@ -204,7 +204,7 @@ class PeriodicReport < ApplicationRecord
       user = User.find(user_id)
       template = Rails.root.join('app/views/periodic_reports/allotted_messages_will_expire.ja.text.erb')
 
-      ttl = GlobalDirectMessageReceivedFlag.new.remaining(user.uid)
+      ttl = DirectMessageReceiveLog.remaining_time(user.uid)
       if ttl.nil? || ttl <= 0
         Airbag.warn "#{self}##{__method__} remaining ttl is nil or less than 0 user_id=#{user_id}"
         ttl = 5.minutes + rand(300)
@@ -430,7 +430,7 @@ class PeriodicReport < ApplicationRecord
       [
           request_id.to_i % 1000,
           (TwitterUser.latest_by(uid: user.uid)&.id || 999) % 1000,
-          remaining_ttl_text(GlobalDirectMessageReceivedFlag.new.remaining(user.uid)),
+          remaining_ttl_text(DirectMessageReceiveLog.remaining_time(user.uid)),
           setting.period_flags,
           access_day ? access_day.short_date : '0000',
           DirectMessageSendCounter.count(user.uid),
@@ -774,12 +774,12 @@ class PeriodicReport < ApplicationRecord
     end
 
     def allotted_messages_will_expire_soon?(user)
-      remaining_ttl = GlobalDirectMessageReceivedFlag.new.remaining(user.uid)
+      remaining_ttl = DirectMessageReceiveLog.remaining_time(user.uid)
       remaining_ttl && remaining_ttl < REMAINING_TTL_HARD_LIMIT
     end
 
     def messages_allotted?(user)
-      GlobalDirectMessageReceivedFlag.new.received?(user.uid)
+      DirectMessageReceiveLog.message_received?(user.uid)
     end
 
     def access_interval_too_long?(user)
@@ -811,8 +811,7 @@ class PeriodicReport < ApplicationRecord
     end
 
     def send_report_limited?(uid)
-      !GlobalDirectMessageReceivedFlag.new.exists?(uid) &&
-          DirectMessageLimitedFlag.on?
+      !DirectMessageReceiveLog.message_received?(uid) && DirectMessageLimitedFlag.on?
     end
   end
 end

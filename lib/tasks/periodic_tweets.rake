@@ -16,7 +16,7 @@ namespace :periodic_tweets do
     users = User.where(id: user_ids, authorized: true, locked: false).find_in_batches(batch_size: 1).to_a.flatten
     puts "users=#{users.size} periodic_tweets=#{user_ids.size}"
 
-    message_received_uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
+    message_received_uids = DirectMessageReceiveLog.received_sender_ids
     users.select! { |user| message_received_uids.include?(user.uid) }
     puts "users=#{users.size} message_received=#{message_received_uids.size}"
 

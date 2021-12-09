@@ -111,7 +111,7 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     let(:users) { 2.times.map { create(:user) } }
     subject { described_class.dm_received_user_ids }
 
-    before { GlobalDirectMessageReceivedFlag.new.received(users[1].uid) }
+    before { allow(DirectMessageReceiveLog).to receive(:received_sender_ids).and_return([users[1].uid]) }
 
     it do
       expect(described_class).to receive(:reject_stop_requested_user_ids).with([users[1].id]).and_return('result')

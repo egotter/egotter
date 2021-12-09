@@ -369,9 +369,7 @@ RSpec.describe PeriodicReport do
   describe '.allotted_messages_will_expire_soon?' do
     subject { described_class.allotted_messages_will_expire_soon?(user) }
 
-    before do
-      allow(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :remaining).with(user.uid).and_return(ttl)
-    end
+    before { allow(DirectMessageReceiveLog).to receive(:remaining_time).with(user.uid).and_return(ttl) }
 
     context 'remaining ttl is short' do
       let(:ttl) { 1.hour }
@@ -387,7 +385,7 @@ RSpec.describe PeriodicReport do
   describe '.messages_allotted?' do
     subject { described_class.messages_allotted?(user) }
     it do
-      expect(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received?).with(user.uid).and_return('result')
+      expect(DirectMessageReceiveLog).to receive(:message_received?).with(user.uid).and_return('result')
       is_expected.to eq('result')
     end
   end
