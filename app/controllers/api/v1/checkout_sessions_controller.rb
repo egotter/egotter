@@ -8,35 +8,36 @@ module Api
       before_action :require_login!
       before_action :doesnt_have_valid_subscription!
 
-      after_action { track_page_order_activity(stripe_session_id: @stripe_session&.id) }
-      after_action { send_message(@stripe_session&.id) }
+      after_action { send_message(@checkout_session.id) }
 
       def create
-        @stripe_session = create_session(current_user)
-        render json: {session_id: @stripe_session.id}
+        @checkout_session = create_checkout_session(current_user)
+        render json: {session_id: @checkout_session.stripe_checkout_session_id}
       end
 
       private
 
-      def create_session(user)
-        attrs = CheckoutSessionBuilder.build(user)
+      def create_checkout_session(user)
+        if params.has_key?(:item_id) && Order::BASIC_PLAN_MONTHLY_BASIS.has_key?(params[:item_id])
+          attrs = CheckoutSessionBuilder.monthly_basis(user, params[:item_id])
+        else
+          attrs = CheckoutSessionBuilder.monthly_subscription(user)
+        end
         stripe_session = Stripe::Checkout::Session.create(attrs)
-        CheckoutSession.create!(user_id: user.id, stripe_checkout_session_id: stripe_session.id, properties: {via: params[:via]})
-        stripe_session
+        CheckoutSession.create!(user_id: user.id, stripe_checkout_session_id: stripe_session.id, properties: {item_id: params[:item_id], via: params[:via]})
       end
 
       def send_message(session_id)
-        message = tracking_params.merge(checkout_session_id: session_id)
-        SlackMessage.create(channel: 'orders_cs_created', message: message)
-        SendMessageToSlackWorker.perform_async(:orders_cs_created, "`#{Rails.env}` #{message}")
-      end
-
-      def tracking_params
-        {
+        message_params = {
             user_id: current_user.id,
+            checkout_session_id: session_id,
             via: params[:via],
             referer: request.referer.to_s.truncate(200),
         }
+        SlackMessage.create(channel: 'orders_cs_created', message: message_params)
+        SendMessageToSlackWorker.perform_async(:orders_cs_created, "`#{Rails.env}` #{message_params}")
+      rescue => e
+        Airbag.warn "#{controller_name}##{__method__}: #{e.inspect} checkout_session_id=#{session_id}"
       end
     end
   end

@@ -5,7 +5,7 @@ RSpec.describe OrdersController, type: :controller do
   let(:order) { create(:order, user_id: user.id) }
 
   describe 'GET #success' do
-    let(:checkout_session) { double('checkout session', id: 'cs_xxx', subscription: 'sub_xxx') }
+    let(:checkout_session) { double('checkout session', id: 'cs_xxx', mode: 'subscription', subscription: 'sub_xxx') }
     subject { get :success, params: {stripe_session_id: checkout_session.id} }
     before do
       allow(controller).to receive(:current_user).and_return(user)

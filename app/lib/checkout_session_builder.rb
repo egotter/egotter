@@ -1,12 +1,6 @@
 class CheckoutSessionBuilder
   class << self
-    def build(user)
-      build_subscription(user)
-    end
-
-    private
-
-    def build_subscription(user)
+    def monthly_subscription(user)
       attrs = {
           client_reference_id: user.id,
           payment_method_types: ['card'],
@@ -24,6 +18,36 @@ class CheckoutSessionBuilder
       end
       attrs[:discounts] = available_discounts(user)
       attrs[:metadata][:price] = calculate_price(attrs)
+
+      attrs
+    end
+
+    def monthly_basis(user, item_id)
+      price = Order::BASIC_PLAN_MONTHLY_BASIS[item_id]
+      months_count = item_id.split('-')[-1]
+
+      name = "えごったー ベーシック #{months_count}ヶ月分"
+      item = {
+          price_data: {
+              currency: 'jpy',
+              product_data: {name: name},
+              unit_amount: price,
+          },
+          description: '今回限りの請求。購入すると、検索回数の増加と使える機能の追加が適用されます。この購入にお試し期間は無く、返金の対象外です。',
+          tax_rates: [Order::TAX_RATE_ID],
+          quantity: 1,
+      }
+      attrs = {
+          client_reference_id: user.id,
+          payment_method_types: ['card'],
+          mode: 'payment',
+          line_items: [item],
+          metadata: {user_id: user.id, name: name, price: price, months_count: months_count},
+          success_url: ENV['STRIPE_SUCCESS_URL'],
+          cancel_url: ENV['STRIPE_CANCEL_URL'],
+      }
+
+      attrs[:customer] = find_or_create_customer(user)
 
       attrs
     end

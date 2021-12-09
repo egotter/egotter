@@ -10,7 +10,12 @@ class OrdersController < ApplicationController
   after_action :track_webhook_order_activity, only: :checkout_session_completed
 
   def success
-    unless current_user.orders.where(subscription_id: @checkout_session.subscription).exists?
+    # TODO Verify a owner of a order
+    if @checkout_session.mode == 'payment' && current_user.orders.where(checkout_session_id: @checkout_session.id).exists?
+      # One-time payment
+    elsif current_user.orders.where(subscription_id: @checkout_session.subscription).exists?
+      # Subscription
+    else
       redirect_to orders_failure_path(via: 'order_not_found', stripe_session_id: params[:stripe_session_id])
     end
   rescue => e

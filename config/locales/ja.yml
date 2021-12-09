@@ -713,12 +713,16 @@ ja:
         others: 'コンビニ決済や銀行振込での支払いを希望される方はこちらからご購入できます。'
         inquiry: 'えごったーショップ'
         modal:
-          title: '単月購入の期間を選択する'
+          title: '1ヶ月分のみ購入する'
           description: '注意事項をご確認の上、同意する方のみご購入ください。'
           1_month:
             title: '1ヶ月分の購入'
             price: '%{value}円 (税込)'
             purchase: '購入する'
+            purchase_by_creditcard: 'クレジットカードで購入する'
+            note_for_creditcard_html: '決済の<span class="text-primary">完了後すぐ</span>にプランが有効になります。'
+            purchase_by_others: 'コンビニ払いやキャリア決済で購入する'
+            note_for_others_html: '購入の<span class="text-primary">確認から数日以内</span>にプランが有効になります。Amazon Payや銀行振込にも対応しています。'
           note_html: |
             ※ 決済手数料は購入者のご負担となります<br>
             ※ 支払いの完了後、5営業日以内に有効になります<br>

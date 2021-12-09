@@ -13,10 +13,12 @@
         return false;
       }
 
-      $('.btn-checkout').each(function () {
+      var selector = '.btn-checkout, .btn-one-time-checkout';
+
+      $(selector).each(function () {
         disableButton($(this));
       })
-      $(document).on('click', '.btn-checkout', function () {
+      $(document).on('click', selector, function () {
         return disableButton($(this));
       });
 
@@ -33,14 +35,18 @@
     $(function () {
       var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
 
-      function redirectToCheckout(buttonId) {
-        var url = '<%= raw api_v1_checkout_sessions_path(via: current_via('__BUTTON__')) %>';
-        if (buttonId) {
-          url = url.replace('__BUTTON__', buttonId);
-        } else {
-          url = url.replace('/__BUTTON__', '');
-        }
+      function trackClickEvent($btn) {
+        var props = {
+          page: window.location.href,
+          id: $btn.attr('id'),
+          class: $btn.attr('class'),
+          text: $btn.text().trim()
+        };
+        ahoy.track('CheckoutButton clicked', props);
+      }
 
+      function redirectToCheckout() {
+        var url = '<%= raw api_v1_checkout_sessions_path(via: current_via) %>';
         $.post(url).done(function (res) {
           stripe.redirectToCheckout({sessionId: res.session_id}).then(function (result) {
             logger.log(result.error.message);
@@ -49,12 +55,26 @@
       }
 
       $(document).on('click', '.btn-checkout', function () {
-        var buttonId = $(this).attr('id');
-        var text = $(this).text().trim();
-        ahoy.track('CheckoutButton clicked', {page: window.location.href, id: buttonId, text: text});
+        trackClickEvent($(this));
+        redirectToCheckout();
+        return false;
+      });
 
-        redirectToCheckout(buttonId);
+      function redirectToOneTimeCheckout(itemId) {
+        var url = '<%= raw api_v1_checkout_sessions_path(via: current_via) %>';
+        url += '&item_id=' + itemId;
 
+        $.post(url).done(function (res) {
+          stripe.redirectToCheckout({sessionId: res.session_id}).then(function (result) {
+            logger.log(result.error.message);
+          });
+        }).fail(showErrorMessage);
+      }
+
+      $(document).on('click', '.btn-one-time-checkout', function () {
+        var $btn = $(this);
+        trackClickEvent($btn);
+        redirectToOneTimeCheckout($btn.data('item-id'));
         return false;
       });
     });

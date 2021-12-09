@@ -11,17 +11,29 @@ RSpec.describe ProcessStripeCheckoutSessionCompletedEventWorker do
   end
 
   describe '#perform' do
-    let(:checkout_session) { double('checkout_session', client_reference_id: user.id) }
+    let(:checkout_session) { double('checkout_session', client_reference_id: user.id, mode: mode) }
     subject { worker.perform(checkout_session_id) }
-    before do
-      allow(User).to receive(:find_by).with(id: user.id).and_return(user)
-      allow(user).to receive(:has_valid_subscription?)
+    before { allow(User).to receive(:find_by).with(id: user.id).and_return(user) }
+
+    context 'mode is subscription' do
+      let(:mode) { 'subscription' }
+      it do
+        expect(Stripe::Checkout::Session).to receive(:retrieve).with(checkout_session_id).and_return(checkout_session)
+        expect(user).to receive(:has_valid_subscription?)
+        expect(Order).to receive(:create_by_checkout_session).with(checkout_session).and_return(order)
+        expect(worker).to receive(:update_trial_end_and_email).with(order)
+        subject
+      end
     end
-    it do
-      expect(Stripe::Checkout::Session).to receive(:retrieve).with(checkout_session_id).and_return(checkout_session)
-      expect(Order).to receive(:create_by_checkout_session).with(checkout_session).and_return(order)
-      expect(worker).to receive(:update_trial_end_and_email).with(order)
-      subject
+
+    context 'mode is payment' do
+      let(:mode) { 'payment' }
+      it do
+        expect(Stripe::Checkout::Session).to receive(:retrieve).with(checkout_session_id).and_return(checkout_session)
+        expect(user).to receive(:has_valid_subscription?)
+        expect(Order).to receive(:create_by_monthly_basis).with(checkout_session).and_return(order)
+        subject
+      end
     end
   end
 end

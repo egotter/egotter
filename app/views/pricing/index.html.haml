@@ -190,7 +190,10 @@
   .my-3= t('.payment_method.modal.description')
   %strong.d-block.mt-5.mb-1= t('.payment_method.modal.1_month.title')
   .mb-1= t('.payment_method.modal.1_month.price', value: Order::BASIC_PLAN_MONTHLY_BASIS_TAX_INCLUDED['monthly-basis-1'])
+  .mt-2= link_to t('.payment_method.modal.1_month.purchase_by_creditcard'), '#', id: 'one-time-checkout-monthly-basis-1', class: 'btn btn-outline-primary btn-sm btn-one-time-checkout', data: {item_id: 'monthly-basis-1'}
+  .mt-1.mb-4.small= t('.payment_method.modal.1_month.note_for_creditcard_html')
   .mt-2= link_to t('.payment_method.modal.1_month.purchase'), base_shop_1_month_url, id: 'base-shop-1-month-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+  .mt-1.mb-5.small= t('.payment_method.modal.1_month.note_for_others_html')
   .text-center.small.mt-5.mb-3
     = link_to t('.payment_method.modal.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank'
     &middot;

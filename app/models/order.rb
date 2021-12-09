@@ -54,6 +54,7 @@ class Order < ApplicationRecord
       'monthly-basis-6' => 1880,
       'monthly-basis-12' => 3560,
   }
+  BASIC_PLAN_MONTHLY_BASIS_PRICE_ID = ENV['STRIPE_BASIC_PLAN_MONTHLY_BASIS_PRICE_ID']
   TAX_RATE_ID = ENV['STRIPE_TAX_RATE_ID']
   TAX_RATE = 0.1
   PRICE = 300
@@ -77,6 +78,7 @@ class Order < ApplicationRecord
       order(created_at: :desc).find_by(customer_id: customer_id)
     end
 
+    # TODO Rename to create_by_monthly_subscription
     def create_by_checkout_session(checkout_session)
       # tax_rate = checkout_session.subscription.tax_percent / 100.0
       name = 'えごったー ベーシック'
@@ -95,6 +97,28 @@ class Order < ApplicationRecord
           checkout_session_id: checkout_session.id,
           customer_id: checkout_session.customer,
           subscription_id: checkout_session.subscription
+      )
+    end
+
+    def create_by_monthly_basis(checkout_session)
+      subscription = Stripe::Subscription.create(
+          customer: checkout_session.customer,
+          items: [{price: BASIC_PLAN_MONTHLY_BASIS_PRICE_ID}],
+          metadata: {user_id: checkout_session.client_reference_id, price: 0, months_count: checkout_session.metadata.months_count},
+      )
+
+      create!(
+          user_id: checkout_session.client_reference_id,
+          email: (checkout_session.customer_details.email rescue nil),
+          name: checkout_session.metadata.name,
+          price: checkout_session.metadata.price,
+          tax_rate: 0.1,
+          search_count: SearchCountLimitation::BASIC_PLAN,
+          follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
+          unfollow_requests_count: 20,
+          checkout_session_id: checkout_session.id,
+          customer_id: checkout_session.customer,
+          subscription_id: subscription.id,
       )
     end
 
