@@ -20,7 +20,7 @@ RSpec.describe JobQueueingConcern, type: :controller do
   describe '#request_creating_twitter_user' do
     subject { controller.request_creating_twitter_user(user.uid) }
     it do
-      expect(CreateSignedInTwitterUserWorker).to receive(:perform_async).with(any_args)
+      expect(CreateTwitterUserWorker).to receive(:perform_async).with(any_args)
       subject
     end
   end
