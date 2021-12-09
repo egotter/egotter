@@ -9,15 +9,7 @@ class HomeController < ApplicationController
   end
 
   def start
-    if user_signed_in?
-      @user = build_twitter_user_by_uid(current_user.uid) # It's possible to be redirected in #build_twitter_user_by_uid
-      return if performed?
-      @screen_name = @user.screen_name
-    else
-      # Crawler
-      @user = nil
-      @screen_name = 'Visitor'
-    end
+    @screen_name = user_signed_in? ? current_user.screen_name : 'Visitor'
   end
 
   private
