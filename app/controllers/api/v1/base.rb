@@ -77,7 +77,6 @@ module Api
               statuses_count: user.delimited_statuses_count,
               friends_count: user.delimited_friends_count,
               followers_count: user.delimited_followers_count,
-              follow_button: render_to_string(partial: 'twitter/follow_button', locals: {user: user}, formats: [:html]),
               timeline_url: timeline_path(user, via: via),
               status_url: status_path(user, via: via),
               friend_url: friend_path(user, via: via),

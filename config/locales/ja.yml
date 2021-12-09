@@ -858,9 +858,6 @@ ja:
       followers: 'フォロワー'
       reverse_follow_back_rate: 'フォロー返され率'
       follow_back_rate: 'フォロー返し率'
-    follow_button:
-      do_follow: "フォロー"
-      following: "フォロー中"
     tweet_box:
       copy: 'コピーする'
       tweet: 'ツイートする'
@@ -2369,12 +2366,6 @@ ja:
       'yes': 'ツイッターで開く'
       'no': 'やめておく'
     create_follow_modal:
-      title: 'フォローする'
-      message_html: '@<span class="screen-name"></span> さんをフォローしますか？<br><br>数が多い場合は凍結されないようゆっくりフォローしていきます。'
-      history_link_html: 'フォローの履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">フォロー履歴</a> から見ることができます。'
-      dont_confirm: '次からは確認しない'
-      'yes': 'フォローします'
-      'no': 'キャンセル'
       warning:
         message_html: |
           1日にフォローできる上限を超えました。ベーシックプランを購入して制限を解除しますか？<br>
@@ -2387,14 +2378,6 @@ ja:
         purchased: '購入済み'
         login: 'ログインする'
     create_unfollow_modal:
-      title: 'フォローを解除する'
-      message_html: '@<span class="screen-name"></span> さんをフォロー解除しますか？<br><br>数が多い場合は凍結されないようゆっくりフォロー解除していきます。'
-      history_link_html: 'フォロー解除の履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">アンフォロー履歴</a> から見ることができます。'
-      dont_confirm: '次からは確認しない'
-      ok: "はい"
-      cancel: "いいえ"
-      'yes': 'フォローを解除します'
-      'no': 'キャンセル'
       warning:
         message_html: |
           1日にフォロー解除できる上限を超えました。ベーシックプランを購入して制限を解除しますか？<br>

@@ -31,8 +31,6 @@
 
   <%#= Profile buttons %>
   <div class="profile-buttons mt-1 mr-0 mr-sm-3">
-    <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
-
     <%= link_to user_url(user.screen_name), class: 'track-twitter-link btn btn-outline-primary btn-sm d-none d-md-inline-block', target: '_blank', data: {location: 'ProfilePanel(large)'} do %>
       <i class="fab fa-twitter no-follow"></i>
       <%= t('.twitter') %>
@@ -113,8 +111,6 @@
 
     if (signedIn) {
       var via = '<%= current_via('profile') %>';
-      new FollowButton('#' + containerId + ' .profile-buttons', via);
-      new UnfollowButton('#' + containerId + ' .profile-buttons', via);
     }
 
     $('#' + containerId).find('.btn-tracked').on('click', function () {

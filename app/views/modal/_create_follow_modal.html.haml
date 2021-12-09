@@ -1,11 +1,3 @@
--# This modal will be initialized in new FollowButton('selector') after follow buttons are rendered.
-= modal_dialog id: 'create-follow-modal', title: t('.title'), button: {positive: t('.yes'), negative: t('.no')} do
-  %p= t('.message_html')
-  %p= t('.history_link_html', url: settings_path(via: current_via('create_follow_modal'), anchor: 'follow-count'))
-  .dont-confirm
-    %input#create-follow-dont-confirm{type: 'checkbox'}
-    %label{for: 'create-follow-dont-confirm'}= t('.dont_confirm')
-
 #follow-limitation-warning-modal.modal.fade{role: 'dialog', tabindex: '-1'}
   .modal-dialog{role: 'document'}
     .modal-content

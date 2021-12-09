@@ -1,11 +1,3 @@
--# This modal will be initialized in new UnfollowButton('selector') after unfollow buttons are rendered.
-= modal_dialog id: 'create-unfollow-modal', title: t('.title'), button: {positive: t('.yes'), negative: t('.no'), category: 'danger'} do
-  %p= t('.message_html')
-  %p= t('.history_link_html', url: settings_path(via: current_via('create_unfollow_modal'), anchor: 'unfollow-count'))
-  .dont-confirm
-    %input#create-unfollow-dont-confirm{type: 'checkbox'}
-    %label{for: 'create-unfollow-dont-confirm'}= t('.dont_confirm')
-
 #unfollow-limitation-warning-modal.modal.fade{role: 'dialog', tabindex: '-1'}
   .modal-dialog{role: 'document'}
     .modal-content

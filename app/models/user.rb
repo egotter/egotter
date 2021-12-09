@@ -174,47 +174,6 @@ class User < ApplicationRecord
     end
   end
 
-  def current_friend_uids
-    if instance_variable_defined?(:@current_friend_uids)
-      @current_friend_uids
-    else
-      twitter_user = TwitterUser.latest_by(uid: uid)
-      uids = Set.new(twitter_user&.friend_uids || [])
-
-      requests = following_requests(twitter_user&.created_at) + unfollowing_requests(twitter_user&.created_at)
-      requests.sort_by!(&:created_at)
-
-      requests.each do |req|
-        if req.class == FollowRequest
-          uids.add(req.uid)
-        elsif req.class == UnfollowRequest
-          uids.subtract([req.uid])
-        else
-          Airbag.warn "#{__method__} Invalid #{req.inspect}"
-        end
-      end
-
-      @current_friend_uids = uids.to_a
-    end
-  rescue => e
-    Airbag.warn "#{__method__} #{e.class} #{e.message}"
-    []
-  end
-
-  def following_requests(created_at)
-    created_at = 1.day.ago unless created_at
-    FollowRequest.temporarily_following(user_id: id, created_at: created_at)
-  end
-
-  def unfollowing_requests(created_at)
-    created_at = 1.day.ago unless created_at
-    UnfollowRequest.temporarily_unfollowing(user_id: id, created_at: created_at)
-  end
-
-  def is_following?(uid)
-    current_friend_uids.include?(uid.to_i)
-  end
-
   def following_egotter?
     EgotterFollower.exists?(uid: uid)
   end
