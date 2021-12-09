@@ -178,7 +178,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       if target_uids.size != users.size
         missing_uids = target_uids - users.map(&:uid)
         Airbag.warn "#{self.class}##{__method__}: Import missing uids request=#{@request.slice(:id, :user_id, :requested_by, :created_at)} context=#{context} uids_size=#{target_uids.size} users_size=#{users.size} uids=#{target_uids} missing_uids=#{missing_uids}"
-        CreateHighPriorityTwitterDBUserWorker.perform_async(missing_uids, user_id: @request.user_id, enqueued_by: "#{self.class}##{__method__}")
+        CreateTwitterDBUserWorker.perform_async(missing_uids, user_id: @request.user_id, enqueued_by: "#{self.class}##{__method__}")
 
         users = uids.map do |uid|
           if (index = users.index { |user| user.uid == uid })
