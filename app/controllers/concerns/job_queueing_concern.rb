@@ -6,7 +6,7 @@ module JobQueueingConcern
   def enqueue_create_twitter_user_job_if_needed(uid, user_id:, force: false)
     return if from_crawler?
     return if !force && !user_signed_in?
-    return if user_signed_in? && (TooManyRequestsUsers.new.exists?(current_user.id) || RateLimitExceededFlag.on?(current_user.id))
+    return if user_signed_in? && RateLimitExceededFlag.on?(current_user.id)
     return if TwitterUserUpdatedFlag.on?(uid)
     return if TwitterUser.too_short_create_interval?(uid)
     return if CreateTwitterUserRequest.too_short_request_interval?(uid)

@@ -102,8 +102,8 @@ class SearchRequest < ApplicationRecord
       end
     end
 
-    if user && (TooManyRequestsUsers.new.exists?(user.id) || RateLimitExceededFlag.on?(user.id))
-      update(status: 'too many searches')
+    if user && RateLimitExceededFlag.on?(user.id)
+      update(status: 'too many searches') # TODO Change to 'rate limit exceeded'
       return
     end
 
