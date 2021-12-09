@@ -35,7 +35,7 @@ class PersonalityInsightsController < ApplicationController
   end
 
   def personality_insight_rate_limited?
-    CallPersonalityInsightCount.new.rate_limited? && !current_user_has_valid_subscription?
+    PersonalityInsight.rate_limited? && !current_user_has_valid_subscription?
   end
 
   def current_user_has_valid_subscription?

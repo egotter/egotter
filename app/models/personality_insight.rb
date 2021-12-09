@@ -98,7 +98,17 @@ class PersonalityInsight < ApplicationRecord
     profile && (profile['error'] || !profile['personality'])
   end
 
+  LIMIT = 10
+
   class << self
+    def used_count
+      where('created_at > ?', 1.day.ago).size
+    end
+
+    def rate_limited?
+      used_count > LIMIT
+    end
+
     def build(uid, tweets, lang: 'ja')
       payload = build_content_items(tweets, lang)
       new(uid: uid, profile: fetch_profile(payload, lang))
@@ -147,8 +157,6 @@ class PersonalityInsight < ApplicationRecord
       else
         raise RetryExhausted.new(e.message)
       end
-    ensure
-      CallPersonalityInsightCount.new.increment
     end
   end
 
