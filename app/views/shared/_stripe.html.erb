@@ -44,8 +44,6 @@
   <script>
     $(function () {
       var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
-      var eventCategory = '<%= "#{controller_name}##{action_name}" %>';
-      var user = {id: '<%= current_user.id %>'};
 
       function redirectToCheckout(buttonId) {
         var url = '<%= raw api_v1_checkout_sessions_path(via: current_via) %>';
@@ -61,18 +59,9 @@
       }
 
       $(document).on('click', '.btn-checkout', function () {
-        ga('send', {
-          hitType: 'event',
-          eventCategory: 'CheckoutButton clicked',
-          eventAction: eventCategory,
-          eventLabel: JSON.stringify(user),
-          transport: 'beacon'
-        });
-
-        var page = window.location.href;
         var buttonId = $(this).attr('id');
         var text = $(this).text().trim();
-        ahoy.track('CheckoutButton clicked', {page: page, id: buttonId, text: text});
+        ahoy.track('CheckoutButton clicked', {page: window.location.href, id: buttonId, text: text});
 
         redirectToCheckout(buttonId);
 
