@@ -4,8 +4,9 @@ module AdsenseHelper
   def ad_ng_page?
     delete_tweets = controller_name == 'delete_tweets' && action_name == 'show'
     delete_favorites = controller_name == 'delete_favorites' && action_name == 'show'
+    pricing = controller_name == 'pricing'
     suspicious = controller_name == 'error_pages' && action_name == 'suspicious_access_detected'
-    %w(login blockers settings).include?(controller_name) || delete_tweets || delete_favorites || suspicious
+    %w(login blockers settings).include?(controller_name) || delete_tweets || delete_favorites || pricing || suspicious
   end
 
   def ad_ng_user?(user)
