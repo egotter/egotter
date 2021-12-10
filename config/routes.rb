@@ -263,7 +263,7 @@ Rails.application.routes.draw do
   get 'settings/order_history', to: 'settings#order_history'
   resources :diagnosis, only: :index
 
-  get 'pricing', to: "pricing#new"
+  get 'pricing', to: "pricing#index"
   resources :orders, only: %i(create)
   get 'orders/success', to: "orders#success"
   get 'orders/failure', to: "orders#failure"

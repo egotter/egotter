@@ -4,6 +4,6 @@ class PricingController < ApplicationController
 
   after_action :track_page_order_activity, if: -> { user_signed_in? }
 
-  def new
+  def index
   end
 end

@@ -42,6 +42,7 @@ ja:
       support: "お問い合わせ"
       faq: 'よくある質問'
       github: "Github"
+      pricing: '料金プラン'
       scheduled_tweets: 'ツイート予約投稿'
       official_account: "公式アカウント"
   searches:
@@ -615,7 +616,7 @@ ja:
       canceling_html: '解約処理中です。<img src="/ajax-loader.gif?a=1">'
       has_not_purchased: "まだ購入していません"
   pricing:
-    new:
+    index:
       meta_title: '料金プラン'
       meta_description: 'えごったーの料金プランです。'
       page_title: '料金プラン'
