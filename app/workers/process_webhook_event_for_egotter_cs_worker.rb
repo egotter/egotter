@@ -43,7 +43,8 @@ class ProcessWebhookEventForEgotterCsWorker
     dm = DirectMessageWrapper.from_event(event.deep_symbolize_keys)
 
     if sent_from_user?(dm)
-      PremiumPlanMessageResponder.from_dm(dm).respond ||
+      DeleteTweetsByArchiveResponder.from_dm(dm).respond ||
+          PremiumPlanMessageResponder.from_dm(dm).respond ||
           InquiryMessageResponder.from_dm(dm).respond
     end
   end
