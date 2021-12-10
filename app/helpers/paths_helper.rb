@@ -230,6 +230,11 @@ module PathsHelper
     "https://egotter.thebase.in/items/44366397?via_id=#{user_id}"
   end
 
+  def base_shop_3_months_url
+    user_id = user_signed_in? ? current_user.id : nil
+    "https://egotter.thebase.in/items/44709062?via_id=#{user_id}"
+  end
+
   def base_shop_6_months_url
     user_id = user_signed_in? ? current_user.id : nil
     "https://egotter.thebase.in/items/44708302?via_id=#{user_id}"

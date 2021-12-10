@@ -658,12 +658,36 @@ ja:
         subscription:
           title: '毎月更新の定期購読'
           description: '短期間使う方にお得な購入方法です。お試し期間（初回限定）が付くので、この期間内に解約すれば支払いは発生しません。初回購入の場合のみ、50%オフの割引があります。支払い方法はクレジットカードのみ対応しています。'
+          card:
+            title: '定期購読プラン'
+            price_html: '<del class="text-muted">¥%{regular_price}</del> ¥%{discount_price} <span class="small">円/月</span>'
+            body_html:
+              ・50%オフ（初回限定）<br>
+              ・%{trial_days}日間は無料（初回限定）<br>
+              ・その後は毎月自動更新<br>
+              ・クレジットカード 対応
         one_purchase:
           title: '1ヶ月分の単体購入'
           description: 'クレジットカードが無い方向けの購入方法です。コンビニ払い、○○Pay、銀行振込に対応していますが、定期購読より価格が少し高いです。'
+          card:
+            title: '1ヶ月プラン'
+            price_html: '%{value} <span class="small">円/月</span>'
+            body_html:
+              ・1ヶ月だけ有効<br>
+              ・クレジットカード 対応<br>
+              ・コンビニ払い 対応<br>
+              ・銀行振込 対応
         bulk_purchase:
           title: '複数月の一括購入'
-          description: '長期間使う方向けのお得な購入方法です。複数月分を一括購入することで、各種の割引価格になります。'
+          description: '長期間使う方向けのお得な購入方法です。複数月分を一括購入することで最大で %{value}%割引 の価格になります。'
+          card:
+            title: '3〜12ヶ月プラン'
+            price_html: '<span class="small">最大割引</span> %{value}%'
+            body_html:
+              ・長期間になるほど割引率アップ<br>
+              ・クレジットカード 対応<br>
+              ・コンビニ払い 対応<br>
+              ・銀行振込 対応
       payment_method:
         title: '有料プランの支払い方法'
         description_html: |
@@ -702,6 +726,11 @@ ja:
         modal:
           title: '一括購入の割引を希望する'
           description: '注意事項をご確認の上、同意する方のみご購入ください。'
+          3_month:
+            title: '3ヶ月分の一括購入'
+            price: '%{value}円 (税込)'
+            discount_rate: '割引率：%{value}%'
+            purchase: '3ヶ月分を購入する'
           6_month:
             title: '6ヶ月分の一括購入'
             price: '%{value}円 (税込)'

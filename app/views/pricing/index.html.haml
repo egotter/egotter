@@ -46,19 +46,34 @@
 %p= t('.payment_options.description')
 
 %h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_options.subscription.title')
-%p
-  = t('.payment_options.subscription.description')
-  = link_to t('.payment_options.purchase'), '#', id: 'btn-pricing-purchase-subscription', class: 'btn btn-outline-primary btn-sm btn-checkout'
+%p.mb-3= t('.payment_options.subscription.description')
+
+.card.mx-auto{style: "max-width: 300px;"}
+  .card-body
+    %h5.card-title.text-center= t('.payment_options.subscription.card.title')
+    %h6.card-subtitle.mb-3.text-center.text-muted= t('.payment_options.subscription.card.price_html', regular_price: Order::REGULAR_PRICE_TAX_INCLUDED, discount_price: Order::DISCOUNT_PRICE_TAX_INCLUDED)
+    %p.card-text= t('.payment_options.subscription.card.body_html', trial_days: Order::TRIAL_DAYS)
+    .text-center= link_to t('.payment_options.purchase'), '#', id: 'btn-pricing-purchase-subscription', class: 'btn btn-outline-primary btn-sm btn-checkout'
 
 %h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_options.one_purchase.title')
-%p
-  = t('.payment_options.one_purchase.description')
-  = link_to t('.payment_options.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#payment-method-modal', toggle: 'modal'}
+%p.mb-3= t('.payment_options.one_purchase.description')
+
+.card.mx-auto{style: "max-width: 300px;"}
+  .card-body
+    %h5.card-title.text-center= t('.payment_options.one_purchase.card.title')
+    %h6.card-subtitle.mb-3.text-center.text-muted= t('.payment_options.one_purchase.card.price_html', value: 660)
+    %p.card-text= t('.payment_options.one_purchase.card.body_html')
+    .text-center= link_to t('.payment_options.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#payment-method-modal', toggle: 'modal'}
 
 %h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_options.bulk_purchase.title')
-%p
-  = t('.payment_options.bulk_purchase.description')
-  = link_to t('.payment_options.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
+%p.mb-3= t('.payment_options.bulk_purchase.description', value: 10)
+
+.card.mx-auto{style: "max-width: 300px;"}
+  .card-body
+    %h5.card-title.text-center= t('.payment_options.bulk_purchase.card.title')
+    %h6.card-subtitle.mb-3.text-center.text-muted= t('.payment_options.bulk_purchase.card.price_html', value: 10)
+    %p.card-text= t('.payment_options.bulk_purchase.card.body_html')
+    .text-center= link_to t('.payment_options.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
 
 %hr
 
@@ -134,7 +149,7 @@
 %h2.h4.text-center.my-5= t('.basic_plan_title')
 .my-3= t('.basic_plan_text_html')
 .h4.my-4
-  %strong= t('.basic_plan_price_html', regular_price: Order::REGULAR_PRICE, discount_price: Order::DISCOUNT_PRICE)
+  %strong= t('.basic_plan_price_html', regular_price: Order::REGULAR_PRICE_TAX_INCLUDED, discount_price: Order::DISCOUNT_PRICE_TAX_INCLUDED)
   %span.small= t('.basic_plan_price_period')
 .my-2= pricing_checked_item(t('.list.basic_plan_search_count', count: SearchCountLimitation::BASIC_PLAN))
 .my-2= pricing_checked_item(t('.list.notification'))
@@ -170,8 +185,8 @@
     = t('.bulk_purchase.description')
     = link_to t('.bulk_purchase.inquiry'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
 .small.text-muted.my-4
-  .mb-1= t('.basic_plan_note1', old_price: Order::REGULAR_PRICE, new_price: Order::DISCOUNT_PRICE)
-  .mb-1= t('.basic_plan_note2', price: Order::REGULAR_PRICE)
+  .mb-1= t('.basic_plan_note1', old_price: Order::REGULAR_PRICE_TAX_INCLUDED, new_price: Order::DISCOUNT_PRICE_TAX_INCLUDED)
+  .mb-1= t('.basic_plan_note2', price: Order::REGULAR_PRICE_TAX_INCLUDED)
   .mb-1= t('.basic_plan_note3')
   .mb-1= t('.basic_plan_note4')
 
@@ -185,6 +200,13 @@
 
 = modal_dialog id: 'bulk-purchase-modal', title: t('.bulk_purchase.modal.title'), button: {positive: t('.bulk_purchase.modal.yes'), category: 'outline-secondary'} do
   .my-3= t('.bulk_purchase.modal.description')
+  .my-5
+    %strong.mb-1= t('.bulk_purchase.modal.3_month.title')
+    -# 300 * 3 * 0.97 * 1.1 = 960
+    .mb-1
+      = t('.bulk_purchase.modal.3_month.price', value: 960)
+      = t('.bulk_purchase.modal.3_month.discount_rate', value: 3)
+    .mt-2= link_to t('.bulk_purchase.modal.3_month.purchase'), base_shop_3_months_url, id: 'base-shop-3-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
   .my-5
     %strong.mb-1= t('.bulk_purchase.modal.6_month.title')
     -# 300 * 6 * 0.95 * 1.1 = 1881
