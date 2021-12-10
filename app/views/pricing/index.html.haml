@@ -53,7 +53,7 @@
     %h5.card-title.text-center= t('.payment_options.subscription.card.title')
     %h6.card-subtitle.mb-3.text-center.text-muted= t('.payment_options.subscription.card.price_html', regular_price: Order::REGULAR_PRICE_TAX_INCLUDED, discount_price: Order::DISCOUNT_PRICE_TAX_INCLUDED)
     %p.card-text= t('.payment_options.subscription.card.body_html', trial_days: Order::TRIAL_DAYS)
-    .text-center= link_to t('.payment_options.purchase'), '#', id: 'btn-pricing-purchase-subscription', class: 'btn btn-outline-primary btn-sm btn-checkout'
+    .text-center= link_to t('.payment_options.subscription.card.button'), '#', id: 'btn-pricing-purchase-subscription', class: 'btn btn-outline-primary btn-sm btn-checkout'
 
 %h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_options.one_purchase.title')
 %p.mb-3= t('.payment_options.one_purchase.description')
@@ -63,7 +63,7 @@
     %h5.card-title.text-center= t('.payment_options.one_purchase.card.title')
     %h6.card-subtitle.mb-3.text-center.text-muted= t('.payment_options.one_purchase.card.price_html', value: 660)
     %p.card-text= t('.payment_options.one_purchase.card.body_html')
-    .text-center= link_to t('.payment_options.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#payment-method-modal', toggle: 'modal'}
+    .text-center= link_to t('.payment_options.one_purchase.card.button'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#payment-method-modal', toggle: 'modal'}
 
 %h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_options.bulk_purchase.title')
 %p.mb-3= t('.payment_options.bulk_purchase.description', value: 10)
@@ -73,36 +73,28 @@
     %h5.card-title.text-center= t('.payment_options.bulk_purchase.card.title')
     %h6.card-subtitle.mb-3.text-center.text-muted= t('.payment_options.bulk_purchase.card.price_html', value: 10)
     %p.card-text= t('.payment_options.bulk_purchase.card.body_html')
-    .text-center= link_to t('.payment_options.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
+    .text-center= link_to t('.payment_options.bulk_purchase.card.button'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
 
 %hr
 
 %h2.h4.text-center.my-5= t('.payment_method.title')
 %p= t('.payment_method.description_html')
 
-.table-responsive
-  %table.table.table-bordered{style: 'white-space: nowrap;'}
-    %caption= t('.payment_method.table.caption')
-    %thead
-      %tr
-        %td
-        %th= t('.payment_method.table.card')
-        %th= t('.payment_method.table.convenient_store')
-        %th= t('.payment_method.table.xxx_pay')
-        %th= t('.payment_method.table.bank_transfer')
-    %tbody
-      %tr
-        %th= t('.payment_method.table.short_term')
-        %td= t('.payment_method.table.subscription')
-        %td= t('.payment_method.table.one_purchase')
-        %td= t('.payment_method.table.one_purchase')
-        %td= t('.payment_method.table.one_purchase')
-      %tr
-        %th= t('.payment_method.table.long_term')
-        %td= t('.payment_method.table.bulk_purchase')
-        %td= t('.payment_method.table.bulk_purchase')
-        %td= t('.payment_method.table.bulk_purchase')
-        %td= t('.payment_method.table.bulk_purchase')
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_method.creditcard.title')
+%p.mb-3
+  = t('.payment_method.creditcard.short_period.description')
+  = link_to t('.payment_method.creditcard.short_period.purchase'), '#', id: 'btn-payment-method-purchase-subscription', class: 'btn btn-outline-primary btn-sm btn-checkout'
+%p.mb-3
+  = t('.payment_method.creditcard.long_period.description')
+  = link_to t('.payment_method.creditcard.long_period.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_method.other_methods.title')
+%p.mb-3
+  = t('.payment_method.other_methods.short_period.description')
+  = link_to t('.payment_method.other_methods.short_period.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#payment-method-modal', toggle: 'modal'}
+%p.mb-3
+  = t('.payment_method.other_methods.long_period.description')
+  = link_to t('.payment_method.other_methods.long_period.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
 
 %hr
 
@@ -120,6 +112,10 @@
 
 %h2.h4.text-center.my-5= t('.contribution.title')
 %p= t('.contribution.description_html')
+
+%blockquote.twitter-tweet.border
+  %p= t('.contribution.text')
+  %a{href: "https://twitter.com/ego_tter/status/1392100447922446338?ref_src=twsrc%5Etfw"}= t('.contribution.date')
 
 %hr
 
@@ -192,11 +188,14 @@
 
 = modal_dialog id: 'payment-method-modal', title: t('.payment_method.modal.title'), button: {positive: t('.bulk_purchase.modal.yes'), category: 'outline-secondary'} do
   .my-3= t('.payment_method.modal.description')
-  .my-5
-    %strong.mb-1= t('.payment_method.modal.1_month.title')
-    .mb-1= t('.payment_method.modal.1_month.price', value: 660)
-    .mt-2= link_to t('.payment_method.modal.1_month.purchase'), base_shop_1_month_url, id: 'base-shop-1-month-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
-  .my-3.small.text-muted= t('.payment_method.modal.note_html')
+  %strong.d-block.mt-5.mb-1= t('.payment_method.modal.1_month.title')
+  .mb-1= t('.payment_method.modal.1_month.price', value: 660)
+  .mt-2= link_to t('.payment_method.modal.1_month.purchase'), base_shop_1_month_url, id: 'base-shop-1-month-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+  .text-center.small.mt-5.mb-3
+    = link_to t('.payment_method.modal.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank'
+    &middot;
+    = link_to t('.payment_method.modal.refund_policy'), refund_policy_path(via: current_via), target: '_blank'
+  .small.text-muted.mt-3.mb-5= t('.payment_method.modal.note_html')
 
 = modal_dialog id: 'bulk-purchase-modal', title: t('.bulk_purchase.modal.title'), button: {positive: t('.bulk_purchase.modal.yes'), category: 'outline-secondary'} do
   .my-3= t('.bulk_purchase.modal.description')
@@ -221,6 +220,10 @@
       = t('.bulk_purchase.modal.6_month.price', value: 3550)
       = t('.bulk_purchase.modal.6_month.discount_rate', value: 10)
     .mt-2= link_to t('.bulk_purchase.modal.12_month.purchase'), base_shop_12_months_url, id: 'base-shop-12-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+  .text-center.small.mt-5.mb-3
+    = link_to t('.bulk_purchase.modal.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank'
+    &middot;
+    = link_to t('.bulk_purchase.modal.refund_policy'), refund_policy_path(via: current_via), target: '_blank'
   .my-3.small.text-muted= t('.bulk_purchase.modal.note_html')
 
 %hr
