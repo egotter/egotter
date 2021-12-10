@@ -8,7 +8,7 @@
 <div class="text-muted my-3">
   <p>
     <%= t('.premium_only') %>
-    <a href="#" class="btn btn-outline-primary btn-sm btn-checkout"><%= t('.purchase') %></a>
+    <%= link_to t('.purchase'), pricing_path(via: current_via), class: 'btn btn-outline-primary btn-sm' %>
   </p>
   <%= t('.description') %>
 </div>
@@ -68,8 +68,11 @@
 <% else %>
   <script>
     $(function () {
-      // Go to the purchase page after clicking the toggle button.
-      $('#private_mode_setting').addClass('btn-checkout')
+      $('#private_mode_setting').on('click', function () {
+        var url = '<%= raw pricing_path(via: current_via('toggle_button')) %>';
+        window.open(url, '_blank');
+        return false;
+      });
     });
   </script>
 <% end %>

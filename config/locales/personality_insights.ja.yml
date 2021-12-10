@@ -18,11 +18,9 @@ ja:
       tweets_not_enough: 'ツイートが少なすぎるため @%{user} の性格分析に失敗しました。'
       analyzing_failed: 'アクセスが多すぎるため @%{user} の性格分析に失敗しました。%{count}秒ほど時間をおいてから再度アクセスしてみてください。'
       rate_limited_html: |
-        1日の分析回数を使い切りました。時間をおいてから再度アクセスしてみてください。<br>
-        <br>
-        有料プランのユーザーはすぐに分析できます。<a href="#" class="btn btn-outline-primary btn-checkout btn-sm">もっと詳しく</a><br>
-        <br>
-        えごったーの宣伝ツイートをした後ならすぐに分析できます。<a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">もっと詳しく</a>
+        <p>1日の分析回数を使い切りました。時間をおいてから再度アクセスしてみてください。</p>
+        <p>有料プランのユーザーはすぐに分析できます。<a href="%{url}" class="btn btn-outline-primary btn-sm">プランを見る</a></p>
+        <p>えごったーの宣伝ツイートをした後ならすぐに分析できます。<a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">もっと詳しく</a></p>
       navbar_title: 'ツイッター性格診断'
       crumb_title: 'ツイッター性格診断'
       page_title: 'ツイッター性格診断'

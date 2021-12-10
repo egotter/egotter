@@ -57,14 +57,14 @@
         <% end %>
       <% else %>
         <div class="text-center mt-3">
-          <%= link_to '#', id: 'btn-delete-tweets-uploader', class: 'btn btn-outline-primary btn-checkout' do %>
+          <%= link_to pricing_path(via: current_via('button')), id: 'btn-delete-tweets-uploader', class: 'btn btn-outline-primary' do %>
             <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
             <%= t('.button') %>
           <% end %>
         </div>
         <div class="text-muted small">
-          <div class="mt-1"><%= t('.note1_html', url: delete_tweets_mypage_path(anchor: 'what_is_archive_data')) %></div>
-          <div class="mt-1"><%= t('.note3_html', url: pricing_path(via: current_via)) %></div>
+          <div class="mt-1"><%= t('.note1_html', url: delete_tweets_faq_path(anchor: 'what_is_archive_data')) %></div>
+          <div class="mt-1"><%= t('.note3_html', url: pricing_path(via: current_via('note'))) %></div>
         </div>
       <% end %>
     </div>

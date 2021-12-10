@@ -17,7 +17,7 @@
       <% end %>
     <% else %>
       <div class="text-muted small my-3"><%= t('.note1') %></div>
-      <a href="#" id="btn-feed-muters" class="btn btn-primary btn-checkout"><%= t('.purchase') %></a>
+      <%= link_to t('.purchase'), pricing_path(via: current_via('feed-muters')), id: 'btn-feed-muters', class: 'btn btn-primary' %>
     <% end %>
   <% else %>
     <div class="text-center my-3"><%= t('.not_signed_in') %></div>

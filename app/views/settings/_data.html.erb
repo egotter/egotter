@@ -15,7 +15,7 @@
         <div class="text-muted small mt-1"><%= t('.delete_caches.note_html') %></div>
       <% else %>
         <%= link_to t('.delete_caches.button'), '#', class: 'btn btn-warning btn-sm', data: {target: '#checkout-for-reset-cache-confirmation-modal', toggle: 'modal'} %>
-        <%= modal_dialog(id: 'checkout-for-reset-cache-confirmation-modal', title: t('.delete_caches.confirmation_modal.title'), body: t('.delete_caches.confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_caches.confirmation_modal.ok'), positive_class: 'btn-checkout'}) %>
+        <%= modal_dialog(id: 'checkout-for-reset-cache-confirmation-modal', title: t('.delete_caches.confirmation_modal.title'), body: t('.delete_caches.confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_caches.confirmation_modal.ok'), positive_class: 'see-more-button-on-cache-modal'}) %>
       <% end %>
     <% end %>
   </div>
@@ -40,8 +40,22 @@
         <div class="text-danger small mt-1"><%= t('.delete_data.note') %></div>
       <% else %>
         <%= link_to t('.delete_data.button'), '#', class: 'btn btn-danger btn-sm', data: {target: '#checkout-for-reset-data-confirmation-modal', toggle: 'modal'} %>
-        <%= modal_dialog(id: 'checkout-for-reset-data-confirmation-modal', title: t('.delete_data.confirmation_modal.title'), body: t('.delete_data.confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.confirmation_modal.ok'), positive_class: 'btn-checkout'}) %>
+        <%= modal_dialog(id: 'checkout-for-reset-data-confirmation-modal', title: t('.delete_data.confirmation_modal.title'), body: t('.delete_data.confirmation_modal.body_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.confirmation_modal.ok'), positive_class: 'see-more-button-on-data-modal'}) %>
       <% end %>
     <% end %>
   </div>
 </div>
+
+<script>
+  $(function () {
+    $('.see-more-button-on-cache-modal').on('click', function () {
+      var url = '<%= raw pricing_path(via: current_via('delete-cache-modal')) %>';
+      window.location.href = url;
+    });
+
+    $('.see-more-button-on-data-modal').on('click', function () {
+      var url = '<%= raw pricing_path(via: current_via('delete-data-modal')) %>';
+      window.location.href = url;
+    });
+  });
+</script>

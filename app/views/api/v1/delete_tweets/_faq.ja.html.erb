@@ -131,7 +131,7 @@
       3. 数ヶ月後、残りのツイートが表示され始める<br>
       4. 表示されたツイートを削除し、1. に戻る
     </p>
-    <p>えごったーの有料プランであれば、上記のような面倒な手順は不要です。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></p>
+    <p>えごったーの有料プランであれば、上記のような面倒な手順は不要です。<%= link_to 'プランを見る', pricing_path(via: current_via('many-times')), class: 'btn btn-outline-primary btn-sm' %></p>
     <p class="text-muted small"><%= limit_reason %></p>
   <% end %>
 
@@ -172,7 +172,7 @@
         <p>@<%= current_user.screen_name %> さんは既に有料プランを購入済みです。</p>
         <p><%= link_to 'ツイート削除マイページ', delete_tweets_mypage_path %>へ進んだ後に、「完全に削除」と書かれたタブをクリックしてください。</p>
       <% else %>
-        <p>こちらから購入することができます。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></p>
+        <p>有料プランは料金プランページから購入することができます。料金プランページでお好きな購入方法をお選びください。<%= link_to 'プランを見る', pricing_path(via: current_via('how-to-purchase')), class: 'btn btn-outline-primary btn-sm' %></p>
       <% end %>
     <% else %>
       <p>まず最初に、こちらからログインしてください。<%= link_to 'ログインする', sign_in_path(redirect_path: delete_tweets_mypage_path), class: 'btn btn-outline-primary btn-sm' %></p>
@@ -246,17 +246,17 @@
   <% faq_question '古いツイートが削除されないのはなぜですか？' do %>
     <p>ツイッターの仕組み上、自動で削除できるのは<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。</p>
     <p>えごったーでは、アーカイブデータを使うことで<%= destroy_limit %>件を超えるツイートを安全に削除する方法を確立しています。</p>
-    <p>一括で簡単に古いツイートを削除したい方は、全てのツイートを削除できるえごったー有料プランをご利用ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></p>
+    <p>一括で簡単に古いツイートを削除したい方は、全てのツイートを削除できるえごったー有料プランをご利用ください。<%= link_to 'プランを見る', pricing_path(via: current_via('old-tweets-not-deleted')), class: 'btn btn-outline-primary btn-sm' %></p>
   <% end %>
 
   <% faq_question '画像付きツイートが削除されないのはなぜですか？' do %>
     <p>ツイッターの仕組み上、ツイート数の多い/少ないに関わらず、画像付きツイートが削除されずに残ることがあります。これは世界中の全てのツールで共通の制限です。</p>
-    <p>この条件に該当する方は、全てのツイートを削除できるえごったー有料プランをご利用ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></p>
+    <p>この条件に該当する方は、全てのツイートを削除できるえごったー有料プランをご利用ください。<%= link_to 'プランを見る', pricing_path(via: current_via('media-not-deleted')), class: 'btn btn-outline-primary btn-sm' %></p>
   <% end %>
 
   <% faq_question '1回で全てのツイートが削除されないことがあるのはなぜですか？', id: 'reason-of-3200' do %>
     <p>ツイッターの仕組み上、自動で削除できるのは最新の<%= destroy_limit %>件までです。これは世界中の全てのツールで共通の制限です。</p>
-    <p><%= destroy_limit %>件を超える全てのツイートの削除を希望される方は、えごったー有料プランをご利用ください。<a href="#" class="btn btn-outline-primary btn-sm btn-checkout">購入する</a></p>
+    <p><%= destroy_limit %>件を超える全てのツイートの削除を希望される方は、えごったー有料プランをご利用ください。<%= link_to 'プランを見る', pricing_path(via: current_via('reason-of-3200')), class: 'btn btn-outline-primary btn-sm' %></p>
   <% end %>
 
   <% faq_question 'ツイート削除に失敗した場合の返金はありますか？' do %>

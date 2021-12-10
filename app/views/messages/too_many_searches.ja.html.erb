@@ -28,8 +28,8 @@
     <% end %>
     <div><a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">ツイートして増やす</a></div>
     <div class="small mt-1 mb-3">ツイート回数x<%= @search_count_limitation.current_sharing_bonus %>回</div>
-    <div><a href="#" class="btn btn-outline-primary btn-checkout btn-sm">購入して増やす</a></div>
-    <div class="small mt-1 mb-3">最大<%= SearchCountLimitation::BASIC_PLAN %>回/日 <a href="#" class="btn-pricing small">料金プランはこちら</a></div>
+    <div><a href="<%= pricing_path(via: current_via('too_many_searches-button')) %>" class="btn btn-outline-primary btn-sm">購入して増やす</a></div>
+    <div class="small mt-1 mb-3">最大<%= SearchCountLimitation::BASIC_PLAN %>回/日 <a href="<%= pricing_path(via: current_via('too_many_searches-more')) %>" class="small">料金プランはこちら</a></div>
   </dd>
 
   <dt>・マーケティングでご利用の方へ</dt>

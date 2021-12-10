@@ -455,7 +455,7 @@ ja:
           title: 'キャッシュをリセットする'
           body_html: |
             キャッシュのリセットは有料プランのユーザーのみ行うことができます。
-          ok: 'もっと詳しく'
+          ok: 'プランを見る'
       delete_data:
         title: 'データの削除'
         button: '実行する'
@@ -464,7 +464,7 @@ ja:
           title: 'データを削除する'
           body_html: |
             データの削除は有料プランのユーザーのみ行うことができます。
-          ok: 'もっと詳しく'
+          ok: 'プランを見る'
     periodic_report_setting:
       morning:
         name: '朝のリムられ通知'
@@ -1661,7 +1661,7 @@ ja:
       since_date: 'この日付から'
       until_date: 'この日付まで'
       send_dm: '削除の完了後に自分へDMする'
-      note1_html: 'アーカイブデータは <a href="%{url}">事前にご用意</a> ください。'
+      note1_html: 'アーカイブデータは <a href="%{url}" target="_blank">事前にご用意</a> ください。'
       note2: 'twitter-0000-00-00-aaaaaa.zip を選択してください。'
       note3_html: '「完全に削除」には <a href="%{url}" target="_blank">有料プラン</a> の購入が必要です。'
       note4: 'パソコンとWi-Fiを使うと高速にアップロードできます。'
@@ -2028,8 +2028,8 @@ ja:
       not_found: "指定された条件での検索結果は0件でした。"
       need_click: '続きを読み込むには「もっと見る」をクリックしてください。'
       need_purchase: '%{count}人 以上の結果を見るには有料プランの購入が必要です。'
-      see_details: 'もっと見る'
       see_more: "もっと見る"
+      see_pricing: 'プランを見る'
     about_plan:
       user: '@%{user} でログイン中です。'
       visitor: 'まだログインしていません。'

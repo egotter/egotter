@@ -10,12 +10,12 @@
 
 <div class="my-5">
   <%= t('.about_bulk_purchase') %>
-  <%= link_to t('.see_plans'), pricing_path(via: current_via('orders_table')), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+  <%= link_to t('.see_plans'), pricing_path(via: current_via('bulk_purchase')), id: 'btn-order-history-bulk-purchase', class: 'btn btn-outline-primary btn-sm' %>
 </div>
 
 <div class="my-5">
   <%= t('.about_purchase') %>
-  <a href="#" id="btn-order-history-purchase" class="btn btn-primary btn-sm btn-checkout"><%= t('.purchase') %></a>
+  <%= link_to t('.purchase'), pricing_path(via: current_via('trial_days')), id: 'btn-order-history-trial-days', class: 'btn btn-primary btn-sm' %>
 </div>
 
 <div class="my-5">

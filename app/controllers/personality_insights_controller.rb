@@ -8,7 +8,8 @@ class PersonalityInsightsController < ApplicationController
   before_action(only: :show) do
     unless @insight
       if personality_insight_rate_limited? && current_user.sharing_count == 0
-        redirect_to personality_insights_top_path(via: current_via('rate_limited')), alert: t('.show.rate_limited_html')
+        via = current_via('rate_limited')
+        redirect_to personality_insights_top_path(via: via), alert: t('.show.rate_limited_html', url: pricing_path(via: via))
       else
         create_personality_insight
       end
