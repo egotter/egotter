@@ -34,7 +34,7 @@
         <% elsif purchased %>
           <%= link_to label, url, {id: id, class: 'dropdown-item'} %>
         <% else %>
-          <%= link_to '#', {id: id, class: 'dropdown-item btn-checkout text-muted'} do %>
+          <%= link_to pricing_path(via: current_via(id)), id: id, class: 'dropdown-item text-muted', target: '_blank' do %>
             <%= label %>
             <i class="fas fa-unlock"></i>
           <% end %>
