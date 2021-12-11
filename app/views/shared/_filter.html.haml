@@ -26,7 +26,7 @@
           %a.filters.dropdown-item{href: "#", data: {filter: value}}
             = label
         - else
-          %a.filters.dropdown-item.btn-checkout.text-muted{href: "#"}
+          %a.filters.dropdown-item.filter-disabled.text-muted{href: pricing_path(via: current_via("filter-#{value}")), target: '_blank'}
             = label
             %i.fas.fa-unlock
   :javascript

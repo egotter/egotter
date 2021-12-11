@@ -20,7 +20,7 @@
           %a.sort-orders.dropdown-item{href: "#", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
             = label
         - else
-          %a.sort-orders.dropdown-item.btn-checkout.text-muted{href: "#"}
+          %a.sort-orders.dropdown-item.sort-disabled.text-muted{href: pricing_path(via: current_via("sort-#{value}")), target: '_blank'}
             = label
             %i.fas.fa-unlock
   :javascript

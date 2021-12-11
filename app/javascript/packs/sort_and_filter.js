@@ -4,7 +4,7 @@ class SortButton {
     this.$container = $('.sort-order-container');
     var self = this;
 
-    this.$container.find('.dropdown-item').not('.btn-checkout').not('.btn-end-trial').on('click', function () {
+    this.$container.find('.dropdown-item').not('.sort-disabled').not('.btn-end-trial').on('click', function () {
       return self.clickItem($(this));
     });
   }
@@ -43,7 +43,7 @@ class FilterButton {
     this.$container = $('.filter-container');
     var self = this;
 
-    this.$container.find('.dropdown-item').not('.btn-checkout').not('.btn-end-trial').not('.btn-allysocial').on('click', function () {
+    this.$container.find('.dropdown-item').not('.filter-disabled').not('.btn-end-trial').not('.btn-allysocial').on('click', function () {
       return self.clickItem($(this));
     });
   }

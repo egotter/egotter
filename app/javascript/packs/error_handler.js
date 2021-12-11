@@ -33,8 +33,8 @@ class ErrorHandler {
     };
 
     try {
-      if (ga) {
-        ga('send', eventParams);
+      if (window.ga) {
+        window.ga('send', eventParams);
         console.warn('Sent JS Exception to GA', eventParams);
       } else {
         console.warn('ga is not defined', eventName, eventParams);
