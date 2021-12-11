@@ -21,6 +21,7 @@ services:
       - /tmp/mysql.sock:/tmp/mysql.sock
     ports:
       - "3000:3000"
+      - "3035:3035"
   sidekiq:
     build: .
     working_dir: /home/root/egotter
