@@ -6,9 +6,7 @@ class SearchesController < ApplicationController
   include SearchRequestCreation
 
   before_action :reject_crawler
-  before_action :valid_screen_name?
-  before_action :not_found_screen_name?
-  before_action :forbidden_screen_name?
+  before_action :validate_screen_name!
   before_action :find_or_create_search_request
 
   before_action { create_search_history(@twitter_user) }

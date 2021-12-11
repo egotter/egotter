@@ -6,10 +6,7 @@ module SearchRequestCreation
   included do
     before_action(only: :show) { head :forbidden if twitter_dm_crawler? }
 
-    before_action(only: :show) { valid_screen_name? }
-    before_action(only: :show) { not_found_screen_name? }
-    before_action(only: :show) { forbidden_screen_name? }
-
+    before_action(only: :show) { validate_screen_name! }
     before_action(only: :show) { find_or_create_search_request }
     before_action(only: :show) { twitter_user_persisted?(@twitter_user.uid) }
     before_action(only: :show) { twitter_db_user_persisted?(@twitter_user.uid) } # Not redirected
@@ -17,7 +14,7 @@ module SearchRequestCreation
   end
 
   def find_or_create_search_request(screen_name = nil)
-    screen_name = params[:screen_name] unless screen_name
+    screen_name ||= params[:screen_name]
     # TODO Save visitor_token
     request = SearchRequest.request_for(current_user&.id, screen_name: screen_name)
 

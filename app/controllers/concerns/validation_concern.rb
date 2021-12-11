@@ -167,4 +167,24 @@ module ValidationConcern
       false
     end
   end
+
+  def validate_screen_name!(screen_name = nil)
+    screen_name ||= params[:screen_name]
+
+    unless Validations::ScreenNameValidator::REGEXP.match?(screen_name)
+      respond_with_error(:bad_request, t('errors.messages.invalid_screen_name'))
+      return
+    end
+
+    if NotFoundUser.exists?(screen_name: screen_name)
+      session[:screen_name] = screen_name
+      redirect_to error_pages_not_found_user_path(via: current_via(__method__))
+      return
+    end
+
+    if ForbiddenUser.exists?(screen_name: screen_name)
+      session[:screen_name] = screen_name
+      redirect_to error_pages_forbidden_user_path(via: current_via(__method__))
+    end
+  end
 end

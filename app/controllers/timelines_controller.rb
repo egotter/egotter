@@ -6,9 +6,7 @@ class TimelinesController < ApplicationController
   include SearchRequestCreation
   include SanitizationConcern
 
-  before_action :valid_screen_name?, only: :waiting
-  before_action :not_found_screen_name?, only: :waiting
-  before_action :forbidden_screen_name?, only: :waiting
+  before_action :validate_screen_name!, only: :waiting
   before_action :set_user, only: :waiting
 
   before_action :enqueue_update_authorized, only: :show

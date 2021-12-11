@@ -178,46 +178,6 @@ describe ValidationConcern, type: :controller do
     end
   end
 
-  describe '#not_found_screen_name?' do
-    let(:screen_name) { 'screen_name' }
-    subject { controller.not_found_screen_name?(screen_name) }
-    before { allow(NotFoundUser).to receive(:exists?).with(screen_name: screen_name).and_return(found) }
-
-    context 'screen_name is found' do
-      let(:found) { false }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'screen_name is not found' do
-      let(:found) { true }
-      before { allow(controller).to receive(:error_pages_not_found_user_path).with(anything).and_return('path') }
-      it do
-        expect(controller).to receive(:redirect_to).with('path')
-        is_expected.to be_truthy
-      end
-    end
-  end
-
-  describe '#forbidden_screen_name?' do
-    let(:screen_name) { 'screen_name' }
-    subject { controller.forbidden_screen_name?(screen_name) }
-    before { allow(ForbiddenUser).to receive(:exists?).with(screen_name: screen_name).and_return(found) }
-
-    context 'screen_name is forbidden' do
-      let(:found) { false }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'screen_name is not forbidden' do
-      let(:found) { true }
-      before { allow(controller).to receive(:error_pages_forbidden_user_path).with(anything).and_return('path') }
-      it do
-        expect(controller).to receive(:redirect_to).with('path')
-        is_expected.to be_truthy
-      end
-    end
-  end
-
   describe '#valid_uid?' do
     subject { controller.valid_uid?(uid) }
 

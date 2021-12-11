@@ -2593,7 +2593,7 @@ ja:
 
   errors:
     messages:
-      invalid_screen_name: 'は、@ から始まる20文字以内の英数字で入力してください'
+      invalid_screen_name: 'TwitterIDは、@ から始まる20文字以内の英数字で入力してください'
   views:
     pagination:
       first: "&laquo; First"

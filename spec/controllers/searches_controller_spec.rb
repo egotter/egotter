@@ -7,9 +7,7 @@ RSpec.describe SearchesController, type: :controller do
     subject { post :create, params: {screen_name: screen_name} }
 
     it do
-      expect(controller).to receive(:valid_screen_name?)
-      expect(controller).to receive(:not_found_screen_name?)
-      expect(controller).to receive(:forbidden_screen_name?)
+      expect(controller).to receive(:validate_screen_name!)
       expect(controller).to receive(:find_or_create_search_request)
       subject
     end
