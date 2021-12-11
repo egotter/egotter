@@ -53,7 +53,7 @@
     %h5.card-title.text-center= t('.payment_options.subscription.card.title')
     %h6.card-subtitle.mb-3.text-center.text-muted= t('.payment_options.subscription.card.price_html', regular_price: Order::REGULAR_PRICE_TAX_INCLUDED, discount_price: Order::DISCOUNT_PRICE_TAX_INCLUDED)
     %p.card-text= t('.payment_options.subscription.card.body_html', trial_days: Order::TRIAL_DAYS)
-    .text-center= link_to t('.payment_options.subscription.card.button'), '#', id: 'btn-pricing-purchase-subscription', class: 'btn btn-outline-primary btn-sm btn-checkout'
+    .text-center= link_to t('.payment_options.subscription.card.button'), '#', id: 'btn-purchase-subscription', class: 'btn btn-outline-primary btn-sm btn-checkout'
 
 %h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_options.one_purchase.title')
 %p.mb-3= t('.payment_options.one_purchase.description')
@@ -83,7 +83,7 @@
 %h3.h5.font-weight-bold.mt-5.mb-3= t('.payment_method.creditcard.title')
 %p.mb-3
   = t('.payment_method.creditcard.short_period.description')
-  = link_to t('.payment_method.creditcard.short_period.purchase'), '#', id: 'btn-payment-method-purchase-subscription', class: 'btn btn-outline-primary btn-sm btn-checkout'
+  = link_to t('.payment_method.creditcard.short_period.purchase'), '#', id: 'btn-purchase-by-creditcard', class: 'btn btn-outline-primary btn-sm btn-checkout'
 %p.mb-3
   = t('.payment_method.creditcard.long_period.description')
   = link_to t('.payment_method.creditcard.long_period.purchase'), '#', class: 'btn btn-outline-primary btn-sm', data: {target: '#bulk-purchase-modal', toggle: 'modal'}
@@ -170,7 +170,7 @@
     - if current_user.has_valid_subscription?
       .btn.btn-outline-primary.disabled= t('.basic_plan_purchased')
     - else
-      = link_to t('.purchase'), '#', id: 'btn-pricing-advantages', class: 'btn btn-primary btn-lg btn-checkout'
+      = link_to t('.purchase'), '#', id: 'btn-advantages-table', class: 'btn btn-primary btn-lg btn-checkout'
   - else
     = link_to t('.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
 .small.my-4
