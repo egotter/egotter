@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       get "follower_insights/profiles_count", to: "follower_insights#profiles_count"
       get "follower_insights/locations_count", to: "follower_insights#locations_count"
       get "follower_insights/tweet_times", to: "follower_insights#tweet_times"
+      get "secret_accounts", to: "secret_accounts#show"
 
       get "timelines", to: "timelines#show"
       get "summaries", to: "summaries#show"
@@ -186,6 +187,8 @@ Rails.application.routes.draw do
   get "mutual_unfriends/:screen_name/download", to: "mutual_unfriends#download", as: :mutual_unfriend_download
   get "unfriends/:screen_name/download", to: "unfriends#download", as: :unfriend_download
   get "unfollowers/:screen_name/download", to: "unfollowers#download", as: :unfollower_download
+
+  resources 'secret_accounts', only: %i(show), param: :screen_name
 
   get 'profiles/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
 

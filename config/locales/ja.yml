@@ -1021,6 +1021,17 @@ ja:
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
   inactive_followers:
   inactive_mutual_friends:
+  secret_accounts:
+    show:
+      navbar_title: '裏アカファインダー'
+      crumb_title: '裏アカファインダー'
+      meta_title: '裏アカファインダー'
+      meta_description: '裏アカファインダーです。'
+      content_title: '裏アカファインダー'
+      content_description: '裏アカファインダーです。'
+      loading: '読み込み中'
+      step1_title: 'ステップ1：趣味アカを見付ける'
+      step1_description_html: 'まず最初に、@%{user} のフォローから @%{user} の<span class="text-primary">趣味に関連するアカウント</span>を <span class="text-primary">3つ</span> 見付けましょう。'
   result_pages:
     show:
       notice_for_update_html: '最後の更新からしばらく時間が経っています。データを最新の状態にするには <a href="%{url}">分析結果トップ</a> へアクセスしてください。'
