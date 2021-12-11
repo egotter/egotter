@@ -1,21 +1,20 @@
 require 'rails_helper'
 
-RSpec.describe StripeCheckoutSession, type: :model do
+RSpec.describe CheckoutSessionBuilder, type: :model do
   let(:user) { create(:user, email: 'a@b.com') }
   let(:stripe_customer) { double('stripe customer', id: 'cus_xxx') }
 
-  describe '.create' do
-    subject { described_class.create(user) }
+  describe '.build' do
+    subject { described_class.build(user) }
 
     it do
-      expect(described_class).to receive(:build).with(user).and_return('attrs')
-      expect(Stripe::Checkout::Session).to receive(:create).with('attrs')
-      subject
+      expect(described_class).to receive(:build_subscription).with(user).and_return('result')
+      is_expected.to eq('result')
     end
   end
 
-  describe '.build' do
-    subject { described_class.send(:build, user) }
+  describe '.build_subscription' do
+    subject { described_class.send(:build_subscription, user) }
 
     it do
       expect(described_class).to receive(:find_or_create_customer).with(user).and_return('cus_xxx')

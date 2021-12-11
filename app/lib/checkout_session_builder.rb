@@ -1,13 +1,12 @@
-class StripeCheckoutSession
-
+class CheckoutSessionBuilder
   class << self
-    def create(user)
-      Stripe::Checkout::Session.create(build(user))
+    def build(user)
+      build_subscription(user)
     end
 
     private
 
-    def build(user)
+    def build_subscription(user)
       attrs = {
           client_reference_id: user.id,
           payment_method_types: ['card'],
