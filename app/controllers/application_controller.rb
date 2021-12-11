@@ -50,16 +50,4 @@ class ApplicationController < ActionController::Base
       user == ENV['DEBUG_USERNAME'] && pass == ENV['DEBUG_PASSWORD']
     end
   end
-
-  def respond_with_error(code, message, ex = nil)
-    location = (caller[0][/`([^']*)'/, 1] rescue '')
-
-    if request.xhr?
-      render json: {message: message}, status: code
-    else
-      redirect_to subroot_path(via: 'respond_with_error'), alert: message
-    end
-
-    create_error_log(location, message, ex)
-  end
 end

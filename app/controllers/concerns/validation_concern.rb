@@ -6,10 +6,6 @@ module ValidationConcern
   include SearchHistoriesHelper
   include JobQueueingConcern
 
-  included do
-
-  end
-
   def require_login!
     return if user_signed_in? && current_user.authorized?
 
@@ -162,5 +158,19 @@ module ValidationConcern
       session[:screen_name] = screen_name
       redirect_to error_pages_forbidden_user_path(via: current_via(__method__))
     end
+  end
+
+  private
+
+  def respond_with_error(code, message, ex = nil)
+    location = (caller[0][/`([^']*)'/, 1] rescue '')
+
+    if request.xhr?
+      render json: {message: message}, status: code
+    else
+      redirect_to subroot_path(via: 'respond_with_error'), alert: message
+    end
+
+    create_error_log(location, message, ex)
   end
 end
