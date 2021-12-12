@@ -1,11 +1,16 @@
-<% breadcrumb :blocker, @twitter_user.screen_name %>
+<%= content_for :navbar_title, t('page_titles.blockers', user: @twitter_user.screen_name) %>
+<%= content_for :result_title, t('page_titles.blockers', user: @twitter_user.screen_name) %>
+
+<% unless request.device_type == :smartphone %>
+  <% breadcrumb :blocker, @twitter_user.screen_name %>
+<% end %>
 <% title t('.meta_title') %>
 
 <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
 
 <%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false} %>
 
-<h2 class="h4 text-center my-5"><%= current_page_title(@twitter_user) %></h2>
+<h2 class="h4 text-center my-5"><%= t('page_titles.blockers', user: @twitter_user.screen_name) %></h2>
 <div class="mb-5"><%= render partial: 'shared/page_description', locals: {twitter_user: @twitter_user} %></div>
 
 <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :middle}) %>

@@ -10,6 +10,10 @@ ja:
       start: '使い方'
       pricing: '料金プラン'
       notification: 'リムられ通知'
+    result_header:
+      title: '@%{user} の分析'
+      app_name: 'えごったー'
+      sign_in: 'ログイン'
     meta_tags:
       title: 'えごったー スマホでかんたん ツイッターのフォロー整理'
       description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
@@ -165,7 +169,7 @@ ja:
         @%{user} のツイッター分析結果では、リムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタ の分析結果を表示しています。
         リム通知は、えごったーにログインすると自動で届きます。えごったーなら基本的な分析は全て無料です。
       audience_insight:
-        title: 'オーディエンス分析'
+        title: 'フォロー/フォロワー 推移'
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
     waiting:
       preparing: "@%{user} の分析結果を準備中です。%{count}秒以内に移動しない場合は、ページを再読込してください。"
@@ -212,7 +216,7 @@ ja:
         title: 'フォロワー'
         description: '@%{user} がフォローされているユーザーです。'
       audience_insights:
-        title: 'フォローとフォロワーの変化'
+        title: 'フォロー/フォロワー 推移'
         description: '@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の変化が分かります。'
       close_friends:
         title: '仲良しランキング'
@@ -273,7 +277,7 @@ ja:
         title: '片思いフォロー'
         description: '@%{user} がフォローしているユーザーのうち、フォロー返しされていないユーザーです。'
       one_sided_followers:
-        title: '片思いフォロワー'
+        title: '片思われフォロワー'
         description: '@%{user} のフォロワーのうち、フォロー返ししていないユーザーです。'
       replying:
         title: '自分から@ツイート'
@@ -354,14 +358,14 @@ ja:
       wday_suffix: "曜日"
   audience_insights:
     show:
-      navbar_title: "オーディエンス分析"
-      crumb_title: "オーディエンス分析"
-      page_title: "@%{user} のオーディエンス分析"
-      meta_title: "@%{user} のオーディエンス分析"
+      navbar_title: "フォロー/フォロワー 推移"
+      crumb_title: "フォロー/フォロワー 推移"
+      page_title: "@%{user} のフォロー/フォロワー 推移"
+      meta_title: "@%{user} のフォロー/フォロワー 推移"
       page_description_html: |
-        @%{user} のオーディエンス分析では、フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。<br>
+        @%{user} のフォロー/フォロワー 推移では、フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。<br>
         <br>
-        オーディエンス分析のデータは @%{user} がえごったーで検索されるたびに更新されます。
+        フォロー/フォロワー 推移のデータは @%{user} がえごったーで検索されるたびに更新されます。
       meta_description: "@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の日次推移を表示します。@%{user} の最新のフォロー数は%{friends}、フォロワー数は%{followers}です。"
       friends:
         title: 'フォロー数'
@@ -1031,17 +1035,18 @@ ja:
     tabs:
       zero: '0'
   page_titles:
+    audience_insights: '@%{user} のフォロー/フォロワー 推移'
     statuses: "@%{user} のツイート"
     friends: "@%{user} のフォロー"
     followers: "@%{user} のフォロワー"
     unfriends: "@%{user} のリムーブ"
-    unfollowers: "@%{user} のリムられチェック - @%{user} のリムられを見るなら、保存ユーザー数 %{count}人突破のリムられチェック！"
+    unfollowers: "@%{user} のリムーブされた"
     mutual_unfriends: "@%{user} がブロックされたかも"
     blockers: "@%{user} のブロックされている（高精度）"
     close_friends: "@%{user} の仲良しランキング"
     favorite_friends: "@%{user} のいいねランキング"
     one_sided_friends: "@%{user} の片思いフォロー"
-    one_sided_followers: "@%{user} の片思いフォロワー"
+    one_sided_followers: "@%{user} の片思われフォロワー"
     mutual_friends: "@%{user} の相互フォロー"
     inactive_friends: "@%{user} の最近いないフォロー"
     inactive_followers: "@%{user} の最近いないフォロワー"
@@ -1062,7 +1067,7 @@ ja:
     close_friends: "@%{user} の仲良し分析"
     favorite_friends: "@%{user} のいいね分析"
     one_sided_friends: "@%{user} の片思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
-    one_sided_followers: "@%{user} の片思いフォロワー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
+    one_sided_followers: "@%{user} の片思われフォロワー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
     mutual_friends: "@%{user} の相互フォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
     inactive_friends: "@%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
     inactive_followers: "@%{user} の最近いないフォロワー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
@@ -1094,8 +1099,6 @@ ja:
     common_friends: "@%{user} と %{user2} の両方がフォローしているユーザーの一覧 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
     common_followers: "@%{user} と %{user2} の両方がフォローされているユーザーの一覧 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
     common_mutual_friends: "@%{user} と %{user2} の両方が相互フォローしているユーザーの一覧 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
-  content_titles:
-    unfollowers: "@%{user} のリムられチェック"
   page_descriptions:
     statuses_html: "%{user} のツイート一覧です。"
     friends_html: "%{user} がフォローしているユーザーの一覧です。"
@@ -1241,7 +1244,7 @@ ja:
       両思い %{mutual_friends}人
       #egotter %{url}
     one_sided_followers: |
-      .@%{user} の片思いフォロワー分析
+      .@%{user} の片思われフォロワー分析
       片思い %{one_sided_friends}人
       片思われ %{one_sided_followers}人
       両思い %{mutual_friends}人
@@ -1331,7 +1334,7 @@ ja:
     close_friends: '仲良しランキング'
     favorite_friends: 'いいねランキング'
     one_sided_friends: '片思いフォロー'
-    one_sided_followers: '片思いフォロワー'
+    one_sided_followers: '片思われフォロワー'
     mutual_friends: '相互フォロー'
     inactive_friends: '最近いないフォロー'
     inactive_followers: '最近いないフォロワー'
@@ -1383,7 +1386,7 @@ ja:
         ツイートから作成したワードクラウドは @%{user} の口ぐせを表しています。
         フォローから作成したワードクラウドは @%{user} のフォローの特徴を表しています。
         フォロワーから作成したワードクラウドは @%{user} のフォロワーの特徴を表しています。
-      page_title: "@%{user} のツイート、フォロー、フォロワーから作ったワードクラウド"
+      page_title: "@%{user} のワードクラウド"
       page_description: |
         @%{user} ツイート、フォロー、フォロワーからワードクラウドを作成します。
         ツイートから作成したワードクラウドは @%{user} の口ぐせを表しています。
@@ -1412,7 +1415,8 @@ ja:
       navbar_title: 'クラスタ判定'
       crumb_title: "入っているクラスタ"
       page_description: "クラスタとは、「あるユーザーが入っているグループ」のことです。えごったーでは、@%{user} がよくツイートするジャンルやフォロー関係からクラスタを判定しています。"
-      page_title: "@%{user} のクラスタ判定 - %{clusters}"
+      page_title: "@%{user} のクラスタ判定"
+      page_title_with_clusters: "@%{user} のクラスタ判定 - %{clusters}"
       content_title: "%{user} のクラスタ判定"
       description: "@%{user} のクラスタは、%{clusters}です。検索されたユーザーが入っているクラスタをさくっと見付けることができます。"
       tweet: |
@@ -2436,7 +2440,7 @@ ja:
     followers: "フォロワー"
     mutual_friends: "相互フォロー"
     one_sided_friends: "片思いフォロー"
-    one_sided_followers: "片思いフォロワー"
+    one_sided_followers: "片思われフォロワー"
     inactive_mutual_friends: "最近いない相互フォロー"
     inactive_friends: "最近いないフォロー"
     inactive_followers: "最近いないフォロワー"

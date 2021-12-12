@@ -47,7 +47,11 @@
     = javascript_include_tag "/adsense.js?t=#{Time.zone.now.to_i}"
     = render partial: 'shared/toast'
 
-    = render partial: 'layouts/header' if show_header? && !under_maintenance?
+    - if show_header? && !under_maintenance?
+      - if result_page? && request.device_type == :smartphone
+        = render partial: 'layouts/result_header'
+      - else
+        = render partial: 'layouts/header'
     = render partial: 'layouts/alert'
 
     - if wrap_in_container?

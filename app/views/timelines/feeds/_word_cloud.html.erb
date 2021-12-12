@@ -7,7 +7,7 @@
   <% container_id = "id-#{words_count.object_id}" %>
   <div id="<%= container_id %>" class="my-3" style="height: 300px;"></div>
 
-  <%= link_to(t('timelines.feeds.view_more'), word_cloud_path(twitter_user), class: 'btn btn-primary btn-block btn-view-more') %>
+  <%= link_to(t('timelines.feeds.view_more'), word_cloud_path(twitter_user, via: current_via), class: 'btn btn-primary btn-block btn-view-more') %>
 </div>
 
 <script>

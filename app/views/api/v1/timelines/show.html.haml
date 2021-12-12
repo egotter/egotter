@@ -7,7 +7,7 @@
 .mb-5= feed_item :close_friends, feed_attrs('close_friends', @twitter_user)
 
 - if @twitter_user.usage_stat
-  .mb-5= feed_item :chart, feed_name: :usage_stats, feed_title: t('timelines.feeds.usage_stats.title'), feed_description: t('timelines.feeds.usage_stats.description', user: @twitter_user.screen_name), graph: @twitter_user.usage_stat.chart_data(:wday), url: usage_stat_path(@twitter_user), twitter_user: @twitter_user
+  .mb-5= feed_item :chart, feed_name: :usage_stats, feed_title: t('timelines.feeds.usage_stats.title'), feed_description: t('timelines.feeds.usage_stats.description', user: @twitter_user.screen_name), graph: @twitter_user.usage_stat.chart_data(:wday), url: usage_stat_path(@twitter_user, via: current_via), twitter_user: @twitter_user
 
 - if show_common_friends?(@twitter_user)
   .mb-5= feed_item :users, feed_attrs('common_friends', @twitter_user)
@@ -20,7 +20,7 @@
   .mb-5= feed_item :word_cloud, feed_name: :word_clouds, feed_title: t('timelines.feeds.word_clouds.title'), feed_description: t('timelines.feeds.word_clouds.description', user: @twitter_user.screen_name), words_count: words_count, twitter_user: @twitter_user
 
 - if (tweet_clusters = @twitter_user.usage_stat&.sorted_tweet_clusters)
-  .mb-5= feed_item :chart, feed_name: :clusters, feed_title: t('timelines.feeds.clusters.title'), feed_description: t('timelines.feeds.clusters.description', user: @twitter_user.screen_name), graph: tweet_clusters.to_a.take(30).map { |word, count| {name: word, y: count} }, url: cluster_path(@twitter_user), twitter_user: @twitter_user
+  .mb-5= feed_item :chart, feed_name: :clusters, feed_title: t('timelines.feeds.clusters.title'), feed_description: t('timelines.feeds.clusters.description', user: @twitter_user.screen_name), graph: tweet_clusters.to_a.take(30).map { |word, count| {name: word, y: count} }, url: cluster_path(@twitter_user, via: current_via), twitter_user: @twitter_user
 
 .mb-0= feed_item :users, feed_attrs('unfriends', @twitter_user)
 .mb-5= render(partial: 'adsense/ad', locals: {vertical: :feed_unfriends})

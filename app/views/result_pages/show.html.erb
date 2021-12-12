@@ -3,8 +3,12 @@
 <% end %>
 
 <% content_for :navbar_title, current_navbar_title %>
+<% content_for :result_title, current_page_title(@twitter_user) %>
 
-<% current_breadcrumb(@twitter_user) %>
+<% unless request.device_type == :smartphone %>
+  <% current_breadcrumb(@twitter_user) %>
+<% end %>
+
 <% title current_page_title(@twitter_user) %>
 <% set_meta_tags description: current_meta_description(@twitter_user) %>
 
@@ -21,7 +25,7 @@
 
 <%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false} %>
 
-<h2 class="h4 text-center my-5"><%= current_content_title(@twitter_user) %></h2>
+<h2 class="h4 text-center my-5"><%= current_page_title(@twitter_user) %></h2>
 <div class="mb-5"><%= render partial: 'shared/page_description', locals: {twitter_user: @twitter_user} %></div>
 
 <% if controller_name == 'close_friends' %>

@@ -12,11 +12,9 @@ module ViewVariablesHelper
     when 'unfriends'
       t('page_titles.unfriends', user: name)
     when 'unfollowers'
-      t('page_titles.unfollowers', user: name, count: Rails.configuration.x.constants[:persisted_count_ja])
+      t('page_titles.unfollowers', user: name)
     when 'mutual_unfriends'
       t('page_titles.mutual_unfriends', user: name)
-    when 'blockers'
-      t('page_titles.blockers', user: name)
     when 'close_friends'
       t('page_titles.close_friends', user: name)
     when 'favorite_friends'
@@ -48,20 +46,6 @@ module ViewVariablesHelper
     else
       raise "Invalid controller value=#{controller_name}"
     end
-  end
-
-  # TODO Remove later
-  def current_content_title(twitter_user)
-    case controller_name
-    when 'unfollowers'
-      t('content_titles.unfollowers', user: twitter_user.screen_name)
-    else
-      current_page_title(twitter_user)
-    end
-  end
-
-  def current_meta_title(twitter_user)
-    raise NotImplementedError
   end
 
   def current_meta_description(twitter_user)
@@ -264,6 +248,7 @@ module ViewVariablesHelper
     end
   end
 
+  # TODO Remove later
   def current_breadcrumb(user)
     breadcrumb controller_name.singularize.to_sym, user.screen_name
   end

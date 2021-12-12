@@ -20,6 +20,38 @@ module ApplicationHelper
         (controller_name == 'personality_insights' && action_name == 'new')
   end
 
+  RESULT_PAGES = %w(
+    audience_insights
+    close_friends
+    clusters
+    common_followers
+    common_friends
+    common_mutual_friends
+    favorite_friends
+    followers
+    friends
+    inactive_followers
+    inactive_friends
+    inactive_mutual_friends
+    mutual_friends
+    mutual_unfriends
+    one_sided_followers
+    one_sided_friends
+    replied
+    replying_and_replied
+    replying
+    statuses
+    unfollowers
+    unfriends
+    usage_stats
+    word_clouds
+  )
+
+  def result_page?
+    (controller_name == 'blockers' && action_name == 'index') ||
+        (action_name == 'show' && RESULT_PAGES.include?(controller_name))
+  end
+
   def waiting_page?
     controller_name == 'waiting'
   end

@@ -1,7 +1,10 @@
 - content_for :canonical_url do
   %link{href: audience_insight_url(@twitter_user), rel: 'canonical'}
 
-- breadcrumb :audience_insight, @twitter_user.screen_name
+- unless request.device_type == :smartphone
+  - breadcrumb :audience_insight, @twitter_user.screen_name
+
+- content_for :result_title, t('page_titles.audience_insights', user: @twitter_user.screen_name)
 
 - title t('.page_title', user: @twitter_user.screen_name)
 - set_meta_tags description: t('.meta_description', user: @twitter_user.screen_name, friends: @twitter_user.friends_count, followers: @twitter_user.followers_count), title: t('.meta_title', user: @twitter_user.screen_name)
