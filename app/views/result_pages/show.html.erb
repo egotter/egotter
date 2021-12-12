@@ -2,7 +2,7 @@
   <link href="<%= current_canonical_url(@twitter_user) %>" rel="canonical">
 <% end %>
 
-<%= content_for :navbar_title, current_navbar_title %>
+<% content_for :navbar_title, current_navbar_title %>
 
 <% current_breadcrumb(@twitter_user) %>
 <% title current_page_title(@twitter_user) %>
