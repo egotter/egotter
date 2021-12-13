@@ -59,8 +59,7 @@
         .row
           - if show_sidebar?
             .d-none.d-sm-none.d-md-block.col-md-3
-              .sticky-top
-                = render partial: 'layouts/sidenav', locals: {twitter_user: @twitter_user}
+              .mt-3= render partial: 'layouts/sidenav', locals: {twitter_user: @twitter_user}
             .col-12.col-sm-12.col-md-9
               = render partial: 'layouts/breadcrumbs'
               = yield
