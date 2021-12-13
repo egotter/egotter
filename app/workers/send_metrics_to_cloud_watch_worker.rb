@@ -40,6 +40,8 @@ class SendMetricsToCloudWatchWorker
     end
 
     client.update
+  rescue => e
+    Airbag.warn "#{e.inspect} type=#{type}"
   end
 
   private
@@ -310,6 +312,8 @@ class SendMetricsToCloudWatchWorker
                 metric_data: data,
             }
             client.put_metric_data(params)
+          rescue => e
+            Airbag.warn "#update #{e.inspect} data=#{data.inspect}"
           end
         end
       end
