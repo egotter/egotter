@@ -3,7 +3,7 @@
 </div>
 
 <% if @user %>
-  <%= render partial: 'shared/profile_section', locals: {twitter_user: @user, expanded: true} %>
+  <%= render partial: 'shared/profile_section', locals: {twitter_user: @user, expanded: true, async: false} %>
 <% end %>
 
 <%= form_tag searches_path, id: 'dummy-form', method: :post do %>

@@ -23,7 +23,7 @@
 
 <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
 
-<%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false} %>
+<%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false, async: false} %>
 
 <h2 class="h4 text-center my-5"><%= current_page_title(@twitter_user) %></h2>
 <div class="mb-5"><%= render partial: 'shared/page_description', locals: {twitter_user: @twitter_user} %></div>

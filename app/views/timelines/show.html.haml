@@ -9,7 +9,7 @@
 = render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top})
 
 .mt-1.mb-3= render(partial: 'profiles/twitter_button', locals: {screen_name: @twitter_user.screen_name, location: 'top'})
-= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: true}
+= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: true, async: false}
 
 %h2.h3.text-center.my-5= t('.heading', user: @twitter_user.screen_name)
 .my-3= t('.this_page_is_html', user: @twitter_user.screen_name)
