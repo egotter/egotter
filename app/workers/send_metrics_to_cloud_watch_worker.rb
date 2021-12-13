@@ -27,14 +27,7 @@ class SendMetricsToCloudWatchWorker
     else
       %i(
         send_google_analytics_metrics
-        send_table_records_metrics
-        send_periodic_reports_metrics
-        send_create_periodic_report_requests_metrics
-        send_search_error_logs_metrics
-        send_search_histories_metrics
-        send_requests_metrics
-        send_bots_metrics
-    ).each do |method_name|
+      ).each do |method_name|
         calc_metrics(method_name)
       end
     end
