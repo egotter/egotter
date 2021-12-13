@@ -37,6 +37,7 @@ module ApplicationHelper
     mutual_unfriends
     one_sided_followers
     one_sided_friends
+    personality_insights
     replied
     replying_and_replied
     replying

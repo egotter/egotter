@@ -10,7 +10,10 @@
 - title t('.meta_title', user: @twitter_user.screen_name)
 - set_meta_tags description: t('.meta_description', user: @twitter_user.screen_name)
 
-= render partial: 'twitter/profile', locals: {user: @twitter_user}
+= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top})
+
+- unless request.device_type == :smartphone
+  = render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false, async: false}
 
 %h2.h4.text-center.my-5= t('.page_title', user: @twitter_user.screen_name)
 .mb-5= t('.page_description', user: @twitter_user.screen_name)

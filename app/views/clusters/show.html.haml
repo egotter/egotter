@@ -11,13 +11,16 @@
 - title page_title
 - set_meta_tags description: t('clusters.show.description', user: @twitter_user.screen_name, clusters: @cluster_names_str)
 
-= render partial: 'twitter/profile', locals: {user: @twitter_user}
+= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top})
+
+- unless request.device_type == :smartphone
+  = render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false, async: false}
 
 %h2.h4.text-center.my-5= page_title
 .mb-5= t('clusters.show.page_description', user: @twitter_user.screen_name)
 
 = render partial: 'shared/search_form', locals: {track_id: 'cluster', via: current_via('top_input'), redirect_path: cluster_path(screen_name: ':screen_name')}
-= render(partial: 'adsense/ad', locals: {vertical: :top})
+= render(partial: 'adsense/ad', locals: {vertical: :middle})
 
 %h2.h3.text-center.mt-5= t('clusters.show.clusters_level')
 #clusters-container.my-3

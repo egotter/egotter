@@ -10,7 +10,10 @@
 - title current_page_title(@twitter_user)
 - set_meta_tags description: current_meta_description(@twitter_user)
 
-= render partial: 'twitter/profile', locals: {user: @twitter_user}
+= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top})
+
+- unless request.device_type == :smartphone
+  = render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false, async: false}
 
 %h2.h2.text-center.my-5= current_page_title(@twitter_user)
 

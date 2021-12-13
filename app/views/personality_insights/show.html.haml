@@ -2,14 +2,17 @@
   %link{href: personality_insight_url(@twitter_user), rel: 'canonical'}
 
 - content_for :navbar_title, t(".navbar_title")
+- content_for :result_title, t('.page_title', user: @twitter_user.screen_name)
 
-- breadcrumb :personality_insight, @twitter_user.screen_name
+- unless request.device_type == :smartphone
+  - breadcrumb :personality_insight, @twitter_user.screen_name
 
 - page_title = t('.page_title', user: @twitter_user.screen_name)
 - title page_title
 - set_meta_tags description: t('.meta_description', user: @twitter_user.screen_name)
 
-= render partial: 'twitter/profile', locals: {user: @twitter_user}
+- unless request.device_type == :smartphone
+  = render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false, async: false}
 
 %h2.h4.text-center.my-5= page_title
 .mb-5= t('.page_description_html', user: @twitter_user.screen_name, words: @insight.word_count, accuracy: personality_insight_analysis_accuracy(@insight.word_count))
