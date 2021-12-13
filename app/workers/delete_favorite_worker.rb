@@ -9,7 +9,7 @@ class DeleteFavoriteWorker
   def perform(user_id, tweet_id, options = {})
     request = DeleteFavoritesRequest.find(options['request_id'])
     if request.stopped_at
-      Airbag.warn "This request is stopped user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
+      Airbag.info "This request is stopped user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
       return
     end
 
@@ -25,6 +25,7 @@ class DeleteFavoriteWorker
   rescue => e
     if TwitterApiStatus.your_account_suspended?(e)
       request.update(stopped_at: Time.zone.now)
+      Airbag.warn "Stop request user_id=#{user_id} tweet_id=#{tweet_id} request=#{request.inspect}"
     end
     request.update(error_message: e.inspect)
     handle_worker_error(e, user_id: user_id, tweet_id: tweet_id, options: options)
