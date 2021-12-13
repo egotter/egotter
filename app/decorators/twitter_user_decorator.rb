@@ -175,10 +175,11 @@ class TwitterUserDecorator < ApplicationDecorator
   ]
 
   def profile_icon_url(size = nil)
+    url = profile_image_url_https.to_s
     if size == 'bigger'
-      profile_image_url_https.to_s.gsub(/_normal(\.jpe?g|\.png|\.gif)$/, '_bigger\1')
+      url.gsub(/_normal(\.jpe?g|\.png|\.gif)$/, '_bigger\1')
     else
-      profile_image_url_https.remove('_normal')
+      profile_image_url_https.to_s.remove('_normal')
     end
   end
 
