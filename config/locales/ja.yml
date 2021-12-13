@@ -313,7 +313,6 @@ ja:
       view_more: '続きを見る'
       sign_in_and_view_more: 'ログインして続きを見る'
       or: " または "
-      view_more_without_signing_in: 'ログインせずに見る'
       sample_data_html: '表示しているのはサンプルデータです<br>データはこれから保存されていきます'
   usage_stats:
     show:
