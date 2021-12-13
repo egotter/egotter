@@ -1,0 +1,18 @@
+<div class="bg-white pt-2">
+  <div class="d-flex border-bottom oneline-tabs">
+    <% tabs.each.with_index do |tab, i| %>
+      <div id="<%= 'current-result-tab' if active_tab == i %>" class="flex-fill text-center mx-3">
+        <div class="pb-2" style="<%= 'border-bottom: 1px solid #000000;' if active_tab == i %>">
+          <%= link_to tab.url, class: class_names('small', 'active text-body': active_tab == i, 'text-muted': active_tab != i) do %>
+            <%= tab.name %>
+            <%= tab.count? ? tab.count : 0 %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  document.getElementById('current-result-tab').scrollIntoView();
+</script>

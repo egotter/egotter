@@ -1306,8 +1306,8 @@ ja:
   tabs:
     friends: 'フォロー'
     followers: 'フォロワー'
-    unfriends: 'リムーブ'
-    unfollowers: 'リムられた'
+    unfriends: 'リムーブした'
+    unfollowers: 'リムーブされた'
     mutual_unfriends: 'ブロックされた（かも）'
     blockers: 'ブロックされた（高精度）'
     close_friends: '仲良しランキング'

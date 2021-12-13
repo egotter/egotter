@@ -9,6 +9,12 @@
   <% current_breadcrumb(@twitter_user) %>
 <% end %>
 
+<% if request.device_type == :smartphone %>
+  <% content_for :result_tabs do %>
+    <%= render partial: 'layouts/result_tabs', locals: {tabs: current_tabs(@twitter_user), active_tab: @active_tab} %>
+  <% end %>
+<% end %>
+
 <% title current_page_title(@twitter_user) %>
 <% set_meta_tags description: current_meta_description(@twitter_user) %>
 
@@ -23,7 +29,9 @@
 
 <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top}) %>
 
-<%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false, async: false} %>
+<% unless request.device_type == :smartphone %>
+  <%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false, async: false} %>
+<% end %>
 
 <h2 class="h4 text-center my-5"><%= current_page_title(@twitter_user) %></h2>
 <div class="mb-5"><%= render partial: 'shared/page_description', locals: {twitter_user: @twitter_user} %></div>
@@ -56,7 +64,9 @@
   <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :middle}) %>
 <% end %>
 
-<div class="my-3"><%= render partial: 'result_pages/tabs', locals: {tabs: current_tabs(@twitter_user), active_tab: @active_tab} %></div>
+<% unless request.device_type == :smartphone %>
+  <div class="my-3"><%= render partial: 'result_pages/tabs', locals: {tabs: current_tabs(@twitter_user), active_tab: @active_tab} %></div>
+<% end %>
 
 <% if (tab = current_tabs(@twitter_user)[@active_tab]) && tab.count && tab.count >= 1 %>
   <% if remove_related_page? %>
