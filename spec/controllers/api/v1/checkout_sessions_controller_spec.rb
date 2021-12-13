@@ -20,11 +20,11 @@ RSpec.describe Api::V1::CheckoutSessionsController, type: :controller do
   describe '#create_session' do
     let(:stripe_session) { double('stripe_session', id: 1) }
     subject { controller.send(:create_session, user) }
-    before { allow(controller).to receive(:params).and_return(button_id: 'id') }
+    before { allow(controller).to receive(:params).and_return(via: 'via') }
     it do
       expect(CheckoutSessionBuilder).to receive(:build).with(user).and_return('hash')
       expect(Stripe::Checkout::Session).to receive(:create).with('hash').and_return(stripe_session)
-      expect(CheckoutSession).to receive(:create!).with(user_id: user.id, stripe_checkout_session_id: stripe_session.id, properties: {button_id: 'id'})
+      expect(CheckoutSession).to receive(:create!).with(user_id: user.id, stripe_checkout_session_id: stripe_session.id, properties: {via: 'via'})
       is_expected.to eq(stripe_session)
     end
   end

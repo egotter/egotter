@@ -40,6 +40,11 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  def head(status, options = {})
+    create_error_log('', '') unless status == :ok
+    super
+  end
+
   # https://github.com/plataformatec/devise/issues/1390
   def new_session_path(scope)
     root_path(via: current_via('new_session'))
