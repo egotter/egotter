@@ -186,8 +186,8 @@ ja:
         inactive_followers: '非アクティブ フォロワー'
         unfriends: 'リムーブした'
         unfollowers: 'リムーブされた'
-        mutual_unfriends: 'ブロックされたかも'
-        blockers: 'ブロックされている（高精度）'
+        mutual_unfriends: 'ブロックされた（かも）'
+        blockers: 'ブロックされた（高精度）'
         muters: 'ミュートされている'
         notice: 'データはこれから保存されていきます'
         word_description: '説明'
@@ -248,10 +248,10 @@ ja:
         title: 'リムーブされた'
         description: '@%{user} がフォローを外されたユーザーです。「リムられ」も同じ意味です。'
       mutual_unfriends:
-        title: 'ブロックされたかも'
+        title: 'ブロックされた（かも）'
         description: '@%{user} がブロックされたかもしれないユーザーです。相互フォローが外れた数を集計しています。'
       blockers:
-        title: 'ブロックされている（高精度）'
+        title: 'ブロックされた（高精度）'
         description_html: '@%{user} がブロックされたユーザーをできる限り高精度に集計しています。'
         not_signed_in: 'このデータは本人のみ見ることができます。'
         text_with_count: '@%{user} は %{count}人 からブロックされているようです。'
@@ -1009,8 +1009,8 @@ ja:
   mutual_unfriends:
   blockers:
     index:
-      crumb_title: 'ブロックされている（高精度）'
-      meta_title: 'ブロックされている（高精度）'
+      crumb_title: 'ブロックされた（高精度）'
+      meta_title: 'ブロックされた（高精度）'
   common_friends:
   common_followers:
   common_mutual_friends:
@@ -1041,8 +1041,8 @@ ja:
     followers: "@%{user} のフォロワー"
     unfriends: "@%{user} のリムーブ"
     unfollowers: "@%{user} のリムーブされた"
-    mutual_unfriends: "@%{user} がブロックされたかも"
-    blockers: "@%{user} のブロックされている（高精度）"
+    mutual_unfriends: "@%{user} がブロックされた（かも）"
+    blockers: "@%{user} のブロックされた（高精度）"
     close_friends: "@%{user} の仲良しランキング"
     favorite_friends: "@%{user} のいいねランキング"
     one_sided_friends: "@%{user} の片思いフォロー"
@@ -1057,27 +1057,6 @@ ja:
     common_friends: "@%{user} と @%{user2} の共通フォロー"
     common_followers: "@%{user} と @%{user2} の共通フォロワー"
     common_mutual_friends: "@%{user} と @%{user2} の共通相互フォロー"
-  meta_titles:
-    statuses: "@%{user} のツイート分析"
-    friends: "@%{user} のフォロー分析 - フォロー %{friends}人 フォロワー %{followers}人"
-    followers: "@%{user} のフォロワー分析 - フォロワー %{followers}人 フォロワー %{followers}人"
-    unfriends: "@%{user} のリムり分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{mutual_unfriends}人"
-    unfollowers: "@%{user} のリムられチェック - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{mutual_unfriends}人"
-    mutual_unfriends: "@%{user} のブロられ分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{mutual_unfriends}人"
-    close_friends: "@%{user} の仲良し分析"
-    favorite_friends: "@%{user} のいいね分析"
-    one_sided_friends: "@%{user} の片思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
-    one_sided_followers: "@%{user} の片思われフォロワー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
-    mutual_friends: "@%{user} の相互フォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
-    inactive_friends: "@%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
-    inactive_followers: "@%{user} の最近いないフォロワー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
-    inactive_mutual_friends: "@%{user} の最近いない相互フォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
-    replying: "@%{user} の@ツイート - @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
-    replied: "@%{user} の@ツイート - @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
-    replying_and_replied: "@%{user} の@ツイート - @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
-    common_friends: "@%{user} と %{user2} の共通フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
-    common_followers: "@%{user} と %{user2} の共通フォロワー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
-    common_mutual_friends: "@%{user} と %{user2} の共通相互フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
   meta_descriptions:
     statuses: "@%{user} のツイート"
     friends: "@%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 フォロワー %{followers}人"
@@ -1329,8 +1308,8 @@ ja:
     followers: 'フォロワー'
     unfriends: 'リムーブ'
     unfollowers: 'リムられた'
-    mutual_unfriends: 'ブロックされたかも'
-    blockers: 'ブロックされている（高精度）'
+    mutual_unfriends: 'ブロックされた（かも）'
+    blockers: 'ブロックされた（高精度）'
     close_friends: '仲良しランキング'
     favorite_friends: 'いいねランキング'
     one_sided_friends: '片思いフォロー'
@@ -2444,7 +2423,7 @@ ja:
     inactive_mutual_friends: "最近いない相互フォロー"
     inactive_friends: "最近いないフォロー"
     inactive_followers: "最近いないフォロワー"
-    mutual_unfriends: "ブロックされたかも"
+    mutual_unfriends: "ブロックされた（かも）"
     unfriends: "リムり"
     unfollowers: "リムられ"
     data:
