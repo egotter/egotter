@@ -22,7 +22,7 @@
 <script type=text/javascript>
   function drawAudienceChart(url, container) {
     $.get(url).done(function (res) {
-      new AudienceInsight().drawSparkLine(container[0], res.series);
+      new AudienceInsight().drawSparkLine(container[0], res.series, true);
     }).fail(showErrorMessage);
   }
 

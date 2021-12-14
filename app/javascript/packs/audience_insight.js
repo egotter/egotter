@@ -42,7 +42,13 @@ class AudienceInsight {
     Highcharts.chart(options);
   }
 
-  drawSparkLine(renderTo, series) {
+  drawSparkLine(renderTo, series, legendEnabled) {
+    var options = {
+      legend: {
+        enabled: legendEnabled
+      }
+    };
+
     var chartConfig = {
       chart: {
         renderTo: renderTo,
@@ -89,7 +95,8 @@ class AudienceInsight {
       credits: false
     };
 
-    Highcharts.chart(chartConfig);
+    options = Highcharts.merge(chartConfig, options);
+    Highcharts.chart(options);
   }
 }
 

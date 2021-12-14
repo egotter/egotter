@@ -14,51 +14,77 @@
 
 <% if user.account_created_at? %>
   <% birthday = user.account_created_at.in_time_zone('Tokyo') %>
-  <div class="small my-1"><i class="fas fa-birthday-cake text-muted"></i>&nbsp;<%= t('.birthday', date: l(birthday, format: :birthday)) %></div>
+  <div class="small my-1">
+    <i class="fas fa-birthday-cake text-muted"></i>&nbsp;<%= t('.birthday', date: l(birthday, format: :birthday)) %>
+  </div>
 <% end %>
 
-<div class="row m-3">
-  <% via = current_via('profile_header') %>
-  <div class="col-6 mb-3 small">
-    <%= link_to status_path(user, via: via) do %>
+<% via = current_via('profile_header') %>
+
+<div class="d-flex my-3" style="height: 40px;">
+  <div class="w-60 d-flex align-items-center">
+    <%= link_to status_path(user, via: via), class: 'small' do %>
       <strong class="text-body"><%= user.delimited_statuses_count %></strong>
       <br class="d-block d-md-none">
       <span class="text-muted small"><%= t('.statuses') %></span>
     <% end %>
   </div>
-  <div class="col-6 mb-3 small">
-    <%= link_to usage_stat_path(user, via: via) do %>
+  <div class="w-auto d-flex align-items-center">
+    <%= link_to usage_stat_path(user, via: via), class: 'small' do %>
       <strong class="text-body"><%= user.status_interval_text %></strong>
       <br class="d-block d-md-none">
       <span class="text-muted small"><%= t('.status_interval_avg') %></span>
     <% end %>
   </div>
-  <div class="col-6 mb-3 small">
-    <%= link_to friend_path(user, via: via) do %>
-      <strong class="text-body"><%= user.delimited_friends_count %></strong>
-      <br class="d-block d-md-none">
-      <span class="text-muted small"><%= t('.friends') %></span>
-    <% end %>
+</div>
+<div class="d-flex my-3" style="height: 40px;">
+  <div class="w-60 d-flex align-items-center">
+    <div>
+      <%= link_to friend_path(user, via: via), class: 'small' do %>
+        <strong class="text-body"><%= user.delimited_friends_count %></strong>
+        <br class="d-block d-md-none">
+        <span class="text-muted small"><%= t('.friends') %></span>
+      <% end %>
+    </div>
+    <div id="friends-spark-line-<%= user.uid %>" style="width: 100px; height: 100%;"></div>
   </div>
-  <div class="col-6 mb-3 small">
-    <%= link_to usage_stat_path(user, via: via) do %>
+  <div class="w-auto d-flex align-items-center">
+    <%= link_to usage_stat_path(user, via: via), class: 'small' do %>
       <strong class="text-body"><%= user.reverse_percent_follow_back_rate_text %></strong>
       <br class="d-block d-md-none">
       <span class="text-muted small"><%= t('.reverse_follow_back_rate') %></span>
     <% end %>
   </div>
-  <div class="col-6 small">
-    <%= link_to follower_path(user, via: via) do %>
-      <strong class="text-body"><%= user.delimited_followers_count %></strong>
-      <br class="d-block d-md-none">
-      <span class="text-muted small"><%= t('.followers') %></span>
-    <% end %>
+</div>
+<div class="d-flex my-3" style="height: 40px;">
+  <div class="w-60 d-flex align-items-center">
+    <div>
+      <%= link_to follower_path(user, via: via), class: 'small' do %>
+        <strong class="text-body"><%= user.delimited_followers_count %></strong>
+        <br class="d-block d-md-none">
+        <span class="text-muted small"><%= t('.followers') %></span>
+      <% end %>
+    </div>
+    <div id="followers-spark-line-<%= user.uid %>" style="width: 100px; height: 100%;"></div>
   </div>
-  <div class="col-6 small">
-    <%= link_to usage_stat_path(user, via: via) do %>
+  <div class="w-auto d-flex align-items-center">
+    <%= link_to usage_stat_path(user, via: via), class: 'small' do %>
       <strong class="text-body"><%= user.percent_follow_back_rate_text %></strong>
       <br class="d-block d-md-none">
       <span class="text-muted small"><%= t('.follow_back_rate') %></span>
     <% end %>
   </div>
 </div>
+
+<script>
+  $(function () {
+    function drawAudienceChart(url, container) {
+      $.get(url).done(function (res) {
+        new AudienceInsight().drawSparkLine(container[0], res.series, false);
+      }).fail(showErrorMessage);
+    }
+
+    drawAudienceChart('<%= raw api_v1_friends_count_points_path(uid: user.uid, padding: true, via: current_via) %>', $('#friends-spark-line-<%= user.uid %>'));
+    drawAudienceChart('<%= raw api_v1_followers_count_points_path(uid: user.uid, padding: true, via: current_via) %>', $('#followers-spark-line-<%= user.uid %>'));
+  });
+</script>
