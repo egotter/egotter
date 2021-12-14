@@ -18,8 +18,8 @@ module Api
 
         options = {
             user: user&.screen_name,
-            since_date: records[0].date,
-            until_date: records[-1].date,
+            since_date: convert_to_ja_date(records[0].date),
+            until_date: convert_to_ja_date(records[-1].date),
             count: records.map(&:val).map(&:to_i).sum,
         }
         t('.index.message', options)

@@ -31,7 +31,7 @@ class AudienceInsight {
       plotOptions: {
         series: {
           marker: {
-            enabled: false
+            enabled: series[0].data.length <= 1
           }
         }
       },
