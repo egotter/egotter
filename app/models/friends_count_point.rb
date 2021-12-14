@@ -14,7 +14,7 @@
 #  index_friends_count_points_on_uid_and_created_at  (uid,created_at)
 #
 class FriendsCountPoint < ApplicationRecord
-  include TimeBetweenQuery
+  include FriendsCountPointsUtil
 
   validates :uid, presence: true
   validates :value, presence: true

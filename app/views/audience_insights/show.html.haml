@@ -23,13 +23,13 @@
   %h3.h5.text-center.my-5= t('.friends.title')
   .description.mb-5
   .chart{style: 'height: 250px;'}
-  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.friends.note')
+  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.friends.note', days: 30)
 
 #followers-chart
   %h3.h5.text-center.my-5= t('.followers.title')
   .description.mb-5
   .chart{style: 'height: 250px;'}
-  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.followers.note')
+  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.followers.note', days: 30)
 
 #new-friends-chart
   %h3.h5.text-center.my-5= t('.new_friends.title')
@@ -52,8 +52,8 @@
   }
 
   $(function () {
-    drawAudienceChart('#{raw api_v1_friends_count_points_path(uid: @twitter_user.uid, via: current_via)}', $('#friends-chart'), 'Friends');
-    drawAudienceChart('#{raw api_v1_followers_count_points_path(uid: @twitter_user.uid, via: current_via)}', $('#followers-chart'), 'Followers');
-    drawAudienceChart('#{raw api_v1_new_friends_count_points_path(uid: @twitter_user.uid, via: current_via)}', $('#new-friends-chart'), 'New friends');
-    drawAudienceChart('#{raw api_v1_new_followers_count_points_path(uid: @twitter_user.uid, via: current_via)}', $('#new-followers-chart'), 'New followers');
+    drawAudienceChart('#{raw api_v1_friends_count_points_path(uid: @twitter_user.uid, type: 'timestamp', via: current_via)}', $('#friends-chart'), '#{t('.friends.series', days: 30)}');
+    drawAudienceChart('#{raw api_v1_followers_count_points_path(uid: @twitter_user.uid, type: 'timestamp', via: current_via)}', $('#followers-chart'), '#{t('.followers.series', days: 30)}');
+    drawAudienceChart('#{raw api_v1_new_friends_count_points_path(uid: @twitter_user.uid, type: 'timestamp', via: current_via)}', $('#new-friends-chart'), '#{t('.new_friends.series', days: 30)}');
+    drawAudienceChart('#{raw api_v1_new_followers_count_points_path(uid: @twitter_user.uid, type: 'timestamp', via: current_via)}', $('#new-followers-chart'), '#{t('.new_followers.series', days: 30)}');
   });

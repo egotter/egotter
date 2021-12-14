@@ -1,14 +1,9 @@
 class AudienceInsight {
-  drawChart(renderTo, series, options) {
-    var yAxis = [{
-      title: {
-        text: null
-      }
-    }];
-
-    var chartConfig = {
+  drawChart(renderTo, series) {
+    var options = {
       chart: {
-        renderTo: renderTo
+        renderTo: renderTo,
+        type: 'spline'
       },
       title: null,
       xAxis: {
@@ -21,8 +16,19 @@ class AudienceInsight {
           text: null
         }
       },
-      yAxis: yAxis,
+      yAxis: [{
+        title: {
+          text: null
+        }
+      }],
       series: series,
+      tooltip: {
+        xDateFormat: '%Y-%m-%d',
+        pointFormat: '{point.y}',
+        hideDelay: 0,
+        outside: true,
+        shared: true
+      },
       plotOptions: {
         series: {
           marker: {
@@ -34,17 +40,14 @@ class AudienceInsight {
       credits: false
     };
 
-    if (options) {
-      Object.assign(chartConfig, options);
-    }
-
-    Highcharts.chart(chartConfig);
+    Highcharts.chart(options);
   }
 
   drawSparkLine(renderTo, series) {
     var chartConfig = {
       chart: {
-        renderTo: renderTo
+        renderTo: renderTo,
+        type: 'spline'
       },
       title: null,
       xAxis: {
