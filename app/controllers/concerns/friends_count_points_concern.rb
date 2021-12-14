@@ -13,7 +13,7 @@ module FriendsCountPointsConcern
     end
   end
 
-  def generate_response(klass, uid)
+  def generate_chart_data(klass, uid)
     records = klass.group_by_day(uid, 29.days.ago, Time.zone.now, params[:padding])
     data = convert_to_chart_format(records, params[:type])
 
@@ -31,6 +31,23 @@ module FriendsCountPointsConcern
     end
 
     {series: series, message: chart_message(uid, records)}
+  end
+
+  def generate_csv(klass, uid)
+    records = klass.group_by_day(uid, 29.days.ago, Time.zone.now, params[:padding])
+    data = convert_to_chart_format(records, nil)
+
+    if params[:with_prev]
+      prev_records = klass.group_by_day(uid, 59.days.ago, 30.days.ago, params[:padding])
+      data.each.with_index { |d, i| d << prev_records[i].val&.to_i }
+      headers = %w(Date Current Previous)
+    else
+      headers = %w(Date Current)
+    end
+
+    CSV.generate(headers: headers, write_headers: true) do |csv|
+      data.each { |d| csv << d }
+    end
   end
 
   def convert_to_chart_format(records, type)

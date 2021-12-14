@@ -4,7 +4,7 @@ module Api
       include FriendsCountPointsConcern
 
       def index
-        render json: generate_response(FollowersCountPoint, params[:uid])
+        render json: generate_chart_data(FollowersCountPoint, params[:uid])
       end
 
       private
