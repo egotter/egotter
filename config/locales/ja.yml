@@ -317,7 +317,6 @@ ja:
       view_more: '続きを見る'
       sign_in_and_view_more: 'ログインして続きを見る'
       or: " または "
-      sample_data_html: '表示しているのはサンプルデータです<br>データはこれから保存されていきます'
   usage_stats:
     show:
       not_found_html: '@%{user} のデータ取得に失敗しました。お手数ですが再度検索してみてください。<a href="%{url}" class="btn btn-primary">@%{user} を検索する</a>'

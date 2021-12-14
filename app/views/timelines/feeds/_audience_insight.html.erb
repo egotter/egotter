@@ -14,10 +14,6 @@
     </tr>
   </table>
 
-  <% if FriendsCountPoint.where(uid: twitter_user.uid).size <= 1 %>
-    <div class="text-center small text-muted"><%= t('timelines.feeds.sample_data_html') %></div>
-  <% end %>
-
   <div class="text-center mt-3">
     <%= link_to t('timelines.feeds.view_more'), audience_insight_path(twitter_user, via: current_via), class: 'btn btn-primary btn-block' %>
   </div>
