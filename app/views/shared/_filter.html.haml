@@ -5,7 +5,7 @@
       %span.filter-count
       %i.fas.fa-filter
     .dropdown-menu
-      %a.filters.dropdown-item.btn-allysocial{href: allysocial_url('filter'), target: '_blank'}
+      %a.filters.dropdown-item.btn-allysocial{id: "btn-filter-allysocial", href: allysocial_url('filter'), target: '_blank'}
         = t('filter.allysocial')
         %i.fas.fa-external-link-alt.text-muted
       .dropdown-divider
@@ -17,16 +17,16 @@
           .dropdown-divider
 
         - if i < 2
-          %a.filters.dropdown-item{href: "#", data: {filter: value}}
+          %a.filters.dropdown-item{href: "#", id: "btn-filter-#{value}", data: {filter: value}}
             = label
         - elsif trial
-          %a.filters.dropdown-item.btn-end-trial{href: "#"}
+          %a.filters.dropdown-item.btn-end-trial{href: "#", id: "btn-filter-#{value}-trial"}
             = label
         - elsif purchased
-          %a.filters.dropdown-item{href: "#", data: {filter: value}}
+          %a.filters.dropdown-item{href: "#", id: "btn-filter-#{value}-premium", data: {filter: value}}
             = label
         - else
-          %a.filters.dropdown-item.filter-disabled.text-muted{href: pricing_path(via: current_via("filter-#{value}")), target: '_blank'}
+          %a.filters.dropdown-item.filter-disabled.text-muted{id: "btn-filter-#{value}-disabled", href: pricing_path(via: current_via("filter-#{value}")), target: '_blank'}
             = label
             %i.fas.fa-unlock
   :javascript
