@@ -11,16 +11,16 @@
           .dropdown-divider
 
         - if i < 2
-          %a.sort-orders.dropdown-item{href: "#", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
+          %a.sort-orders.dropdown-item{href: "#", id: "btn-sort-#{value}", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
             = label
         - elsif trial
-          %a.sort-orders.dropdown-item.btn-end-trial{href: "#"}
+          %a.sort-orders.dropdown-item.btn-end-trial{href: "#", id: "btn-sort-#{value}-trial"}
             = label
         - elsif purchased
-          %a.sort-orders.dropdown-item{href: "#", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
+          %a.sort-orders.dropdown-item{href: "#", id: "btn-sort-#{value}-premium", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
             = label
         - else
-          %a.sort-orders.dropdown-item.sort-disabled.text-muted{href: pricing_path(via: current_via("sort-#{value}")), target: '_blank'}
+          %a.sort-orders.dropdown-item.sort-disabled.text-muted{id: "btn-sort-#{value}-disabled", href: pricing_path(via: current_via("sort-#{value}")), target: '_blank'}
             = label
             %i.fas.fa-unlock
   :javascript
