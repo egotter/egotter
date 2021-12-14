@@ -31,7 +31,7 @@ class AudienceInsight {
       plotOptions: {
         series: {
           marker: {
-            enabled: this.checkMarkerEnabled(series[0].data)
+            enabled: false
           }
         }
       },
@@ -90,13 +90,6 @@ class AudienceInsight {
     };
 
     Highcharts.chart(chartConfig);
-  }
-
-  checkMarkerEnabled(data) {
-    var count = data.filter(function (d) {
-      return d[1];
-    }).length;
-    return count <= 1;
   }
 }
 

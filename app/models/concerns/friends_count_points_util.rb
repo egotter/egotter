@@ -31,7 +31,7 @@ module FriendsCountPointsUtil
             prev_v = i > 0 ? records[i - 1].val : nil
             next_v = i < records.size - 1 ? records[i + 1].val : nil
 
-            if prev_v && next_v
+            if prev_v && prev_v > 0 && next_v && next_v > 0
               record.val = (prev_v + next_v) / 2
             else
               record.val = prev_v || next_v || 0
