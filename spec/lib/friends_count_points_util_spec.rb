@@ -6,7 +6,7 @@ RSpec.describe FriendsCountPointsUtil, type: :model do
   describe '#group_by_day' do
     let(:uid) { 1 }
     let(:end_time) { Time.zone.now }
-    subject { klass.group_by_day(uid, start_time, end_time) }
+    subject { klass.group_by_day(uid, start_time, end_time, true) }
 
     context 'complete data' do
       let(:start_time) { 2.days.ago }
@@ -34,7 +34,7 @@ RSpec.describe FriendsCountPointsUtil, type: :model do
       it do
         data = subject
         expect(data.size).to eq(3)
-        expect(data[0].val.to_i).to eq(50)
+        expect(data[0].val.to_i).to eq(100)
         expect(data[1].val.to_i).to eq(100)
         expect(data[2].val.to_i).to eq(200)
       end
@@ -66,7 +66,7 @@ RSpec.describe FriendsCountPointsUtil, type: :model do
         expect(data.size).to eq(3)
         expect(data[0].val.to_i).to eq(100)
         expect(data[1].val.to_i).to eq(200)
-        expect(data[2].val.to_i).to eq(100)
+        expect(data[2].val.to_i).to eq(200)
       end
     end
   end

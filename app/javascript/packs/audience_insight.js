@@ -72,15 +72,18 @@ class AudienceInsight {
         tickPositions: [0]
       },
       series: series,
+      tooltip: {
+        xDateFormat: '%Y-%m-%d',
+        hideDelay: 0,
+        outside: true,
+        shared: true
+      },
       plotOptions: {
         series: {
           marker: {
             enabled: false
           }
         }
-      },
-      tooltip: {
-        enabled: false
       },
       exporting: false,
       credits: false

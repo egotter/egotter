@@ -10,7 +10,7 @@ module FriendsCountPointsUtil
   end
 
   class_methods do
-    def group_by_day(uid, start_time, end_time)
+    def group_by_day(uid, start_time, end_time, padding)
       records = where(uid: uid).where(created_at: start_time..end_time).
           select('gd_day(created_at, "Asia/Tokyo") date, avg(value) val').group('date').to_a
 
@@ -25,13 +25,20 @@ module FriendsCountPointsUtil
 
       records.sort_by!(&:date)
 
-      # records.each.with_index do |record, i|
-      #   if record.val == -1
-      #     prev_v = i > 0 ? records[i - 1].val : 0
-      #     next_v = i < records.size - 1 ? records[i + 1].val : 0
-      #     record.val = (prev_v + next_v) / 2
-      #   end
-      # end
+      if padding
+        records.each.with_index do |record, i|
+          if record.val.nil?
+            prev_v = i > 0 ? records[i - 1].val : nil
+            next_v = i < records.size - 1 ? records[i + 1].val : nil
+
+            if prev_v && next_v
+              record.val = (prev_v + next_v) / 2
+            else
+              record.val = prev_v || next_v || 0
+            end
+          end
+        end
+      end
 
       records
     end

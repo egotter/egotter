@@ -24,56 +24,17 @@
 </div>
 
 <script type=text/javascript>
-  function drawFriendsChart() {
-    var url = '<%= raw api_v1_friends_count_points_path(uid: twitter_user.uid, via: current_via) %>';
+  function drawAudienceChart(url, container) {
     $.get(url).done(function (res) {
-      var data = res.data;
-      if (data.length <= 1) {
-        data = AudienceInsight.SampleData;
-      }
-      new AudienceInsight().drawSparkLine($('#audience-insight-friends-chart')[0], [{name: 'Friends', data: data}]);
-    }).fail(showErrorMessage);
-  }
-
-  function drawFollowersChart() {
-    var url = '<%= raw api_v1_followers_count_points_path(uid: twitter_user.uid, via: current_via) %>';
-    $.get(url).done(function (res) {
-      $('#audience-insight-followers-chart-description').text(res.message);
-      var data = res.data;
-      if (data.length <= 1) {
-        data = AudienceInsight.SampleData;
-      }
-      new AudienceInsight().drawSparkLine($('#audience-insight-followers-chart')[0], [{name: 'Followers', data: data}]);
-    }).fail(showErrorMessage);
-  }
-
-  function drawNewFriendsChart() {
-    var url = '<%= raw api_v1_new_friends_count_points_path(uid: twitter_user.uid, via: current_via) %>';
-    $.get(url).done(function (res) {
-      var data = res.data;
-      if (data.length <= 1) {
-        data = AudienceInsight.SampleData;
-      }
-      new AudienceInsight().drawSparkLine($('#audience-insight-new-friends-chart')[0], [{name: 'New friends', data: data}]);
-    }).fail(showErrorMessage);
-  }
-
-  function drawNewFollowersChart() {
-    var url = '<%= raw api_v1_new_followers_count_points_path(uid: twitter_user.uid, via: current_via) %>';
-    $.get(url).done(function (res) {
-      var data = res.data;
-      if (data.length <= 1) {
-        data = AudienceInsight.SampleData;
-      }
-      new AudienceInsight().drawSparkLine($('#audience-insight-new-followers-chart')[0], [{name: 'New followers', data: data}]);
+      new AudienceInsight().drawSparkLine(container[0], res.series);
     }).fail(showErrorMessage);
   }
 
   $(function () {
-    drawFriendsChart();
-    drawFollowersChart();
-    drawNewFriendsChart();
-    drawNewFollowersChart();
+    drawAudienceChart('<%= raw api_v1_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-friends-chart'));
+    drawAudienceChart('<%= raw api_v1_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-followers-chart'));
+    drawAudienceChart('<%= raw api_v1_new_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-new-friends-chart'));
+    drawAudienceChart('<%= raw api_v1_new_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-new-followers-chart'));
     // trackPageEvents('TimelinePage events', 'AudienceInsights loaded', {dataLength: 0});
   });
 </script>

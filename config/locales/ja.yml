@@ -2161,6 +2161,7 @@ ja:
           success_html: '利用制限を解除しました。そのままでお待ちください。%{count}秒後に自動的に移動します。<img src="/ajax-loader.gif?a=1">'
       friends_count_points:
         index:
+          name: 'フォロー数'
           period: '現在の期間'
           prev_period: '前の期間'
           message: '@%{user} のフォロー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
@@ -2169,6 +2170,7 @@ ja:
           default_message: '@%{user} のフォロー数です。'
       followers_count_points:
         index:
+          name: 'フォロワー数'
           period: '現在の期間'
           prev_period: '前の期間'
           message: '@%{user} のフォロワー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
@@ -2177,12 +2179,14 @@ ja:
           default_message: '@%{user} のフォロワー数です。'
       new_friends_count_points:
         index:
+          name: '新しいフォロー'
           period: '現在の期間'
           prev_period: '前の期間'
           message: '@%{user} は %{since_date} から %{until_date} までの間に %{count}人 を新しくフォローしました。'
           default_message: '@%{user} の新しいフォロー数です。'
       new_followers_count_points:
         index:
+          name: '新しいフォロワー'
           period: '現在の期間'
           prev_period: '前の期間'
           message: '@%{user} は %{since_date} から %{until_date} までの間に %{count}人 から新しくフォローされました。'

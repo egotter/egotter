@@ -14,11 +14,11 @@ module FriendsCountPointsConcern
   end
 
   def generate_response(klass, uid)
-    records = klass.group_by_day(uid, 29.days.ago, Time.zone.now)
+    records = klass.group_by_day(uid, 29.days.ago, Time.zone.now, params[:padding])
     data = convert_to_chart_format(records, params[:type])
 
     if params[:with_prev]
-      prev_records = klass.group_by_day(uid, 59.days.ago, 30.days.ago)
+      prev_records = klass.group_by_day(uid, 59.days.ago, 30.days.ago, params[:padding])
       prev_data = data.map.with_index { |(date, _), i| [date, prev_records[i].val&.to_i] }
       series = [
           {name: t('.period'), data: data, dashStyle: 'solid', color: '#7cb5ec'},
@@ -26,7 +26,7 @@ module FriendsCountPointsConcern
       ]
     else
       series = [
-          {name: t('.period'), data: data, dashStyle: 'solid', color: '#7cb5ec'},
+          {name: t('.name'), data: data, dashStyle: 'solid', color: '#7cb5ec'},
       ]
     end
 
