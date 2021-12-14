@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Ahoy::Engine => '/ahoy'
+
   if ENV['MAINTENANCE'] == '1'
     root 'misc#maintenance'
     match '*path' => 'misc#maintenance', via: :all
@@ -315,8 +317,6 @@ Rails.application.routes.draw do
   end
 
   resources :slack_messages
-
-  mount Ahoy::Engine => '/ahoy'
 
   match '*unmatched_route', to: 'application#not_found', via: :all
 end
