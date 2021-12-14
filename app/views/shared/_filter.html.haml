@@ -16,7 +16,7 @@
         - if [2, 6, 8, 10, 17].include?(i)
           .dropdown-divider
 
-        - if i < 2
+        - if i < 2 || true
           %a.filters.dropdown-item{href: "#", id: "btn-filter-#{value}", data: {filter: value}}
             = label
         - elsif trial

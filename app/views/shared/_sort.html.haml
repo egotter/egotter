@@ -10,7 +10,7 @@
         - if [2, 6].include?(i)
           .dropdown-divider
 
-        - if i < 2
+        - if i < 2 || true
           %a.sort-orders.dropdown-item{href: "#", id: "btn-sort-#{value}", class: (i == 0 ? 'active' : ''), data: {sort_order: value}}
             = label
         - elsif trial
