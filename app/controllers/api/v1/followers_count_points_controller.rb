@@ -4,9 +4,7 @@ module Api
       include FriendsCountPointsConcern
 
       def index
-        records = FollowersCountPoint.group_by_day(params[:uid], validated_limit)
-        data = convert_to_chart_format(records, params[:type])
-        render json: {data: data, message: chart_message(params[:uid], records)}
+        render json: generate_response(FollowersCountPoint, params[:uid])
       end
 
       private

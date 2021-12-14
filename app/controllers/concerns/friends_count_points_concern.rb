@@ -13,15 +13,31 @@ module FriendsCountPointsConcern
     end
   end
 
-  def validated_limit(max = 30)
-    params[:limit]&.match?(/\A[1-9][0-9]\z/) && params[:limit].to_i < max ? params[:limit].to_i : max
+  def generate_response(klass, uid)
+    records = klass.group_by_day(uid, 29.days.ago, Time.zone.now)
+    data = convert_to_chart_format(records, params[:type])
+
+    if params[:with_prev]
+      prev_records = klass.group_by_day(uid, 59.days.ago, 30.days.ago)
+      prev_data = data.map.with_index { |(date, _), i| [date, prev_records[i].val&.to_i] }
+      series = [
+          {name: t('.period'), data: data, dashStyle: 'solid', color: '#7cb5ec'},
+          {name: t('.prev_period'), data: prev_data, dashStyle: 'dot', color: '#7cb5ec'},
+      ]
+    else
+      series = [
+          {name: t('.period'), data: data, dashStyle: 'solid', color: '#7cb5ec'},
+      ]
+    end
+
+    {series: series, message: chart_message(uid, records)}
   end
 
   def convert_to_chart_format(records, type)
     if type == 'timestamp'
-      records.map { |r| [r.date.to_time.to_i * 1000, r.val.to_i] }
+      records.map { |r| [r.date.to_time.to_i * 1000, r.val&.to_i] }
     else
-      records.map { |r| [r.date, r.val.to_i] }
+      records.map { |r| [r.date, r.val&.to_i] }
     end
   end
 

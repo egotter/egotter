@@ -24,7 +24,6 @@ class AudienceInsight {
       series: series,
       tooltip: {
         xDateFormat: '%Y-%m-%d',
-        pointFormat: '{point.y}',
         hideDelay: 0,
         outside: true,
         shared: true
