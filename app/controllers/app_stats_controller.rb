@@ -3,37 +3,6 @@ class AppStatsController < ApplicationController
   before_action :authenticate_admin!
 
   def index
-    @sent_users = DirectMessageSendLog.sent_messages_count
-    @received_users = DirectMessageReceiveLog.received_sender_ids.size
-
-    @sent_messages = {
-        total: DirectMessageEventLog.total_dm.where('time > ?', 1.day.ago).size,
-        active: DirectMessageEventLog.active_dm.where('time > ?', 1.day.ago).size,
-        passive: DirectMessageEventLog.passive_dm.where('time > ?', 1.day.ago).size,
-    }
-
-    @sent_messages_from_egotter = {
-        total: DirectMessageEventLog.dm_from_egotter.where('time > ?', 1.day.ago).size,
-        active: DirectMessageEventLog.active_dm_from_egotter.where('time > ?', 1.day.ago).size,
-        passive: DirectMessageEventLog.passive_dm_from_egotter.where('time > ?', 1.day.ago).size,
-    }
-
-    @redis = {
-        base: RedisClient.new.info,
-        in_memory: RedisClient.new(host: ENV['IN_MEMORY_REDIS_HOST']).info,
-        api_cache: ApiClientCacheStore.instance.redis.info,
-    }
-
-    @periodic_reports = PeriodicReport.where('created_at > ?', 1.day.ago).size
-    @block_reports = BlockReport.where('created_at > ?', 1.day.ago).size
-    @mute_reports = MuteReport.where('created_at > ?', 1.day.ago).size
-    @search_reports = SearchReport.where('created_at > ?', 1.day.ago).size
-
-    @user_timeline = TwitterApiLog.where('created_at > ?', 1.day.ago).where(name: 'user_timeline').size
-    @follow = TwitterApiLog.where('created_at > ?', 1.day.ago).where(name: 'follow!').size
-    @unfollow = TwitterApiLog.where('created_at > ?', 1.day.ago).where(name: 'unfollow').size
-    @personality_insight = PersonalityInsight.used_count
-
     @chart_data = {
         day: generate_chart_data('day'),
         week: generate_chart_data('week'),

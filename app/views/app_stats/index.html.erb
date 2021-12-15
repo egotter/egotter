@@ -22,24 +22,84 @@
   });
 </script>
 
-<div class="mt-3"><%= "DirectMessageSentFlag #{@sent_users}" %></div>
-<div><%= "DirectMessageReceivedFlag #{@received_users}" %></div>
-<div><%= "SendDirectMessageCount #{@sent_messages[:total]} (active #{@sent_messages[:active]} passive #{@sent_messages[:passive]})" %></div>
-<div><%= "SendDirectMessageFromEgotterCount #{@sent_messages_from_egotter[:total]} (active #{@sent_messages_from_egotter[:active]} passive #{@sent_messages_from_egotter[:passive]})" %></div>
+<div class="mt-3">DirectMessageSentFlag <span id="sent_users"></span></div>
+<div>DirectMessageReceivedFlag <span id="received_users"></span></div>
+<div>
+  SendDirectMessageCount <span id="sent_messages_total"></span>
+  active <span id="sent_messages_active"></span>
+  passive <span id="sent_messages_passive"></span>
+</div>
+<div>
+  SendDirectMessageFromEgotterCount <span id="sent_messages_from_egotter_total"></span>
+  active <span id="sent_messages_from_egotter_active"></span>
+  passive <span id="sent_messages_from_egotter_passive"></span>
+</div>
 
-<div class="mt-3">Base <%= "used=#{@redis[:base]['used_memory_rss_human']} peak=#{@redis[:base]['used_memory_peak_human']} total=#{@redis[:base]['total_system_memory_human']}" %></div>
-<div>InMemory <%= "used=#{@redis[:in_memory]['used_memory_rss_human']} peak=#{@redis[:in_memory]['used_memory_peak_human']} total=#{@redis[:in_memory]['total_system_memory_human']}" %></div>
-<div>ApiCache <%= "used=#{@redis[:api_cache]['used_memory_rss_human']} peak=#{@redis[:api_cache]['used_memory_peak_human']} total=#{@redis[:api_cache]['total_system_memory_human']}" %></div>
+<div>
+  Base
+  used=<span id="redis_base_used_memory_rss_human"></span>
+  peak=<span id="redis_base_used_memory_peak_human"></span>
+  total=<span id="redis_base_total_system_memory_human"></span>
+</div>
+<div>
+  InMemory
+  used=<span id="redis_in_memory_used_memory_rss_human"></span>
+  peak=<span id="redis_in_memory_used_memory_peak_human"></span>
+  total=<span id="redis_in_memory_total_system_memory_human"></span>
+</div>
+<div>
+  ApiCache
+  used=<span id="redis_api_cache_used_memory_rss_human"></span>
+  peak=<span id="redis_api_cache_used_memory_peak_human"></span>
+  total=<span id="redis_api_cache_total_system_memory_human"></span>
+</div>
 
-<div class="mt-3">PeriodicReport <%= @periodic_reports %></div>
-<div>BlockReport <%= @block_reports %></div>
-<div>MuteReport <%= @mute_reports %></div>
-<div>SearchReport <%= @search_reports %></div>
+<div class="mt-3">PeriodicReport <span id="periodic_reports"></span></div>
+<div>BlockReport <span id="block_reports"></span></div>
+<div>MuteReport <span id="mute_reports"></span></div>
+<div>SearchReport <span id="search_reports"></span></div>
 
-<div class="mt-3">user_timeline <%= @user_timeline %></div>
-<div>follow! <%= @follow %> (400 per user; 1000 per app)</div>
-<div>unfollow <%= @unfollow %> (800 - 900 per day)</div>
-<div>PersonalityInsight <%= "#{@personality_insight} (limit #{PersonalityInsight::LIMIT})" %></div>
+<div class="mt-3">user_timeline <span id="user_timeline"></span></div>
+<div>follow <span id="follow"></span> (400 per user; 1000 per app)</div>
+<div>unfollow <span id="unfollow"></span> (800 - 900 per day)</div>
+<div>personality_insight <span id="personality_insight"></span> limit <%= PersonalityInsight::LIMIT %></div>
+
+<script>
+  function updateCount(key) {
+    var url = '<%= raw api_v1_app_stats_path(key: 'KEY') %>';
+    $.get(url.replace('KEY', key)).done(function (res) {
+      $('#' + key).text(res.count);
+    });
+  }
+
+  $(function () {
+    updateCount('sent_users');
+    updateCount('received_users');
+    updateCount('sent_messages_total');
+    updateCount('sent_messages_active');
+    updateCount('sent_messages_passive');
+    updateCount('sent_messages_from_egotter_total');
+    updateCount('sent_messages_from_egotter_active');
+    updateCount('sent_messages_from_egotter_passive');
+    updateCount('redis_base_used_memory_rss_human');
+    updateCount('redis_base_used_memory_peak_human');
+    updateCount('redis_base_total_system_memory_human');
+    updateCount('redis_in_memory_used_memory_rss_human');
+    updateCount('redis_in_memory_used_memory_peak_human');
+    updateCount('redis_in_memory_total_system_memory_human');
+    updateCount('redis_api_cache_used_memory_rss_human');
+    updateCount('redis_api_cache_used_memory_peak_human');
+    updateCount('redis_api_cache_total_system_memory_human');
+    updateCount('periodic_reports');
+    updateCount('block_reports');
+    updateCount('mute_reports');
+    updateCount('search_reports');
+    updateCount('user_timeline');
+    updateCount('follow');
+    updateCount('unfollow');
+    updateCount('personality_insight');
+  });
+</script>
 
 <div id="day-chart" class="my-5" style="height: 100px;"></div>
 <div id="week-chart" class="my-5" style="height: 100px;"></div>

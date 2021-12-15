@@ -300,6 +300,7 @@ Rails.application.routes.draw do
   namespace :api, {format: 'json'} do
     namespace :v1 do
       get 'access_stats', to: 'access_stats#index'
+      get 'app_stats', to: 'app_stats#index'
     end
   end
 
