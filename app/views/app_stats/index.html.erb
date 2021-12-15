@@ -1,14 +1,8 @@
 <% title '0 0 0' %>
 
-<div class="h1">
-  Total <span id="total-count">0</span>
-  Mobile <span id="mobile-count">0</span>
-  Desktop <span id="desktop-count">0</span>
-</div>
-<div class="h1">
-</div>
-<div class="h1">
-</div>
+<div>Total <span id="total-count">0</span></div>
+<div>Mobile <span id="mobile-count">0</span></div>
+<div>Desktop <span id="desktop-count">0</span></div>
 
 <script>
   function updateView() {
@@ -28,7 +22,24 @@
   });
 </script>
 
-<%= raw AppStat.new.to_s.gsub("\n", '<br>') %>
+<div class="mt-3"><%= "DirectMessageSentFlag #{@sent_users}" %></div>
+<div><%= "DirectMessageReceivedFlag #{@received_users}" %></div>
+<div><%= "SendDirectMessageCount #{@sent_messages[:total]} (active #{@sent_messages[:active]} passive #{@sent_messages[:passive]})" %></div>
+<div><%= "SendDirectMessageFromEgotterCount #{@sent_messages_from_egotter[:total]} (active #{@sent_messages_from_egotter[:active]} passive #{@sent_messages_from_egotter[:passive]})" %></div>
+
+<div class="mt-3">Base <%= "used=#{@redis[:base]['used_memory_rss_human']} peak=#{@redis[:base]['used_memory_peak_human']} total=#{@redis[:base]['total_system_memory_human']}" %></div>
+<div>InMemory <%= "used=#{@redis[:in_memory]['used_memory_rss_human']} peak=#{@redis[:in_memory]['used_memory_peak_human']} total=#{@redis[:in_memory]['total_system_memory_human']}" %></div>
+<div>ApiCache <%= "used=#{@redis[:api_cache]['used_memory_rss_human']} peak=#{@redis[:api_cache]['used_memory_peak_human']} total=#{@redis[:api_cache]['total_system_memory_human']}" %></div>
+
+<div class="mt-3">PeriodicReport <%= @periodic_reports %></div>
+<div>BlockReport <%= @block_reports %></div>
+<div>MuteReport <%= @mute_reports %></div>
+<div>SearchReport <%= @search_reports %></div>
+
+<div class="mt-3">user_timeline <%= @user_timeline %></div>
+<div>follow! <%= @follow %> (400 per user; 1000 per app)</div>
+<div>unfollow <%= @unfollow %> (800 - 900 per day)</div>
+<div>PersonalityInsight <%= "#{@personality_insight} (limit #{PersonalityInsight::LIMIT})" %></div>
 
 <div id="day-chart" class="my-5" style="height: 100px;"></div>
 <div id="week-chart" class="my-5" style="height: 100px;"></div>
