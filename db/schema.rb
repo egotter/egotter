@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_08_224146) do
+ActiveRecord::Schema.define(version: 2021_12_16_212728) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -850,12 +850,30 @@ ActiveRecord::Schema.define(version: 2021_12_08_224146) do
     t.index ["user_id"], name: "index_import_twitter_user_requests_on_user_id"
   end
 
+  create_table "inactive_followers_count_points", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "uid", null: false
+    t.integer "value", null: false
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_inactive_followers_count_points_on_created_at"
+    t.index ["uid", "created_at"], name: "index_inactive_followers_count_points_on_uid_and_created_at"
+    t.index ["uid"], name: "index_inactive_followers_count_points_on_uid"
+  end
+
   create_table "inactive_followerships", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "from_uid", null: false
     t.bigint "follower_uid", null: false
     t.integer "sequence", null: false
     t.index ["follower_uid"], name: "index_inactive_followerships_on_follower_uid"
     t.index ["from_uid"], name: "index_inactive_followerships_on_from_uid"
+  end
+
+  create_table "inactive_friends_count_points", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "uid", null: false
+    t.integer "value", null: false
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_inactive_friends_count_points_on_created_at"
+    t.index ["uid", "created_at"], name: "index_inactive_friends_count_points_on_uid_and_created_at"
+    t.index ["uid"], name: "index_inactive_friends_count_points_on_uid"
   end
 
   create_table "inactive_friendships", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

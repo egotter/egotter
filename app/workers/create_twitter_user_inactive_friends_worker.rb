@@ -32,9 +32,12 @@ class CreateTwitterUserInactiveFriendsWorker
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
 
-    import_uids(S3::InactiveFriendship, twitter_user)
-    import_uids(S3::InactiveFollowership, twitter_user)
+    inactive_friend_uids = import_uids(S3::InactiveFriendship, twitter_user)
+    inactive_follower_uids = import_uids(S3::InactiveFollowership, twitter_user)
     import_uids(S3::InactiveMutualFriendship, twitter_user)
+
+    # CreateInactiveFriendsCountPointWorker.perform_async(twitter_user.uid, inactive_friend_uids.size)
+    # CreateInactiveFollowersCountPointWorker.perform_async(twitter_user.uid, inactive_follower_uids.size)
 
     InactiveFriendship.delete_by_uid(twitter_user.uid)
     InactiveFollowership.delete_by_uid(twitter_user.uid)
@@ -50,5 +53,6 @@ class CreateTwitterUserInactiveFriendsWorker
     uids = twitter_user.calc_uids_for(klass)
     klass.import_from!(twitter_user.uid, uids)
     twitter_user.update_counter_cache_for(klass, uids.size)
+    uids
   end
 end
