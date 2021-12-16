@@ -261,17 +261,6 @@ class SendMetricsToCloudWatchWorker
     client.append(*args)
   end
 
-  # It is not working
-  def encode(str)
-    options = {
-        invalid: :replace,
-        undef: :replace,
-        replace: '',
-        universal_newline: true
-    }
-    str.encode(Encoding.find('ASCII'), options)
-  end
-
   class Metrics
     def initialize
       @metrics = Hash.new { |hash, key| hash[key] = [] }
@@ -292,28 +281,24 @@ class SendMetricsToCloudWatchWorker
     end
 
     def update
-      if @appended
-        client = Aws::CloudWatch::Client.new(region: CloudWatchClient::REGION)
+      return unless @appended
 
-        @metrics.each do |namespace, metric_data|
-          Airbag.info "Send #{metric_data.size} metrics to #{namespace}"
-          # Airbag.info metric_data.inspect
+      client = Aws::CloudWatch::Client.new(region: CloudWatchClient::REGION)
 
-          metric_data.each_slice(20).each do |data|
-            params = {
-                namespace: namespace,
-                metric_data: data,
-            }
-            client.put_metric_data(params)
-          rescue => e
-            Airbag.warn "#update #{e.inspect} data=#{data.inspect}"
-          end
+      @metrics.each do |namespace, metric_data|
+        Airbag.info "Send #{metric_data.size} metrics to #{namespace}"
+        # Airbag.info metric_data.inspect
+
+        metric_data.each_slice(20).each do |data|
+          params = {
+              namespace: namespace,
+              metric_data: data,
+          }
+          client.put_metric_data(params)
+        rescue => e
+          Airbag.warn "#update #{e.inspect} data=#{data.inspect}"
         end
       end
-    end
-
-    def logger
-      Rails.logger
     end
   end
 end
