@@ -1,8 +1,10 @@
 <% title '0 0 0' %>
 
-<div>Total <span id="total-count">0</span></div>
-<div>Mobile <span id="mobile-count">0</span></div>
-<div>Desktop <span id="desktop-count">0</span></div>
+<div>
+  Total <span id="total-count">0</span>
+  Mobile <span id="mobile-count">0</span>
+  Desktop <span id="desktop-count">0</span>
+</div>
 
 <script>
   function updateView() {
@@ -35,7 +37,7 @@
   passive <span id="sent_messages_from_egotter_passive"></span>
 </div>
 
-<div>
+<div class="mt-3">
   Base
   used=<span id="redis_base_used_memory_rss_human"></span>
   peak=<span id="redis_base_used_memory_peak_human"></span>
@@ -54,10 +56,10 @@
   total=<span id="redis_api_cache_total_system_memory_human"></span>
 </div>
 
-<div class="mt-3">PeriodicReport <span id="periodic_reports"></span></div>
-<div>BlockReport <span id="block_reports"></span></div>
-<div>MuteReport <span id="mute_reports"></span></div>
-<div>SearchReport <span id="search_reports"></span></div>
+<div class="mt-3">PeriodicReport <span id="periodic_reports"></span> (<span id="periodic_reports_previous_period"></span>)</div>
+<div>BlockReport <span id="block_reports"></span> (<span id="block_reports_previous_period"></span>)</div>
+<div>MuteReport <span id="mute_reports"></span> (<span id="mute_reports_previous_period"></span>)</div>
+<div>SearchReport <span id="search_reports"></span> (<span id="search_reports_previous_period"></span>)</div>
 
 <div class="mt-3">user_timeline <span id="user_timeline"></span></div>
 <div>follow <span id="follow"></span> (400 per user; 1000 per app)</div>
@@ -91,9 +93,13 @@
     updateCount('redis_api_cache_used_memory_peak_human');
     updateCount('redis_api_cache_total_system_memory_human');
     updateCount('periodic_reports');
+    updateCount('periodic_reports_previous_period');
     updateCount('block_reports');
+    updateCount('block_reports_previous_period');
     updateCount('mute_reports');
+    updateCount('mute_reports_previous_period');
     updateCount('search_reports');
+    updateCount('search_reports_previous_period');
     updateCount('user_timeline');
     updateCount('follow');
     updateCount('unfollow');
