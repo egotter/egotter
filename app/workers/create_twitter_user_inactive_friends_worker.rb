@@ -36,8 +36,8 @@ class CreateTwitterUserInactiveFriendsWorker
     inactive_follower_uids = import_uids(S3::InactiveFollowership, twitter_user)
     import_uids(S3::InactiveMutualFriendship, twitter_user)
 
-    # CreateInactiveFriendsCountPointWorker.perform_async(twitter_user.uid, inactive_friend_uids.size)
-    # CreateInactiveFollowersCountPointWorker.perform_async(twitter_user.uid, inactive_follower_uids.size)
+    CreateInactiveFriendsCountPointWorker.perform_async(twitter_user.uid, inactive_friend_uids.size)
+    CreateInactiveFollowersCountPointWorker.perform_async(twitter_user.uid, inactive_follower_uids.size)
 
     InactiveFriendship.delete_by_uid(twitter_user.uid)
     InactiveFollowership.delete_by_uid(twitter_user.uid)
