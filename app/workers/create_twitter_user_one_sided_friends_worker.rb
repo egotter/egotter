@@ -32,9 +32,12 @@ class CreateTwitterUserOneSidedFriendsWorker
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
 
-    import_uids(S3::OneSidedFriendship, twitter_user)
-    import_uids(S3::OneSidedFollowership, twitter_user)
+    one_sided_friend_uids = import_uids(S3::OneSidedFriendship, twitter_user)
+    one_sided_follower_uids = import_uids(S3::OneSidedFollowership, twitter_user)
     import_uids(S3::MutualFriendship, twitter_user)
+
+    # CreateOneSidedFriendsCountPointWorker.perform_async(twitter_user.uid, one_sided_friend_uids.size)
+    # CreateOneSidedFollowersCountPointWorker.perform_async(twitter_user.uid, one_sided_follower_uids.size)
 
     OneSidedFriendship.delete_by_uid(twitter_user.uid)
     OneSidedFollowership.delete_by_uid(twitter_user.uid)
@@ -50,5 +53,6 @@ class CreateTwitterUserOneSidedFriendsWorker
     uids = twitter_user.calc_uids_for(klass)
     klass.import_from!(twitter_user.uid, uids)
     twitter_user.update_counter_cache_for(klass, uids.size)
+    uids
   end
 end
