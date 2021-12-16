@@ -36,8 +36,8 @@ class CreateTwitterUserOneSidedFriendsWorker
     one_sided_follower_uids = import_uids(S3::OneSidedFollowership, twitter_user)
     import_uids(S3::MutualFriendship, twitter_user)
 
-    # CreateOneSidedFriendsCountPointWorker.perform_async(twitter_user.uid, one_sided_friend_uids.size)
-    # CreateOneSidedFollowersCountPointWorker.perform_async(twitter_user.uid, one_sided_follower_uids.size)
+    CreateOneSidedFriendsCountPointWorker.perform_async(twitter_user.uid, one_sided_friend_uids.size)
+    CreateOneSidedFollowersCountPointWorker.perform_async(twitter_user.uid, one_sided_follower_uids.size)
 
     OneSidedFriendship.delete_by_uid(twitter_user.uid)
     OneSidedFollowership.delete_by_uid(twitter_user.uid)
