@@ -61,6 +61,20 @@
   .small.text-muted.my-3= link_to t('.download'), inactive_followers_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
   .text-muted.small{style: 'margin-bottom: 120px;'}= t('.inactive_followers.note', days: 30)
 
+#one-sided-friends-chart
+  %h3.h5.text-center.my-5= t('.one_sided_friends.title')
+  .description.mb-4
+  .chart{style: 'height: 250px;'}
+  .small.text-muted.my-3= link_to t('.download'), one_sided_friends_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.one_sided_friends.note', days: 30)
+
+#one-sided-followers-chart
+  %h3.h5.text-center.my-5= t('.one_sided_followers.title')
+  .description.mb-4
+  .chart{style: 'height: 250px;'}
+  .small.text-muted.my-3= link_to t('.download'), one_sided_followers_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.one_sided_followers.note', days: 30)
+
 :javascript
   function drawAudienceChart(url, container) {
     $.get(url).done(function (res) {
@@ -76,4 +90,6 @@
     drawAudienceChart('#{raw api_v1_new_followers_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#new-followers-chart'));
     drawAudienceChart('#{raw api_v1_inactive_friends_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#inactive-friends-chart'));
     drawAudienceChart('#{raw api_v1_inactive_followers_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#inactive-followers-chart'));
+    drawAudienceChart('#{raw api_v1_one_sided_friends_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#one-sided-friends-chart'));
+    drawAudienceChart('#{raw api_v1_one_sided_followers_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#one-sided-followers-chart'));
   });

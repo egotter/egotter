@@ -387,6 +387,12 @@ ja:
       inactive_followers:
         title: '最近いないフォロワー'
         note: 'フォロワーのうち「最近ツイートしていない」フォロワー数です。直近の %{days}日間 を集計しています。たくさん検索されるユーザーほど優先的に更新されます。'
+      one_sided_friends:
+        title: '片思いフォロー'
+        note: 'フォローのうち「相手からフォローされていない」フォロー数です。直近の %{days}日間 を集計しています。たくさん検索されるユーザーほど優先的に更新されます。'
+      one_sided_followers:
+        title: '片思われフォロワー'
+        note: 'フォロワーのうち「自分からフォローしていない」フォロワー数です。直近の %{days}日間 を集計しています。たくさん検索されるユーザーほど優先的に更新されます。'
   access_confirmations:
     index:
       page_title: 'ログインしてください'
@@ -2216,6 +2222,24 @@ ja:
           increase: '増加'
           decrease: '減少'
           default_message: '@%{user} の最近いないフォロワー数です。'
+      one_sided_friends_count_points:
+        index:
+          name: '片思いフォロー'
+          period: '現在の期間'
+          prev_period: '前の期間'
+          message: '@%{user} の片思いフォロー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
+          increase: '増加'
+          decrease: '減少'
+          default_message: '@%{user} の片思いフォロー数です。'
+      one_sided_followers_count_points:
+        index:
+          name: '片思われフォロワー'
+          period: '現在の期間'
+          prev_period: '前の期間'
+          message: '@%{user} の片思われフォロワー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
+          increase: '増加'
+          decrease: '減少'
+          default_message: '@%{user} の片思われフォロワー数です。'
       follow_requests:
         create:
           invalid_uid: '有効な uid を指定してください。'

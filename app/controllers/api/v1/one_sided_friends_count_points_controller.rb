@@ -1,10 +1,10 @@
 module Api
   module V1
-    class InactiveFriendsCountPointsController < ApplicationController
+    class OneSidedFriendsCountPointsController < ApplicationController
       include FriendsCountPointsConcern
 
       def index
-        render json: generate_chart_data(InactiveFriendsCountPoint, params[:uid])
+        render json: generate_chart_data(OneSidedFriendsCountPoint, params[:uid])
       end
 
       private

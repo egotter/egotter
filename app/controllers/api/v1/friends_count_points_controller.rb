@@ -20,7 +20,6 @@ module Api
         options[:verb] = options[:increased] ? t('.index.increase') : t('.index.decrease')
         t('.index.message', options)
       rescue => e
-        logger.warn e.inspect
         t('.index.default_message', user: user&.screen_name)
       end
     end
