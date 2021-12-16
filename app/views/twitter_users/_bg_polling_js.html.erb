@@ -36,11 +36,11 @@
     if (signedIn) {
       if (!isPremium && !isEgotterFollower) {
         var message = '<%= t('twitter_users.in_background.is_not_egotter_follower_html', user: current_user&.screen_name, url: sign_in_and_timeline_path(twitter_user, via: 'not_egotter_follower', follow: true)) %>';
-        ToastMessage.info(message, {id: 'not_egotter_follower'});
+        ToastMessage.info(message, {ttl: 300});
         return;
       } else if (!isPremium && periodicReportStopped) {
         var message = '<%= t('twitter_users.in_background.periodic_report_stopped_html', url: direct_message_url(User::EGOTTER_UID, t('short_messages.restart_periodic_reports'))) %>';
-        ToastMessage.info(message, {id: 'periodic_report_stopped', ttl: 300});
+        ToastMessage.info(message, {ttl: 300});
         return;
       }
 
