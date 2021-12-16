@@ -37,8 +37,8 @@ class CreateTwitterUserUnfriendsWorker
     mutual_unfriend_uids = import_uids(S3::MutualUnfriendship, twitter_user)
     update_twitter_db_users((unfriend_uids + unfollower_uids + mutual_unfriend_uids).uniq, twitter_user.user_id)
 
-    # CreateUnfriendsCountPointWorker.perform_async(twitter_user.uid, unfriend_uids.size)
-    # CreateUnfollowersCountPointWorker.perform_async(twitter_user.uid, unfollower_uids.size)
+    CreateUnfriendsCountPointWorker.perform_async(twitter_user.uid, unfriend_uids.size)
+    CreateUnfollowersCountPointWorker.perform_async(twitter_user.uid, unfollower_uids.size)
 
     DeleteUnfriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
