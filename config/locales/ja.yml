@@ -381,6 +381,12 @@ ja:
       new_followers:
         title: '新しいフォロワー'
         note: '毎日の新しいフォロワー数です。合計フォロワー数が減っていても、新しい人からフォローされれば数値が増えます。例：2人からリムられた + 3人からフォローされた = 新しいフォロワーは3人'
+      inactive_friends:
+        title: '最近いないフォロー'
+        note: 'フォローのうち「最近ツイートしていない」フォロー数です。直近の %{days}日間 を集計しています。たくさん検索されるユーザーほど優先的に更新されます。'
+      inactive_followers:
+        title: '最近いないフォロワー'
+        note: 'フォロワーのうち「最近ツイートしていない」フォロワー数です。直近の %{days}日間 を集計しています。たくさん検索されるユーザーほど優先的に更新されます。'
   access_confirmations:
     index:
       page_title: 'ログインしてください'
@@ -2192,6 +2198,24 @@ ja:
           prev_period: '前の期間'
           message: '@%{user} は %{since_date} から %{until_date} までの間に %{count}人 から新しくフォローされました。'
           default_message: '@%{user} の新しいフォロワー数です。'
+      inactive_friends_count_points:
+        index:
+          name: '最近いないフォロー'
+          period: '現在の期間'
+          prev_period: '前の期間'
+          message: '@%{user} の最近いないフォロー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
+          increase: '増加'
+          decrease: '減少'
+          default_message: '@%{user} の最近いないフォロー数です。'
+      inactive_followers_count_points:
+        index:
+          name: '最近いないフォロワー'
+          period: '現在の期間'
+          prev_period: '前の期間'
+          message: '@%{user} の最近いないフォロワー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
+          increase: '増加'
+          decrease: '減少'
+          default_message: '@%{user} の最近いないフォロワー数です。'
       follow_requests:
         create:
           invalid_uid: '有効な uid を指定してください。'

@@ -77,6 +77,8 @@ Rails.application.routes.draw do
       resources :followers_count_points, only: %i(index)
       resources :new_friends_count_points, only: %i(index)
       resources :new_followers_count_points, only: %i(index)
+      resources :inactive_friends_count_points, only: %i(index)
+      resources :inactive_followers_count_points, only: %i(index)
 
       resources :checkout_sessions, only: %i(create)
       resources :payment_intents, only: %i(create)
@@ -192,6 +194,8 @@ Rails.application.routes.draw do
   get 'followers_count_points/download', to: 'followers_count_points#download'
   get 'new_friends_count_points/download', to: 'new_friends_count_points#download'
   get 'new_followers_count_points/download', to: 'new_followers_count_points#download'
+  get 'inactive_friends_count_points/download', to: 'inactive_friends_count_points#download'
+  get 'inactive_followers_count_points/download', to: 'inactive_followers_count_points#download'
 
   get 'profiles/:screen_name/latest', to: redirect("/profiles/%{screen_name}")
 
