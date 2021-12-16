@@ -386,8 +386,9 @@ ja:
       page_title: 'ログインしてください'
       page_title_ok: '@%{user} でログイン中です'
       notice1: '※ えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
-      notice2_html: '※ <a href="%{url}" class="btn btn-outline-secondary btn-sm">アカウントを切り替える</a>こともできます。'
+      notice2_html: '※ <a href="%{url}">アカウントを切り替える</a>こともできます。'
       notice3_html: '※ 分からないことがある場合は %{egotter_link} までご連絡ください。'
+      loading_html: 'アクセス履歴を確認中です。<img src="/ajax-loader.gif?a=1">'
     description:
       sign_in_description: 'アクセス履歴を確認するために、えごったーにログインしてください。'
       make_sure_description: '@%{user} でログインしています。DMが届いたユーザーと同じかご確認ください。'
