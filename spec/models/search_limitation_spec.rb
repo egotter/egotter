@@ -45,16 +45,16 @@ RSpec.describe SearchLimitation, type: :model do
     let(:twitter_user) { build(:twitter_user, friends_count: friends_count, followers_count: followers_count, with_relations: false) }
     subject { described_class.hard_limited?(twitter_user) }
 
-    context 'friends_count + followers_count > 190000' do
-      let(:friends_count) { 95000 }
-      let(:followers_count) { 95001 }
+    context 'friends_count + followers_count > 210000' do
+      let(:friends_count) { 105000 }
+      let(:followers_count) { 105001 }
       it { expect(friends_count + followers_count).to be > SearchLimitation::HARD_LIMIT }
       it { is_expected.to be_truthy }
     end
 
-    context 'friends_count + followers_count <= 190000' do
-      let(:friends_count) { 95000 }
-      let(:followers_count) { 95000 }
+    context 'friends_count + followers_count <= 210000' do
+      let(:friends_count) { 105000 }
+      let(:followers_count) { 105000 }
       it { expect(friends_count + followers_count).to be <= SearchLimitation::HARD_LIMIT }
       it { is_expected.to be_falsey }
     end
