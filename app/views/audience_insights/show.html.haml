@@ -23,14 +23,21 @@
   %h3.h5.text-center.my-5= t('.friends.title')
   .description.mb-4
   .chart{style: 'height: 250px;'}
-  .small.text-muted.my-3= link_to t('.download'), friends_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+  .small.text-muted.my-3
+    = link_to t('.download'), friends_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+    = t('.or')
+    = link_to t('.list'), friend_path(@twitter_user, via: current_via)
+  .small.text-muted.my-3
   .text-muted.small{style: 'margin-bottom: 120px;'}= t('.friends.note', days: 30)
 
 #followers-chart
   %h3.h5.text-center.my-5= t('.followers.title')
   .description.mb-4
   .chart{style: 'height: 250px;'}
-  .small.text-muted.my-3= link_to t('.download'), followers_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+  .small.text-muted.my-3
+    = link_to t('.download'), followers_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+    = t('.or')
+    = link_to t('.list'), follower_path(@twitter_user, via: current_via)
   .text-muted.small{style: 'margin-bottom: 120px;'}= t('.followers.note', days: 30)
 
 #new-friends-chart
@@ -51,28 +58,40 @@
   %h3.h5.text-center.my-5= t('.inactive_friends.title')
   .description.mb-4
   .chart{style: 'height: 250px;'}
-  .small.text-muted.my-3= link_to t('.download'), inactive_friends_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+  .small.text-muted.my-3
+    = link_to t('.download'), inactive_friends_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+    = t('.or')
+    = link_to t('.list'), inactive_friend_path(@twitter_user, via: current_via)
   .text-muted.small{style: 'margin-bottom: 120px;'}= t('.inactive_friends.note', days: 30)
 
 #inactive-followers-chart
   %h3.h5.text-center.my-5= t('.inactive_followers.title')
   .description.mb-4
   .chart{style: 'height: 250px;'}
-  .small.text-muted.my-3= link_to t('.download'), inactive_followers_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+  .small.text-muted.my-3
+    = link_to t('.download'), inactive_followers_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+    = t('.or')
+    = link_to t('.list'), inactive_follower_path(@twitter_user, via: current_via)
   .text-muted.small{style: 'margin-bottom: 120px;'}= t('.inactive_followers.note', days: 30)
 
 #one-sided-friends-chart
   %h3.h5.text-center.my-5= t('.one_sided_friends.title')
   .description.mb-4
   .chart{style: 'height: 250px;'}
-  .small.text-muted.my-3= link_to t('.download'), one_sided_friends_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+  .small.text-muted.my-3
+    = link_to t('.download'), one_sided_friends_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+    = t('.or')
+    = link_to t('.list'), one_sided_friend_path(@twitter_user, via: current_via)
   .text-muted.small{style: 'margin-bottom: 120px;'}= t('.one_sided_friends.note', days: 30)
 
 #one-sided-followers-chart
   %h3.h5.text-center.my-5= t('.one_sided_followers.title')
   .description.mb-4
   .chart{style: 'height: 250px;'}
-  .small.text-muted.my-3= link_to t('.download'), one_sided_followers_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+  .small.text-muted.my-3
+    = link_to t('.download'), one_sided_followers_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+    = t('.or')
+    = link_to t('.list'), one_sided_follower_path(@twitter_user, via: current_via)
   .text-muted.small{style: 'margin-bottom: 120px;'}= t('.one_sided_followers.note', days: 30)
 
 :javascript
