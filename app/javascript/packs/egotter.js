@@ -3,7 +3,9 @@ window.Egotter = {};
 function extractErrorMessage(xhr, textStatus, errorThrown) {
   var message;
   try {
-    message = JSON.parse(xhr.responseText)['message'];
+    if (xhr.responseText) {
+      message = JSON.parse(xhr.responseText)['message'];
+    }
   } catch (e) {
     logger.warn('Parsing xhr.responseText failed', xhr.responseText, e);
   }
