@@ -52,7 +52,7 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
             puts "Stop processing tweet_id=#{t.id}"
             raise
           else
-            puts "Ignore an error exception=#{e.inspect} tweet_id=#{t.id}"
+            puts "Ignore: exception=#{e.inspect} tweet_id=#{t.id}"
           end
         end
       end
