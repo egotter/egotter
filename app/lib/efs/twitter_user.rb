@@ -7,13 +7,11 @@ module Efs
     attr_reader :uid, :screen_name, :profile, :friend_uids, :follower_uids
 
     def initialize(attrs)
-      if attrs
-        @uid = attrs[:uid]
-        @screen_name = attrs[:screen_name]
-        @profile = attrs[:profile]
-        @friend_uids = attrs[:friend_uids]
-        @follower_uids = attrs[:follower_uids]
-      end
+      @uid = attrs[:uid]
+      @screen_name = attrs[:screen_name]
+      @profile = attrs[:profile]
+      @friend_uids = attrs[:friend_uids]
+      @follower_uids = attrs[:follower_uids]
     end
 
     class TimeoutError < Timeout::Error
@@ -23,7 +21,7 @@ module Efs
       def find_by(twitter_user_id)
         Timeout.timeout(3.seconds) do
           obj = client.read(twitter_user_id)
-          new(unpack(obj))
+          obj ? new(unpack(obj)) : nil
         end
       rescue Timeout::Error => e
         raise TimeoutError.new(e.message)
