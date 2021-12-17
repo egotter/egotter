@@ -77,30 +77,32 @@ def logger
 end
 
 def main(params)
-  lockfile = "deploy-#{params['role']}.pid"
-
   if params['h'] || params['help']
     print_help
     return
   end
 
+  lockfile = "deploy-#{params['role']}.pid"
+
   if !params['list'] && File.exist?(lockfile)
     puts 'Another deployment is already running'
     return
   end
-  File.write(lockfile, Process.pid)
 
   logger.info "Deploy started params=#{params.compact.inspect}" unless params['list']
-  task = Tasks::TaskBuilder.build(params)
-  task.run
+  begin
+    File.write(lockfile, Process.pid)
+    task = Tasks::TaskBuilder.build(params)
+    task.run
+  ensure
+    File.delete(lockfile) if File.exist?(lockfile)
+  end
   logger.info "Deploy finished params=#{params.compact.inspect}" unless params['list']
 
   if git_tag?(params)
     system("git tag #{task.action}-#{params['role']}-#{Time.now.strftime("%Y-%m-%d_%H%M%S")}")
     system('git push origin --tags')
   end
-ensure
-  File.delete(lockfile) if File.exist?(lockfile)
 end
 
 if __FILE__ == $0
