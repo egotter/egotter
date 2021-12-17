@@ -10,8 +10,12 @@ function extractErrorMessage(xhr, textStatus, errorThrown) {
     logger.warn('Parsing xhr.responseText failed', xhr.responseText, e);
   }
   if (!message) {
-    message = xhr.status + ' (' + errorThrown + ')';
-    logger.warn('Set default error message', message);
+    if (errorThrown === 'Forbidden') {
+      message = '<%= I18n.t('js.messages.forbidden') %>' + xhr.status;
+    } else {
+      message = xhr.status + ' (' + errorThrown + ')';
+      logger.warn('Set default error message', message);
+    }
   }
   return message;
 }
