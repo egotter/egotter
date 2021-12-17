@@ -39,6 +39,11 @@ module Api
         candidate_uids = paginator.users.map(&:uid)
         users = TwitterDB::User.where_and_order_by_field(uids: candidate_uids)
 
+        if remove_related_page? && candidate_uids.any? && candidate_uids.size != users.size
+          users = users.index_by(&:uid)
+          users = candidate_uids.map { |uid| users[uid] }.compact
+        end
+
         update_twitter_db_users(candidate_uids)
 
         options = {}
