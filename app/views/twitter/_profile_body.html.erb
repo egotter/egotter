@@ -81,7 +81,9 @@
     function drawAudienceChart(url, container) {
       $.get(url).done(function (res) {
         new AudienceInsight().drawSparkLine(container[0], res.series, false);
-      }).fail(showErrorMessage);
+      }).fail(function () {
+        // Do nothing
+      });
     }
 
     drawAudienceChart('<%= raw api_v1_friends_count_points_path(uid: user.uid, padding: true, via: current_via) %>', $('#friends-spark-line-<%= user.uid %>'));
