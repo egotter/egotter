@@ -184,8 +184,8 @@ ja:
         one_sided_friends: '片思いフォロー'
         one_sided_followers: '片思われフォロワー'
         mutual_friends: '両思いフォロー'
-        inactive_friends: '非アクティブ フォロー'
-        inactive_followers: '非アクティブ フォロワー'
+        inactive_friends: '休眠フォロー'
+        inactive_followers: '休眠フォロワー'
         unfriends: 'リムーブした'
         unfollowers: 'リムーブされた'
         mutual_unfriends: 'ブロックされた（かも）'
@@ -279,10 +279,10 @@ ja:
         description: '@%{user} が相互フォローしているユーザーです。'
       one_sided_friends:
         title: '片思いフォロー'
-        description: '@%{user} がフォローしているユーザーのうち、フォロー返しされていないユーザーです。'
+        description: '@%{user} のフォローのうち、自分からフォローしているけど相手からはフォローされていないユーザーのことです。'
       one_sided_followers:
         title: '片思われフォロワー'
-        description: '@%{user} のフォロワーのうち、フォロー返ししていないユーザーです。'
+        description: '@%{user} のフォロワーのうち、相手からはフォローされているけど自分からフォローしていないユーザーのことです。'
       replying:
         title: '自分から@ツイート'
         description: '@%{user} が自分から@ツイートしたユーザーです。'
@@ -293,11 +293,11 @@ ja:
         title: 'いいねランキング'
         description: '@%{user} がよくいいねするユーザーです。いいねの分析には、お気に入り登録を使っています。'
       inactive_friends:
-        title: '最近いないフォロー'
-        description: '@%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーです。'
+        title: '休眠フォロー'
+        description: '@%{user} のフォローのうち、最近ツイートしていないユーザーです。低浮上フォローとも言います。'
       inactive_followers:
-        title: '最近いないフォロワー'
-        description: '@%{user} のフォロワーのうち、最近ツイートしていないユーザーです。'
+        title: '休眠フォロワー'
+        description: '@%{user} のフォロワーのうち、最近ツイートしていないユーザーです。低浮上フォロワーとも言います。'
       personality_insights:
         title: 'ツイッター性格診断'
         description_html: 'ツイートから @%{user} の性格を推定してみましょう。ツイッター性格診断は、言語学的分析とパーソナリティ理論を応用し、これまでのツイートから @%{user} の特徴を推測します。'
@@ -384,10 +384,10 @@ ja:
         title: '新しいフォロワー'
         note: '毎日の新しいフォロワー数です。合計フォロワー数が減っていても、新しい人からフォローされれば数値が増えます。例：2人からリムられた + 3人からフォローされた = 新しいフォロワーは3人'
       inactive_friends:
-        title: '最近いないフォロー'
+        title: '休眠フォロー'
         note: 'フォローのうち「最近ツイートしていない」フォロー数です。直近の %{days}日間 を集計しています。たくさん検索されるユーザーほど優先的に更新されます。'
       inactive_followers:
-        title: '最近いないフォロワー'
+        title: '休眠フォロワー'
         note: 'フォロワーのうち「最近ツイートしていない」フォロワー数です。直近の %{days}日間 を集計しています。たくさん検索されるユーザーほど優先的に更新されます。'
       one_sided_friends:
         title: '片思いフォロー'
@@ -1033,11 +1033,11 @@ ja:
   common_mutual_friends:
   inactive_friends:
     new:
-      footer_title: '最近いない人検索'
-      meta_title: '最近いない人検索'
-      meta_description: "保存ユーザー数 %{count}人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
+      footer_title: '休眠フォロー分析'
+      meta_title: '休眠フォロー分析'
+      meta_description: "保存ユーザー数 %{count}人突破！ スマホから、自分のフォロー・フォロワーのうち最近ツイートしていないユーザーを検索できます。"
       right_side:
-        header: '最近いない人チェック'
+        header: '休眠フォロー分析'
         subheader: 'スマホでサクッとフォロー整理'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
   inactive_followers:
@@ -1065,9 +1065,9 @@ ja:
     one_sided_friends: "@%{user} の片思いフォロー"
     one_sided_followers: "@%{user} の片思われフォロワー"
     mutual_friends: "@%{user} の相互フォロー"
-    inactive_friends: "@%{user} の最近いないフォロー"
-    inactive_followers: "@%{user} の最近いないフォロワー"
-    inactive_mutual_friends: "@%{user} の最近いない相互フォロー"
+    inactive_friends: "@%{user} の休眠フォロー"
+    inactive_followers: "@%{user} の休眠フォロワー"
+    inactive_mutual_friends: "@%{user} の休眠相互フォロー"
     replying: "@%{user} の@ツイート(自分から)"
     replied: "@%{user} の@ツイート(相手から)"
     replying_and_replied: "@%{user} の@ツイート(相互)"
@@ -1083,12 +1083,12 @@ ja:
     mutual_unfriends: "@%{user} がブロックされたかもしれないユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{mutual_unfriends}人"
     close_friends: "@%{user} の仲良しランキング"
     favorite_friends: "@%{user} のいいねランキング"
-    one_sided_friends: "@%{user} がフォローしているユーザーのうち、フォロー返しされていないユーザーの一覧 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
+    one_sided_friends: "@%{user} のフォローのうち、フォロー返しされていないユーザーの一覧 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
     one_sided_followers: "@%{user} のフォロワーのうち、フォロー返ししていないユーザーの一覧 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
     mutual_friends: "@%{user} が相互フォローしているユーザーの一覧 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
-    inactive_friends: "@%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーの一覧 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
-    inactive_followers: "@%{user} のフォロワーのうち、最近ツイートしていないユーザーの一覧 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
-    inactive_mutual_friends: "@%{user} の相互フォローのうち、最近ツイートしていないユーザーの一覧 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
+    inactive_friends: "@%{user} のフォローのうち、最近ツイートしていないユーザーの一覧 - 休眠フォロー %{inactive_friends}人 休眠フォロワー %{inactive_followers}人 休眠相互フォロー %{inactive_mutual_friends}人"
+    inactive_followers: "@%{user} のフォロワーのうち、最近ツイートしていないユーザーの一覧 - 休眠フォロー %{inactive_friends}人 休眠フォロワー %{inactive_followers}人 休眠相互フォロー %{inactive_mutual_friends}人"
+    inactive_mutual_friends: "@%{user} の相互フォローのうち、最近ツイートしていないユーザーの一覧 - 休眠フォロー %{inactive_friends}人 休眠フォロワー %{inactive_followers}人 休眠相互フォロー %{inactive_mutual_friends}人"
     replying: "@%{user} が自分から@ツイートしたユーザーの一覧 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
     replied: "@%{user} が@ツイートされたユーザーの一覧 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
     replying_and_replied: "@%{user} が自分からも相手からも@ツイートしているユーザーの一覧 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
@@ -1138,9 +1138,9 @@ ja:
         <br>
         よく見られているページほど頻繁にデータが更新されるため、%{user} の最新の相互フォローユーザーを見たい場合は、定期的にこのページにアクセスしてください。
       </div>
-    inactive_friends_html: "%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーです。"
-    inactive_followers_html: "%{user} のフォロワーのうち、最近ツイートしていないユーザーです。"
-    inactive_mutual_friends_html: "%{user} の相互フォローのうち、最近ツイートしていないユーザーです。"
+    inactive_friends_html: "%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーです。低浮上フォローとも言います。"
+    inactive_followers_html: "%{user} のフォロワーのうち、最近ツイートしていないユーザーです。低浮上フォロワーとも言います。"
+    inactive_mutual_friends_html: "%{user} の相互フォローのうち、最近ツイートしていないユーザーです。低浮上相互フォローとも言います。"
     replying_html: "%{user} が自分から@ツイートしたユーザーの一覧です。"
     replied_html: "%{user} が@ツイートされたユーザーの一覧です。本人がログインしていない場合は検索して見付けるため、少し不正確です。"
     replying_and_replied_html: "%{user} が自分からも相手からも@ツイートしているユーザーの一覧です。"
@@ -1159,9 +1159,9 @@ ja:
     one_sided_friends: '片思いチェック'
     one_sided_followers: '片思われチェック'
     mutual_friends: '相互フォロー分析'
-    inactive_friends: '最近いないフォロー分析'
-    inactive_followers: '最近いないフォロワー分析'
-    inactive_mutual_friends: '最近いない相互フォロー分析'
+    inactive_friends: '休眠フォロー分析'
+    inactive_followers: '休眠フォロワー分析'
+    inactive_mutual_friends: '休眠相互フォロー分析'
     replying: '@ツイート(自分から)分析'
     replied: '@ツイート(相手から)分析'
     replying_and_replied: '@ツイート(相互)分析'
@@ -1180,9 +1180,9 @@ ja:
     one_sided_friends: "片思い分析"
     one_sided_followers: "片思われ分析"
     mutual_friends: "相互フォロー分析"
-    inactive_friends: "最近いないフォロー分析"
-    inactive_followers: "最近いないフォロワー分析"
-    inactive_mutual_friends: "最近いない相互フォロー分析"
+    inactive_friends: "休眠フォロー分析"
+    inactive_followers: "休眠フォロワー分析"
+    inactive_mutual_friends: "休眠相互フォロー分析"
     replying: "@ツイート(自分から)"
     replied: "@ツイート(他の人から)"
     replying_and_replied: "@ツイート(相互)"
@@ -1252,22 +1252,22 @@ ja:
       両思い %{mutual_friends}人
       #egotter %{url}
     inactive_friends: |
-      .@%{user} の最近いないフォロー分析
-      最近いないフォロー %{inactive_friends}人
-      最近いないフォロワー %{inactive_followers}人
-      最近いない相互フォロー %{inactive_mutual_friends}人
+      .@%{user} の休眠フォロー分析
+      休眠フォロー %{inactive_friends}人
+      休眠フォロワー %{inactive_followers}人
+      休眠相互フォロー %{inactive_mutual_friends}人
       #egotter %{url}
     inactive_followers: |
-      .@%{user} の最近いないフォロワー分析
-      最近いないフォロー %{inactive_friends}人
-      最近いないフォロワー %{inactive_followers}人
-      最近いない相互フォロー %{inactive_mutual_friends}人
+      .@%{user} の休眠フォロワー分析
+      休眠フォロー %{inactive_friends}人
+      休眠フォロワー %{inactive_followers}人
+      休眠相互フォロー %{inactive_mutual_friends}人
       #egotter %{url}
     inactive_mutual_friends: |
-      .@%{user} の最近いない相互フォロー分析
-      最近いないフォロー %{inactive_friends}人
-      最近いないフォロワー %{inactive_followers}人
-      最近いない相互フォロー %{inactive_mutual_friends}人
+      .@%{user} の休眠相互フォロー分析
+      休眠フォロー %{inactive_friends}人
+      休眠フォロワー %{inactive_followers}人
+      休眠相互フォロー %{inactive_mutual_friends}人
       #egotter %{url}
     replying: |
       .@%{user} の@ツイート分析
@@ -1332,9 +1332,9 @@ ja:
     one_sided_friends: '片思いフォロー'
     one_sided_followers: '片思われフォロワー'
     mutual_friends: '相互フォロー'
-    inactive_friends: '最近いないフォロー'
-    inactive_followers: '最近いないフォロワー'
-    inactive_mutual_friends: '最近いない相互フォロー'
+    inactive_friends: '休眠フォロー'
+    inactive_followers: '休眠フォロワー'
+    inactive_mutual_friends: '休眠相互フォロー'
     replying: '@ツイート(自分から)'
     replied: '@ツイート(相手から)'
     replying_and_replied: '@ツイート(相互)'
@@ -2075,18 +2075,18 @@ ja:
           <p><span class="egotter-pink">%{title}</span>を使うと、%{user}のフォロワーの中から、フォローを解除されたアカウントを簡単に見付けることができます。</p>
           <p><span class="egotter-pink">%{title}</span>でフォローを解除されたアカウントを見付けた後は、その場で簡単にフォロワー整理を行うことができます。</p>
       inactive_friends:
-        title: '最近いない人検索'
+        title: '休眠フォロー分析'
         description_html: |
-          <p>最近いない人とは、<span class="egotter-pink">一定の期間ツイートしなかった</span>アカウントのことです。</p>
-          <p>アクティブ（活発）の反対なので、えごったーでは<span class="egotter-pink">非アクティブ</span>とも書いています。</p>
+          <p>休眠フォローとは、<span class="egotter-pink">一定の期間ツイートしなかった</span>アカウントのことです。</p>
+          <p>タイムラインにあまり上がってこないという意味で「低浮上フォロー」と言うこともあります。</p>
 
           <p>
-            最近いない（非アクティブ）フォローの例：<br>
+            休眠（低浮上）フォローの例：<br>
             フォローのうち、最後のツイートから一定期間が経過した人たち
           </p>
 
           <p>
-            最近いないフォロワーの例：<br>
+            休眠（低浮上）フォロワーの例：<br>
             フォロワーのうち、最後のツイートから一定期間が経過した人たち
           </p>
 
@@ -2208,22 +2208,22 @@ ja:
           default_message: '@%{user} の新しいフォロワー数です。'
       inactive_friends_count_points:
         index:
-          name: '最近いないフォロー'
+          name: '休眠フォロー'
           period: '現在の期間'
           prev_period: '前の期間'
-          message: '@%{user} の最近いないフォロー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
+          message: '@%{user} の休眠フォロー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
           increase: '増加'
           decrease: '減少'
-          default_message: '@%{user} の最近いないフォロー数です。'
+          default_message: '@%{user} の休眠フォロー数です。'
       inactive_followers_count_points:
         index:
-          name: '最近いないフォロワー'
+          name: '休眠フォロワー'
           period: '現在の期間'
           prev_period: '前の期間'
-          message: '@%{user} の最近いないフォロワー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
+          message: '@%{user} の休眠フォロワー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
           increase: '増加'
           decrease: '減少'
-          default_message: '@%{user} の最近いないフォロワー数です。'
+          default_message: '@%{user} の休眠フォロワー数です。'
       one_sided_friends_count_points:
         index:
           name: '片思いフォロー'
@@ -2384,7 +2384,7 @@ ja:
       page_names:
         close_friends: '仲良しランキング'
         unfriends: 'リムられ分析'
-        inactive_friends: '最近いないフォロー分析'
+        inactive_friends: '休眠フォロー分析'
         one_sided_friends: '片思いフォロー分析'
         clusters: 'クラスタ分析'
         delete_tweets: 'ツイート削除マイページ'
@@ -2485,9 +2485,9 @@ ja:
     mutual_friends: "相互フォロー"
     one_sided_friends: "片思いフォロー"
     one_sided_followers: "片思われフォロワー"
-    inactive_mutual_friends: "最近いない相互フォロー"
-    inactive_friends: "最近いないフォロー"
-    inactive_followers: "最近いないフォロワー"
+    inactive_mutual_friends: "休眠相互フォロー"
+    inactive_friends: "休眠フォロー"
+    inactive_followers: "休眠フォロワー"
     mutual_unfriends: "ブロックされた（かも）"
     unfriends: "リムり"
     unfollowers: "リムられ"
