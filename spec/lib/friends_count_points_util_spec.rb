@@ -3,6 +3,20 @@ require 'rails_helper'
 RSpec.describe FriendsCountPointsUtil, type: :model do
   let(:klass) { FriendsCountPoint }
 
+  before(:all) do
+    ActiveRecord::Base.connection.execute('DROP FUNCTION IF EXISTS gd_day;')
+    sql = <<~SQL
+      CREATE FUNCTION gd_day(ts TIMESTAMP, time_zone VARCHAR(255))
+        RETURNS DATE NO SQL
+        RETURN DATE_FORMAT(CONVERT_TZ(ts, '+00:00', time_zone), '%Y-%m-%d 00:00:00');
+    SQL
+    ActiveRecord::Base.connection.execute(sql)
+  end
+
+  after(:all) do
+    ActiveRecord::Base.connection.execute('DROP FUNCTION IF EXISTS gd_day;')
+  end
+
   describe '#group_by_day' do
     let(:uid) { 1 }
     let(:end_time) { Time.zone.now }
