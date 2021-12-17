@@ -16,8 +16,13 @@ module Api
         uids, size = summary_uids
         update_twitter_db_users(uids)
 
-        # This method makes the users unique.
         users = TwitterDB::User.where_and_order_by_field(uids: uids)
+
+        if remove_related_page?
+          users = users.index_by(&:uid)
+          users = uids.map { |uid| users[uid] }.compact
+        end
+
         users = users.map { |user| Hashie::Mash.new(to_summary_hash(user)) }
 
         render json: {name: controller_name, count: size, users: users}
@@ -33,6 +38,11 @@ module Api
 
         candidate_uids = paginator.users.map(&:uid)
         users = TwitterDB::User.where_and_order_by_field(uids: candidate_uids)
+
+        if remove_related_page?
+          users = users.index_by(&:uid)
+          users = candidate_uids.map { |uid| users[uid] }.compact
+        end
 
         update_twitter_db_users(candidate_uids)
 
