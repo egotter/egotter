@@ -39,6 +39,7 @@ module SearchRequestCreation
       @screen_name = request.screen_name
       @user = TwitterDB::User.find_by(screen_name: request.screen_name)
       self.sidebar_disabled = true
+      self.footer_disabled = true
       render template: 'searches/create'
     end
   end

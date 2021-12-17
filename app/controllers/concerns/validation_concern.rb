@@ -89,6 +89,7 @@ module ValidationConcern
       @redirect_path = timeline_path(@twitter_user, via: current_via(__method__))
       @via = params['via'].presence || current_via('render_template')
       self.sidebar_disabled = true
+      self.footer_disabled = true
       render template: 'searches/create'
     else
       session[:screen_name] = @twitter_user.screen_name

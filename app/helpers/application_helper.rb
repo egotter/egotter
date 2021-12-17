@@ -85,6 +85,18 @@ module ApplicationHelper
     !top_page?
   end
 
+  def show_footer?
+    !footer_disabled?
+  end
+
+  def footer_disabled?
+    @footer_disabled
+  end
+
+  def footer_disabled=(flag)
+    @footer_disabled = flag
+  end
+
   def show_sidebar?
     !sidebar_disabled? && @twitter_user && !waiting_page?
   end

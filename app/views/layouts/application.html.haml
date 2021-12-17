@@ -70,8 +70,10 @@
     - else
       = yield
 
-  - unless under_maintenance?
+  - if show_footer? && !under_maintenance?
     = render partial: 'layouts/footer'
+
+  - unless under_maintenance?
     = render partial: 'modal/search_modal' unless top_page?
 
     - if user_signed_in?
