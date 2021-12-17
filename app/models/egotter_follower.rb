@@ -20,10 +20,15 @@ class EgotterFollower < ApplicationRecord
 
   class << self
     def collect_uids(uid = User::EGOTTER_UID)
+      client = nil
+
       collect_with_max_id do |options|
-        client = Bot.api_client.twitter
-        client.follower_ids(uid, options)
+        client = Bot.api_client
+        client.twitter.follower_ids(uid, options)
       end
+    rescue => e
+      Airbag.warn { "#{e.inspect} rate_limit=#{client&.rate_limit}" }
+      raise
     end
 
     def collect_with_max_id(&block)
