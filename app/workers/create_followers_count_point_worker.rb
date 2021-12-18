@@ -4,7 +4,7 @@ class CreateFollowersCountPointWorker
   sidekiq_options queue: 'creating_low', retry: 0, backtrace: false
 
   def unique_key(uid, value, time, options = {})
-    "#{uid}-#{value}-#{time}"
+    uid
   end
 
   def unique_in
@@ -13,11 +13,7 @@ class CreateFollowersCountPointWorker
 
   # options:
   def perform(uid, value, time, options = {})
-    if !FollowersCountPoint.where(uid: uid).exists? && TwitterUser.where(uid: uid).exists?
-      FollowersCountPoint.import_by_uid(uid)
-    else
-      FollowersCountPoint.create(uid: uid, value: value, created_at: time)
-    end
+    FollowersCountPoint.create(uid: uid, value: value)
   rescue => e
     handle_worker_error(e, uid: uid, value: value, time: time, **options)
   end
