@@ -15,7 +15,7 @@ RSpec.describe CreateTwitterUserNewFollowersWorker do
     it do
       expect(twitter_user).to receive(:update).with(new_followers_size: uids.size)
       expect(worker).to receive(:update_twitter_db_users).with(uids, twitter_user.user_id)
-      expect(CreateNewFollowersCountPointWorker).to receive(:perform_async).with(twitter_user.id)
+      expect(CreateNewFollowersCountPointWorker2).to receive(:perform_async).with(twitter_user.uid, uids.size)
       subject
     end
   end

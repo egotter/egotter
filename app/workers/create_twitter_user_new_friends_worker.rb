@@ -30,7 +30,7 @@ class CreateTwitterUserNewFriendsWorker
     if (uids = twitter_user.calc_new_friend_uids)
       twitter_user.update(new_friends_size: uids.size)
       update_twitter_db_users(uids, twitter_user.user_id)
-      CreateNewFriendsCountPointWorker.perform_async(twitter_user_id)
+      CreateNewFriendsCountPointWorker2.perform_async(twitter_user.uid, uids.size)
     end
   rescue => e
     Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
