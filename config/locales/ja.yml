@@ -2618,17 +2618,6 @@ ja:
         most_active_hour: "活発な時間"
         most_active_wday: "活発な曜日"
         tweets_interval: "ツイート間隔"
-      audience_insight_chart_builder:
-        friends: "フォロー"
-        followers: "フォロワー"
-        new_friends: "新しいフォロー"
-        new_followers: "新しいフォロワー"
-        unfriends: "フォロー解除した"
-        unfollowers: "フォロー解除された"
-        new_unfriends: "新しいフォロー解除（フォロー）"
-        new_unfollowers: "新しいフォロー解除（フォロワー）"
-        tweets: "ツイート"
-        replies: "リプライ"
       twitter_db/user:
         uid: "uid"
         screen_name: "screen name"

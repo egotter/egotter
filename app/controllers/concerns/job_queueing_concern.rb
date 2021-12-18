@@ -52,10 +52,4 @@ module JobQueueingConcern
     return unless user_signed_in?
     UpdateEgotterFriendshipWorker.perform_async(current_user.id)
   end
-
-  # TODO Remove later
-  def enqueue_audience_insight(uid)
-    return if from_crawler?
-    UpdateAudienceInsightWorker.perform_async(uid, location: controller_name)
-  end
 end

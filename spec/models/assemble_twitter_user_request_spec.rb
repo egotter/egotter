@@ -23,7 +23,6 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
 
     it do
       expect(UpdateUsageStatWorker).to receive(:perform_async).with(twitter_user.uid, user_id: twitter_user.user_id, location: described_class)
-      # expect(UpdateAudienceInsightWorker).to receive(:perform_async).with(twitter_user.uid, anything)
       expect(CreateFriendInsightWorker).to receive(:perform_async).with(twitter_user.uid, anything)
       expect(CreateFollowerInsightWorker).to receive(:perform_async).with(twitter_user.uid, anything)
       expect(CreateTopFollowerWorker).to receive(:perform_async).with(twitter_user.id)

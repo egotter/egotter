@@ -20,7 +20,7 @@ module TwitterUserReset
     twitter_user_ids = TwitterUser.where(uid: uid).pluck(:id)
     result = {}
 
-    [UsageStat, AudienceInsight].each do |klass|
+    [UsageStat].each do |klass|
       result[klass.to_s] = klass.where(uid: uid).delete_all
     end
 

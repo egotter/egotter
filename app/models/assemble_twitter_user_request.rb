@@ -34,7 +34,6 @@ class AssembleTwitterUserRequest < ApplicationRecord
 
   def first_part(user_id, uid)
     UpdateUsageStatWorker.perform_async(uid, user_id: user_id, location: self.class)
-    # UpdateAudienceInsightWorker.perform_async(uid, location: self.class)
     CreateFriendInsightWorker.perform_async(uid, location: self.class)
     CreateFollowerInsightWorker.perform_async(uid, location: self.class)
     CreateTopFollowerWorker.perform_async(twitter_user_id)
