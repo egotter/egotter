@@ -18,19 +18,4 @@ class NewFollowersCountPoint < ApplicationRecord
 
   validates :uid, presence: true
   validates :value, presence: true
-
-  class << self
-    # Fast enough as confirming the record existence before fetching uids
-    def create_by_twitter_user(twitter_user)
-      unless where(uid: twitter_user.uid).time_within(twitter_user.created_at, 3.minutes).exists?
-        create(uid: twitter_user.uid, value: twitter_user.calc_new_follower_uids.size, created_at: twitter_user.created_at)
-      end
-    end
-
-    def import_by_uid(uid, limit: 30)
-      TwitterUser.where(uid: uid).order(created_at: :desc).limit(limit).reverse.each do |record|
-        create_by_twitter_user(record)
-      end
-    end
-  end
 end

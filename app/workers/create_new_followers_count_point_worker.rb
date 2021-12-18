@@ -1,11 +1,10 @@
-# TODO Remove later
 class CreateNewFollowersCountPointWorker
   include Sidekiq::Worker
   include WorkerErrorHandler
-  sidekiq_options queue: 'misc_low', retry: 0, backtrace: false
+  sidekiq_options queue: 'creating_low', retry: 0, backtrace: false
 
-  def unique_key(twitter_user_id, options = {})
-    twitter_user_id
+  def unique_key(uid, value, options = {})
+    uid
   end
 
   def unique_in
@@ -13,15 +12,9 @@ class CreateNewFollowersCountPointWorker
   end
 
   # options:
-  def perform(twitter_user_id, options = {})
-    twitter_user = TwitterUser.find(twitter_user_id)
-
-    if NewFollowersCountPoint.where(uid: twitter_user.uid).exists?
-      NewFollowersCountPoint.create_by_twitter_user(twitter_user)
-    else
-      NewFollowersCountPoint.import_by_uid(twitter_user.uid)
-    end
+  def perform(uid, value, options = {})
+    NewFollowersCountPoint.create(uid: uid, value: value)
   rescue => e
-    handle_worker_error(e, twitter_user_id: twitter_user_id, **options)
+    handle_worker_error(e, uid: uid, value: value, **options)
   end
 end
