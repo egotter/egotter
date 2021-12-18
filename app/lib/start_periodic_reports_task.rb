@@ -1,10 +1,15 @@
 class StartPeriodicReportsTask
-
   def initialize(period: nil, user_ids: nil, start_date: nil, end_date: nil, limit: 5000)
     @period = period || 'none'
 
     if user_ids.present?
       @user_ids = self.class.reject_stop_requested_user_ids(user_ids)
+    elsif period == 'morning'
+      @user_ids = self.class.morning_user_ids
+    elsif period == 'afternoon'
+      @user_ids = self.class.afternoon_user_ids
+    elsif period == 'night_user_ids'
+      @user_ids = self.class.night_user_ids
     end
 
     @start_date = start_date
@@ -13,11 +18,15 @@ class StartPeriodicReportsTask
   end
 
   def start!
+    response = SlackBotClient.channel('cron').post_message("Start sending reports period=#{@period}") rescue {}
+
     user_ids = initialize_user_ids
     return if user_ids.empty?
 
     requests = create_requests(user_ids)
     create_jobs(requests)
+
+    SlackBotClient.channel('cron').post_message("Finished user_ids=#{user_ids.size} period=#{@period}", thread_ts: response['thread_ts']) rescue nil
   end
 
   def initialize_user_ids
