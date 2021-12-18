@@ -23,10 +23,16 @@ RSpec.describe Api::V1::UnfriendsController, type: :controller do
   end
 
   describe '#list_users' do
+    let(:uids) { [1, 2, 2] }
     subject { controller.send(:list_users) }
+    before do
+      create(:twitter_db_user, uid: uids[0])
+      create(:twitter_db_user, uid: uids[1])
+    end
     it do
-      expect(twitter_user).to receive(:unfriends).and_return('result')
-      is_expected.to eq('result')
+      expect(twitter_user).to receive(:unfriend_uids).and_return(uids)
+      result = subject
+      expect(result.map(&:uid)).to eq(uids)
     end
   end
 end

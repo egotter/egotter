@@ -15,6 +15,12 @@ module SearchRequestCreation
 
   def find_or_create_search_request(screen_name = nil)
     screen_name ||= params[:screen_name]
+
+    if user_signed_in? && current_user.screen_name == screen_name
+      @twitter_user = TwitterUser.new(uid: current_user.uid, screen_name: current_user.screen_name)
+      return
+    end
+
     # TODO Save visitor_token
     request = SearchRequest.request_for(current_user&.id, screen_name: screen_name)
 

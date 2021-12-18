@@ -4,7 +4,7 @@ class TwitterUsersController < ApplicationController
   before_action :reject_crawler
   before_action :require_login!
   before_action { valid_uid?(params[:uid]) }
-  before_action { head :forbidden unless SearchRequest.request_for(current_user.id, uid: params[:uid]) }
+  before_action :validate_search_request_by_uid!
   before_action { @twitter_user = TwitterUser.with_delay.latest_by(uid: params[:uid]) }
 
   # Polling access of waiting

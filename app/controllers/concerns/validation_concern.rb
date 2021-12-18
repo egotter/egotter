@@ -161,6 +161,30 @@ module ValidationConcern
     end
   end
 
+  def validate_search_request_by_uid!(uid = nil)
+    uid ||= params[:uid].to_i
+
+    if user_signed_in? && current_user.uid == uid
+      # Don't check SearchRequest
+    else
+      unless SearchRequest.request_for(current_user&.id, uid: uid)
+        head :forbidden
+      end
+    end
+  end
+
+  def validate_search_request_by_screen_name!(screen_name = nil)
+    screen_name ||= params[:screen_name]
+
+    if user_signed_in? && current_user.screen_name == screen_name
+      # Don't check SearchRequest
+    else
+      unless SearchRequest.request_for(current_user&.id, screen_name: screen_name)
+        head :forbidden
+      end
+    end
+  end
+
   private
 
   def respond_with_error(code, message, ex = nil)

@@ -6,7 +6,7 @@ RSpec.describe Api::V1::SummariesController, type: :controller do
   before do
     request.headers['HTTP_X_CSRF_TOKEN'] = 'token'
     allow(controller).to receive(:valid_uid?).with(twitter_user.uid.to_s)
-    allow(SearchRequest).to receive(:request_for).with(nil, uid: twitter_user.uid.to_s).and_return('request')
+    allow(controller).to receive(:validate_search_request_by_uid!)
     allow(TwitterUser).to receive(:latest_by).with(uid: twitter_user.uid.to_s).and_return(twitter_user)
   end
 

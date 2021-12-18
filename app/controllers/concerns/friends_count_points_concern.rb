@@ -5,7 +5,7 @@ module FriendsCountPointsConcern
 
   included do
     before_action { valid_uid?(params[:uid]) }
-    before_action { head :forbidden unless SearchRequest.request_for(current_user&.id, uid: params[:uid]) }
+    before_action { :validate_search_request_by_uid! }
 
     rescue_from Rack::Timeout::RequestTimeoutException do |e|
       Airbag.warn "#{e.message} user_id=#{current_user&.id} controller=#{controller_path} action=#{action_name}"
