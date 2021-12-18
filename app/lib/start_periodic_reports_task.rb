@@ -26,7 +26,7 @@ class StartPeriodicReportsTask
     requests = create_requests(user_ids)
     create_jobs(requests)
 
-    SlackBotClient.channel('cron').post_message("Finished user_ids=#{user_ids.size} period=#{@period}", thread_ts: response['thread_ts']) rescue nil
+    SlackBotClient.channel('cron').post_message("Finished user_ids=#{user_ids.size} period=#{@period}", thread_ts: response['ts']) rescue nil
   end
 
   def initialize_user_ids
