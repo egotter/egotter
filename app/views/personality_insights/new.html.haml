@@ -4,9 +4,4 @@
 - right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html'), redirect_path: personality_insight_path(screen_name: ':screen_name', via: current_via), show_search_form: false, show_screenshots: false}
 = render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options}
 
-.text-center.my-5= link_to t('.see_sample'), personality_insight_path(screen_name: 'ego_tter', via: current_via('see_sample')), class: 'btn btn-outline-primary'
-
-= render partial: 'shared/review_section', locals: {kind: 'personality_insights', divider: true}
-
-- if show_redirection_modal? && !personality_insight_is_processing?
-  = render partial: 'modal/redirection_modal', locals: {positive_url: personality_insight_path(current_user, via: current_via('redirection_modal'))}
+.m-3.text-primary= t('.service_stopped')

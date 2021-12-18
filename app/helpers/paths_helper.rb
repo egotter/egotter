@@ -291,4 +291,8 @@ module PathsHelper
       error_pages_twitter_error_unknown_path(via: via)
     end
   end
+
+  def personality_insight_path(*args)
+    personality_insights_top_path
+  end
 end
