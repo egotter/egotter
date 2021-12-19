@@ -26,6 +26,7 @@
     }
 </style>
 
+<%# Set a background color and enable to close a menu by tapping anywhere %>
 <div class="fade-sidemenu"></div>
 
 <div class="sidemenu shadow bg-white">
@@ -94,8 +95,6 @@
     <% end %>
   </div>
   <hr class="p-0 m-0">
-
-  <%= render partial: 'layouts/sidenav', locals: {twitter_user: @twitter_user} if @twitter_user %>
 
   <% if user_signed_in? %>
     <div class="text-center py-3">
