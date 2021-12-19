@@ -2153,8 +2153,6 @@ ja:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
     tweet_times:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
-    times_count:
-      loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
     users_count:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
       users_list: 'ユーザーリストを見る'
