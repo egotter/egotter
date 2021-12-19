@@ -1482,11 +1482,17 @@ ja:
   error_pages:
     support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
     api_not_authorized:
-      message_html: |
-        <p>@%{user} のツイッター連携（API）が無効になっています。</p>
-        <p>ログイン連携の取り消しや、<span class="egotter-pink">アカウントの削除</span>をするとこの状態になります。</p>
-        <p>ログインしたいアカウントは @%{user} で合っていますか？ 合っているなら <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> をクリックしてください。</p>
-        他のアカウントでログインしたいですか？ もしそうなら <a class="btn btn-primary btn-sm" href="%{url}">アカウントの切り替え</a> をクリックしてください。
+      message: '@%{user} のツイッター連携（API）が無効になっています。'
+      reason_html: 'ログイン連携の取り消しや、<span class="text-danger">アカウントの削除</span>をするとこの状態になります。'
+      sign_in_html: 'ログインしたいアカウントは @%{user} で合っていますか？ 合っているなら <a href="%{url}">ログイン</a> してください。'
+      switch_account_html: '他のアカウントでログインしたいですか？ もしそうなら <a href="%{url}">アカウントの切り替え</a> をしてください。'
+      faq:
+        q1: '「ツイッター連携が無効」とは何ですか？'
+        a1_html: 'ログイン連携の取り消しや、<span class="text-danger">アカウントの削除</span>をするとこの状態になります。'
+        q2: 'この状態だと何が起きますか？'
+        a2: 'えごったーの全機能が利用できなくなります。リムられ通知もこなくなります。'
+        q3: 'どうすれば元に戻りますか？'
+        a3_html: '<a href="%{url1}">ログイン</a> または <a href="%{url2}">アカウントの切り替え</a> をしてください。そうすれば元に戻ります。'
     ad_blocker_detected:
       message: 'えごったーは広告ブロッカーが有効な場合はご利用できません。広告ブロッカーを無効にしてからご利用ください。'
     blocker_detected:

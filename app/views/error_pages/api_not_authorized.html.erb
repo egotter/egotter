@@ -1,6 +1,18 @@
-<p><%= t('.message_html', user: @screen_name, url: force_sign_in_path(via: current_via)) %></p>
+<p class="mt-3"><%= t('.message', user: @screen_name) %></p>
+<p><%= t('.reason_html') %></p>
+<p><%= t('.sign_in_html', user: @screen_name, url: sign_in_path(via: current_via)) %></p>
+<p><%= t('.switch_account_html', user: @screen_name, url: force_sign_in_path(via: current_via)) %></p>
 <p><%= t('error_pages.support_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></p>
 
 <%= render partial: 'ad_section', locals: {screen_name: @screen_name} %>
 
-<div class="my-3"><%= render template: 'messages/api_not_authorized' %></div>
+<div class="mt-4 mb-1">Q. <%= t('.faq.q1') %></div>
+<p class="mb-5"><%= t('.faq.a1_html') %></p>
+
+<div class="mb-1">Q. <%= t('.faq.q2') %></div>
+<p class="mb-5"><%= t('.faq.a2') %></p>
+
+<div class="mb-1">Q. <%= t('.faq.q3') %></div>
+<p class="mb-5"><%= t('.faq.a3_html') %></p>
+
+<p><%= t('error_pages.support_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></p>
