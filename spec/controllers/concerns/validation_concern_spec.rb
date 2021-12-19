@@ -85,7 +85,7 @@ describe ValidationConcern, type: :controller do
     context 'user is not signed in' do
       include_context 'user is not signed in'
       it do
-        expect(controller).to receive(:respond_with_error).with(:unauthorized, instance_of(String))
+        expect(controller).to receive(:head).with(:forbidden)
         subject
       end
     end
@@ -94,7 +94,7 @@ describe ValidationConcern, type: :controller do
       include_context 'user is signed in'
       include_context 'user is not admin'
       it do
-        expect(controller).to receive(:respond_with_error).with(:unauthorized, instance_of(String))
+        expect(controller).to receive(:head).with(:forbidden)
         subject
       end
     end

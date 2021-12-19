@@ -6,6 +6,11 @@ module ValidationConcern
   include SearchHistoriesHelper
   include JobQueueingConcern
 
+  def authenticate_admin!
+    return if user_signed_in? && current_user.admin?
+    head :forbidden
+  end
+
   def require_login!
     return if user_signed_in? && current_user.authorized?
 
@@ -50,11 +55,6 @@ module ValidationConcern
 
     message = t('after_sign_in.already_have_valid_subscription')
     respond_with_error(:bad_request, message)
-  end
-
-  def authenticate_admin!
-    return if user_signed_in? && current_user.admin?
-    respond_with_error(:unauthorized, 'Unauthorized')
   end
 
   def valid_uid?(uid, only_validation: false)
