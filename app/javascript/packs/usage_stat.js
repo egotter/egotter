@@ -8,11 +8,6 @@ class UsageStat {
     this._drawColumnChart(renderTo, [series], {series: drilldown});
   }
 
-  drawColorlessColumnChart(renderTo, data) {
-    var series = {name: null, colorByPoint: false, data: data};
-    this._drawColumnChart(renderTo, [series], {});
-  }
-
   drawStockLineChart(renderTo, data) {
     var series = {name: null, data: data};
     this._drawStockLineChart(renderTo, [series]);
