@@ -15,9 +15,9 @@
 - unless request.device_type == :smartphone
   = render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false, async: false}
 
-%h2.h2.text-center.my-5= current_page_title(@twitter_user)
+%h3.h4.text-center.my-5= current_page_title(@twitter_user)
 
-= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.tweets', user: @twitter_user.screen_name), api_path: api_v1_word_clouds_path(uid: @twitter_user.uid, via: current_via)}
+.card.card-body.my-3= render partial: 'shared/word_cloud', locals: {title: t('word_cloud_titles.tweets'), description: t('word_cloud_descriptions.tweets', user: @twitter_user.screen_name), api_path: api_v1_word_clouds_path(uid: @twitter_user.uid, via: current_via)}
 
 .mb-5= feed_item :ad, feed_title: t('timelines.feeds.delete_tweets.title'), feed_description: t('timelines.feeds.delete_tweets.description_html', user: @twitter_user.screen_name), feed_image: image_path('/egotter_trash_with_text_400x448.png'), button_text: t('timelines.feeds.delete_tweets.open'), page_url: delete_tweets_path(via: current_via)
 .mb-5= feed_item :ad, feed_title: t('timelines.feeds.scheduled_tweets.title'), feed_description: t('timelines.feeds.scheduled_tweets.description_html', user: @twitter_user.screen_name), feed_image: image_path('/scheduled_tweets_og_image.jpg'), button_text: t('timelines.feeds.scheduled_tweets.open'), page_url: scheduled_tweets_url(via: current_via)

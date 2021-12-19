@@ -1,4 +1,9 @@
+<% title ||= nil %>
 <% container_id = "word-cloud-container-#{SecureRandom.urlsafe_base64(10)}" %>
+
+<% if title %>
+  <div class="text-center my-3"><%= title %></div>
+<% end %>
 <div><%= description %></div>
 <div id="<%= container_id %>" class="d-flex align-items-center justify-content-center mt-3" style="height: 300px;">
   <div><%= t('.loading_html') %></div>
