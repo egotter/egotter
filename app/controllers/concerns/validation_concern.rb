@@ -105,8 +105,7 @@ module ValidationConcern
     TwitterDB::User.exists?(uid: uid)
   end
 
-  # TODO Rename to validate_api_authorization!
-  def current_user_authorized?
+  def validate_api_authorization!
     return true unless user_signed_in?
     return true if current_user.authorized?
 

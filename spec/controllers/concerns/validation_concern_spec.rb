@@ -123,8 +123,8 @@ describe ValidationConcern, type: :controller do
     end
   end
 
-  describe '#current_user_authorized?' do
-    subject { controller.current_user_authorized? }
+  describe '#validate_api_authorization!' do
+    subject { controller.validate_api_authorization! }
 
     context 'user is not signed in' do
       include_context 'user is not signed in'

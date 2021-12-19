@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   include Logging
 
   before_action :reject_spam_ip!, if: -> { controller_name != 'error_pages' }
-  before_action :current_user_authorized?, if: -> { controller_name != 'error_pages' }
+  before_action :validate_api_authorization!, if: -> { controller_name != 'error_pages' }
   before_action :validate_dm_permission!, if: -> { controller_name != 'error_pages' }
   before_action :current_user_not_blocker?, if: -> { controller_name != 'error_pages' }
 
