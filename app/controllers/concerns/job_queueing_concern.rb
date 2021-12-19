@@ -21,7 +21,7 @@ module JobQueueingConcern
   def request_assembling_twitter_user(twitter_user)
     return unless user_signed_in?
     return if TwitterUserAssembledFlag.on?(twitter_user.uid)
-    return if twitter_user.created_at > 10.seconds.ago
+    return if twitter_user.created_at > 30.seconds.ago
     return if twitter_user.assembled_at.present?
 
     TwitterUserAssembledFlag.on(twitter_user.uid)
