@@ -4,7 +4,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   include JobQueueingConcern
 
   skip_before_action :current_user_authorized?
-  skip_before_action :current_user_has_dm_permission?
+  skip_before_action :validate_dm_permission!
   skip_before_action :current_user_not_blocker?
 
   after_action only: :twitter do

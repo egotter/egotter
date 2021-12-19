@@ -1,7 +1,7 @@
 class LoginController < ApplicationController
 
   skip_before_action :current_user_authorized?
-  skip_before_action :current_user_has_dm_permission?
+  skip_before_action :validate_dm_permission!
   skip_before_action :current_user_not_blocker?
 
   before_action :require_login!, only: %i(after_sign_in after_sign_up sign_out)

@@ -148,7 +148,7 @@ describe ValidationConcern, type: :controller do
     end
   end
 
-  describe '#current_user_has_dm_permission?' do
+  describe '#validate_dm_permission!' do
     shared_context 'user has proper permission' do
       before { allow(user).to receive(:enough_permission_level?).and_return(true) }
     end
@@ -157,7 +157,7 @@ describe ValidationConcern, type: :controller do
       before { allow(user).to receive(:enough_permission_level?).and_return(false) }
     end
 
-    subject { controller.current_user_has_dm_permission? }
+    subject { controller.validate_dm_permission! }
 
     context 'user is not signed in' do
       include_context 'user is not signed in'
