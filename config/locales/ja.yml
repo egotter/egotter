@@ -930,6 +930,8 @@ ja:
       sign_in_with_twitter_html: '%{icon} Twitter でログイン'
   tokimeki_unfollow:
     index:
+      title: 'ときめきアンフォロー'
+      description: 'あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。'
       service_stopped: 'ときめきアンフォローはサービスを終了いたしました。今までご利用ありがとうございました。'
   misc:
     support:

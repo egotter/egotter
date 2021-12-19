@@ -1,7 +1,4 @@
 - title t('.page_title')
 - set_meta_tags description: t('.meta_description')
 
-- right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html'), redirect_path: personality_insight_path(screen_name: ':screen_name', via: current_via), show_search_form: false, show_screenshots: false}
-= render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options}
-
-.m-3.text-primary= t('.service_stopped')
+.m-3{style: 'min-height: 300px;'}= t('.service_stopped')
