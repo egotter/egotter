@@ -68,12 +68,7 @@ class UsageStat {
       colors: ['rgba(181, 137, 0, 1.0)', 'rgba(203, 75, 22, 1.0)', 'rgba(220, 50, 47, 1.0)', 'rgba(211, 54, 130, 1.0)', 'rgba(108, 113, 196, 1.0)', 'rgba(38, 139, 210, 1.0)', 'rgba(42, 161, 152, 1.0)', 'rgba(133, 153, 0, 1.0)'],
       chart: {
         renderTo: renderTo,
-        type: 'column',
-        marginTop: 0,
-        marginRight: 0,
-        spacingTop: 0,
-        spacingBottom: 0,
-        spacingLeft: 0
+        type: 'column'
       },
       title: {
         style: {color: '#777777'},
