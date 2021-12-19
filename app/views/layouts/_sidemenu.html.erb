@@ -11,6 +11,10 @@
         z-index: 9999;
     }
 
+    .sidemenu a {
+        color: #212529;
+    }
+
     .fade-sidemenu {
         display: none;
         color: white;
@@ -31,7 +35,7 @@
 
 <div class="sidemenu shadow bg-white">
   <div class="<%= button_class %> text-center py-3">
-    <%= link_to '#', class: 'text-body' do %>
+    <%= link_to '#' do %>
       <i class="fas fa-times"></i>
       <%= t('.close') %>
     <% end %>
@@ -39,8 +43,8 @@
   <hr class="p-0 m-0">
 
   <% if user_signed_in? %>
-    <div class="text-center text-body py-3">
-      <%= link_to t('.logged_in', user: current_user.screen_name), timeline_path(current_user) %>
+    <div class="text-center py-3">
+      <%= link_to t('.logged_in', user: current_user.screen_name), timeline_path(current_user, via: current_via('navmenu')) %>
     </div>
     <hr class="p-0 m-0">
 
@@ -56,11 +60,11 @@
     </div>
     <hr class="p-0 m-0">
 
-    <div class="text-center text-body py-3">
+    <div class="text-center py-3">
       <%= link_to t('.switch_account'), force_sign_in_path(via: current_via('navmenu')) %>
     </div>
   <% else %>
-    <div class="text-center text-body py-3"><%= link_to t('.sign_in'), sign_in_path(via: current_via('navmenu')) %></div>
+    <div class="text-center py-3"><%= link_to t('.sign_in'), sign_in_path(via: current_via('navmenu')) %></div>
   <% end %>
   <hr class="p-0 m-0">
 
