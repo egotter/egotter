@@ -928,6 +928,9 @@ ja:
   welcome:
     new:
       sign_in_with_twitter_html: '%{icon} Twitter でログイン'
+  tokimeki_unfollow:
+    index:
+      service_stopped: 'ときめきアンフォローはサービスを終了いたしました。今までご利用ありがとうございました。'
   misc:
     support:
       meta_title: 'えごったーサポート・よくある質問'
