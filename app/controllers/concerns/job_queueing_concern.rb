@@ -26,7 +26,7 @@ module JobQueueingConcern
 
     TwitterUserAssembledFlag.on(twitter_user.uid)
 
-    request = AssembleTwitterUserRequest.create(twitter_user: twitter_user, requested_by: controller_path)
+    request = AssembleTwitterUserRequest.create(twitter_user: twitter_user, uid: twitter_user.uid, requested_by: controller_path)
     AssembleTwitterUserWorker.perform_async(request.id, requested_by: controller_path)
   rescue => e
     Airbag.warn "##{__method__}: #{e.inspect} twitter_user_id=#{twitter_user.id} controller=#{controller_path}"
