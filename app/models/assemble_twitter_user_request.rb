@@ -4,6 +4,7 @@
 #
 #  id              :bigint(8)        not null, primary key
 #  twitter_user_id :integer          not null
+#  uid             :bigint(8)
 #  status          :string(191)      default(""), not null
 #  requested_by    :string(191)
 #  finished_at     :datetime

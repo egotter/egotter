@@ -108,6 +108,7 @@ ActiveRecord::Schema.define(version: 2021_12_16_223514) do
 
   create_table "assemble_twitter_user_requests", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "twitter_user_id", null: false
+    t.bigint "uid"
     t.string "status", default: "", null: false
     t.string "requested_by"
     t.datetime "finished_at"
