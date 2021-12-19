@@ -13,6 +13,7 @@ class AssembleTwitterUserWorker
 
   def after_skip(request_id, options = {})
     SkippedAssembleTwitterUserWorker.perform_async(request_id, options)
+    AssembleTwitterUserRequest.find(request_id).append_status('skipped')
   end
 
   def expire_in
@@ -21,6 +22,7 @@ class AssembleTwitterUserWorker
 
   def after_expire(request_id, options = {})
     ExpiredAssembleTwitterUserWorker.perform_async(request_id, options)
+    AssembleTwitterUserRequest.find(request_id).append_status('expired')
   end
 
   def _timeout_in

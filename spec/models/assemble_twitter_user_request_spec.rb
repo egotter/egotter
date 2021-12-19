@@ -18,6 +18,16 @@ RSpec.describe AssembleTwitterUserRequest, type: :model do
     end
   end
 
+  describe '#append_status' do
+    it do
+      expect(request.status).to eq('')
+      request.append_status('aaa')
+      expect(request.status).to eq('aaa')
+      request.append_status('bbb')
+      expect(request.status).to eq('aaa,bbb')
+    end
+  end
+
   describe '#first_part' do
     subject { request.perform! }
 

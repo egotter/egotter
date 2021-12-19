@@ -31,6 +31,11 @@ class AssembleTwitterUserRequest < ApplicationRecord
     second_part
   end
 
+  def append_status(message)
+    update(status: [status, message].reject(&:blank?).join(','))
+  rescue => e
+  end
+
   private
 
   def first_part(user_id, uid)
