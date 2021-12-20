@@ -17,8 +17,3 @@
 
   xhr.send('');
 })();
-
-$(function () {
-  var h = $('.adsense-container').height();
-  $('.adsense-height').text(h);
-});

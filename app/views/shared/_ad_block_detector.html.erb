@@ -23,5 +23,10 @@
 
       trackDetectionEvent('AdBlocker detected');
     });
+
+    setTimeout(function () {
+      var h = $('.adsense-container').height();
+      $('.adsense-height').text(h);
+    }, 3000);
   });
 </script>
