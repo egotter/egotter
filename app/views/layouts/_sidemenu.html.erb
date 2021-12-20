@@ -98,13 +98,17 @@
       <%= t('.pricing') %>
     <% end %>
   </div>
-  <hr class="p-0 m-0">
 
   <% if user_signed_in? %>
+    <hr class="p-0 m-0">
+
     <div class="text-center py-3">
       <%= link_to t('.sign_out'), goodbye_path(via: current_via('navmenu')) %>
     </div>
   <% end %>
+
+  <hr class="p-0 m-0">
+  <div class="adsense-height text-body text-center py-3"></div>
 </div>
 
 <script>
