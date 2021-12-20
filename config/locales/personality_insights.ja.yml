@@ -23,7 +23,6 @@ ja:
         <p>有料プランのユーザーはすぐに分析できます。<a href="%{url}" class="btn btn-outline-primary btn-sm">プランを見る</a></p>
         <p>えごったーの宣伝ツイートをした後ならすぐに分析できます。<a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary btn-sm">もっと詳しく</a></p>
       navbar_title: 'ツイッター性格診断'
-      crumb_title: 'ツイッター性格診断'
       page_title: '@%{user} のツイッター性格診断'
       page_description_html: |
         ツイッター性格診断は、言語学的分析とパーソナリティ理論を応用し、これまでのツイートから @%{user} の特徴を推測します。<br>

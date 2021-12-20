@@ -97,7 +97,6 @@ ja:
       text001_html: 'フォロワーが減った？ 誰？？'
       text002_html: '<span class="egotter-pink">フォロワーが減った</span>り<span class="egotter-pink">ブロックされた</span>時に相手がすぐに分かります。'
     start:
-      crumb_title: "えごったーの使い方"
       page_title: "えごったーの使い方"
       meta_description: "@%{user}さん えごったーへようこそ！"
       desc1_html: 'このページでは、えごったーの使い方を説明しています。えごったーには、リムられ通知や仲良し分析などたくさんの機能があります。<br><br>自分に合った機能を見付けて、えごったーを便利に活用しましょう。'
@@ -141,7 +140,6 @@ ja:
       navbar_title: '@%{user} の分析'
       meta_title: "@%{user} の分析 - フォロー %{friends}人 フォロワー %{followers}人 リムーブ %{unfriends}人 リムられ %{unfollowers}人"
       directory_page_title: "@%{user} の分析"
-      crumb_title: "@%{user} の分析"
       heading: "@%{user} の分析結果"
       meta_description: "えごったーなら全部無料！ @%{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
@@ -317,7 +315,6 @@ ja:
     show:
       not_found_html: '@%{user} のデータ取得に失敗しました。お手数ですが再度検索してみてください。<a href="%{url}" class="btn btn-primary">@%{user} を検索する</a>'
       navbar_title: 'ツイッター利用状況分析'
-      crumb_title: "ツイッター利用状況"
       page_title: "@%{user} のツイッター利用状況"
       meta_title: "@%{user} のツイッター利用状況 分析"
       page_description: "@%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。"
@@ -357,7 +354,6 @@ ja:
   audience_insights:
     show:
       navbar_title: "フォロー/フォロワー 推移"
-      crumb_title: "フォロー/フォロワー 推移"
       page_title: "@%{user} のフォロー/フォロワー 推移"
       meta_title: "@%{user} のフォロー/フォロワー 推移"
       page_description_html: |
@@ -1027,7 +1023,6 @@ ja:
   mutual_unfriends:
   blockers:
     index:
-      crumb_title: 'ブロックされた（高精度）'
       meta_title: 'ブロックされた（高精度）'
   common_friends:
   common_followers:
@@ -1169,27 +1164,6 @@ ja:
     common_friends: '共通フォロー分析'
     common_followers: '共通フォロワー分析'
     common_mutual_friends: '共通相互フォロー分析'
-  crumb_titles:
-    statuses: "ツイート"
-    friends: "フォローチェック"
-    followers: "フォロワーチェック"
-    unfriends: "リムーブした"
-    unfollowers: "リムられチェック"
-    mutual_unfriends: "ブロックされた"
-    close_friends: "仲良しランキング"
-    favorite_friends: "いいねランキング"
-    one_sided_friends: "片思い分析"
-    one_sided_followers: "片思われ分析"
-    mutual_friends: "相互フォロー分析"
-    inactive_friends: "休眠フォロー分析"
-    inactive_followers: "休眠フォロワー分析"
-    inactive_mutual_friends: "休眠相互フォロー分析"
-    replying: "@ツイート(自分から)"
-    replied: "@ツイート(他の人から)"
-    replying_and_replied: "@ツイート(相互)"
-    common_friends: "共通フォロー分析"
-    common_followers: "共通フォロワー分析"
-    common_mutual_friends: "共通相互フォロー分析"
   tweet_text:
     friends: |
       .@%{user} のフォロー分析
@@ -1382,7 +1356,6 @@ ja:
     new:
     show:
       navbar_title: 'ワードクラウド'
-      crumb_title: 'ワードクラウド'
       meta_title: "@%{user} のツイート、フォロー、フォロワーから作ったワードクラウド"
       meta_description: |
         @%{user} ツイート、フォロー、フォロワーからワードクラウドを作成します。
@@ -1402,7 +1375,6 @@ ja:
   clusters:
     new:
       plain_title: 'クラスタ判定'
-      crumb_title: 'クラスタ判定'
       footer_title: 'クラスタ判定'
       description: "保存ユーザー数 %{count}人突破！ 無料でスマホからクラスタ判定！ 検索されたユーザーが入っているクラスタをさくっと判定します。"
       lead_003_html: "クラスタ判定ならえごったー。<br>スマホから使える無料のクラスタ判定アプリです。"
@@ -1412,7 +1384,6 @@ ja:
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
     show:
       navbar_title: 'クラスタ判定'
-      crumb_title: "入っているクラスタ"
       page_description: "クラスタとは、「あるユーザーが入っているグループ」のことです。えごったーでは、@%{user} がよくツイートするジャンルやフォロー関係からクラスタを判定しています。"
       page_title: "@%{user} のクラスタ判定"
       page_title_with_clusters: "@%{user} のクラスタ判定 - %{clusters}"
@@ -1748,7 +1719,6 @@ ja:
       cancel: "キャンセル"
   delete_favorites:
     new:
-      crumb_title: 'いいねクリーナー'
       navbar_title: 'いいねクリーナー'
       footer_title: 'いいねを一括削除'
       meta_title: 'いいねクリーナー - ワンクリックでいいねを一括削除'
@@ -2153,8 +2123,6 @@ ja:
       loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
     stripe:
       already_purchased: '購入済み'
-  breadcrumb:
-    root: 'トップ'
   api:
     v1:
       payment_intents:
