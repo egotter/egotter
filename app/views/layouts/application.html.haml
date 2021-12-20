@@ -48,7 +48,7 @@
     = render partial: 'shared/toast'
 
     - if show_header? && !under_maintenance?
-      - if result_page? && request.device_type == :smartphone
+      - if result_page?
         = render partial: 'layouts/result_header'
       - else
         = render partial: 'layouts/header'

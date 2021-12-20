@@ -4,9 +4,6 @@
 - content_for :navbar_title, t(".navbar_title")
 - content_for :result_title, t('.page_title', user: @twitter_user.screen_name)
 
-- unless request.device_type == :smartphone
-  - breadcrumb :word_cloud, @twitter_user.screen_name
-
 - title t('.meta_title', user: @twitter_user.screen_name)
 - set_meta_tags description: t('.meta_description', user: @twitter_user.screen_name)
 
@@ -18,20 +15,20 @@
 %h2.h4.text-center.my-5= t('.page_title', user: @twitter_user.screen_name)
 .mb-5= t('.page_description', user: @twitter_user.screen_name)
 
-%h3.h5.text-center.my-5= t('.tweets_word_cloud', user: @twitter_user.screen_name)
-= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.tweets', user: @twitter_user.screen_name), api_path: api_v1_word_clouds_path(uid: @twitter_user.uid, via: current_via)}
-%div= link_to t('.tweets_link', user: @twitter_user.screen_name), status_path(@twitter_user, via: current_via), class: 'btn btn-outline-primary'
+.card.card-body.my-3
+  = render partial: 'shared/word_cloud', locals: {title: t('word_cloud_titles.tweets'), description: t('word_cloud_descriptions.tweets', user: @twitter_user.screen_name), api_path: api_v1_word_clouds_path(uid: @twitter_user.uid, via: current_via)}
+  %div= link_to t('.tweets_link', user: @twitter_user.screen_name), status_path(@twitter_user, via: current_via), class: 'btn btn-outline-primary'
 
-%h3.h5.text-center.my-5= t('.friend_profiles_word_cloud', user: @twitter_user.screen_name)
-= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.friend_profiles', user: @twitter_user.screen_name), api_path: api_v1_friend_insights_profiles_count_path(uid: @twitter_user.uid, via: current_via)}
-%div= link_to t('.friends_link', user: @twitter_user.screen_name), friend_path(@twitter_user, via: current_via), class: 'btn btn-outline-primary'
+.card.card-body.my-3
+  = render partial: 'shared/word_cloud', locals: {title: t('word_cloud_titles.friend_profiles'), description: t('word_cloud_descriptions.friend_profiles', user: @twitter_user.screen_name), api_path: api_v1_friend_insights_profiles_count_path(uid: @twitter_user.uid, via: current_via)}
+  %div= link_to t('.friends_link', user: @twitter_user.screen_name), friend_path(@twitter_user, via: current_via), class: 'btn btn-outline-primary'
 
-%h3.h5.text-center.my-5= t('.friend_locations_word_cloud', user: @twitter_user.screen_name)
-= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.friend_locations', user: @twitter_user.screen_name), api_path: api_v1_friend_insights_locations_count_path(uid: @twitter_user.uid, via: current_via)}
+.card.card-body.my-3
+  = render partial: 'shared/word_cloud', locals: {title: t('word_cloud_titles.friend_locations'), description: t('word_cloud_descriptions.friend_locations', user: @twitter_user.screen_name), api_path: api_v1_friend_insights_locations_count_path(uid: @twitter_user.uid, via: current_via)}
 
-%h3.h5.text-center.my-5= t('.follower_profiles_word_cloud', user: @twitter_user.screen_name)
-= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.follower_profiles', user: @twitter_user.screen_name), api_path: api_v1_follower_insights_profiles_count_path(uid: @twitter_user.uid, via: current_via)}
-%div= link_to t('.followers_link', user: @twitter_user.screen_name), follower_path(@twitter_user, via: current_via), class: 'btn btn-outline-primary'
+.card.card-body.my-3
+  = render partial: 'shared/word_cloud', locals: {title: t('word_cloud_titles.follower_profiles'), description: t('word_cloud_descriptions.follower_profiles', user: @twitter_user.screen_name), api_path: api_v1_follower_insights_profiles_count_path(uid: @twitter_user.uid, via: current_via)}
+  %div= link_to t('.followers_link', user: @twitter_user.screen_name), follower_path(@twitter_user, via: current_via), class: 'btn btn-outline-primary'
 
-%h3.h5.text-center.my-5= t('.follower_locations_word_cloud', user: @twitter_user.screen_name)
-= render partial: 'shared/word_cloud', locals: {description: t('word_cloud_descriptions.follower_locations', user: @twitter_user.screen_name), api_path: api_v1_follower_insights_locations_count_path(uid: @twitter_user.uid, via: current_via)}
+.card.card-body.my-3
+  = render partial: 'shared/word_cloud', locals: {title: t('word_cloud_titles.follower_locations'), description: t('word_cloud_descriptions.follower_locations', user: @twitter_user.screen_name), api_path: api_v1_follower_insights_locations_count_path(uid: @twitter_user.uid, via: current_via)}

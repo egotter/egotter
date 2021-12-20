@@ -1,7 +1,6 @@
 - content_for :canonical_url do
   %link{href: start_url(screen_name: @screen_name), rel: 'canonical'}
 
-- breadcrumb :start
 - title t('.page_title')
 - set_meta_tags description: t('.meta_description', user: @screen_name)
 

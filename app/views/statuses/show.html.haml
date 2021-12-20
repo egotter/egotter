@@ -4,9 +4,6 @@
 - content_for :navbar_title, current_navbar_title
 - content_for :result_title, current_page_title(@twitter_user)
 
-- unless request.device_type == :smartphone
-  - breadcrumb :status, @twitter_user.screen_name
-
 - title current_page_title(@twitter_user)
 - set_meta_tags description: current_meta_description(@twitter_user)
 

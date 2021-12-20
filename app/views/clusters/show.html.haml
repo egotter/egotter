@@ -4,9 +4,6 @@
 - content_for :navbar_title, t(".navbar_title")
 - content_for :result_title, t('.page_title', user: @twitter_user.screen_name)
 
-- unless request.device_type == :smartphone
-  - breadcrumb :cluster, @twitter_user.screen_name
-
 - page_title = t('.page_title_with_clusters', user: @twitter_user.screen_name, clusters: @cluster_names_str)
 - title page_title
 - set_meta_tags description: t('clusters.show.description', user: @twitter_user.screen_name, clusters: @cluster_names_str)
@@ -19,7 +16,6 @@
 %h2.h4.text-center.my-5= page_title
 .mb-5= t('clusters.show.page_description', user: @twitter_user.screen_name)
 
-= render partial: 'shared/search_form', locals: {track_id: 'cluster', via: current_via('top_input'), redirect_path: cluster_path(screen_name: ':screen_name')}
 = render(partial: 'adsense/ad', locals: {vertical: :middle})
 
 %h2.h3.text-center.mt-5= t('clusters.show.clusters_level')

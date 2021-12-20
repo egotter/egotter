@@ -65,8 +65,3 @@ crumb :audience_insight do |screen_name|
   link t('audience_insights.show.crumb_title'), audience_insight_path(screen_name: screen_name, via: current_via("breadcrumb_audience_insight"))
   parent :timeline, screen_name
 end
-
-crumb :personality_insight do |screen_name|
-  link t('personality_insights.show.crumb_title'), personality_insight_path(screen_name: screen_name, via: current_via("breadcrumb_personality_insight"))
-  parent :timeline, screen_name
-end

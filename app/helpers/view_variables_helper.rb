@@ -248,11 +248,6 @@ module ViewVariablesHelper
     end
   end
 
-  # TODO Remove later
-  def current_breadcrumb(user)
-    breadcrumb controller_name.singularize.to_sym, user.screen_name
-  end
-
   def current_canonical_url(twitter_user)
     send("#{controller_name.singularize}_url", twitter_user)
   end

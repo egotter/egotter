@@ -5,14 +5,8 @@
 <% content_for :navbar_title, current_navbar_title %>
 <% content_for :result_title, current_page_title(@twitter_user) %>
 
-<% unless request.device_type == :smartphone %>
-  <% current_breadcrumb(@twitter_user) %>
-<% end %>
-
-<% if request.device_type == :smartphone %>
-  <% content_for :result_tabs do %>
-    <%= render partial: 'layouts/result_tabs', locals: {tabs: current_tabs(@twitter_user), active_tab: @active_tab} %>
-  <% end %>
+<% content_for :result_tabs do %>
+  <%= render partial: 'layouts/result_tabs', locals: {tabs: current_tabs(@twitter_user), active_tab: @active_tab} %>
 <% end %>
 
 <% title current_page_title(@twitter_user) %>
@@ -62,10 +56,6 @@
   <div class="card card-body mb-3"><%= render partial: 'shared/tweet_times', locals: {description: tweets_per_hour_description(@twitter_user), api_path: api_tweet_times_path(uid: @twitter_user.uid)} %></div>
 
   <%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :middle}) %>
-<% end %>
-
-<% unless request.device_type == :smartphone %>
-  <div class="my-3"><%= render partial: 'result_pages/tabs', locals: {tabs: current_tabs(@twitter_user), active_tab: @active_tab} %></div>
 <% end %>
 
 <% if (tab = current_tabs(@twitter_user)[@active_tab]) && tab.count && tab.count >= 1 %>
