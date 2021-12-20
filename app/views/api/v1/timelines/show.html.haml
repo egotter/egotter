@@ -38,7 +38,6 @@
 .mb-5= feed_item :users, feed_attrs('favorite_friends', @twitter_user)
 .mb-5= feed_item :users, feed_attrs('inactive_friends', @twitter_user)
 .mb-5= feed_item :users, feed_attrs('inactive_followers', @twitter_user)
-.mb-5= feed_item :personality_insight, feed_title: t('timelines.feeds.personality_insights.title'), feed_description: t('timelines.feeds.personality_insights.description_html', user: @twitter_user.screen_name), feed_image: image_path('/egotter_personality_insight_840x450.jpg'), button_text: t('timelines.feeds.personality_insights.open', user: @twitter_user.screen_name), page_url: personality_insight_path(@twitter_user, via: current_via('feed_text')), twitter_user: @twitter_user
 .mb-5= feed_item :ad, feed_title: t('timelines.feeds.delete_tweets.title'), feed_description: t('timelines.feeds.delete_tweets.description_html', user: @twitter_user.screen_name), feed_image: image_path('/egotter_trash_with_text_400x448.png'), button_text: t('timelines.feeds.delete_tweets.open'), page_url: delete_tweets_path(via: current_via('feed_text'))
 .mb-5= feed_item :ad, feed_title: t('timelines.feeds.scheduled_tweets.title'), feed_description: t('timelines.feeds.scheduled_tweets.description_html', user: @twitter_user.screen_name), feed_image: image_path('/scheduled_tweets_og_image.jpg'), button_text: t('timelines.feeds.scheduled_tweets.open'), page_url: scheduled_tweets_url(via: current_via('feed_text'))
 

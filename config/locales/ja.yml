@@ -298,10 +298,6 @@ ja:
       inactive_followers:
         title: '休眠フォロワー'
         description: '@%{user} のフォロワーのうち、最近ツイートしていないユーザーです。低浮上フォロワーとも言います。'
-      personality_insights:
-        title: 'ツイッター性格診断'
-        description_html: 'ツイートから @%{user} の性格を推定してみましょう。ツイッター性格診断は、言語学的分析とパーソナリティ理論を応用し、これまでのツイートから @%{user} の特徴を推測します。'
-        open: '@%{user} の性格を分析する'
       delete_tweets:
         title: 'ツイートを一括削除'
         description_html: 'ツイートクリーナーで @%{user} のツイートを<br>一括で削除することができます。'
