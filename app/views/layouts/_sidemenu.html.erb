@@ -147,6 +147,7 @@
     btn.on('click', function () {
       menu.trigger('sidebar:toggle');
       ahoy.track('SideMenu opened');
+      return false;
     });
 
     function toggled() {

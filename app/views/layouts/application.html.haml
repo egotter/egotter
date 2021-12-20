@@ -48,16 +48,16 @@
     = render partial: 'shared/toast'
 
     - if show_header? && !under_maintenance?
-      - if result_page?
-        .sticky-top
+      .sticky-top
+        - if result_page?
           = render partial: 'layouts/result_header'
           - if content_for?(:result_tabs)
             - if request.device_type == :smartphone
               = yield(:result_tabs)
             - else
               .container= yield(:result_tabs)
-      - else
-        = render partial: 'layouts/header'
+        - else
+          = render partial: 'layouts/header'
 
     = render partial: 'layouts/alert'
 
