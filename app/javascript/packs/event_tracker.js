@@ -4,6 +4,28 @@ class EventTracker {
     this.deviceType = attrs['deviceType'];
     this.controllerAction = attrs['controllerAction'];
     this.via = attrs['via'];
+
+    var self = this;
+
+    window.trackPageEvents = function (pageName, eventName, eventParams) {
+      self.track(pageName, eventName, eventParams);
+    };
+
+    window.trackMessageEvent = function (eventName) {
+      self.trackMessageEvent(eventName);
+    };
+
+    window.trackDetectionEvent = function (eventName) {
+      self.trackDetectionEvent(eventName);
+    };
+
+    window.trackModalEvent = function (eventName, eventAction) {
+      self.trackModalEvent(eventName, eventAction);
+    };
+
+    window.trackTwitterLink = function (eventLocation, eventAction) {
+      self.trackTwitterLink(eventLocation, eventAction);
+    };
   }
 
   track(pageName, eventName, eventParams) {

@@ -1,36 +1,10 @@
 <%= javascript_pack_tag 'event_tracker' %>
 <script>
-  (function () {
-    var eventTracker = new EventTracker({
-      userId: '<%= current_user&.id %>',
-      deviceType: '<%= request.device_type %>',
-      controllerAction: '<%= controller_name %>#<%= action_name %>',
-      via: '<%= params[:via]&.truncate(200) %>'
-    });
-
-    window.trackPageEvents = function (pageName, eventName, eventParams) {
-      eventTracker.track(pageName, eventName, eventParams);
-    };
-
-    window.trackMessageEvent = function (eventName) {
-      eventTracker.trackMessageEvent(eventName);
-    };
-
-    window.trackDetectionEvent = function (eventName) {
-      eventTracker.trackDetectionEvent(eventName);
-    };
-
-    window.trackModalEvent = function (eventName, eventAction) {
-      eventTracker.trackModalEvent(eventName, eventAction);
-    };
-
-    window.trackTwitterLink = function (eventLocation, eventAction) {
-      eventTracker.trackTwitterLink(eventLocation, eventAction);
-    };
-
+  new EventTracker({userId: '<%= current_user&.id %>', deviceType: '<%= request.device_type %>', controllerAction: '<%= controller_name %>#<%= action_name %>', via: '<%= params[:via]&.truncate(200) %>'});
+  $(function () {
     $(document).on('click', '.track-twitter-link', function () {
       var eventLocation = $(this).data('location');
       window.trackTwitterLink(eventLocation, 'clicked');
     });
-  })();
+  });
 </script>

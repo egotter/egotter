@@ -1,21 +1,4 @@
 <%= javascript_pack_tag 'error_handler' %>
 <script>
-  (function () {
-    var errorHandler = new ErrorHandler({
-      userId: '<%= current_user&.id %>',
-      visitId: '<%= current_visit&.id %>',
-      controllerAction: '<%= "#{controller_name}##{action_name}" %>',
-      deviceType: '<%= request.device_type %>',
-      os: '<%= request.os + ' ' + request.os_version %>',
-      browser: '<%= request.browser + ' ' + request.browser_version %>'
-    });
-
-    window.onerror = function (message, filePath, rowNumber, columnNumber) {
-      errorHandler.handle('onerror', 'message=' + message + '&filePath=' + filePath + '&rowNumber=' + rowNumber + '&columnNumber=' + columnNumber);
-    };
-
-    window.addEventListener('unhandledrejection', function (e) {
-      errorHandler.handle('unhandledrejection', e.message);
-    });
-  })();
+  new ErrorHandler({userId: '<%= current_user&.id %>', visitId: '<%= current_visit&.id %>', controllerAction: '<%= "#{controller_name}##{action_name}" %>', deviceType: '<%= request.device_type %>', os: '<%= request.os + ' ' + request.os_version %>', browser: '<%= request.browser + ' ' + request.browser_version %>'});
 </script>

@@ -6,6 +6,16 @@ class ErrorHandler {
     this.deviceType = attrs['deviceType'];
     this.os = attrs['os'];
     this.browser = attrs['browser'];
+
+    var self = this;
+
+    window.onerror = function (message, filePath, rowNumber, columnNumber) {
+      self.handle('onerror', 'message=' + message + '&filePath=' + filePath + '&rowNumber=' + rowNumber + '&columnNumber=' + columnNumber);
+    };
+
+    window.addEventListener('unhandledrejection', function (e) {
+      self.handle('unhandledrejection', e.message);
+    });
   }
 
   handle(kind, message) {
