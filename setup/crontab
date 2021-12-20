@@ -21,7 +21,7 @@ RUBY='/var/egotter/bin/cron/ruby.sh'
 # 20  9 * * * /bin/sh -c "PERIOD=night $RAKE periodic_reports:create_records"
 # 30 11 * * * /bin/sh -c "$RAKE periodic_reports:send_messages:night"
 
-*/10 * * * * /bin/sh -c "DRY_RUN=true ROLE=web $RUBY bin/adjust_servers.rb"
-*/10 * * * * /bin/sh -c "DRY_RUN=true ROLE=sidekiq $RUBY bin/adjust_servers.rb"
+*/3 * * * * /bin/sh -c "DRY_RUN=true ROLE=web $RUBY bin/adjust_servers.rb"
+*/3 * * * * /bin/sh -c "DRY_RUN=true ROLE=sidekiq $RUBY bin/adjust_servers.rb"
 
 0 * * * * /bin/sh -c "$RAKE trends:save"
