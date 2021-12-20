@@ -11,7 +11,7 @@
       return;
     }
 
-    new AdBlockDetector(token).detect(function () {
+    function detected() {
       if (!isRootPage) {
         ToastMessage.warn(message);
         ToastMessage.freeze();
@@ -20,13 +20,18 @@
           window.location.href = redirectPath;
         }, 3000);
       }
+    }
 
+    new AdBlockDetector(token).detect(function () {
+      detected();
       trackDetectionEvent('AdBlocker detected');
     });
 
     setTimeout(function () {
-      var h = $('.adsense-container').height();
-      $('.adsense-height').text(h);
+      if ($('.adsense-container').height() === 0) {
+        detected();
+        trackDetectionEvent('AdBlocker detected (height is 0)');
+      }
     }, 3000);
   });
 </script>
