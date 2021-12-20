@@ -7,9 +7,17 @@ version: "3"
 services:
   redis:
     image: redis
+    deploy:
+      resources:
+        limits:
+          memory: 64M
   redis2:
     image: redis
     hostname: redis2
+    deploy:
+      resources:
+        limits:
+          memory: 64M
   web:
     build: .
     working_dir: /home/root/egotter
@@ -22,6 +30,10 @@ services:
     ports:
       - "3000:3000"
       - "3035:3035"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
   sidekiq:
     build: .
     working_dir: /home/root/egotter
@@ -33,5 +45,9 @@ services:
       - /tmp/mysql.sock:/tmp/mysql.sock
     depends_on:
       - redis
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 volumes:
   bundle:
