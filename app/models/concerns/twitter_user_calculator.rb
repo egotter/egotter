@@ -7,6 +7,15 @@ module TwitterUserCalculator
   end
 
   class_methods do
+    def calc_total_new_friend_uids(users)
+      return [] if users.size <= 1
+      users.sort_by(&:created_at).each_cons(2).map { |prev, cur| cur.calc_new_friend_uids(prev) }.flatten.reverse
+    end
+
+    def calc_total_new_follower_uids(users)
+      return [] if users.size <= 1
+      users.sort_by(&:created_at).each_cons(2).map { |prev, cur| cur.calc_new_follower_uids(prev) }.flatten.reverse
+    end
   end
 
   def calc_uids_for(klass, login_user: nil)
@@ -137,32 +146,32 @@ module TwitterUserCalculator
     (calc_unfriend_uids & calc_unfollower_uids).uniq
   end
 
-  def calc_new_friend_uids
-    record = previous_version
+  def calc_new_friend_uids(record = nil)
+    record ||= previous_version
     record ? friend_uids - record.friend_uids : []
   rescue => e
     Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }
     []
   end
 
-  def calc_new_follower_uids
-    record = previous_version
+  def calc_new_follower_uids(record = nil)
+    record ||= previous_version
     record ? follower_uids - record.follower_uids : []
   rescue => e
     Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }
     []
   end
 
-  def calc_new_unfriend_uids
-    record = previous_version
+  def calc_new_unfriend_uids(record = nil)
+    record ||= previous_version
     record ? record.friend_uids - friend_uids : []
   rescue => e
     Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }
     []
   end
 
-  def calc_new_unfollower_uids
-    record = previous_version
+  def calc_new_unfollower_uids(record = nil)
+    record ||= previous_version
     record ? record.follower_uids - follower_uids : []
   rescue => e
     Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }

@@ -107,7 +107,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
       # To specify start_date, UnfriendsBuilder is used
       @unfriends_builder = UnfriendsBuilder.new(request.user.uid, start_date: @start_date, end_date: @end_date)
-      @new_friends_builder = FriendsGroupBuilder.new(request.user.uid, users: @unfriends_builder.users)
     end
 
     def build
@@ -120,9 +119,9 @@ class CreatePeriodicReportRequest < ApplicationRecord
       total_unfollowers = fetch_users(total_unfollower_uids, limit: 5, context: 'total_unfollower')
       account_statuses = attach_status(unfriends + unfollowers + total_unfollowers).map { |s| s.slice(:uid, :screen_name, :account_status) }
 
-      new_friend_uids = @new_friends_builder.new_friends.flatten.take(10)
+      new_friend_uids = TwitterUser.calc_total_new_friend_uids(@unfriends_builder.users)
       new_friends = TwitterDB::User.where_and_order_by_field(uids: new_friend_uids).map { |user| user.slice(:uid, :screen_name) }
-      new_follower_uids = @new_friends_builder.new_followers.flatten.take(10)
+      new_follower_uids = TwitterUser.calc_total_new_follower_uids(@unfriends_builder.users)
       new_followers = TwitterDB::User.where_and_order_by_field(uids: new_follower_uids).map { |user| user.slice(:uid, :screen_name) }
 
       properties = {

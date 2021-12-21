@@ -10,6 +10,38 @@ RSpec.describe TwitterUserCalculator do
     allow(twitter_user).to receive(:follower_uids).and_return(follower_uids)
   end
 
+  describe '.calc_total_new_friend_uids' do
+    let(:users) do
+      [
+          create(:twitter_user, created_at: 5.seconds.ago),
+          create(:twitter_user, created_at: 3.seconds.ago),
+          create(:twitter_user, created_at: 1.seconds.ago),
+      ]
+    end
+    subject { TwitterUser.calc_total_new_friend_uids(users) }
+    it do
+      expect(users[1]).to receive(:calc_new_friend_uids).with(users[0]).and_return([1, 2])
+      expect(users[2]).to receive(:calc_new_friend_uids).with(users[1]).and_return([2, 3])
+      is_expected.to eq([3, 2, 2, 1])
+    end
+  end
+
+  describe '.calc_total_new_follower_uids' do
+    let(:users) do
+      [
+          create(:twitter_user, created_at: 5.seconds.ago),
+          create(:twitter_user, created_at: 3.seconds.ago),
+          create(:twitter_user, created_at: 1.seconds.ago),
+      ]
+    end
+    subject { TwitterUser.calc_total_new_follower_uids(users) }
+    it do
+      expect(users[1]).to receive(:calc_new_follower_uids).with(users[0]).and_return([1, 2])
+      expect(users[2]).to receive(:calc_new_follower_uids).with(users[1]).and_return([2, 3])
+      is_expected.to eq([3, 2, 2, 1])
+    end
+  end
+
   describe '#calc_uids_for' do
     subject { twitter_user.calc_uids_for(klass) }
 
