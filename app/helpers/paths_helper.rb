@@ -191,13 +191,13 @@ module PathsHelper
   end
 
   def meta_og_image_url
-    if controller_name == 'personality_insights'
-      image_url('/egotter_personality_insight_840x450.jpg?loc=og_image')
-    elsif controller_name == 'close_friends' && action_name == 'show' && @twitter_user
+    if controller_name == 'close_friends' && action_name == 'show' && @twitter_user
       CloseFriendsOgImage.lambda_url(@twitter_user.uid)
     elsif controller_name == 'delete_tweets'
       # TODO
       image_url('/egotter_like_app_store_840x450.png?loc=og_image')
+    elsif params[:og_image] == 'test_chart'
+      image_url('/test_chart.png?loc=og_image')
     else
       image_url('/egotter_like_app_store_840x450.png?loc=og_image')
     end
