@@ -18,5 +18,17 @@ class DirectMessageEvent
 
       attrs
     end
+
+    # For debugging
+    # media_id = client.send(:chunk_upload, File.open(...), 'image/png', 'dm_image')[:media_id]
+    def build_with_media(uid, message, media_id)
+      {
+          type: 'message_create',
+          message_create: {
+              target: {recipient_id: uid},
+              message_data: {text: message, attachment: {type: 'media', media: {id: media_id}}}
+          }
+      }
+    end
   end
 end
