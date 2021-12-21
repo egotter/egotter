@@ -16,6 +16,16 @@ module TwitterUserCalculator
       return [] if users.size <= 1
       users.sort_by(&:created_at).each_cons(2).map { |prev, cur| cur.calc_new_follower_uids(prev) }.flatten.reverse
     end
+
+    def calc_total_new_unfriend_uids(users)
+      return [] if users.size <= 1
+      users.sort_by(&:created_at).each_cons(2).map { |prev, cur| cur.calc_new_unfriend_uids(prev) }.flatten.reverse
+    end
+
+    def calc_total_new_unfollower_uids(users)
+      return [] if users.size <= 1
+      users.sort_by(&:created_at).each_cons(2).map { |prev, cur| cur.calc_new_unfollower_uids(prev) }.flatten.reverse
+    end
   end
 
   def calc_uids_for(klass, login_user: nil)
