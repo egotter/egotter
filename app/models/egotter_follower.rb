@@ -27,7 +27,7 @@ class EgotterFollower < ApplicationRecord
         client.twitter.follower_ids(uid, options)
       end
     rescue => e
-      Airbag.warn { "#{e.inspect} rate_limit=#{client&.rate_limit}" }
+      Airbag.warn { "#{e.inspect} screen_name=#{client.user[:screen_name]} rate_limit=#{client&.rate_limit&.inspect}" }
       raise
     end
 
