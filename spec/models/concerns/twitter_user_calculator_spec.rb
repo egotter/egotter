@@ -111,15 +111,6 @@ RSpec.describe TwitterUserCalculator do
     end
   end
 
-  describe '#calc_inactive_mutual_friend_uids' do
-    let(:users) { 3.times.map { create(:twitter_db_user) } }
-    subject { twitter_user.calc_inactive_mutual_friend_uids }
-    it do
-      expect(twitter_user).to receive(:mutual_friends).with(inactive: true).and_return(users)
-      is_expected.to eq(users.map(&:uid))
-    end
-  end
-
   describe '#calc_inactive_follower_uids' do
     let(:users) { 3.times.map { create(:twitter_db_user) } }
     subject { twitter_user.calc_inactive_follower_uids }
@@ -129,20 +120,12 @@ RSpec.describe TwitterUserCalculator do
     end
   end
 
-  describe '#calc_mutual_unfriend_uids' do
-    subject { twitter_user.calc_mutual_unfriend_uids }
-    before do
-      allow(twitter_user).to receive(:calc_unfriend_uids).and_return([1, 2, 3])
-      allow(twitter_user).to receive(:calc_unfollower_uids).and_return([2, 3, 4])
-    end
-    it { is_expected.to eq([2, 3]) }
-  end
-
-  describe '#unfriends_builder' do
-    subject { twitter_user.send(:unfriends_builder) }
+  describe '#calc_inactive_mutual_friend_uids' do
+    let(:users) { 3.times.map { create(:twitter_db_user) } }
+    subject { twitter_user.calc_inactive_mutual_friend_uids }
     it do
-      expect(UnfriendsBuilder).to receive(:new).with(twitter_user.uid, end_date: twitter_user.created_at).and_return('builder')
-      is_expected.to eq('builder')
+      expect(twitter_user).to receive(:mutual_friends).with(inactive: true).and_return(users)
+      is_expected.to eq(users.map(&:uid))
     end
   end
 
@@ -166,6 +149,15 @@ RSpec.describe TwitterUserCalculator do
     end
   end
 
+  describe '#calc_mutual_unfriend_uids' do
+    subject { twitter_user.calc_mutual_unfriend_uids }
+    before do
+      allow(twitter_user).to receive(:calc_unfriend_uids).and_return([1, 2, 3])
+      allow(twitter_user).to receive(:calc_unfollower_uids).and_return([2, 3, 4])
+    end
+    it { is_expected.to eq([2, 3]) }
+  end
+
   describe '#calc_new_friend_uids' do
     subject { twitter_user.calc_new_friend_uids }
     before do
@@ -186,6 +178,26 @@ RSpec.describe TwitterUserCalculator do
     it { is_expected.to eq([4]) }
   end
 
+  describe '#calc_new_unfriend_uids' do
+    subject { twitter_user.calc_new_unfriend_uids }
+    before do
+      record = build(:twitter_user, uid: twitter_user.uid)
+      allow(record).to receive(:friend_uids).and_return([1, 2, 3, 4])
+      allow(twitter_user).to receive(:previous_version).and_return(record)
+    end
+    it { is_expected.to eq([4]) }
+  end
+
+  describe '#calc_new_unfollower_uids' do
+    subject { twitter_user.calc_new_unfollower_uids }
+    before do
+      record = build(:twitter_user, uid: twitter_user.uid)
+      allow(record).to receive(:follower_uids).and_return([2, 3, 4, 5])
+      allow(twitter_user).to receive(:previous_version).and_return(record)
+    end
+    it { is_expected.to eq([5]) }
+  end
+
   describe '#previous_version' do
     let(:record1) { build(:twitter_user, uid: twitter_user.uid, created_at: twitter_user.created_at - 1.hour) }
     let(:record2) { build(:twitter_user, uid: twitter_user.uid, created_at: twitter_user.created_at + 1.hour) }
@@ -195,5 +207,13 @@ RSpec.describe TwitterUserCalculator do
       record2.save(validate: false)
     end
     it { expect(subject.id).to eq(record1.id) }
+  end
+
+  describe '#unfriends_builder' do
+    subject { twitter_user.send(:unfriends_builder) }
+    it do
+      expect(UnfriendsBuilder).to receive(:new).with(twitter_user.uid, end_date: twitter_user.created_at).and_return('builder')
+      is_expected.to eq('builder')
+    end
   end
 end

@@ -125,10 +125,6 @@ module TwitterUserCalculator
     mutual_friends(inactive: true).map(&:uid)
   end
 
-  def calc_mutual_unfriend_uids
-    (calc_unfriend_uids & calc_unfollower_uids).uniq
-  end
-
   def calc_unfriend_uids
     unfriends_builder.unfriends.flatten
   end
@@ -137,23 +133,39 @@ module TwitterUserCalculator
     unfriends_builder.unfollowers.flatten
   end
 
+  def calc_mutual_unfriend_uids
+    (calc_unfriend_uids & calc_unfollower_uids).uniq
+  end
+
   def calc_new_friend_uids
-    if (record = previous_version)
-      friend_uids - record.friend_uids
-    else
-      []
-    end
+    record = previous_version
+    record ? friend_uids - record.friend_uids : []
   rescue => e
+    Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }
     []
   end
 
   def calc_new_follower_uids
-    if (record = previous_version)
-      follower_uids - record.follower_uids
-    else
-      []
-    end
+    record = previous_version
+    record ? follower_uids - record.follower_uids : []
   rescue => e
+    Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }
+    []
+  end
+
+  def calc_new_unfriend_uids
+    record = previous_version
+    record ? record.friend_uids - friend_uids : []
+  rescue => e
+    Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }
+    []
+  end
+
+  def calc_new_unfollower_uids
+    record = previous_version
+    record ? record.follower_uids - follower_uids : []
+  rescue => e
+    Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }
     []
   end
 
