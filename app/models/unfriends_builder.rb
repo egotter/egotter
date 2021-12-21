@@ -1,3 +1,4 @@
+# TODO Remove later
 class UnfriendsBuilder
 
   # TODO Decrease to avoid high loads
