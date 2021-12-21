@@ -76,9 +76,9 @@
       new Polling(options).start(function done() {
         new FetchChangesText(urls.twitter_users_changes).fetch(function done(message) {
           if (message) {
-            message += '<%= t('twitter_users.show.reload_page_html', url: timeline_path(twitter_user, via: current_via('reload_page'))) %>';
+            message += '<%= t('twitter_users.in_background.reload_page_html', url: timeline_path(twitter_user, via: current_via('reload_page'))) %>';
           } else {
-            message = '<%= t('twitter_users.show.update_is_coming', user: twitter_user.screen_name, url: timeline_path(twitter_user, via: current_via('update_is_coming'))) %>';
+            message = '<%= t('twitter_users.in_background.update_is_coming', user: twitter_user.screen_name, url: timeline_path(twitter_user, via: current_via('update_is_coming'))) %>';
           }
           ToastMessage.info(message);
         });
