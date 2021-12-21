@@ -200,11 +200,12 @@ module TwitterUserCalculator
   private
 
   def unfriends_target
+    # Want to decrease limit
     @unfriends_target ||= TwitterUser.select(:id, :uid, :screen_name, :created_at).
         creation_completed.
         where(uid: uid).
         where('created_at <= ?', created_at).
-        order(created_at: :desc).limit(50).reverse
+        order(created_at: :desc).limit(90).reverse
   end
 
   def sort_by_count_desc(ids)

@@ -105,6 +105,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       @start_date = PERIOD_START.ago
       @end_date = Time.zone.now
 
+      # Want to find unfollowers for a period of this report
       @target_users = TwitterUser.select(:id, :uid, :screen_name, :created_at).
           creation_completed.
           where(uid: request.user.uid).
