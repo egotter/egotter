@@ -27,7 +27,7 @@
           <div class="dropdown-divider"></div>
         <% end %>
 
-        <% if i < 2 %>
+        <% if i < 2 || true %>
           <%= link_to label, url, {id: id, class: 'dropdown-item'} %>
         <% elsif trial %>
           <%= link_to label, '#', {id: id, class: 'dropdown-item btn-end-trial'} %>
