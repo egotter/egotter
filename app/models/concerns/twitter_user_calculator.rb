@@ -145,11 +145,11 @@ module TwitterUserCalculator
   end
 
   def calc_unfriend_uids
-    unfriends_builder.unfriends.flatten
+    self.class.calc_total_new_unfriend_uids(unfriends_target)
   end
 
   def calc_unfollower_uids
-    unfriends_builder.unfollowers.flatten
+    self.class.calc_total_new_unfollower_uids(unfriends_target)
   end
 
   def calc_mutual_unfriend_uids
@@ -199,8 +199,12 @@ module TwitterUserCalculator
 
   private
 
-  def unfriends_builder
-    @unfriends_builder ||= UnfriendsBuilder.new(uid, end_date: created_at)
+  def unfriends_target
+    @unfriends_target ||= TwitterUser.select(:id, :uid, :screen_name, :created_at).
+        creation_completed.
+        where(uid: uid).
+        where('created_at <= ?', created_at).
+        order(created_at: :desc).limit(50).reverse
   end
 
   def sort_by_count_desc(ids)

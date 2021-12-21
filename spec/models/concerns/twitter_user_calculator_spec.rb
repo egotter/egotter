@@ -194,21 +194,19 @@ RSpec.describe TwitterUserCalculator do
   end
 
   describe '#calc_unfriend_uids' do
-    let(:builder) { double('builder') }
     subject { twitter_user.calc_unfriend_uids }
-    before { twitter_user.instance_variable_set(:@unfriends_builder, builder) }
+    before { allow(twitter_user).to receive(:unfriends_target).and_return('target') }
     it do
-      expect(builder).to receive_message_chain(:unfriends, :flatten)
+      expect(TwitterUser).to receive(:calc_total_new_unfriend_uids).with('target')
       subject
     end
   end
 
   describe '#calc_unfollower_uids' do
-    let(:builder) { double('builder') }
     subject { twitter_user.calc_unfollower_uids }
-    before { twitter_user.instance_variable_set(:@unfriends_builder, builder) }
+    before { allow(twitter_user).to receive(:unfriends_target).and_return('target') }
     it do
-      expect(builder).to receive_message_chain(:unfollowers, :flatten)
+      expect(TwitterUser).to receive(:calc_total_new_unfollower_uids).with('target')
       subject
     end
   end
@@ -273,11 +271,20 @@ RSpec.describe TwitterUserCalculator do
     it { expect(subject.id).to eq(record1.id) }
   end
 
-  describe '#unfriends_builder' do
-    subject { twitter_user.send(:unfriends_builder) }
+  describe '#unfriends_target' do
+    let(:users) do
+      [
+          create(:twitter_user, uid: twitter_user.uid, created_at: twitter_user.created_at - 1.second),
+          create(:twitter_user, uid: twitter_user.uid, created_at: twitter_user.created_at + 1.second),
+      ]
+    end
+    subject { twitter_user.send(:unfriends_target) }
+    before { users }
     it do
-      expect(UnfriendsBuilder).to receive(:new).with(twitter_user.uid, end_date: twitter_user.created_at).and_return('builder')
-      is_expected.to eq('builder')
+      result = subject
+      expect(result.size).to eq(2)
+      expect(result[0].id).to eq(users[0].id)
+      expect(result[1].id).to eq(twitter_user.id)
     end
   end
 end
