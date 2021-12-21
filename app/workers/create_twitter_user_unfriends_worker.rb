@@ -40,6 +40,9 @@ class CreateTwitterUserUnfriendsWorker
     CreateUnfriendsCountPointWorker.perform_async(twitter_user.uid, unfriend_uids.size)
     CreateUnfollowersCountPointWorker.perform_async(twitter_user.uid, unfollower_uids.size)
 
+    CreateNewUnfriendsCountPointWorker.perform_async(twitter_user.uid, twitter_user.calc_new_unfriend_uids.size)
+    CreateNewUnfollowersCountPointWorker.perform_async(twitter_user.uid, twitter_user.calc_new_unfollower_uids.size)
+
     DeleteUnfriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
     Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"

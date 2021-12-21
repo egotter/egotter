@@ -189,7 +189,7 @@ module TwitterUserCalculator
   end
 
   def previous_version
-    TwitterUser.where(uid: uid).where('created_at < ?', created_at).order(created_at: :desc).first
+    @previous_version ||= TwitterUser.where(uid: uid).where('created_at < ?', created_at).order(created_at: :desc).first
   end
 
   # For debugging
