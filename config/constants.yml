@@ -6,7 +6,7 @@ default: &default
   search_limitation:
     soft_limit: 2000
     warn_limit: 50000
-    hard_limit: 230000
+    hard_limit: 250000
   search_count_limitation:
     sign_in_bonus: 2
     sharing_bonus: 1
