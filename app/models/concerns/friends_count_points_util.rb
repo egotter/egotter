@@ -11,8 +11,9 @@ module FriendsCountPointsUtil
 
   class_methods do
     def group_by_day(uid, start_time, end_time, padding)
+      operator = (self == NewFriendsCountPoint || self == NewFollowersCountPoint) ? 'sum' : 'avg'
       records = where(uid: uid).where(created_at: start_time..end_time).
-          select('gd_day(created_at, "Asia/Tokyo") date, avg(value) val').group('date').to_a
+          select("gd_day(created_at, \"Asia/Tokyo\") date, #{operator}(value) val").group('date').to_a
 
       start_date = start_time.in_time_zone('Tokyo').to_date
       end_date = end_time.in_time_zone('Tokyo').to_date
