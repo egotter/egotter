@@ -6,6 +6,7 @@ module JobQueueingConcern
   def request_creating_twitter_user(uid)
     return unless user_signed_in?
     return if RateLimitExceededFlag.on?(current_user.id)
+    return if TooManyFriendsSearchedFlag.on?(current_user.id)
     return if TwitterUserUpdatedFlag.on?(uid)
     return if TwitterUser.too_short_create_interval?(uid)
     return if CreateTwitterUserRequest.too_short_request_interval?(uid)
