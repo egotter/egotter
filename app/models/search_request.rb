@@ -109,10 +109,12 @@ class SearchRequest < ApplicationRecord
 
     if user && TooManyFriendsSearchedFlag.on?(user.id)
       update(status: 'too many friends')
+      return
     end
 
     if !user && TwitterUserDecorator.new(TwitterUser.from_api_user(target_user)).adult_account?
       update(status: 'adult account')
+      return
     end
 
     update(status: 'ok')
