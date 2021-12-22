@@ -112,17 +112,19 @@ class TwitterUserFetcher
     end
 
     def start_bm
-      @bm = {}
-      @mutex = Mutex.new
+      @bm_result = Queue.new
       @start = Time.zone.now
     end
 
     def finish_bm(message)
-      @bm['sum'] = @bm.values.sum
-      @bm['elapsed'] = Time.zone.now - @start
-      @bm.transform_values! { |v| sprintf("%.3f", v) }
-
-      Airbag.info "#{message} #{@bm.inspect}"
+      if (elapsed = Time.zone.now - @start) > 3.0
+        result = @bm_result.size.times.map { @bm_result.pop }.to_h
+        result['sum'] = result.values.sum
+        result['elapsed'] = elapsed
+        result.transform_values! { |v| sprintf("%.3f", v) }
+        Airbag.info "#{message} #{result}"
+      end
+    rescue => e
     end
 
     private
@@ -170,12 +172,10 @@ class TwitterUserFetcher
     end
 
     def bm(message, &block)
-      if @mutex && @bm
+      if @bm_result
         start = Time.zone.now
         result = yield
-        @mutex.synchronize do
-          @bm[message] = Time.zone.now - start
-        end
+        @bm_result << [message, Time.zone.now - start]
         result
       else
         yield
