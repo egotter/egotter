@@ -6,7 +6,7 @@
   </div>
 </script>
 
-<script id='user-rectangle-template' type='x-tmpl-mustache'>
+<template id='user-rectangle-template'>
   <div class="card mb-3">
     <div class="d-flex">
       <div class="mt-1 ml-1">
@@ -14,48 +14,48 @@
           <img class="rounded-circle shadow" style="width: 50px; height: 50px;" alt="@{{screen_name}}">
         </a>
       </div>
-      <div class="mt-1 ml-1">
+      <div class="mt-1 ml-1" style="white-space: nowrap; overflow: hidden;">
         <div class="small">{{{name_with_icon}}}</div>
         <div class="small"><a href="{{timeline_url}}">@{{screen_name}}</a></div>
         <div class="small">{{{status_labels}}}</div>
       </div>
-    </div>
-
-    <div class="mx-1 mb-3">{{{followed_label}}}</div>
-    <div class="card-text small mx-1 mb-3">{{{description}}}</div>
-
-    <div class="card-text small mx-1 mb-3">
-      <a href="{{status_url}}">
-        <strong class="text-body">{{statuses_count}}</strong>
-        <span class="text-muted"><%= t('.statuses') %></span>
-      </a>
-      <a href="{{friend_url}}">
-        <strong class="text-body">{{friends_count}}</strong>
-        <span class="text-muted"><%= t('.friends') %></span>
-      </a>
-      <a href="{{follower_url}}">
-        <strong class="text-body">{{followers_count}}</strong>
-        <span class="text-muted"><%= t('.followers') %></span>
-      </a>
-    </div>
-
-    <div class="d-flex align-items-end">
-      <div class="small text-muted ml-1 mr-auto">{{index}}</div>
-
-      <div>
+      <div class="mt-1 mr-1 ml-auto" style="white-space: nowrap;">
         <a href="#" class="btn btn-outline-primary btn-sm" data-screen-name="{{screen_name}}" data-target="#open-twitter-modal" data-toggle="modal">
           <i class="fab fa-twitter"></i>
-          <%= t('.twitter') %>
         </a>
-
         <a href="{{timeline_url}}" class="btn btn-primary btn-sm">
           <i class="fas fa-search"></i>
           <%= t('.search') %>
         </a>
       </div>
     </div>
+
+    <div class="mx-1 mb-3">{{{followed_label}}}</div>
+    <div class="card-text small mx-1 mb-3">{{{description}}}</div>
+
+    <div class="d-flex card-text small mx-1 mb-1">
+      <div>
+        <a href="{{status_url}}">
+          <strong class="text-body">{{statuses_count}}</strong>
+          <span class="text-muted"><%= t('.statuses') %></span>
+        </a>
+      </div>
+      <div>
+        <a href="{{friend_url}}">
+          <strong class="text-body">{{friends_count}}</strong>
+          <span class="text-muted"><%= t('.friends') %></span>
+        </a>
+      </div>
+      <div>
+        <a href="{{follower_url}}">
+          <strong class="text-body">{{followers_count}}</strong>
+          <span class="text-muted"><%= t('.followers') %></span>
+        </a>
+      </div>
+      <div class="ml-auto text-muted">{{index}}</div>
+    </div>
   </div>
-</script>
+</template>
 
 <script id='search-history-rectangle-template' type='x-tmpl-mustache'>
   <div class="card mb-3">

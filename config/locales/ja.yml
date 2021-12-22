@@ -1951,7 +1951,7 @@ ja:
       friends: 'フォロー'
       followers: 'フォロワー'
       twitter: 'ツイッター'
-      search: '検索する'
+      search: '検索'
     search_form:
       twitter_id: "Twitter ID"
       search_by_twitter_id: "@TwitterID で検索"
