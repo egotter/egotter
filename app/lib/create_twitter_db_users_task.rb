@@ -3,7 +3,12 @@ class CreateTwitterDBUsersTask
 
   def initialize(uids, user_id: nil, force: false)
     @uids = uids.uniq.map(&:to_i)
-    @client = user_id ? User.find(user_id).api_client : Bot.api_client
+    @user_id = user_id
+    if user_id && !RateLimitExceededFlag.on?(@user_id)
+      @client = User.find(user_id).api_client
+    else
+      @client = Bot.api_client
+    end
     @force = force
     @debug_message = ''
   end
@@ -47,7 +52,12 @@ class CreateTwitterDBUsersTask
     if TwitterApiStatus.no_user_matches?(e)
       []
     elsif retryable_twitter_error?(e)
+      if TwitterApiStatus.too_many_requests?(e) && @user_id
+        RateLimitExceededFlag.on(@user_id)
+      end
+
       if (retries -= 1) >= 0
+        Airbag.info { "#{self.class}: Client is switched #{e.inspect} user_id=#{@user_id}" }
         client = Bot.api_client
         retry
       else
