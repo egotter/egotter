@@ -1,5 +1,10 @@
-<%= modal_dialog id: 'search-modal', title: t('.title'), size: 'modal-lg' do %>
+<%= modal_dialog id: 'search-modal', title: t('.title'), button: {positive: t('.close'), category: 'outline-secondary'}, size: 'modal-lg' do %>
   <%= render partial: 'shared/search_form', locals: {track_id: 'search-modal', via: current_via('search_modal')} %>
+
+  <div class="loading text-center m-3">
+    <%= t('.loading') %>
+    <%= image_tag('/ajax-loader.gif?a=1') %>
+  </div>
 <% end %>
 
 <script>

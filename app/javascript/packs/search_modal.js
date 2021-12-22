@@ -31,9 +31,8 @@ class SearchModal {
     $.get(url).done(function (res) {
       logger.log(url, 'loaded');
 
-      if (res.modal_body) {
-        $modal.find('.modal-body').append(res.modal_body);
-      }
+      $modal.find('.loading').remove();
+      $modal.find('.modal-body').append(res.modal_body);
 
       if (res.users) {
         var container = $modal.find('#search-histories-users-container');
@@ -41,7 +40,7 @@ class SearchModal {
         container.empty();
 
         res.users.forEach(function (user) {
-          var rendered = Mustache.render(template, user);
+          var rendered = MustacheUtil.renderUser(template, user);
           container.append(rendered);
         });
       }
