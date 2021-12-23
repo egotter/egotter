@@ -8,7 +8,7 @@ class StartPeriodicReportsTask
       @user_ids = self.class.morning_user_ids
     elsif period == 'afternoon'
       @user_ids = self.class.afternoon_user_ids
-    elsif period == 'night_user_ids'
+    elsif period == 'night'
       @user_ids = self.class.night_user_ids
     end
   end
