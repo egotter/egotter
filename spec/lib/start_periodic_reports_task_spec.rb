@@ -15,25 +15,11 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     let(:user_ids) { [1, 2] }
     let(:instance) { described_class.new }
     subject { instance.start! }
-    before { allow(instance).to receive(:initialize_user_ids).and_return(user_ids) }
-
+    before { instance.instance_variable_set(:@user_ids, user_ids) }
     it do
       expect(instance).to receive(:create_requests).with(user_ids).and_return('requests')
       expect(instance).to receive(:create_jobs).with('requests')
       subject
-    end
-  end
-
-  describe '#initialize_user_ids' do
-    let(:start_date) { 'start_date' }
-    let(:end_date) { 'end_date' }
-    subject { described_class.new(start_date: start_date, end_date: end_date).initialize_user_ids }
-
-    it do
-      expect(described_class).to receive(:dm_received_user_ids).and_return([1, 2])
-      expect(described_class).to receive(:recent_access_user_ids).with(start_date, end_date).and_return([2, 3])
-      expect(described_class).to receive(:new_user_ids).with(start_date, end_date).and_return([3, 4])
-      is_expected.to match_array([1, 2, 3, 4])
     end
   end
 
@@ -123,22 +109,6 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     before { allow(DirectMessageReceiveLog).to receive(:received_sender_ids).and_return(users.map(&:uid)) }
     it do
       is_expected.to eq([users[0].id])
-    end
-  end
-
-  describe '.recent_access_user_ids' do
-    let(:users) { 3.times.map { create(:user) } }
-    subject { described_class.recent_access_user_ids }
-
-    before do
-      users[0].access_days.create!(date: 1.day.ago.to_date, created_at: 1.day.ago)
-      users[1].access_days.create!(date: 10.hours.ago.to_date, created_at: 10.hours.ago)
-      users[2].access_days.create!(date: 1.hours.ago.to_date, created_at: 1.hour.ago)
-    end
-
-    it do
-      expect(described_class).to receive(:reject_stop_requested_user_ids).with([users[1].id]).and_return('result')
-      is_expected.to eq('result')
     end
   end
 

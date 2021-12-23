@@ -11,34 +11,17 @@ class StartPeriodicReportsTask
     elsif period == 'night_user_ids'
       @user_ids = self.class.night_user_ids
     end
-
-    @start_date = start_date
-    @end_date = end_date
-    @limit = limit
   end
 
   def start!
     response = SlackBotClient.channel('cron').post_message("Start sending reports period=#{@period}") rescue {}
 
-    user_ids = initialize_user_ids
-    return if user_ids.empty?
-
-    requests = create_requests(user_ids)
-    create_jobs(requests)
-
-    SlackBotClient.channel('cron').post_message("Finished user_ids=#{user_ids.size} period=#{@period}", thread_ts: response['ts']) rescue nil
-  end
-
-  def initialize_user_ids
-    if @user_ids.nil?
-      user_ids = self.class.dm_received_user_ids
-      user_ids += self.class.recent_access_user_ids(@start_date, @end_date).take(@limit)
-      user_ids += self.class.new_user_ids(@start_date, @end_date).take(@limit)
-      @user_ids = user_ids.uniq
-      Rails.logger.debug { "#{self.class}##{__method__} user_ids.size=#{@user_ids.size}" }
+    if @user_ids.any?
+      requests = create_requests(@user_ids)
+      create_jobs(requests)
     end
 
-    @user_ids
+    SlackBotClient.channel('cron').post_message("Finished user_ids=#{@user_ids.size} period=#{@period}", thread_ts: response['ts']) rescue nil
   end
 
   def create_requests(user_ids)
@@ -91,20 +74,6 @@ class StartPeriodicReportsTask
     def dm_received_user_ids
       uids = DirectMessageReceiveLog.received_sender_ids
       uids.each_slice(1000).map { |uids_array| User.authorized.where(uid: uids_array).pluck(:id) }.flatten
-    end
-
-    ACCESS_DAYS_START = 12.hours
-    ACCESS_DAYS_END = 3.hours
-
-    # TODO Remove later
-    def recent_access_user_ids(start_date = nil, end_date = nil)
-      start_date = ACCESS_DAYS_START.ago unless start_date
-      end_date = ACCESS_DAYS_END.ago unless end_date
-
-      # The target is `created_at`, not 'date'
-      user_ids = AccessDay.where(created_at: start_date..end_date).select(:user_id).distinct.map(&:user_id)
-      user_ids = user_ids.each_slice(1000).map { |ids_array| User.where(authorized: true, id: ids_array).pluck(:id) }.flatten
-      reject_stop_requested_user_ids(user_ids)
     end
 
     NEW_USERS_START = 1.day
