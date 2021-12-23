@@ -59,39 +59,44 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     end
   end
 
-  describe '.morning_user_ids' do
-    let(:user) { create(:user) }
-    subject { described_class.morning_user_ids }
+  describe '.periodic_base_user_ids' do
+    subject { described_class.periodic_base_user_ids }
     before do
-      allow(described_class).to receive(:premium_user_ids).and_return([1, 2])
-      allow(described_class).to receive(:dm_received_user_ids).and_return([2, 3])
-      allow(described_class).to receive(:new_user_ids).with(any_args).and_return([3, 4])
-      allow(described_class).to receive(:reject_specific_period_stopped_user_ids).with([1, 2, 3, 4], :morning).and_return('result')
+      allow(described_class).to receive(:dm_received_user_ids).and_return([1, 2])
+      allow(described_class).to receive(:new_user_ids).and_return([2, 3])
+      allow(described_class).to receive(:premium_user_ids).and_return([1, 4])
     end
-    it { is_expected.to eq('result') }
+    it do
+      expect(described_class).to receive(:reject_egotter_blocker_user_ids).and_return([1, 2, 3]).and_return([1, 3])
+      expect(described_class).to receive(:reject_stop_requested_user_ids).and_return([1, 3, 4]).and_return([3, 4])
+      is_expected.to eq([3, 4])
+    end
+  end
+
+  describe '.morning_user_ids' do
+    subject { described_class.morning_user_ids }
+    it do
+      expect(described_class).to receive(:periodic_base_user_ids).and_return([1, 2, 3])
+      expect(described_class).to receive(:reject_specific_period_stopped_user_ids).with([1, 2, 3], :morning).and_return([2, 3])
+      is_expected.to eq([2, 3])
+    end
   end
 
   describe '.afternoon_user_ids' do
-    let(:user) { create(:user) }
     subject { described_class.afternoon_user_ids }
-    before do
-      allow(described_class).to receive(:premium_user_ids).and_return([1, 2])
-      allow(described_class).to receive(:dm_received_user_ids).and_return([2, 3])
-      allow(described_class).to receive(:new_user_ids).with(any_args).and_return([3, 4])
-      allow(described_class).to receive(:reject_specific_period_stopped_user_ids).with([1, 2, 3, 4], :afternoon).and_return('result')
+    it do
+      expect(described_class).to receive(:periodic_base_user_ids).and_return([1, 2, 3])
+      expect(described_class).to receive(:reject_specific_period_stopped_user_ids).with([1, 2, 3], :afternoon).and_return([2, 3])
+      is_expected.to eq([2, 3])
     end
-    it { is_expected.to eq('result') }
   end
 
   describe '.night_user_ids' do
-    let!(:user) { create(:user) }
     subject { described_class.night_user_ids }
-    before do
-      allow(described_class).to receive(:premium_user_ids).and_return([1, 2])
-      allow(described_class).to receive(:dm_received_user_ids).and_return([2, 3])
-      allow(described_class).to receive(:new_user_ids).with(any_args).and_return([3, 4])
+    it do
+      expect(described_class).to receive(:periodic_base_user_ids).and_return([1, 2, 3])
+      is_expected.to eq([1, 2, 3])
     end
-    it { is_expected.to eq([1, 2, 3, 4]) }
   end
 
   describe '#reject_specific_period_stopped_user_ids' do
@@ -108,14 +113,16 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
   end
 
   describe '.dm_received_user_ids' do
-    let(:users) { 2.times.map { create(:user) } }
+    let(:users) do
+      [
+          create(:user),
+          create(:user, authorized: false),
+      ]
+    end
     subject { described_class.dm_received_user_ids }
-
-    before { allow(DirectMessageReceiveLog).to receive(:received_sender_ids).and_return([users[1].uid]) }
-
+    before { allow(DirectMessageReceiveLog).to receive(:received_sender_ids).and_return(users.map(&:uid)) }
     it do
-      expect(described_class).to receive(:reject_stop_requested_user_ids).with([users[1].id]).and_return('result')
-      is_expected.to eq('result')
+      is_expected.to eq([users[0].id])
     end
   end
 
@@ -136,24 +143,22 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
   end
 
   describe '.new_user_ids' do
-    let(:users) { 2.times.map { create(:user) } }
+    let(:users) do
+      [
+          create(:user, created_at: 2.day.ago),
+          create(:user, created_at: 10.hours.ago),
+          create(:user, authorized: false, created_at: 5.hours.ago),
+      ]
+    end
     subject { described_class.new_user_ids }
-
-    before do
-      users[0].update(created_at: 2.day.ago)
-      users[1].update(created_at: 10.hours.ago)
-    end
-
-    it do
-      expect(described_class).to receive(:reject_stop_requested_user_ids).with([users[1].id]).and_return('result')
-      is_expected.to eq('result')
-    end
+    before { users }
+    it { is_expected.to eq([users[1].id]) }
   end
 
   describe '.premium_user_ids' do
-    subject { User.premium.pluck(:id) }
+    subject { described_class.premium_user_ids }
     it do
-      expect(User).to receive_message_chain(:premium, :pluck).with(no_args).with(:id)
+      expect(User).to receive_message_chain(:premium, :authorized, :pluck).with(no_args).with(no_args).with(:id)
       subject
     end
   end

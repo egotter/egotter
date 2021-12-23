@@ -62,8 +62,10 @@ class StartPeriodicReportsTask
 
   class << self
     def periodic_base_user_ids
-      user_ids = (premium_user_ids + dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
-      reject_egotter_blocker_user_ids(user_ids)
+      user_ids = (dm_received_user_ids + new_user_ids).uniq
+      user_ids = reject_egotter_blocker_user_ids(user_ids)
+      user_ids = (user_ids + premium_user_ids).uniq
+      reject_stop_requested_user_ids(user_ids)
     end
 
     def morning_user_ids
@@ -88,13 +90,13 @@ class StartPeriodicReportsTask
 
     def dm_received_user_ids
       uids = DirectMessageReceiveLog.received_sender_ids
-      user_ids = uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).pluck(:id) }.flatten
-      reject_stop_requested_user_ids(user_ids)
+      uids.each_slice(1000).map { |uids_array| User.authorized.where(uid: uids_array).pluck(:id) }.flatten
     end
 
     ACCESS_DAYS_START = 12.hours
     ACCESS_DAYS_END = 3.hours
 
+    # TODO Remove later
     def recent_access_user_ids(start_date = nil, end_date = nil)
       start_date = ACCESS_DAYS_START.ago unless start_date
       end_date = ACCESS_DAYS_END.ago unless end_date
@@ -111,13 +113,11 @@ class StartPeriodicReportsTask
     def new_user_ids(start_date = nil, end_date = nil)
       start_date = NEW_USERS_START.ago unless start_date
       end_date = NEW_USERS_END.ago unless end_date
-
-      user_ids = User.where(created_at: start_date..end_date).where(authorized: true).pluck(:id)
-      reject_stop_requested_user_ids(user_ids)
+      User.authorized.where(created_at: start_date..end_date).pluck(:id)
     end
 
     def premium_user_ids
-      User.premium.pluck(:id)
+      User.premium.authorized.pluck(:id)
     end
 
     def reject_stop_requested_user_ids(user_ids)
