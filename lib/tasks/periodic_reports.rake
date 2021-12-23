@@ -1,9 +1,7 @@
 namespace :periodic_reports do
   desc 'Send messages'
   task send_messages: :environment do
-    user_ids = StartPeriodicReportsTask.morning_user_ids
-    StartPeriodicReportsTask.new(user_ids: user_ids).start!
-    puts "user_ids=#{user_ids.size}"
+    StartPeriodicReportsTask.new(period: ENV['PERIOD']).start!
   end
 
   desc 'Send remind messages'
@@ -13,7 +11,7 @@ namespace :periodic_reports do
     puts "user_ids=#{task.user_ids.size}"
   end
 
-  desc 'Send re-engage messages'
+  # TODO Remove later
   task send_reengage_messages: :environment do
     start_date = ENV['START_DATE'] ? Time.zone.parse(ENV['START_DATE']) : 7.days.ago
     end_date = ENV['END_DATE'] ? Time.zone.parse(ENV['END_DATE']) : Time.zone.now
@@ -53,24 +51,22 @@ namespace :periodic_reports do
   end
 
   task create_records: :environment do
-    task = StartPeriodicReportsCreatingRecordsTask.new(period: ENV['PERIOD'])
-    task.start!
-    puts "user_ids=#{task.user_ids.size}"
+    StartPeriodicReportsCreatingRecordsTask.new(period: ENV['PERIOD']).start!
   end
 
   namespace :send_messages do
     desc 'Send morning messages'
-    task morning: :environment do |task|
+    task morning: :environment do
       StartPeriodicReportsTask.new(period: 'morning').start!
     end
 
     desc 'Send afternoon messages'
-    task afternoon: :environment do |task|
+    task afternoon: :environment do
       StartPeriodicReportsTask.new(period: 'afternoon').start!
     end
 
     desc 'Send night messages'
-    task night: :environment do |task|
+    task night: :environment do
       StartPeriodicReportsTask.new(period: 'night').start!
     end
   end

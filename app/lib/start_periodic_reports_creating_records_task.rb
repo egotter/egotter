@@ -1,22 +1,25 @@
 class StartPeriodicReportsCreatingRecordsTask
-  attr_reader :user_ids
-
-  def initialize(user_ids: nil, period: nil)
-    @user_ids = user_ids
+  def initialize(period:)
     @period = period || 'none'
+
+    if period == 'morning'
+      @user_ids = StartPeriodicReportsTask.morning_user_ids
+    elsif period == 'afternoon'
+      @user_ids = StartPeriodicReportsTask.afternoon_user_ids
+    elsif period == 'night'
+      @user_ids = StartPeriodicReportsTask.night_user_ids
+    end
   end
 
   def start!
-    user_ids = initialize_user_ids
-    return if user_ids.empty?
+    response = SlackBotClient.channel('cron').post_message("Start creating records period=#{@period}") rescue {}
 
-    requests = create_requests(user_ids)
-    create_jobs(requests)
-    requests.size
-  end
+    if @user_ids.any?
+      requests = create_requests(@user_ids)
+      create_jobs(requests)
+    end
 
-  def initialize_user_ids
-    @user_ids ||= StartPeriodicReportsTask.morning_user_ids
+    SlackBotClient.channel('cron').post_message("Finished user_ids=#{@user_ids.size} period=#{@period}", thread_ts: response['ts']) rescue nil
   end
 
   def create_requests(user_ids)

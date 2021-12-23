@@ -154,7 +154,4 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
       it { is_expected.to match_array([1, 3]) }
     end
   end
-
-  describe '.allotted_messages_will_expire_user_ids' do
-  end
 end
