@@ -22,13 +22,21 @@ class InvalidateExpiredCredentialWorker
   # options:
   def perform(bot_id, options = {})
     bot = Bot.find(bot_id)
-    bot.sync_credential_status
+    api_user = bot.api_client.twitter.verify_credentials
+    bot.assign_attributes(authorized: true, screen_name: api_user.screen_name)
 
-    if (changes = bot.saved_changes).any?
-      notify("bot is changed bot_id=#{bot_id} changes=#{changes}")
+    if bot.changed?
+      bot.save
+      notify("bot is updated bot_id=#{bot_id} changes=#{bot.saved_changes}")
     end
   rescue => e
-    handle_worker_error(e, bot_id: bot_id, **options)
+    if TwitterApiStatus.unauthorized?(e)
+      bot.update(authorized: false)
+    elsif TwitterApiStatus.temporarily_locked?(e)
+      bot.update(locked: true)
+    else
+      handle_worker_error(e, bot_id: bot_id, **options)
+    end
   end
 
   private

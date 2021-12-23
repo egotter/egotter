@@ -26,23 +26,6 @@ class Bot < ApplicationRecord
     ApiClient.instance(options.merge(access_token: token, access_token_secret: secret))
   end
 
-  def sync_credential_status
-    begin
-      user = api_client.twitter.verify_credentials
-      assign_attributes(authorized: true, screen_name: user.screen_name)
-    rescue => e
-      if TwitterApiStatus.unauthorized?(e)
-        assign_attributes(authorized: false)
-      elsif TwitterApiStatus.temporarily_locked?(e)
-        assign_attributes(locked: true)
-      else
-        raise
-      end
-    end
-
-    save! if changed?
-  end
-
   def rate_limit
     result = super
     {
