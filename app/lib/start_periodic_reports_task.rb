@@ -76,13 +76,8 @@ class StartPeriodicReportsTask
       uids.each_slice(1000).map { |uids_array| User.authorized.where(uid: uids_array).pluck(:id) }.flatten
     end
 
-    NEW_USERS_START = 1.day
-    NEW_USERS_END = 1.second
-
-    def new_user_ids(start_date = nil, end_date = nil)
-      start_date = NEW_USERS_START.ago unless start_date
-      end_date = NEW_USERS_END.ago unless end_date
-      User.authorized.where(created_at: start_date..end_date).pluck(:id)
+    def new_user_ids
+      User.authorized.where('created_at > ?', 1.day.ago).pluck(:id)
     end
 
     def premium_user_ids
