@@ -17,11 +17,13 @@ RSpec.describe UpdateUserAttrsWorker do
 
   describe '#perform' do
     let(:user) { create(:user) }
+    let(:api_user) { double('api_user', screen_name: 'new_name') }
     subject { worker.perform(user.id) }
     before { allow(User).to receive(:find).with(user.id).and_return(user) }
     it do
-      expect(user).to receive_message_chain(:api_client, :verify_credentials).and_return(screen_name: 'sn')
+      expect(user).to receive_message_chain(:api_client, :twitter, :verify_credentials).and_return(api_user)
       subject
+      expect(user.reload.screen_name).to eq(api_user.screen_name)
     end
   end
 end

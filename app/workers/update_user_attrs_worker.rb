@@ -22,13 +22,12 @@ class UpdateUserAttrsWorker
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
-    t_user = user.api_client.verify_credentials
-
-    user.screen_name = t_user[:screen_name]
-    user.save! if user.changed?
+    api_user = user.api_client.twitter.verify_credentials
+    user.assign_attributes(authorized: true, screen_name: api_user.screen_name)
+    user.save if user.changed?
   rescue => e
     if TwitterApiStatus.unauthorized?(e)
-      user.update!(authorized: false)
+      user.update(authorized: false)
     elsif TwitterApiStatus.not_found?(e) || TwitterApiStatus.suspended?(e) || TwitterApiStatus.too_many_requests?(e)
       # Do nothing
     else
