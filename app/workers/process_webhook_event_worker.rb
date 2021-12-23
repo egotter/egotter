@@ -60,7 +60,8 @@ class ProcessWebhookEventWorker
   def process_message_from_user(dm)
     DirectMessageSendCounter.clear(dm.sender_id)
 
-    processed = PeriodicReportResponder.from_dm(dm).respond
+    processed = StopAllReportsResponder.from_dm(dm).respond
+    processed = PeriodicReportResponder.from_dm(dm).respond unless processed
     processed = BlockReportResponder.from_dm(dm).respond unless processed
     processed = MuteReportResponder.from_dm(dm).respond unless processed
     processed = SearchReportResponder.from_dm(dm).respond unless processed

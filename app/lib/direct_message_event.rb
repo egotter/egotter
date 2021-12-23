@@ -19,6 +19,22 @@ class DirectMessageEvent
       attrs
     end
 
+    def build_with_replies(uid, message, replies)
+      {
+          type: 'message_create',
+          message_create: {
+              target: {recipient_id: uid},
+              message_data: {
+                  text: message,
+                  quick_reply: {
+                      type: 'options',
+                      options: replies
+                  }
+              }
+          }
+      }
+    end
+
     # For debugging
     # media_id = client.send(:chunk_upload, File.open(...), 'image/png', 'dm_image')[:media_id]
     def build_with_media(uid, message, media_id)

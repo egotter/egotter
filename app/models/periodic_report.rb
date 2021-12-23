@@ -616,6 +616,11 @@ class PeriodicReport < ApplicationRecord
       description: I18n.t('quick_replies.prompt_reports.description3')
   }
 
+  QUICK_REPLY_RESTART = {
+      label: I18n.t('quick_replies.prompt_reports.label4'),
+      description: I18n.t('quick_replies.prompt_reports.description4')
+  }
+
   class << self
     def default_quick_reply_options
       # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
