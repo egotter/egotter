@@ -53,7 +53,7 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
       allow(described_class).to receive(:premium_user_ids).and_return([1, 4])
     end
     it do
-      expect(described_class).to receive(:reject_egotter_blocker_user_ids).and_return([1, 2, 3]).and_return([1, 3])
+      expect(described_class).to receive(:reject_banned_user_ids).and_return([1, 2, 3]).and_return([1, 3])
       expect(described_class).to receive(:reject_stop_requested_user_ids).and_return([1, 3, 4]).and_return([3, 4])
       is_expected.to eq([3, 4])
     end
@@ -133,10 +133,10 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     end
   end
 
-  describe '.reject_egotter_blocker_user_ids' do
+  describe '.reject_banned_user_ids' do
     let(:users) { [create(:user), create(:user)] }
     let(:user_ids) { users.map(&:id) }
-    subject { described_class.reject_egotter_blocker_user_ids(user_ids) }
+    subject { described_class.reject_banned_user_ids(user_ids) }
     before { create(:banned_user, user_id: users[0].id) }
     it { is_expected.to match_array([users[1].id]) }
   end

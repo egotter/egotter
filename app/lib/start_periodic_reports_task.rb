@@ -46,7 +46,7 @@ class StartPeriodicReportsTask
   class << self
     def periodic_base_user_ids
       user_ids = (dm_received_user_ids + new_user_ids).uniq
-      user_ids = reject_egotter_blocker_user_ids(user_ids)
+      user_ids = reject_banned_user_ids(user_ids)
       user_ids = (user_ids + premium_user_ids).uniq
       reject_stop_requested_user_ids(user_ids)
     end
@@ -102,7 +102,7 @@ class StartPeriodicReportsTask
       user_ids = reject_stop_requested_user_ids(user_ids)
       user_ids = reject_remind_requested_user_ids(user_ids)
       user_ids = reject_premium_user_ids(user_ids)
-      reject_egotter_blocker_user_ids(user_ids)
+      reject_banned_user_ids(user_ids)
     end
 
     def reject_remind_requested_user_ids(user_ids)
@@ -112,7 +112,7 @@ class StartPeriodicReportsTask
       user_ids
     end
 
-    def reject_egotter_blocker_user_ids(user_ids)
+    def reject_banned_user_ids(user_ids)
       BannedUser.find_in_batches do |banned_users|
         user_ids -= banned_users.map(&:user_id)
       end
