@@ -7,9 +7,9 @@ module Api
 
       def index
         requests = [
-            DeleteTweetsRequest.where(user_id: current_user.id).order(created_at: :desc).limit(100),
-            DeleteTweetsBySearchRequest.where(user_id: current_user.id).order(created_at: :desc).limit(100),
-            DeleteTweetsByArchiveRequest.where(user_id: current_user.id).order(created_at: :desc).limit(100)
+            DeleteTweetsRequest.where(user_id: current_user.id).order(created_at: :desc).limit(10),
+            DeleteTweetsBySearchRequest.where(user_id: current_user.id).order(created_at: :desc).limit(10),
+            DeleteTweetsByArchiveRequest.where(user_id: current_user.id).order(created_at: :desc).limit(10)
         ].flatten.sort_by { |r| -r.created_at.to_i }.take(10)
 
         render json: {requests: to_json(requests)}
@@ -31,13 +31,13 @@ module Api
 
       def request_type(klass)
         if klass == DeleteTweetsRequest
-          t('delete_tweets.free.title')
+          t('.index.request_types.default')
         elsif klass == DeleteTweetsBySearchRequest
-          t('delete_tweets.search.title')
+          t('.index.request_types.search')
         elsif klass == DeleteTweetsByArchiveRequest
-          t('delete_tweets.premium.title')
+          t('.index.request_types.archive')
         else
-          t('delete_tweets.free.title')
+          t('.index.request_types.default')
         end
       end
 

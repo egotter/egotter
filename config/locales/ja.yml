@@ -1651,6 +1651,7 @@ ja:
       type: '種類'
       reservations: '予約'
       deletions: '完了'
+      loading: '読み込み中'
     uploader:
       debug_message_html:
         <div>
@@ -2224,6 +2225,12 @@ ja:
           success_html: |
             削除は%{delay}後に自動で始まります。今すぐ始めてよい場合は、@ego_tter へ【<a href="%{url}" target="_blank">%{message}</a>】と書いたDMを送ってください。
             <a href="%{url}" class="btn btn-sm btn-outline-primary" target="_blank">DMを送る</a>
+      delete_tweets_histories:
+        index:
+          request_types:
+            default: '一括'
+            search: '検索'
+            archive: '完全'
       deletable_tweets:
         index:
           completed_html: |
