@@ -22,8 +22,8 @@ class SyncOrderEmailWorker
   end
 
   def send_message(order, channel = 'orders_sync')
-    message = "#{order.id} #{order.saved_changes.except('updated_at')}"
+    message = "#{self.class}: #{order.id} #{order.saved_changes.except('updated_at')}"
     SlackMessage.create(channel: channel, message: message)
-    SlackBotClient.channel(channel).post_message("`#{Rails.env}` #{message}")
+    SlackBotClient.channel(channel).post_message(message)
   end
 end
