@@ -184,7 +184,7 @@ class DeleteTweetsRequest < ApplicationRecord
   def tweet_finished_message
     message = DeleteTweetsReport.finished_tweet(user, self).message
     api_client.update(message)
-    SendMessageToSlackWorker.perform_async(:delete_tweets, "request_id=#{id} tweet=#{message}")
+    SlackBotClient.channel('monit_delete_tweets').post_message("request_id=#{id} tweet=#{message}") rescue nil
   rescue => e
     if TwitterApiStatus.temporarily_locked?(e)
       # Do nothing
