@@ -66,6 +66,10 @@ class TwitterApiStatus
       ex.class == Twitter::Error::Forbidden && ex.message == "Your account is suspended and is not permitted to access this feature."
     end
 
+    def retry_timeout?(ex)
+      ex.class == ApiClient::RetryExhausted && ServiceStatus.http_timeout?(ex.cause)
+    end
+
     # This exception is raised when calling #follow!
     def blocked_from_following?(ex)
       ex && ex.class == Twitter::Error::Forbidden && ex.message == 'You have been blocked from following this account at the request of the user.'

@@ -208,7 +208,7 @@ class CreateTwitterUserRequest < ApplicationRecord
       raise TooManyRequests.new("user_id=#{user_id} api_name=#{@fetcher&.api_name}")
     end
 
-    if e.class == ApiClient::RetryExhausted && ServiceStatus.http_timeout?(e.cause)
+    if TwitterApiStatus.retry_timeout?(e)
       raise TimeoutError.new(e.inspect)
     end
 
