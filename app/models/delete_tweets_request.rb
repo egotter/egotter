@@ -152,8 +152,9 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def destroy_statuses!(tweets)
-    tweets.each do |tweet|
-      DeleteTweetWorker.perform_async(user_id, tweet.id, request_id: id, last_tweet: tweet == tweets.last)
+    tweets.each.with_index do |tweet, i|
+      interval = (0.1 * i).floor
+      DeleteTweetWorker.perform_in(interval, user_id, tweet.id, request_id: id, last_tweet: tweet == tweets.last)
     end
   end
 

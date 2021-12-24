@@ -149,8 +149,9 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     subject { request.destroy_statuses!(tweets) }
 
     it do
-      tweets.each do |tweet|
-        expect(DeleteTweetWorker).to receive(:perform_async).with(user.id, tweet.id, request_id: request.id, last_tweet: tweet == tweets.last)
+      tweets.each.with_index do |tweet, i|
+        interval = (0.1 * i).floor
+        expect(DeleteTweetWorker).to receive(:perform_in).with(interval, user.id, tweet.id, request_id: request.id, last_tweet: tweet == tweets.last)
       end
       subject
     end

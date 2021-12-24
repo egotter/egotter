@@ -124,8 +124,9 @@ class DeleteFavoritesRequest < ApplicationRecord
   end
 
   def destroy_favorites!(tweets)
-    tweets.each do |tweet|
-      DeleteFavoriteWorker.perform_async(user_id, tweet.id, request_id: id, last_tweet: tweet == tweets.last)
+    tweets.each.with_index do |tweet, i|
+      interval = (0.1 * i).floor
+      DeleteFavoriteWorker.perform_in(interval, user_id, tweet.id, request_id: id, last_tweet: tweet == tweets.last)
     end
   end
 

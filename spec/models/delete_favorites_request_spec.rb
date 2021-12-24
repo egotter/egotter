@@ -121,8 +121,9 @@ RSpec.describe DeleteFavoritesRequest, type: :model do
     subject { request.destroy_favorites!(tweets) }
 
     it do
-      tweets.each do |tweet|
-        expect(DeleteFavoriteWorker).to receive(:perform_async).with(user.id, tweet.id, request_id: request.id, last_tweet: tweet == tweets.last)
+      tweets.each.with_index do |tweet, i|
+        interval = (0.1 * i).floor
+        expect(DeleteFavoriteWorker).to receive(:perform_in).with(interval, user.id, tweet.id, request_id: request.id, last_tweet: tweet == tweets.last)
       end
       subject
     end
