@@ -194,7 +194,7 @@ class ApiClient
     rescue => e
       @retries += 1
       handle_retryable_error(e)
-      sleep 0.1 # TODO Retry with exponential backoff and jitter
+      sleep 0.1 * @retries
       retry
     end
 
