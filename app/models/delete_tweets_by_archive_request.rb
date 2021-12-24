@@ -32,37 +32,35 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
   private
 
   def delete_tweets(client, tweets, threads_count)
-    started_time = Time.zone.now
+    start_time = Time.zone.now
     total_size = tweets.size
     processed_count = 0
     errors_count = 0
+    stopped = false
 
     tweets.each_slice(threads_count) do |partial_tweets|
-      threads = partial_tweets.map do |t|
+      threads = partial_tweets.map do |tweet|
         Thread.new do
-          delete_tweet(client, t)
+          client.destroy_status(tweet.id)
         rescue => e
-          if (errors_count += 1) > 5
-            puts "Stop processing tweet_id=#{t.id}"
-            raise
-          else
-            puts "Ignore: exception=#{e.inspect} tweet_id=#{t.id}"
+          puts "#{e.inspect} tweet_id=#{tweet.id}"
+          if (errors_count += 1) > 10
+            puts 'Stop processing'
+            stopped = true
           end
         end
       end
       threads.each(&:join)
 
       if processed_count % 1000 == 0 || tweets[-1] == partial_tweets[-1]
-        puts progress(started_time, total_size, processed_count + partial_tweets.size)
+        puts progress(start_time, total_size, processed_count + partial_tweets.size)
       end
 
       processed_count += partial_tweets.size
       increment!(:deletions_count, partial_tweets.size)
-    end
-  end
 
-  def delete_tweet(client, tweet)
-    DeleteTweetWorker.new.send(:destroy_status!, client, tweet.id)
+      break if stopped
+    end
   end
 
   def progress(started_time, total_count, processed_count)
