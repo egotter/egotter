@@ -28,13 +28,5 @@ RSpec.describe DeleteTweetWorker do
       expect(client).to receive(:destroy_status).with(tweet_id)
       subject
     end
-
-    context 'If the number of retries is too many' do
-      before do
-        allow(client).to receive(:destroy_status).with(any_args).and_raise('Error')
-        allow(ServiceStatus).to receive(:retryable_error?).with(any_args).and_return(true)
-      end
-      it { expect { subject }.to raise_error(described_class::RetryExhausted) }
-    end
   end
 end

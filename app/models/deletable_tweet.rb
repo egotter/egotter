@@ -52,17 +52,10 @@ class DeletableTweet < ApplicationRecord
   private
 
   def destroy_status!
-    retries ||= 3
     user.api_client.twitter.destroy_status(tweet_id)
     update(deleted_at: Time.zone.now)
   rescue => e
-    if ServiceStatus.retryable_error?(e)
-      if (retries -= 1) > 0
-        retry
-      else
-        raise RetryExhausted.new(e.inspect)
-      end
-    elsif TwitterApiStatus.invalid_or_expired_token?(e) ||
+    if TwitterApiStatus.invalid_or_expired_token?(e) ||
         TwitterApiStatus.suspended?(e) ||
         TweetStatus.no_status_found?(e) ||
         TweetStatus.not_authorized?(e) ||
@@ -111,6 +104,4 @@ class DeletableTweet < ApplicationRecord
       )
     end
   end
-
-  class RetryExhausted < StandardError; end
 end
