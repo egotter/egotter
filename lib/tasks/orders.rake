@@ -1,5 +1,4 @@
 namespace :orders do
-  desc 'Update stripe attributes'
   task update_stripe_attributes: :environment do
     Order.where(canceled_at: nil).find_each.with_index do |order, i|
       interval = (0.1 * i).floor
@@ -25,14 +24,16 @@ namespace :orders do
     end
   end
 
-  desc 'Invalidate insufficient subscriptions'
-  task invalidate_insufficient_subscriptions: :environment do
+  task print_invalid_order: :environment do
     Order.unexpired.find_each do |order|
-      # TODO Confirm "c = customer.charges[0]; c.paid && !c.refunded"
       customer = Stripe::Customer.retrieve(order.customer_id)
       invoices = Stripe::Invoice.list(customer: customer.id, limit: 3).data
-      unless invoices[0].paid
-        order.cancel!('batch')
+      charges = Stripe::Charge.list(customer: customer.id, limit: 3).data
+
+      if (invoices[0] && invoices[0].status != 'draft' && !invoices[0].paid) || (charges[0] && charges[0].paid && charges[0].refunded)
+        puts "found #{order.id}"
+      else
+        print '.'
       end
     end
   end
