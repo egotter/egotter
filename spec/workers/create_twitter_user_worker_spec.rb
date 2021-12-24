@@ -6,9 +6,7 @@ RSpec.describe CreateTwitterUserWorker do
 
   describe '#unique_key' do
     subject { worker.unique_key(request.id, {}) }
-    it do
-      is_expected.to eq("#{request.user_id}-#{request.uid}")
-    end
+    it { is_expected.to eq(request.uid) }
   end
 
   describe '#after_skip' do

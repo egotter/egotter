@@ -5,13 +5,11 @@ class CreateTwitterUserWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
-    request = CreateTwitterUserRequest.find(request_id)
-    "#{request.user_id}-#{request.uid}"
+    CreateTwitterUserRequest.find(request_id).uid
   end
 
-  # Notice: This interval is for the job. It is not for creating records.
   def unique_in
-    TwitterUser::CREATE_RECORD_INTERVAL - 1.minute
+    1.minute
   end
 
   def after_skip(request_id, options = {})
