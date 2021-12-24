@@ -936,7 +936,7 @@ ja:
       search: '@%{user} を分析する'
       sign_in: 'ログインする'
       settings: '設定ページを開く'
-      open_dm: 'DM作成画面を開く'
+      open_dm: 'DMを送る'
     terms_of_service:
       title: "利用規約"
     privacy_policy:
@@ -1624,7 +1624,7 @@ ja:
       since_date: 'この日付から'
       until_date: 'この日付まで'
       send_dm: '完了後に自分へDMする'
-      send_test_message: 'DMのテスト'
+      send_test_message: 'DMのテスト送信'
       test_message: 'DM送信テスト ※そのまま送信'
       post_tweet: '完了後にツイートする'
       button: '無料で直近のツイートを削除する'
@@ -2222,7 +2222,7 @@ ja:
       delete_tweets_requests:
         create:
           success_html: |
-            削除は%{delay}後に自動で始まります。今すぐ始めてよい場合は、@ego_tter へ <a href="%{url}" target="_blank">%{message}</a> と書いたDMを送ってください。
+            削除は%{delay}後に自動で始まります。今すぐ始めてよい場合は、@ego_tter へ【<a href="%{url}" target="_blank">%{message}</a>】と書いたDMを送ってください。
             <a href="%{url}" class="btn btn-sm btn-outline-primary" target="_blank">DMを送る</a>
       deletable_tweets:
         index:

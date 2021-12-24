@@ -18,8 +18,7 @@ class DeleteTweetsTask
     e = nil
     request.perform!
   rescue DeleteTweetsRequest::TweetsNotFound => e
-    request.finished!
-    SendDeleteTweetsFinishedWorker.perform_async(request.id)
+    SendDeleteTweetsFinishedMessageWorker.perform_async(request.id)
   rescue DeleteTweetsRequest::InvalidToken => e
     # Do nothing
   rescue DeleteTweetsRequest::TemporarilyLocked => e
