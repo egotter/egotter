@@ -50,8 +50,13 @@ class CreateTwitterUserWorker
     AssembleTwitterUserWorker.perform_in(request.delay_for_importing, assemble_request.id, requested_by: self.class)
     TwitterUserAssembledFlag.on(task.twitter_user.uid)
   rescue CreateTwitterUserRequest::TimeoutError => e
-    # TODO Retry like CreateReportTwitterUserWorker
-    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options}"
+    if options['retries']
+      Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options}"
+    else
+      options['retries'] = 1
+      Airbag.warn "RETRY: #{e.inspect} request_id=#{request_id} options=#{options}" # TODO Remove
+      CreateTwitterUserWorker.perform_in(rand(20) + unique_in, request_id, options)
+    end
   rescue CreateTwitterUserRequest::Error => e
     # Do nothing
   rescue => e
