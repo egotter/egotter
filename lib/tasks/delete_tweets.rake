@@ -31,7 +31,6 @@ namespace :delete_tweets do
     end
 
     options = {
-        sync: ENV['SYNC'],
         dry_run: ENV['DRY_RUN'],
         since: ENV['SINCE'],
         _until: ENV['UNTIL'],

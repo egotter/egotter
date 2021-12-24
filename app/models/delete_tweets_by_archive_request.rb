@@ -23,14 +23,8 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform(tweets, sync: true, threads: 4)
-    if sync
-      client = user.api_client.twitter
-      delete_tweets(client, tweets, threads)
-    else
-      tweets.each do |tweet|
-        DeleteTweetByArchiveWorker.perform_async(id, tweet.id)
-      end
-    end
+    client = user.api_client.twitter
+    delete_tweets(client, tweets, threads)
 
     update(finished_at: Time.zone.now)
   end

@@ -4,7 +4,6 @@ class StartDeletingTweetsTask
     @screen_name = screen_name
     @file = file
     @tweets = load_tweets(file)
-    @sync = sync
     @dry_run = dry_run
     @since = since ? Time.zone.parse(since) : nil
     @until = _until ? Time.zone.parse(_until) : nil
@@ -110,7 +109,7 @@ class StartDeletingTweetsTask
       user = User.find_by(screen_name: @screen_name)
       request = DeleteTweetsByArchiveRequest.create!(user_id: user.id, since_date: @since, until_date: @until, reservations_count: @deletable_tweets.size)
       puts "request_id=#{request.id}"
-      request.perform(@deletable_tweets, sync: @sync, threads: @threads)
+      request.perform(@deletable_tweets, threads: @threads)
     end
   end
 
