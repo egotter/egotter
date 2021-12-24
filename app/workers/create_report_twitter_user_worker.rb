@@ -3,6 +3,10 @@ class CreateReportTwitterUserWorker < CreateTwitterUserWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
+  def unique_in
+    10.seconds
+  end
+
   def after_skip(request_id, options = {})
     SkippedReportTwitterUserWorker.perform_async(request_id, options)
   end
@@ -21,9 +25,14 @@ class CreateReportTwitterUserWorker < CreateTwitterUserWorker
 
     task = CreateTwitterUserTask.new(request)
     task.start!(:reporting)
-  rescue CreateTwitterUserRequest::Unknown => e
-    # Suppress redundant message: CreateTwitterUserRequest::Unknown -> ApiClient::RetryExhausted -> HTTP::TimeoutError: execution expired
-    Airbag.warn "#{e.inspect.truncate(200)} request_id=#{request_id} options=#{options}"
+  rescue CreateTwitterUserRequest::TimeoutError => e
+    if options['retries']
+      Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options}"
+    else
+      options['retries'] = 1
+      Airbag.warn "RETRY: #{e.inspect} request_id=#{request_id} options=#{options}" # TODO Remove
+      CreateReportTwitterUserWorker.perform_in(rand(20) + unique_in, request_id, options)
+    end
   rescue CreateTwitterUserRequest::Error => e
     # Do nothing
   rescue => e

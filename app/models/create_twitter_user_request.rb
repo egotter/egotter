@@ -208,6 +208,10 @@ class CreateTwitterUserRequest < ApplicationRecord
       raise TooManyRequests.new("user_id=#{user_id} api_name=#{@fetcher&.api_name}")
     end
 
+    if e.class == ApiClient::RetryExhausted && ServiceStatus.http_timeout?(e.cause)
+      raise TimeoutError.new(e.inspect)
+    end
+
     Airbag.info "#{self.class}##{__method__}: error_class=#{e.class} error_message=#{e.message}"
     raise Unknown.new(e.inspect)
   end
@@ -251,6 +255,8 @@ class CreateTwitterUserRequest < ApplicationRecord
   class InternalServerError < Error; end
 
   class RetryExhausted < Error; end
+
+  class TimeoutError < Error; end
 
   class Unknown < StandardError; end
 end
