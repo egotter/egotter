@@ -16,17 +16,38 @@ RSpec.describe DeleteTweetWorker do
   describe '#perform' do
     subject { worker.perform(user.id, tweet_id, 'request_id' => request.id) }
     it do
-      expect(worker).to receive(:destroy_status!).with(client, tweet_id).and_return('result')
+      expect(worker).to receive(:destroy_status!).with(client, tweet_id, request).and_return('result')
       expect(request).to receive(:increment!).with(:destroy_count)
       subject
     end
   end
 
   describe '#destroy_status!' do
-    subject { worker.send(:destroy_status!, client, tweet_id) }
-    it do
-      expect(client).to receive(:destroy_status).with(tweet_id)
-      subject
+    subject { worker.send(:destroy_status!, client, tweet_id, request) }
+
+    context 'deletion succeeded' do
+      it do
+        expect(client).to receive(:destroy_status).with(tweet_id)
+        subject
+      end
+    end
+
+    context 'error raised' do
+      let(:error) { RuntimeError.new('error') }
+      before { allow(client).to receive(:destroy_status).and_raise(error) }
+
+      context 'the error can be ignored' do
+        before { allow(TweetStatus).to receive(:no_status_found?).with(error).and_return(true) }
+        it { is_expected.to be_nil }
+      end
+
+      context 'the error cannot be ignored' do
+        before { allow(TwitterApiStatus).to receive(:your_account_suspended?).with(error).and_return(true) }
+        it do
+          is_expected.to be_nil
+          expect(request.reload.stopped_at).to be_truthy
+        end
+      end
     end
   end
 end
