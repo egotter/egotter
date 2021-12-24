@@ -40,9 +40,7 @@ class SendMetricsToCloudWatchWorker
   private
 
   def calc_metrics(type)
-    Timeout.timeout(10.seconds) do
-      send(type)
-    end
+    send(type)
   rescue => e
     Airbag.warn "#{e.inspect} type=#{type}"
   end
