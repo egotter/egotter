@@ -11,8 +11,14 @@ class DeleteForbiddenUsersWorker
   end
 
   def perform(options = {})
+    ids_array = []
+
     ForbiddenUser.where('created_at < ?', 15.minutes.ago).find_in_batches do |users|
-      ForbiddenUser.where(id: users.map(&:id)).delete_all
+      ids_array << users.map(&:id)
+    end
+
+    ids_array.each do |ids|
+      ForbiddenUser.where(id: ids).delete_all
     end
   rescue => e
     Airbag.warn "#{e.inspect} options=#{options.inspect}"
