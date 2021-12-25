@@ -17,7 +17,7 @@ class DeleteTweetBySearchWorker
     request.increment!(:deletions_count)
 
     if request.last_tweet_id?(tweet_id)
-      SendDeleteTweetsBySearchFinishedMessageWorker.perform_async(request.id)
+      SendDeleteTweetsBySearchFinishedMessageWorker.perform_in(5.seconds, request.id)
     end
   rescue => e
     request.update(error_message: e.inspect)
