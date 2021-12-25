@@ -1,3 +1,4 @@
+# TODO Rename to CreateDirectMessageEventLogWorker
 class CreateDirectMessageEventWorker
   include Sidekiq::Worker
   include WorkerErrorHandler

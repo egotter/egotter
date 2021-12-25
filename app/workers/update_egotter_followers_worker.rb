@@ -25,6 +25,7 @@ class UpdateEgotterFollowersWorker
     uids = EgotterFollower.collect_uids
     EgotterFollower.import_uids(uids)
     uids = EgotterFollower.filter_unnecessary_uids(uids)
+    Airbag.info { "#{self.class}: Delete #{uids.size} uids" }
     EgotterFollower.delete_uids(uids)
   rescue => e
     handle_worker_error(e, **options)

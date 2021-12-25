@@ -51,7 +51,7 @@ class EgotterFollower < ApplicationRecord
     end
 
     def import_uids(uids)
-      uids.each_slice(1000).with_index do |uids_array, i|
+      uids.each_slice(1000) do |uids_array|
         time = Time.zone.now
         if where(uid: uids_array).size != uids_array.size
           data = uids_array.map { |uid| [uid, time, time] }
@@ -65,7 +65,7 @@ class EgotterFollower < ApplicationRecord
     end
 
     def delete_uids(uids)
-      uids.each_slice(1000).with_index do |uids_array, i|
+      uids.each_slice(1000) do |uids_array|
         where(uid: uids_array).delete_all
       end
     end
