@@ -94,23 +94,11 @@
       }
     });
 
+    var multipleRetryCheckbox = new DeleteTweetsRequiredCheckbox('multiple-retry');
+    var tooOldTweetsCheckbox = new DeleteTweetsRequiredCheckbox('too-old-tweets');
+
     $('#open-delete-tweets-modal').on('click', function () {
-      var validated = [false, false];
-
-      if ($('#multiple-retry').prop('checked')) {
-        validated[0] = true;
-        $('label[for="multiple-retry"]').removeClass('text-danger');
-      } else {
-        $('label[for="multiple-retry"]').addClass('text-danger');
-      }
-
-      if ($('#too-old-tweets').prop('checked')) {
-        validated[1] = true;
-        $('label[for="too-old-tweets"]').removeClass('text-danger');
-      } else {
-        $('label[for="too-old-tweets"]').addClass('text-danger');
-      }
-
+      var validated = [multipleRetryCheckbox.validate(), tooOldTweetsCheckbox.validate()];
       if (!validated[0] || !validated[1]) {
         window.alert(checkIsRequired);
         return false;
