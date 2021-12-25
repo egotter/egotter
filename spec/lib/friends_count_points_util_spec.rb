@@ -77,6 +77,7 @@ RSpec.describe FriendsCountPointsUtil, type: :model do
       end
       it do
         data = subject
+        expect(klass.all.size).to eq(2) # TODO Debug
         expect(data.size).to eq(3)
         expect(data[0].val.to_i).to eq(100)
         expect(data[1].val.to_i).to eq(200)
