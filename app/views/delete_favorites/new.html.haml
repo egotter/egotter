@@ -3,20 +3,11 @@
 - title t('.meta_title')
 - set_meta_tags description: t('.meta_description', count: usage_count / 10000)
 
-- content_for :navbar_title, t('.navbar_title')
-
 - right_side_options = {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html', count: usage_count / 10000), redirect_path: delete_favorites_mypage_path(via: current_via), show_search_form: false, show_screenshots: false}
 = render partial: 'shared/side_by_side_section', locals: {right_side: right_side_options}
 
-= render partial: 'description'
-= render partial: 'shared/about_egotter'
-
-= render partial: 'shared/review_section', locals: {kind: 'delete_favorites', divider: true}
-.container= render partial: 'faq'
-= render partial: 'shared/features_section', locals: {divider: true}
-= render partial: 'shared/recent_users_section', locals: {divider: true}
-= render partial: 'shared/functions_section', locals: {divider: true}
-= render partial: 'shared/announcements_section'
+.my-5= render partial: 'description'
+.my-5= render partial: 'shared/review_section', locals: {kind: 'delete_favorites', divider: true}
 
 - if show_redirection_modal?
   = render partial: 'modal/redirection_modal', locals: {positive_url: delete_favorites_mypage_path(via: current_via('redirection_modal'))}

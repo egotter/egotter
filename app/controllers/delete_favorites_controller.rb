@@ -11,4 +11,7 @@ class DeleteFavoritesController < ApplicationController
     end
     @max_count = DeleteFavoritesRequest::DESTROY_LIMIT
   end
+
+  def faq
+  end
 end

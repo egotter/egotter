@@ -1,6 +1,6 @@
 <% content_for :navbar_title, t('.navbar_title') %>
 
-<div class="mb-5"><%= t('.page_description_html', count: @max_count) %></div>
+<div class="mt-3 mb-5"><%= t('.page_description_html', count: @max_count) %></div>
 
 <ul class="nav nav-tabs">
   <li class="nav-item">
@@ -8,6 +8,9 @@
   </li>
   <li class="nav-item">
     <a class="nav-link" href="#premium-tab" data-toggle="tab"><%= t('delete_favorites.premium.title') %></a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="<%= delete_favorites_faq_path(via: current_via('tab')) %>" target="_blank"><%= t('delete_favorites.faq.tab_title') %></a>
   </li>
 </ul>
 
@@ -20,4 +23,5 @@
   </div>
 </div>
 
-<%= render partial: 'delete_favorites/faq' %>
+<p class="small"><%= t('.support_html', user: 'egotter_cs', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_favorites_inquiry'))) %></p>
+<p class="small"><%= t('.faq_html', url: delete_favorites_faq_path(via: current_via)) %></p>

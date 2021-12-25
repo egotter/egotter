@@ -1,20 +1,18 @@
-<div class="my-5"><%= t('.description', user: current_user.screen_name, count: max_count) %></div>
+<div class="my-5"><%= t('.description_html', count: max_count) %></div>
 
 <%= alert_box class: 'my-5' do %>
-  <%= t('.notice_html', count: DeleteFavoritesRequest::DESTROY_LIMIT) %>
+  <%= t('.notice1_html', count: DeleteFavoritesRequest::DESTROY_LIMIT) %>
+<% end %>
+
+<%= alert_box class: 'my-5' do %>
+  <%= t('.notice2') %>
 <% end %>
 
 <div class="card my-3">
   <div class="card-body">
     <div class="card-text">
 
-      <div>
-        <%= t('.how_to') %>
-        <%= link_to '#delete-favorites-faq', class: 'btn btn-outline-primary btn-sm' do %>
-          <i class="far fa-question-circle"></i>
-          <%= t('.more') %>
-        <% end %>
-      </div>
+      <div><%= t('.how_to_html', url: delete_favorites_faq_path(via: current_via)) %></div>
 
       <div class="my-4">
         <div>
@@ -55,7 +53,10 @@
 
           <div class="text-muted small">
             <div class="mt-1"><%= t('.note1') %></div>
-            <div class="mt-1"><%= t('.note2_html', count: max_count, url: delete_favorites_mypage_path(anchor: 'reason-of-3200')) %></div>
+            <div class="mt-1">
+              <%= t('.note2', count: max_count) %>
+              <%= link_to t('.reason'), delete_favorites_faq_path(anchor: 'reason-of-3200'), target: '_blank' %>
+            </div>
             <div class="mt-1"><%= t('.note4') %></div>
           </div>
         <% end %>

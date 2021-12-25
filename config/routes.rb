@@ -70,6 +70,7 @@ Rails.application.routes.draw do
       delete 'deletable_tweet_bulk_destroy', to: 'deletable_tweets#bulk_destroy'
       delete 'deletable_tweet_force_reload', to: 'deletable_tweets#force_reload'
 
+      get 'delete_favorites_faq', to: 'delete_favorites#faq'
       resources :delete_favorites_requests, only: %i(create)
       resources :delete_favorites_notifications, only: %i(create)
 
@@ -137,6 +138,7 @@ Rails.application.routes.draw do
   get 'delete_tweets/mypage/history', to: 'delete_tweets#show', as: :delete_tweets_mypage_history
 
   get 'delete_favorites', to: 'delete_favorites#new'
+  get 'delete_favorites/faq', to: 'delete_favorites#faq', as: :delete_favorites_faq
   get 'delete_favorites/mypage', to: 'delete_favorites#show', as: :delete_favorites_mypage
 
   namespace :directory do

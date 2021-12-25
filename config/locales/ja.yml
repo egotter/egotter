@@ -1734,19 +1734,26 @@ ja:
         header: 'いいねクリーナー'
         subheader: 'ワンクリックでいいねを一括削除'
         lead_html: '100件/秒の速さで高速削除！<br><span class="egotter-pink">%{count}万回</span>以上利用された安心のツールです。<br>'
+    faq:
+      navbar_title: 'いいねクリーナー'
+      meta_title: 'いいねクリーナーのよくある質問'
+      page_title: 'いいねクリーナーのよくある質問'
+      tab_title: 'FAQ'
+    faq_section:
+      title: 'いいね削除のよくある質問'
     show:
       navbar_title: 'いいねクリーナー'
       page_description_html: |
         <p>いいねクリーナーは、いいねを簡単に素早く削除するためのツールです。</p>
-        <p>最新の%{count}件まで無料で削除することができます。</p>
+        <p>いいねクリーナーは無料です。最新の%{count}件まで削除することができます。</p>
+      support_html: 'いいねクリーナーに分からないところがある場合は、<a href="%{url}" target="_blank">@%{user}</a> にいつでもご質問ください。'
+      faq_html: 'いいねクリーナーの詳細については <a href="%{url}">いいねクリーナーのよくある質問</a> をご覧ください。'
     free:
       title: '一括で削除'
-      description: '「一括で削除」では、日付指定でいいねを一括削除することができます。最新の%{count}件までをワンクリックで削除することができます。'
-      notice_html: |
-        <p>「一括で削除」を短い時間で何回か実行しても、%{count}件までしかいいねは削除されません。これは全世界共通のツイッターの制限です。</p>
-        ツイッターのバグがあるため、残っているいいねを完全に削除する方法は現時点でありません。
-      how_to: 'いいね削除のよくある質問についてはこちらをご覧ください。'
-      more: 'よくある質問'
+      description_html: '「一括で削除」では、日付指定でいいねを一括削除することができます。<strong>最新の%{count}件まで</strong>をワンクリックで削除することができます。'
+      notice1_html: '「一括で削除」を短い時間で何回か実行しても、<strong>%{count}件までしかいいねは削除されません。</strong>これは全世界共通のツイッターの制限です。'
+      notice2: 'ツイッターのバグがあるため、いいねクリーナーには「完全に削除」はありません。'
+      how_to_html: '必ず事前に <a href="%{url}">いいね削除のよくある質問</a> をご確認ください。'
       since_date: 'この日付から'
       until_date: 'この日付まで'
       send_dm: '削除の完了後に自分へDMする'
@@ -1754,9 +1761,10 @@ ja:
       button: '無料で直近のいいねを削除する'
       requested: '削除リクエスト済み'
       note1: '※ いいね削除は取り消しできません。'
-      note2_html: '※ 無料で削除できるのは%{count}件までです。<a href="%{url}">理由</a>'
+      note2: '※ 無料で削除できるのは%{count}件までです。'
       note3: '1時間ほど経過すると再度リクエストできます。'
       note4: '※ 日付は「元ツイートの日付」です。'
+      reason: '理由'
     premium:
       title: '完全に削除'
       description: '「完全に削除」では、アーカイブデータをアップロードして全てのいいねを完全に削除することができます。'
@@ -1911,6 +1919,7 @@ ja:
     delete_tweets_refund: 'ツイートの削除に失敗しました。有料プランの返金を希望します。理由：'
     delete_tweets_inquiry: 'ツイート削除のお問い合わせ：'
     delete_tweets_max_deletion: '%{count}万件以上のツイート削除を希望します'
+    delete_favorites_inquiry: 'いいね削除のお問い合わせ：'
     charge_failed_inquiry: 'カードに問題が無いのに支払いに失敗しました。定期購読の継続を希望します。'
     error_inquiry: '%{name} エラーが複数回起きています。（スクリーンショットも送ってください）'
     recovery_message: 'リクエストの処理に失敗しました…！お手数ですが再度お試しください。3回以上連続して起きる場合は @egotter_cs にご連絡ください。#egotter'
