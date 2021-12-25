@@ -33,7 +33,7 @@ RSpec.describe DeleteTweetsTask, type: :model do
     context 'TweetsNotFound is raised' do
       before { allow(request).to receive(:perform!).and_raise(DeleteTweetsRequest::TweetsNotFound) }
       it do
-        expect(request).to receive(:finished!)
+        expect(SendDeleteTweetsFinishedMessageWorker).to receive(:perform_async).with(request.id)
         subject
       end
     end

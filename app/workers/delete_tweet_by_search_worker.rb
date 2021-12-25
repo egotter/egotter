@@ -17,8 +17,7 @@ class DeleteTweetBySearchWorker
     request.increment!(:deletions_count)
 
     if request.last_tweet_id?(tweet_id)
-      request.finished!
-      SendMessageToSlackWorker.perform_async(:delete_tweets, "`Finished` #{request.to_message}")
+      SendDeleteTweetsBySearchFinishedMessageWorker.perform_async(request.id)
     end
   rescue => e
     request.update(error_message: e.inspect)
