@@ -23,10 +23,14 @@ class UpdateEgotterFollowersWorker
   # options:
   def perform(options = {})
     uids = EgotterFollower.collect_uids
-    EgotterFollower.import_uids(uids)
-    uids = EgotterFollower.filter_unnecessary_uids(uids)
-    Airbag.info { "#{self.class}: Delete #{uids.size} uids" }
-    EgotterFollower.delete_uids(uids)
+
+    necessary_uids = EgotterFollower.filter_necessary_uids(uids)
+    EgotterFollower.import_uids(necessary_uids)
+    Airbag.info { "#{self.class}: Import #{necessary_uids.size} uids" }
+
+    unnecessary_uids = EgotterFollower.filter_unnecessary_uids(uids)
+    EgotterFollower.delete_uids(unnecessary_uids)
+    Airbag.info { "#{self.class}: Delete #{unnecessary_uids.size} uids" }
   rescue => e
     handle_worker_error(e, **options)
   end

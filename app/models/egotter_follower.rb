@@ -60,6 +60,10 @@ class EgotterFollower < ApplicationRecord
       end
     end
 
+    def filter_necessary_uids(uids)
+      uids - pluck(:uid)
+    end
+
     def filter_unnecessary_uids(uids)
       pluck(:uid) - uids
     end
