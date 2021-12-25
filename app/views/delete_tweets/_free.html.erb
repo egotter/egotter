@@ -25,6 +25,20 @@
         </div>
       </div>
 
+      <div class="mb-4">
+        <%= check_box_tag('multiple-retry', '1', false) %>
+        <span class="text-danger"><%= t('.required') %></span>
+        <label class="d-inline" for="multiple-retry"><%= t('.multiple_retry') %></label>
+        <span class="small"><%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %></span>
+      </div>
+
+      <div class="mb-4">
+        <%= check_box_tag('too-old-tweets', '1', false) %>
+        <span class="text-danger"><%= t('.required') %></span>
+        <label class="d-inline" for="too-old-tweets"><%= t('.too_old_tweets') %></label>
+        <span class="small"><%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %></span>
+      </div>
+
       <div class="my-4">
         <div>
           <%= check_box_tag('send_dm', '1', false) %>
@@ -54,7 +68,10 @@
 
           <div class="text-muted small">
             <div class="mt-1"><%= t('.note1') %></div>
-            <div class="mt-1"><%= t('.note2_html', count: max_count, url: delete_tweets_faq_path(anchor: 'reason-of-3200')) %></div>
+            <div class="mt-1">
+              <%= t('.note2', count: max_count) %>
+              <%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %>
+            </div>
           </div>
         <% end %>
       </div>
@@ -66,6 +83,8 @@
 
 <script>
   $(function () {
+    var checkIsRequired = '<%= t('.check_is_required') %>';
+
     $('#send_dm').on('change', function () {
       var url = '<%= raw direct_message_url(User::EGOTTER_UID, t('.test_message')) %>';
       if ($(this).prop('checked')) {
@@ -76,6 +95,27 @@
     });
 
     $('#open-delete-tweets-modal').on('click', function () {
+      var validated = [false, false];
+
+      if ($('#multiple-retry').prop('checked')) {
+        validated[0] = true;
+        $('label[for="multiple-retry"]').removeClass('text-danger');
+      } else {
+        $('label[for="multiple-retry"]').addClass('text-danger');
+      }
+
+      if ($('#too-old-tweets').prop('checked')) {
+        validated[1] = true;
+        $('label[for="too-old-tweets"]').removeClass('text-danger');
+      } else {
+        $('label[for="too-old-tweets"]').addClass('text-danger');
+      }
+
+      if (!validated[0] || !validated[1]) {
+        window.alert(checkIsRequired);
+        return false;
+      }
+
       $('#delete-tweets-modal').data({
         since: $('#since_date').val(),
         until: $('#until_date').val(),
