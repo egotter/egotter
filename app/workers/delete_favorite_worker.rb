@@ -9,43 +9,33 @@ class DeleteFavoriteWorker
   def perform(user_id, tweet_id, options = {})
     request = DeleteFavoritesRequest.find(options['request_id'])
     if request.stopped_at
-      Airbag.info "This request is stopped user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
+      Airbag.info "This request is already stopped user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
       return
     end
 
     client = User.find(user_id).api_client.twitter
-    destroy_favorite!(client, tweet_id)
+    if destroy_favorite!(client, tweet_id, request)
+      request.increment!(:destroy_count)
+    end
 
-    request.increment!(:destroy_count)
 
     if options['last_tweet']
       request.finished!
       SendDeleteFavoritesFinishedWorker.perform_async(request.id)
     end
   rescue => e
-    if TwitterApiStatus.your_account_suspended?(e)
-      request.update(stopped_at: Time.zone.now)
-      Airbag.warn "Stop request user_id=#{user_id} tweet_id=#{tweet_id} request=#{request.inspect}"
+    if TwitterApiStatus.retry_timeout?(e)
+      DeleteTweetWorker::RETRY_HANDLER.call(e, self.class, user_id, tweet_id, options)
+    else
+      handle_worker_error(e, user_id: user_id, tweet_id: tweet_id, options: options)
     end
-    request.update(error_message: e.inspect)
-    handle_worker_error(e, user_id: user_id, tweet_id: tweet_id, options: options)
   end
 
   private
 
-  def destroy_favorite!(client, tweet_id)
+  def destroy_favorite!(client, tweet_id, request)
     client.unfavorite!(tweet_id)
   rescue => e
-    if TwitterApiStatus.invalid_or_expired_token?(e) ||
-        TwitterApiStatus.suspended?(e) ||
-        TweetStatus.no_status_found?(e) ||
-        TweetStatus.not_authorized?(e) ||
-        TweetStatus.temporarily_locked?(e) ||
-        TweetStatus.that_page_does_not_exist?(e) ||
-        TweetStatus.forbidden?(e)
-      nil
-    else
-      raise
-    end
+    DeleteTweetWorker::ERROR_HANDLER.call(e, request)
   end
 end

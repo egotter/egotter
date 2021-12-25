@@ -9,7 +9,7 @@ class DeleteTweetWorker
   def perform(user_id, tweet_id, options = {})
     request = DeleteTweetsRequest.find(options['request_id'])
     if request.stopped_at
-      Airbag.info "This request is stopped user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
+      Airbag.info "This request is already stopped user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
       return
     end
 
@@ -23,13 +23,7 @@ class DeleteTweetWorker
     end
   rescue => e
     if TwitterApiStatus.retry_timeout?(e)
-      if options['retries']
-        Airbag.warn { "#{e.inspect} user_id=#{user_id} tweet_id=#{tweet_id} options=#{options}" }
-      else
-        options['retries'] = 1
-        Airbag.warn { "RETRY: #{e.inspect} user_id=#{user_id} tweet_id=#{tweet_id} options=#{options}" } # TODO Remove
-        DeleteTweetWorker.perform_in(rand(10) + 10, user_id, tweet_id, options)
-      end
+      RETRY_HANDLER.call(e, self.class, user_id, tweet_id, options)
     else
       handle_worker_error(e, user_id: user_id, tweet_id: tweet_id, options: options)
     end
@@ -40,6 +34,20 @@ class DeleteTweetWorker
   def destroy_status!(client, tweet_id, request)
     client.destroy_status(tweet_id)
   rescue => e
+    ERROR_HANDLER.call(e, request)
+  end
+
+  RETRY_HANDLER = Proc.new do |e, worker_class, user_id, tweet_id, options|
+    if options['retries']
+      Airbag.warn { "#{e.inspect} user_id=#{user_id} tweet_id=#{tweet_id} options=#{options}" }
+    else
+      options['retries'] = 1
+      Airbag.warn { "RETRY: #{e.inspect} user_id=#{user_id} tweet_id=#{tweet_id} options=#{options}" } # TODO Remove
+      worker_class.perform_in(rand(10) + 10, user_id, tweet_id, options)
+    end
+  end
+
+  ERROR_HANDLER = Proc.new do |e, request|
     request.update(error_message: e.inspect)
 
     if TweetStatus.no_status_found?(e) ||
@@ -55,7 +63,7 @@ class DeleteTweetWorker
       Airbag.warn { "Request stopped request=#{request.inspect}" }
       nil
     else
-      raise
+      raise e
     end
   end
 end
