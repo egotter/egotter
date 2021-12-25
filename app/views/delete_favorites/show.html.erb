@@ -4,10 +4,10 @@
 
 <ul class="nav nav-tabs">
   <li class="nav-item">
-    <a class="nav-link active" href="#free-tab" data-toggle="tab"><%= t('delete_favorites.free.title') %></a>
+    <a id="delete-favorites-free-tab" class="nav-link <%= class_names(active: delete_favorites_free_tab?) %>" href="#free-tab" data-toggle="tab"><%= t('delete_favorites.free.title') %></a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#premium-tab" data-toggle="tab"><%= t('delete_favorites.premium.title') %></a>
+    <a id="delete-favorites-premium-tab" class="nav-link <%= class_names(active: delete_favorites_premium_tab?) %>" href="#premium-tab" data-toggle="tab"><%= t('delete_favorites.premium.title') %></a>
   </li>
   <li class="nav-item">
     <a class="nav-link" href="<%= delete_favorites_faq_path(via: current_via('tab')) %>" target="_blank"><%= t('delete_favorites.faq.tab_title') %></a>
@@ -15,13 +15,28 @@
 </ul>
 
 <div class="tab-content">
-  <div id="free-tab" class="tab-pane active">
+  <div id="free-tab" class="tab-pane <%= class_names(active: delete_favorites_free_tab?) %>">
     <%= render partial: 'free', locals: {processing: @processing, max_count: @max_count} %>
   </div>
-  <div id="premium-tab" class="tab-pane">
+  <div id="premium-tab" class="tab-pane <%= class_names(active: delete_favorites_premium_tab?) %>">
     <%= render partial: 'premium' %>
   </div>
 </div>
 
 <p class="small"><%= t('.support_html', user: 'egotter_cs', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_favorites_inquiry'))) %></p>
 <p class="small"><%= t('.faq_html', url: delete_favorites_faq_path(via: current_via)) %></p>
+
+<script>
+  $(function () {
+    var urls = [
+      '<%= raw delete_favorites_mypage_path %>',
+      '<%= raw delete_favorites_mypage_premium_path %>',
+    ];
+    $('#delete-favorites-free-tab').on('shown.bs.tab', function () {
+      window.history.replaceState(null, null, urls[0]);
+    });
+    $('#delete-favorites-premium-tab').on('shown.bs.tab', function () {
+      window.history.replaceState(null, null, urls[1]);
+    });
+  });
+</script>
