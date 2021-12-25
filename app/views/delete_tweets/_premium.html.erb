@@ -21,6 +21,7 @@
         <div>
           <%= check_box_tag('premium_send_dm', '1', true, disabled: true) %>
           <label for="premium_send_dm"><%= t('.send_dm') %></label>
+          <span class="small"><%= link_to t('.send_test_message'), direct_message_url(User::EGOTTER_UID, t('.test_message')), target: '_blank' %></span>
         </div>
       </div>
 
