@@ -41,13 +41,13 @@ class ApiClient
 
     if e.class == ApiClient::RetryExhausted
       failed_dm = DirectMessageWrapper.from_event(event)
-      Airbag.warn { "Sending DM failed method=#{__method__} user_id=#{@user&.id} recipient_id=#{failed_dm.recipient_id} message=#{failed_dm.text&.truncate(50)}" }
-      begin
-        if failed_dm.recipient_id != User::EGOTTER_UID
-          twitter.create_direct_message_event(failed_dm.recipient_id, I18n.t('short_messages.recovery_message'))
-        end
-      rescue => e
-        Airbag.warn { "Sending recovery DM failed method=#{__method__} user_id=#{@user&.id}" }
+      message = "%s method=#{__method__} user_id=#{@user&.id} recipient_id=#{failed_dm.recipient_id} message=#{failed_dm.text&.truncate(50)}"
+
+      if failed_dm.recipient_id != User::EGOTTER_UID && @user
+        Airbag.warn { message % 'Retry sending DM' }
+        CreateDirectMessageEventWorker.perform_in(5.seconds, @user.id, event)
+      else
+        Airbag.warn { message % 'Sending DM failed' }
       end
     end
 

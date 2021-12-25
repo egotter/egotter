@@ -54,11 +54,21 @@ RSpec.describe ApiClient, type: :model do
     end
 
     context 'an exception is raised' do
-      before { allow(client).to receive(:create_direct_message_event).and_raise('anything') }
+      let(:error) { RuntimeError.new('error') }
+      before { allow(client).to receive(:create_direct_message_event).and_raise(error) }
       it do
         expect(CreateDirectMessageErrorLogWorker).to receive(:perform_async).with(any_args)
-        expect(instance).to receive(:update_blocker_status).with(any_args)
-        expect { subject }.to raise_error('anything')
+        expect(instance).to receive(:update_blocker_status).with(error)
+        expect { subject }.to raise_error(error)
+      end
+    end
+
+    context 'retryable exception is raised' do
+      let(:error) { ApiClient::RetryExhausted.new }
+      before { allow(client).to receive(:create_direct_message_event).and_raise(error) }
+      it do
+        expect(CreateDirectMessageEventWorker).to receive(:perform_in).with(5.seconds, user.id, event)
+        expect { subject }.to raise_error(error)
       end
     end
   end
