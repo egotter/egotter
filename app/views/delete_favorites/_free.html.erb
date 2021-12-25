@@ -25,10 +25,25 @@
         </div>
       </div>
 
+      <div class="mb-4">
+        <%= check_box_tag('multiple-retry', '1', false) %>
+        <span class="text-danger"><%= t('.required') %></span>
+        <label class="d-inline" for="multiple-retry"><%= t('.multiple_retry') %></label>
+        <span class="small"><%= link_to t('.reason'), delete_favorites_faq_path(anchor: 'reason-of-3200'), target: '_blank' %></span>
+      </div>
+
+      <div class="mb-4">
+        <%= check_box_tag('too-old-tweets', '1', false) %>
+        <span class="text-danger"><%= t('.required') %></span>
+        <label class="d-inline" for="too-old-tweets"><%= t('.too_old_tweets') %></label>
+        <span class="small"><%= link_to t('.reason'), delete_favorites_faq_path(anchor: 'reason-of-3200'), target: '_blank' %></span>
+      </div>
+
       <div class="my-4">
         <div>
-          <%= check_box_tag('send_dm', '1', true) %>
+          <%= check_box_tag('send_dm', '1', false) %>
           <label for="send_dm"><%= t('.send_dm') %></label>
+          <span class="small"><%= link_to t('.send_test_message'), direct_message_url(User::EGOTTER_UID, t('.test_message')), target: '_blank' %></span>
         </div>
         <div>
           <%= check_box_tag('post_tweet', '1', true) %>
@@ -69,7 +84,27 @@
 
 <script>
   $(function () {
+    var checkIsRequired = '<%= t('.check_is_required') %>';
+
+    $('#send_dm').on('change', function () {
+      var url = '<%= raw direct_message_url(User::EGOTTER_UID, t('.test_message')) %>';
+      if ($(this).prop('checked')) {
+        setTimeout(function () {
+          window.open(url, '_blank');
+        }, 300);
+      }
+    });
+
+    var multipleRetryCheckbox = new DeleteTweetsRequiredCheckbox('multiple-retry');
+    var tooOldTweetsCheckbox = new DeleteTweetsRequiredCheckbox('too-old-tweets');
+
     $('#open-delete-favorites-modal').on('click', function () {
+      var validated = [multipleRetryCheckbox.validate(), tooOldTweetsCheckbox.validate()];
+      if (!validated[0] || !validated[1]) {
+        window.alert(checkIsRequired);
+        return false;
+      }
+
       $('#delete-favorites-modal').data({
         since: $('#since_date').val(),
         until: $('#until_date').val(),
