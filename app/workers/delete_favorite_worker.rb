@@ -20,8 +20,7 @@ class DeleteFavoriteWorker
 
 
     if options['last_tweet']
-      request.finished!
-      SendDeleteFavoritesFinishedWorker.perform_async(request.id)
+      SendDeleteFavoritesFinishedMessageWorker.perform_in(5.seconds, request.id)
     end
   rescue => e
     if TwitterApiStatus.retry_timeout?(e)

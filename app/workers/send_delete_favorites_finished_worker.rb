@@ -1,3 +1,4 @@
+# TODO Remove later
 class SendDeleteFavoritesFinishedWorker
   include Sidekiq::Worker
   include WorkerErrorHandler

@@ -19,8 +19,7 @@ class DeleteFavoritesTask
     e = nil
     request.perform!
   rescue DeleteFavoritesRequest::FavoritesNotFound => e
-    request.finished!
-    SendDeleteFavoritesFinishedWorker.perform_async(request.id)
+    SendDeleteFavoritesFinishedMessageWorker.perform_async(request.id)
   rescue DeleteFavoritesRequest::InvalidToken => e
     Airbag.info "#{e.inspect} request=#{request.inspect}"
   rescue DeleteFavoritesRequest::RetryableError => e
