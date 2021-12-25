@@ -81,11 +81,15 @@ module Api
         }
       end
 
+      def strip_tags(html)
+        ApplicationController.helpers.strip_tags(html)
+      end
+
       def tweets_json(user, records)
         records.map do |record|
           {
               id: record.tweet_id.to_s,
-              text: record.properties['text'],
+              text: strip_tags(record.properties['text']).gsub("\n", '<br>'),
               retweet_count: record.retweet_count,
               favorite_count: record.favorite_count,
               media: record.media&.map { |m| {url: m['media_url_https']} },
