@@ -1,6 +1,7 @@
 class DeletableTweetsFilter
 
   DATE_REGEXP = /\A\d{4}-\d{2}-\d{2}\z/
+  MAX_TWEET_TEXT = 20
 
   def initialize(attrs)
     @retweet_count = to_integer(attrs[:retweet_count])
@@ -11,6 +12,7 @@ class DeletableTweetsFilter
     @user_mentions = to_bool(attrs[:user_mentions])
     @urls = to_bool(attrs[:urls])
     @media = to_bool(attrs[:media])
+    @tweet_text = attrs[:tweet_text]
     @deleted = to_bool(attrs[:deleted])
   end
 
@@ -61,6 +63,10 @@ class DeletableTweetsFilter
       else
         query = query.where('json_length(media) = 0')
       end
+    end
+
+    if @tweet_text.present? && @tweet_text.length < MAX_TWEET_TEXT
+      query = query.where('properties->>"$.text" like ?', "%#{DeletableTweet.sanitize_sql_like(@tweet_text)}%")
     end
 
     if @deleted
@@ -119,6 +125,7 @@ class DeletableTweetsFilter
           user_mentions: hash[:user_mentions],
           urls: hash[:urls],
           media: hash[:media],
+          tweet_text: hash[:tweet_text],
           deleted: hash[:deleted],
       )
     end

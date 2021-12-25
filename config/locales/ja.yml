@@ -1583,6 +1583,8 @@ ja:
         mentions: 'メンション'
         urls: 'URL'
         media: '画像や動画'
+        tweet_text: 'ツイートのテキスト'
+        tweet_text_placeholder: '検索したい文字'
         deletion_button: '削除済みかどうか'
         deleted: '削除済み'
         noop: '指定無し'

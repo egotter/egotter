@@ -1,6 +1,6 @@
 <% button_class ||= 'btn-outline-secondary' %>
 <div class="mr-2">
-  <button type="button" id="<%= id %>" class="btn <%= button_class %> btn-sm" style="white-space: nowrap;" data-target="#<%= modal_id %>" data-toggle="modal">
+  <button type="button" id="<%= id %>" class="btn <%= button_class %> btn-sm" style="white-space: nowrap; max-width: 100%; overflow: hidden;" data-target="#<%= modal_id %>" data-toggle="modal">
     <strong><%= name %></strong> <span class="label"><%= label %></span>
   </button>
 </div>

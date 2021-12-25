@@ -29,9 +29,13 @@
   <%= render partial: 'filter_button', locals: {id: 'mentions-button', modal_id: 'entities-filter-modal', name: t('.filter.mentions'), label: t('.filter.noop')} %>
 </div>
 
-<div class="d-flex mt-1 mb-3" style="overflow-x: scroll;">
+<div class="d-flex mt-1 mb-2" style="overflow-x: scroll;">
   <%= render partial: 'filter_button', locals: {id: 'urls-button', modal_id: 'entities-filter-modal', name: t('.filter.urls'), label: t('.filter.noop')} %>
   <%= render partial: 'filter_button', locals: {id: 'media-button', modal_id: 'entities-filter-modal', name: t('.filter.media'), label: t('.filter.noop')} %>
+</div>
+
+<div class="mt-1 mb-3">
+  <%= render partial: 'filter_button', locals: {id: 'tweet-text-button', modal_id: 'entities-filter-modal', name: t('.filter.tweet_text'), label: t('.filter.noop')} %>
 </div>
 
 <strong><%= t('.filter.deletion_button') %></strong>
@@ -62,6 +66,10 @@
   <%= render partial: 'filter_select_tag', locals: {title: t('.filter.mentions'), name: 'mentions', options: [[t('.filter.noop'), ''], [t('.filter.attached'), 'true'], [t('.filter.not_attached'), 'false']], selected: '', button_id: 'mentions-button'} %>
   <%= render partial: 'filter_select_tag', locals: {title: t('.filter.urls'), name: 'urls', options: [[t('.filter.noop'), ''], [t('.filter.attached'), 'true'], [t('.filter.not_attached'), 'false']], selected: '', button_id: 'urls-button'} %>
   <%= render partial: 'filter_select_tag', locals: {title: t('.filter.media'), name: 'media', options: [[t('.filter.noop'), ''], [t('.filter.attached'), 'true'], [t('.filter.not_attached'), 'false']], selected: '', button_id: 'media-button'} %>
+  <div class="my-5">
+    <div class="mb-1"><%= t('.filter.tweet_text') %></div>
+    <%= text_field_tag 'tweet-text', nil, class: 'form-control', placeholder: t('.filter.tweet_text_placeholder'), maxlength: DeletableTweetsFilter::MAX_TWEET_TEXT, data: {button_target: "#tweet-text-button"} %>
+  </div>
 <% end %>
 
 <%= modal_dialog(id: 'meta-filter-modal', klass: 'filter-modal', title: t('.filter.modal')) do %>
@@ -114,12 +122,13 @@
   $(function () {
     $('select[name="retweet-count"]').on('change', onChange).on('change', updateOptionLabel);
     $('select[name="favorite-count"]').on('change', onChange).on('change', updateOptionLabel);
-    $('input[name="filter-since-date"]').on('change', onChange).on('change', updateDateLabel);
-    $('input[name="filter-until-date"]').on('change', onChange).on('change', updateDateLabel);
+    $('input[name="filter-since-date"]').on('change', onChange).on('change', updateInputTextLabel);
+    $('input[name="filter-until-date"]').on('change', onChange).on('change', updateInputTextLabel);
     $('select[name="hashtags"]').on('change', onChange).on('change', updateOptionLabel);
     $('select[name="mentions"]').on('change', onChange).on('change', updateOptionLabel);
     $('select[name="urls"]').on('change', onChange).on('change', updateOptionLabel);
     $('select[name="media"]').on('change', onChange).on('change', updateOptionLabel);
+    $('input[name="tweet-text"]').on('change', onChange).on('change', updateInputTextLabel);
     $('select[name="deleted"]').on('change', onChange).on('change', updateOptionLabel);
 
     function onChange() {
@@ -140,7 +149,7 @@
       btn.find('.label').text(label);
     }
 
-    function updateDateLabel() {
+    function updateInputTextLabel() {
       var target = $(this);
       var val = target.val();
       var btn = $(target.data('button-target'));
@@ -296,6 +305,7 @@
         user_mentions: $('select[name="mentions"]').val(),
         urls: $('select[name="urls"]').val(),
         media: $('select[name="media"]').val(),
+        tweet_text: $('input[name="tweet-text"]').val(),
         deleted: $('select[name="deleted"]').val()
       };
     }
