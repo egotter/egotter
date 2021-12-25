@@ -83,6 +83,7 @@
 
 <script>
   $(function () {
+    var datesAreInvalid = '<%= t('.dates_are_invalid') %>';
     var checkIsRequired = '<%= t('.check_is_required') %>';
 
     $('#send_dm').on('change', function () {
@@ -94,12 +95,23 @@
       }
     });
 
+    var datesSelector = new DeleteTweetsDatesSelector('since_date', 'until_date');
     var multipleRetryCheckbox = new DeleteTweetsRequiredCheckbox('multiple-retry');
     var tooOldTweetsCheckbox = new DeleteTweetsRequiredCheckbox('too-old-tweets');
 
     $('#open-delete-tweets-modal').on('click', function () {
-      var validated = [multipleRetryCheckbox.validate(), tooOldTweetsCheckbox.validate()];
-      if (!validated[0] || !validated[1]) {
+      var validated = [
+        datesSelector.validate(),
+        multipleRetryCheckbox.validate(),
+        tooOldTweetsCheckbox.validate()
+      ];
+
+      if (!validated[0]) {
+        window.alert(datesAreInvalid);
+        return false;
+      }
+
+      if (!validated[1] || !validated[2]) {
         window.alert(checkIsRequired);
         return false;
       }

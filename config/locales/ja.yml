@@ -1638,6 +1638,7 @@ ja:
       note3: '1時間ほど経過すると再度リクエストできます。'
       required: '*'
       reason: '理由'
+      dates_are_invalid: '「この日付から」が小さい日付、「この日付まで」が大きい日付になるように日付を選択してください。'
       check_is_required: '必須のチェックボックスが選択されていません。'
     premium:
       title: '完全に削除'
