@@ -20,6 +20,17 @@ RSpec.describe DeleteTweetWorker do
       expect(request).to receive(:increment!).with(:destroy_count)
       subject
     end
+
+    context 'retryable error is raised' do
+      let(:error) { RuntimeError.new('error') }
+      before { allow(worker).to receive(:destroy_status!).and_raise(error) }
+
+      before { allow(TwitterApiStatus).to receive(:retry_timeout?).with(error).and_return(true) }
+      it do
+        expect(described_class).to receive(:perform_in).with(instance_of(Integer), user.id, tweet_id, 'request_id' => request.id, 'retries' => 1)
+        subject
+      end
+    end
   end
 
   describe '#destroy_status!' do
