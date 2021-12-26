@@ -191,9 +191,17 @@ RSpec.describe CreatePeriodicReportRequest::ReportOptionsBuilder, type: :model d
   let(:user) { create(:user) }
   let(:request) { CreatePeriodicReportRequest.create(user_id: user.id) }
   let(:instance) { described_class.new(request) }
+
   before { create(:twitter_user, uid: user.uid) }
+
   describe '#build' do
     subject { instance.build }
     it { is_expected.to be_truthy }
+  end
+
+  describe '#total_unfollower_uids' do
+    subject { instance.send(:total_unfollower_uids) }
+    before { allow(instance).to receive(:unfollower_uids).and_return([]) }
+    it { is_expected.to eq([]) }
   end
 end

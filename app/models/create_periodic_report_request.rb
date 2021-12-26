@@ -166,8 +166,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
 
     def total_unfollower_uids
-      if unfollower_uids.empty?
-        TwitterUser.latest_by(uid: @request.user.uid).unfollower_uids.uniq
+      if unfollower_uids.empty? && (twitter_user = TwitterUser.latest_by(uid: @request.user.uid))
+        twitter_user.unfollower_uids.uniq
       else
         []
       end
