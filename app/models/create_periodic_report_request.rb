@@ -120,7 +120,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
       unfriends = fetch_users(unfriend_uids, context: 'unfriend')
       unfollowers = fetch_users(unfollower_uids, context: 'unfollower')
-      total_unfollowers = fetch_users(total_unfollower_uids, limit: 5, context: 'total_unfollower')
+      total_unfollowers = fetch_users(total_unfollower_uids, context: 'total_unfollower')
       account_statuses = attach_status(unfriends + unfollowers + total_unfollowers).map { |s| s.slice(:uid, :screen_name, :account_status) }
 
       new_friend_uids = TwitterUser.calc_total_new_friend_uids(@target_users).uniq.take(10)
@@ -131,6 +131,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       properties = {
           version: 1,
           request_id: @request.id,
+          twitter_user_ids: @target_users.map(&:id),
           start_date: @start_date,
           end_date: @end_date,
           first_friends_count: first_user&.friends_count,
@@ -157,16 +158,16 @@ class CreatePeriodicReportRequest < ApplicationRecord
     private
 
     def unfriend_uids
-      @unfriend_uids ||= TwitterUser.calc_total_new_unfriend_uids(@target_users).uniq.take(10)
+      @unfriend_uids ||= TwitterUser.calc_total_new_unfriend_uids(@target_users).uniq
     end
 
     def unfollower_uids
-      @unfollower_uids ||= TwitterUser.calc_total_new_unfollower_uids(@target_users).uniq.take(10)
+      @unfollower_uids ||= TwitterUser.calc_total_new_unfollower_uids(@target_users).uniq
     end
 
     def total_unfollower_uids
       if unfollower_uids.empty?
-        TwitterUser.latest_by(uid: @request.user.uid).unfollower_uids.uniq.take(10)
+        TwitterUser.latest_by(uid: @request.user.uid).unfollower_uids.uniq
       else
         []
       end
