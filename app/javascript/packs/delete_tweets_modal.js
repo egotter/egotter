@@ -15,9 +15,14 @@ class DeleteTweetsModal {
 
     $modal.find('.positive').on('click', function () {
       var input = $modal.find('.confirm-input');
+
       if (!input.val() || input.val() !== i18n['confirmationText']) {
-        ToastMessage.warn(i18n['pleaseEnterConfirmationText']);
-        return;
+        $modal.find('.confirmation-text').addClass('text-danger').removeClass('text-muted');
+        $modal.find('.confirmation-checklist').show();
+        return false;
+      } else {
+        $modal.find('.confirmation-text').addClass('text-muted').removeClass('text-danger');
+        $modal.find('.confirmation-checklist').hide();
       }
 
       $modal.modal('hide');

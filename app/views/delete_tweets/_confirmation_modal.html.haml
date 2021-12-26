@@ -17,7 +17,8 @@
     %span#post-tweet-confirmation
 
   .my-3
-    %small.form-text.text-muted.mb-1= t('.confirmation_text', text: confirmation_text)
+    %small.confirmation-text.form-text.text-muted.mb-1= t('.confirmation_text', text: confirmation_text)
+    %small.confirmation-checklist.form-text.text-danger.mb-1{style: 'display: none;'}= t('.confirmation_checklist')
     = text_field_tag '', '', class: 'form-control confirm-input', placeholder: ''
 
 :javascript
@@ -26,7 +27,6 @@
     var url = '#{api_v1_delete_tweets_requests_path}';
 
     var i18n = {
-      pleaseEnterConfirmationText: '#{t('.confirmation_text', text: confirmation_text)}',
       confirmationText: '#{confirmation_text}',
       notSpecified: '#{t('.not_specified')}',
       send: '#{t('.send')}',

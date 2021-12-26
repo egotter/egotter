@@ -1716,6 +1716,7 @@ ja:
       title: '@%{user} のツイート削除'
       body_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートを削除します。本当によろしいですか？'
       confirmation_text: '確認のために「%{text}」と入力してください'
+      confirmation_checklist: '入力するのは自分のツイッターIDです。数字や記号を間違えていないかご確認ください。'
       since_date: 'この日付から：'
       until_date: 'この日付まで：'
       send_dm: '完了後に自分へDM：'
