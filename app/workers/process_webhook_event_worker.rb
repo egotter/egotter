@@ -42,6 +42,7 @@ class ProcessWebhookEventWorker
   end
 
   def process_direct_message_event(event)
+    # TODO Call #from_event
     dm = DirectMessageWrapper.new(event: event.deep_symbolize_keys)
 
     if sent_from_user?(dm)
