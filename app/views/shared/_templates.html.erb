@@ -139,6 +139,15 @@
   </tr>
 </template>
 
+<template id="delete-favorites-history-template">
+  <tr>
+    <td>{{created_at}}</td>
+    <td>{{type}}</td>
+    <td>{{reservations_count}}</td>
+    <td>{{deletions_count}}</td>
+  </tr>
+</template>
+
 <script>
   $(function () {
     var templates = {
@@ -147,7 +156,8 @@
       searchHistoryRectangle: $('#search-history-rectangle-template').html(),
       toast: $('#toast-template').html(),
       deletableTweet: $('#deletable-tweet-template').html(),
-      deleteTweetsHistory: $('#delete-tweets-history-template').html()
+      deleteTweetsHistory: $('#delete-tweets-history-template').html(),
+      deleteFavoritesHistory: $('#delete-favorites-history-template').html()
     };
 
     window.templates = templates;

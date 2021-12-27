@@ -72,6 +72,7 @@ Rails.application.routes.draw do
 
       get 'delete_favorites_faq', to: 'delete_favorites#faq'
       resources :delete_favorites_requests, only: %i(create)
+      resources :delete_favorites_histories, only: %i(index)
       resources :delete_favorites_notifications, only: %i(create)
 
       resources :friends_count_points, only: %i(index)
@@ -142,6 +143,7 @@ Rails.application.routes.draw do
   get 'delete_favorites/faq', to: 'delete_favorites#faq', as: :delete_favorites_faq
   get 'delete_favorites/mypage', to: 'delete_favorites#show', as: :delete_favorites_mypage
   get 'delete_favorites/mypage/premium', to: 'delete_favorites#show', as: :delete_favorites_mypage_premium
+  get 'delete_favorites/mypage/history', to: 'delete_favorites#show', as: :delete_favorites_mypage_history
 
   namespace :directory do
     get "profiles(/:id1(/:id2))", to: "profiles#show", as: :profile

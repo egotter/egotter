@@ -1,0 +1,53 @@
+<div class="my-5"><%= t('.description') %></div>
+
+<div id="delete-favorites-history-container">
+  <div class="loading my-5">
+    <%= image_tag '/ajax-loader.gif', size: '16x16' %>
+    <%= t('.loading') %>
+  </div>
+
+  <table class="table small my-3" style="display: none;">
+    <tr>
+      <td><%= t('.date') %></td>
+      <td><%= t('.type') %></td>
+      <td><%= t('.reservations') %></td>
+      <td><%= t('.deletions') %></td>
+    </tr>
+  </table>
+</div>
+
+<script>
+  $(function () {
+    var historyTabShown = <%= delete_favorites_history_tab? %>;
+    if (historyTabShown) {
+      loadHistory();
+    }
+
+    $('#delete-favorites-history-tab').on('shown.bs.tab', loadHistory);
+
+    function loadHistory() {
+      var url = '<%= raw api_v1_delete_favorites_histories_path %>';
+      var container = $('#delete-favorites-history-container');
+
+      if (container.data('loaded')) {
+        return;
+      }
+      container.data('loaded', true);
+
+      $.get(url).done(function (res) {
+        var requests = res.requests;
+        var template = window.templates['deleteFavoritesHistory'];
+
+        container.find('.loading').remove();
+        container.find('table').show();
+        var tbody = container.find('tbody');
+
+        for (var i = 0; i < requests.length; i++) {
+          var request = requests[i];
+          var rendered = Mustache.render(template, request);
+          tbody.append(rendered);
+        }
+      }).fail(showErrorMessage);
+    }
+  });
+</script>

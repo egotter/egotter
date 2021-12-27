@@ -1,6 +1,6 @@
 <% content_for :navbar_title, t('.navbar_title') %>
 
-<div class="mt-3 mb-5"><%= t('.page_description_html', count: @max_count) %></div>
+<div class="mt-3 mb-5"><%= t('.page_description_html', count: DeleteFavoritesRequest::DESTROY_LIMIT) %></div>
 
 <ul class="nav nav-tabs">
   <li class="nav-item">
@@ -10,16 +10,22 @@
     <a id="delete-favorites-premium-tab" class="nav-link <%= class_names(active: delete_favorites_premium_tab?) %>" href="#premium-tab" data-toggle="tab"><%= t('delete_favorites.premium.title') %></a>
   </li>
   <li class="nav-item">
+    <a id="delete-favorites-history-tab" class="nav-link <%= class_names(active: delete_favorites_history_tab?) %>" href="#history-tab" data-toggle="tab"><%= t('delete_favorites.history.title') %></a>
+  </li>
+  <li class="nav-item">
     <a class="nav-link" href="<%= delete_favorites_faq_path(via: current_via('tab')) %>" target="_blank"><%= t('delete_favorites.faq.tab_title') %></a>
   </li>
 </ul>
 
 <div class="tab-content">
   <div id="free-tab" class="tab-pane <%= class_names(active: delete_favorites_free_tab?) %>">
-    <%= render partial: 'free', locals: {processing: @processing, max_count: @max_count} %>
+    <%= render partial: 'free', locals: {request: @delete_favorites_request, max_count: DeleteFavoritesRequest::DESTROY_LIMIT} %>
   </div>
   <div id="premium-tab" class="tab-pane <%= class_names(active: delete_favorites_premium_tab?) %>">
     <%= render partial: 'premium' %>
+  </div>
+  <div id="history-tab" class="tab-pane <%= class_names(active: delete_favorites_history_tab?) %>">
+    <%= render partial: 'history' %>
   </div>
 </div>
 
@@ -31,12 +37,16 @@
     var urls = [
       '<%= raw delete_favorites_mypage_path %>',
       '<%= raw delete_favorites_mypage_premium_path %>',
+      '<%= raw delete_favorites_mypage_history_path %>'
     ];
     $('#delete-favorites-free-tab').on('shown.bs.tab', function () {
       window.history.replaceState(null, null, urls[0]);
     });
     $('#delete-favorites-premium-tab').on('shown.bs.tab', function () {
       window.history.replaceState(null, null, urls[1]);
+    });
+    $('#delete-favorites-history-tab').on('shown.bs.tab', function () {
+      window.history.replaceState(null, null, urls[2]);
     });
   });
 </script>

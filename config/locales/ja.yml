@@ -1773,6 +1773,7 @@ ja:
       test_message: 'DM送信テスト ※そのまま送信'
       post_tweet: '削除の完了後にツイートする'
       button: '無料で直近のいいねを削除する'
+      history_html: '「削除の履歴」で <a href="%{url}">進行中の履歴を見る</a> ことができます。'
       requested: '削除リクエスト済み'
       note1: '※ いいね削除は取り消しできません。'
       note2: '※ 無料で削除できるのは%{count}件までです。'
@@ -1796,6 +1797,14 @@ ja:
       note2: 'twitter-0000-00-00-aaaaaa.zip を選択してください。'
       note3: '日付は「元ツイートの日付」です。'
       note4: 'パソコンとWi-Fiを使うと高速にアップロードできます。'
+    history:
+      title: '削除の履歴'
+      description: '「削除の履歴」では、これまでに実行した削除の履歴を見ることができます。'
+      date: '日付'
+      type: '種類'
+      reservations: '予約'
+      deletions: '完了'
+      loading: '読み込み中'
     confirmation_modal:
       title: '@%{user} のいいね削除'
       body_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のいいねを削除します。本当によろしいですか？'
@@ -2251,6 +2260,15 @@ ja:
           cannot_follow_yourself: '自分をフォローすることはできません。'
           success: '@%{user} のフォローに成功しました。残りのフォロー回数は %{count}回 です。'
           success_with_delay: '@%{user} のフォローをリクエストしました。凍結を防ぐために一定時間後にフォローします。'
+      delete_favorites_requests:
+        create:
+          success: 'いいね削除のリクエストに成功しました。ページを更新します。'
+      delete_favorites_histories:
+        index:
+          request_types:
+            default: '一括'
+            search: '検索'
+            archive: '完全'
       delete_tweets_requests:
         create:
           success_html: |
@@ -2287,9 +2305,6 @@ ja:
       delete_tweets_presigned_urls:
         create:
           fail: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをそのまま指定してください。'
-      delete_favorites_requests:
-        create:
-          success: 'いいね削除のリクエストに成功しました。ページを更新します。'
       friend_insights:
         fail: '更新中です。数分後に再度お試しください。'
       follower_insights:
@@ -2658,6 +2673,8 @@ ja:
       block_report_short: "%-m月%-d日 %-H時%-M分"
       mute_report_short: "%-m月%-d日 %-H時%-M分"
       periodic_report_short: "%-m月%-d日 %-H時%-M分"
+      delete_favorites_short: "%-H時%-M分"
+      delete_favorites_long: "%-m月%-d日 %-H時%-M分"
       delete_tweets_short: "%-H時%-M分"
       delete_tweets_long: "%-m月%-d日 %-H時%-M分"
       deletable_tweets_long: "%-m月%-d日 %-H時%-M分"
