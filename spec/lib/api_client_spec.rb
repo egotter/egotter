@@ -221,6 +221,66 @@ RSpec.describe ApiClient::TwitterWrapper, type: :model do
   let(:twitter) { double('twitter') }
   let(:instance) { described_class.new(api_client, twitter) }
 
+  describe 'follow!' do
+    subject { instance.follow!(1) }
+    it do
+      expect(twitter).to receive(:follow!).with(1)
+      expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: :follow!)
+      subject
+    end
+  end
+
+  describe 'unfollow' do
+    subject { instance.unfollow(1) }
+    it do
+      expect(twitter).to receive(:unfollow).with(1)
+      expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: :unfollow)
+      subject
+    end
+  end
+
+  describe 'user_timeline' do
+    subject { instance.user_timeline(1) }
+    it do
+      expect(twitter).to receive(:user_timeline).with(1)
+      expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: :user_timeline)
+      subject
+    end
+  end
+
+  describe 'create_direct_message_event' do
+    subject { instance.create_direct_message_event(*args) }
+
+    context 'Pass uid and message' do
+      let(:args) { [1, 'text'] }
+      it do
+        expect(DirectMessageReceiveLog).to receive(:message_received?).with(1).and_return(true)
+        expect(twitter).to receive(:create_direct_message_event).with(1, 'text')
+        subject
+      end
+    end
+
+    context 'Pass event' do
+      let(:event) do
+        {
+            type: 'message_create',
+            message_create: {
+                target: {recipient_id: 1},
+                message_data: {
+                    text: 'text'
+                }
+            }
+        }
+      end
+      let(:args) { [event: event] }
+      it do
+        expect(DirectMessageReceiveLog).to receive(:message_received?).with(1).and_return(true)
+        expect(twitter).to receive(:create_direct_message_event).with(event: event)
+        subject
+      end
+    end
+  end
+
   describe '#method_missing' do
     subject { instance.send(:method_missing, :user, 1) }
     before { allow(twitter).to receive(:respond_to?).with(:user).and_return(true) }

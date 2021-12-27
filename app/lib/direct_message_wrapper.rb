@@ -13,6 +13,14 @@ class DirectMessageWrapper
     def from_response(res)
       new(res)
     end
+
+    def from_args(args)
+      if args.length == 1 && args[0].is_a?(Hash)
+        new(event: args[0][:event])
+      else
+        new(event: DirectMessageEvent.build(args[0], args[1]))
+      end
+    end
   end
 
   def id

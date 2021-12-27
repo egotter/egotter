@@ -159,16 +159,55 @@ class ApiClient
       end
     end
 
+    def follow!(*args)
+      call_api(__method__, *args)
+    ensure
+      CreateTwitterApiLogWorker.perform_async(name: __method__)
+    end
+
+    def unfollow(*args)
+      call_api(__method__, *args)
+    ensure
+      CreateTwitterApiLogWorker.perform_async(name: __method__)
+    end
+
+    def user_timeline(*args)
+      call_api(__method__, *args)
+    ensure
+      CreateTwitterApiLogWorker.perform_async(name: __method__)
+    end
+
+    def create_direct_message_event(*args)
+      dm = DirectMessageWrapper.from_args(args)
+
+      if !DirectMessageReceiveLog.message_received?(dm.recipient_id) && DirectMessageLimitedFlag.on?
+        message_text = dm.text.truncate(100)
+        error_message = "Sending DMs is rate-limited remaining=#{DirectMessageLimitedFlag.remaining} text=#{message_text}"
+        raise Twitter::Error::EnhanceYourCalm.new(error_message)
+      end
+
+      begin
+        call_api(__method__, *args)
+      rescue Twitter::Error::EnhanceYourCalm => e
+        DirectMessageLimitedFlag.on
+        raise
+      end
+    end
+
     # TODO List api methods
     def method_missing(method, *args, &block)
       if @twitter.respond_to?(method)
-        @api_name = method
-
-        RequestWithRetryHandler.new(method).perform do
-          @twitter.send(method, *args, &block)
-        end
+        call_api(method, *args, &block)
       else
         super
+      end
+    end
+
+    def call_api(method, *args, &block)
+      @api_name = method
+
+      RequestWithRetryHandler.new(method).perform do
+        @twitter.send(method, *args, &block)
       end
     rescue => e
       @api_client.update_authorization_status(e)
