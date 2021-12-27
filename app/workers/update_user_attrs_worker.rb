@@ -23,7 +23,7 @@ class UpdateUserAttrsWorker
   def perform(user_id, options = {})
     user = User.find(user_id)
     api_user = user.api_client.twitter.verify_credentials
-    user.assign_attributes(authorized: true, screen_name: api_user.screen_name)
+    user.assign_attributes(authorized: true, locked: false, screen_name: api_user.screen_name)
     user.save if user.changed?
   rescue => e
     if TwitterApiStatus.unauthorized?(e)
