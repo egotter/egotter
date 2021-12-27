@@ -23,6 +23,8 @@ class ApiClient
 
     if e.class == ApiClient::RetryExhausted
       Airbag.warn { "Sending DM failed method=#{__method__} user_id=#{@user&.id} recipient_id=#{recipient_id} message=#{message}" }
+    elsif DirectMessageStatus.enhance_your_calm?(e)
+      SendEnhanceYourCalmCountToSlackWorker.perform_async
     end
 
     raise
@@ -49,6 +51,8 @@ class ApiClient
       else
         Airbag.warn { message % 'Sending DM failed' }
       end
+    elsif DirectMessageStatus.enhance_your_calm?(e)
+      SendEnhanceYourCalmCountToSlackWorker.perform_async
     end
 
     raise
