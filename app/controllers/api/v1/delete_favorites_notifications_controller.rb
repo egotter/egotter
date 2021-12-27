@@ -6,7 +6,7 @@ module Api
       before_action :require_login!
 
       def create
-        SendMessageToSlackWorker.perform_async(:delete_favorites, "`Upload completed` user_id=#{current_user.id} screen_name=#{current_user.screen_name}")
+        SendMessageToSlackWorker.perform_async(:monit_delete_favorites, "`Upload completed` user_id=#{current_user.id} screen_name=#{current_user.screen_name}")
 
         CreateDeleteFavoritesUploadCompletedMessageWorker.perform_async(current_user.id, since: validated_since, until: validated_until)
         render json: {status: 'ok'}

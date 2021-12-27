@@ -7,7 +7,7 @@ class SendDeleteTweetsStartedWorker
   #   user_id
   def perform(request_id, options = {})
     request = DeleteTweetsRequest.find(request_id)
-    SendMessageToSlackWorker.perform_async(:delete_tweets, "`Started` #{request.to_message}")
+    SendMessageToSlackWorker.perform_async(:monit_delete_tweets, "`Started` #{request.to_message}")
   rescue => e
     handle_worker_error(e, request_id: request_id, options: options)
   end

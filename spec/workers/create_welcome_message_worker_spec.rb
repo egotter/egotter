@@ -49,7 +49,7 @@ RSpec.describe CreateWelcomeMessageWorker do
 
       context 'the exception is unknown' do
         it do
-          expect(SendMessageToSlackWorker).to receive(:perform_async).with(:welcome_messages, instance_of(String))
+          expect(SendMessageToSlackWorker).to receive(:perform_async).with(:messages_welcome, instance_of(String))
           subject
         end
       end

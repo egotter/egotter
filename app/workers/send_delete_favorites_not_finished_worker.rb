@@ -8,7 +8,7 @@ class SendDeleteFavoritesNotFinishedWorker
   def perform(request_id, options = {})
     request = DeleteFavoritesRequest.find(request_id)
     unless request.finished?
-      SendMessageToSlackWorker.perform_async(:delete_favorites, "`Not finished` #{request.to_message}")
+      SendMessageToSlackWorker.perform_async(:monit_delete_favorites, "`Not finished` #{request.to_message}")
     end
   rescue => e
     handle_worker_error(e, request_id: request_id, options: options)

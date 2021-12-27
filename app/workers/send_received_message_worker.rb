@@ -1,3 +1,4 @@
+# TODO Rename to SendReceivedDirectMessageToSlackWorker
 class SendReceivedMessageWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
