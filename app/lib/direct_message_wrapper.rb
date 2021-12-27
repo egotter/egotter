@@ -10,8 +10,8 @@ class DirectMessageWrapper
       new(event: event)
     end
 
-    def from_response(res)
-      new(res)
+    def from_json(json)
+      new(JSON.parse(json, symbolize_names: true))
     end
 
     def from_args(args)

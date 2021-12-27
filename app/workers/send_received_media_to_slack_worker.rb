@@ -3,9 +3,8 @@ class SendReceivedMediaToSlackWorker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   # options:
-  def perform(response, options = {})
-    res = JSON.parse(response, symbolize_names: true)
-    dm = DirectMessageWrapper.from_response(res)
+  def perform(json, options = {})
+    dm = DirectMessageWrapper.from_json(json)
 
     if dm.media_url
       client = User.egotter.api_client.twitter
@@ -21,7 +20,7 @@ class SendReceivedMediaToSlackWorker
       end
     end
   rescue => e
-    Airbag.warn "#{e.inspect} response=#{response.inspect.truncate(100)}"
+    Airbag.warn "#{e.inspect} json=#{json.inspect.truncate(100)}"
     Airbag.info e.backtrace.join("\n")
   end
 end
