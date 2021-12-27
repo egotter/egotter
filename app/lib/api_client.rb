@@ -18,7 +18,7 @@ class ApiClient
       true
     end
   rescue => e
-    CreateDirectMessageErrorLogWorker.perform_async([recipient_id, message], e.class, e.message, Time.zone.now, sender_id: @user&.uid)
+    CreateDirectMessageErrorLog2Worker.perform_async(sender_id: @user&.uid, recipient_id: recipient_id, error_class: e.class, error_message: e.message, properties: {args: [recipient_id, message]}, created_at: Time.zone.now)
     update_blocker_status(e)
 
     if e.class == ApiClient::RetryExhausted
@@ -36,11 +36,11 @@ class ApiClient
     CreateDirectMessageSendLogWorker.perform_async(sender_id: dm.sender_id, recipient_id: dm.recipient_id, message: dm.text)
     dm
   rescue => e
-    CreateDirectMessageErrorLogWorker.perform_async({event: event}, e.class, e.message, Time.zone.now, sender_id: @user&.uid)
+    failed_dm = DirectMessageWrapper.from_event(event)
+    CreateDirectMessageErrorLog2Worker.perform_async(sender_id: @user&.uid, recipient_id: failed_dm.recipient_id, error_class: e.class, error_message: e.message, properties: {args: {event: event}}, created_at: Time.zone.now)
     update_blocker_status(e)
 
     if e.class == ApiClient::RetryExhausted
-      failed_dm = DirectMessageWrapper.from_event(event)
       message = "%s method=#{__method__} user_id=#{@user&.id} recipient_id=#{failed_dm.recipient_id} message=#{failed_dm.text&.truncate(50)}"
 
       if failed_dm.recipient_id != User::EGOTTER_UID && @user
