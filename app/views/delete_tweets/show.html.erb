@@ -1,6 +1,6 @@
 <% content_for :navbar_title, t('.navbar_title') %>
 
-<div class="mt-3 mb-5"><%= t('.page_description_html', count: @max_count) %></div>
+<div class="mt-3 mb-5"><%= t('.page_description_html', count: DeleteTweetsRequest::DESTROY_LIMIT) %></div>
 
 <ul class="nav nav-tabs oneline-tabs">
   <li class="nav-item">
@@ -25,7 +25,7 @@
     <%= render partial: 'search' %>
   </div>
   <div id="free-tab" class="tab-pane <%= class_names(active: delete_tweets_free_tab?) %>">
-    <%= render partial: 'free', locals: {processing: @processing, max_count: @max_count} %>
+    <%= render partial: 'free', locals: {request: @delete_tweets_request, max_count: DeleteTweetsRequest::DESTROY_LIMIT} %>
   </div>
   <div id="premium-tab" class="tab-pane <%= class_names(active: delete_tweets_premium_tab?) %>">
     <%= render partial: 'premium' %>

@@ -52,8 +52,10 @@
       </div>
 
       <div class="text-center mt-3">
-        <% if processing %>
+        <% if request&.processing? %>
+          <div class="my-3"><%= t('.history_html', url: delete_tweets_mypage_history_path(via: current_via)) %></div>
           <div class="btn btn-danger disabled">
+            <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
             <%= t('.requested') %>
           </div>
 
