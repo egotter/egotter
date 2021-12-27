@@ -57,7 +57,8 @@ RSpec.describe ApiClient, type: :model do
       let(:error) { RuntimeError.new('error') }
       before { allow(client).to receive(:create_direct_message_event).and_raise(error) }
       it do
-        expect(CreateDirectMessageErrorLogWorker).to receive(:perform_async).with(any_args)
+        expect(CreateDirectMessageErrorLogWorker).to receive(:perform_async).
+            with(sender_id: user.uid, recipient_id: 1, error_class: error.class, error_message: error.message, properties: {args: {event: event}}, created_at: instance_of(ActiveSupport::TimeWithZone))
         expect(instance).to receive(:update_blocker_status).with(error)
         expect { subject }.to raise_error(error)
       end
