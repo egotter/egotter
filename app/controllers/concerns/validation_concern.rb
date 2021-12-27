@@ -106,6 +106,14 @@ module ValidationConcern
     false
   end
 
+  def validate_account_suspension!
+    return true unless user_signed_in?
+    return true unless current_user.locked?
+
+    redirect_to error_pages_account_locked_path(via: current_via(__method__))
+    false
+  end
+
   def validate_dm_permission!
     return true unless user_signed_in?
     return true if current_user.enough_permission_level?

@@ -98,6 +98,7 @@ Rails.application.routes.draw do
   end
 
   get 'error_pages/api_not_authorized', to: 'error_pages#api_not_authorized'
+  get 'error_pages/account_locked', to: 'error_pages#account_locked'
   get 'error_pages/too_many_searches', to: 'error_pages#too_many_searches'
   get 'error_pages/too_many_friends', to: 'error_pages#too_many_friends'
   get 'error_pages/ad_blocker_detected', to: 'error_pages#ad_blocker_detected'

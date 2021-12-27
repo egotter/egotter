@@ -21,6 +21,10 @@ class ErrorPagesController < ApplicationController
     @screen_name = current_user&.screen_name
   end
 
+  def account_locked
+    @screen_name = current_user&.screen_name
+  end
+
   def too_many_searches; end
 
   def too_many_friends; end

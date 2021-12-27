@@ -4,6 +4,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   include JobQueueingConcern
 
   skip_before_action :validate_api_authorization!
+  skip_before_action :validate_account_suspension!
   skip_before_action :validate_dm_permission!
   skip_before_action :current_user_not_blocker?
 

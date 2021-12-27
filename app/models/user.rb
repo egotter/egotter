@@ -131,6 +131,7 @@ class User < ApplicationRecord
     def update_with_token(uid, screen_name, email, token, secret)
       user = find_by(uid: uid)
       user.authorized = true
+      user.locked = false
       user.token = token if user.respond_to?(:token)
       user.secret = secret if user.respond_to?(:secret)
 
