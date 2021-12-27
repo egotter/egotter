@@ -30,7 +30,9 @@ class DeleteTweetsTask
     raise
   ensure
     if e && e.class != DeleteTweetsRequest::TweetsNotFound
-      request.update(error_message: e.inspect)
+      request.update(error_class: e.class, error_message: e.message)
+      Airbag.info { "#{e.inspect} request_id=#{request.id}" }
+      Airbag.info { e.backtrace.join("\n") }
     end
   end
 end
