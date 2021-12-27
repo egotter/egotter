@@ -183,7 +183,7 @@ class ApiClient
       if !DirectMessageReceiveLog.message_received?(dm.recipient_id) && DirectMessageLimitedFlag.on?
         message_text = dm.text.truncate(100)
         error_message = "Sending DMs is rate-limited remaining=#{DirectMessageLimitedFlag.remaining} text=#{message_text}"
-        raise Twitter::Error::EnhanceYourCalm.new(error_message)
+        raise ApiClient::EnhanceYourCalm.new(error_message)
       end
 
       begin
@@ -220,6 +220,9 @@ class ApiClient
   end
 
   class RetryExhausted < StandardError
+  end
+
+  class EnhanceYourCalm < StandardError
   end
 
   class RequestWithRetryHandler
