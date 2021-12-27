@@ -17,4 +17,9 @@
 #  index_direct_message_error_logs_on_sender_id     (sender_id)
 #
 class DirectMessageErrorLog < ApplicationRecord
+  class << self
+    def enhance_your_calm
+      where('created_at > ?', 1.day.ago).where('error_class regexp "EnhanceYourCalm"')
+    end
+  end
 end
