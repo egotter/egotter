@@ -1,5 +1,6 @@
 require 'net/http'
 
+# TODO Remove later
 class SlackClient
   URLS = {
       monitoring:                  ENV['SLACK_METRICS_WEBHOOK_URL'],
