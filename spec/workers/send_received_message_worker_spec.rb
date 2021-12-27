@@ -42,10 +42,10 @@ RSpec.describe SendReceivedMessageWorker do
     let(:client) { double('client') }
     subject { worker.send(:send_message, uid, 'text') }
     before do
-      allow(SlackClient).to receive(:channel).with('received_messages').and_return(client)
+      allow(SlackBotClient).to receive(:channel).with('messages_received').and_return(client)
     end
     it do
-      expect(client).to receive(:send_context_message).with(any_args)
+      expect(client).to receive(:post_context_message).with(any_args)
       subject
     end
   end

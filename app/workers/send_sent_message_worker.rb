@@ -7,7 +7,7 @@ class SendSentMessageWorker
   #   dm_id
   def perform(recipient_uid, options = {})
     return if static_message?(options['text'])
-    send_message_to_slack(recipient_uid, options['text'])
+    send_message(recipient_uid, options['text'])
   rescue => e
     Airbag.warn "Sending a message to slack failed #{e.inspect}"
   end
@@ -17,10 +17,10 @@ class SendSentMessageWorker
         text.include?('#egotter')
   end
 
-  def send_message_to_slack(recipient_uid, text)
+  def send_message(recipient_uid, text)
     screen_name = fetch_screen_name(recipient_uid)
     text = dm_url(screen_name) + "\n" + text
-    SlackClient.sent_messages.send_message(text, title: "`#{screen_name}` `#{recipient_uid}`")
+    SlackBotClient.channel('messages_sent').post_message("`#{screen_name}` `#{recipient_uid}`\n#{text}")
   end
 
   def fetch_screen_name(uid)
