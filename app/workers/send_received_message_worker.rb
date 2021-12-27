@@ -9,7 +9,7 @@ class SendReceivedMessageWorker
     return if dont_send_message?(options['text'])
     send_message(sender_uid, options['text'])
   rescue => e
-    Airbag.warn "sender_uid=#{sender_uid} options=#{options.inspect}"
+    Airbag.warn "#{e.inspect} sender_uid=#{sender_uid} options=#{options.inspect}"
     Airbag.info e.backtrace.join("\n")
   end
 
@@ -48,11 +48,11 @@ class SendReceivedMessageWorker
     icon_url = user&.profile_image_url_https
     urls = [dm_url(screen_name), dm_url_by_uid(sender_uid)]
 
-    client = SlackClient.channel('received_messages')
+    client = SlackBotClient.channel('messages_received')
     begin
-      client.send_context_message(text, screen_name, icon_url, urls)
+      client.post_context_message(text, screen_name, icon_url, urls)
     rescue => e
-      client.send_message("sender_uid=#{sender_uid} text=#{text}")
+      client.post_message("sender_uid=#{sender_uid} text=#{text}")
     end
   end
 

@@ -20,7 +20,6 @@ class SlackBotClient
     # end
   end
 
-  # TODO Not used
   def post_context_message(text, screen_name, icon_url, urls)
     mrkdwn_text = urls.map.with_index { |url, i| "<#{url}|url#{i + 1}>" }.join(' ') + ' ' + text
     block = {
