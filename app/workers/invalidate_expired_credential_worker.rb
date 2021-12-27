@@ -30,7 +30,9 @@ class InvalidateExpiredCredentialWorker
       notify("bot is updated bot_id=#{bot_id} changes=#{bot.saved_changes}")
     end
   rescue => e
-    if TwitterApiStatus.unauthorized?(e)
+    if TwitterApiStatus.retry_timeout?(e)
+      # Do nothing
+    elsif TwitterApiStatus.unauthorized?(e)
       bot.update(authorized: false)
     elsif TwitterApiStatus.temporarily_locked?(e)
       bot.update(locked: true)
