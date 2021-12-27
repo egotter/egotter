@@ -6,7 +6,6 @@ RUBY='/var/egotter/bin/cron/ruby.sh'
 # 30 * * * * /bin/sh -c "$RAKE orders:update_stripe_attributes"
 # 45 * * * * /bin/sh -c "$RAKE periodic_reports:send_remind_messages"
 # 25 * * * * /bin/sh -c "$RUNNER 'UpdateEgotterFollowersWorker.perform_async'"
-#  0 15 * * * /bin/sh -c "$RUNNER 'SendMetricsToSlackWorker.perform_async'"
 #  * * * * * /bin/sh -c "$RUBY bin/send_metrics_to_cloudwatch.rb"
 #  * * * * * /bin/sh -c "$RUBY bin/delete_not_found_users.rb"
 #  * * * * * /bin/sh -c "$RUBY bin/delete_forbidden_users.rb"
