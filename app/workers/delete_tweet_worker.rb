@@ -60,7 +60,7 @@ class DeleteTweetWorker
         TwitterApiStatus.suspended?(e) ||
         TweetStatus.temporarily_locked?(e)
       request.update(stopped_at: Time.zone.now)
-      Airbag.warn { "Request stopped request=#{request.inspect}" }
+      Airbag.warn { "Request stopped request_id=#{request.id} user_id=#{request.user_id}" }
       nil
     else
       raise e
