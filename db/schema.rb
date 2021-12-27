@@ -584,6 +584,7 @@ ActiveRecord::Schema.define(version: 2021_12_21_040841) do
     t.boolean "tweet", default: false, null: false
     t.integer "reservations_count", default: 0, null: false
     t.integer "destroy_count", default: 0, null: false
+    t.integer "errors_count", default: 0, null: false
     t.datetime "stopped_at"
     t.datetime "finished_at"
     t.string "error_class", default: "", null: false

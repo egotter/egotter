@@ -43,7 +43,7 @@ RSpec.describe DeleteTweetsTask, type: :model do
       before { allow(request).to receive(:perform!).and_raise(error) }
       it do
         expect(request).to receive(:send_error_message)
-        expect(request).to receive(:update).with(error_message: instance_of(String))
+        expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
         expect { subject }.to raise_error(error)
       end
     end
