@@ -49,6 +49,7 @@ class DeleteTweetWorker
 
   ERROR_HANDLER = Proc.new do |e, request|
     request.update(error_class: e.class, error_message: e.message)
+    request.increment!(:errors_count)
 
     if TweetStatus.no_status_found?(e) ||
         TweetStatus.not_authorized?(e) ||

@@ -49,7 +49,11 @@ RSpec.describe DeleteTweetWorker do
 
       context 'the error can be ignored' do
         before { allow(TweetStatus).to receive(:no_status_found?).with(error).and_return(true) }
-        it { is_expected.to be_nil }
+        it do
+          expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
+          expect(request).to receive(:increment!).with(:errors_count)
+          is_expected.to be_nil
+        end
       end
 
       context 'the error cannot be ignored' do
