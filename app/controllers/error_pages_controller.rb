@@ -18,11 +18,17 @@ class ErrorPagesController < ApplicationController
   before_action :set_user, only: SET_USER_ACTIONS
 
   def api_not_authorized
-    @screen_name = current_user&.screen_name
+    if user_signed_in?
+      UpdateUserAttrsWorker.perform_async(current_user.id)
+      @screen_name = current_user.screen_name
+    end
   end
 
   def account_locked
-    @screen_name = current_user&.screen_name
+    if user_signed_in?
+      UpdateUserAttrsWorker.perform_async(current_user.id)
+      @screen_name = current_user.screen_name
+    end
   end
 
   def too_many_searches; end

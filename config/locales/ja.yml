@@ -1450,7 +1450,7 @@ ja:
   error_pages:
     support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
     api_not_authorized:
-      message: '@%{user} のツイッター連携（API）が無効になっています。'
+      message_html: '@%{user} のツイッター連携（API）が無効になっています。間違いの場合は <a href="%{url}">ログイン</a> すればすぐに元に戻ります。'
       reason_html: 'ログイン連携の取り消しや、<span class="text-danger">アカウントの削除</span>をするとこの状態になります。'
       sign_in_html: 'ログインしたいアカウントは @%{user} で合っていますか？ 合っているなら <a href="%{url}">ログイン</a> してください。'
       switch_account_html: '他のアカウントでログインしたいですか？ もしそうなら <a href="%{url}">アカウントの切り替え</a> をしてください。'
@@ -1462,7 +1462,7 @@ ja:
         q3: 'どうすれば元に戻りますか？'
         a3_html: '<a href="%{url1}">ログイン</a> または <a href="%{url2}">アカウントの切り替え</a> をしてください。そうすれば元に戻ります。'
     account_locked:
-      message: '@%{user} のアカウントが凍結されているかもしれません。'
+      message_html: '@%{user} のアカウントが凍結されているかもしれません。間違いの場合は <a href="%{url}">ログイン</a> すればすぐに元に戻ります。'
       reason_html: 'ツイッターのルール違反をするとこの状態になりますが、間違いによる凍結も数多く報告されています。詳しくは <a href="%{url}" target="_blank">ツイッター公式ヘルプ：アカウントの凍結について</a> をご覧になってください。'
       sign_in_html: '凍結が解除された後は再度えごったーに <a href="%{url}">ログイン</a> してください。'
       switch_account_html: '他のアカウントでログインしたいですか？ もしそうなら <a href="%{url}">アカウントの切り替え</a> をしてください。'
