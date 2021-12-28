@@ -25,7 +25,10 @@ class UpdatePermissionLevelWorker
   rescue => e
     if TwitterApiStatus.unauthorized?(e)
       user.update!(authorized: false)
-    elsif TwitterApiStatus.not_found?(e) || TwitterApiStatus.suspended?(e) || TwitterApiStatus.too_many_requests?(e)
+    elsif TwitterApiStatus.not_found?(e) ||
+        TwitterApiStatus.suspended?(e) ||
+        TwitterApiStatus.too_many_requests?(e) ||
+        TwitterApiStatus.retry_timeout?(e)
       # Do nothing
     else
       Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
