@@ -6,7 +6,6 @@ class SendDeleteTweetsBySearchFinishedMessageWorker
   def perform(request_id, options = {})
     request = DeleteTweetsBySearchRequest.find(request_id)
     request.finished!
-    SlackBotClient.channel('monit_delete_tweets').post_message("`Finished` #{request.to_message}")
   rescue => e
     Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
   end

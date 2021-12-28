@@ -6,7 +6,6 @@ class SendDeleteFavoritesFinishedMessageWorker
   def perform(request_id, options = {})
     request = DeleteFavoritesRequest.find(request_id)
     request.finished!
-    SlackBotClient.channel('monit_delete_favorites').post_message("`Finished` #{request.to_message}")
   rescue => e
     Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
   end
