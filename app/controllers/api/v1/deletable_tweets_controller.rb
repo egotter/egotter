@@ -86,7 +86,7 @@ module Api
       end
 
       def tweets_json(user, records)
-        records.map do |record|
+        records.map.with_index do |record, i|
           {
               id: record.tweet_id.to_s,
               text: strip_tags(record.properties['text']).gsub("\n", '<br>'),
@@ -95,6 +95,7 @@ module Api
               media: record.media&.map { |m| {url: m['media_url_https']} },
               url: tweet_url(user.screen_name, record.tweet_id),
               created_at: l(record.tweeted_at.in_time_zone('Tokyo'), format: :deletable_tweets_long),
+              index: i + 1,
           }
         end
       end

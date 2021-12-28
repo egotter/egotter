@@ -1573,8 +1573,8 @@ ja:
       notice1_html: '「検索して削除」を短い時間で何回か実行しても、<strong>%{count}件までしかツイートは削除されません。</strong>これは全世界共通のツイッターの制限です。'
       notice2_html: 'まだ残っているツイートを削除するには、<a href="%{url1}" target="_blank">有料プラン</a> を購入後に <a href="%{url2}">完全に削除</a> をご利用ください。'
       loading: 'ツイートを読み込んでいます。初回は1〜5分ほど時間がかかることがあります。'
-      reload_confirmation_message: 'ページ内の表示を更新します。よろしいですか？'
-      force_reload_confirmation_message: '最新のツイートを同期します。この操作には1〜5分ほど時間がかかることがあります。よろしいですか？'
+      reload_confirmation_message: 'ページ内の表示を更新します。よろしいですか？\n\n検索条件と表示されるツイートが一致しない時に利用してください。'
+      force_reload_confirmation_message: '最新のツイートを同期します。よろしいですか？\n\nツイッターから最新のツイートを取得してきます。この操作には1〜5分ほど時間がかかることがあります。'
       filter:
         modal: '検索条件の指定'
         popularity_buttons: 'ツイートの評判'

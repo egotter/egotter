@@ -2,7 +2,7 @@
 
 <div class="mt-3 mb-5"><%= t('.page_description_html', count: DeleteFavoritesRequest::DESTROY_LIMIT) %></div>
 
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs oneline-tabs">
   <li class="nav-item">
     <a id="delete-favorites-free-tab" class="nav-link <%= class_names(active: delete_favorites_free_tab?) %>" href="#free-tab" data-toggle="tab"><%= t('delete_favorites.free.title') %></a>
   </li>

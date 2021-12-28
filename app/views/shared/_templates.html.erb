@@ -96,7 +96,7 @@
 
 <template id="deletable-tweet-template">
   <div class="deletable-tweet-container" data-id="{{id}}">
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center mb-2">
       <div>
         <input type="checkbox" name="selected-deletable-tweet" data-id="{{id}}">
       </div>
@@ -114,6 +114,7 @@
       <div class="small ml-3" style="white-space: nowrap;">
         <a href="{{url}}" class="text-muted" target="_blank">{{created_at}}</a>
       </div>
+      <div class="ml-auto small text-muted">{{index}}</div>
     </div>
     <div class="tweet-text" style="cursor: pointer; overflow: hidden; word-break: break-word; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;">
       {{{text}}}
