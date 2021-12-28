@@ -2,6 +2,7 @@ default: &default
   usage_count: 26000000
   persisted_count_ja: '1億5000万'
   delete_tweets_count: 82000000
+  delete_favorites_count: 82000000
   usage_stat_recently_created: <%= 30.minutes %>
   search_limitation:
     soft_limit: 2000

@@ -1546,12 +1546,12 @@ ja:
     index:
       navbar_title: 'ツイートクリーナー'
       footer_title: 'ツイートを一括削除'
-      meta_title: '安全にツイートを削除したい？ ツイート削除の人気No.1 ツイートクリーナーでOK'
-      meta_description: 'ツイートクリーナーを使うと効率的に複数ツイートを削除できます。ツイートクリーナーは世界最大のツイート削除ツールの1つです。'
+      meta_title: '安全にツイートを削除したい？ ツイート削除の人気No.1 ツイートクリーナー'
+      meta_description: 'ツイートクリーナーを使うと効率的にツイートを削除できます。ツイートクリーナーは世界最大のツイート削除ツールの1つです。'
       right_side:
         header: 'ツイートクリーナー'
         subheader: 'ワンクリックでツイートを一括削除'
-        lead_html: '100ツイート/秒の速さで高速削除！<br><span class="egotter-pink">%{count}万回</span>以上利用された安心のツールです。<br>'
+        lead_html: '100ツイート/秒の速さで高速削除！<br><span class="egotter-pink">%{count}万回</span>以上利用された安心のツールです。'
     faq:
       navbar_title: 'ツイートクリーナー'
       meta_title: 'ツイートクリーナーのよくある質問'
@@ -1740,15 +1740,15 @@ ja:
       ok: "削除する"
       cancel: "キャンセル"
   delete_favorites:
-    new:
+    index:
       navbar_title: 'いいねクリーナー'
       footer_title: 'いいねを一括削除'
-      meta_title: 'いいねクリーナー - ワンクリックでいいねを一括削除'
-      meta_description: '黒歴史よさようなら！ ワンクリックでいいねを一括削除。%{count}万回以上利用されたえごったーに新機能が登場！ 100件/秒の速さでいいねを高速削除します。10年以上利用されているえごったーだからプライバシーも安心です。'
+      meta_title: '安全にいいねを削除したい？ いいね削除の人気No.1 いいねクリーナー'
+      meta_description: 'いいねクリーナーを使うと効率的にいいねを削除できます。いいねクリーナーは世界最大のいいね削除ツールの1つです。'
       right_side:
         header: 'いいねクリーナー'
         subheader: 'ワンクリックでいいねを一括削除'
-        lead_html: '100件/秒の速さで高速削除！<br><span class="egotter-pink">%{count}万回</span>以上利用された安心のツールです。<br>'
+        lead_html: '100件/秒の速さで高速削除！<br><span class="egotter-pink">%{count}万回</span>以上利用された安心のツールです。'
     faq:
       navbar_title: 'いいねクリーナー'
       meta_title: 'いいねクリーナーのよくある質問'

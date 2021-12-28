@@ -1,20 +1,61 @@
-<h2 class="h5 text-center my-5">いいねクリーナーとは？</h2>
-
-<div class="m-3">
-  <p>ツイッターでいいねしたツイートを一括で削除するえごったーの機能です。</p>
-
-  <p>最大で <%= DeleteFavoritesRequest::DESTROY_LIMIT %>件 のいいねを一括で削除できます。</p>
-
-  <p>さらに残っているいいねツイートは、2〜4週間ほど経過すると削除できるようになります。（これは世界共通のツイッターの制限です。）</p>
+<div class="d-flex" style="overflow-x: scroll;">
+  <div class="m-3">
+    <%= image_tag '/images/ss_delete_favorites_400.png', class: 'border', width: '200', loading: 'lazy' %>
+    <div class="text-center text-muted small mt-1">いいね削除の条件指定</div>
+  </div>
 </div>
 
-<div class="text-center m-3">
-  <%= image_tag '/images/ss_delete_favorites_400.png', class: 'border', width: '200', loading: 'lazy' %>
-  <div class="text-muted small mt-1">いいね削除の条件指定</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">いいねクリーナーとは</h3>
+      <div>
+        <p>いいねクリーナーを使うと効率的に複数いいねを削除できます。いいねクリーナーは世界最大のいいね削除ツールの1つです。</p>
+        <p>世の中のほとんどのいいね削除ツールは、今はもう動いていなかったり、少数のいいねしか削除できません。</p>
+        <p>無料で大量のいいねを削除でき、今も正常に動作するツールの中で、いいねクリーナーはトップクラスの安定性を誇っています。</p>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">いいねクリーナーの安全性</h3>
+      <div>
+        <p>いいねクリーナーは、10年以上に渡って世界最大級のツイッター分析ツールである えごったー&#174; からスピンオフされたツールです。</p>
+        <p>宣伝ツイートを勝手にしたり、不要な広告メールを送ったりすることは一切ありません。いいねの削除だけに特化した機能のみを持っています。</p>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">いいねクリーナーの速度</h3>
+      <div>
+        <p>いいねクリーナーは、平均して100いいね/秒の速さでいいねを削除することができます。</p>
+        <p>一晩中待っても一向に削除が進まない、そんな不安は全くありませんのでご安心ください。</p>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">いいね削除数は無制限</h3>
+      <div>
+        <p>いいねクリーナーでは、一度に削除できるいいねは最大で<%= DeleteFavoritesRequest::DESTROY_LIMIT %>件です。これはツイッター側の制限であり、世界中の全てのツールで共通の制限です。</p>
+        <p>世の中のほとんどのいいね削除ツールは、これだけの大量のいいねを一括で削除することができません。10年以上運営されている えごったー&#174; だからこそ実現出来ている技術です。</p>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">アーカイブデータで完璧に削除</h3>
+      <div>
+        <p>いいね総数が<%= DeleteFavoritesRequest::DESTROY_LIMIT %>件を超えている場合は、アーカイブデータをアップロードすることで全てのいいねを1つ残らず削除することが出来ます。</p>
+        <p>アーカイブデータを利用したいいね削除も含めて、いいねクリーナーは全て無料です。</p>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <h3 class="h5 my-5">充実のサポート</h3>
+      <div>
+        <% url = direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_favorites_inquiry')) %>
+        <p>いいねクリーナーに分からないところがある場合は、<%= link_to '@egotter_cs', url, target: '_blank' %> にいつでもご質問ください。日本語と英語のお問い合わせに対応しています。</p>
+        <p>いいねクリーナーの詳細については <%= link_to 'いいねクリーナーのよくある質問', delete_favorites_faq_path(via: current_via) %> をご覧ください。</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="mx-auto my-5" style="width: 300px;">
-  <%= sign_in_with_twitter_link(nil, 'delete_favorites_button', class: 'btn btn-primary btn-lg w-100') %>
+  <%= link_to 'いいねクリーナーにログイン', sign_in_path(redirect_path: delete_favorites_mypage_path, via: current_via), id: 'btn-sign-in-like-cleaner', class: 'btn btn-primary btn-lg w-100' %>
 </div>
 
 <div class="mx-auto my-5" style="width: 300px;">
