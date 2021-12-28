@@ -14,70 +14,68 @@
 
       <div><%= t('.how_to_html', url: delete_tweets_faq_path(via: current_via)) %></div>
 
-      <div class="my-4">
-        <div>
-          <label for="since_date"><%= t('.since_date') %></label>
-          <%= date_field_tag('since_date') %>
+      <% if request&.processing? %>
+        <div class="my-3"><%= t('.history_html', url: delete_tweets_mypage_history_path(via: current_via)) %></div>
+        <div class="btn btn-danger disabled">
+          <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+          <%= t('.requested') %>
         </div>
-        <div>
-          <label for="until_date"><%= t('.until_date') %></label>
-          <%= date_field_tag('until_date') %>
+
+        <div class="text-muted small">
+          <div class="mt-1"><%= t('.note3') %></div>
         </div>
-      </div>
-
-      <div class="mb-4">
-        <%= check_box_tag('multiple-retry', '1', false) %>
-        <span class="text-danger"><%= t('.required') %></span>
-        <label class="d-inline" for="multiple-retry"><%= t('.multiple_retry') %></label>
-        <span class="small"><%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %></span>
-      </div>
-
-      <div class="mb-4">
-        <%= check_box_tag('too-old-tweets', '1', false) %>
-        <span class="text-danger"><%= t('.required') %></span>
-        <label class="d-inline" for="too-old-tweets"><%= t('.too_old_tweets') %></label>
-        <span class="small"><%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %></span>
-      </div>
-
-      <div class="my-4">
-        <div>
-          <%= check_box_tag('send_dm', '1', false) %>
-          <label for="send_dm"><%= t('.send_dm') %></label>
-          <span class="small"><%= link_to t('.send_test_message'), direct_message_url(User::EGOTTER_UID, t('.test_message')), target: '_blank' %></span>
-          <span class="small"><%= link_to t('.reason'), '#', onclick: "window.alert('#{t('.test_message_reason')}'); return false;" %></span>
+      <% else %>
+        <div class="my-4">
+          <div>
+            <label for="since_date"><%= t('.since_date') %></label>
+            <%= date_field_tag('since_date') %>
+          </div>
+          <div>
+            <label for="until_date"><%= t('.until_date') %></label>
+            <%= date_field_tag('until_date') %>
+          </div>
         </div>
-        <div>
-          <%= check_box_tag('post_tweet', '1', true) %>
-          <label for="post_tweet"><%= t('.post_tweet') %></label>
+
+        <div class="mb-4">
+          <%= check_box_tag('multiple-retry', '1', false) %>
+          <span class="text-danger"><%= t('.required') %></span>
+          <label class="d-inline" for="multiple-retry"><%= t('.multiple_retry') %></label>
+          <span class="small"><%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %></span>
         </div>
-      </div>
 
-      <div class="text-center mt-3">
-        <% if request&.processing? %>
-          <div class="my-3"><%= t('.history_html', url: delete_tweets_mypage_history_path(via: current_via)) %></div>
-          <div class="btn btn-danger disabled">
-            <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
-            <%= t('.requested') %>
-          </div>
+        <div class="mb-4">
+          <%= check_box_tag('too-old-tweets', '1', false) %>
+          <span class="text-danger"><%= t('.required') %></span>
+          <label class="d-inline" for="too-old-tweets"><%= t('.too_old_tweets') %></label>
+          <span class="small"><%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %></span>
+        </div>
 
-          <div class="text-muted small">
-            <div class="mt-1"><%= t('.note3') %></div>
+        <div class="my-4">
+          <div>
+            <%= check_box_tag('send_dm', '1', false) %>
+            <label for="send_dm"><%= t('.send_dm') %></label>
+            <span class="small"><%= link_to t('.send_test_message'), direct_message_url(User::EGOTTER_UID, t('.test_message')), target: '_blank' %></span>
+            <span class="small"><%= link_to t('.reason'), '#', onclick: "window.alert('#{t('.test_message_reason')}'); return false;" %></span>
           </div>
-        <% else %>
-          <div id="open-delete-tweets-modal" class="btn btn-danger" data-target="#delete-tweets-modal" data-toggle="modal">
-            <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
-            <%= t('.button') %>
+          <div>
+            <%= check_box_tag('post_tweet', '1', true) %>
+            <label for="post_tweet"><%= t('.post_tweet') %></label>
           </div>
+        </div>
 
-          <div class="text-muted small">
-            <div class="mt-1"><%= t('.note1') %></div>
-            <div class="mt-1">
-              <%= t('.note2', count: max_count) %>
-              <%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %>
-            </div>
+        <div id="open-delete-tweets-modal" class="btn btn-danger" data-target="#delete-tweets-modal" data-toggle="modal">
+          <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+          <%= t('.button') %>
+        </div>
+
+        <div class="text-muted small">
+          <div class="mt-1"><%= t('.note1') %></div>
+          <div class="mt-1">
+            <%= t('.note2', count: max_count) %>
+            <%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %>
           </div>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
