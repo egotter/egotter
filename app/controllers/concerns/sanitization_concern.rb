@@ -8,6 +8,7 @@ module SanitizationConcern
       /timelines
       /clusters
       /delete_tweets
+      /delete_favorites
       /settings
       /start
       /personality_insights

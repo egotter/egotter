@@ -2271,6 +2271,7 @@ ja:
           success: 'いいね削除のリクエストに成功しました。ページを更新します。'
       delete_favorites_histories:
         index:
+          error_message_html: 'エラーで削除が止まっています。削除を再開する場合は <a href="%{url}">ログイン</a> してからもう一度削除をリクエストしてください。'
           request_types:
             default: '一括'
             search: '検索'
@@ -2282,6 +2283,7 @@ ja:
             <a href="%{url}" class="btn btn-sm btn-outline-primary" target="_blank">DMを送る</a>
       delete_tweets_histories:
         index:
+          error_message_html: 'エラーで削除が止まっています。削除を再開する場合は <a href="%{url}">ログイン</a> してからもう一度削除をリクエストしてください。'
           request_types:
             default: '一括'
             search: '検索'

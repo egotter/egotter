@@ -10,7 +10,13 @@ module Api
             DeleteFavoritesRequest.where(user_id: current_user.id).order(created_at: :desc).limit(10)
         ].flatten.sort_by { |r| -r.created_at.to_i }.take(10)
 
-        render json: {requests: to_json(requests)}
+        if requests.any? && requests[0].error_message.present?
+          error_message = t('.error_message_html', url: sign_in_path(redirect_path: delete_favorites_mypage_history_path, via: current_via('error')))
+        else
+          error_message = nil
+        end
+
+        render json: {requests: to_json(requests), error_message: error_message}
       end
 
       private
@@ -22,7 +28,6 @@ module Api
               reservations_count: req.reservations_count,
               deletions_count: req.respond_to?(:deletions_count) ? req.deletions_count : req.destroy_count,
               created_at: request_time(req.created_at),
-
           }
         end
       end

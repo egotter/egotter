@@ -6,6 +6,11 @@
     <%= t('.loading') %>
   </div>
 
+  <div class="error-message-container" style="display: none;">
+    <%= alert_box category: 'danger', class: 'error-message my-5' do %>
+    <% end %>
+  </div>
+
   <table class="table small my-3" style="display: none;">
     <tr>
       <td><%= t('.date') %></td>
@@ -46,6 +51,11 @@
           var request = requests[i];
           var rendered = Mustache.render(template, request);
           tbody.append(rendered);
+        }
+
+        if (res.error_message) {
+          container.find('.error-message').html(res.error_message);
+          container.find('.error-message-container').show();
         }
       }).fail(showErrorMessage);
     }
