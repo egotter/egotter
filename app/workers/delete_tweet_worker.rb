@@ -42,7 +42,6 @@ class DeleteTweetWorker
       Airbag.warn { "#{e.inspect} user_id=#{user_id} tweet_id=#{tweet_id} options=#{options}" }
     else
       options['retries'] = 1
-      Airbag.warn { "RETRY: #{e.inspect} user_id=#{user_id} tweet_id=#{tweet_id} options=#{options}" } # TODO Remove
       worker_class.perform_in(rand(10) + 10, user_id, tweet_id, options)
     end
   end
