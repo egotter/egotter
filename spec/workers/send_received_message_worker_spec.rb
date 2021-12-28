@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe SendReceivedMessageWorker do
   let(:worker) { described_class.new }
 
-  describe '#dont_send_message?' do
+  describe '#ignore?' do
     [
         I18n.t('quick_replies.continue.label'),
         'リムられ通知',
@@ -20,7 +20,7 @@ RSpec.describe SendReceivedMessageWorker do
     ].each do |word|
       context "text is #{word}" do
         let(:text) { word }
-        subject { worker.dont_send_message?(text) }
+        subject { worker.ignore?(text) }
         it { is_expected.to be_truthy }
       end
     end
@@ -30,7 +30,7 @@ RSpec.describe SendReceivedMessageWorker do
     ].each do |word|
       context "text is #{word}" do
         let(:text) { word }
-        subject { worker.dont_send_message?(text) }
+        subject { worker.ignore?(text) }
         it { is_expected.to be_falsey }
       end
     end

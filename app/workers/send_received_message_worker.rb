@@ -7,7 +7,7 @@ class SendReceivedMessageWorker
   #   text
   #   dm_id
   def perform(sender_uid, options = {})
-    return if dont_send_message?(options['text'])
+    return if ignore?(options['text'])
     send_message(sender_uid, options['text'])
   rescue => e
     Airbag.warn "#{e.inspect} sender_uid=#{sender_uid} options=#{options.inspect}"
@@ -25,7 +25,7 @@ class SendReceivedMessageWorker
       /\A【?フォロー通知(\s|　)*届きました】?\z/,
   ]
 
-  def dont_send_message?(text)
+  def ignore?(text)
     PeriodicReportResponder::Processor.new(nil, text).received? ||
         BlockReportResponder::Processor.new(nil, text).received? ||
         MuteReportResponder::Processor.new(nil, text).received? ||
@@ -34,6 +34,7 @@ class SendReceivedMessageWorker
         WelcomeReportResponder::Processor.new(nil, text).received? ||
         SpamMessageResponder::Processor.new(nil, text).received? ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
+        text.include?('DM送信テスト ※そのまま送信') ||
         text.include?('送信】をDMにコピペして送ってください') ||
         text.include?('送ると、今すぐリムられ通知を受信することができます') ||
         text == 'あ' ||
