@@ -4,8 +4,7 @@ class SearchCountController < ApplicationController
       count = UsageCount.get
       SetUsageCountWorker.perform_async if UsageCount.ttl < 5.minutes
     else
-      Airbag.warn 'UsageCount is not found'
-      count = User.all.size
+      count = -1
       SetUsageCountWorker.perform_async
     end
 

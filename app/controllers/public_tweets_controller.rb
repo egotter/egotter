@@ -11,7 +11,7 @@ class PublicTweetsController < ApplicationController
     elsif params[:kind] == 'delete_tweets'
       keyword = '#egotter #ツイートクリーナー'
     elsif params[:kind] == 'delete_favorites'
-      keyword = '#egotter #ツイートクリーナー' # TODO Set #いいねクリーナー
+      keyword = '#egotter #いいねクリーナー'
     else
       keyword = 'えごったー 便利' # 'egotter OR えごったー OR #egotter'
     end
