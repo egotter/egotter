@@ -44,6 +44,7 @@
           <%= check_box_tag('send_dm', '1', false) %>
           <label for="send_dm"><%= t('.send_dm') %></label>
           <span class="small"><%= link_to t('.send_test_message'), direct_message_url(User::EGOTTER_UID, t('.test_message')), target: '_blank' %></span>
+          <span class="small"><%= link_to t('.reason'), '#', onclick: "window.alert('#{t('.test_message_reason')}'); return false;" %></span>
         </div>
         <div>
           <%= check_box_tag('post_tweet', '1', true) %>
