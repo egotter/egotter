@@ -30,13 +30,11 @@ class UpdateEgotterFriendshipWorker
   rescue => e
     if TwitterApiStatus.invalid_or_expired_token?(e)
       user&.update!(authorized: false)
-    elsif TwitterApiStatus.temporarily_locked?(e)
+    elsif TwitterApiStatus.temporarily_locked?(e) ||
+        TwitterApiStatus.retry_timeout?(e)
       # Do nothing
-    elsif ServiceStatus.connection_reset_by_peer?(e)
-      retry
     else
-      Airbag.warn "#{e.inspect} user_id=#{user_id} api_name=#{client&.api_name} options=#{options.inspect}"
-      Airbag.info e.backtrace.join("\n")
+      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
     end
   end
 
