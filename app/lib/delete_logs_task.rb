@@ -5,41 +5,27 @@ class DeleteLogsTask
     @month = month
   end
 
-  def start!
-    if !Rails.env.test? && File.basename($0) != 'rake'
-      raise "Don't call #{self}##{__method__} outside Rake tasks"
-    end
+  def start
+    time = Time.zone.now.change(year: @year, month: @month)
+    min_time = time.beginning_of_month
+    max_time = time.end_of_month
 
-    first_log = @klass.order(created_at: :asc).first
-    if first_log.nil?
-      puts "The #{@klass.table_name} table is empty"
-      return
-    end
+    100.times do |n|
+      start_time = [min_time + n.days, max_time].min
+      end_time = [min_time + (n + 1).days, max_time].min
+      target_ids = []
 
-    if @year.blank? || @month.blank?
-      time = first_log.created_at
-    else
-      time = Time.zone.now.change(year: @year, month: @month)
-    end
-
-    start_time = time.beginning_of_month.to_s(:db)
-    end_time = time.end_of_month.to_s(:db)
-    puts "start_time=#{start_time} end_time=#{end_time}"
-
-    sigint = Sigint.new.trap
-
-    logs = @klass.where(created_at: start_time..end_time).select(:id)
-    puts "Delete #{logs.size} records from #{@klass}"
-
-    return if sigint.trapped?
-
-    if logs.size > 0
-      logs.find_in_batches(batch_size: 1000) do |logs_array|
-        @klass.where(id: logs_array.map(&:id)).delete_all
-        print '.'
-
-        return if sigint.trapped?
+      @klass.where(created_at: start_time..end_time).select(:id).find_in_batches do |records|
+        next if records.empty?
+        target_ids << records.map(&:id)
       end
+
+      target_ids.each do |ids|
+        @klass.where(id: ids).delete_all
+        print '.'
+      end
+
+      break if start_time >= max_time
     end
   end
 end
