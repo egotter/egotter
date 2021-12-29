@@ -417,16 +417,6 @@ ActiveRecord::Schema.define(version: 2021_12_21_040841) do
     t.index ["user_id"], name: "index_create_prompt_report_logs_on_user_id"
   end
 
-  create_table "create_prompt_report_requests", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.boolean "skip_error_check", default: false, null: false
-    t.datetime "finished_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_create_prompt_report_requests_on_created_at"
-    t.index ["user_id"], name: "index_create_prompt_report_requests_on_user_id"
-  end
-
   create_table "create_relationship_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "session_id", default: "", null: false
     t.integer "user_id", default: -1, null: false
