@@ -1407,14 +1407,6 @@ ActiveRecord::Schema.define(version: 2021_12_21_040841) do
     t.index ["user_id"], name: "index_sneak_search_requests_on_user_id", unique: true
   end
 
-  create_table "start_sending_prompt_reports_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.json "properties"
-    t.datetime "started_at"
-    t.datetime "finished_at"
-    t.datetime "created_at", null: false
-    t.index ["created_at"], name: "index_start_sending_prompt_reports_logs_on_created_at"
-  end
-
   create_table "statuses", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", options: "ENGINE=InnoDB ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4", force: :cascade do |t|
     t.string "uid", null: false
     t.string "screen_name", null: false
