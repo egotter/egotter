@@ -15,10 +15,17 @@ class CreateTwitterDBUsersForMissingUidsWorker
   class << self
     def perform_async(uids, user_id, options = {})
       uids = uids.uniq
-      if uids.size > 10
-        uids = Base64.encode64(Zlib::Deflate.deflate(uids.to_json))
+
+      if uids.size > 100
+        uids.each_slice(100) do |uids_array|
+          perform_async(uids_array, user_id, options)
+        end
+      else
+        if uids.size > 10
+          uids = Base64.encode64(Zlib::Deflate.deflate(uids.to_json))
+        end
+        super(uids, user_id, options)
       end
-      super(uids, user_id, options)
     end
   end
 
