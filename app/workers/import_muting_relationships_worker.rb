@@ -23,7 +23,7 @@ class ImportMutingRelationshipsWorker
     MutingRelationship.import_from(user.uid, collected_uids)
 
     collected_uids.each_slice(100).each do |uids_array|
-      CreateTwitterDBUserWorker.compress_and_perform_async(uids_array, user_id: user_id, enqueued_by: self.class)
+      CreateTwitterDBUserWorker.perform_async(uids_array, user_id: user_id, enqueued_by: self.class)
     end
 
     collected_uids.each_slice(1000) do |uids_array|

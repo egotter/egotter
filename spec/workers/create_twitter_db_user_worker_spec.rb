@@ -8,35 +8,48 @@ RSpec.describe CreateTwitterDBUserWorker do
     allow(User).to receive(:find_by).with(id: user.id).and_return(user)
   end
 
-  describe '.compress_and_perform_async' do
-    let(:options) { {} }
-    subject { described_class.compress_and_perform_async(uids, options) }
+  describe '.perform_async' do
+    let(:worker_wrapper) do
+      Class.new(described_class) do
+        def perform(uids, options)
+          self.class.do_perform(uids, options)
+        end
 
-    context 'uids.size is 5' do
+        class << self
+          def do_perform(*) end
+        end
+      end
+    end
+
+    context '100 < uids.size' do
+      let(:uids1) { (1..100).to_a }
+      let(:encoded_uids1) { Base64.encode64(Zlib::Deflate.deflate(uids1.join(','))) }
+      let(:uids2) { (101..110).to_a }
+      let(:uids) { (1..110).to_a }
+      it do
+        expect(worker_wrapper).to receive(:do_perform).with(encoded_uids1, {})
+        expect(worker_wrapper).to receive(:do_perform).with(uids2, {})
+        worker_wrapper.perform_async(uids)
+        worker_wrapper.drain
+      end
+    end
+
+    context '10 < uids.size < 100' do
+      let(:uids) { (1..50).to_a }
+      let(:encoded_uids) { Base64.encode64(Zlib::Deflate.deflate(uids.join(','))) }
+      it do
+        expect(worker_wrapper).to receive(:do_perform).with(encoded_uids, {})
+        worker_wrapper.perform_async(uids)
+        worker_wrapper.drain
+      end
+    end
+
+    context 'uids.size < 10' do
       let(:uids) { (1..5).to_a }
       it do
-        expect(described_class).to receive(:perform_async).with(uids, options)
-        subject
-      end
-    end
-
-    context 'uids.size is 50' do
-      let(:uids) { (1..50).to_a }
-      let(:compressed_uids) { described_class.compress((1..50).to_a) }
-      it do
-        expect(described_class).to receive(:perform_async).with(compressed_uids, options)
-        subject
-      end
-    end
-
-    context 'uids.size is 150' do
-      let(:uids) { (1..150).to_a }
-      let(:compressed_uids1) { described_class.compress((1..100).to_a) }
-      let(:compressed_uids2) { described_class.compress((101..150).to_a) }
-      it do
-        expect(described_class).to receive(:perform_async).with(compressed_uids1, options)
-        expect(described_class).to receive(:perform_async).with(compressed_uids2, options)
-        subject
+        expect(worker_wrapper).to receive(:do_perform).with(uids, {})
+        worker_wrapper.perform_async(uids)
+        worker_wrapper.drain
       end
     end
   end

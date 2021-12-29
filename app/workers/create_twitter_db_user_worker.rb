@@ -71,15 +71,18 @@ class CreateTwitterDBUserWorker
   end
 
   class << self
-    def compress_and_perform_async(uids, options = {})
+    def perform_async(uids, options = {})
+      uids = uids.uniq
+
       if uids.size > 100
         uids.each_slice(100) do |uids_array|
-          compress_and_perform_async(uids_array, options)
+          perform_async(uids_array, options)
         end
-      elsif uids.size > 10
-        perform_async(compress(uids), options)
       else
-        perform_async(uids, options)
+        if uids.size > 10
+          uids = compress(uids)
+        end
+        super(uids, options)
       end
     end
 

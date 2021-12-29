@@ -74,7 +74,7 @@ RSpec.describe TwitterDB::User::QueryMethods do
             with(uid: uids).with(uids).and_return(users.take(2))
       end
       # it do
-      #   expect(CreateHighPriorityTwitterDBUserWorker).to receive(:compress_and_perform_async).
+      #   expect(CreateHighPriorityTwitterDBUserWorker).to receive(:perform_async).
       #       with([users.last.uid], enqueued_by: instance_of(String))
       #   is_expected.to eq(users.take(2))
       # end
