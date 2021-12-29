@@ -399,24 +399,6 @@ ActiveRecord::Schema.define(version: 2021_12_21_040841) do
     t.index ["user_id"], name: "index_create_periodic_tweet_requests_on_user_id", unique: true
   end
 
-  create_table "create_prompt_report_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "user_id", default: -1, null: false
-    t.integer "request_id", default: -1, null: false
-    t.bigint "uid", default: -1, null: false
-    t.string "screen_name", default: "", null: false
-    t.boolean "status", default: false, null: false
-    t.string "error_class", default: "", null: false
-    t.string "error_message", default: "", null: false
-    t.datetime "created_at", null: false
-    t.index ["created_at"], name: "index_create_prompt_report_logs_on_created_at"
-    t.index ["error_class"], name: "index_create_prompt_report_logs_on_error_class"
-    t.index ["request_id"], name: "index_create_prompt_report_logs_on_request_id"
-    t.index ["screen_name"], name: "index_create_prompt_report_logs_on_screen_name"
-    t.index ["uid"], name: "index_create_prompt_report_logs_on_uid"
-    t.index ["user_id", "created_at"], name: "index_create_prompt_report_logs_on_user_id_and_created_at"
-    t.index ["user_id"], name: "index_create_prompt_report_logs_on_user_id"
-  end
-
   create_table "create_relationship_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "session_id", default: "", null: false
     t.integer "user_id", default: -1, null: false
