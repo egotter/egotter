@@ -1,10 +1,8 @@
 namespace :periodic_reports do
-  desc 'Send messages'
   task send_messages: :environment do
     StartPeriodicReportsTask.new(period: ENV['PERIOD']).start!
   end
 
-  desc 'Send remind messages'
   task send_remind_messages: :environment do
     task = StartPeriodicReportsRemindersTask.new
     task.start!
@@ -55,19 +53,51 @@ namespace :periodic_reports do
   end
 
   namespace :send_messages do
-    desc 'Send morning messages'
     task morning: :environment do
       StartPeriodicReportsTask.new(period: 'morning').start!
     end
 
-    desc 'Send afternoon messages'
     task afternoon: :environment do
       StartPeriodicReportsTask.new(period: 'afternoon').start!
     end
 
-    desc 'Send night messages'
     task night: :environment do
       StartPeriodicReportsTask.new(period: 'night').start!
     end
+  end
+
+  task delete: :environment do
+    limit = ENV['LIMIT']&.to_i || 100
+    batch_size = [limit, 1000].min
+    min_date = Time.zone.parse(ENV['START_DATE'])
+    max_date = Time.zone.parse(ENV['END_DATE'])
+    processed_count = 0
+    stopped = false
+
+    100.times do |n|
+      start_date = [min_date + n.days, max_date].min
+      end_date = [min_date + (n + 1).days, max_date].min
+      target_ids = []
+
+      PeriodicReport.from('periodic_reports USE INDEX(index_periodic_reports_on_created_at)').
+          where(created_at: start_date..end_date).select(:id).find_in_batches(batch_size: batch_size) do |records|
+        next if records.empty?
+        target_ids << records.map(&:id)
+      end
+
+      target_ids.each do |ids|
+        PeriodicReport.where(id: ids).delete_all
+        print '.'
+
+        if (processed_count += ids.size) >= limit
+          stopped = true
+          break
+        end
+      end
+
+      break if stopped || start_date >= max_date
+    end
+
+    puts "\nprocessed #{processed_count}"
   end
 end
