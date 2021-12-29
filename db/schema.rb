@@ -1206,22 +1206,6 @@ ActiveRecord::Schema.define(version: 2021_12_21_040841) do
     t.index ["user_id"], name: "index_private_mode_settings_on_user_id", unique: true
   end
 
-  create_table "prompt_reports", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.datetime "read_at"
-    t.bigint "removed_uid"
-    t.text "changes_json", null: false
-    t.string "token", null: false
-    t.string "message_id", null: false
-    t.string "message", default: "", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_prompt_reports_on_created_at"
-    t.index ["token"], name: "index_prompt_reports_on_token", unique: true
-    t.index ["user_id", "created_at"], name: "index_prompt_reports_on_user_id_and_created_at"
-    t.index ["user_id"], name: "index_prompt_reports_on_user_id"
-  end
-
   create_table "remind_periodic_report_requests", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
