@@ -10,6 +10,7 @@ class DeleteLogsTask
     min_time = time.beginning_of_month
     max_time = time.end_of_month
     progress = Progress.new(total: @klass.where(created_at: min_time..max_time).size * 2)
+    sigint = Sigint.new.trap
 
     100.times do |n|
       start_time = [min_time + n.days, max_time].min
@@ -21,14 +22,16 @@ class DeleteLogsTask
         next if records.empty?
         target_ids << records.map(&:id)
         progress.increment(records.size, '(collecting ids)')
+        break if sigint.trapped?
       end
 
       target_ids.each do |ids|
         @klass.where(id: ids).delete_all
         progress.increment(ids.size, '(deleting records)')
+        break if sigint.trapped?
       end
 
-      break if start_time >= max_time
+      break if start_time >= max_time || sigint.trapped?
     end
   end
 
