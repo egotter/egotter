@@ -3,36 +3,56 @@ class DeleteLogsTask
     @klass = klass
     @year = year
     @month = month
+    Rails.logger.level = :debug
   end
 
   def start
-    time = Time.zone.now.change(year: @year, month: @month)
+    time = Time.zone.parse("#{@year}-#{@month}-01")
     min_time = time.beginning_of_month
     max_time = time.end_of_month
-    progress = Progress.new(total: @klass.where(created_at: min_time..max_time).size * 2)
-    sigint = Sigint.new.trap
+    total = @klass.where(created_at: min_time..max_time).size
+
+    return if total == 0
+
+    @progress = Progress.new(total: total * 2)
+    @sigint = Sigint.new.trap
 
     100.times do |n|
       start_time = [min_time + n.days, max_time].min
       end_time = [min_time + (n + 1).days, max_time].min
-      target_ids = []
 
-      @klass.from("#{@klass.table_name} USE INDEX(index_#{@klass.table_name}_on_created_at)").
-          where(created_at: start_time..end_time).select(:id).find_in_batches do |records|
-        next if records.empty?
-        target_ids << records.map(&:id)
-        progress.increment(records.size, '(collecting ids)')
-        break if sigint.trapped?
-      end
+      ids = collect_ids(start_time, end_time)
+      delete_records(ids)
 
-      target_ids.each do |ids|
-        @klass.where(id: ids).delete_all
-        progress.increment(ids.size, '(deleting records)')
-        break if sigint.trapped?
-      end
-
-      break if start_time >= max_time || sigint.trapped?
+      break if start_time >= max_time || @sigint.trapped?
     end
+  end
+
+  def collect_ids(start_time, end_time)
+    query = @klass.from("#{@klass.table_name} USE INDEX(index_#{@klass.table_name}_on_created_at)").
+        where(created_at: start_time..end_time)
+    ids = []
+    total = query.size
+
+    query.select(:id).find_in_batches(batch_size: 10000) do |records|
+      ids.concat(records.map(&:id))
+      @progress.increment(records.size, "(collecting #{ids.size}/#{total} ids)")
+      break if @sigint.trapped?
+    end
+
+    ids
+  end
+
+  def delete_records(ids)
+    total = ids.size
+    deleted_count = 0
+
+    ids.each_slice(1000) do |ids_array|
+      @klass.where(id: ids_array).delete_all
+      @progress.increment(ids_array.size, "(deleting #{deleted_count += ids_array.size}/#{total} records)")
+      break if @sigint.trapped?
+    end
+
   end
 
   class Progress
