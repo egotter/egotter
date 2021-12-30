@@ -1,78 +1,63 @@
 class DeleteAhoyRecordsTask
-  # options:
-  #   loop_count
-  #   time_range
-  def initialize(klass, start_time, end_time, options = {})
+  def initialize(klass, year, month, options = {})
     @klass = klass
-    @start_time = start_time
-    @end_time = end_time
+    @year = year
+    @month = month
     @column = klass == Ahoy::Event ? :time : :started_at
-    @loop_count = options[:loop_count]
-    @time_range = options[:time_range]
   end
 
   def start
-    total = @klass.where(@column => @start_time..@end_time).size
-    puts "Delete #{total} records"
-    return if total == 0
+    time = Time.zone.now.change(year: @year, month: @month)
+    min_time = time.beginning_of_month
+    max_time = time.end_of_month
+    progress = Progress.new(total: @klass.where(@column => min_time..max_time).size * 2)
 
-    sigint = Sigint.new.trap
-    count = 0
-    stopped = false
-    if total > 5_000_000
-      loop_count = @loop_count || 30 * 24 * 60
-      time_range = @time_range || 1.minute
-    else
-      loop_count = @loop_count || 30 * 24
-      time_range = @time_range || 1.hour
-    end
+    100.times do |n|
+      start_time = [min_time + n.days, max_time].min
+      end_time = [min_time + (n + 1).days, max_time].min
+      target_ids = []
 
-    puts "Time range is #{time_range}"
-    puts "Loop count is #{loop_count}"
-    progress = Progress.new(total: total * 2)
-
-    loop_count.times do |i|
-      start_time = @start_time + i * time_range
-      end_time = @start_time + (i + 1) * time_range
-      if end_time > @end_time
-        end_time = @end_time
-        stopped = true
-      end
-      query = @klass.where(@column => start_time..end_time).select(:id)
-      ids_array = []
-
-      query.find_in_batches do |records|
-        ids_array << records.map(&:id)
-
-        progress.progress(count += records.size, '(collecting ids)')
-        break if sigint.trapped?
+      @klass.from("#{@klass.table_name} USE INDEX(index_#{@klass.table_name}_on_#{@column})").
+          where(@column => start_time..end_time).select(:id).find_in_batches do |records|
+        next if records.empty?
+        target_ids << records.map(&:id)
+        progress.increment(records.size, '(collecting ids)')
       end
 
-      ids_array.each do |ids|
+      target_ids.each do |ids|
         @klass.where(id: ids).delete_all
-
-        progress.progress(count += ids.size, '(deleting records)')
-        break if sigint.trapped?
+        progress.increment(ids.size, '(deleting records)')
       end
 
-      break if stopped || sigint.trapped?
+      break if start_time >= max_time
     end
-
-    puts ''
   end
 
   class Progress
     def initialize(total:)
       @total = total
+      @count = 0
       @output = $stdout
     end
 
+    def increment(count, message = nil)
+      @count += count
+      print(message)
+    end
+
     def progress(count, message = nil)
-      @output.print "\r#{(100 * count.to_f / @total).round(1)}% #{message}"
+      @count = count
+      print(message)
     end
 
     def finish
       @output.puts '100.0%'
+    end
+
+    private
+
+    def print(message)
+      @output.print "\r#{(100 * @count.to_f / @total).round(1)}% #{message}"
     end
   end
 end
