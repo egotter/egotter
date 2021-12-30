@@ -16,8 +16,8 @@
   - deleting_low
   - report_high
   - AssembleTwitterUserWorker
-  - CreateTwitterDBUserWorker
   - ImportTwitterDBUserWorker
+  - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
   - CreateReportTwitterUserWorker
   - WriteToS3Worker

@@ -40,6 +40,7 @@ class CreateTwitterDBUsersTask
       @debug_message += ", stale_uids=#{stale_uids.join(',')}"
     end
 
+    # ImportTwitterDBUserWorker.perform_async(users) if users.any?
     import_users(users) if users.any?
   end
 
@@ -68,6 +69,7 @@ class CreateTwitterDBUsersTask
     end
   end
 
+  # TODO Remove later
   def import_users(users)
     TwitterDB::User.import_by!(users: users)
   rescue => e

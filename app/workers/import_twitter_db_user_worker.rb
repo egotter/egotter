@@ -5,8 +5,8 @@ class ImportTwitterDBUserWorker
   include WorkerErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def unique_key(uids, options = {})
-    Digest::MD5.hexdigest(uids.to_s)
+  def unique_key(users, options = {})
+    Digest::MD5.hexdigest(users.to_json)
   end
 
   def unique_in
@@ -18,25 +18,15 @@ class ImportTwitterDBUserWorker
   end
 
   # options:
-  def perform(compressed_users, options = {})
-    users = compressed_users.is_a?(String) ? decompress(compressed_users) : compressed_users
-
-    if users.empty?
-      Airbag.warn "The users is empty options=#{options.inspect}"
-      return
-    end
-
-    if users.size > 100
-      Airbag.warn "More than 100 users are passed size=#{users.size} options=#{options.inspect}"
-    end
-
+  def perform(users, options = {})
+    users = JSON.parse(Zlib::Inflate.inflate(Base64.decode64(users))) if users.is_a?(String)
     import_users(users)
   rescue Deadlocked => e
-    Airbag.info "exception=#{e.inspect} cause=#{e.cause&.inspect&.truncate(200)}"
-    FailedImportTwitterDBUserWorker.perform_async(users, options.merge(error_class: e.class))
+    delay = rand(20) + 15
+    ImportTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, users, options.merge(klass: self.class, error_class: e.class))
   rescue => e
     handle_worker_error(e, users: users.size, options: options)
-    FailedImportTwitterDBUserWorker.perform_async(users, options.merge(error_class: e.class))
+    FailedImportTwitterDBUserWorker.perform_async(users, options.merge(klass: self.class, error_class: e.class))
   end
 
   private
@@ -57,26 +47,15 @@ class ImportTwitterDBUserWorker
   # ActiveRecord::StatementInvalid
   # ActiveRecord::Deadlocked
   def deadlock_error?(e)
-    e.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')
+    e.message.include?('try restarting transaction')
   end
 
   class << self
-    def perform_async_wrapper(users, options = {})
-      if users.size > 100
-        users.each_slice(100) do |users_array|
-          perform_async_wrapper(users_array, options)
-        end
-      else
-        perform_async(compress(users), options)
+    def perform_async(users, options = {})
+      if users.size > 1
+        users = Base64.encode64(Zlib::Deflate.deflate(users.to_json))
       end
+      super(users, options)
     end
-
-    def compress(users)
-      Base64.encode64(Zlib::Deflate.deflate(users.to_json))
-    end
-  end
-
-  def decompress(data)
-    JSON.parse(Zlib::Inflate.inflate(Base64.decode64(data)))
   end
 end
