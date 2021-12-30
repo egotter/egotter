@@ -13,6 +13,10 @@ class ImportTwitterDBUserWorker
     10.seconds
   end
 
+  def after_skip(users, options = {})
+    SkippedImportTwitterDBUserWorker.perform_async(users, options)
+  end
+
   def _timeout_in
     10.seconds
   end
