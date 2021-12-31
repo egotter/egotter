@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_21_040841) do
+ActiveRecord::Schema.define(version: 2021_12_31_151054) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -917,6 +917,15 @@ ActiveRecord::Schema.define(version: 2021_12_21_040841) do
     t.index ["created_at"], name: "index_muting_relationships_on_created_at"
     t.index ["from_uid", "to_uid"], name: "index_muting_relationships_on_from_uid_and_to_uid", unique: true
     t.index ["to_uid", "from_uid"], name: "index_muting_relationships_on_to_uid_and_from_uid", unique: true
+  end
+
+  create_table "mutual_friends_count_points", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "uid", null: false
+    t.integer "value", null: false
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_mutual_friends_count_points_on_created_at"
+    t.index ["uid", "created_at"], name: "index_mutual_friends_count_points_on_uid_and_created_at"
+    t.index ["uid"], name: "index_mutual_friends_count_points_on_uid"
   end
 
   create_table "mutual_friendships", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
