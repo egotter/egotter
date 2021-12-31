@@ -20,17 +20,11 @@
 </div>
 
 <script type=text/javascript>
-  function drawAudienceChart(url, container) {
-    $.get(url).done(function (res) {
-      new AudienceInsight().drawSparkLine(container[0], res.series, true);
-    }).fail(showErrorMessage);
-  }
-
   $(function () {
-    drawAudienceChart('<%= raw api_v1_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-friends-chart'));
-    drawAudienceChart('<%= raw api_v1_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-followers-chart'));
-    drawAudienceChart('<%= raw api_v1_new_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-new-friends-chart'));
-    drawAudienceChart('<%= raw api_v1_new_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-new-followers-chart'));
+    window.drawSparkLine('<%= raw api_v1_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-friends-chart')[0], true);
+    window.drawSparkLine('<%= raw api_v1_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-followers-chart')[0], true);
+    window.drawSparkLine('<%= raw api_v1_new_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-new-friends-chart')[0], true);
+    window.drawSparkLine('<%= raw api_v1_new_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#audience-insight-new-followers-chart')[0], true);
     // trackPageEvents('TimelinePage events', 'AudienceInsights loaded', {dataLength: 0});
   });
 </script>

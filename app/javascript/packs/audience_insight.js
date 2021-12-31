@@ -52,7 +52,10 @@ class AudienceInsight {
     var chartConfig = {
       chart: {
         renderTo: renderTo,
-        type: 'spline'
+        type: 'spline',
+        borderWidth: 0,
+        margin: [2, 0, 2, 0],
+        skipClone: true
       },
       title: null,
       xAxis: {
@@ -86,6 +89,14 @@ class AudienceInsight {
       },
       plotOptions: {
         series: {
+          animation: false,
+          lineWidth: 1,
+          shadow: false,
+          states: {
+            hover: {
+              lineWidth: 1
+            }
+          },
           marker: {
             enabled: false
           }
@@ -101,3 +112,13 @@ class AudienceInsight {
 }
 
 window.AudienceInsight = AudienceInsight;
+
+function drawSparkLine(url, container, legendEnabled) {
+  $.get(url).done(function (res) {
+    new AudienceInsight().drawSparkLine(container, res.series, legendEnabled);
+  }).fail(function () {
+    // Do nothing
+  });
+}
+
+window.drawSparkLine = drawSparkLine;

@@ -78,15 +78,7 @@
 
 <script>
   $(function () {
-    function drawAudienceChart(url, container) {
-      $.get(url).done(function (res) {
-        new AudienceInsight().drawSparkLine(container[0], res.series, false);
-      }).fail(function () {
-        // Do nothing
-      });
-    }
-
-    drawAudienceChart('<%= raw api_v1_friends_count_points_path(uid: user.uid, padding: true, via: current_via) %>', $('#friends-spark-line-<%= user.uid %>'));
-    drawAudienceChart('<%= raw api_v1_followers_count_points_path(uid: user.uid, padding: true, via: current_via) %>', $('#followers-spark-line-<%= user.uid %>'));
+    window.drawSparkLine('<%= raw api_v1_friends_count_points_path(uid: user.uid, padding: true, via: current_via) %>', $('#friends-spark-line-<%= user.uid %>')[0], false);
+    window.drawSparkLine('<%= raw api_v1_followers_count_points_path(uid: user.uid, padding: true, via: current_via) %>', $('#followers-spark-line-<%= user.uid %>')[0], false);
   });
 </script>
