@@ -1,4 +1,4 @@
-class DeleteUnfriendshipsWorker
+class DeleteInactiveFriendshipsWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'deleting_low', retry: 0, backtrace: false
 
@@ -12,9 +12,9 @@ class DeleteUnfriendshipsWorker
 
   # options:
   def perform(uid, options = {})
-    Unfriendship.delete_by_uid(uid)
-    Unfollowership.delete_by_uid(uid)
-    BlockFriendship.delete_by_uid(uid)
+    InactiveFriendship.delete_by_uid(uid)
+    InactiveFollowership.delete_by_uid(uid)
+    InactiveMutualFriendship.delete_by_uid(uid)
   rescue => e
     Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
   end

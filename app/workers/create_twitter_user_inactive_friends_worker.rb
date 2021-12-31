@@ -39,9 +39,7 @@ class CreateTwitterUserInactiveFriendsWorker
     CreateInactiveFriendsCountPointWorker.perform_async(twitter_user.uid, inactive_friend_uids.size)
     CreateInactiveFollowersCountPointWorker.perform_async(twitter_user.uid, inactive_follower_uids.size)
 
-    InactiveFriendship.delete_by_uid(twitter_user.uid)
-    InactiveFollowership.delete_by_uid(twitter_user.uid)
-    InactiveMutualFriendship.delete_by_uid(twitter_user.uid)
+    DeleteInactiveFriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
     Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
     Airbag.info e.backtrace.join("\n")
