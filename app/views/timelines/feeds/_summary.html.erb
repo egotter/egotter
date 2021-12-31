@@ -2,9 +2,9 @@
 <% items = [
   ['friends', t('.friends')],
   ['followers', t('.followers')],
+  ['mutual_friends', t('.mutual_friends')],
   ['one_sided_friends', t('.one_sided_friends')],
   ['one_sided_followers', t('.one_sided_followers')],
-  ['mutual_friends', t('.mutual_friends')],
   ['inactive_friends', t('.inactive_friends')],
   ['inactive_followers', t('.inactive_followers')],
   ['unfriends', t('.unfriends')],
@@ -20,7 +20,7 @@
       <li class="list-group-item" style="height: 56px;">
         <div class="d-flex align-items-center h-100">
           <div><%= link_to title, "#feed-#{name}", class: 'summary-section-item', data: {name: name} %></div>
-          <% if %w(friends followers one_sided_friends one_sided_followers inactive_friends inactive_followers).include?(name) %>
+          <% if %w(friends followers mutual_friends one_sided_friends one_sided_followers inactive_friends inactive_followers unfriends unfollowers).include?(name) %>
             <div id="summary-spark-line-<%= name %>" class="ml-2" style="width: 60px; height: 100%;"></div>
           <% end %>
           <div class="ml-auto">
@@ -86,6 +86,8 @@
           window.drawSparkLine('<%= raw api_v1_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
         } else if (name === 'followers') {
           window.drawSparkLine('<%= raw api_v1_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
+        } else if (name === 'mutual_friends') {
+          window.drawSparkLine('<%= raw api_v1_mutual_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
         } else if (name === 'one_sided_friends') {
           window.drawSparkLine('<%= raw api_v1_one_sided_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
         } else if (name === 'one_sided_followers') {
@@ -94,6 +96,10 @@
           window.drawSparkLine('<%= raw api_v1_inactive_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
         } else if (name === 'inactive_followers') {
           window.drawSparkLine('<%= raw api_v1_inactive_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
+        } else if (name === 'unfriends') {
+          window.drawSparkLine('<%= raw api_v1_new_unfriends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
+        } else if (name === 'unfollowers') {
+          window.drawSparkLine('<%= raw api_v1_new_unfollowers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
         }
       }
     }

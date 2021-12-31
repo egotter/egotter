@@ -81,6 +81,7 @@ Rails.application.routes.draw do
       resources :new_followers_count_points, only: %i(index)
       resources :inactive_friends_count_points, only: %i(index)
       resources :inactive_followers_count_points, only: %i(index)
+      resources :mutual_friends_count_points, only: %i(index)
       resources :one_sided_friends_count_points, only: %i(index)
       resources :one_sided_followers_count_points, only: %i(index)
       resources :new_unfriends_count_points, only: %i(index)
@@ -206,6 +207,7 @@ Rails.application.routes.draw do
   get 'new_followers_count_points/download', to: 'new_followers_count_points#download'
   get 'inactive_friends_count_points/download', to: 'inactive_friends_count_points#download'
   get 'inactive_followers_count_points/download', to: 'inactive_followers_count_points#download'
+  get 'mutual_friends_count_points/download', to: 'mutual_friends_count_points#download'
   get 'one_sided_friends_count_points/download', to: 'one_sided_friends_count_points#download'
   get 'one_sided_followers_count_points/download', to: 'one_sided_followers_count_points#download'
   get 'new_unfriends_count_points/download', to: 'new_unfriends_count_points#download'

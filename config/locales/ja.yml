@@ -2240,6 +2240,15 @@ ja:
           increase: '増加'
           decrease: '減少'
           default_message: '@%{user} の休眠フォロワー数です。'
+      mutual_friends_count_points:
+        index:
+          name: '両思いフォロー'
+          period: '現在の期間'
+          prev_period: '前の期間'
+          message: '@%{user} の両思いフォロー数は、%{since_date} から %{until_date} までの間に %{diff_count}人 %{verb}して %{current_count}人 になりました。'
+          increase: '増加'
+          decrease: '減少'
+          default_message: '@%{user} の両思いフォロー数です。'
       one_sided_friends_count_points:
         index:
           name: '片思いフォロー'
