@@ -189,26 +189,12 @@ ja:
         mutual_unfriends: 'ブロックされた（かも）'
         blockers: 'ブロックされた（高精度）'
         muters: 'ミュートされている'
-        notice: 'データはこれから保存されていきます'
-        word_description: '説明'
-        detailed_description_html:
-          <p>えごったーのデータは、最初に使った時から保存されていきます。そのため、最初は少ないデータが表示されます。</p>
-          また、たくさん使うユーザーほどたくさんデータが更新されます。
+        detailed_description: 'えごったーのデータは、最初に使った時から保存されていきます。そのため、最初は少ないデータが表示されます。「分析中」と書かれている場合は次回のデータ更新の時にデータが蓄積されます。また、たくさん使うユーザーほどたくさんデータが更新されます。'
         unit: '人'
         analyzing: '分析中'
-        zero: 'これから貯まります'
+        zero: '分析中'
+        reason: '理由'
         error: '更新エラー'
-        description:
-          one_sided_friends: '「あなたは相手をフォローしている、相手はあなたをフォローしていない」関係のことです。'
-          one_sided_followers: 'あなたは相手をフォローしていない、相手はあなたをフォローしている」関係のことです。'
-          mutual_friends: '「お互いにフォローしている」関係のことです。'
-          inactive_friends: '「一定の期間ツイートしていないフォロー」のことです。'
-          inactive_followers: '「一定の期間ツイートしていないフォロワー」のことです。'
-          unfriends: '「あなたは相手のフォローを外した」関係のことです。'
-          unfollowers: '「あなたは相手からフォローを外された」関係のことです。'
-          mutual_unfriends: '「あなたは相手からブロックされた」関係のことです。'
-          blockers: 'ブロックされているユーザーをより高精度に集計しています。'
-          muters: '「ミュートされているユーザー」のことです。'
       statuses:
         title: 'ツイート'
       friends:
@@ -274,13 +260,13 @@ ja:
         note2: 'トライアル期間を終了すれば、「先頭から2文字目」まで分かります。'
       mutual_friends:
         title: '相互フォロー'
-        description: '@%{user} が相互フォローしているユーザーです。'
+        description: '@%{user} のフォローのうち、相手からもフォローされている関係のことです。'
       one_sided_friends:
         title: '片思いフォロー'
-        description: '@%{user} のフォローのうち、自分からフォローしているけど相手からはフォローされていないユーザーのことです。'
+        description: '@%{user} のフォローのうち、相手からはフォローされていない関係のことです。'
       one_sided_followers:
         title: '片思われフォロワー'
-        description: '@%{user} のフォロワーのうち、相手からはフォローされているけど自分からフォローしていないユーザーのことです。'
+        description: '@%{user} のフォロワーのうち、自分からはフォローしていない関係のことです。'
       replying:
         title: '自分から@ツイート'
         description: '@%{user} が自分から@ツイートしたユーザーです。'
@@ -292,10 +278,10 @@ ja:
         description: '@%{user} がよくいいねするユーザーです。いいねの分析には、お気に入り登録を使っています。'
       inactive_friends:
         title: '休眠フォロー'
-        description: '@%{user} のフォローのうち、最近ツイートしていないユーザーです。低浮上フォローとも言います。'
+        description: '@%{user} のフォローのうち、一定期間ツイートしていないユーザーのことです。低浮上フォローとも言います。'
       inactive_followers:
         title: '休眠フォロワー'
-        description: '@%{user} のフォロワーのうち、最近ツイートしていないユーザーです。低浮上フォロワーとも言います。'
+        description: '@%{user} のフォロワーのうち、一定期間ツイートしていないユーザーのことです。低浮上フォロワーとも言います。'
       delete_tweets:
         title: 'ツイートを一括削除'
         description_html: 'ツイートクリーナーで @%{user} のツイートを<br>一括で削除することができます。'

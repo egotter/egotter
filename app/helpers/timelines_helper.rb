@@ -1,31 +1,4 @@
 module TimelinesHelper
-  def summary_description(name)
-    case name
-    when 'one_sided_friends'
-      t('timelines.feeds.summary.description.one_sided_friends')
-    when 'one_sided_followers'
-      t('timelines.feeds.summary.description.one_sided_followers')
-    when 'mutual_friends'
-      t('timelines.feeds.summary.description.mutual_friends')
-    when 'inactive_friends'
-      t('timelines.feeds.summary.description.inactive_friends')
-    when 'inactive_followers'
-      t('timelines.feeds.summary.description.inactive_followers')
-    when 'unfriends'
-      t('timelines.feeds.summary.description.unfriends')
-    when 'unfollowers'
-      t('timelines.feeds.summary.description.unfollowers')
-    when 'mutual_unfriends'
-      t('timelines.feeds.summary.description.mutual_unfriends')
-    when 'blockers'
-      t('timelines.feeds.summary.description.blockers')
-    when 'muters'
-      t('timelines.feeds.summary.description.muters')
-    else
-      raise "Invalid name value=#{name}"
-    end
-  end
-
   def feed_attrs(name, twitter_user)
     attrs = {
         feed_name: name,

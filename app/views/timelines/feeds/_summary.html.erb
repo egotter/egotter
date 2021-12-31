@@ -15,34 +15,23 @@
 <div class="summary-on-timeline">
   <div class="list-group">
     <% items.each do |name, title| %>
-      <%= link_to "#feed-#{name}", class: 'list-group-item', onclick: "itemOnSummaryClicked(this, '#{name}')" do %>
+      <li class="list-group-item">
         <div class="d-flex justify-content-between align-items-center">
-          <div><%= title %></div>
+          <div><%= link_to title, "#feed-#{name}", onclick: "itemOnSummaryClicked(this, '#{name}')" %></div>
           <div>
-            <span class="analyzing <%= name %>"><%= t('.analyzing') %></span>
-            <span class="zero text-muted <%= name %>" style="display: none;"><%= t('.zero') %></span>
-            <span class="result <%= name %>" style="display: none;"><span class="count">0</span><%= t('.unit') %></span>
-            <span class="error text-muted" style="display: none;"><%= t('.error') %></span>
+            <%= link_to "#feed-#{name}", onclick: "itemOnSummaryClicked(this, '#{name}')" do %>
+              <span class="message-container <%= name %>"><%= t('.analyzing') %></span>
+            <% end %>
+            <span class="zero-reason <%= name %> small" style="display: none;">
+              <%= link_to '#', class: 'zero-reason-link' do %>
+                <i class="far fa-question-circle"></i>
+                <%= t('.reason') %>
+              <% end %>
+            </span>
           </div>
         </div>
-        <div class="small text-muted collapse summary-descriptions"><%= summary_description(name) %></div>
-      <% end %>
+      </li>
     <% end %>
-  </div>
-
-  <div class="text-center text-muted small mt-1">
-    <%= t('.notice') %>
-    <button class="btn btn-link btn-sm" data-toggle="collapse" aria-expanded="false" data-target=".summary-descriptions">
-      <i class="far fa-question-circle"></i>
-      <%= t('.word_description') %>
-    </button>
-  </div>
-  <div class="summary-descriptions text-muted small collapse mt-3">
-    <div class="card">
-      <div class="card-body">
-        <%= t('.detailed_description_html') %>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -52,28 +41,42 @@
     trackPageEvents('TimelinePage events', 'Summary ' + name + ' clicked', {count: count});
   }
 
+  function showZeroReasonAlert() {
+    var message = '<%= t('.detailed_description') %>';
+    window.alert(message);
+    return false;
+  }
+
   $(function () {
     var url = '<%= raw api_v1_summaries_path(uid: twitter_user.uid, via: via) %>';
     var names = <%= raw items.map(&:first).to_json %>;
     var parent = $('.summary-on-timeline');
 
+    $('.zero-reason-link').on('click', showZeroReasonAlert);
+
     function updateView(res) {
+      var zeroMessage = '<%= t('.zero') %>';
+      var unit = '<%= t('.unit') %>';
+
       for (var i = 0; i < names.length; i++) {
         var name = names[i];
         var count = res[name];
 
-        parent.find('.analyzing.' + name).hide();
+        var container = parent.find('.message-container.' + name);
+        container.empty();
+
         if (count <= 0) {
-          parent.find('.zero.' + name).show();
+          container.text(zeroMessage).addClass('text-muted');
+          parent.find('.zero-reason.' + name).show();
         } else {
-          parent.find('.result.' + name).find('.count').text(count).end().show();
+          container.text(count + unit);
         }
       }
     }
 
     function updateErrorView(xhr, textStatus, errorThrown) {
-      parent.find('.analyzing').hide();
-      parent.find('.error').show();
+      var message = '<%= t('.error') %>';
+      parent.find('.message-container').empty().text(message).addClass('text-muted');
       showErrorMessage(xhr, textStatus, errorThrown);
     }
 
