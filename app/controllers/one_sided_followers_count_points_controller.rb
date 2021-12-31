@@ -6,11 +6,6 @@ class OneSidedFollowersCountPointsController < ApplicationController
 
   def download
     data = generate_csv(OneSidedFollowersCountPoint, params[:uid])
-
-    if request.device_type == :smartphone
-      render plain: data
-    else
-      send_data data, filename: 'one_sided_followers.csv', type: 'text/csv; charset=utf-8'
-    end
+    send_data data, filename: 'one_sided_followers.csv', type: 'text/csv; charset=utf-8'
   end
 end

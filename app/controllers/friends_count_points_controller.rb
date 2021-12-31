@@ -6,11 +6,6 @@ class FriendsCountPointsController < ApplicationController
 
   def download
     data = generate_csv(FriendsCountPoint, params[:uid])
-
-    if request.device_type == :smartphone
-      render plain: data
-    else
-      send_data data, filename: 'friends.csv', type: 'text/csv; charset=utf-8'
-    end
+    send_data data, filename: 'friends.csv', type: 'text/csv; charset=utf-8'
   end
 end

@@ -379,6 +379,12 @@ ja:
       one_sided_followers:
         title: '片思われフォロワー'
         note: 'フォロワーのうち「自分からフォローしていない」フォロワー数です。直近の %{days}日間 を集計しています。たくさん検索されるユーザーほど優先的に更新されます。'
+      new_unfriends:
+        title: '新しいリムーブ'
+        note: 'フォローを解除した数です。直近の %{days}日間 を集計しています。たくさん検索されるユーザーほど優先的に更新されます。'
+      new_unfollowers:
+        title: '新しいリムられ'
+        note: 'フォローを解除された数です。直近の %{days}日間 を集計しています。たくさん検索されるユーザーほど優先的に更新されます。'
   access_confirmations:
     index:
       page_title: 'ログインしてください'
@@ -2252,6 +2258,20 @@ ja:
           increase: '増加'
           decrease: '減少'
           default_message: '@%{user} の片思われフォロワー数です。'
+      new_unfriends_count_points:
+        index:
+          name: '新しいリムーブ'
+          period: '現在の期間'
+          prev_period: '前の期間'
+          message: '@%{user} は %{since_date} から %{until_date} までの間に %{count}人 を新しくリムーブしました。'
+          default_message: '@%{user} の新しいリムーブ数です。'
+      new_unfollowers_count_points:
+        index:
+          name: '新しいリムられ'
+          period: '現在の期間'
+          prev_period: '前の期間'
+          message: '@%{user} は %{since_date} から %{until_date} までの間に %{count}人 から新しくリムられました。'
+          default_message: '@%{user} の新しいリムられ数です。'
       follow_requests:
         create:
           invalid_uid: '有効な uid を指定してください。'

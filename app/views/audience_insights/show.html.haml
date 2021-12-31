@@ -91,6 +91,28 @@
     = link_to t('.list'), one_sided_follower_path(@twitter_user, via: current_via)
   .text-muted.small{style: 'margin-bottom: 120px;'}= t('.one_sided_followers.note', days: 30)
 
+#new-unfriends-chart
+  %h3.h5.text-center.my-5= t('.new_unfriends.title')
+  .description.mb-4
+  .chart{style: 'height: 250px;'}
+  .small.text-muted.my-3
+    = link_to t('.download'), new_unfriends_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+    = t('.or')
+    = link_to t('.list'), unfriend_path(@twitter_user, via: current_via)
+  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.new_unfriends.note', days: 30)
+
+#new-unfollowers-chart
+  %h3.h5.text-center.my-5= t('.new_unfollowers.title')
+  .description.mb-4
+  .chart{style: 'height: 250px;'}
+  .small.text-muted.my-3
+    = link_to t('.download'), new_unfollowers_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+    = t('.or')
+    = link_to t('.list'), unfollower_path(@twitter_user, via: current_via)
+  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.new_unfollowers.note', days: 30)
+
+- chart_options = {uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via}
+
 :javascript
   function drawAudienceChart(url, container) {
     $.get(url).done(function (res) {
@@ -100,12 +122,14 @@
   }
 
   $(function () {
-    drawAudienceChart('#{raw api_v1_friends_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#friends-chart'));
-    drawAudienceChart('#{raw api_v1_followers_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#followers-chart'));
-    drawAudienceChart('#{raw api_v1_new_friends_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#new-friends-chart'));
-    drawAudienceChart('#{raw api_v1_new_followers_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#new-followers-chart'));
-    drawAudienceChart('#{raw api_v1_inactive_friends_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#inactive-friends-chart'));
-    drawAudienceChart('#{raw api_v1_inactive_followers_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#inactive-followers-chart'));
-    drawAudienceChart('#{raw api_v1_one_sided_friends_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#one-sided-friends-chart'));
-    drawAudienceChart('#{raw api_v1_one_sided_followers_count_points_path(uid: @twitter_user.uid, type: 'timestamp', with_prev: true, padding: true, via: current_via)}', $('#one-sided-followers-chart'));
+    drawAudienceChart('#{raw api_v1_friends_count_points_path(chart_options)}', $('#friends-chart'));
+    drawAudienceChart('#{raw api_v1_followers_count_points_path(chart_options)}', $('#followers-chart'));
+    drawAudienceChart('#{raw api_v1_new_friends_count_points_path(chart_options)}', $('#new-friends-chart'));
+    drawAudienceChart('#{raw api_v1_new_followers_count_points_path(chart_options)}', $('#new-followers-chart'));
+    drawAudienceChart('#{raw api_v1_inactive_friends_count_points_path(chart_options)}', $('#inactive-friends-chart'));
+    drawAudienceChart('#{raw api_v1_inactive_followers_count_points_path(chart_options)}', $('#inactive-followers-chart'));
+    drawAudienceChart('#{raw api_v1_one_sided_friends_count_points_path(chart_options)}', $('#one-sided-friends-chart'));
+    drawAudienceChart('#{raw api_v1_one_sided_followers_count_points_path(chart_options)}', $('#one-sided-followers-chart'));
+    drawAudienceChart('#{raw api_v1_new_unfriends_count_points_path(chart_options)}', $('#new-unfriends-chart'));
+    drawAudienceChart('#{raw api_v1_new_unfollowers_count_points_path(chart_options)}', $('#new-unfollowers-chart'));
   });
