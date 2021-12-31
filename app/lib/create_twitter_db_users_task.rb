@@ -40,8 +40,7 @@ class CreateTwitterDBUsersTask
       @debug_message += ", stale_uids=#{stale_uids.join(',')}"
     end
 
-    # ImportTwitterDBUserWorker.perform_async(users) if users.any?
-    import_users(users) if users.any?
+    ImportTwitterDBUserWorker.perform_async(users) if users.any?
   end
 
   private
