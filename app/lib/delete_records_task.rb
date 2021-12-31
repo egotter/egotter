@@ -1,9 +1,9 @@
-class DeleteAhoyRecordsTask
+class DeleteRecordsTask
   def initialize(klass, year, month, options = {})
     @klass = klass
     @year = year
     @month = month
-    @column = klass == Ahoy::Event ? :time : :started_at
+    @column = detect_time_column(klass)
     Rails.logger.level = :debug
   end
 
@@ -52,6 +52,13 @@ class DeleteAhoyRecordsTask
       @klass.where(id: ids_array).delete_all
       @progress.increment(ids_array.size, "(deleting #{deleted_count += ids_array.size}/#{total} records)")
       break if @sigint.trapped?
+    end
+  end
+
+  def detect_time_column(klass)
+    columns = klass.attribute_names
+    %w(created_at time started_at).each do |name|
+      return name if columns.include?(name)
     end
   end
 
