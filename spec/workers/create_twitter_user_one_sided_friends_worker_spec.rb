@@ -26,9 +26,7 @@ RSpec.describe CreateTwitterUserOneSidedFriendsWorker do
       expect(worker).to receive(:import_uids).with(S3::MutualFriendship, twitter_user)
       expect(CreateOneSidedFriendsCountPointWorker).to receive(:perform_async).with(twitter_user.uid, 2)
       expect(CreateOneSidedFollowersCountPointWorker).to receive(:perform_async).with(twitter_user.uid, 3)
-      expect(OneSidedFriendship).to receive(:delete_by_uid).with(twitter_user.uid)
-      expect(OneSidedFollowership).to receive(:delete_by_uid).with(twitter_user.uid)
-      expect(MutualFriendship).to receive(:delete_by_uid).with(twitter_user.uid)
+      expect(DeleteOneSidedFriendshipsWorker).to receive(:perform_async).with(twitter_user.uid)
       subject
     end
   end

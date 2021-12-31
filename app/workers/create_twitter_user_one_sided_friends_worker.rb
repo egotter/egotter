@@ -39,9 +39,7 @@ class CreateTwitterUserOneSidedFriendsWorker
     CreateOneSidedFriendsCountPointWorker.perform_async(twitter_user.uid, one_sided_friend_uids.size)
     CreateOneSidedFollowersCountPointWorker.perform_async(twitter_user.uid, one_sided_follower_uids.size)
 
-    OneSidedFriendship.delete_by_uid(twitter_user.uid)
-    OneSidedFollowership.delete_by_uid(twitter_user.uid)
-    MutualFriendship.delete_by_uid(twitter_user.uid)
+    DeleteOneSidedFriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
     Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
     Airbag.info e.backtrace.join("\n")
