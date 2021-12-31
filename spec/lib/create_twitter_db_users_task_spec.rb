@@ -19,7 +19,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
       expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
       expect(instance).not_to receive(:import_suspended_users)
       expect(instance).to receive(:reject_fresh_users).with(users).and_return(users)
-      expect(instance).to receive(:import_users).with(users)
+      expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users)
       subject
     end
 
@@ -29,7 +29,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
         expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
         expect(instance).to receive(:import_suspended_users).with(uids.slice(2, 3))
         expect(instance).to receive(:reject_fresh_users).with(users).and_return(users)
-        expect(instance).to receive(:import_users).with(users)
+        expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users)
         subject
       end
     end
@@ -40,7 +40,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
         expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
         expect(instance).not_to receive(:import_suspended_users)
         expect(instance).not_to receive(:reject_fresh_users)
-        expect(instance).to receive(:import_users).with(users)
+        expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users)
         subject
       end
     end
@@ -50,14 +50,6 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
     subject { instance.send(:fetch_users, client, uids) }
     it do
       expect(twitter).to receive(:users).with(uids).and_return(users)
-      subject
-    end
-  end
-
-  describe '#import_users' do
-    subject { instance.send(:import_users, users) }
-    it do
-      expect(TwitterDB::User).to receive(:import_by!).with(users: users)
       subject
     end
   end

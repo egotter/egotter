@@ -68,17 +68,6 @@ class CreateTwitterDBUsersTask
     end
   end
 
-  # TODO Remove later
-  def import_users(users)
-    TwitterDB::User.import_by!(users: users)
-  rescue => e
-    if deadlock_error?(e)
-      raise RetryDeadlockExhausted.new(e.inspect)
-    else
-      raise
-    end
-  end
-
   def import_suspended_users(uids)
     Airbag.info "Import suspended uids size=#{uids.size} ids=#{uids.inspect}"
     users = uids.map { |uid| Hashie::Mash.new(id: uid, screen_name: 'suspended', description: '') }
@@ -105,12 +94,6 @@ class CreateTwitterDBUsersTask
     persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }).pluck(:uid)
     Airbag.info "Reject persisted users passed=#{users.size} persisted=#{persisted_uids.size}"
     users.reject { |user| persisted_uids.include? user[:id] }
-  end
-
-  # ActiveRecord::StatementInvalid
-  # ActiveRecord::Deadlocked
-  def deadlock_error?(e)
-    e.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')
   end
 
   def retryable_twitter_error?(e)
