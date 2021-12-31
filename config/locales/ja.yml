@@ -179,6 +179,8 @@ ja:
           <p>えごったーのデータは、最初に使った時から保存されていきます。そのため、最初は少ないデータが表示されます。</p>
           また、たくさん使うユーザーほどたくさんデータが更新されます。
       summary:
+        friends: 'フォロー'
+        followers: 'フォロワー'
         one_sided_friends: '片思いフォロー'
         one_sided_followers: '片思われフォロワー'
         mutual_friends: '両思いフォロー'
@@ -206,6 +208,10 @@ ja:
       audience_insights:
         title: 'フォロー/フォロワー 推移'
         description: '@%{user} の フォロー数 / フォロワー数 / 新しいフォロー数 / 新しいフォロワー数 の変化が分かります。'
+        friends: 'フォロー'
+        followers: 'フォロワー'
+        new_friends: '新しいフォロー'
+        new_followers: '新しいフォロワー'
       close_friends:
         title: '仲良しランキング'
         description: '@%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。'

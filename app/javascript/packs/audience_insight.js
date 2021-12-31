@@ -113,9 +113,9 @@ class AudienceInsight {
 
 window.AudienceInsight = AudienceInsight;
 
-function drawSparkLine(url, container, legendEnabled) {
+function drawSparkLine(url, container) {
   $.get(url).done(function (res) {
-    new AudienceInsight().drawSparkLine(container, res.series, legendEnabled);
+    new AudienceInsight().drawSparkLine(container, res.series, false);
   }).fail(function () {
     // Do nothing
   });

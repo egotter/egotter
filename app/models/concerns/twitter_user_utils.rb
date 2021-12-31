@@ -52,6 +52,8 @@ module TwitterUserUtils
 
   def to_summary
     {
+        friends: friends_size || friend_uids.size,
+        followers: followers_size || follower_uids.size,
         one_sided_friends: one_sided_friends_size || one_sided_friendships.size,
         one_sided_followers: one_sided_followers_size || one_sided_followerships.size,
         mutual_friends: mutual_friends_size || mutual_friendships.size,

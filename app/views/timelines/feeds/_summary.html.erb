@@ -1,5 +1,7 @@
 <% via = current_via('summary_on_timeline') %>
 <% items = [
+  ['friends', t('.friends')],
+  ['followers', t('.followers')],
   ['one_sided_friends', t('.one_sided_friends')],
   ['one_sided_followers', t('.one_sided_followers')],
   ['mutual_friends', t('.mutual_friends')],
@@ -12,17 +14,17 @@
   ['muters', t('.muters')],
 ] %>
 
-<div class="summary-on-timeline">
+<div id="summary-section">
   <div class="list-group">
     <% items.each do |name, title| %>
       <li class="list-group-item" style="height: 56px;">
         <div class="d-flex align-items-center h-100">
-          <div><%= link_to title, "#feed-#{name}", onclick: "itemOnSummaryClicked(this, '#{name}')" %></div>
-          <% if %w(one_sided_friends one_sided_followers inactive_friends inactive_followers).include?(name) %>
+          <div><%= link_to title, "#feed-#{name}", class: 'summary-section-item', data: {name: name} %></div>
+          <% if %w(friends followers one_sided_friends one_sided_followers inactive_friends inactive_followers).include?(name) %>
             <div id="summary-spark-line-<%= name %>" class="ml-2" style="width: 60px; height: 100%;"></div>
           <% end %>
           <div class="ml-auto">
-            <%= link_to "#feed-#{name}", onclick: "itemOnSummaryClicked(this, '#{name}')" do %>
+            <%= link_to "#feed-#{name}", class: 'summary-section-item', data: {name: name} do %>
               <span class="message-container <%= name %>"><%= t('.analyzing') %></span>
             <% end %>
             <span class="zero-reason <%= name %> small" style="display: none;">
@@ -39,11 +41,6 @@
 </div>
 
 <script>
-  function itemOnSummaryClicked(elem, name) {
-    var count = $(elem).find('.count').text();
-    trackPageEvents('TimelinePage events', 'Summary ' + name + ' clicked', {count: count});
-  }
-
   function showZeroReasonAlert() {
     var message = '<%= t('.detailed_description') %>';
     window.alert(message);
@@ -53,7 +50,17 @@
   $(function () {
     var url = '<%= raw api_v1_summaries_path(uid: twitter_user.uid, via: via) %>';
     var names = <%= raw items.map(&:first).to_json %>;
-    var parent = $('.summary-on-timeline');
+    var parent = $('#summary-section');
+
+    $('.summary-section-item').on('click', function () {
+      var name = $(this).data('name');
+      trackPageEvents('TimelinePage events', 'Summary ' + name + ' clicked');
+      if (name === 'friends') {
+        window.location.href = '<%= raw friend_path(twitter_user, via: current_via('summary')) %>';
+      } else if (name === 'followers') {
+        window.location.href = '<%= raw follower_path(twitter_user, via: current_via('summary')) %>';
+      }
+    });
 
     $('.zero-reason-link').on('click', showZeroReasonAlert);
 
@@ -75,14 +82,18 @@
           container.text(count + unit);
         }
 
-        if (name === 'one_sided_friends') {
-          window.drawSparkLine('<%= raw api_v1_one_sided_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0], false);
+        if (name === 'friends') {
+          window.drawSparkLine('<%= raw api_v1_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
+        } else if (name === 'followers') {
+          window.drawSparkLine('<%= raw api_v1_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
+        } else if (name === 'one_sided_friends') {
+          window.drawSparkLine('<%= raw api_v1_one_sided_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
         } else if (name === 'one_sided_followers') {
-          window.drawSparkLine('<%= raw api_v1_one_sided_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0], false);
+          window.drawSparkLine('<%= raw api_v1_one_sided_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
         } else if (name === 'inactive_friends') {
-          window.drawSparkLine('<%= raw api_v1_inactive_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0], false);
+          window.drawSparkLine('<%= raw api_v1_inactive_friends_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
         } else if (name === 'inactive_followers') {
-          window.drawSparkLine('<%= raw api_v1_inactive_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0], false);
+          window.drawSparkLine('<%= raw api_v1_inactive_followers_count_points_path(uid: twitter_user.uid, padding: true, via: current_via) %>', $('#summary-spark-line-' + name)[0]);
         }
       }
     }

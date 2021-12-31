@@ -78,7 +78,7 @@
 
 <script>
   $(function () {
-    window.drawSparkLine('<%= raw api_v1_friends_count_points_path(uid: user.uid, padding: true, via: current_via) %>', $('#friends-spark-line-<%= user.uid %>')[0], false);
-    window.drawSparkLine('<%= raw api_v1_followers_count_points_path(uid: user.uid, padding: true, via: current_via) %>', $('#followers-spark-line-<%= user.uid %>')[0], false);
+    window.drawSparkLine('<%= raw api_v1_friends_count_points_path(uid: user.uid, padding: true, via: current_via) %>', $('#friends-spark-line-<%= user.uid %>')[0]);
+    window.drawSparkLine('<%= raw api_v1_followers_count_points_path(uid: user.uid, padding: true, via: current_via) %>', $('#followers-spark-line-<%= user.uid %>')[0]);
   });
 </script>
