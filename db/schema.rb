@@ -1312,11 +1312,7 @@ ActiveRecord::Schema.define(version: 2021_12_21_040841) do
     t.string "medium", default: "", null: false
     t.string "ab_test", default: "", null: false
     t.datetime "created_at", null: false
-    t.index ["action"], name: "index_search_logs_on_action"
     t.index ["created_at"], name: "index_search_logs_on_created_at"
-    t.index ["screen_name"], name: "index_search_logs_on_screen_name"
-    t.index ["session_id"], name: "index_search_logs_on_session_id"
-    t.index ["uid", "action"], name: "index_search_logs_on_uid_and_action"
     t.index ["uid"], name: "index_search_logs_on_uid"
     t.index ["user_id"], name: "index_search_logs_on_user_id"
   end

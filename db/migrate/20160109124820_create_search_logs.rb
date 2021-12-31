@@ -1,10 +1,10 @@
 class CreateSearchLogs < ActiveRecord::Migration[5.2]
   def change
     create_table :search_logs do |t|
-      t.string  :session_id,  null: false, default: '', index: true
+      t.string  :session_id,  null: false, default: ''
       t.integer :user_id,     null: false, default: -1, index: true
       t.bigint  :uid,         null: false, default: -1, index: true
-      t.string  :screen_name, null: false, default: '', index: true
+      t.string  :screen_name, null: false, default: ''
 
       t.string  :controller,  null: false, default: ''
       t.string  :action,      null: false, default: ''
@@ -30,9 +30,7 @@ class CreateSearchLogs < ActiveRecord::Migration[5.2]
 
       t.datetime :created_at, null: false
 
-      t.index :action
       t.index :created_at
-      t.index [:uid, :action]
     end
   end
 end
