@@ -71,6 +71,16 @@
     = link_to t('.list'), inactive_follower_path(@twitter_user, via: current_via)
   .text-muted.small{style: 'margin-bottom: 120px;'}= t('.inactive_followers.note', days: 30)
 
+#mutual-friends-chart
+  %h3.h5.text-center.my-5= t('.mutual_friends.title')
+  .description.mb-4
+  .chart{style: 'height: 250px;'}
+  .small.text-muted.my-3
+    = link_to t('.download'), mutual_friends_count_points_download_path(uid: @twitter_user.uid, with_prev: true, padding: true, via: current_via)
+    = t('.or')
+    = link_to t('.list'), mutual_friend_path(@twitter_user, via: current_via)
+  .text-muted.small{style: 'margin-bottom: 120px;'}= t('.mutual_friends.note', days: 30)
+
 #one-sided-friends-chart
   %h3.h5.text-center.my-5= t('.one_sided_friends.title')
   .description.mb-4
@@ -128,6 +138,7 @@
     drawAudienceChart('#{raw api_v1_new_followers_count_points_path(chart_options)}', $('#new-followers-chart'));
     drawAudienceChart('#{raw api_v1_inactive_friends_count_points_path(chart_options)}', $('#inactive-friends-chart'));
     drawAudienceChart('#{raw api_v1_inactive_followers_count_points_path(chart_options)}', $('#inactive-followers-chart'));
+    drawAudienceChart('#{raw api_v1_mutual_friends_count_points_path(chart_options)}', $('#mutual-friends-chart'));
     drawAudienceChart('#{raw api_v1_one_sided_friends_count_points_path(chart_options)}', $('#one-sided-friends-chart'));
     drawAudienceChart('#{raw api_v1_one_sided_followers_count_points_path(chart_options)}', $('#one-sided-followers-chart'));
     drawAudienceChart('#{raw api_v1_new_unfriends_count_points_path(chart_options)}', $('#new-unfriends-chart'));
