@@ -3,12 +3,6 @@ require 'active_support/concern'
 module FriendsCountPointsUtil
   extend ActiveSupport::Concern
 
-  included do
-    scope :time_within, -> (time, duration) do
-      where(created_at: (time - duration)..(time + duration))
-    end
-  end
-
   class_methods do
     def group_by_day(uid, start_time, end_time, padding)
       operator = detect_aggregation_operator
