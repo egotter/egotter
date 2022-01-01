@@ -46,7 +46,7 @@
         <span class="text-muted small"><%= t('.friends') %></span>
       <% end %>
     </div>
-    <div id="friends-spark-line-<%= user.uid %>" style="width: 100px; height: 100%;"></div>
+    <div id="friends-spark-line-<%= user.uid %>" class="ml-2" style="width: 60px; height: 100%;"></div>
   </div>
   <div class="w-auto d-flex align-items-center">
     <%= link_to usage_stat_path(user, via: via), class: 'small' do %>
@@ -65,7 +65,7 @@
         <span class="text-muted small"><%= t('.followers') %></span>
       <% end %>
     </div>
-    <div id="followers-spark-line-<%= user.uid %>" style="width: 100px; height: 100%;"></div>
+    <div id="followers-spark-line-<%= user.uid %>" class="ml-2" style="width: 60px; height: 100%;"></div>
   </div>
   <div class="w-auto d-flex align-items-center">
     <%= link_to usage_stat_path(user, via: via), class: 'small' do %>
