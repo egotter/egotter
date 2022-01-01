@@ -109,13 +109,15 @@ class UsageStat < ApplicationRecord
   end
 
   def most_active_hour
-    max_value = chart_data(:hour).map { |obj| obj[:y] }.max
-    chart_data(:hour).find { |obj| obj[:y] == max_value }.try(:fetch, :name, nil)
+    times = tweet_times.map { |t| Time.zone.at(t) }
+    data = times.each_with_object(Hash.new(0)) { |time, memo| memo[time.hour] += 1 }
+    data.sort_by { |_, count| count }[-1][0]
   end
 
   def most_active_wday
-    max_value = chart_data(:wday).map { |obj| obj[:y] }.max
-    chart_data(:wday).find { |obj| obj[:y] == max_value }.try(:fetch, :name, nil)
+    times = tweet_times.map { |t| Time.zone.at(t) }
+    data = times.each_with_object(Hash.new(0)) { |time, memo| memo[time.wday] += 1 }
+    I18n.t('date.abbr_day_names')[data.sort_by { |_, count| count }[-1][0]]
   end
 
   def mention_uids
@@ -289,25 +291,6 @@ class UsageStat < ApplicationRecord
       end
     end
 
-    HOUR_COLORS = {
-        morning: 'rgba(220, 50, 47, 1.0)',
-        afternoon: 'rgba(220, 50, 47, 1.0)',
-        night: 'rgba(220, 50, 47, 1.0)',
-        else: 'rgba(108, 113, 196, 1.0)',
-    }
-
-    def color_by_hour(hour)
-      if 7 <= hour && hour <= 9
-        HOUR_COLORS[:morning]
-      elsif 11 <= hour && hour <= 13
-        HOUR_COLORS[:afternoon]
-      elsif 20 <= hour && hour <= 22
-        HOUR_COLORS[:night]
-      else
-        HOUR_COLORS[:else]
-      end
-    end
-
     # [
     #   {:name=>"0", :y=>66, :drilldown=>"0"},
     #   {:name=>"1", :y=>47, :drilldown=>"1"},
@@ -317,7 +300,7 @@ class UsageStat < ApplicationRecord
     # ]
     def usage_stats_hour_series_data(times)
       count_hour(times).map do |hour, count|
-        {name: hour.to_s, y: count, color: color_by_hour(hour), drilldown: hour.to_s}
+        {name: hour.to_s, y: count, color: 'rgba(108, 113, 196, 1.0)', drilldown: hour.to_s}
       end
     end
 
