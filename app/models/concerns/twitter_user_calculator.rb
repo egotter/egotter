@@ -82,7 +82,7 @@ module TwitterUserCalculator
     numerator = mutual_friendships.size
     # Use #followers_count instead of #follower_uids.size to reduce calls to the external API
     denominator = followers_count
-    (numerator == 0 || denominator == 0) ? 0.0 : numerator.to_f / denominator
+    (numerator == 0 || denominator <= 0) ? 0.0 : numerator.to_f / denominator
   rescue
     0.0
   end
@@ -91,7 +91,7 @@ module TwitterUserCalculator
     numerator = mutual_friendships.size
     # Use #friends_count instead of #friend_uids.size to reduce calls to the external API
     denominator = friends_count
-    (numerator == 0 || denominator == 0) ? 0.0 : numerator.to_f / denominator
+    (numerator == 0 || denominator <= 0) ? 0.0 : numerator.to_f / denominator
   rescue
     0.0
   end
