@@ -14,6 +14,7 @@ module Logging
     @access_log_disabled
   end
 
+  # TODO Remove later
   def access_log_disabled=(flag)
     @access_log_disabled = flag
   end

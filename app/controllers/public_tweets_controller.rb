@@ -1,8 +1,5 @@
 # TODO Move to Api::V1
 class PublicTweetsController < ApplicationController
-
-  before_action { self.access_log_disabled = true }
-
   def load
     if params[:kind] == 'close_friends'
       keyword = '#仲良しランキング #egotter'
