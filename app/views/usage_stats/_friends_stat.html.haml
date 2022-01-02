@@ -1,33 +1,33 @@
-%h2.h4.text-center.my-5= UsageStat.human_attribute_name(:friends_stat)
+%h2.h4.text-center.my-5= t('.title')
 
 .text-center
   = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
     = stat[:friends_count]
-    .small= UsageStat.human_attribute_name(:friends_count)
+    .small= t('.friends_count')
   = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
     = stat[:one_sided_friends_count]
-    .small= UsageStat.human_attribute_name(:one_sided_friends_count)
+    .small= t('.one_sided_friends_count')
   = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
     = number_to_percentage(stat[:one_sided_friends_rate] * 100, precision: 1)
-    .small= UsageStat.human_attribute_name(:one_sided_friends_rate)
+    .small= t('.one_sided_friends_rate')
   = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
     = stat[:followers_count]
-    .small= UsageStat.human_attribute_name(:followers_count)
+    .small= t('.followers_count')
   = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
     = stat[:one_sided_followers_count]
-    .small= UsageStat.human_attribute_name(:one_sided_followers_count)
+    .small= t('.one_sided_followers_count')
   = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
     = number_to_percentage(stat[:one_sided_followers_rate] * 100, precision: 1)
-    .small= UsageStat.human_attribute_name(:one_sided_followers_rate)
+    .small= t('.one_sided_followers_rate')
   = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
     = stat[:mutual_friends_count]
-    .small= UsageStat.human_attribute_name(:mutual_friends_count)
+    .small= t('.mutual_friends_count')
   = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
     = number_to_percentage(stat[:follow_back_rate] * 100, precision: 1)
-    .small= UsageStat.human_attribute_name(:follow_back_rate)
+    .small= t('.follow_back_rate')
   = button_tag class: 'btn btn-outline-primary btn-lg m-1' do
     = number_to_percentage(stat[:mutual_friends_rate] * 100, precision: 1)
-    .small= UsageStat.human_attribute_name(:mutual_friends_rate)
+    .small= t('.mutual_friends_rate')
 
 .friends-stat-bar-chart.my-5{style: 'height: 200px;'}
 

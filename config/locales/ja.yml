@@ -316,6 +316,16 @@ ja:
       hashtags_cloud_title: ' ハッシュタグクラウド'
       hashtags_tweet_text: ".@%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
     friends_stat:
+      title: 'フォロー分析'
+      friends_count: 'フォロー'
+      one_sided_friends_count: '片思い'
+      one_sided_friends_rate: '片思い率'
+      followers_count: 'フォロワー'
+      one_sided_followers_count: '片思われ'
+      one_sided_followers_rate: '片思われ率'
+      mutual_friends_count: '相互フォロー'
+      follow_back_rate: 'フォロー返し率'
+      mutual_friends_rate: '相互フォロー率'
       tweet: ".@%{user} のフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人です。 #egotter %{url}"
       chart_categories:
         existence: "フォロー返しあり"
@@ -323,6 +333,17 @@ ja:
         friends: 'フォロー'
         followers: 'フォロワー'
     tweets_stat:
+      title: 'ツイート分析'
+      twitter_days: '登録日数'
+      statuses_count: 'ツイート'
+      statuses_per_day_count: 'ツイート/日'
+      most_active_hour: '活発な時間'
+      most_active_wday: '活発な曜日'
+      tweets_interval: 'ツイート間隔'
+      tweets_per_wday: '曜日ごとのツイート数'
+      tweets_per_hour: '時間帯ごとのツイート数'
+      most_active: ".@%{user} のツイート分析 - もっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
+      tweets_breakdown: 'ツイートの内訳'
       chart_categories:
         existence: 'あり'
         nonexistence: 'なし'
@@ -341,7 +362,6 @@ ja:
         %{location}% は位置情報付き
 
         #egotter %{url}
-      most_active: ".@%{user} のツイート分析 - もっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
       wday_suffix: "曜日"
   audience_insights:
     show:
@@ -2653,28 +2673,6 @@ ja:
         statuses: "ツイート"
         created_at: "作成日時"
         updated_at: "更新日時"
-      usage_stat:
-        friends_stat: "フォロー分析"
-        tweets_stat: "ツイート分析"
-        tweets_per_wday: "曜日ごとのツイート数"
-        tweets_per_hour: "時間帯ごとのツイート数"
-        tweets_breakdown: "ツイートの内訳"
-        friends_count: "フォロー"
-        followers_count: "フォロワー"
-        one_sided_friends_count: "片思い"
-        one_sided_followers_count: "片思われ"
-        mutual_friends_count: "相互フォロー"
-        one_sided_friends_rate: "片思い率"
-        one_sided_followers_rate: "片思われ率"
-        follow_back_rate: "フォロー返し率"
-        followed_back_rate: "フォロー返され率"
-        mutual_friends_rate: "相互フォロー率"
-        statuses_count: "ツイート"
-        statuses_per_day_count: "ツイート/日"
-        twitter_days: "登録日数"
-        most_active_hour: "活発な時間"
-        most_active_wday: "活発な曜日"
-        tweets_interval: "ツイート間隔"
       twitter_db/user:
         uid: "uid"
         screen_name: "screen name"
