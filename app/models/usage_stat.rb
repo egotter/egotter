@@ -104,17 +104,19 @@ class UsageStat < ApplicationRecord
       breakdown:              breakdown
     }
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} uid=#{uid}"
     Hash.new(0)
   end
 
   def most_active_hour
+    return '?' if tweet_times.blank?
     times = tweet_times.map { |t| Time.zone.at(t) }
     data = times.each_with_object(Hash.new(0)) { |time, memo| memo[time.hour] += 1 }
     data.sort_by { |_, count| count }[-1][0]
   end
 
   def most_active_wday
+    return '?' if tweet_times.blank?
     times = tweet_times.map { |t| Time.zone.at(t) }
     data = times.each_with_object(Hash.new(0)) { |time, memo| memo[time.wday] += 1 }
     I18n.t('date.abbr_day_names')[data.sort_by { |_, count| count }[-1][0]]
