@@ -10,17 +10,8 @@ module Logging
 
   end
 
-  def access_log_disabled
-    @access_log_disabled
-  end
-
-  # TODO Remove later
-  def access_log_disabled=(flag)
-    @access_log_disabled = flag
-  end
-
   def create_access_log?
-    !access_log_disabled && !apache_bench? && (response.successful? || response.redirection?)
+    !apache_bench? && (response.successful? || response.redirection?)
   end
 
   def apache_bench?
