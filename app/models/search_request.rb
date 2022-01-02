@@ -95,19 +95,17 @@ class SearchRequest < ApplicationRecord
       return
     end
 
-    if properties['remaining_count'] && properties['search_histories']
-      if properties['remaining_count'] <= 0 && properties['search_histories'].exclude?(target_user[:id])
-        update(status: 'too many searches')
-        return
-      end
+    if remaining_count <= 0 && search_histories.exclude?(target_user[:id])
+      update(status: 'too many searches')
+      return
     end
 
-    if user && RateLimitExceededFlag.on?(user.id)
+    if search_histories.exclude?(target_user[:id]) && user && RateLimitExceededFlag.on?(user.id)
       update(status: 'too many searches') # TODO Change to 'rate limit exceeded'
       return
     end
 
-    if user && TooManyFriendsSearchedFlag.on?(user.id)
+    if search_histories.exclude?(target_user[:id]) && user && TooManyFriendsSearchedFlag.on?(user.id)
       update(status: 'too many friends')
       return
     end
@@ -122,6 +120,14 @@ class SearchRequest < ApplicationRecord
 
   def ok?
     status == 'ok'
+  end
+
+  def remaining_count
+    properties['remaining_count'] || 0
+  end
+
+  def search_histories
+    properties['search_histories'] || []
   end
 
   class << self
