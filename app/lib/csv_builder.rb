@@ -13,12 +13,12 @@ class CsvBuilder
         csv << @headers.map { |attr| user[attr] }
       end
 
-      if !@with_description && @users.size == 100
+      if !@with_description && @users.size == Order::FREE_PLAN_USERS_LIMIT
         url = Rails.application.routes.url_helpers.pricing_url(via: 'download_100')
         csv << ['-1', I18n.t('download.data.note1', count: 100, url: url)]
       end
 
-      if @with_description && @users.size == 10000
+      if @with_description && @users.size == Order::BASIC_PLAN_USERS_LIMIT
         url = Rails.application.routes.url_helpers.pricing_url(via: 'download_10000')
         csv << ['-1', I18n.t('download.data.note2', count: 10000, url: url)]
       end
