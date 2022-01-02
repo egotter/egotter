@@ -2185,9 +2185,9 @@ ja:
           <p><span class="egotter-pink">%{title}</span>を使ってツイートを予約した後は、予約したツイートを一覧で管理できます。</p>
           <p><span class="egotter-pink">%{title}</span>を使ってツイートを予約した後に、予約したツイートをキャンセルすることもできます。</p>
     word_cloud:
-      loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
+      loading: '読み込み中'
     tweet_times:
-      loading_html: '読み込み中  <img src="/ajax-loader-blue.gif?a=1">'
+      loading: '読み込み中'
     stripe:
       already_purchased: '購入済み'
   api:

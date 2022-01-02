@@ -1,6 +1,7 @@
 <div><%= description %></div>
 <div id="tweets-per-hour-container" class="d-flex align-items-center justify-content-center mt-3" style="height: 300px;">
-  <div><%= t('.loading_html') %></div>
+  <%= t('.loading') %>
+  <%= image_tag '/ajax-loader.gif', size: '16x16' %>
 </div>
 <script>
   $(function () {
@@ -9,7 +10,7 @@
 
     $.get(url).done(function (res) {
       container.empty();
-      new UsageStat().drawColumnChart(container.attr('id'), res.tweets_per_hour);
+      new UsageStat().drawColumnChart(container.attr('id'), res.tweets_per_hour, res.drilldown);
     }).fail(function (xhr, textStatus, errorThrown) {
       logger.warn(url, xhr.responseText);
       var message = extractErrorMessage(xhr, textStatus, errorThrown)

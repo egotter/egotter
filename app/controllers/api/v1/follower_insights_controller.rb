@@ -29,7 +29,8 @@ module Api
         if @insight&.tweet_times&.any?
           times = @insight.tweet_times.map { |t| Time.zone.at(t) }
           tweets_per_hour = UsageStat::Misc.usage_stats_hour_series_data(times)
-          render json: {tweets_per_hour: tweets_per_hour}
+          drilldown = UsageStat::Misc.usage_stats_hour_drilldown_series(times)
+          render json: {tweets_per_hour: tweets_per_hour, drilldown: drilldown}
         else
           CreateFollowerInsightWorker.perform_async(@twitter_user.uid) unless from_crawler?
           render json: {message: t('.fail')}, status: :not_found
