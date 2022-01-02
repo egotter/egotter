@@ -1496,10 +1496,6 @@ ja:
       note: '※ 利用制限の解除のために購入された売上は、全額を特定公益増進法人（例：日本赤十字社）に寄付します。'
     not_found_user:
       message: '@%{user} は存在しないか削除済みです。主な理由は下記の通りです。'
-      trends:
-        title: 'ツイッタートレンド'
-        rank: '%{n}位'
-        link: 'ツイッターで見る'
     forbidden_user:
       message: '@%{user} は凍結されています。'
     protected_user:
@@ -1563,6 +1559,10 @@ ja:
       message_html: 'アクセスが多すぎてリクエストがタイムアウトしました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     csrf_error:
       message_html: 'ページの有効期限が切れました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+    trends_section:
+      title: 'ツイッタートレンド'
+      rank: '%{n}位'
+      link: 'ツイッターで見る'
   delete_tweets:
     index:
       navbar_title: 'ツイートクリーナー'

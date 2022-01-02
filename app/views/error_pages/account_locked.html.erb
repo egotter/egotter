@@ -5,3 +5,5 @@
 <p><%= t('error_pages.support_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></p>
 
 <%= render partial: 'ad_section', locals: {screen_name: @screen_name} %>
+
+<%= render partial: 'trends_section', locals: {trends: @trends} if @trends.any? %>

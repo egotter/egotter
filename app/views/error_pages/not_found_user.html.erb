@@ -1,22 +1,9 @@
 <div class="my-3"><%= t('.message', user: @screen_name) %></div>
 
-<div class="card">
-  <div class="card-body">
-    <%= render(partial: 'profiles/profile_section', locals: {user: @user}) if @user %>
-  </div>
-</div>
+<%= render(partial: 'profiles/profile_section', locals: {user: @user}) if @user %>
 
 <%= render partial: 'ad_section', locals: {screen_name: @screen_name} %>
 
 <%= render template: 'messages/not_found_reason', locals: {expanded: true} %>
 
-<% if @trends.any? %>
-  <div class="my-3"><%= t('.trends.title') %></div>
-
-  <% @trends.each do |trend| %>
-    <div><%= t('.trends.rank', n: trend.rank) %>. <%= trend.name %> <%= link_to t('.trends.link'), twitter_search_url(trend.name), target: '_blank', rel: 'nofollow' %></div>
-    <% if (tweet = trend.properties['tweet']) %>
-      <%= render partial: 'twitter/plain_oembed_tweet', locals: {text: trend.name, url: tweet_url('user', tweet['id'])} %>
-    <% end %>
-  <% end %>
-<% end %>
+<%= render partial: 'trends_section', locals: {trends: @trends} if @trends.any? %>
