@@ -54,7 +54,6 @@ class CreateTwitterUserWorker
       Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options}"
     else
       options['retries'] = 1
-      Airbag.warn "RETRY: #{e.inspect} request_id=#{request_id} options=#{options}" # TODO Remove
       CreateTwitterUserWorker.perform_in(rand(20) + unique_in, request_id, options)
     end
   rescue CreateTwitterUserRequest::Error => e
