@@ -45,16 +45,20 @@ class ProcessWebhookEventWorker
     # TODO Call #from_event
     dm = DirectMessageWrapper.new(event: event.deep_symbolize_keys)
 
+    if message_from_user?(dm)
+      begin
+        CreateDirectMessageReceiveLogWorker.new.perform(sender_id: dm.sender_id, recipient_id: dm.recipient_id, message: dm.text)
+      rescue => e
+        Airbag.warn "Creating DirectMessageReceiveLog failed: #{e.inspect}"
+      end
+    elsif message_from_egotter?(dm)
+      # Do nothing
+    end
+
     if sent_from_user?(dm)
       process_message_from_user(dm)
     elsif sent_from_egotter?(dm)
       process_message_from_egotter(dm)
-    end
-
-    if message_from_user?(dm)
-      CreateDirectMessageReceiveLogWorker.perform_async(sender_id: dm.sender_id, recipient_id: dm.recipient_id, message: dm.text)
-    elsif message_from_egotter?(dm)
-      # Do nothing
     end
   end
 

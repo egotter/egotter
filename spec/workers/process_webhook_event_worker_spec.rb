@@ -87,7 +87,7 @@ RSpec.describe ProcessWebhookEventWorker do
       include_context 'skip processing messages'
       before { allow(worker).to receive(:message_from_user?).with(dm).and_return(true) }
       it do
-        expect(CreateDirectMessageReceiveLogWorker).to receive(:perform_async).with(sender_id: dm.sender_id, recipient_id: dm.recipient_id, message: dm.text)
+        expect(CreateDirectMessageReceiveLogWorker).to receive_message_chain(:new, :perform).with(sender_id: dm.sender_id, recipient_id: dm.recipient_id, message: dm.text)
         subject
       end
     end
