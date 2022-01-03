@@ -184,10 +184,10 @@ class ApiClient
     def create_direct_message_event(*args)
       dm = DirectMessageWrapper.from_args(args)
 
-      if !DirectMessageReceiveLog.message_received?(dm.recipient_id) && DirectMessageLimitedFlag.on?
-        error_message = "Sending DM is rate-limited remaining=#{DirectMessageLimitedFlag.remaining} recipient_id=#{dm.recipient_id} text=#{dm.text.truncate(100)}"
-        raise ApiClient::EnhanceYourCalm.new(error_message)
-      end
+      # if !DirectMessageReceiveLog.message_received?(dm.recipient_id) && DirectMessageLimitedFlag.on?
+      #   error_message = "Sending DM is rate-limited remaining=#{DirectMessageLimitedFlag.remaining} recipient_id=#{dm.recipient_id} text=#{dm.text.truncate(100)}"
+      #   raise ApiClient::EnhanceYourCalm.new(error_message)
+      # end
 
       begin
         call_api(__method__, *args)
