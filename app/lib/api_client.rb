@@ -185,8 +185,7 @@ class ApiClient
       dm = DirectMessageWrapper.from_args(args)
 
       if !DirectMessageReceiveLog.message_received?(dm.recipient_id) && DirectMessageLimitedFlag.on?
-        message_text = dm.text.truncate(100)
-        error_message = "Sending DMs is rate-limited remaining=#{DirectMessageLimitedFlag.remaining} text=#{message_text}"
+        error_message = "Sending DM is rate-limited remaining=#{DirectMessageLimitedFlag.remaining} recipient_id=#{dm.recipient_id} text=#{dm.text.truncate(100)}"
         raise ApiClient::EnhanceYourCalm.new(error_message)
       end
 
