@@ -45,7 +45,7 @@ class StartPeriodicReportsTask
 
   class << self
     def periodic_base_user_ids
-      user_ids = (dm_received_user_ids + new_user_ids).uniq
+      user_ids = dm_received_user_ids.uniq
       user_ids = reject_banned_user_ids(user_ids)
       user_ids = (user_ids + premium_user_ids).uniq
       reject_stop_requested_user_ids(user_ids)
