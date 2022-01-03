@@ -21,7 +21,7 @@ class DirectMessageReceiveLog < ApplicationRecord
   class << self
     # Index: index_direct_message_receive_logs_on_srac
     def message_received?(uid)
-      where('created_at > ?', 1.day.ago).where(sender_id: uid, recipient_id: User::EGOTTER_UID, automated: false).exists?
+      where('created_at > ?', 1.day.ago).where(sender_id: uid, recipient_id: User::EGOTTER_UID, automated: [false, nil]).exists?
     end
 
     def remaining_time(uid)
