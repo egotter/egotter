@@ -12,7 +12,7 @@ class PremiumPlanMessageResponder < AbstractMessageResponder
     end
 
     def received_regexp
-      /お試し|有料|購入|返金/
+      /お試し|トライアル|有料|有償|購入|返金/
     end
 
     def send_message
