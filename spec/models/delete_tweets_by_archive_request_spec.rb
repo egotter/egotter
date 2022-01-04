@@ -28,4 +28,9 @@ RSpec.describe DeleteTweetsByArchiveRequest, type: :model do
       expect(instance.reload.deletions_count).to eq(tweets.size)
     end
   end
+
+  describe '#stop_processing?' do
+    subject { instance.send(:stop_processing?, 10, 5) }
+    it { is_expected.to be_falsey }
+  end
 end

@@ -22,10 +22,9 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
-  def perform(tweets, sync: true, threads: 4)
+  def perform(tweets, threads: 4)
     client = user.api_client.twitter
     delete_tweets(client, tweets, threads)
-
     update(finished_at: Time.zone.now)
   end
 
@@ -44,7 +43,7 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
           client.destroy_status(tweet.id)
         rescue => e
           puts "#{e.inspect} tweet_id=#{tweet.id}"
-          if (errors_count += 1) > 10
+          if stop_processing?(processed_count, errors_count += 1)
             puts 'Stop processing'
             stopped = true
           end
@@ -61,6 +60,10 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
 
       break if stopped
     end
+  end
+
+  def stop_processing?(processed_count, errors_count)
+    errors_count > [processed_count, 100].max / 10
   end
 
   def progress(started_time, total_count, processed_count)
