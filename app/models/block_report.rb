@@ -205,6 +205,10 @@ class BlockReport < ApplicationRecord
       label: I18n.t('quick_replies.block_reports.label4'),
       description: I18n.t('quick_replies.block_reports.description4')
   }
+  QUICK_REPLY_HELP = {
+      label: I18n.t('quick_replies.block_reports.label5'),
+      description: I18n.t('quick_replies.block_reports.description5')
+  }
   QUICK_REPLY_DEFAULT = [QUICK_REPLY_RECEIVED, QUICK_REPLY_RESTART, QUICK_REPLY_STOP]
 
   class << self

@@ -1912,6 +1912,7 @@ ja:
       label4: 'ブロック通知 送信'
       description4: 'ブロックされた時の通知を送信します'
       label5: 'ブロック通知 使い方'
+      description5: '使い方を送信します'
     mute_reports:
       label1: 'ミュート通知 届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'

@@ -18,7 +18,8 @@ class CreateMuteReportAccessIntervalTooLongMessageWorker
 
     MuteReport.send_start_message(user)
     message = MuteReport.access_interval_too_long_message(user)
-    event = MuteReport.build_direct_message_event(user.uid, message)
+    replies = [MuteReport::QUICK_REPLY_SEND, MuteReport::QUICK_REPLY_STOP, MuteReport::QUICK_REPLY_HELP]
+    event = DirectMessageEvent.build_with_replies(user.uid, message, replies)
     User.egotter.api_client.create_direct_message_event(event: event)
   rescue => e
     unless ignorable_report_error?(e)
