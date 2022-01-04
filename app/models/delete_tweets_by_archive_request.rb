@@ -63,7 +63,7 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
   end
 
   def stop_processing?(processed_count, errors_count)
-    errors_count > [processed_count, 100].max / 10
+    errors_count > [processed_count, 1000].max / 10
   end
 
   def progress(started_time, total_count, processed_count)
