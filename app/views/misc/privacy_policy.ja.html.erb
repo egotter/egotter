@@ -1,10 +1,12 @@
 <%# http://kiyaku.jp/hinagata/privacy.html %>
+
+<% title t('.title') %>
+
+<h2 class="h4 text-center my-5"><%= t('.title') %></h2>
+
+<%= render partial: 'shared/about_plan' %>
+
 <div class="privacy-policy">
-
-  <h2>
-    <small><%= t('.title') %></small>
-  </h2>
-
   <div>えごったー開発者（以下，「当方」といいます。）は，本ウェブサイト上で提供するサービス（以下,「本サービス」といいます。）における
     プライバシー情報の取扱いについて，以下のとおりプライバシーポリシー（以下，「本ポリシー」といいます。）を定めます。</div>
 
@@ -97,6 +99,5 @@
   <h3><small>第9条（お問い合わせ窓口）</small></h3>
   <div>本ポリシーに関するお問い合わせは，下記の窓口までお願いいたします。</div>
 
-  <div>公式アカウント：<%= user_link('ego_tter') %></div>
-
+  <div>公式アカウント：<%= user_link('egotter_cs') %></div>
 </div>

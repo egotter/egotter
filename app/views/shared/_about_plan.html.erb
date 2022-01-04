@@ -5,8 +5,14 @@
   <% else %>
     <%= t('.visitor') %>
   <% end %>
+
   <%= t('.description') %>
+
   <% if action_name != 'order_history' && user_signed_in? && current_user.has_valid_subscription? %>
     <%= t('.canceling_html', url: settings_order_history_path(via: current_via('plan_notice'))) %>
   <% end %>
+<% end %>
+
+<%= alert_box class: 'my-4' do %>
+  <%= t('.cancel_form_html', url: cancel_form) %>
 <% end %>

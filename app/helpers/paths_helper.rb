@@ -292,6 +292,10 @@ module PathsHelper
     end
   end
 
+  def cancel_form
+    'https://forms.gle/ozRwmLVwdJYPeWe9A'
+  end
+
   def personality_insight_path(*args)
     personality_insights_top_path
   end
