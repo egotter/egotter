@@ -76,11 +76,6 @@ class StartPeriodicReportsTask
       uids.each_slice(1000).map { |uids_array| User.authorized.where(uid: uids_array).pluck(:id) }.flatten
     end
 
-    # TODO Remove later
-    def new_user_ids
-      User.authorized.where('created_at > ?', 1.day.ago).pluck(:id)
-    end
-
     def premium_user_ids
       User.premium.authorized.pluck(:id)
     end

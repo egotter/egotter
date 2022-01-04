@@ -49,7 +49,6 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     subject { described_class.periodic_base_user_ids }
     before do
       allow(described_class).to receive(:dm_received_user_ids).and_return([1, 2])
-      allow(described_class).to receive(:new_user_ids).and_return([2, 3])
       allow(described_class).to receive(:premium_user_ids).and_return([1, 4])
     end
     it do
@@ -110,19 +109,6 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     it do
       is_expected.to eq([users[0].id])
     end
-  end
-
-  describe '.new_user_ids' do
-    let(:users) do
-      [
-          create(:user, created_at: 2.day.ago),
-          create(:user, created_at: 10.hours.ago),
-          create(:user, authorized: false, created_at: 5.hours.ago),
-      ]
-    end
-    subject { described_class.new_user_ids }
-    before { users }
-    it { is_expected.to eq([users[1].id]) }
   end
 
   describe '.premium_user_ids' do
