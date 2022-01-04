@@ -251,17 +251,19 @@ class PeriodicReport < ApplicationRecord
     end
 
     def interval_too_short_message(user_id)
+      user = User.find(user_id)
       template = Rails.root.join('app/views/periodic_reports/interval_too_short.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           interval: DateHelper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
           sent_at: last_report_time(user_id),
           last_time: last_report_time(user_id),
           next_time: next_report_time(user_id),
+          timeline_url: timeline_url(user, campaign_params('interval_too_short_timeline')),
           support_url: support_url(campaign_params('interval_too_short_support')),
           pricing_url: pricing_url(campaign_params('interval_too_short_pricing')),
       )
 
-      new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
+      new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
     end
 
     def request_interval_too_short_message(user_id)
