@@ -1,6 +1,6 @@
-class StartDeletingTweetsTask
+class DeleteTweetsByArchiveTask
 
-  def initialize(screen_name, file, sync: false, dry_run: nil, since: nil, _until: nil, threads: nil)
+  def initialize(screen_name, file, dry_run: nil, since: nil, _until: nil, threads: nil)
     @screen_name = screen_name
     @file = file
     @tweets = load_tweets(file)

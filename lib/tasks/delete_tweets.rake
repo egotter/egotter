@@ -41,7 +41,7 @@ namespace :delete_tweets do
     puts 'Continue?'
 
     if STDIN.gets.chomp == 'YES'
-      task = StartDeletingTweetsTask.new(screen_name, ENV['FILE'], **options)
+      task = DeleteTweetsByArchiveTask.new(screen_name, ENV['FILE'], **options)
       task.start
     end
   end
