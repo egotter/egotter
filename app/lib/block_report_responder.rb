@@ -62,7 +62,11 @@ class BlockReportResponder < AbstractMessageResponder
       elsif @received
         CreateBlockReportReceivedMessageWorker.perform_async(@uid)
       elsif @send
-        CreateBlockReportByUserRequestWorker.perform_async(user.id)
+        if StopBlockReportRequest.exists?(user_id: user.id)
+          CreateBlockReportStoppedMessageWorker.perform_async(user.id)
+        else
+          CreateBlockReportByUserRequestWorker.perform_async(user.id)
+        end
       elsif @help
         CreateBlockReportHelpMessageWorker.perform_async(user.id)
       end
