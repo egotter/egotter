@@ -1,16 +1,10 @@
 class StartPeriodicReportsRemindersTask
-  attr_reader :user_ids
-
-  def start!
-    user_ids = initialize_user_ids
+  def start
+    user_ids = StartPeriodicReportsTask.allotted_messages_will_expire_user_ids.uniq.sort
     return if user_ids.empty?
 
     create_requests(user_ids)
     create_jobs(user_ids)
-  end
-
-  def initialize_user_ids
-    @user_ids ||= StartPeriodicReportsTask.allotted_messages_will_expire_user_ids.uniq.sort
   end
 
   def create_requests(user_ids)

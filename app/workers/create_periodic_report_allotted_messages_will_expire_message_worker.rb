@@ -23,7 +23,6 @@ class CreatePeriodicReportAllottedMessagesWillExpireMessageWorker
     quick_reply_buttons = PeriodicReport.will_expire_quick_reply_options
     event = PeriodicReport.build_direct_message_event(user.uid, message, quick_reply_buttons: quick_reply_buttons)
     User.egotter.api_client.create_direct_message_event(event: event)
-
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options}"

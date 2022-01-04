@@ -92,14 +92,16 @@ class StartPeriodicReportsTask
       user_ids
     end
 
-    def allotted_messages_will_expire_user_ids(reject_stop_requested: true, reject_remind_requested: true, reject_premium: true)
+    def allotted_messages_will_expire_user_ids
       uids = DirectMessageReceiveLog.received_sender_ids
-      users = uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).select(:id, :uid) }.flatten
+      users = uids.each_slice(1000).map { |uids_array| User.authorized.where(uid: uids_array).select(:id, :uid) }.flatten
       users.sort_by! { |user| uids.index(user.uid) }
+
       user_ids = users.select do |user|
         PeriodicReport.allotted_messages_will_expire_soon?(user) &&
-            DirectMessageSendCounter.messages_left?(user.uid)
+            DirectMessageSendCounter.count(user.uid) <= 4
       end.map(&:id)
+
       user_ids = reject_stop_requested_user_ids(user_ids)
       user_ids = reject_remind_requested_user_ids(user_ids)
       user_ids = reject_premium_user_ids(user_ids)

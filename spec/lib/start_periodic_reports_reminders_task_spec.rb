@@ -3,23 +3,15 @@ require 'rails_helper'
 RSpec.describe StartPeriodicReportsRemindersTask, type: :model do
   let(:instance) { described_class.new }
 
-  describe '#start!' do
+  describe '#start' do
     let(:user_ids) { [1, 2] }
-    subject { instance.start! }
-    before { allow(instance).to receive(:initialize_user_ids).and_return(user_ids) }
+    subject { instance.start }
+    before { allow(StartPeriodicReportsTask).to receive(:allotted_messages_will_expire_user_ids).and_return(user_ids) }
 
     it do
       expect(instance).to receive(:create_requests).with(user_ids)
       expect(instance).to receive(:create_jobs).with(user_ids)
       subject
-    end
-  end
-
-  describe '#initialize_user_ids' do
-    subject { instance.initialize_user_ids }
-    it do
-      expect(StartPeriodicReportsTask).to receive(:allotted_messages_will_expire_user_ids).and_return([1, 2, 2])
-      is_expected.to eq([1, 2])
     end
   end
 

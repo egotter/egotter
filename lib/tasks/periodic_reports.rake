@@ -4,9 +4,7 @@ namespace :periodic_reports do
   end
 
   task send_remind_messages: :environment do
-    task = StartPeriodicReportsRemindersTask.new
-    task.start!
-    puts "user_ids=#{task.user_ids.size}"
+    StartPeriodicReportsRemindersTask.new.start
   end
 
   # TODO Remove later
