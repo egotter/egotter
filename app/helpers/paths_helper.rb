@@ -296,6 +296,10 @@ module PathsHelper
     'https://forms.gle/ozRwmLVwdJYPeWe9A'
   end
 
+  def refund_form
+    'https://forms.gle/vJ2gidD6s6kr6b3T8'
+  end
+
   def personality_insight_path(*args)
     personality_insights_top_path
   end
