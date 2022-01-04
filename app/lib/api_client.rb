@@ -193,7 +193,7 @@ class ApiClient
         call_api(__method__, *args)
       rescue Twitter::Error::EnhanceYourCalm => e
         DirectMessageLimitedFlag.on
-        raise
+        raise ApiClient::EnhanceYourCalm.new("recipient_id=#{dm.recipient_id} text=#{dm.text.truncate(100)}")
       end
     end
 
