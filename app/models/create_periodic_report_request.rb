@@ -251,7 +251,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
   end
 
-  SHORT_INTERVAL = 3.hours
+  SHORT_INTERVAL = 30.minutes
 
   class << self
     def fetch_last_request(include_user_id:, reject_id:)
