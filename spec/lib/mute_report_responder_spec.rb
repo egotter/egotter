@@ -40,14 +40,31 @@ describe MuteReportResponder::Processor do
   describe '#send_message' do
     let(:user) { create(:user, uid: uid) }
     subject { instance.send_message }
-    before do
-      allow(instance).to receive(:validate_report_status).with(uid).and_return(user)
-      instance.instance_variable_set(:@help, true)
+    before { allow(instance).to receive(:validate_report_status).with(uid).and_return(user) }
+
+    context 'help is requested' do
+      before { instance.instance_variable_set(:@help, true) }
+      it do
+        expect(CreateMuteReportHelpMessageWorker).to receive(:perform_async).with(user.id)
+        subject
+      end
     end
 
-    it do
-      expect(CreateMuteReportHelpMessageWorker).to receive(:perform_async).with(user.id)
-      subject
+    context 'send is requested' do
+      before { instance.instance_variable_set(:@send, true) }
+
+      it do
+        expect(CreateMuteReportByUserRequestWorker).to receive(:perform_async).with(user.id)
+        subject
+      end
+
+      context 'stop is already requested' do
+        before { create(:stop_mute_report_request, user_id: user.id) }
+        it do
+          expect(CreateMuteReportStopRequestedWorker).to receive(:perform_async).with(user.id)
+          subject
+        end
+      end
     end
   end
 end

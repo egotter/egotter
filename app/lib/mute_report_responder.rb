@@ -64,7 +64,11 @@ class MuteReportResponder < AbstractMessageResponder
       elsif @received
         CreateMuteReportReceivedMessageWorker.perform_async(user.id)
       elsif @send
-        CreateMuteReportByUserRequestWorker.perform_async(user.id)
+        if StopMuteReportRequest.exists?(user_id: user.id)
+          CreateMuteReportStopRequestedWorker.perform_async(user.id)
+        else
+          CreateMuteReportByUserRequestWorker.perform_async(user.id)
+        end
       elsif @help
         CreateMuteReportHelpMessageWorker.perform_async(user.id)
       end
