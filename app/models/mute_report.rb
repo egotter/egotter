@@ -157,7 +157,15 @@ class MuteReport < ApplicationRecord
     end
 
     def url_helper
-      @url_helper ||= Rails.application.routes.url_helpers
+      @url_helper ||= UrlHelpers.new
+    end
+
+    class UrlHelpers
+      include Rails.application.routes.url_helpers
+
+      def default_url_options
+        {og_tag: false}
+      end
     end
 
     def fetch_muted_users(user, limit: 10)
