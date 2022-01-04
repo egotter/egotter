@@ -258,10 +258,6 @@ class BlockReport < ApplicationRecord
       name
     end
 
-    def request_interval_too_short?(user)
-      where(user_id: user.id, created_at: REQUEST_INTERVAL.ago..Time.zone.now).exists?
-    end
-
     def last_report_time(user_id)
       where(user_id: user_id).order(created_at: :desc).limit(1).pluck(:created_at).first
     end

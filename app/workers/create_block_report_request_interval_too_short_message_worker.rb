@@ -1,3 +1,4 @@
+# TODO Remove later
 class CreateBlockReportRequestIntervalTooShortMessageWorker
   include Sidekiq::Worker
   include ReportErrorHandler
