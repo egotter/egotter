@@ -160,4 +160,18 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
       it { is_expected.to match_array([user_ids[1]]) }
     end
   end
+
+  describe '.reject_premium_user_ids' do
+    let(:user_ids) { [create(:user).id, create(:user).id] }
+    subject { described_class.reject_premium_user_ids(user_ids) }
+
+    context 'premium is not specified' do
+      it { is_expected.to match_array(user_ids) }
+    end
+
+    context 'premium is specified' do
+      before { allow(User).to receive(:premium).and_return(User.where(id: user_ids[0])) }
+      it { is_expected.to match_array([user_ids[1]]) }
+    end
+  end
 end

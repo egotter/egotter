@@ -115,7 +115,9 @@ class StartPeriodicReportsTask
     end
 
     def reject_premium_user_ids(user_ids)
-      user_ids - User.premium.pluck(:id)
+      user_ids.each_slice(1000).map do |ids|
+        ids - User.premium.where(id: ids).pluck(:id)
+      end.flatten
     end
   end
 end
