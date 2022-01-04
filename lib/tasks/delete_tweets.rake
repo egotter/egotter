@@ -1,9 +1,8 @@
 namespace :delete_tweets do
-  desc 'Delete by archive'
-  task delete_by_archive: :environment do
-    if ENV['KEY'] && ENV['BUCKET']
+  task start: :environment do
+    if ENV['KEY']
       region = ENV['REGION'] || 'ap-northeast-1'
-      bucket = ENV['BUCKET']
+      bucket = S3::ArchiveData.delete_tweets_bucket_name
       key = ENV['KEY']
 
       s3 = Aws::S3::Resource.new(region: region).bucket(bucket)
@@ -11,7 +10,6 @@ namespace :delete_tweets do
 
       ENV['SINCE'] = "#{obj.metadata['since']} JST" if obj.metadata['since'].present?
       ENV['UNTIL'] = "#{obj.metadata['until']} JST" if obj.metadata['until'].present?
-      puts "since=#{ENV['SINCE']} until=#{ENV['UNTIL']}"
     end
 
     if ENV['SCREEN_NAME']
