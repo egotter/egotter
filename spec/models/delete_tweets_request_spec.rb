@@ -107,7 +107,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       allow(request).to receive_message_chain(:api_client, :user_timeline).
           with(count: 200).and_return(tweets)
       allow(request).to receive_message_chain(:api_client, :user_timeline).
-          with(count: 200, max_id:  99).and_return([])
+          with(count: 200, max_id: 99).and_return([])
     end
 
     it { is_expected.to match_array(tweets) }
@@ -168,6 +168,31 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     context 'exception is Twitter::Error::TooManyRequests' do
       let(:exception) { Twitter::Error::TooManyRequests.new }
       it { expect { subject }.to raise_error(described_class::TooManyRequests) }
+    end
+  end
+
+  describe '#send_finished_message' do
+    subject { request.send_finished_message }
+    it do
+      expect(request).to receive(:send_start_message)
+      expect(request).to receive(:send_result_message)
+      subject
+    end
+  end
+
+  describe '#send_start_message' do
+    subject { request.send_start_message }
+    it do
+      expect(DeleteTweetsReport).to receive_message_chain(:finished_message_from_user, :deliver!).with(user).with(no_args)
+      subject
+    end
+  end
+
+  describe '#send_result_message' do
+    subject { request.send_result_message }
+    it do
+      expect(DeleteTweetsReport).to receive_message_chain(:finished_message, :deliver!).with(user, request).with(no_args)
+      subject
     end
   end
 end

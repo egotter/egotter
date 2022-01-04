@@ -195,28 +195,27 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def send_finished_message
-    report = DeleteTweetsReport.finished_message_from_user(user)
-    begin
-      report.deliver!
-    rescue => e
-      if TwitterApiStatus.temporarily_locked?(e)
-        # Do nothing
-      elsif DirectMessageStatus.enhance_your_calm?(e)
-        Airbag.warn "#{self.class}##{__method__}: #{e.inspect} id=#{id}"
-      else
-        raise e
-      end
-    end
+    send_start_message
+    send_result_message
+  end
 
-    report = DeleteTweetsReport.finished_message(user, self)
-    report.deliver!
+  def send_start_message
+    unless DirectMessageReceiveLog.message_received?(user.uid)
+      DeleteTweetsReport.finished_message_from_user(user).deliver!
+    end
+  rescue => e
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} request_id=#{id}"
+  end
+
+  def send_result_message
+    DeleteTweetsReport.finished_message(user, self).deliver!
   rescue => e
     if DirectMessageStatus.not_following_you?(e) ||
         DirectMessageStatus.cannot_send_messages?(e) ||
         DirectMessageStatus.you_have_blocked?(e)
       # Do nothing
     else
-      raise FinishedMessageNotSent.new("#{e.inspect} sender_uid=#{report.sender.uid}")
+      raise FinishedMessageNotSent.new("#{e.inspect} request_id=#{id}")
     end
   end
 
