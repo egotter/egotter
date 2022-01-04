@@ -86,10 +86,9 @@ class StartPeriodicReportsTask
     end
 
     def reject_stop_requested_user_ids(user_ids)
-      StopPeriodicReportRequest.select(:id, :user_id).find_in_batches do |requests|
-        user_ids -= requests.map(&:user_id)
-      end
-      user_ids
+      user_ids.each_slice(1000).map do |ids|
+        ids - StopPeriodicReportRequest.where(user_id: ids).pluck(:user_id)
+      end.flatten
     end
 
     def allotted_messages_will_expire_user_ids
@@ -109,18 +108,15 @@ class StartPeriodicReportsTask
     end
 
     def reject_remind_requested_user_ids(user_ids)
-      RemindPeriodicReportRequest.select(:id, :user_id).find_in_batches do |requests|
-        user_ids -= requests.map(&:user_id)
-      end
-      user_ids
+      user_ids.each_slice(1000).map do |ids|
+        ids - RemindPeriodicReportRequest.where(user_id: ids).pluck(:user_id)
+      end.flatten
     end
 
     def reject_banned_user_ids(user_ids)
-      BannedUser.find_in_batches do |banned_users|
-        user_ids -= banned_users.map(&:user_id)
-      end
-
-      user_ids
+      user_ids.each_slice(1000).map do |ids|
+        ids - BannedUser.where(user_id: ids).pluck(:user_id)
+      end.flatten
     end
 
     def reject_premium_user_ids(user_ids)

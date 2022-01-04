@@ -133,25 +133,45 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     end
   end
 
-  describe '.reject_banned_user_ids' do
-    let(:users) { [create(:user), create(:user)] }
-    let(:user_ids) { users.map(&:id) }
-    subject { described_class.reject_banned_user_ids(user_ids) }
-    before { create(:banned_user, user_id: users[0].id) }
-    it { is_expected.to match_array([users[1].id]) }
-  end
-
   describe '.reject_stop_requested_user_ids' do
     let(:user_ids) { [1, 2, 3] }
     subject { described_class.reject_stop_requested_user_ids(user_ids) }
 
-    context 'unsubscribe is not requested' do
+    context 'stop is not requested' do
       it { is_expected.to match_array([1, 2, 3]) }
     end
 
-    context 'unsubscribe is requested' do
+    context 'stop is requested' do
       before { StopPeriodicReportRequest.create!(user_id: user_ids[1]) }
       it { is_expected.to match_array([1, 3]) }
+    end
+  end
+
+  describe '.reject_remind_requested_user_ids' do
+    let(:user_ids) { [1, 2, 3] }
+    subject { described_class.reject_remind_requested_user_ids(user_ids) }
+
+    context 'remind is not requested' do
+      it { is_expected.to match_array([1, 2, 3]) }
+    end
+
+    context 'remind is requested' do
+      before { RemindPeriodicReportRequest.create!(user_id: user_ids[1]) }
+      it { is_expected.to match_array([1, 3]) }
+    end
+  end
+
+  describe '.reject_banned_user_ids' do
+    let(:user_ids) { [create(:user).id, create(:user).id] }
+    subject { described_class.reject_banned_user_ids(user_ids) }
+
+    context 'ban is not requested' do
+      it { is_expected.to match_array(user_ids) }
+    end
+
+    context 'ban is requested' do
+      before { create(:banned_user, user_id: user_ids[0]) }
+      it { is_expected.to match_array([user_ids[1]]) }
     end
   end
 end
