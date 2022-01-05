@@ -100,6 +100,7 @@ class BlockReport < ApplicationRecord
       template = Rails.root.join('app/views/block_reports/request_interval_too_short.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           has_subscription: has_subscription,
+          page_url: url_helper.interval_confirmations_url(url_options.merge(campaign_params('block_report_request_interval_too_short_confirmation'))),
           first_name: mask_name(blocked_user&.screen_name, has_subscription),
           total_count: BlockingRelationship.where(to_uid: user.uid).size,
           interval: DateHelper.distance_of_time_in_words(REQUEST_INTERVAL),

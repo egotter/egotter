@@ -1,14 +1,17 @@
-ミュート通知の間隔が短すぎて送信できませんでした。前回の通知から <%= interval %> 以上たってからリクエストしてください。
+短い間隔でミュート通知を受け取るためには、一度Webサイトへアクセスしてください。
 
+えごったーWebサイト：
+↓↓↓
+<%= page_url %>
+↑↑↑
+
+※ 上記のURLにアクセスしてログインまで完了してください。
+
+<% unless has_subscription %>
 もっと早く通知が欲しい場合は？：
 有料プランのユーザーはすぐに次のミュート通知を受け取ることができます。
 料金はこちら。無料のお試し期間あり <%= pricing_url %>
-
-最後のミュート通知：
-<%= last_time ? I18n.l(last_time.in_time_zone('Tokyo'), format: :mute_report_short) : '' %>
-
-次のミュート通知：
-<%= next_time ? I18n.l(next_time.in_time_zone('Tokyo'), format: :mute_report_short) : '' %> 以降
+<% end %>
 
 あなたをミュートしている：
 <%= "#{first_name} と" if first_name.present? %>合計 <%= users_count %>人<%= ' ※これから貯まります' if users_count == 0 %>
