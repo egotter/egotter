@@ -36,7 +36,8 @@ class CreateBlockReportWorker
         return
       end
 
-      if requested_by_user? && BlockReport.request_interval_too_short?(user)
+      if requested_by_user? && BlockReport.request_interval_too_short?(user) &&
+          !SearchLog.where(user_id: user.id).where('created_at > ?', 1.minute.ago).exists?
         CreateBlockReportRequestIntervalTooShortMessageWorker.perform_async(user.id)
         return
       end
