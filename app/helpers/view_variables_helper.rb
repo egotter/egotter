@@ -110,9 +110,27 @@ module ViewVariablesHelper
     when 'statuses'
       t('page_descriptions.statuses_html', values)
     when 'friends'
-      t('page_descriptions.friends_html', values)
+      decorated_user = TwitterUserDecorator.new(twitter_user)
+      insight = FriendInsight.find_by(uid: twitter_user.uid)
+
+      t('page_descriptions.friends_html', values.merge(
+          friends_count: twitter_user.friends_count,
+          reverse_follow_back_rate: decorated_user.reverse_percent_follow_back_rate_text,
+          profile_words: insight&.top_3_profile_words&.join(','),
+          location_words: insight&.top_3_location_words&.join(','),
+          tweet_hours:  insight&.top_3_tweet_hours&.join(','))
+      )
     when 'followers'
-      t('page_descriptions.followers_html', values)
+      decorated_user = TwitterUserDecorator.new(twitter_user)
+      insight = FollowerInsight.find_by(uid: twitter_user.uid)
+
+      t('page_descriptions.followers_html', values.merge(
+          followers_count: twitter_user.followers_count,
+          follow_back_rate: decorated_user.percent_follow_back_rate_text,
+          profile_words: insight&.top_3_profile_words&.join(','),
+          location_words: insight&.top_3_location_words&.join(','),
+          tweet_hours:  insight&.top_3_tweet_hours&.join(','))
+      )
     when 'unfriends'
       render template: 'page_descriptions/unfriends', locals: {twitter_user: twitter_user}
     when 'unfollowers'

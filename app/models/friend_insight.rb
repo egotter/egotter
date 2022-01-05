@@ -16,9 +16,7 @@
 #  index_friend_insights_on_uid         (uid) UNIQUE
 #
 class FriendInsight < ApplicationRecord
-  def fresh?
-    updated_at && updated_at > 30.minutes.ago
-  end
+  include FriendInsightsUtil
 
   class << self
     def builder(uid)

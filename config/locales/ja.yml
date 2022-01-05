@@ -1115,8 +1115,12 @@ ja:
     common_mutual_friends: "@%{user} と %{user2} の両方が相互フォローしているユーザーの一覧 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
   page_descriptions:
     statuses_html: "%{user} のツイート一覧です。"
-    friends_html: "%{user} がフォローしているユーザーの一覧です。"
-    followers_html: "%{user} がフォローされているユーザーの一覧です。"
+    friends_html:
+      <p>このページでは %{user} がフォローしているユーザーの一覧を見ることができます。%{user} は %{friends_count}人 をフォローしていて、そのうち %{reverse_follow_back_rate} からフォローを返されています。</p>
+      %{user} のフォローのプロフィールには [%{profile_words}] とよく書かれています。%{user} のフォローのロケーションには [%{location_words}] とよく書かれています。%{user} のフォローがよくツイートする時間帯は [%{tweet_hours}] です。
+    followers_html:
+      <p>このページでは %{user} のフォロワーの一覧を見ることができます。%{user} は %{followers_count}人 からフォローされていて、そのうち %{follow_back_rate} にフォローを返しています。</p>
+      %{user} のフォロワーのプロフィールには [%{profile_words}] とよく書かれています。%{user} のフォロワーのロケーションには [%{location_words}] とよく書かれています。%{user} のフォロワーがよくツイートする時間帯は [%{tweet_hours}] です。
     blockers_html: "%{user} がブロックされているユーザーの一覧です。できる限り高精度に集計しています。このページのデータはログインしている本人のみ見ることができます。"
     close_friends_html: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
     favorite_friends_html: "%{user} がよくいいねするユーザーの一覧です。いいねの分析には、お気に入り登録を使っています。"

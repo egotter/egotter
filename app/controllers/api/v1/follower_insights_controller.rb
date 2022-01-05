@@ -7,7 +7,7 @@ module Api
 
       def profiles_count
         if @insight&.profiles_count&.any?
-          words_count = @insight.profiles_count.sort_by { |_, v| -v }.map { |word, count| {word: word, count: count} }
+          words_count = @insight.sorted_profiles_count.map { |word, count| {word: word, count: count} }
           render json: {words_count: words_count}
         else
           CreateFollowerInsightWorker.perform_async(@twitter_user.uid) unless from_crawler?
@@ -17,7 +17,7 @@ module Api
 
       def locations_count
         if @insight&.locations_count&.any?
-          words_count = @insight.locations_count.sort_by { |_, v| -v }.map { |word, count| {word: word, count: count} }
+          words_count = @insight.sorted_locations_count.map { |word, count| {word: word, count: count} }
           render json: {words_count: words_count}
         else
           CreateFollowerInsightWorker.perform_async(@twitter_user.uid) unless from_crawler?
@@ -27,7 +27,7 @@ module Api
 
       def tweet_times
         if @insight&.tweet_times&.any?
-          times = @insight.tweet_times.map { |t| Time.zone.at(t) }
+          times = @insight.parsed_tweet_times
           tweets_per_hour = UsageStat::Misc.usage_stats_hour_series_data(times)
           drilldown = UsageStat::Misc.usage_stats_hour_drilldown_series(times)
           render json: {tweets_per_hour: tweets_per_hour, drilldown: drilldown}
