@@ -4,7 +4,7 @@
 <% title t('.meta_title') %>
 
 <% unless request.device_type == :smartphone %>
-  <%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false, async: false} %>
+  <%= render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, async: false} %>
 <% end %>
 
 <h2 class="h4 text-center my-5"><%= t('page_titles.blockers', user: @twitter_user.screen_name) %></h2>

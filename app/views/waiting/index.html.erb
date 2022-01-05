@@ -39,7 +39,7 @@
 
   <% if @user %>
     <div class="mb-3">
-      <%= render partial: 'shared/profile_section', locals: {twitter_user: @user, expanded: true, async: true} %>
+      <%= render partial: 'shared/profile_section', locals: {twitter_user: @user, async: true} %>
     </div>
   <% end %>
 </div>

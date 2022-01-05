@@ -13,7 +13,7 @@ module Api
       before_action { set_user(params[:uid]) }
 
       def show
-        html = render_to_string(partial: 'twitter/profile', locals: {user: @user, body_expanded: params['expanded'] == 'true'}, formats: [:html])
+        html = render_to_string(partial: 'twitter/profile', locals: {user: @user}, formats: [:html])
         render json: {html: html}
       end
 

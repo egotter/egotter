@@ -910,7 +910,6 @@ ja:
       mute: "ミュートする"
       report_spam: "スパム報告する"
       updated_at: 'データの最終更新：%{text}'
-      profile_details: 'プロフィール詳細'
       counting: '集計中'
       labels:
         suspended: "垢消し"

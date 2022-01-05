@@ -1,6 +1,5 @@
 <% random_id = SecureRandom.urlsafe_base64(10) %>
 <% container_id = "profile-section-#{random_id}" %>
-<% body_id = "profile-section-body-#{random_id}" %>
 <% profilemenu_id = "profilemenu-#{random_id}" %>
 
 <% if switch_to_twitter_db_user?(user) %>
@@ -8,7 +7,6 @@
 <% end %>
 <% logger.info { "Profile is rendered by #{user.class} in #{controller_name}##{action_name}" } %>
 <% user = TwitterUserDecorator.new(user) %>
-<% body_expanded ||= false %>
 
 <div id="<%= container_id %>" class="profile-header mt-3">
   <%#= Profile banner %>
@@ -85,19 +83,7 @@
       <div class="small my-3"><%= linkify(user.censored_description).gsub("\n", '<br>').html_safe %></div>
     <% end %>
 
-    <% if body_expanded %>
-      <%= render partial: 'twitter/profile_body', locals: {user: user} %>
-    <% else %>
-      <div class="text-right">
-        <a class="btn btn-outline-primary btn-sm mb-3 text-right" data-toggle="collapse" aria-expanded="false" href="#<%= body_id %>">
-          <%= t('.profile_details') %>
-        </a>
-      </div>
-
-      <div id="<%= body_id %>" class="collapse">
-        <%= render partial: 'twitter/profile_body', locals: {user: user} %>
-      </div>
-    <% end %>
+    <%= render partial: 'twitter/profile_body', locals: {user: user} %>
   </div>
 </div>
 <% if user.updated_at %>

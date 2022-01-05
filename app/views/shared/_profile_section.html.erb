@@ -14,7 +14,7 @@
   <script>
     $(function () {
       var id = '<%= container_id %>';
-      var url = '<%= raw api_v1_profiles_path(uid: twitter_user.uid, expanded: expanded, via: current_via('profile_on_timeline')) %>';
+      var url = '<%= raw api_v1_profiles_path(uid: twitter_user.uid, via: current_via('profile_on_timeline')) %>';
       var errorMessage = '<%= t('.loading_error_html', user: twitter_user.screen_name, egotter_link:  twitter_web_link('egotter_cs')) %>';
 
       $('#' + id).lazyload().one('appear', function () {
@@ -25,5 +25,5 @@
     });
   </script>
 <% else %>
-  <%= render partial: 'twitter/profile', locals: {user: twitter_user, body_expanded: expanded} %>
+  <%= render partial: 'twitter/profile', locals: {user: twitter_user} %>
 <% end %>

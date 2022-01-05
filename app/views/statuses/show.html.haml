@@ -10,7 +10,7 @@
 = render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top})
 
 - unless request.device_type == :smartphone
-  = render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, expanded: false, async: false}
+  = render partial: 'shared/profile_section', locals: {twitter_user: @twitter_user, async: false}
 
 %h3.h4.text-center.my-5= current_page_title(@twitter_user)
 
