@@ -69,7 +69,7 @@ RSpec.describe ApiClient, type: :model do
       before { allow(client).to receive(:create_direct_message_event).and_raise(error) }
       it do
         expect(CreateDirectMessageEventWorker).to receive(:perform_in).with(5.seconds, user.id, event)
-        expect { subject }.to raise_error(error)
+        expect { subject }.to raise_error(ApiClient::MessageWillBeResent)
       end
     end
   end

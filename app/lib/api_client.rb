@@ -43,13 +43,9 @@ class ApiClient
     update_blocker_status(e)
 
     if e.class == ApiClient::RetryExhausted
-      message = "%s method=#{__method__} user_id=#{@user&.id} recipient_id=#{failed_dm.recipient_id} message=#{failed_dm.text&.truncate(50)}"
-
       if failed_dm.recipient_id != User::EGOTTER_UID && @user
-        Airbag.warn { message % 'Retry sending DM' }
         CreateDirectMessageEventWorker.perform_in(5.seconds, @user.id, event)
-      else
-        Airbag.warn { message % 'Sending DM failed' }
+        raise MessageWillBeResent.new("user_id=#{@user.id} recipient_id=#{failed_dm.recipient_id} message=#{failed_dm.text&.truncate(50)}")
       end
     elsif DirectMessageStatus.enhance_your_calm?(e)
       SendEnhanceYourCalmCountToSlackWorker.perform_async
@@ -223,6 +219,9 @@ class ApiClient
   end
 
   class RetryExhausted < StandardError
+  end
+
+  class MessageWillBeResent < StandardError
   end
 
   class EnhanceYourCalm < StandardError

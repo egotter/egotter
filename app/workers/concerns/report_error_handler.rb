@@ -4,8 +4,7 @@ module ReportErrorHandler
   extend ActiveSupport::Concern
 
   def ignorable_report_error?(e)
-    disposable_report? ||
-        TwitterApiStatus.unauthorized?(e) ||
+    TwitterApiStatus.unauthorized?(e) ||
         TwitterApiStatus.invalid_or_expired_token?(e) ||
         DirectMessageStatus.your_account_suspended?(e) ||
         DirectMessageStatus.protect_out_users_from_spam?(e) ||
@@ -15,10 +14,5 @@ module ReportErrorHandler
         DirectMessageStatus.cannot_send_messages?(e) ||
         DirectMessageStatus.cannot_find_specified_user?(e) ||
         DirectMessageStatus.not_following_you?(e)
-  end
-
-  # TODO Remove later
-  def disposable_report?
-    false
   end
 end
