@@ -27,6 +27,14 @@ class DirectMessageSendCounter
     0
   end
 
+  def sent_count(uid)
+    count(uid)
+  end
+
+  def remaining_count(uid)
+    5 - count(uid)
+  end
+
   def clear(uid)
     @redis.del(key(uid))
   end
@@ -42,10 +50,10 @@ class DirectMessageSendCounter
 
   class << self
     extend Forwardable
-    def_delegators :instance, :increment, :count, :clear, :ttl
+    def_delegators :instance, :increment, :sent_count, :remaining_count, :clear, :ttl
 
     def messages_left?(uid)
-      count(uid) <= 3
+      remaining_count(uid) >= 1
     end
   end
 end

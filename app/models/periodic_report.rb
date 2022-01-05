@@ -435,7 +435,7 @@ class PeriodicReport < ApplicationRecord
           remaining_ttl_text(DirectMessageReceiveLog.remaining_time(user.uid)),
           setting.period_flags,
           access_day ? access_day.short_date : '0000',
-          DirectMessageSendCounter.count(user.uid),
+          DirectMessageSendCounter.sent_count(user.uid),
           worker_context_text(worker_context)
       ].join('-')
 

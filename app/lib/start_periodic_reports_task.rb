@@ -93,7 +93,7 @@ class StartPeriodicReportsTask
 
       user_ids = users.select do |user|
         PeriodicReport.allotted_messages_will_expire_soon?(user) &&
-            DirectMessageSendCounter.count(user.uid) <= 4
+            DirectMessageSendCounter.messages_left?(user.uid)
       end.map(&:id)
 
       user_ids = reject_stop_requested_user_ids(user_ids)
