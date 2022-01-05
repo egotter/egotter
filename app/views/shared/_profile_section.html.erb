@@ -2,13 +2,11 @@
   <% container_id = "profile-section-#{twitter_user.uid}" %>
 
   <div id="<%= container_id %>">
-    <% if expanded %>
-      <div class="mb-3">
-        <%= t('.loading', user: twitter_user.screen_name) %>
-        <img src="/ajax-loader-blue.gif?a=1">
-      </div>
-      <%= render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'} %>
-    <% end %>
+    <div class="mb-3">
+      <%= t('.loading', user: twitter_user.screen_name) %>
+      <img src="/ajax-loader-blue.gif?a=1">
+    </div>
+    <%= render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'} %>
   </div>
 
   <script>
