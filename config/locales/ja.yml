@@ -1320,13 +1320,13 @@ ja:
     follower_locations: 'ワードクラウド by ロケーション'
   word_cloud_descriptions:
     tweets: '@%{user} のツイートから作ったワードクラウドです。@%{user} がよくツイートする単語、口ぐせを表しています。'
-    friend_profiles: '@%{user} がフォローしているユーザーのプロフィールから作ったワードクラウドです。@%{user} がフォローしているユーザーの特徴を表しています。'
-    follower_profiles: '@%{user} がフォローされているユーザーのプロフィールから作ったワードクラウドです。@%{user} がフォローされているユーザーの特徴を表しています。'
-    friend_locations: '@%{user} がフォローしているユーザーのロケーションから作ったワードクラウドです。@%{user} がフォローしているユーザーの居る場所を表しています。'
-    follower_locations: '@%{user} がフォローされているユーザーのロケーションから作ったワードクラウドです。@%{user} がフォローされているユーザーの居る場所を表しています。'
+    friend_profiles: '@%{user} がフォローしているユーザーのプロフィールから作ったワードクラウドです。'
+    follower_profiles: '@%{user} のフォロワーのプロフィールから作ったワードクラウドです。'
+    friend_locations: '@%{user} がフォローしているユーザーのロケーションから作ったワードクラウドです。'
+    follower_locations: '@%{user} のフォロワーのロケーションから作ったワードクラウドです。'
   tweets_per_hour_description:
-    friends: '@%{user} がフォローしているユーザーのツイートから作った時間帯ごとのツイート数です。@%{user} がフォローしているユーザーが活発な時間帯が分かります。'
-    followers: '@%{user} がフォローされているユーザーのツイートから作った時間帯ごとのツイート数です。@%{user} がフォローされているユーザーが活発な時間帯が分かります。'
+    friends: '@%{user} がフォローしているユーザーのツイートから作った時間帯ごとのツイート数です。'
+    followers: '@%{user} のフォロワーのツイートから作った時間帯ごとのツイート数です。'
   tabs:
     friends: 'フォロー'
     followers: 'フォロワー'
@@ -2364,8 +2364,20 @@ ja:
         create:
           fail: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをそのまま指定してください。'
       friend_insights:
+        profiles_count:
+          description: '@%{user} のフォローのプロフィールには [%{words}] とよく書かれています。'
+        locations_count:
+          description: '@%{user} のフォローのロケーションには [%{words}] とよく書かれています。'
+        tweet_times:
+          description: '@%{user} のフォローがよくツイートする時間帯は [%{words}] です。'
         fail: '更新中です。数分後に再度お試しください。'
       follower_insights:
+        profiles_count:
+          description: '@%{user} のフォロワーのプロフィールには [%{words}] とよく書かれています。'
+        locations_count:
+          description: '@%{user} のフォロワーのロケーションには [%{words}] とよく書かれています。'
+        tweet_times:
+          description: '@%{user} のフォロワーがよくツイートする時間帯は [%{words}] です。'
         fail: '更新中です。数分後に再度お試しください。'
       share_tweets:
         create:

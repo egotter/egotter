@@ -3,8 +3,8 @@ class WordCloud {
   //   {word: 'w1', count: 1},
   //   {word: 'w2', count: 2}
   // ]
-  constructor(selector, data, width, height, smartphone) {
-    this.selector = selector;
+  constructor(element, data, width, height, smartphone) {
+    this.element = element;
     this.width = width;
     this.height = height;
     this.watermarkOffset = 30;
@@ -27,7 +27,7 @@ class WordCloud {
   }
 
   draw() {
-    var selector = this.selector;
+    var element = this.element;
     var width = this.width;
     var height = this.height;
     var watermarkOffset = this.watermarkOffset;
@@ -53,8 +53,7 @@ class WordCloud {
     });
 
     function draw(words) {
-      d3.select('#' + selector).append("svg")
-          .attr("id", selector + '-svg')
+      d3.select(element).append("svg")
           .attr("width", width)
           .attr("height", height - watermarkOffset)
           .append("g")
@@ -101,17 +100,17 @@ class WordCloud {
   }
 
   drawWatermark() {
-    var svg = $('#' + this.selector).find('svg');
-    svg.attr('height', parseInt(svg.attr('height')) + this.watermarkOffset);
-    new Watermark(svg.attr('id'), svg.attr('width'), svg.attr('height')).draw();
+    var elem = $(this.element).find('svg');
+    elem.attr('height', parseInt(elem.attr('height')) + this.watermarkOffset);
+    new Watermark(elem[0], elem.attr('width'), elem.attr('height')).draw();
   }
 }
 
 window.WordCloud = WordCloud;
 
 class Watermark {
-  constructor(id, x, y) {
-    this.elem = d3.select('#' + id);
+  constructor(elem, x, y) {
+    this.elem = d3.select(elem);
     this.x = parseInt(x);
     this.y = parseInt(y) - 7;
     this.name = '#ワードクラウド';

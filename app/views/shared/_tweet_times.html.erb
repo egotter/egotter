@@ -1,20 +1,32 @@
-<div><%= description %></div>
-<div id="tweets-per-hour-container" class="d-flex align-items-center justify-content-center mt-3" style="height: 300px;">
-  <%= t('.loading') %>
-  <%= image_tag '/ajax-loader.gif', size: '16x16' %>
+<% title ||= nil %>
+
+<% if title %>
+  <div class="text-center my-3"><%= title %></div>
+<% end %>
+
+<div id="tweets-per-hour-container">
+  <p><%= description %></p>
+  <div class="additional-description"></div>
+  <div class="chart d-flex align-items-center justify-content-center mt-3" style="height: 300px;">
+    <%= t('.loading') %>
+    <%= image_tag '/ajax-loader.gif', size: '16x16' %>
+  </div>
 </div>
+
 <script>
   $(function () {
     var url = '<%= raw api_path %>';
     var container = $('#tweets-per-hour-container');
+    var chartContainer = container.find('.chart');
 
     $.get(url).done(function (res) {
-      container.empty();
-      new UsageStat().drawColumnChart(container.attr('id'), res.tweets_per_hour, res.drilldown);
+      chartContainer.empty();
+      new UsageStat().drawColumnChart(chartContainer[0], res.tweets_per_hour, res.drilldown);
+      container.find('.additional-description').text(res.description);
     }).fail(function (xhr, textStatus, errorThrown) {
       logger.warn(url, xhr.responseText);
       var message = extractErrorMessage(xhr, textStatus, errorThrown)
-      container.empty().text(message);
+      chartContainer.empty().text(message);
     });
   });
 </script>

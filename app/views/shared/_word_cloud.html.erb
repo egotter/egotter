@@ -4,25 +4,31 @@
 <% if title %>
   <div class="text-center my-3"><%= title %></div>
 <% end %>
-<div><%= description %></div>
-<div id="<%= container_id %>" class="d-flex align-items-center justify-content-center mt-3" style="height: 300px;">
-  <%= t('.loading') %>
-  <%= image_tag '/ajax-loader.gif', size: '16x16' %>
+
+<div id="<%= container_id %>">
+  <p><%= description %></p>
+  <div class="additional-description"></div>
+  <div class="chart d-flex align-items-center justify-content-center mt-3" style="height: 300px;">
+    <%= t('.loading') %>
+    <%= image_tag '/ajax-loader.gif', size: '16x16' %>
+  </div>
 </div>
 
 <script>
   $(function () {
     var url = '<%= raw api_path %>';
     var container = $('#<%= container_id %>');
+    var chartContainer = container.find('.chart');
 
     $.get(url).done(function (res) {
-      container.empty();
+      chartContainer.empty();
       var smartphone = <%= request.device_type == :smartphone %>;
-      new WordCloud(container.attr('id'), res.words_count, container.width(), container.height(), smartphone).draw();
+      new WordCloud(chartContainer[0], res.words_count, chartContainer.width(), chartContainer.height(), smartphone).draw();
+      container.find('.additional-description').text(res.description);
     }).fail(function (xhr, textStatus, errorThrown) {
       logger.warn(url, xhr.responseText);
       var message = extractErrorMessage(xhr, textStatus, errorThrown)
-      container.empty().text(message);
+      chartContainer.empty().text(message);
     });
   });
 </script>
