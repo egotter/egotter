@@ -408,51 +408,6 @@ ja:
       new_unfollowers:
         title: '新しいリムられ'
         note: 'フォローを解除された数です。直近の %{days}日間 を集計しています。たくさん検索されるユーザーほど優先的に更新されます。'
-  access_confirmations:
-    index:
-      page_title: 'ログインしてください'
-      page_title_ok: '@%{user} でログイン中です'
-      notice1: '※ えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
-      notice2_html: '※ <a href="%{url}">アカウントを切り替える</a>こともできます。'
-      notice3_html: '※ 分からないことがある場合は %{egotter_link} までご連絡ください。'
-      loading_html: 'アクセス履歴を確認中です。<img src="/ajax-loader.gif?a=1">'
-    description:
-      sign_in_description: 'アクセス履歴を確認するために、えごったーにログインしてください。'
-      make_sure_description: '異なるユーザーでログインしています。DMが届いたユーザーでログインし直してください。'
-      already_signed_in_description: '@%{user} さん、ログインありがとうございます。アクセス履歴の確認ができました。これからもえごったーのご利用をよろしくお願いします。'
-      or: 'または'
-      switch_account: 'アカウントを切り替える'
-    button:
-      sign_in_label: 'えごったーにログインする'
-      timeline_label: '@%{user} の分析結果を見る'
-  follow_confirmations:
-    index:
-      page_title: 'ログインとフォローを完了してください'
-      page_title_ok: '@%{user} でログイン中です'
-      click_below_button: '↓ フォローした後に押してください。'
-      click_above_button: '↑ フォローした後に押してください。'
-      notice1: '※ えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
-      notice2_html: '※ <a href="%{url}" class="btn btn-outline-secondary btn-sm">アカウントを切り替える</a>こともできます。'
-      notice3_html: '※ 分からないことがある場合は %{egotter_link} までご連絡ください。'
-    description:
-      text_for_visitor: '「今すぐ送信機能」を利用するためには、@ego_tter をフォローしてください。'
-      text_for_user: '異なるユーザーでログインしています。DMが届いたユーザーでログインし直してください。'
-      switch_account_html: 'または <a href="%{url}" class="btn btn-outline-secondary btn-sm">アカウントを切り換える</a>'
-    button:
-      label: '@%{user} をフォローしました'
-  interval_confirmations:
-    index:
-      page_title_success: '@%{user} でログイン中です'
-      page_title_failure: 'DMが届いたユーザーでログインしていません'
-      notice: 'えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
-      support_html: '分からないことがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
-      loading_html: 'アクセス履歴を確認中です。<img src="/ajax-loader.gif?a=1">'
-    description:
-      success: '@%{user} さん、ログインありがとうございます。アクセス履歴の確認ができました。これからもえごったーのご利用をよろしくお願いします。'
-      failure_html: '<span class="text-danger">DMが届いたユーザーでログインしていません。</span>アクセス履歴を確認するために、DMが届いたユーザーでえごったーに <a href="%{url}">ログイン</a> してください。'
-    button:
-      timeline: '@%{user} の分析結果を見る'
-      sign_in: 'えごったーにログインする'
   settings:
     index:
       settings: '設定'
@@ -2087,6 +2042,16 @@ ja:
     profile_section:
       loading: '@%{user} のプロフィールを読み込み中'
       loading_error_html: '@%{user} のプロフィール読み込みに失敗しました。お手数ですが再度お試しください。何度も起きる場合は %{egotter_link} までご連絡ください。'
+    confirmation_section:
+      page_title_success: '@%{user} でログイン中です'
+      page_title_failure: 'DMが届いたユーザーでログインしていません'
+      description_success: '@%{user} さん、ログインありがとうございます。アクセス履歴の確認ができました。これからもえごったーのご利用をよろしくお願いします。'
+      description_failure_html: '<span class="text-danger">DMが届いたユーザーでログインしていません。</span>アクセス履歴を確認するために、DMが届いたユーザーでえごったーに <a href="%{url}">ログイン</a> してください。'
+      button_success: '@user でログイン中'
+      button_failure: 'えごったーにログインする'
+      notice: 'えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
+      support_html: '分からないことがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
+      loading_html: 'アクセス履歴を確認中です。<img src="/ajax-loader.gif?a=1">'
     users_section:
       not_found: "指定された条件での検索結果は0件でした。"
       need_click: '続きを読み込むには「もっと見る」をクリックしてください。'

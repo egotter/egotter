@@ -1,0 +1,68 @@
+<h2 class="h4 text-center my-5">
+  <% if sign_in_as_confirmation_user? %>
+    <%= t('.page_title_success', user: current_user.screen_name) %>
+  <% else %>
+    <%= t('.page_title_failure') %>
+  <% end %>
+</h2>
+
+<div class="my-5">
+  <% if sign_in_as_confirmation_user? %>
+    <%= t('.description_success', user: current_user.screen_name) %>
+  <% else %>
+    <%= t('.description_failure_html', url: confirmation_path) %>
+  <% end %>
+</div>
+
+<div class="mt-3 mb-1">
+  <%= link_to confirmation_path, class: 'btn btn-primary btn-block' do %>
+    <% if sign_in_as_confirmation_user? %>
+      <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+      <%= t('.button_success', user: current_user.screen_name) %>
+    <% else %>
+      <img class="rounded" height="20" src="<%= image_path('/logo_transparent_96x96.png') %>">
+      <%= t('.button_failure') %>
+    <% end %>
+  <% end %>
+</div>
+
+<%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top, user: @user}) %>
+
+<div class="mt-1 mb-3">
+  <%= link_to confirmation_path, class: 'btn btn-primary btn-block' do %>
+    <% if sign_in_as_confirmation_user? %>
+      <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+      <%= t('.button_success', user: current_user.screen_name) %>
+    <% else %>
+      <img class="rounded" height="20" src="<%= image_path('/logo_transparent_96x96.png') %>">
+      <%= t('.button_failure') %>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="my-5">
+  <% if sign_in_as_confirmation_user? %>
+    <%= t('.description_success', user: current_user.screen_name) %>
+  <% else %>
+    <%= t('.description_failure_html', url: confirmation_path) %>
+  <% end %>
+</div>
+
+<div class="text-muted small my-3"><%= t('.notice') %></div>
+<div class="text-muted small my-3"><%= t('.support_html', url: twitter_web_url('egotter_cs')) %></div>
+
+<% if sign_in_as_confirmation_user? %>
+  <script>
+    function createAccessDayLog() {
+      var url = '<%= raw api_v1_access_days_path(via: current_via) %>';
+      $.post(url).done(function (res) {
+        ToastMessage.info(res.message);
+      }).fail(showErrorMessage);
+    }
+
+    $(function () {
+      ToastMessage.info('<%= t('.loading_html') %>');
+      setTimeout(createAccessDayLog, 3000);
+    });
+  </script>
+<% end %>

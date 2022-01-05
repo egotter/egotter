@@ -1,5 +1,0 @@
-<% if sign_in_as_confirmation_user? %>
-  <%= t('.success', user: current_user.screen_name) %>
-<% else %>
-  <%= t('.failure_html', url: sign_in_path) %>
-<% end %>
