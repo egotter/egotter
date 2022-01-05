@@ -3,11 +3,11 @@ class CreateAccessDayWorker
   sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
-    user_id
+    "#{user_id}-#{AccessDay.current_date}"
   end
 
   def unique_in
-    5.minutes
+    1.hour
   end
 
   def perform(user_id, options = {})
