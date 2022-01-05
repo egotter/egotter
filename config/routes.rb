@@ -186,6 +186,7 @@ Rails.application.routes.draw do
   end
   resources 'access_confirmations', only: %i(index)
   resources 'follow_confirmations', only: %i(index)
+  resources 'interval_confirmations', only: %i(index)
   resources 'blockers', only: %i(index)
 
   get 'blocking_or_blocked/:screen_name', to: redirect("/mutual_unfriends/%{screen_name}?via=routing")
