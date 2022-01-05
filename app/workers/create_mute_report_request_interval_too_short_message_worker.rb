@@ -1,4 +1,3 @@
-# TODO Remove later
 class CreateMuteReportRequestIntervalTooShortMessageWorker
   include Sidekiq::Worker
   include ReportErrorHandler

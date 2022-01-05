@@ -34,6 +34,11 @@ class CreateMuteReportWorker
         CreateMuteReportAccessIntervalTooLongMessageWorker.perform_async(user.id)
         return
       end
+
+      if requested_by_user? && MuteReport.request_interval_too_short?(user)
+        CreateMuteReportRequestIntervalTooShortMessageWorker.perform_async(user.id)
+        return
+      end
     end
 
     MuteReport.you_are_muted(user.id, requested_by: requested_by_user? ? 'user' : nil).deliver!
