@@ -97,12 +97,10 @@ class CreatePeriodicReportRequest < ApplicationRecord
   end
 
   class ReportOptionsBuilder
-    PERIOD_START = 1.day
-
     def initialize(request)
       @request = request
 
-      @start_date = PERIOD_START.ago
+      @start_date = 1.day.ago
       @end_date = Time.zone.now
 
       # Want to find unfollowers for a period of this report
