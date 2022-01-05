@@ -70,8 +70,10 @@
             .col-12.col-sm-12.col-md-9
               = yield
           - else
-            .col-12
+            .d-none.d-sm-none.d-md-block.col-md-2
+            .col-12.col-sm-12.col-md-8
               = yield
+            .d-none.d-sm-none.d-md-block.col-md-2
     - else
       = yield
 

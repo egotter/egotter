@@ -97,7 +97,7 @@ module ApplicationHelper
   end
 
   def show_sidebar?
-    !sidebar_disabled? && @twitter_user && !waiting_page?
+    !sidebar_disabled? && @twitter_user && !result_page? && !waiting_page?
   end
 
   def sidebar_disabled?
