@@ -19,7 +19,7 @@ class CreatePeriodicReportNotFollowingMessageWorker
   def perform(user_id, options = {})
     user = User.find(user_id)
 
-    message = PeriodicReport.not_following_message.message
+    message = PeriodicReport.not_following_message(user_id).message
     quick_reply_buttons = PeriodicReport.not_following_quick_reply_options
     event = PeriodicReport.build_direct_message_event(user.uid, message, quick_reply_buttons: quick_reply_buttons)
     User.egotter.api_client.create_direct_message_event(event: event)

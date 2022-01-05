@@ -161,7 +161,7 @@ RSpec.describe PeriodicReport do
   end
 
   describe '.not_following_message' do
-    subject { described_class.not_following_message }
+    subject { described_class.not_following_message(user.id) }
     it { is_expected.to be_truthy }
   end
 

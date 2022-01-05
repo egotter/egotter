@@ -63,51 +63,51 @@ class BlockReport < ApplicationRecord
     def not_following_message(user)
       has_subscription = user.has_valid_subscription?
       blocked_user = fetch_blocked_users(user, limit: 1)[0]
-      url_options = dialog_params
+      url_options = dialog_params.merge(campaign_params('block_report_not_following'))
 
       template = Rails.root.join('app/views/block_reports/not_following.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           has_subscription: has_subscription,
           first_name: mask_name(blocked_user&.screen_name, has_subscription),
           total_count: BlockingRelationship.where(to_uid: user.uid).size,
-          follow_url: url_helper.follow_confirmations_url(url_options.except(:sign_in_dialog).merge(campaign_params('block_report_not_following_follow'))),
-          pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('block_report_not_following_pricing'))),
-          support_url: url_helper.support_url(url_options.merge(campaign_params('block_report_not_following_support'))),
+          follow_url: url_helper.follow_confirmations_url(url_options.except(:sign_in_dialog).merge(user_token: user.user_token)),
+          pricing_url: url_helper.pricing_url(url_options),
+          support_url: url_helper.support_url(url_options),
       )
     end
 
     def access_interval_too_long_message(user)
       has_subscription = user.has_valid_subscription?
       blocked_user = fetch_blocked_users(user, limit: 1)[0]
-      url_options = dialog_params
+      url_options = dialog_params.merge(campaign_params('block_report_access_interval_too_long'))
 
       template = Rails.root.join('app/views/block_reports/access_interval_too_long.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           has_subscription: has_subscription,
           first_name: mask_name(blocked_user&.screen_name, has_subscription),
           total_count: BlockingRelationship.where(to_uid: user.uid).size,
-          access_url: url_helper.access_confirmations_url(url_options.except(:sign_in_dialog).merge(campaign_params('block_report_access_interval_too_long_access'), user_token: user.user_token)),
-          pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('block_report_access_interval_too_long_pricing'))),
-          support_url: url_helper.support_url(url_options.merge(campaign_params('block_report_access_interval_too_long_support'))),
+          access_url: url_helper.access_confirmations_url(url_options.except(:sign_in_dialog).merge(user_token: user.user_token)),
+          pricing_url: url_helper.pricing_url(url_options),
+          support_url: url_helper.support_url(url_options),
       )
     end
 
     def request_interval_too_short_message(user)
       has_subscription = user.has_valid_subscription?
       blocked_user = fetch_blocked_users(user, limit: 1)[0]
-      url_options = dialog_params
+      url_options = dialog_params.merge(campaign_params('block_report_request_interval_too_short'))
 
       template = Rails.root.join('app/views/block_reports/request_interval_too_short.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           has_subscription: has_subscription,
-          page_url: url_helper.interval_confirmations_url(url_options.merge(campaign_params('block_report_request_interval_too_short_confirmation'))),
+          page_url: url_helper.interval_confirmations_url(url_options.except(:sign_in_dialog).merge(user_token: user.user_token)),
           first_name: mask_name(blocked_user&.screen_name, has_subscription),
           total_count: BlockingRelationship.where(to_uid: user.uid).size,
           interval: DateHelper.distance_of_time_in_words(REQUEST_INTERVAL),
           last_time: last_report_time(user.id),
           next_time: next_report_time(user.id),
-          pricing_url: url_helper.pricing_url(url_options.merge(campaign_params('block_report_request_interval_too_short_pricing'))),
-          support_url: url_helper.support_url(url_options.merge(campaign_params('block_report_request_interval_too_short_support'))),
+          pricing_url: url_helper.pricing_url(url_options),
+          support_url: url_helper.support_url(url_options),
       )
     end
 

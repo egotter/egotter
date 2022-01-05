@@ -44,7 +44,7 @@ class CreatePeriodicReportReceivedNotFollowingMessageWorker
       User.egotter.api_client.create_direct_message_event(event: event)
     else
       # CreatePeriodicReportNotFollowingMessageWorker.perform_async(user.id)
-      User.egotter.api_client.create_direct_message(uid, build_second_message)
+      User.egotter.api_client.create_direct_message(uid, build_second_message(user))
     end
   rescue => e
     unless ignorable_report_error?(e)
@@ -54,8 +54,8 @@ class CreatePeriodicReportReceivedNotFollowingMessageWorker
 
   private
 
-  def build_second_message
-    url = Rails.application.routes.url_helpers.follow_confirmations_url(share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false, via: 'not_following_received_message')
+  def build_second_message(user)
+    url = Rails.application.routes.url_helpers.follow_confirmations_url(user_token: user.user_token, share_dialog: 1, follow_dialog: 1, purchase_dialog: 1, og_tag: false, via: 'not_following_received_message')
     ERB.new(SECOND_MESSAGE).result_with_hash(url: url)
   end
 end

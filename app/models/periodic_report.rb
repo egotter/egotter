@@ -237,14 +237,14 @@ class PeriodicReport < ApplicationRecord
 
     def access_interval_too_long_message(user_id)
       user = User.find(user_id)
-      dialog_params = {follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}
+      dialog_params = {follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}.merge(campaign_params('web_access_hard_limited'))
       template = Rails.root.join('app/views/periodic_reports/web_access_hard_limited.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           access_day: user.access_days.last,
-          access_url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(campaign_params('web_access_hard_limited'), user_token: user.user_token)),
+          access_url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(user_token: user.user_token)),
           screen_name: user.screen_name,
-          support_url: support_url(dialog_params.merge(campaign_params('web_access_hard_limited_support'))),
-          pricing_url: pricing_url(dialog_params.merge(campaign_params('web_access_hard_limited_pricing'))),
+          support_url: support_url(dialog_params),
+          pricing_url: pricing_url(dialog_params),
       )
 
       new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
@@ -298,14 +298,15 @@ class PeriodicReport < ApplicationRecord
       new(user: nil, message: message, token: nil)
     end
 
-    def not_following_message
-      dialog_params = {follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}
+    def not_following_message(user_id)
+      user = User.find(user_id)
+      dialog_params = {follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}.merge(campaign_params('not_following'))
       template = Rails.root.join('app/views/periodic_reports/not_following.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           records_count: EgotterFollower.all.size,
-          follow_url: follow_confirmations_url(dialog_params.except(:sign_in_dialog).merge(campaign_params('not_following_message'))),
-          pricing_url: pricing_url(campaign_params('not_following_pricing')),
-          support_url: support_url(campaign_params('not_following_support')),
+          follow_url: follow_confirmations_url(dialog_params.except(:sign_in_dialog).merge(user_token: user.user_token)),
+          pricing_url: pricing_url(dialog_params),
+          support_url: support_url(dialog_params),
       )
 
       new(user: nil, message: message, token: nil)
