@@ -15,13 +15,16 @@
 </div>
 
 <div class="mt-3 mb-1">
+  <% if follow_confirmations_page? %>
+    <div class="text-center mb-1"><%= t('.click_below_button') %></div>
+  <% end %>
   <%= link_to confirmation_path, class: 'btn btn-primary btn-block' do %>
     <% if sign_in_as_confirmation_user? %>
-      <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
-      <%= t('.button_success', user: current_user.screen_name) %>
+      <%= image_tag(current_user_icon, class: 'rounded-circle', size: '28x28') %>
+      <%= follow_confirmations_page? ? t('.button_follow') : t('.button_success') %>
     <% else %>
-      <img class="rounded" height="20" src="<%= image_path('/logo_transparent_96x96.png') %>">
-      <%= t('.button_failure') %>
+      <%= image_tag(image_path('/logo_transparent_96x96.png'), class: 'rounded', size: '20x20') %>
+      <%= follow_confirmations_page? ? t('.button_follow') : t('.button_failure') %>
     <% end %>
   <% end %>
 </div>
@@ -31,12 +34,15 @@
 <div class="mt-1 mb-3">
   <%= link_to confirmation_path, class: 'btn btn-primary btn-block' do %>
     <% if sign_in_as_confirmation_user? %>
-      <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
-      <%= t('.button_success', user: current_user.screen_name) %>
+      <%= image_tag(current_user_icon, class: 'rounded-circle', size: '28x28') %>
+      <%= follow_confirmations_page? ? t('.button_follow') : t('.button_success') %>
     <% else %>
-      <img class="rounded" height="20" src="<%= image_path('/logo_transparent_96x96.png') %>">
-      <%= t('.button_failure') %>
+      <%= image_tag(image_path('/logo_transparent_96x96.png'), class: 'rounded', size: '20x20') %>
+      <%= follow_confirmations_page? ? t('.button_follow') : t('.button_failure') %>
     <% end %>
+  <% end %>
+  <% if follow_confirmations_page? %>
+    <div class="text-center mt-1"><%= t('.click_above_button') %></div>
   <% end %>
 </div>
 
@@ -51,7 +57,7 @@
 <div class="text-muted small my-3"><%= t('.notice') %></div>
 <div class="text-muted small my-3"><%= t('.support_html', url: twitter_web_url('egotter_cs')) %></div>
 
-<% if sign_in_as_confirmation_user? %>
+<% if sign_in_as_confirmation_user? && !follow_confirmations_page? %>
   <script>
     function createAccessDayLog() {
       var url = '<%= raw api_v1_access_days_path(via: current_via) %>';
