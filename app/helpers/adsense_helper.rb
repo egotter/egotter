@@ -129,8 +129,14 @@ module AdsenseHelper
       1327574054, # 0346
       9014492380, # 0347
       5075247378, # 0348
-      8675543043, # 0349 <- Next
+      8675543043, # 0349
       2110134698, # 0350
+      5397436411, # 0351 <- Next
+      5014293031, # 0352
+      6135803011, # 0353
+      3509639678, # 0354
+      7925071997, # 0355
+      1359663648, # 0356
   ]
 
   def left_slot_pc_ad_id(controller, action, position)
@@ -215,6 +221,7 @@ module AdsenseHelper
         when [true,  'usage_stats',           'show', :top]    then USER_USAGE_STATS
         when [true,  'access_confirmations',  'index', :top]   then 5452501065 # 0336
         when [true,  'follow_confirmations',  'index', :top]   then 3953737396 # 0344
+        when [true,  'interval_confirmations','index', :top]   then 8675543043 # 0349
 
         when [false, 'home',                  'new',  :top]    then GUEST_HOME
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM
@@ -244,6 +251,7 @@ module AdsenseHelper
         when [false, 'close_friends',         'show', :top]    then 8094925634 # 0314
         when [false, 'access_confirmations',  'index', :top]   then 5452501065 # 0336
         when [false, 'follow_confirmations',  'index', :top]   then 3953737396 # 0344
+        when [false, 'interval_confirmations','index', :top]   then 8675543043 # 0349
         else nil
         end
 
@@ -456,6 +464,7 @@ module AdsenseHelper
         when [true,  'usage_stats',           'show', :top]    then USER_USAGE_STATS_RESP
         when [true,  'access_confirmations',  'index', :top]   then 9235122967 # 0337
         when [true,  'follow_confirmations',  'index', :top]   then 3057596301 # 0345
+        when [true,  'interval_confirmations','index', :top]   then 2110134698 # 0350
 
         when [false, 'home',                  'new',  :top]    then GUEST_HOME_RESP
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM_RESP
@@ -547,8 +556,9 @@ module AdsenseHelper
         when [false, 'usage_stats',           'show', :bottom] then GUEST_USAGE_STATS_RESP
         when [false, 'usage_stats',           'show', :middle] then GUEST_USAGE_STATS_RESP
         when [false, 'usage_stats',           'show', :top]    then GUEST_USAGE_STATS_RESP
-        when [false,  'access_confirmations', 'index', :top]   then 9235122967 # 0337
-        when [false,  'follow_confirmations', 'index', :top]   then 3057596301 # 0345
+        when [false, 'access_confirmations',  'index', :top]   then 9235122967 # 0337
+        when [false, 'follow_confirmations',  'index', :top]   then 3057596301 # 0345
+        when [false, 'interval_confirmations','index', :top]   then 2110134698 # 0350
         else nil
         end
 
