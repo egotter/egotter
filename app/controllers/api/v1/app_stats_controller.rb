@@ -46,6 +46,10 @@ module Api
           ApiClientCacheStore.instance.redis.info['used_memory_peak_human']
         when 'redis_api_cache_total_system_memory_human'
           ApiClientCacheStore.instance.redis.info['total_system_memory_human']
+        when 'welcome_messages'
+          WelcomeMessage.where('created_at > ?', 1.day.ago).size
+        when 'welcome_messages_previous_period'
+          WelcomeMessage.where(created_at: 2.days.ago..1.day.ago).size
         when 'periodic_reports'
           PeriodicReport.where('created_at > ?', 1.day.ago).size
         when 'periodic_reports_previous_period'
