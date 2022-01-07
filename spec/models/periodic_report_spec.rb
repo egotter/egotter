@@ -237,16 +237,6 @@ RSpec.describe PeriodicReport do
     end
   end
 
-  describe '.unsubscribe_quick_reply_options' do
-    subject { described_class.unsubscribe_quick_reply_options }
-    it do
-      subject.each do |options|
-        expect(options[:label]).not_to include('missing')
-        expect(options[:description]).not_to include('missing')
-      end
-    end
-  end
-
   describe '.build_direct_message_event' do
     subject { described_class.build_direct_message_event(1, 'message') }
     before { allow(described_class).to receive(:default_quick_reply_options).and_return(['options']) }

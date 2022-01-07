@@ -208,11 +208,6 @@ class PeriodicReport < ApplicationRecord
       new(user: user, message: message, token: generate_token)
     end
 
-    # TODO Remove later
-    def sending_soft_limited_message(user_id)
-      allotted_messages_not_enough_message(user_id)
-    end
-
     def allotted_messages_not_enough_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/sending_soft_limited.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
@@ -582,20 +577,6 @@ class PeriodicReport < ApplicationRecord
       ]
     end
 
-    def unsubscribe_quick_reply_options
-      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
-      [
-          {
-              label: I18n.t('quick_replies.prompt_reports.label4'),
-              description: I18n.t('quick_replies.prompt_reports.description4')
-          },
-          {
-              label: I18n.t('quick_replies.prompt_reports.label3'),
-              description: I18n.t('quick_replies.prompt_reports.description3')
-          }
-      ]
-    end
-
     def not_following_quick_reply_options
       # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
       [
@@ -652,13 +633,11 @@ class PeriodicReport < ApplicationRecord
       ]
     end
 
-    # options:
-    #   unsubscribe
     def build_direct_message_event(uid, message, options = {})
       if options[:quick_reply_buttons]
         quick_replies = options[:quick_reply_buttons]
       else
-        quick_replies = options[:unsubscribe] ? unsubscribe_quick_reply_options : default_quick_reply_options
+        quick_replies = default_quick_reply_options
       end
 
       event = {
