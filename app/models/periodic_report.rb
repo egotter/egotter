@@ -194,8 +194,8 @@ class PeriodicReport < ApplicationRecord
       template = Rails.root.join('app/views/periodic_reports/allotted_messages_will_expire.ja.text.erb')
 
       ttl = DirectMessageReceiveLog.remaining_time(user.uid)
-      if ttl.nil? || ttl <= 0
-        Airbag.warn "#{self}##{__method__} remaining ttl is nil or less than 0 user_id=#{user_id}"
+      if ttl <= 0
+        Airbag.warn "#{self}##{__method__} remaining ttl is 0 user_id=#{user_id}"
         ttl = 5.minutes + rand(300)
       end
 
@@ -533,9 +533,6 @@ class PeriodicReport < ApplicationRecord
     ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
   end
 
-  REMAINING_TTL_SOFT_LIMIT = 12.hours
-  REMAINING_TTL_HARD_LIMIT = 3.hours
-
   ACCESS_DAYS_SOFT_LIMIT = 5.days
 
   QUICK_REPLY_SEND = {
@@ -574,12 +571,6 @@ class PeriodicReport < ApplicationRecord
   }
 
   class << self
-    # TODO Move to StartPeriodicReportsTask
-    def allotted_messages_will_expire_soon?(user)
-      remaining_ttl = DirectMessageReceiveLog.remaining_time(user.uid)
-      remaining_ttl && remaining_ttl < REMAINING_TTL_HARD_LIMIT
-    end
-
     # TODO Remove later
     def messages_allotted?(user)
       DirectMessageReceiveLog.message_received?(user.uid)

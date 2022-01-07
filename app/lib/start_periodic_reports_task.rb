@@ -92,7 +92,7 @@ class StartPeriodicReportsTask
       users.sort_by! { |user| uids.index(user.uid) }
 
       user_ids = users.select do |user|
-        PeriodicReport.allotted_messages_will_expire_soon?(user) &&
+        DirectMessageReceiveLog.remaining_time(user.uid) < 3.hours &&
             DirectMessageSendCounter.messages_left?(user.uid)
       end.map(&:id)
 

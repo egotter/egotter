@@ -227,22 +227,6 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
-  describe '.allotted_messages_will_expire_soon?' do
-    subject { described_class.allotted_messages_will_expire_soon?(user) }
-
-    before { allow(DirectMessageReceiveLog).to receive(:remaining_time).with(user.uid).and_return(ttl) }
-
-    context 'remaining ttl is short' do
-      let(:ttl) { 1.hour }
-      it { is_expected.to be_truthy }
-    end
-
-    context 'remaining ttl is long' do
-      let(:ttl) { 6.hours }
-      it { is_expected.to be_falsey }
-    end
-  end
-
   describe '.messages_allotted?' do
     subject { described_class.messages_allotted?(user) }
     it do

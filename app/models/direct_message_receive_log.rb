@@ -27,6 +27,8 @@ class DirectMessageReceiveLog < ApplicationRecord
     def remaining_time(uid)
       if (record = where('created_at > ?', 1.day.ago).where(sender_id: uid, recipient_id: User::EGOTTER_UID, automated: false).order(created_at: :desc).first)
         1.day - (Time.zone.now - record.created_at)
+      else
+        0
       end
     end
 
