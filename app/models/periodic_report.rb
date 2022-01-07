@@ -27,7 +27,7 @@ class PeriodicReport < ApplicationRecord
 
   belongs_to :user
 
-  attr_accessor :dont_send_remind_message, :quick_reply_buttons
+  attr_accessor :quick_reply_buttons
 
   def deliver!
     dm = send_direct_message
@@ -204,7 +204,7 @@ class PeriodicReport < ApplicationRecord
           pricing_url: pricing_url(campaign_params('will_expire_pricing')),
       )
 
-      new(user: user, message: message, token: generate_token, dont_send_remind_message: true, quick_reply_buttons: will_expire_quick_reply_options)
+      new(user: user, message: message, token: generate_token, quick_reply_buttons: will_expire_quick_reply_options)
     end
 
     # TODO Remove later
@@ -220,7 +220,7 @@ class PeriodicReport < ApplicationRecord
           pricing_url: pricing_url(campaign_params('soft_limited_pricing')),
       )
 
-      new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true, quick_reply_buttons: sending_soft_limited_quick_reply_options)
+      new(user: User.find(user_id), message: message, token: generate_token, quick_reply_buttons: sending_soft_limited_quick_reply_options)
     end
 
     def access_interval_too_long_message(user_id)
@@ -235,7 +235,7 @@ class PeriodicReport < ApplicationRecord
           pricing_url: pricing_url(dialog_params),
       )
 
-      new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
+      new(user: user, message: message, token: generate_token)
     end
 
     def interval_too_short_message(user_id)
@@ -251,7 +251,7 @@ class PeriodicReport < ApplicationRecord
           pricing_url: pricing_url(campaign_params('interval_too_short_pricing')),
       )
 
-      new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
+      new(user: user, message: message, token: generate_token)
     end
 
     def request_interval_too_short_message(user_id)
@@ -261,7 +261,7 @@ class PeriodicReport < ApplicationRecord
           support_url: support_url(campaign_params('request_interval_too_short_support')),
       )
 
-      new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
+      new(user: User.find(user_id), message: message, token: generate_token)
     end
 
     def unauthorized_message
