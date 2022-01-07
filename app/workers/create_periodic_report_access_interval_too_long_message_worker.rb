@@ -20,10 +20,8 @@ class CreatePeriodicReportAccessIntervalTooLongMessageWorker
     user = User.find(user_id)
 
     message = PeriodicReport.access_interval_too_long_message(user.id).message
-    quick_reply_buttons = PeriodicReport.access_interval_too_long_quick_reply_options
-    event = PeriodicReport.build_direct_message_event(user.uid, message, quick_reply_buttons: quick_reply_buttons)
-    User.egotter.api_client.create_direct_message_event(event: event)
-
+    buttons = [PeriodicReport::QUICK_REPLY_URL_ACCESSED]
+    User.egotter.api_client.send_report(user.uid, message, buttons)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options}"

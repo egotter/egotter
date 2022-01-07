@@ -21,9 +21,7 @@ class CreatePeriodicReportAllottedMessagesNotEnoughMessageWorker
 
     message = PeriodicReport.allotted_messages_not_enough_message(user.id).message
     buttons = [PeriodicReport::QUICK_REPLY_CONTINUE]
-    event = PeriodicReport.build_direct_message_event(user.uid, message, quick_reply_buttons: buttons)
-    User.egotter.api_client.create_direct_message_event(event: event)
-
+    User.egotter.api_client.send_report(user.uid, message, buttons)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options}"

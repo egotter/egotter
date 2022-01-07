@@ -227,27 +227,6 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
-  describe '.default_quick_reply_options' do
-    subject { described_class.default_quick_reply_options }
-    it do
-      subject.each do |options|
-        expect(options[:label]).not_to include('missing')
-        expect(options[:description]).not_to include('missing')
-      end
-    end
-  end
-
-  describe '.build_direct_message_event' do
-    subject { described_class.build_direct_message_event(1, 'message') }
-    before { allow(described_class).to receive(:default_quick_reply_options).and_return(['options']) }
-    it do
-      event = subject
-      expect(event[:message_create][:target][:recipient_id]).to eq(1)
-      expect(event[:message_create][:message_data][:text]).to eq('message')
-      expect(event[:message_create][:message_data][:quick_reply][:options]).to eq(['options'])
-    end
-  end
-
   describe '.allotted_messages_will_expire_soon?' do
     subject { described_class.allotted_messages_will_expire_soon?(user) }
 

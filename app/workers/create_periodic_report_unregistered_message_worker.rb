@@ -20,9 +20,7 @@ class CreatePeriodicReportUnregisteredMessageWorker
   def perform(uid, options = {})
     message = PeriodicReport.unregistered_message.message
     buttons = [PeriodicReport::QUICK_REPLY_RECEIVED]
-    event = PeriodicReport.build_direct_message_event(uid, message, quick_reply_buttons: buttons)
-    User.egotter.api_client.create_direct_message_event(event: event)
-
+    User.egotter.api_client.send_report(uid, message, buttons)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.warn "#{e.inspect} uid=#{uid} options=#{options}"

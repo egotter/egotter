@@ -27,9 +27,7 @@ class CreatePeriodicReportBlockerNotPermittedMessageWorker
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
-
-    event = PeriodicReport.build_direct_message_event(user.uid, build_message, quick_reply_buttons: [])
-    User.egotter.api_client.create_direct_message_event(event: event)
+    User.egotter.api_client.create_direct_message(user.uid, build_message)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options}"

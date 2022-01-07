@@ -54,6 +54,16 @@ class ApiClient
     raise
   end
 
+  # Shorthand for #create_direct_message_event
+  def send_report(uid, message, buttons = [])
+    if buttons.blank?
+      event = DirectMessageEvent.build(uid, message)
+    else
+      event = DirectMessageEvent.build_with_replies(uid, message, buttons)
+    end
+    create_direct_message_event(event: event)
+  end
+
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
       RequestWithRetryHandler.new(method).perform do

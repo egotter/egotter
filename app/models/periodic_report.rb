@@ -518,8 +518,8 @@ class PeriodicReport < ApplicationRecord
   end
 
   def send_report_message
-    event = self.class.build_direct_message_event(user.uid, message, quick_reply_buttons: quick_reply_buttons)
-    User.egotter.api_client.create_direct_message_event(event: event)
+    buttons = [QUICK_REPLY_RECEIVED, QUICK_REPLY_SEND, QUICK_REPLY_STOP]
+    User.egotter.api_client.send_report(user.uid, message, buttons)
   end
 
   def send_start_message
@@ -543,6 +543,11 @@ class PeriodicReport < ApplicationRecord
       description: I18n.t('quick_replies.prompt_reports.description3')
   }
 
+  QUICK_REPLY_STOP = {
+      label: I18n.t('quick_replies.prompt_reports.label5'),
+      description: I18n.t('quick_replies.prompt_reports.description5')
+  }
+
   QUICK_REPLY_RESTART = {
       label: I18n.t('quick_replies.prompt_reports.label4'),
       description: I18n.t('quick_replies.prompt_reports.description4')
@@ -558,103 +563,18 @@ class PeriodicReport < ApplicationRecord
       description: I18n.t('quick_replies.shared.description1')
   }
 
+  QUICK_REPLY_URL_ACCESSED = {
+      label: I18n.t('quick_replies.shared.label2'),
+      description: I18n.t('quick_replies.shared.description2')
+  }
+
+  QUICK_REPLY_FOLLOWED = {
+      label: I18n.t('quick_replies.shared.label3'),
+      description: I18n.t('quick_replies.shared.description3')
+  }
+
   class << self
-    def default_quick_reply_options
-      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
-      [
-          {
-              label: I18n.t('quick_replies.prompt_reports.label1'),
-              description: I18n.t('quick_replies.prompt_reports.description1')
-          },
-          {
-              label: I18n.t('quick_replies.prompt_reports.label3'),
-              description: I18n.t('quick_replies.prompt_reports.description3')
-          },
-          {
-              label: I18n.t('quick_replies.prompt_reports.label5'),
-              description: I18n.t('quick_replies.prompt_reports.description5')
-          }
-      ]
-    end
-
-    def not_following_quick_reply_options
-      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
-      [
-          {
-              label: I18n.t('quick_replies.shared.label3'),
-              description: I18n.t('quick_replies.shared.description3')
-          }
-      ]
-    end
-
-    def access_interval_too_long_quick_reply_options
-      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
-      [
-          {
-              label: I18n.t('quick_replies.shared.label2'),
-              description: I18n.t('quick_replies.shared.description2')
-          }
-      ]
-    end
-
-    def stop_requested_quick_reply_options
-      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
-      [
-          {
-              label: I18n.t('quick_replies.shared.label1'),
-              description: I18n.t('quick_replies.shared.description1')
-          },
-          {
-              label: I18n.t('quick_replies.prompt_reports.label4'),
-              description: I18n.t('quick_replies.prompt_reports.description4')
-          },
-          {
-              label: I18n.t('quick_replies.prompt_reports.label3'),
-              description: I18n.t('quick_replies.prompt_reports.description3')
-          }
-      ]
-    end
-
-    def restart_requested_quick_reply_options
-      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
-      [
-          {
-              label: I18n.t('quick_replies.shared.label1'),
-              description: I18n.t('quick_replies.shared.description1')
-          },
-          {
-              label: I18n.t('quick_replies.prompt_reports.label5'),
-              description: I18n.t('quick_replies.prompt_reports.description5')
-          },
-          {
-              label: I18n.t('quick_replies.prompt_reports.label3'),
-              description: I18n.t('quick_replies.prompt_reports.description3')
-          }
-      ]
-    end
-
-    def build_direct_message_event(uid, message, options = {})
-      if options[:quick_reply_buttons]
-        quick_replies = options[:quick_reply_buttons]
-      else
-        quick_replies = default_quick_reply_options
-      end
-
-      event = {
-          type: 'message_create',
-          message_create: {
-              target: {recipient_id: uid},
-              message_data: {text: message}
-          }
-      }
-
-      if quick_replies.any?
-        event[:message_create][:message_data][:quick_reply] = {type: 'options', options: quick_replies}
-      end
-
-      event
-    end
-
+    # TODO Move to StartPeriodicReportsTask
     def allotted_messages_will_expire_soon?(user)
       remaining_ttl = DirectMessageReceiveLog.remaining_time(user.uid)
       remaining_ttl && remaining_ttl < REMAINING_TTL_HARD_LIMIT

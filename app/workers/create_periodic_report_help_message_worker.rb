@@ -13,11 +13,11 @@ class CreatePeriodicReportHelpMessageWorker
 
   # options:
   def perform(user_id, options = {})
-    # The user's existence is confirmed in PeriodicReportResponder.
     user = User.find(user_id)
+
     message = PeriodicReport.help_message(user).message
-    event = PeriodicReport.build_direct_message_event(user.uid, message, quick_replies: [PeriodicReport::QUICK_REPLY_SEND])
-    User.egotter.api_client.create_direct_message_event(event: event)
+    buttons = [PeriodicReport::QUICK_REPLY_SEND]
+    User.egotter.api_client.send_report(user.uid, message, buttons)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"

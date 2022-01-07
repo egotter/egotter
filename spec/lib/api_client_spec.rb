@@ -74,6 +74,27 @@ RSpec.describe ApiClient, type: :model do
     end
   end
 
+  describe '#send_report' do
+    context 'No button is passed' do
+      subject { instance.send_report(1, 'message') }
+      it do
+        expect(DirectMessageEvent).to receive(:build).with(1, 'message').and_return('event')
+        expect(instance).to receive(:create_direct_message_event).with(event: 'event')
+        subject
+      end
+    end
+
+    context 'Buttons are passed' do
+      let(:buttons) { ['button'] }
+      subject { instance.send_report(1, 'message', buttons) }
+      it do
+        expect(DirectMessageEvent).to receive(:build_with_replies).with(1, 'message', buttons).and_return('event')
+        expect(instance).to receive(:create_direct_message_event).with(event: 'event')
+        subject
+      end
+    end
+  end
+
   describe '#method_missing' do
     subject { instance.send(:method_missing, :user, 1) }
 

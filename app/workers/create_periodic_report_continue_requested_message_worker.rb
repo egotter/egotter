@@ -20,10 +20,8 @@ class CreatePeriodicReportContinueRequestedMessageWorker
     user = User.find(user_id)
 
     message = PeriodicReport.continue_requested_message.message
-    quick_replies = [PeriodicReport::QUICK_REPLY_SEND, BlockReport::QUICK_REPLY_SEND, MuteReport::QUICK_REPLY_SEND]
-    event = PeriodicReport.build_direct_message_event(user.uid, message, quick_reply_buttons: quick_replies)
-    User.egotter.api_client.create_direct_message_event(event: event)
-
+    buttons = [PeriodicReport::QUICK_REPLY_SEND, BlockReport::QUICK_REPLY_SEND, MuteReport::QUICK_REPLY_SEND]
+    User.egotter.api_client.send_report(user.uid, message, buttons)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options}"

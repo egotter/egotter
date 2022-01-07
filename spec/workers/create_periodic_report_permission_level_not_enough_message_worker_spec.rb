@@ -7,7 +7,7 @@ RSpec.describe CreatePeriodicReportPermissionLevelNotEnoughMessageWorker do
     let(:user) { create(:user) }
     subject { worker.perform(user.id) }
     it do
-      expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(anything)
+      expect(User).to receive_message_chain(:egotter, :api_client, :send_report).with(any_args)
       subject
     end
   end
