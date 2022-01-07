@@ -188,18 +188,6 @@ class PeriodicReport < ApplicationRecord
       new(user: nil, message: message, token: nil)
     end
 
-    def remind_access_message
-      dialog_params = {follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}
-      template = Rails.root.join('app/views/periodic_reports/remind_access.ja.text.erb')
-      message = ERB.new(template.read).result_with_hash(
-          root_url: root_url(dialog_params.merge(campaign_params('remind_access_root'))),
-          support_url: support_url(dialog_params.merge(campaign_params('remind_access_support'))),
-          pricing_url: pricing_url(dialog_params.merge(campaign_params('remind_access_pricing'))),
-      )
-
-      new(user: nil, message: message, token: nil)
-    end
-
     def allotted_messages_will_expire_message(user_id)
       user = User.find(user_id)
       template = Rails.root.join('app/views/periodic_reports/allotted_messages_will_expire.ja.text.erb')
@@ -534,12 +522,6 @@ class PeriodicReport < ApplicationRecord
   end
 
   def send_direct_message
-    self.message = append_remind_message_if_needed(self.message)
-
-    if Rails.env.development?
-      self.message = '[dev] ' + self.message
-    end
-
     send_start_message
 
     event = self.class.build_direct_message_event(user.uid, self.message, quick_reply_buttons: quick_reply_buttons)
@@ -557,62 +539,10 @@ class PeriodicReport < ApplicationRecord
     ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
   end
 
-  def append_remind_message_if_needed(message)
-    unless user.has_valid_subscription?
-      if send_remind_reply_message?
-        message = self.class.remind_reply_message.message + "\n\n-------------------------------------------------\n\n" + message
-      elsif send_remind_access_message?
-        message = self.class.remind_access_message.message + "\n\n-------------------------------------------------\n\n" + message
-      end
-    end
-
-    message
-  end
-
   REMAINING_TTL_SOFT_LIMIT = 12.hours
   REMAINING_TTL_HARD_LIMIT = 3.hours
 
-  def send_remind_reply_message?
-    return false if dont_send_remind_message
-
-    if self.class.messages_allotted?(user)
-      self.class.allotted_messages_will_expire_soon?(user)
-    else
-      true
-    end
-  end
-
   ACCESS_DAYS_SOFT_LIMIT = 5.days
-
-  def send_remind_access_message?
-    return false if dont_send_remind_message
-
-    if self.class.messages_allotted?(user)
-      self.class.web_access_soft_limited?(user)
-    else
-      true
-    end
-  end
-
-  def send_remind_reply_message
-    send_remind_message(self.class.remind_reply_message.message)
-  end
-
-  def send_remind_access_message
-    send_remind_message(self.class.remind_access_message.message)
-  end
-
-  def send_remind_message(message)
-    event = self.class.build_direct_message_event(user.uid, message)
-    User.egotter.api_client.create_direct_message_event(event: event)
-  rescue => e
-    if DirectMessageStatus.cannot_send_messages?(e) ||
-        DirectMessageStatus.cannot_find_specified_user?(e)
-      # Do nothing
-    else
-      Airbag.warn "#{self.class}##{__method__} sending remind message is failed #{e.inspect} user_id=#{user_id}"
-    end
-  end
 
   QUICK_REPLY_SEND = {
       label: I18n.t('quick_replies.prompt_reports.label3'),
@@ -792,12 +722,6 @@ class PeriodicReport < ApplicationRecord
     end
 
     def access_interval_too_long?(user)
-      access_day = user.access_days.last
-      access_day && access_day.date < ACCESS_DAYS_SOFT_LIMIT.ago
-    end
-
-    # TODO Remove later
-    def web_access_soft_limited?(user)
       access_day = user.access_days.last
       access_day && access_day.date < ACCESS_DAYS_SOFT_LIMIT.ago
     end

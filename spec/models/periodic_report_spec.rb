@@ -120,11 +120,6 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
-  describe '.remind_access_message' do
-    subject { described_class.remind_access_message }
-    it { is_expected.to be_truthy }
-  end
-
   describe '.allotted_messages_will_expire_message' do
     subject { described_class.allotted_messages_will_expire_message(user.id) }
     it { is_expected.to be_truthy }
@@ -238,100 +233,10 @@ RSpec.describe PeriodicReport do
     subject { report.send_direct_message }
 
     it do
-      expect(report).to receive(:append_remind_message_if_needed).and_return(report.message)
       expect(report).to receive(:send_start_message)
       expect(described_class).to receive(:build_direct_message_event).with(user.uid, 'message', quick_reply_buttons: 'buttons').and_return('event')
       expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(event: 'event').and_return('dm')
       is_expected.to eq('dm')
-    end
-  end
-
-  describe '#send_remind_reply_message?' do
-    let(:report) { described_class.new }
-    subject { report.send_remind_reply_message? }
-
-    before { allow(report).to receive(:user).and_return(user) }
-
-    context 'dont_send_remind_message is set' do
-      before { report.dont_send_remind_message = true }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'messages_allotted? returns true' do
-      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(true) }
-      it do
-        expect(described_class).to receive(:allotted_messages_will_expire_soon?).with(user).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-
-    context 'messages_allotted? returns false' do
-      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(false) }
-      it { is_expected.to be_truthy }
-    end
-  end
-
-  describe '#send_remind_access_message?' do
-    let(:report) { described_class.new }
-    subject { report.send_remind_access_message? }
-
-    before { allow(report).to receive(:user).and_return(user) }
-
-    context 'dont_send_remind_message is set' do
-      before { report.dont_send_remind_message = true }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'messages_allotted? returns true' do
-      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(true) }
-      it do
-        expect(described_class).to receive(:web_access_soft_limited?).with(user).and_return('result')
-        is_expected.to eq('result')
-      end
-    end
-
-    context 'messages_allotted? returns false' do
-      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(false) }
-      it { is_expected.to be_truthy }
-    end
-  end
-
-  describe '#send_remind_reply_message' do
-    let(:report) { described_class.new }
-    subject { report.send_remind_reply_message }
-
-    before { allow(report).to receive(:user).and_return(user) }
-
-    it do
-      expect(described_class).to receive(:remind_reply_message).and_call_original
-      expect(report).to receive(:send_remind_message).with(instance_of(String))
-      subject
-    end
-  end
-
-  describe '#send_remind_access_message' do
-    let(:report) { described_class.new }
-    subject { report.send_remind_access_message }
-
-    before { allow(report).to receive(:user).and_return(user) }
-
-    it do
-      expect(described_class).to receive(:remind_access_message).and_call_original
-      expect(report).to receive(:send_remind_message).with(instance_of(String))
-      subject
-    end
-  end
-
-  describe '#send_remind_message' do
-    let(:report) { described_class.new }
-    subject { report.send_remind_message('message') }
-
-    before { allow(report).to receive(:user).and_return(user) }
-
-    it do
-      expect(described_class).to receive(:build_direct_message_event).with(user.uid, 'message').and_return('event')
-      expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(no_args).with(event: 'event')
-      subject
     end
   end
 
@@ -387,20 +292,6 @@ RSpec.describe PeriodicReport do
     it do
       expect(DirectMessageReceiveLog).to receive(:message_received?).with(user.uid).and_return('result')
       is_expected.to eq('result')
-    end
-  end
-
-  describe '.web_access_soft_limited?' do
-    subject { described_class.web_access_soft_limited?(user) }
-
-    context 'last access is 1 day ago' do
-      before { AccessDay.create!(user_id: user.id, date: 1.day.ago.to_date) }
-      it { is_expected.to be_falsey }
-    end
-
-    context 'last access is 6 days ago' do
-      before { AccessDay.create!(user_id: user.id, date: 6.days.ago.to_date) }
-      it { is_expected.to be_truthy }
     end
   end
 
