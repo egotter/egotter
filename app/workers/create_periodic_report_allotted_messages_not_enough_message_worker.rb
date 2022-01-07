@@ -20,8 +20,8 @@ class CreatePeriodicReportAllottedMessagesNotEnoughMessageWorker
     user = User.find(user_id)
 
     message = PeriodicReport.allotted_messages_not_enough_message(user.id).message
-    quick_reply_buttons = PeriodicReport.allotted_messages_not_enough_quick_reply_options
-    event = PeriodicReport.build_direct_message_event(user.uid, message, quick_reply_buttons: quick_reply_buttons)
+    buttons = [PeriodicReport::QUICK_REPLY_CONTINUE]
+    event = PeriodicReport.build_direct_message_event(user.uid, message, quick_reply_buttons: buttons)
     User.egotter.api_client.create_direct_message_event(event: event)
 
   rescue => e

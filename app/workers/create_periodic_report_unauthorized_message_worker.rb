@@ -21,8 +21,8 @@ class CreatePeriodicReportUnauthorizedMessageWorker
     user = User.find(user_id)
 
     message = PeriodicReport.unauthorized_message.message
-    quick_reply_buttons = PeriodicReport.unauthorized_quick_reply_options
-    event = PeriodicReport.build_direct_message_event(user.uid, message, quick_reply_buttons: quick_reply_buttons)
+    buttons = [PeriodicReport::QUICK_REPLY_RECEIVED]
+    event = PeriodicReport.build_direct_message_event(user.uid, message, quick_reply_buttons: buttons)
     User.egotter.api_client.create_direct_message_event(event: event)
 
   rescue => e

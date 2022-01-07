@@ -19,8 +19,8 @@ class CreatePeriodicReportUnregisteredMessageWorker
   # options:
   def perform(uid, options = {})
     message = PeriodicReport.unregistered_message.message
-    quick_reply_buttons = PeriodicReport.unregistered_quick_reply_options
-    event = PeriodicReport.build_direct_message_event(uid, message, quick_reply_buttons: quick_reply_buttons)
+    buttons = [PeriodicReport::QUICK_REPLY_RECEIVED]
+    event = PeriodicReport.build_direct_message_event(uid, message, quick_reply_buttons: buttons)
     User.egotter.api_client.create_direct_message_event(event: event)
 
   rescue => e

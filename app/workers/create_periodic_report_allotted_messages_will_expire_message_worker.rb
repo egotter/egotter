@@ -20,8 +20,8 @@ class CreatePeriodicReportAllottedMessagesWillExpireMessageWorker
     user = User.find(user_id)
 
     message = PeriodicReport.allotted_messages_will_expire_message(user.id).message
-    quick_reply_buttons = PeriodicReport.will_expire_quick_reply_options
-    event = PeriodicReport.build_direct_message_event(user.uid, message, quick_reply_buttons: quick_reply_buttons)
+    buttons = [PeriodicReport::QUICK_REPLY_CONTINUE]
+    event = DirectMessageEvent.build_with_replies(user.uid, message, buttons)
     User.egotter.api_client.create_direct_message_event(event: event)
   rescue => e
     unless ignorable_report_error?(e)

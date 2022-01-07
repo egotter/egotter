@@ -205,7 +205,7 @@ class PeriodicReport < ApplicationRecord
           pricing_url: pricing_url(campaign_params('will_expire_pricing')),
       )
 
-      new(user: user, message: message, token: generate_token, quick_reply_buttons: will_expire_quick_reply_options)
+      new(user: user, message: message, token: generate_token)
     end
 
     # TODO Remove later
@@ -221,7 +221,7 @@ class PeriodicReport < ApplicationRecord
           pricing_url: pricing_url(campaign_params('soft_limited_pricing')),
       )
 
-      new(user: User.find(user_id), message: message, token: generate_token, quick_reply_buttons: sending_soft_limited_quick_reply_options)
+      new(user: User.find(user_id), message: message, token: generate_token)
     end
 
     def access_interval_too_long_message(user_id)
@@ -553,6 +553,16 @@ class PeriodicReport < ApplicationRecord
       description: I18n.t('quick_replies.prompt_reports.description4')
   }
 
+  QUICK_REPLY_CONTINUE = {
+      label: I18n.t('quick_replies.continue.label'),
+      description: I18n.t('quick_replies.continue.description')
+  }
+
+  QUICK_REPLY_RECEIVED = {
+      label: I18n.t('quick_replies.shared.label1'),
+      description: I18n.t('quick_replies.shared.description1')
+  }
+
   class << self
     def default_quick_reply_options
       # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
@@ -586,34 +596,6 @@ class PeriodicReport < ApplicationRecord
       ]
     end
 
-    def will_expire_quick_reply_options
-      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
-      [
-          {
-              label: I18n.t('quick_replies.continue.label'),
-              description: I18n.t('quick_replies.continue.description')
-          }
-      ]
-    end
-
-    def sending_soft_limited_quick_reply_options
-      will_expire_quick_reply_options
-    end
-
-    def interval_too_short_quick_reply_options
-      # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
-      [
-          {
-              label: I18n.t('quick_replies.shared.label1'),
-              description: I18n.t('quick_replies.shared.description1')
-          }
-      ]
-    end
-
-    def request_interval_too_short_quick_reply_options
-      interval_too_short_quick_reply_options
-    end
-
     def not_following_quick_reply_options
       # When this variable is defined in class context as a constant, "Translation missing: en ..." occurs
       [
@@ -632,22 +614,6 @@ class PeriodicReport < ApplicationRecord
               description: I18n.t('quick_replies.shared.description2')
           }
       ]
-    end
-
-    def unregistered_quick_reply_options
-      interval_too_short_quick_reply_options
-    end
-
-    def unauthorized_quick_reply_options
-      interval_too_short_quick_reply_options
-    end
-
-    def permission_level_not_enough_quick_reply_options
-      interval_too_short_quick_reply_options
-    end
-
-    def allotted_messages_not_enough_quick_reply_options
-      will_expire_quick_reply_options
     end
 
     def stop_requested_quick_reply_options
