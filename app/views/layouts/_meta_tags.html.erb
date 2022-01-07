@@ -16,7 +16,7 @@
   # Set default values
   display_meta_tags(
     description: t('.description'),
-    title: "#{'[dev] ' if Rails.env.development?}#{t('.title')}",
+    title: t('.title'),
     og: og_tag
   )
 %>
