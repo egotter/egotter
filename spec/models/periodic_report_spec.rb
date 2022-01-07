@@ -227,19 +227,6 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
-  describe '#send_direct_message' do
-    let(:user) { create(:user) }
-    let(:report) { described_class.new(user: user, message: 'message', quick_reply_buttons: 'buttons') }
-    subject { report.send_direct_message }
-
-    it do
-      expect(report).to receive(:send_start_message)
-      expect(described_class).to receive(:build_direct_message_event).with(user.uid, 'message', quick_reply_buttons: 'buttons').and_return('event')
-      expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(event: 'event').and_return('dm')
-      is_expected.to eq('dm')
-    end
-  end
-
   describe '.default_quick_reply_options' do
     subject { described_class.default_quick_reply_options }
     it do

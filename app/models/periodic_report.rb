@@ -30,7 +30,8 @@ class PeriodicReport < ApplicationRecord
   attr_accessor :quick_reply_buttons
 
   def deliver!
-    dm = send_direct_message
+    send_start_message
+    dm = send_report_message
     update!(message_id: dm.id, message: dm.truncated_message)
   end
 
@@ -521,10 +522,8 @@ class PeriodicReport < ApplicationRecord
     extend ActionView::Helpers::DateHelper
   end
 
-  def send_direct_message
-    send_start_message
-
-    event = self.class.build_direct_message_event(user.uid, self.message, quick_reply_buttons: quick_reply_buttons)
+  def send_report_message
+    event = self.class.build_direct_message_event(user.uid, message, quick_reply_buttons: quick_reply_buttons)
     User.egotter.api_client.create_direct_message_event(event: event)
   end
 
