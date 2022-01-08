@@ -556,8 +556,8 @@ class PeriodicReport < ApplicationRecord
   }
 
   QUICK_REPLY_RECEIVED = {
-      label: I18n.t('quick_replies.shared.label1'),
-      description: I18n.t('quick_replies.shared.description1')
+      label: I18n.t('quick_replies.prompt_reports.label1'),
+      description: I18n.t('quick_replies.prompt_reports.description1')
   }
 
   QUICK_REPLY_URL_ACCESSED = {
