@@ -5,7 +5,7 @@ class CloudWatchClient
   DB_INSTANCE_ID = ENV['DB_INSTANCE_ID']
 
   def initialize
-    @client = Aws::CloudWatch::Client.new(region: REGION)
+    @client = Aws::CloudWatch::Client.new(region: REGION, retry_limit: 4, http_open_timeout: 3, http_read_timeout: 3)
   end
 
   def put_metric_data(metric_name, value, namespace:, dimensions: nil)
