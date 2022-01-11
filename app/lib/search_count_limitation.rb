@@ -74,11 +74,11 @@ class SearchCountLimitation
   end
   memoize
 
-  # TODO Don't call external API in this method
   def current_sharing_bonus
     if @user&.authorized?
       followers = TwitterUser.latest_by(uid: @user.uid)&.followers_count
-      followers = @user.api_client.user(@user.uid)[:followers_count] unless followers
+      followers = TwitterDB::User.find_by(uid: @user.uid)&.followers_count unless followers
+      followers = 0 unless followers
     else
       followers = 0
     end
@@ -89,10 +89,6 @@ class SearchCountLimitation
     when 2001..5000 then SHARING_BONUS + 2
     else SHARING_BONUS + 3
     end
-  rescue => e
-    Airbag.warn "##{__method__} #{e.inspect} user_id=#{@user&.id}"
-    Airbag.info e.backtrace.join("\n")
-    SHARING_BONUS
   end
   memoize
 

@@ -188,12 +188,6 @@ RSpec.describe SearchCountLimitation, type: :model do
       let(:count) { 10000 }
       it { is_expected.to eq(described_class::SHARING_BONUS + 3) }
     end
-
-    context 'An exception is raised' do
-      let(:count) { 'count' }
-      before { allow(user).to receive(:uid).and_raise('Anything') }
-      it { is_expected.to eq(described_class::SHARING_BONUS) }
-    end
   end
 
   describe '#to_h' do
