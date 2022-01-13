@@ -65,3 +65,8 @@ def extract_file(archive_file, outdir):
 
             with source, target:
                 shutil.copyfileobj(source, target)
+
+
+if __name__ == '__main__':
+    import sys
+    extract_file(sys.argv[1], './')

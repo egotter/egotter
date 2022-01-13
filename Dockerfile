@@ -49,3 +49,5 @@ RUN echo "alias be='bundle exec'" >>~/.bashrc
 #RUN locale-gen ja_JP.UTF-8
 #RUN update-locale LANG=ja_JP.UTF-8
 #RUN echo "export LANG=ja_JP.UTF-8" >>~/.bashrc
+
+#RUN apt install -y python3-pip
