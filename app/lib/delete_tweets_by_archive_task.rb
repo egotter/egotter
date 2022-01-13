@@ -42,6 +42,7 @@ class DeleteTweetsByArchiveTask
     puts "user=#{user.screen_name}"
 
     if @tweets.empty?
+      send_no_tweet_found_message
       raise "There are no tweets user_id=#{user.id}"
     end
     puts "tweets_size=#{@tweets.size}"
@@ -120,7 +121,7 @@ class DeleteTweetsByArchiveTask
     puts report.message
   end
 
-  def no_tweet_found
+  def send_no_tweet_found_message
     report = DeleteTweetsByArchiveReport.no_tweet_found(user)
     report.deliver!
     puts report.message
