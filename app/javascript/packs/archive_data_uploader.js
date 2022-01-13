@@ -43,24 +43,32 @@ class ArchiveDataUploader {
     showMessage(i18n['preparing'], file.attrs());
 
     setTimeout(function () {
-      self.managedUpload(file).then(
-          function () {
+      readTweetFiles(file.getFile()).then(function (data) {
+        writeTweetFiles(data).then(function (newFile) {
+          self.uploadFile(newFile, file.attrs()).then(function () {
             self.completed = true;
             self.notifyUploadCompleted(self.metadata);
             showMessage(i18n['success']);
-          },
-          function (err) {
-            logger.error(err.message);
-            showMessage(i18n['fail'], file.attrs());
-          }
-      );
-    }, 10000);
+          }).catch(function (err) {
+            logger.warn('uploadFile() failed', err);
+            showMessage(i18n['fail'], Object.assign({reason: err}, file.attrs()));
+          });
+        }).catch(function (err) {
+          logger.warn('writeTweetFiles() failed', err);
+          showMessage(i18n['fail'], Object.assign({reason: err}, file.attrs()));
+        });
+      }).catch(function (err) {
+        logger.warn('readTweetFiles() failed', err);
+        showMessage(i18n['brokenFile'], Object.assign({reason: err}, file.attrs()));
+      });
+
+    }, 10 * 1000);
   }
 
-  managedUpload(file) {
+  uploadFile(fileObj, fileAttrs) {
     var i18n = this.i18n;
-    var fileObj = file.getFile();
     var startTime = new Date();
+    var AWS = window.AWS;
     var self = this;
 
     var onProgress = (function () {
@@ -75,7 +83,7 @@ class ArchiveDataUploader {
         if (curValue > value) {
           value = curValue;
           var loadedSize = Math.round(event.loaded / ((new Date() - startTime) / 1000));
-          var options = Object.assign({percentage: value + '%', speed: readableSize(loadedSize)}, file.attrs());
+          var options = Object.assign({percentage: value + '%', speed: readableSize(loadedSize)}, fileAttrs);
           options['size'] = readableSize(options['size']);
           showMessage(i18n['uploading'], options);
         }
@@ -88,9 +96,9 @@ class ArchiveDataUploader {
     });
 
     self.metadata = {
-      filename: fileObj.name,
-      filesize: '' + fileObj.size,
-      filetype: fileObj.type,
+      filename: fileAttrs.name,
+      filesize: '' + fileAttrs.size,
+      filetype: fileAttrs.type,
       since: $('#premium_since_date').val(),
       until: $('#premium_until_date').val()
     };
@@ -164,23 +172,6 @@ class ArchiveFile {
   attrs() {
     return {name: this.file.name, type: this.file.type, size: this.file.size};
   }
-
-  escapeHtml(str) {
-    if (str.length >= 30) {
-      str = str.substr(0, 30) + '...';
-    }
-
-    var type = '';
-    try {
-      type = str.replace(/<\/?[^>]+(>|$)/g, '');
-      if (!type) {
-        type = 'empty';
-      }
-    } catch (e) {
-      type = 'error';
-    }
-    return type;
-  }
 }
 
 
@@ -198,13 +189,13 @@ function readableSize(size) {
   return (size / Math.pow(1024, i)).toFixed(2) * 1 + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 }
 
-function truncatedFilename(name) {
+function truncateFilename(name) {
   return name.slice(0, 22) + '...' + name.slice(name.length - 7);
 }
 
 function escapeHtml(str) {
   if (str.length >= 30) {
-    str = truncatedFilename(str);
+    str = truncateFilename(str);
   }
 
   var type = '';
@@ -217,4 +208,75 @@ function escapeHtml(str) {
     type = 'error';
   }
   return type;
+}
+
+function readTweetFiles(file) {
+  var zip = window.zip;
+  var data = {};
+  var processedCount = 0;
+  var dirname = file.name.split('.')[0];
+  var reader = new zip.ZipReader(new zip.BlobReader(file));
+
+  return new Promise(function (resolve, reject) {
+    reader.getEntries().then(function (entries) {
+      if (!entries.length) {
+        return reject('No entry found');
+      }
+
+      var filteredEntries = entries.filter(function (entry) {
+        return !entry.directory && entry.filename.match(/^data\/tweet.*\.js$/);
+      });
+
+      filteredEntries.forEach(function (entry) {
+        entry.getData(new zip.TextWriter()).then(function (text) {
+          data[dirname + '/' + entry.filename] = text;
+          processedCount++;
+
+          if (processedCount === filteredEntries.length) {
+            reader.close().then(function () {
+              resolve(data);
+            }).catch(function (err) {
+              reject('reader.close() failed', err);
+            });
+          }
+        }).catch(function (err) {
+          reject('entry.getData() failed', err);
+        });
+      });
+    }).catch(function (err) {
+      reject('getEntries() failed', err);
+    });
+  });
+}
+
+function writeTweetFiles(data) {
+  var zip = window.zip;
+  var processedCount = 0;
+  var writer = new zip.ZipWriter(new zip.BlobWriter('application/zip'), {bufferedWrite: true});
+
+  var dataKeys = Object.keys(data);
+
+  return new Promise(function (resolve, reject) {
+    if (dataKeys.length === 0) {
+      return reject('dataKeys is empty');
+    }
+
+    dataKeys.forEach(function (key) {
+      var blob = new Blob([data[key]], {type: 'text/plain'});
+
+      writer.add(key, new zip.BlobReader(blob)).then(function () {
+        processedCount++;
+
+        if (processedCount === dataKeys.length) {
+          writer.close().then(function (result) {
+            resolve(result);
+          }).catch(function (err) {
+            reject('writer.close() failed', err);
+          });
+        }
+      }).catch(function (err) {
+        reject('writer.add() failed', err);
+      });
+    });
+  });
 }

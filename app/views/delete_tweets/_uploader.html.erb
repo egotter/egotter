@@ -1,6 +1,7 @@
 <input type="file" id="<%= file_id %>" accept=".zip,application/zip" style="display: none;">
 
 <script src="https://sdk.amazonaws.com/js/aws-sdk-2.820.0.min.js"></script>
+<script src="<%= asset_path('/javascript/zip-full.min.js') %>"></script>
 
 <% debug_message = t('.debug_message_html', device_type: request.device_type, os: request.os, browser: request.browser) %>
 <% support_message = t('.support_message_html', url: twitter_web_url('egotter_cs')) %>
@@ -13,6 +14,7 @@
       invalidContentType: '<%= t('.invalid_content_type_html', message_options) %>',
       filesizeTooSmall: '<%= t('.filesize_too_small_html', message_options) %>',
       filesizeTooLarge: '<%= t('.filesize_too_large_html', {url: cs_url}.merge(message_options)) %>',
+      brokenFile: '<%= t('.broken_file_html', {url: cs_url}.merge(message_options)) %>',
       preparing: '<%= t('.preparing_html', {image_url: image_path('/ajax-loader.gif'), url: cs_url}.merge(debug_message: debug_message)) %>',
       uploading: '<%= t('.uploading_html', url: cs_url, debug_message: debug_message) %>',
       alertOnBeforeunload: '<%= t('.alert_on_beforeunload') %>',

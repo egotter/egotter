@@ -28,8 +28,7 @@
     "Egotter": true,
     "ToastMessage": true,
     "Mustache": true,
-    "AsyncLoader": true,
-    "AWS": true
+    "AsyncLoader": true
   },
   "rules": {
     "semi": "error"

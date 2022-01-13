@@ -1677,7 +1677,7 @@ ja:
           browser=%{browser}
         </div>
       support_message_html:
-        <p>何度も起きる場合は、このメッセージのスクショを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
+        <p>何度も起きる場合は、このメッセージのスクリーンショットを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
       invalid_filename_html:
         <p>ファイル名(twitter-長い文字.zip)が間違っています。<span class="text-danger">Twitterから取得したアーカイブデータをそのまま指定してください。</span></p>
         %{support_message}
@@ -1692,16 +1692,20 @@ ja:
         %{debug_message}
       filesize_too_large_html:
         <p>ファイルサイズが上限を超えています。</p>
-        <p>個別に対応しますので このメッセージのスクショを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
+        <p>個別に対応しますので このメッセージのスクリーンショットを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
+        %{debug_message}
+      broken_file_html:
+        <p>壊れたファイルが指定されています。<span class="text-danger">アップロードの前に、アーカイブデータをパソコンでダブルクリックして開けるかを確認してください。</span></p>
+        %{support_message}
+        <div>reason={reason}</div>
         %{debug_message}
       preparing_html:
-        <img src="%{image_url}" width="16" height="16">
-        <p>ファイルのアップロードを準備中です。ページを閉じないでそのままお待ちください。</p>
-        <p>1分待ってもこのメッセージが表示され続ける場合は、このメッセージのスクショを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
+        <p><img src="%{image_url}" width="16" height="16"> ファイルのアップロードを準備中です。ページを閉じないでそのままお待ちください。</p>
+        <p>1分待ってもこのメッセージが表示され続ける場合は、このメッセージのスクリーンショットを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
         %{debug_message}
       uploading_html:
         <p>ファイルをアップロード中です。ページを閉じないでそのままお待ちください。{percentage} ({speed}/s)</p>
-        <p>ファイルのアップロードが途中で止まってしまう場合は、このメッセージのスクショを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
+        <p>ファイルのアップロードが途中で止まってしまう場合は、このメッセージのスクリーンショットを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
         <p class="small">
           <span class="mt-1">※ 高速なWi-Fiをお使いください。スマホ回線だと速度制限を受けることがあります</span><br>
           <span class="mt-1">※ できればパソコンをお使いください。アップロードが何倍も早くなります</span>
@@ -1714,7 +1718,8 @@ ja:
         <p>DMが届かない場合は、@egotter_cs に「アップロード完了しました」とDMしてください。</p>
         このWebページは閉じて大丈夫です。
       fail_html:
-        <p>ファイルのアップロードに失敗しました。何度も起きる場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。</p>
+        <p>ファイルのアップロードに失敗しました。何度も起きる場合はこのメッセージのスクリーンショットを <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。</p>
+        <div>reason={reason}</div>
         %{debug_message}
     confirmation_modal:
       title: '@%{user} のツイート削除'

@@ -47,6 +47,7 @@ def lambda_handler(event, context):
     archive_file = dirname + meta_filename
     s3.download_file(Bucket=bucket, Key=key, Filename=archive_file)
     extract_file(archive_file, dirname)
+    os.remove(archive_file)
 
 
 def extract_file(archive_file, outdir):
