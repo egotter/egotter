@@ -93,14 +93,6 @@ class DeleteTweetsReport
       new(User.egotter_cs, user, message, quick_replies: options['quick_replies'])
     end
 
-    def delete_completed_message(user, deletions_count)
-      template = Rails.root.join('app/views/delete_tweets/delete_completed.ja.text.erb')
-      message = ERB.new(template.read).result_with_hash(
-          destroy_count: deletions_count
-      )
-      new(User.egotter_cs, user, message)
-    end
-
     def build_direct_message_event(uid, message, quick_replies = nil)
       quick_replies ||= [{label: I18n.t('quick_replies.delete_reports.label1'), description: I18n.t('quick_replies.delete_reports.description1')}]
 

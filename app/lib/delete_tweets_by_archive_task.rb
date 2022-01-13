@@ -11,13 +11,13 @@ class DeleteTweetsByArchiveTask
   end
 
   def start
-    validate!
+    validate_task
 
     puts "first_tweet=#{@tweets[0].created_at.to_s(:db)}"
     puts "last_tweet=#{@tweets[-1].created_at.to_s(:db)}"
 
-    initialize_task!
-    start_task!
+    initialize_task
+    start_task
     send_dm
   end
 
@@ -35,8 +35,8 @@ class DeleteTweetsByArchiveTask
     tweets.sort_by(&:created_at)
   end
 
-  def validate!
-    unless (user = User.find_by(screen_name: @screen_name))
+  def validate_task
+    unless user
       raise "The user doesn't exist screen_name=#{@screen_name}"
     end
     puts "user=#{user.screen_name}"
@@ -71,7 +71,7 @@ class DeleteTweetsByArchiveTask
     puts "tweet_author=#{tweet.user.screen_name}"
   end
 
-  def initialize_task!
+  def initialize_task
     processed = 0
     skipped_tweets = []
     @deletable_tweets = []
@@ -97,7 +97,7 @@ class DeleteTweetsByArchiveTask
     puts "\nprocessed #{processed} skipped #{skipped_tweets.size}"
   end
 
-  def start_task!
+  def start_task
     if @dry_run
       deletable_tweet_ids = @deletable_tweets.index_by(&:id)
 
@@ -114,12 +114,20 @@ class DeleteTweetsByArchiveTask
   end
 
   def send_dm
-    if (user = User.find_by(screen_name: @screen_name))
-      request = DeleteTweetsByArchiveRequest.order(created_at: :desc).find_by(user_id: user.id)
-      report = DeleteTweetsReport.delete_completed_message(user, request.deletions_count)
-      report.deliver!
-      puts report.message
-    end
+    request = DeleteTweetsByArchiveRequest.order(created_at: :desc).find_by(user_id: user.id)
+    report = DeleteTweetsByArchiveReport.delete_completed(user, request.deletions_count)
+    report.deliver!
+    puts report.message
+  end
+
+  def no_tweet_found
+    report = DeleteTweetsByArchiveReport.no_tweet_found(user)
+    report.deliver!
+    puts report.message
+  end
+
+  def user
+    @user ||= User.find_by(screen_name: @screen_name)
   end
 
   class Tweet
