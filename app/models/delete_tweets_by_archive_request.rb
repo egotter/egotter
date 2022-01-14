@@ -43,7 +43,7 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
           client.destroy_status(tweet.id)
         rescue => e
           puts "#{e.inspect} tweet_id=#{tweet.id}"
-          if stop_processing?(processed_count, errors_count += 1)
+          if stop_processing?(e, processed_count, errors_count += 1)
             puts 'Stop processing'
             stopped = true
           end
@@ -62,8 +62,8 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
     end
   end
 
-  def stop_processing?(processed_count, errors_count)
-    errors_count > [processed_count, 1000].max / 10
+  def stop_processing?(e, processed_count, errors_count)
+    TwitterApiStatus.invalid_or_expired_token?(e) || errors_count > [processed_count, 1000].max / 10
   end
 
   def progress(started_time, total_count, processed_count)
