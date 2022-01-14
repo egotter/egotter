@@ -300,6 +300,10 @@ module PathsHelper
     'https://forms.gle/vJ2gidD6s6kr6b3T8'
   end
 
+  def twitter_developer_feedback_fix_unlike_path
+    'https://twitterdevfeedback.uservoice.com/forums/930250-twitter-api/suggestions/44050935-un-retweet-or-un-like-tweets-that-are-more-than'
+  end
+
   def personality_insight_path(*args)
     personality_insights_top_path
   end

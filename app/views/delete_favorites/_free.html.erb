@@ -4,8 +4,8 @@
   <%= t('.notice1_html', count: DeleteFavoritesRequest::DESTROY_LIMIT) %>
 <% end %>
 
-<%= alert_box class: 'my-5' do %>
-  <%= t('.notice2') %>
+<%= alert_box category: 'danger', class: 'my-5' do %>
+  <%= t('.notice2_html', url: twitter_developer_feedback_fix_unlike_path) %>
 <% end %>
 
 <div class="card my-3">

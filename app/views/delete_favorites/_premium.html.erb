@@ -1,7 +1,7 @@
 <div id="delete-favorites-uploader" class="my-5"><%= t('.description', user: current_user.screen_name) %></div>
 
 <%= alert_box category: 'danger', class: 'my-5' do %>
-  <%= t('.notice_html') %>
+  <%= t('.notice_html', url: twitter_developer_feedback_fix_unlike_path) %>
 <% end %>
 
 <div class="card my-3">
