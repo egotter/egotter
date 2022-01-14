@@ -7,12 +7,18 @@ version: "3"
 services:
   redis:
     image: redis
+    command: redis-server /etc/redis.conf
+    volumes:
+      - ./setup/etc/redis.dev.conf:/etc/redis.conf
     deploy:
       resources:
         limits:
           memory: 64M
   redis2:
     image: redis
+    command: redis-server /etc/redis.conf
+    volumes:
+      - ./setup/etc/redis.dev.conf:/etc/redis.conf
     hostname: redis2
     deploy:
       resources:
