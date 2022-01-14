@@ -55,12 +55,13 @@ class CreateInquiryMessageWorker
   #   from_uid
   def perform(uid, options = {})
     user = User.find_by(uid: uid)
-    event = InquiryResponseReport.build_direct_message_event(uid, build_message(user))
 
     unless options['from_uid'] && (sender = User.find_by(uid: options['from_uid']))
       sender = User.egotter_cs
     end
-    sender.api_client.create_direct_message_event(event: event)
+
+    buttons = [InquiryResponseReport::QUICK_REPLY_RESOLVED, InquiryResponseReport::QUICK_REPLY_WAITING]
+    sender.api_client.send_report(uid, build_message(user), buttons)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"

@@ -30,7 +30,7 @@ RSpec.describe DeleteTweetsByArchiveRequest, type: :model do
   end
 
   describe '#stop_processing?' do
-    subject { instance.send(:stop_processing?, 10, 5) }
+    subject { instance.send(:stop_processing?, nil, 10, 5) }
     it { is_expected.to be_falsey }
   end
 end

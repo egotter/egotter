@@ -7,17 +7,20 @@ class CreatePremiumPlanMessageWorker
     ご連絡ありがとうございます。えごったーサポートです。
     (ง •̀_•́)ง
 
-    有料プランの購入は 価格ページ から行えます。
-    <%= pricing_url %>
+    ・有料プランの購入
+    価格ページ から行えます。<%= pricing_url %>
 
-    有料プランのキャンセルは 設定 > 購入履歴 から行えます。
-    <%= order_history_url %>
+    ・購入後の有料プランが有効にならない
+    購入時にツイッターIDを書き忘れています。該当者にはメールを送っています。メールに返信してください。
 
-    有料プランの返金は 返金ポリシー をご覧になってください。
-    <%= refund_policy_url %>
+    ・有料プランの解約
+    設定 > 購入履歴 から行えます。<%= order_history_url %>
 
-    よくある質問と回答はこちらです。
-    <%= support_url %>
+    ・有料プランの返金
+    返金ポリシー をご覧になってください。<%= refund_policy_url %>
+
+    ・その他の質問
+    ほとんどの回答は よくある質問 に載っています。<%= support_url %>
 
     回答が必要な質問の場合は、そのままでしばらくお待ちください。数日中に回答いたします。
     (๑•ᴗ•๑)
@@ -35,8 +38,8 @@ class CreatePremiumPlanMessageWorker
 
   # options:
   def perform(uid, options = {})
-    event = InquiryResponseReport.build_direct_message_event(uid, build_message)
-    User.egotter_cs.api_client.create_direct_message_event(event: event)
+    buttons = [InquiryResponseReport::QUICK_REPLY_RESOLVED, InquiryResponseReport::QUICK_REPLY_WAITING]
+    User.egotter_cs.api_client.send_report(uid, build_message, buttons)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
