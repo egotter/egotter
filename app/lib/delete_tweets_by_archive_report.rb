@@ -13,6 +13,12 @@ class DeleteTweetsByArchiveReport
   end
 
   class << self
+    def delete_started(user)
+      template = Rails.root.join('app/views/delete_tweets_by_archive/delete_started.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash({})
+      new(User.egotter_cs, user, message, [])
+    end
+
     def delete_completed(user, deletions_count)
       template = Rails.root.join('app/views/delete_tweets_by_archive/delete_completed.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(

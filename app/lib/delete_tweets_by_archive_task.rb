@@ -17,8 +17,9 @@ class DeleteTweetsByArchiveTask
     puts "last_tweet=#{@tweets[-1].created_at.to_s(:db)}"
 
     initialize_task
+    send_started_message
     start_task
-    send_dm
+    send_completed_message
   end
 
   private
@@ -114,7 +115,13 @@ class DeleteTweetsByArchiveTask
     end
   end
 
-  def send_dm
+  def send_started_message
+    report = DeleteTweetsByArchiveReport.delete_started(user)
+    report.deliver!
+    puts report.message
+  end
+
+  def send_completed_message
     request = DeleteTweetsByArchiveRequest.order(created_at: :desc).find_by(user_id: user.id)
     report = DeleteTweetsByArchiveReport.delete_completed(user, request.deletions_count)
     report.deliver!
