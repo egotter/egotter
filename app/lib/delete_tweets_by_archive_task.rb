@@ -17,12 +17,15 @@ class DeleteTweetsByArchiveTask
     puts "last_tweet=#{@tweets[-1].created_at.to_s(:db)}"
 
     initialize_task
-    send_started_message
+    request = DeleteTweetsByArchiveRequest.create!(user_id: user.id, since_date: @since, until_date: @until, reservations_count: @deletable_tweets.size)
 
-    if start_task
-      send_completed_message
-    else
+    send_started_message(request)
+    request.perform(@deletable_tweets, threads: @threads)
+
+    if request.stopped?
       send_stopped_message
+    else
+      send_completed_message(request)
     end
   end
 
@@ -103,20 +106,13 @@ class DeleteTweetsByArchiveTask
     puts "\nprocessed #{processed} skipped #{skipped_tweets.size}"
   end
 
-  def start_task
-    request = DeleteTweetsByArchiveRequest.create!(user_id: user.id, since_date: @since, until_date: @until, reservations_count: @deletable_tweets.size)
-    request.perform(@deletable_tweets, threads: @threads)
-    !request.stopped?
-  end
-
-  def send_started_message
+  def send_started_message(request)
     report = DeleteTweetsByArchiveReport.delete_started(user)
     report.deliver!
     puts report.message
   end
 
-  def send_completed_message
-    request = DeleteTweetsByArchiveRequest.order(created_at: :desc).find_by(user_id: user.id)
+  def send_completed_message(request)
     report = DeleteTweetsByArchiveReport.delete_completed(user, request.deletions_count)
     report.deliver!
     puts report.message

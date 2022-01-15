@@ -13,9 +13,15 @@ class DeleteTweetsByArchiveReport
   end
 
   class << self
-    def delete_started(user)
+    def delete_started(user, reservations_count)
+      sec_per_tweet = 0.055
+      estimated_sec = (sec_per_tweet * reservations_count).ceil
+
       template = Rails.root.join('app/views/delete_tweets_by_archive/delete_started.ja.text.erb')
-      message = ERB.new(template.read).result_with_hash({})
+      message = ERB.new(template.read).result_with_hash(
+          reservations_count: reservations_count,
+          estimated_time: estimated_sec.seconds.since
+      )
       new(User.egotter_cs, user, message, [])
     end
 
