@@ -208,7 +208,7 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def send_result_message
-    DeleteTweetsReport.finished_message(user, self).deliver!
+    DeleteTweetsReport.finished_message(user, destroy_count).deliver!
   rescue => e
     if DirectMessageStatus.not_following_you?(e) ||
         DirectMessageStatus.cannot_send_messages?(e) ||

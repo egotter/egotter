@@ -45,8 +45,7 @@ class DeleteTweetsReport
       new(nil, nil, message)
     end
 
-    def finished_message(user, request)
-      deletions_count = request.respond_to?(:deletions_count) ? request.deletions_count : request.destroy_count
+    def finished_message(user, deletions_count)
       if deletions_count > 0
         template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
       else

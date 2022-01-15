@@ -62,7 +62,7 @@ class DeleteTweetsBySearchRequest < ApplicationRecord
       report = DeleteTweetsReport.finished_message_from_user(user)
       report.deliver!
 
-      report = DeleteTweetsReport.finished_message(user, self)
+      report = DeleteTweetsReport.finished_message(user, deletions_count)
       report.deliver!
     end
   rescue => e
