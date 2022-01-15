@@ -1650,6 +1650,7 @@ ja:
       since_date: 'この日付から'
       until_date: 'この日付まで'
       multiple_retry: '短時間に複数回アップロードした場合は最後の1回分のみ実行されることを理解しました'
+      complete_data: 'アーカイブデータの作成後はツイートの削除を行っていません'
       send_dm: '完了後に自分へDM'
       send_test_message: 'DMのテスト送信'
       test_message: 'DM送信テスト ※そのまま送信'

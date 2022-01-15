@@ -23,6 +23,12 @@
         <label class="d-inline" for="premium_multiple_retry"><%= t('.multiple_retry') %></label>
       </div>
 
+      <div class="mb-4">
+        <%= check_box_tag('premium_complete_data', '1', false) %>
+        <span class="text-danger"><%= t('.required') %></span>
+        <label class="d-inline" for="premium_complete_data"><%= t('.complete_data') %></label>
+      </div>
+
       <div class="my-4">
         <div>
           <%= check_box_tag('premium_send_dm', '1', true, disabled: true) %>
@@ -60,13 +66,15 @@
             $(function () {
               var checkIsRequired = '<%= t('.check_is_required') %>';
               var multipleRetryCheckbox = new DeleteTweetsRequiredCheckbox('premium_multiple_retry');
+              var completeDataCheckbox = new DeleteTweetsRequiredCheckbox('premium_complete_data');
 
               $('#delete-tweets-button').on('click', function (e) {
                 var validated = [
-                  multipleRetryCheckbox.validate()
+                  multipleRetryCheckbox.validate(),
+                  completeDataCheckbox.validate()
                 ];
 
-                if (!validated[0]) {
+                if (!validated[0] || !validated[1]) {
                   e.stopImmediatePropagation(); // Prevent a file selector from being opened
                   window.alert(checkIsRequired);
                   return false;
