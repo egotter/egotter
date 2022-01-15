@@ -11,12 +11,12 @@ RSpec.describe DeleteTweetsReport, type: :model do
   end
 
   describe '.finished_message' do
-    subject { described_class.finished_message(user, request) }
-    it { is_expected.to be_truthy }
-
-    context 'destroy_count is 10' do
-      before { request.update!(destroy_count: 10) }
-      it { is_expected.to be_truthy }
+    subject { described_class.finished_message(user, deletions_count) }
+    [0, 10].each do |count|
+      let(:deletions_count) { count }
+      context "deletions_count is #{count}" do
+        it { is_expected.to be_truthy }
+      end
     end
   end
 

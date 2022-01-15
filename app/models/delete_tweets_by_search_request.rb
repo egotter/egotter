@@ -52,7 +52,9 @@ class DeleteTweetsBySearchRequest < ApplicationRecord
       SendMessageToSlackWorker.perform_async(:monit_delete_tweets, "`Tweet` tweet=#{message} #{to_message}")
     end
   rescue => e
-    raise FinishedTweetNotSent.new("exception=#{e.inspect} tweet=#{message} #{to_message}")
+    unless TwitterApiStatus.invalid_or_expired_token?(e)
+      raise FinishedTweetNotSent.new("exception=#{e.inspect} tweet=#{message} #{to_message}")
+    end
   end
 
   def send_dm!(delay = false)
@@ -72,7 +74,8 @@ class DeleteTweetsBySearchRequest < ApplicationRecord
   end
 
   def ignorable_direct_message_error?(e)
-    DirectMessageStatus.not_following_you?(e) |
+    TwitterApiStatus.invalid_or_expired_token?(e) ||
+        DirectMessageStatus.not_following_you?(e) ||
         DirectMessageStatus.cannot_send_messages?(e) ||
         DirectMessageStatus.you_have_blocked?(e)
   end
