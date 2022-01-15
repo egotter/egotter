@@ -1,20 +1,44 @@
 require 'rails_helper'
 
 RSpec.describe WriteToS3Worker do
+  let(:worker) { described_class.new }
+
   describe '#perform' do
+    let(:klass) { 'S3::Followership' }
+    let(:params) { {'klass' => 'S3::Followership', 'bucket' => 'bucket', 'key' => 'key', 'body' => 'body'} }
+    subject { worker.perform(params) }
+    it do
+      expect(worker).to receive(:do_perform).with(S3::Followership, 'bucket', 'key', 'body')
+      subject
+    end
+
+    context 'exception is raised' do
+      let(:error) { RuntimeError.new }
+      before { allow(worker).to receive(:do_perform).with(any_args).and_raise(error) }
+      it do
+        expect(described_class).to receive(:perform_in).with(2, params, 'retry_count' => 1)
+        subject
+      end
+    end
+  end
+
+  describe '#do_perform' do
+    subject { worker.send(:do_perform, klass, bucket, key, body) }
+
     [
         S3::Followership,
         S3::Friendship,
         S3::Profile,
-    ].each.with_index do |klass, i|
-      context klass.to_s do
-        it do
-          bucket = "bucket#{i}"
-          key = "key#{i}"
-          body = "body#{i}"
+    ].each.with_index do |target, i|
+      context "klass is #{target}" do
+        let(:klass) { target }
+        let(:bucket) { "bucket-#{target}" }
+        let(:key) { "key-#{target}" }
+        let(:body) { "body-#{target}" }
 
+        it do
           expect(klass.client).to receive(:put_object).with(bucket: bucket, key: key, body: body)
-          described_class.new.perform('klass' => klass.to_s, 'bucket' => bucket, 'key' => key, 'body' => body)
+          subject
         end
       end
     end
@@ -23,42 +47,17 @@ RSpec.describe WriteToS3Worker do
         S3::FavoriteTweet,
         S3::MentionTweet,
         S3::StatusTweet,
-    ].each.with_index do |klass, i|
-      context klass.to_s do
+    ].each.with_index do |target, i|
+      context "klass is #{target}" do
+        let(:klass) { target }
+        let(:bucket) { "bucket-#{target}" }
+        let(:key) { "key-#{target}" }
+        let(:body) { "body-#{target}" }
+
         it do
-          bucket = "bucket#{i}"
-          key = "key#{i}"
-          body = "body#{i}"
-
           expect(klass.client.instance_variable_get(:@s3)).to receive(:put_object).with(bucket: bucket, key: key, body: body)
-          described_class.new.perform('klass' => klass.to_s, 'bucket' => bucket, 'key' => key, 'body' => body)
+          subject
         end
-      end
-    end
-
-    context 'Raise timeout exception' do
-      let(:klass) { 'any class' }
-      let(:params) { {'klass' => klass} }
-      let(:worker) { described_class.new }
-      subject { worker.perform(params, {}) }
-      before { allow(klass).to receive(:constantize).and_raise('Timeout') }
-
-      it do
-        expect(worker).to receive(:after_timeout).with(params, {})
-        subject
-      end
-    end
-
-    context 'Raise limmit exception' do
-      let(:klass) { 'any class' }
-      let(:params) { {'klass' => klass} }
-      let(:worker) { described_class.new }
-      subject { worker.perform(params, {}) }
-      before { allow(klass).to receive(:constantize).and_raise('Limit') }
-
-      it do
-        expect(worker).to receive(:after_timeout).with(params, {})
-        subject
       end
     end
   end

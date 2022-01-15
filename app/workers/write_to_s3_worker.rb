@@ -2,28 +2,6 @@ class WriteToS3Worker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def retry_in
-    30.seconds
-  end
-
-  def retry_limit
-    3
-  end
-
-  # This worker handles Timeout in Aws::S3::Client
-  def after_timeout(params, options = {})
-    retry_count = options['retry_count']
-    retry_count = 0 unless retry_count
-
-    if retry_count < retry_limit
-      Airbag.info "Retry later #{params.inspect.truncate(50)} #{options}"
-      options['retry_count'] = retry_count + 1
-      WriteToS3Worker.perform_in(retry_in, params, options)
-    else
-      Airbag.warn "Retry exhausted: Timeout #{timeout_in} seconds #{params.inspect.truncate(50)} #{options}"
-    end
-  end
-
   # params:
   #   klass
   #   bucket
@@ -33,24 +11,24 @@ class WriteToS3Worker
   #   retry_count
   def perform(params, options = {})
     klass = params['klass'].constantize
-    request_options = {bucket: params['bucket'], key: params['key'].to_s, body: params['body']}
+    do_perform(klass, params['bucket'], params['key'].to_s, params['body'])
+  rescue => e
+    retry_count = (options['retry_count'] || 0) + 1
+    WriteToS3Worker.perform_in(retry_count * 2, params, options.merge('retry_count' => retry_count))
 
-    if [S3::Followership, S3::Friendship, S3::Profile,].include?(klass)
+    Airbag.warn "#{e.inspect} klass=#{params['klass']} bucket=#{params['bucket']} key=#{params['key']} options=#{options}"
+    Airbag.info e.backtrace.join("\n")
+  end
+
+  private
+
+  def do_perform(klass, bucket, key, body)
+    if [S3::Followership, S3::Friendship, S3::Profile].include?(klass)
       client = klass.client
     else
       client = klass.client.instance_variable_get(:@s3)
     end
 
-    client.put_object(request_options)
-  rescue => e
-    # Seahorse::Client::NetworkingError Net::OpenTimeout
-    # Seahorse::Client::NetworkingError Net::ReadTimeout
-    # RetryErrorsSvc::Errors::RequestLimitExceeded
-    if e.message.downcase.match?(/timeout|limit/)
-      after_timeout(params, options)
-    else
-      Airbag.warn "#{e.class}: #{e.message.truncate(100)} #{params.inspect.truncate(50)} #{options.inspect}"
-      Airbag.info e.backtrace.join("\n")
-    end
+    client.put_object(bucket: bucket, key: key, body: body)
   end
 end
