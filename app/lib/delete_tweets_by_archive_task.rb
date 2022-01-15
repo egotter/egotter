@@ -18,8 +18,12 @@ class DeleteTweetsByArchiveTask
 
     initialize_task
     send_started_message
-    start_task
-    send_completed_message
+
+    if start_task
+      send_completed_message
+    else
+      send_stopped_message
+    end
   end
 
   private
@@ -100,19 +104,9 @@ class DeleteTweetsByArchiveTask
   end
 
   def start_task
-    if @dry_run
-      deletable_tweet_ids = @deletable_tweets.index_by(&:id)
-
-      @tweets.each do |tweet|
-        flag = deletable_tweet_ids[tweet.id] ? 'd' : 's'
-        puts "#{flag} tweet_id=#{tweet.id} tweeted_at=#{tweet.created_at}"
-      end
-    else
-      user = User.find_by(screen_name: @screen_name)
-      request = DeleteTweetsByArchiveRequest.create!(user_id: user.id, since_date: @since, until_date: @until, reservations_count: @deletable_tweets.size)
-      puts "request_id=#{request.id}"
-      request.perform(@deletable_tweets, threads: @threads)
-    end
+    request = DeleteTweetsByArchiveRequest.create!(user_id: user.id, since_date: @since, until_date: @until, reservations_count: @deletable_tweets.size)
+    request.perform(@deletable_tweets, threads: @threads)
+    !request.stopped?
   end
 
   def send_started_message
@@ -130,6 +124,12 @@ class DeleteTweetsByArchiveTask
 
   def send_no_tweet_found_message
     report = DeleteTweetsByArchiveReport.no_tweet_found(user)
+    report.deliver!
+    puts report.message
+  end
+
+  def send_stopped_message
+    report = DeleteTweetsByArchiveReport.delete_stopped(user)
     report.deliver!
     puts report.message
   end

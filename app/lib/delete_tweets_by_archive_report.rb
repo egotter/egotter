@@ -34,5 +34,12 @@ class DeleteTweetsByArchiveReport
       buttons = [{label: I18n.t('quick_replies.delete_reports.label1'), description: I18n.t('quick_replies.delete_reports.description1')}]
       new(User.egotter_cs, user, message, buttons)
     end
+
+    def delete_stopped(user)
+      template = Rails.root.join('app/views/delete_tweets_by_archive/delete_stopped.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash({})
+      buttons = [{label: I18n.t('quick_replies.delete_reports.label1'), description: I18n.t('quick_replies.delete_reports.description1')}]
+      new(User.egotter_cs, user, message, buttons)
+    end
   end
 end

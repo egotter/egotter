@@ -28,6 +28,10 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
     update(finished_at: Time.zone.now)
   end
 
+  def stopped?
+    @stopped
+  end
+
   private
 
   def delete_tweets(client, tweets, threads_count)
@@ -35,7 +39,7 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
     total_size = tweets.size
     processed_count = 0
     errors_count = 0
-    stopped = false
+    @stopped = false
 
     tweets.each_slice(threads_count) do |partial_tweets|
       threads = partial_tweets.map do |tweet|
@@ -45,7 +49,7 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
           puts "#{e.inspect} tweet_id=#{tweet.id}"
           if stop_processing?(e, processed_count, errors_count += 1)
             puts 'Stop processing'
-            stopped = true
+            @stopped = true
           end
         end
       end
@@ -58,7 +62,11 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
       processed_count += partial_tweets.size
       increment!(:deletions_count, partial_tweets.size)
 
-      break if stopped
+      break if @stopped
+    end
+
+    if @stopped
+      # TODO update stopped_at
     end
   end
 
