@@ -22,15 +22,15 @@ class ImportTwitterDBUserWorker
   end
 
   # options:
-  def perform(users, options = {})
-    users = JSON.parse(Zlib::Inflate.inflate(Base64.decode64(users))) if users.is_a?(String)
+  def perform(data, options = {})
+    users = data.is_a?(String) ? JSON.parse(Zlib::Inflate.inflate(Base64.decode64(data))) : data
     import_users(users)
   rescue Deadlocked => e
     delay = rand(20) + 15
-    ImportTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, users, options.merge(klass: self.class, error_class: e.class))
+    ImportTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, data, options.merge(klass: self.class, error_class: e.class))
   rescue => e
-    handle_worker_error(e, users: users.size, options: options)
-    FailedImportTwitterDBUserWorker.perform_async(users, options.merge(klass: self.class, error_class: e.class))
+    handle_worker_error(e, options: options)
+    FailedImportTwitterDBUserWorker.perform_async(data, options.merge(klass: self.class, error_class: e.class))
   end
 
   private
