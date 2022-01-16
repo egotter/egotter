@@ -573,6 +573,9 @@ ActiveRecord::Schema.define(version: 2021_12_31_151054) do
     t.datetime "until_date"
     t.integer "reservations_count", default: 0, null: false
     t.integer "deletions_count", default: 0, null: false
+    t.integer "errors_count", default: 0, null: false
+    t.datetime "started_at"
+    t.datetime "stopped_at"
     t.datetime "finished_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

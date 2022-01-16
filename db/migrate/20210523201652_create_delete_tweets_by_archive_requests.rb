@@ -6,6 +6,9 @@ class CreateDeleteTweetsByArchiveRequests < ActiveRecord::Migration[6.0]
       t.datetime :until_date,         null: true
       t.integer  :reservations_count, null: false, default: 0
       t.integer  :deletions_count,    null: false, default: 0
+      t.integer  :errors_count,       null: false, default: 0
+      t.datetime :started_at,         null: true
+      t.datetime :stopped_at,         null: true
       t.datetime :finished_at,        null: true
 
       t.timestamps null: false

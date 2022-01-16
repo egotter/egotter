@@ -8,6 +8,9 @@
 #  until_date         :datetime
 #  reservations_count :integer          default(0), not null
 #  deletions_count    :integer          default(0), not null
+#  errors_count       :integer          default(0), not null
+#  started_at         :datetime
+#  stopped_at         :datetime
 #  finished_at        :datetime
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
