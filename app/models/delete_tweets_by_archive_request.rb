@@ -27,22 +27,18 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
 
   def perform(tweets, threads: 4)
     client = user.api_client.twitter
+    update(started_at: Time.zone.now)
     delete_tweets(client, tweets, threads)
     update(finished_at: Time.zone.now)
   end
 
   def stopped?
-    @stopped
+    stopped_at
   end
 
   private
 
   def delete_tweets(client, tweets, threads_count)
-    start_time = Time.zone.now
-    total_count = tweets.size
-    processed_count = 0
-    errors_count = 0
-    @stopped = false
     mx = Mutex.new
 
     tweets.each_slice(threads_count) do |partial_tweets|
@@ -59,25 +55,20 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
       threads.each(&:join)
 
       increment!(:deletions_count, partial_tweets.size - errors.size)
-      # TODO Update #errors_count
-      processed_count += partial_tweets.size
-      errors_count += errors.size
+      increment!(:errors_count, errors.size) if errors.any?
+      processed_count = deletions_count + errors_count
 
       if processed_count % 1000 == 0 || tweets[-1] == partial_tweets[-1]
-        puts progress(start_time, total_count, processed_count, deletions_count, errors_count)
+        puts progress(started_at, reservations_count, processed_count, deletions_count, errors_count)
       end
 
       if errors.any? { |e| TwitterApiStatus.invalid_or_expired_token?(e) } ||
           stop_processing?(processed_count, errors_count)
         puts 'Stop processing'
-        @stopped = true
+        update(stopped_at: Time.zone.now)
       end
 
-      break if @stopped
-    end
-
-    if @stopped
-      # TODO Update #stopped_at
+      break if stopped_at
     end
   end
 
@@ -85,8 +76,8 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
     errors_count > [processed_count, 1000].max / 10
   end
 
-  def progress(started_time, total_count, processed_count, deletions_count, errors_count)
+  def progress(started_time, reservations_count, processed_count, deletions_count, errors_count)
     time = Time.zone.now - started_time
-    "total #{total_count}, processed #{processed_count}, deletions #{deletions_count}, errors #{errors_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / processed_count)}"
+    "total #{reservations_count}, processed #{processed_count}, deletions #{deletions_count}, errors #{errors_count}, elapsed #{sprintf("%.3f sec", time)}, avg #{sprintf("%.3f sec", time / processed_count)}"
   end
 end

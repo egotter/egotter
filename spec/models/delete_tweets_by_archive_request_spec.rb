@@ -20,12 +20,14 @@ RSpec.describe DeleteTweetsByArchiveRequest, type: :model do
     let(:tweets) { [double('tweet1', id: 1), double('tweet2', id: 2), double('tweet2', id: 3)] }
     let(:client) { double('client') }
     subject { instance.send(:delete_tweets, client, tweets, 1) }
+    before { instance.update(reservations_count: 3, started_at: Time.zone.now) }
     it do
       expect(client).to receive(:destroy_status).with(tweets[0].id)
       expect(client).to receive(:destroy_status).with(tweets[1].id).and_raise('error')
       expect(client).to receive(:destroy_status).with(tweets[2].id)
       subject
       expect(instance.reload.deletions_count).to eq(2)
+      expect(instance.reload.errors_count).to eq(1)
     end
   end
 
