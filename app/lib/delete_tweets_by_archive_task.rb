@@ -107,7 +107,7 @@ class DeleteTweetsByArchiveTask
   end
 
   def send_started_message(request)
-    report = DeleteTweetsByArchiveReport.delete_started(user)
+    report = DeleteTweetsByArchiveReport.delete_started(user, request.reservations_count)
     report.deliver!
     puts report.message
   end
