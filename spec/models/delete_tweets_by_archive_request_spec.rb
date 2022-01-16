@@ -21,16 +21,16 @@ RSpec.describe DeleteTweetsByArchiveRequest, type: :model do
     let(:client) { double('client') }
     subject { instance.send(:delete_tweets, client, tweets, 1) }
     it do
-      tweets.each do |tweet|
-        expect(client).to receive(:destroy_status).with(tweet.id)
-      end
+      expect(client).to receive(:destroy_status).with(tweets[0].id)
+      expect(client).to receive(:destroy_status).with(tweets[1].id).and_raise('error')
+      expect(client).to receive(:destroy_status).with(tweets[2].id)
       subject
-      expect(instance.reload.deletions_count).to eq(tweets.size)
+      expect(instance.reload.deletions_count).to eq(2)
     end
   end
 
   describe '#stop_processing?' do
-    subject { instance.send(:stop_processing?, nil, 10, 5) }
+    subject { instance.send(:stop_processing?, 10, 5) }
     it { is_expected.to be_falsey }
   end
 end
