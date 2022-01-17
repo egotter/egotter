@@ -34,7 +34,7 @@ module BypassFlashMessagesConcern
   end
 
   def bypassed_notice_message_found?
-    session[:bypassed_notice_message] || start_page?
+    (session[:bypassed_notice_message] || start_page?) && !confirmation_page?
   end
 
   def bypassed_notice_message

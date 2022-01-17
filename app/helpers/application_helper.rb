@@ -72,6 +72,10 @@ module ApplicationHelper
     controller_name == 'home' && action_name == 'start'
   end
 
+  def confirmation_page?
+    %w(access_confirmations follow_confirmations interval_confirmations).include?(controller_name)
+  end
+
   def delete_tweets_top_page?
     controller_name == 'delete_tweets' && action_name == 'index'
   end
