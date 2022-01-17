@@ -15,17 +15,12 @@
 </div>
 
 <div class="mt-3 mb-1">
-  <% if follow_confirmations_page? %>
-    <div class="text-center mb-1"><%= t('.click_below_button') %></div>
-  <% end %>
+  <div class="text-center mb-1">
+    <%= follow_confirmations_page? ? t('.click_button_follow', arrow: t('.arrow_down')) : t('.click_button', arrow: t('.arrow_down')) %>
+  </div>
   <%= link_to confirmation_path, class: 'btn btn-primary btn-block' do %>
-    <% if sign_in_as_confirmation_user? %>
-      <%= image_tag(current_user_icon, class: 'rounded-circle', size: '28x28') %>
-      <%= follow_confirmations_page? ? t('.button_follow') : t('.button_success') %>
-    <% else %>
-      <%= image_tag(image_path('/logo_transparent_96x96.png'), class: 'rounded', size: '20x20') %>
-      <%= follow_confirmations_page? ? t('.button_follow') : t('.button_failure') %>
-    <% end %>
+    <%= image_tag(image_path('/logo_transparent_96x96.png'), class: 'rounded', size: '20x20') %>
+    <%= follow_confirmations_page? ? t('.button_follow') : t('.button') %>
   <% end %>
 </div>
 
@@ -33,17 +28,12 @@
 
 <div class="mt-1 mb-3">
   <%= link_to confirmation_path, class: 'btn btn-primary btn-block' do %>
-    <% if sign_in_as_confirmation_user? %>
-      <%= image_tag(current_user_icon, class: 'rounded-circle', size: '28x28') %>
-      <%= follow_confirmations_page? ? t('.button_follow') : t('.button_success') %>
-    <% else %>
-      <%= image_tag(image_path('/logo_transparent_96x96.png'), class: 'rounded', size: '20x20') %>
-      <%= follow_confirmations_page? ? t('.button_follow') : t('.button_failure') %>
-    <% end %>
+    <%= image_tag(image_path('/logo_transparent_96x96.png'), class: 'rounded', size: '20x20') %>
+    <%= follow_confirmations_page? ? t('.button_follow') : t('.button') %>
   <% end %>
-  <% if follow_confirmations_page? %>
-    <div class="text-center mt-1"><%= t('.click_above_button') %></div>
-  <% end %>
+  <div class="text-center mt-1">
+    <%= follow_confirmations_page? ? t('.click_button_follow', arrow: t('.arrow_down')) : t('.click_button', arrow: t('.arrow_down')) %>
+  </div>
 </div>
 
 <div class="my-5">
@@ -57,18 +47,17 @@
 <div class="text-muted small my-3"><%= t('.notice') %></div>
 <div class="text-muted small my-3"><%= t('.support_html', url: twitter_web_url('egotter_cs')) %></div>
 
-<% if sign_in_as_confirmation_user? && !follow_confirmations_page? %>
+<% if sign_in_as_confirmation_user? && confirmation_specified? %>
   <script>
-    function createAccessDayLog() {
-      var url = '<%= raw api_v1_access_days_path(via: current_via) %>';
-      $.post(url).done(function (res) {
-        ToastMessage.info(res.message);
-      }).fail(showErrorMessage);
-    }
-
     $(function () {
-      ToastMessage.info('<%= t('.loading_html') %>');
-      setTimeout(createAccessDayLog, 3000);
+      ToastMessage.info('<%= follow_confirmations_page? ? t('.loading_follow_html') : t('.loading_html') %>');
+      var url = '<%= raw confirmation_api_path(via: current_via) %>';
+
+      setTimeout(function () {
+        $.post(url).done(function (res) {
+          ToastMessage.info(res.message);
+        }).fail(showErrorMessage);
+      }, 3000);
     });
   </script>
 <% end %>

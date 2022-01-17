@@ -26,6 +26,9 @@ class CreateAccessDayWorker
     unless user.access_days.exists?(date: date)
       user.access_days.create(date: date, time: time)
     end
+
+    true
   rescue => e
+    false
   end
 end

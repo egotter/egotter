@@ -2056,16 +2056,18 @@ ja:
     confirmation_section:
       page_title_success: '@%{user} でログイン中です'
       page_title_failure: 'DMが届いたユーザーでログインしていません'
-      description_success: '@%{user} さん、ログインありがとうございます。アクセス履歴の確認ができました。これからもえごったーのご利用をよろしくお願いします。'
+      description_success: '@%{user} でログインしています。ボタンをクリックして確認を完了してください。'
       description_failure_html: '<span class="text-danger">DMが届いたユーザーでログインしていません。</span>アクセス履歴を確認するために、DMが届いたユーザーでえごったーに <a href="%{url}">ログイン</a> してください。'
-      button_success: '@user でログイン中'
-      button_failure: 'えごったーにログインする'
+      button: 'ログインしてアクセス履歴を確認'
       button_follow: 'ログインして @ego_tter をフォロー'
-      click_below_button: '↓ @ego_tter をフォロー後にクリック'
-      click_above_button: '↑ @ego_tter をフォロー後にクリック'
+      arrow_up: '↑'
+      arrow_down: '↓'
+      click_button: '%{arrow} アクセス履歴を確認するにはクリック'
+      click_button_follow: '%{arrow} @ego_tter をフォロー後にクリック'
       notice: 'えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
       support_html: '分からないことがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
       loading_html: 'アクセス履歴を確認中です。<img src="/ajax-loader.gif?a=1">'
+      loading_follow_html: 'フォロー履歴を確認中です。<img src="/ajax-loader.gif?a=1">'
     users_section:
       not_found: "指定された条件での検索結果は0件でした。"
       need_click: '続きを読み込むには「もっと見る」をクリックしてください。'
@@ -2207,6 +2209,11 @@ ja:
       access_days:
         create:
           success: '@%{user} のアクセス履歴の確認が完了しました。'
+          failure: '@%{user} のアクセス履歴の確認に失敗しました。もう一度お試しください。'
+      egotter_followers:
+        create:
+          success: '@%{user} のフォロー履歴の確認が完了しました。'
+          failure: '@%{user} のフォロー履歴の確認に失敗しました。もう一度お試しください。'
       banned_users:
         destroy:
           success_html: '利用制限を解除しました。そのままでお待ちください。%{count}秒後に自動的に移動します。<img src="/ajax-loader.gif?a=1">'

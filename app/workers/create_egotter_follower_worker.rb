@@ -13,8 +13,17 @@ class CreateEgotterFollowerWorker
 
   def perform(user_id, options = {})
     user = User.find(user_id)
-    EgotterFollower.import_uids([user.uid])
+    create_record(user)
   rescue => e
     handle_worker_error(e, user_id: user_id, **options)
+  end
+
+  def create_record(user)
+    unless EgotterFollower.exists?(uid: user.uid)
+      EgotterFollower.create(uid: user.uid, screen_name: user.screen_name)
+    end
+    true
+  rescue => e
+    false
   end
 end
