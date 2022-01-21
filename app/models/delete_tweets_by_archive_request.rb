@@ -24,20 +24,8 @@
 class DeleteTweetsByArchiveRequest < ApplicationRecord
   belongs_to :user
 
-  before_validation do
-    if since_date.present?
-      self.since_date -= 9.hours rescue nil
-    end
-
-    if until_date.present?
-      self.until_date -= 9.hours rescue nil
-    end
-  end
-
   validates :user_id, presence: true
   validates :archive_name, presence: true, format: {with: S3::ArchiveData::FILENAME_REGEXP}
-  validates :since_date, allow_blank: true, format: {with: /\A\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC\z/}
-  validates :until_date, allow_blank: true, format: {with: /\A\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC\z/}
 
   def perform(tweets, threads: 4)
     client = user.api_client.twitter
