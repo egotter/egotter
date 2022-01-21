@@ -6,26 +6,10 @@ module Api
       before_action :require_login!
 
       def create
-        SendMessageToSlackWorker.perform_async(:monit_delete_tweets, "`Upload completed` user_id=#{current_user.id} screen_name=#{current_user.screen_name}")
-
-        CreateDeleteTweetsUploadCompletedMessageWorker.perform_async(current_user.id, since: validated_since, until: validated_until)
+        request = DeleteTweetsByArchiveRequest.create(user_id: current_user.id, archive_name: params[:filename], since_date: params[:since], until_date: params[:until])
+        CreateDeleteTweetsUploadCompletedMessageWorker.perform_async(current_user.id, since: request.since_date, until: request.until_date)
+        SendMessageToSlackWorker.perform_async(:monit_delete_tweets, "`Upload completed` user_id=#{current_user.id} request_id=#{request.id}")
         render json: {status: 'ok'}
-      end
-
-      private
-
-      DATE_REGEXP = /\A\d{4}-\d{2}-\d{2}\z/
-
-      def validated_since
-        if params[:since]&.match?(DATE_REGEXP)
-          params[:since]
-        end
-      end
-
-      def validated_until
-        if params[:until]&.match?(DATE_REGEXP)
-          params[:until]
-        end
       end
     end
   end

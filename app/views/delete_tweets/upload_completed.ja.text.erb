@@ -1,8 +1,8 @@
 ツイート削除アーカイブデータのアップロードありがとうございます。
 
 ・削除の日付指定
-この日付から：<%= since_date ? since_date : '指定無し' %>
-この日付まで：<%= until_date ? until_date : '指定無し' %>
+この日付から：<%= since_date ? I18n.l(since_date.in_time_zone('Tokyo'), format: :long_time) : '指定無し' %>
+この日付まで：<%= until_date ? I18n.l(until_date.in_time_zone('Tokyo'), format: :long_time) : '指定無し' %>
 
 削除はすぐには始まりません。もし停止したい場合は下記の通りDMを送ってください。
 

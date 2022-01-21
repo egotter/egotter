@@ -1,10 +1,8 @@
 class DeleteTweetsByArchiveTask
-
-  def initialize(screen_name, file, dry_run: nil, since: nil, _until: nil, threads: nil)
+  def initialize(screen_name, file, since: nil, _until: nil, threads: nil)
     @screen_name = screen_name
     @file = file
     @tweets = load_tweets(file)
-    @dry_run = dry_run
     @since = since ? Time.zone.parse(since) : nil
     @until = _until ? Time.zone.parse(_until) : nil
     @threads = threads&.to_i || 4
@@ -17,7 +15,9 @@ class DeleteTweetsByArchiveTask
     puts "last_tweet=#{@tweets[-1].created_at.to_s(:db)}"
 
     initialize_task
-    request = DeleteTweetsByArchiveRequest.create!(user_id: user.id, since_date: @since, until_date: @until, reservations_count: @deletable_tweets.size)
+    # request = DeleteTweetsByArchiveRequest.create!(user_id: user.id, since_date: @since, until_date: @until, reservations_count: @deletable_tweets.size)
+    request = DeleteTweetsByArchiveRequest.order(created_at: :desc).find_by(user_id: user.id)
+    request.update(reservations_count: @deletable_tweets.size)
 
     send_started_message(request)
     request.perform(@deletable_tweets, threads: @threads)
@@ -54,30 +54,6 @@ class DeleteTweetsByArchiveTask
       raise "There are no tweets user_id=#{user.id}"
     end
     puts "tweets_size=#{@tweets.size}"
-
-    tweet_ids = @tweets.map(&:id)
-    tweet = nil
-
-    [0, tweet_ids.size / 2, tweet_ids.size - 1].each do |i|
-      tweet = user.api_client.twitter.status(tweet_ids[i])
-      break
-    rescue => e
-      if TweetStatus.no_status_found?(e) || TweetStatus.not_authorized?(e) || TweetStatus.you_have_been_blocked?(e)
-        puts "Skip #{e.message} tweet_id=#{tweet_ids[i]}"
-        next
-      else
-        raise "#{e.message} tweet_id=#{tweet_ids[i]}"
-      end
-    end
-
-    if tweet.nil?
-      raise "No status found user_id=#{user.id}"
-    end
-
-    if tweet.user.id != user.uid
-      raise "The uid of the user doesn't match the uid of a tweet user_id=#{user.id} tweet_id=#{tweet_ids[0]}"
-    end
-    puts "tweet_author=#{tweet.user.screen_name}"
   end
 
   def initialize_task
