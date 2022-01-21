@@ -4,6 +4,7 @@
 #
 #  id                 :bigint(8)        not null, primary key
 #  user_id            :integer          not null
+#  archive_name       :string(191)
 #  since_date         :datetime
 #  until_date         :datetime
 #  reservations_count :integer          default(0), not null

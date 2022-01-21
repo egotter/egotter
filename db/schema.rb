@@ -569,6 +569,7 @@ ActiveRecord::Schema.define(version: 2021_12_31_151054) do
 
   create_table "delete_tweets_by_archive_requests", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
+    t.string "archive_name"
     t.datetime "since_date"
     t.datetime "until_date"
     t.integer "reservations_count", default: 0, null: false

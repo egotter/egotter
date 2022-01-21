@@ -2,6 +2,7 @@ class CreateDeleteTweetsByArchiveRequests < ActiveRecord::Migration[6.0]
   def change
     create_table :delete_tweets_by_archive_requests do |t|
       t.integer  :user_id,            null: false
+      t.string   :archive_name,       null: true
       t.datetime :since_date,         null: true
       t.datetime :until_date,         null: true
       t.integer  :reservations_count, null: false, default: 0
