@@ -2731,3 +2731,4 @@ ja:
       settings_short: "%m-%d %H:%M"
       birthday: "%Y年%-m月%-d日"
       long_time: "%-m月%-d日 %-H時%-M分"
+      long_year: "%Y年%-m月%-d日 %-H時%-M分"
