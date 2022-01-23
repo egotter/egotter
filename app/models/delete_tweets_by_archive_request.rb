@@ -42,6 +42,7 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
 
   def delete_tweets(client, tweets, threads_count)
     mx = Mutex.new
+    consecutive_errors_count = 0
 
     tweets.each_slice(threads_count) do |partial_tweets|
       errors = []
@@ -49,8 +50,12 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
       threads = partial_tweets.map do |tweet|
         Thread.new do
           client.destroy_status(tweet.id)
+          consecutive_errors_count = 0 if consecutive_errors_count > 0
         rescue => e
-          mx.synchronize { errors << e }
+          mx.synchronize do
+            errors << e
+            consecutive_errors_count += 1
+          end
           puts "#{e.inspect} tweet_id=#{tweet.id}"
         end
       end
@@ -65,7 +70,8 @@ class DeleteTweetsByArchiveRequest < ApplicationRecord
       end
 
       if errors.any? { |e| TwitterApiStatus.invalid_or_expired_token?(e) } ||
-          stop_processing?(processed_count, errors_count)
+          stop_processing?(processed_count, errors_count) ||
+          consecutive_errors_count > 100
         puts 'Stop processing'
         update(stopped_at: Time.zone.now)
       end
