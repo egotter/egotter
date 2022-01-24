@@ -89,7 +89,7 @@ class DeleteTweetsByArchiveTask
   end
 
   def send_completed_message(request)
-    report = DeleteTweetsByArchiveReport.delete_completed(user, request.deletions_count)
+    report = DeleteTweetsByArchiveReport.delete_completed(user, request.deletions_count, request.errors_count)
     report.deliver!
     puts report.message
   end

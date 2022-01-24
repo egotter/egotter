@@ -25,10 +25,11 @@ class DeleteTweetsByArchiveReport
       new(User.egotter_cs, user, message, [])
     end
 
-    def delete_completed(user, deletions_count)
+    def delete_completed(user, deletions_count, errors_count)
       template = Rails.root.join('app/views/delete_tweets_by_archive/delete_completed.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          destroy_count: deletions_count
+          deletions_count: deletions_count,
+          errors_count: errors_count,
       )
       buttons = [{label: I18n.t('quick_replies.delete_reports.label1'), description: I18n.t('quick_replies.delete_reports.description1')}]
       new(User.egotter_cs, user, message, buttons)
