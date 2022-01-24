@@ -25,3 +25,4 @@
   - report_low
   - retry_low
   - CreateReportTwitterUserWorker
+  - batch
