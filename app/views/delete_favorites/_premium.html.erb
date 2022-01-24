@@ -1,6 +1,7 @@
 <div id="delete-favorites-uploader" class="my-5"><%= t('.description', user: current_user.screen_name) %></div>
 
 <%= alert_box category: 'danger', class: 'my-5' do %>
+  <div id="delete-favorites-note" class="anchor-offset"></div>
   <%= t('.notice_html', url: twitter_developer_feedback_fix_unlike_path) %>
 <% end %>
 
@@ -29,7 +30,7 @@
       </div>
 
       <div class="text-center mt-3">
-        <%= link_to '#', id: 'delete-favorites-button', class: 'btn btn-outline-primary' do %>
+        <%= link_to '#delete-favorites-note', id: 'disable-delete-favorites-button', class: 'btn btn-outline-primary' do %>
           <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
           <%= t('.button') %>
         <% end %>
