@@ -34,6 +34,8 @@
             <label for="until_date"><%= t('.until_date') %></label>
             <%= date_field_tag('until_date') %>
           </div>
+
+          <div id="dates_error_message" class="small text-danger mt-2" style="display: none;"><%= t('.dates_are_invalid') %></div>
         </div>
 
         <div class="mb-4">
@@ -84,9 +86,6 @@
 
 <script>
   $(function () {
-    var datesAreInvalid = '<%= t('.dates_are_invalid') %>';
-    var checkIsRequired = '<%= t('.check_is_required') %>';
-
     $('#send_dm').on('change', function () {
       var url = '<%= raw direct_message_url(User::EGOTTER_UID, t('.test_message')) %>';
       if ($(this).prop('checked')) {
@@ -96,7 +95,9 @@
       }
     });
 
-    var datesSelector = new DeleteTweetsDatesSelector('since_date', 'until_date');
+    var datesAreInvalid = '<%= t('.dates_are_invalid') %>';
+    var checkIsRequired = '<%= t('.check_is_required') %>';
+    var datesSelector = new DeleteTweetsDatesSelector('since_date', 'until_date', 'dates_error_message');
     var multipleRetryCheckbox = new DeleteTweetsRequiredCheckbox('multiple-retry');
     var tooOldTweetsCheckbox = new DeleteTweetsRequiredCheckbox('too-old-tweets');
 

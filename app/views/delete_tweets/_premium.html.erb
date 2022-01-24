@@ -15,6 +15,8 @@
           <label for="premium_until_date"><%= t('.until_date') %></label>
           <%= date_field_tag('premium_until_date') %>
         </div>
+
+        <div id="premium_dates_error_message" class="small text-danger mt-2" style="display: none;"><%= t('.dates_are_invalid') %></div>
       </div>
 
       <div class="mb-4">
@@ -64,17 +66,26 @@
           </div>
           <script>
             $(function () {
+              var datesAreInvalid = '<%= t('.dates_are_invalid') %>';
               var checkIsRequired = '<%= t('.check_is_required') %>';
+              var datesSelector = new DeleteTweetsDatesSelector('premium_since_date', 'premium_until_date', 'premium_dates_error_message');
               var multipleRetryCheckbox = new DeleteTweetsRequiredCheckbox('premium_multiple_retry');
               var completeDataCheckbox = new DeleteTweetsRequiredCheckbox('premium_complete_data');
 
               $('#delete-tweets-button').on('click', function (e) {
                 var validated = [
+                  datesSelector.validate(),
                   multipleRetryCheckbox.validate(),
                   completeDataCheckbox.validate()
                 ];
 
-                if (!validated[0] || !validated[1]) {
+                if (!validated[0]) {
+                  e.stopImmediatePropagation(); // Prevent a file selector from being opened
+                  window.alert(datesAreInvalid);
+                  return false;
+                }
+
+                if (!validated[1] || !validated[2]) {
                   e.stopImmediatePropagation(); // Prevent a file selector from being opened
                   window.alert(checkIsRequired);
                   return false;

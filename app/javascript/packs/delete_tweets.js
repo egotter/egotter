@@ -1,9 +1,10 @@
 class DeleteTweetsDatesSelector {
-  constructor(since_id, until_id) {
+  constructor(since_id, until_id, error_id) {
     this.$since = $('#' + since_id);
     this.$until = $('#' + until_id);
     this.$since_label = $('label[for="' + since_id + '"]');
     this.$until_label = $('label[for="' + until_id + '"]');
+    this.$error_message = $('#' + error_id);
 
     this.$since.on('change', this.validate.bind(this));
     this.$until.on('change', this.validate.bind(this));
@@ -16,6 +17,7 @@ class DeleteTweetsDatesSelector {
     if (!v1 || !v2) {
       this.$since_label.removeClass('text-danger');
       this.$until_label.removeClass('text-danger');
+      this.$error_message.hide();
       return true;
     }
 
@@ -25,10 +27,12 @@ class DeleteTweetsDatesSelector {
     if (d1 <= d2) {
       this.$since_label.removeClass('text-danger');
       this.$until_label.removeClass('text-danger');
+      this.$error_message.hide();
       return true;
     } else {
       this.$since_label.addClass('text-danger');
       this.$until_label.addClass('text-danger');
+      this.$error_message.show();
       return false;
     }
   }

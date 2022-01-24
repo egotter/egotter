@@ -1657,6 +1657,7 @@ ja:
       test_message_reason: '事前に一度DMを送っておくことで通知が届きやすくなります。'
       required: '*'
       reason: '理由'
+      dates_are_invalid: '「この日付から」が小さい日付、「この日付まで」が大きい日付になるように日付を選択してください。'
       check_is_required: '必須のチェックボックスが選択されていません。'
       note1_html: 'アーカイブデータは <a href="%{url}" target="_blank">事前にご用意</a> ください。'
       note2: 'twitter-0000-00-00-aaaaaa.zip を選択してください。'
