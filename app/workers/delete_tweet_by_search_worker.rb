@@ -1,7 +1,7 @@
 class DeleteTweetBySearchWorker
   include Sidekiq::Worker
   include WorkerErrorHandler
-  sidekiq_options queue: 'deleting_low', retry: 0, backtrace: false
+  sidekiq_options queue: 'batch', retry: 0, backtrace: false
 
   # options:
   def perform(request_id, tweet_id, options = {})

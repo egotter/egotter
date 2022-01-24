@@ -14,4 +14,3 @@
   - ImportTwitterDBUserWorker
   - CreateTwitterDBUserWorker
   - CreateReportTwitterUserWorker
-  - batch
