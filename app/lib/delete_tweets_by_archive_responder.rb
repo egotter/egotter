@@ -14,13 +14,19 @@ class DeleteTweetsByArchiveResponder < AbstractMessageResponder
     def received?
       return false if @text.length > message_length
 
-      if @text.match?(stop_regexp)
+      if @text.match?(ok_regexp)
+        @ok = true
+      elsif @text.match?(stop_regexp)
         @stop = true
       elsif @text.match?(change_regexp)
         @change = true
       end
 
-      @stop || @change
+      @ok || @stop || @change
+    end
+
+    def ok_regexp
+      /アーカイブ削除(\s|　)*[oOＯ][kKＫ]/
     end
 
     def stop_regexp
@@ -32,7 +38,9 @@ class DeleteTweetsByArchiveResponder < AbstractMessageResponder
     end
 
     def send_message
-      if @stop || @change
+      if @ok
+        # Do nothing
+      elsif @stop || @change
         # TODO Verify that the request really exists
         CreateDeleteTweetsByArchiveStopRequestedMessageWorker.perform_async(@uid)
       end

@@ -19,6 +19,17 @@ describe DeleteTweetsByArchiveResponder::Processor do
     end
   end
 
+  describe '#ok_regexp' do
+    subject { text.match?(instance.ok_regexp) }
+
+    ['アーカイブ削除 OK', 'アーカイブ削除 ok', 'アーカイブ削除 ＯＫ'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
   describe '#stop_regexp' do
     subject { text.match?(instance.stop_regexp) }
 

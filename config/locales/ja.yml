@@ -1910,7 +1910,7 @@ ja:
     delete_reports:
       label1: 'DM届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
-      label2: 'このままでOK'
+      label2: 'アーカイブ削除 OK'
       description2: '問題が無い場合は押しておくと安心です'
       label3: 'アーカイブ削除 停止'
       description3: '削除の開始前に押すと、削除が完全に止まります'
