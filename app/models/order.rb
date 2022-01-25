@@ -39,20 +39,20 @@ class Order < ApplicationRecord
 
   BASIC_PLAN_ID = ENV['STRIPE_BASIC_PLAN_ID']
   BASIC_PLAN_PRICE_ID = ENV['STRIPE_BASIC_PLAN_PRICE_ID']
-  BASIC_PLAN_DURATION_TO_DISCOUNT_PRICE = {
-      'payment-1' => 600,
-      'payment-3' => 873,
-      'payment-6' => 1709,
-      'payment-12' => 3236,
+  BASIC_PLAN_MONTHLY_BASIS = {
+      'monthly-basis-1' => 600,
+      'monthly-basis-3' => 873,
+      'monthly-basis-6' => 1709,
+      'monthly-basis-12' => 3236,
   }
   # 3 months: 300 * 3 * 0.97 * 1.1 = 960
   # 6 months: 300 * 6 * 0.95 * 1.1 = 1881
   # 12 months: 300 * 12 * 0.90 * 1.1 = 3564
-  BASIC_PLAN_DURATION_TO_DISCOUNT_PRICE_TAX_INCLUDED = {
-      'payment-1' => 660,
-      'payment-3' => 960,
-      'payment-6' => 1880,
-      'payment-12' => 3560,
+  BASIC_PLAN_MONTHLY_BASIS_TAX_INCLUDED = {
+      'monthly-basis-1' => 660,
+      'monthly-basis-3' => 960,
+      'monthly-basis-6' => 1880,
+      'monthly-basis-12' => 3560,
   }
   TAX_RATE_ID = ENV['STRIPE_TAX_RATE_ID']
   TAX_RATE = 0.1
