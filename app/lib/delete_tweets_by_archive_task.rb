@@ -31,16 +31,14 @@ class DeleteTweetsByArchiveTask
 
   private
 
-  def load_tweets(file)
-    files = file.include?(',') ? file.split(',') : [file]
-    tweets = []
+  def load_tweets(paths)
+    files = paths.include?(',') ? paths.split(',') : [paths]
+    files.reject! { |f| f.include?('tweetdeck.js') }
 
-    files.each do |filename|
-      data = File.read(filename).remove(/\Awindow\.YTD\.tweet\.part\d+ =/)
-      tweets.concat(JSON.load(data).map { |hash| Tweet.from_hash(hash) })
-    end
-
-    tweets.sort_by(&:created_at)
+    files.map do |file|
+      data = File.read(file).remove(/\Awindow\.YTD\.tweet\.part\d+ =/)
+      JSON.load(data).map { |hash| Tweet.from_hash(hash) }
+    end.flatten.sort_by(&:created_at)
   end
 
   def validate_task
