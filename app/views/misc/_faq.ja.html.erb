@@ -28,26 +28,48 @@
   <% end %>
 
   <% faq_question 'えごったーに公式アカウントはありますか？' do %>
-    <div class="mb-3">
-      @ego_tter が公式アカウントです。フォローしていると検索回数や使える機能が増えます。
-      <%= link_to '@ego_tter を開く', user_url('ego_tter'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
-    </div>
-
-    @egotter_cs は問い合わせ用のアカウントです。お返事が必要な場合はこちらにご連絡ください。
-    <%= link_to '@egotter_cs を開く', user_url('egotter_cs'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    <p>@ego_tter、@egotter_cs、@egotter_ai の3つがあります。</p>
+    <p><%= link_to '@ego_tter', twitter_web_url('ego_tter'), target: '_blank' %> は定期的なアナウンスを行います。 さらに、フォローしていると検索回数や使える機能が増える、DMで通知が届くという機能があります。</p>
+    <p><%= link_to '@egotter_cs', twitter_web_url('egotter_cs'), target: '_blank' %> は問い合わせ用のアカウントです。お返事が必要な場合はこのアカウントにご連絡ください。</p>
+    <%= link_to '@egotter_ai', twitter_web_url('egotter_ai'), target: '_blank' %> はツイッター全体の分析や投票をたまに行うアカウントです。
   <% end %>
 
-  <% faq_question '@ego_tter と @egotter_cs の違いは何ですか？' do %>
-    <div class="mb-3">
-      @ego_tter は、フォローしていると使える機能が増えたりします。さらに、DMで特定の言葉を送ることで自動通知を行うことができます。
-    </div>
+  <% faq_question '@ego_tter がどういうアカウントなのか詳しく教えてください' do %>
+    <div><strong>・フォローすると機能が増えます</strong></div>
+    <p><%= link_to '@ego_tter', twitter_web_url('ego_tter'), target: '_blank' %> をフォローしているとえごったーWebサイトでの検索回数や使える機能が増えます。</p>
 
-    @egotter_cs は、中の人がお返事をするためのアカウントです。回答が必要な連絡は必ずこちらに送ってください。
+    <div><strong>・通知がDMで届きます</strong></div>
+    <p><%= link_to '@ego_tter', twitter_web_url('ego_tter'), target: '_blank' %> にこのどれかのメッセージを送ると対応した通知が届きます。
+      例：<%= link_to t('quick_replies.prompt_reports.label3'), direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), target: '_blank' %> /
+      <%= link_to t('quick_replies.block_reports.label4'), direct_message_url(User::EGOTTER_UID, t('quick_replies.block_reports.label4')), target: '_blank' %> /
+      <%= link_to t('quick_replies.mute_reports.label4'), direct_message_url(User::EGOTTER_UID, t('quick_replies.mute_reports.label4')), target: '_blank' %>
+    </p>
+
+    <div><strong>・定期的なアナウンスをします</strong></div>
+    <p><%= link_to '@ego_tter', twitter_web_url('ego_tter'), target: '_blank' %> は定期的に「○○機能が追加されました」というアナウンスを行います。</p>
+  <% end %>
+
+  <% faq_question '@egotter_cs がどういうアカウントなのか詳しく教えてください', id: 'about_egotter_cs' do %>
+    <p><%= link_to '@egotter_cs', twitter_web_url('egotter_cs'), target: '_blank' %> は問い合わせ用のアカウントです。お返事が必要な場合はこのアカウントにご連絡ください。ただし、問い合わせが多すぎて返事はとても遅いです。</p>
+    <p>質問を送る前に、下記の注意事項をお読みください。</p>
+
+    <div><strong>・よくある質問 を事前に読んでください</strong></div>
+    <p>ほとんどの質問の回答は <%= link_to 'よくある質問', support_path(via: current_via('about_egotter_cs')) %> に既に書いてあります。<br>
+      質問をもらっても返事はすごく遅くなります。自分で回答を探した方が早く答えが見付かります。</p>
+
+    <div><strong>・質問を送るときは 丁寧な文章 で書いてください</strong></div>
+    <p>質問文に乱暴な言葉が使われていると、自動でスパム判定されてその後の返信はなくなります。目安として「道を歩いていて、知らない人に話しかけて失礼にあたらない文章」を使ってください。<br>
+      スパム判定される例：「○○ってどゆこと？」や「○○はどうなってんの？」のような文章、「○○しろよ」のような命令、乱暴な単語全般
+    </p>
+
+    <div><strong>・返事の催促 はしないでください</strong></div>
+    <p>何度も回答を催促されると、自動でスパム判定されてその後の返信はなくなります。<br>
+      どうしても急ぎで回答を知りたい場合は <%= link_to '料金プラン > 有償サポート', pricing_path(via: current_via('about_egotter_cs')) %>を購入してください。</p>
   <% end %>
 
   <% faq_question '公式アカウントをフォローするメリット' do %>
     @ego_tter をフォローするとWebサイトでの検索回数や使える機能が増えます。さらに、@ego_tter に【リムられ通知 送信】とDMすることでリムられ通知を受け取ることができます。
-    <%= link_to '@ego_tter を開く', user_url('ego_tter'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
+    <%= link_to '@ego_tter を開く', twitter_web_url('ego_tter'), class: 'btn btn-outline-primary btn-sm', target: '_blank' %>
   <% end %>
 
   <% faq_question '公式アカウントのフォローは必須ですか？' do %>
