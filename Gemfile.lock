@@ -395,7 +395,7 @@ GEM
       tilt
     semantic_range (2.3.0)
     sexp_processor (4.15.1)
-    sidekiq (6.2.2)
+    sidekiq (6.4.0)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
