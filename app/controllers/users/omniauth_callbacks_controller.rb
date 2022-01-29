@@ -8,13 +8,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   skip_before_action :validate_dm_permission!
   skip_before_action :current_user_not_blocker?
 
-  after_action only: :twitter do
-    update_search_histories_when_signing_in(@user)
-    update_twitter_db_user(@user.uid)
-    request_creating_twitter_user(@user.uid)
-  end
-
-  after_action :follow_egotter, only: :twitter
   after_action :delete_tracking_params
 
   def twitter
@@ -34,7 +27,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       track_invitation_event(click_id)
     end
 
-    @user = user
+    update_search_histories_when_signing_in(user)
+    update_twitter_db_user(user.uid)
+    request_creating_twitter_user(user.uid)
+    follow_egotter(user)
 
     redirect_to after_callback_path(user, save_context)
   end
@@ -67,11 +63,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     [nil, nil]
   end
 
-  def follow_egotter
+  def follow_egotter(user)
     if 'true' == session[:sign_in_follow]
-      request = FollowRequest.create(user_id: @user.id, uid: User::EGOTTER_UID, requested_by: 'sign_in')
+      request = FollowRequest.create(user_id: user.id, uid: User::EGOTTER_UID, requested_by: 'sign_in')
       CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
-      CreateEgotterFollowerWorker.perform_async(@user.id)
+      CreateEgotterFollowerWorker.perform_async(user.id)
     end
   end
 
