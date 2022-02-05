@@ -1,7 +1,7 @@
 class ActivateSubscriptionTask
 
-  def initialize(user, months_count, email: nil, price_id: nil)
-    @user = user
+  def initialize(screen_name:, months_count:, email:, price_id:)
+    @screen_name = screen_name
     @months_count = months_count.to_i
     @email = email
     @price_id = price_id
@@ -18,17 +18,20 @@ class ActivateSubscriptionTask
   private
 
   def validate_task
+    unless User.where(screen_name: @screen_name).one?
+      raise 'The number of users is not one.'
+    end
+    @user = User.find_by(screen_name: @screen_name)
+
     @user.api_client.twitter.verify_credentials
 
     if @user.has_valid_subscription?
       raise 'The user already has a subscription.'
     end
-    puts "user=#{@user.screen_name}"
 
     if @months_count <= 0
       raise "Invalid months_count value=#{@months_count}"
     end
-    puts "months=#{@months_count}"
   end
 
   def start_task

@@ -39,10 +39,9 @@ namespace :orders do
   end
 
   task create: :environment do
-    user = ENV['USER_ID'] ? User.find(ENV['USER_ID']) : User.find_by(screen_name: ENV['SCREEN_NAME'])
     ActivateSubscriptionTask.new(
-        user,
-        ENV['MONTHS_COUNT'],
+        screen_name: ENV['SCREEN_NAME'],
+        months_count: ENV['MONTHS_COUNT'],
         email: ENV['EMAIL'],
         price_id: ENV['PRICE_ID']
     ).start
