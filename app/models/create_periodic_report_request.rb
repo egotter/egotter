@@ -108,7 +108,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
           creation_completed.
           where(uid: request.user.uid).
           where(created_at: @start_date..@end_date).
-          order(created_at: :desc).limit(50).reverse
+          order(created_at: :desc).limit(10).reverse
     end
 
     def build
@@ -164,8 +164,12 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
 
     def total_unfollower_uids
-      if unfollower_uids.empty? && (twitter_user = TwitterUser.latest_by(uid: @request.user.uid))
-        twitter_user.unfollower_uids.uniq
+      if unfollower_uids.empty?
+        twitter_users = TwitterUser.select(:id, :uid, :screen_name, :created_at).
+            creation_completed.
+            where(uid: @request.user.uid).
+            order(created_at: :desc).limit(10).reverse
+        TwitterUser.calc_total_new_unfollower_uids(twitter_users).uniq
       else
         []
       end
