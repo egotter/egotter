@@ -77,6 +77,10 @@ class DeleteTweetsByArchiveTask
       print 'd'
     end
 
+    if @deletable_tweets.empty?
+      send_no_tweet_found_message
+      raise "\nThere are no deletable tweets user_id=#{user.id}"
+    end
     puts "\nprocessed #{processed} skipped #{skipped_tweets.size}"
   end
 
