@@ -18,12 +18,20 @@ class ActivateSubscriptionTask
   private
 
   def validate_task
+    unless User.where(screen_name: @screen_name).exists?
+      raise 'User is not found.'
+    end
+
     unless User.where(screen_name: @screen_name).one?
       raise 'The number of users is not one.'
     end
     @user = User.find_by(screen_name: @screen_name)
 
     @user.api_client.twitter.verify_credentials
+
+    unless @user.api_client.user[:screen_name] == @user.screen_name
+      raise "The user's screen_name is not up to date."
+    end
 
     if @user.has_valid_subscription?
       raise 'The user already has a subscription.'
@@ -51,10 +59,10 @@ class ActivateSubscriptionTask
   end
 
   def send_starting_message(user)
-    OrdersReport.starting_message(User.egotter_cs, user).deliver!
-  rescue => e
-    puts "Sending starting message failed exception=#{e.inspect}"
-    OrdersReport.starting_message(user).deliver!
+    cs = User.egotter_cs
+    unless cs.api_client.twitter.friendship(cs.uid, user.uid).source.can_dm?
+      OrdersReport.starting_message(user, cs).deliver!
+    end
   end
 
   def send_finishing_message(user, months_count)

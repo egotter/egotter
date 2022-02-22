@@ -14,8 +14,7 @@ class OrdersReport
   end
 
   class << self
-    def starting_message(from_user, to_user = nil)
-      to_user = User.egotter_cs unless to_user
+    def starting_message(from_user, to_user)
       template = Rails.root.join('app/views/orders/start.ja.text.erb')
       message = ERB.new(template.read).result
       new(from_user, to_user, message)
