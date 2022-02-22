@@ -642,6 +642,7 @@ ja:
         delete_tweets:
           title: 'ツイートの完全な削除'
           description: 'アーカイブデータを利用してすべてのツイートを一括削除できます。'
+        note_html: '<strong>ヒント</strong><br>「いいね」の削除は全て無料です。有料プランを購入せずに利用できます。'
       type:
         title: 'プランの種類'
         description_html: |
