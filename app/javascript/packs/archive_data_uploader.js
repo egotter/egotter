@@ -138,6 +138,8 @@ class ArchiveFile {
 
     if (!file.name.match(/^twitter-20\d{2}-\d{2}-\d{2}-[a-z0-9-]+.zip$/i)) {
       this.errors = ['invalidFilename'];
+    } else if (Date.now() - Date.parse(file.name.match(/20\d{2}-\d{2}-\d{2}/)[0]) > 7 * 24 * 60 * 60 * 1000) {
+      this.errors = ['tooOldFile'];
     } else if (file.type.indexOf('zip') === -1 && file.type.indexOf('octet-stream' === -1)) {
       this.errors = ['invalidContentType'];
     } else if (file.size < 1000000) { // 1MB

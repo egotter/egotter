@@ -1688,6 +1688,10 @@ ja:
         <p>ファイル名(twitter-長い文字.zip)が間違っています。<span class="text-danger">Twitterから取得したアーカイブデータをそのまま指定してください。</span></p>
         %{support_message}
         %{debug_message}
+      too_old_file_html:
+        <p>ファイルが古すぎます。<span class="text-danger">アーカイブデータの作成から1週間以内にアップロードしてください。</span></p>
+        %{support_message}
+        %{debug_message}
       invalid_content_type_html:
         <p>ファイルの形式(zip)が違います。<span class="text-danger">Twitterから取得したアーカイブデータをそのまま指定してください。</span></p>
         %{support_message}
