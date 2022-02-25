@@ -1727,6 +1727,10 @@ ja:
         <p><a href="%{url}" target="_blank">@egotter_cs</a> から届くDMをお待ちください。</p>
         <p>DMが届かない場合は、@egotter_cs に「この画面のスクリーンショット」と「アップロード完了しましたというテキスト」をDMしてください。</p>
         このWebページは閉じて大丈夫です。
+      duplicate_file_uploaded_html:
+        <p>以前と同じデータがアップロードされています。<span class="text-danger">一度使ったデータは利用できません。ツイッターWebサイトで新しく作成したデータをアップロードしてください。</span></p>
+        %{support_message}
+        %{debug_message}
       fail_html:
         <p>ファイルのアップロードに失敗しました。何度も起きる場合はこのメッセージのスクリーンショットを <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。</p>
         <div>reason={reason}</div>

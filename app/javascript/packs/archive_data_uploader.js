@@ -47,8 +47,11 @@ class ArchiveDataUploader {
         writeTweetFiles(data).then(function (newFile) {
           self.uploadFile(newFile, file.attrs()).then(function () {
             self.completed = true;
-            self.notifyUploadCompleted(self.metadata);
-            showMessage(i18n['success']);
+            self.notifyUploadCompleted(self.metadata, function () {
+              showMessage(i18n['success']);
+            }, function () {
+              showMessage(i18n['duplicateFileUploaded'], file.attrs());
+            });
           }).catch(function (err) {
             logger.warn('uploadFile() failed', err);
             showMessage(i18n['fail'], Object.assign({reason: err}, file.attrs()));
@@ -117,9 +120,8 @@ class ArchiveDataUploader {
     return upload.on('httpUploadProgress', onProgress).promise();
   }
 
-  notifyUploadCompleted(metadata) {
-    $.post(this.notifyUrl, metadata).done(function () {
-    }).fail(showErrorMessage);
+  notifyUploadCompleted(metadata, callback, error_callback) {
+    $.post(this.notifyUrl, metadata).done(callback).fail(error_callback);
   }
 }
 
