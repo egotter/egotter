@@ -64,6 +64,10 @@ class ApiClient
     create_direct_message_event(event: event)
   end
 
+  def can_dm?(uid)
+    twitter.friendship(@user.uid, uid).source.can_dm?
+  end
+
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
       RequestWithRetryHandler.new(method).perform do

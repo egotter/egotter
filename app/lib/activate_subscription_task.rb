@@ -60,7 +60,7 @@ class ActivateSubscriptionTask
 
   def send_starting_message(user)
     cs = User.egotter_cs
-    unless cs.api_client.twitter.friendship(cs.uid, user.uid).source.can_dm?
+    unless cs.api_client.can_dm?(user.uid)
       OrdersReport.starting_message(user, cs).deliver!
     end
   end
