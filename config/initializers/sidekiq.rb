@@ -1,6 +1,4 @@
-unless File.basename($0) == 'rake'
-  Sidekiq.logger.level = Logger::DEBUG
-end
+Sidekiq.strict_args!(false)
 
 database = Rails.env.test? ? 1 : 0
 redis_options = {

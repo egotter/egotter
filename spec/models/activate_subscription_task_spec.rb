@@ -16,6 +16,7 @@ RSpec.describe ActivateSubscriptionTask, type: :model do
 
     before do
       allow(User).to receive(:find_by).with(screen_name: user.screen_name).and_return(user)
+      allow(user).to receive_message_chain(:api_client, :user).and_return(screen_name: user.screen_name)
     end
 
     it do

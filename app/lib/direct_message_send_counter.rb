@@ -12,9 +12,9 @@ class DirectMessageSendCounter
 
   def increment(uid)
     k = key(uid)
-    @redis.pipelined do
-      @redis.incr(k)
-      @redis.expire(k, TTL)
+    @redis.pipelined do |pipeline|
+      pipeline.incr(k)
+      pipeline.expire(k, TTL)
     end
   rescue => e
     @redis.expire(k, TTL) rescue nil
