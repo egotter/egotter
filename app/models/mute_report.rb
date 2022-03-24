@@ -101,7 +101,7 @@ class MuteReport < ApplicationRecord
           has_subscription: has_subscription,
           page_url: url_helper.interval_confirmations_url(url_options.except(:sign_in_dialog).merge(user_token: user.user_token)),
           first_name: mask_name(muted_user&.screen_name),
-          users_count: BlockingRelationship.where(to_uid: user.uid).size,
+          users_count: MutingRelationship.where(to_uid: user.uid).size,
           interval: DateHelper.distance_of_time_in_words(REQUEST_INTERVAL),
           last_time: last_report_time(user.id),
           next_time: next_report_time(user.id),
