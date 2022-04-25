@@ -146,7 +146,7 @@ class ArchiveFile {
       this.errors = ['invalidContentType'];
     } else if (file.size < 1000000) { // 1MB
       this.errors = ['filesizeTooSmall'];
-    } else if (file.size > 30000000000) { // 30GB
+    } else if (file.size > 60000000000) { // 60GB
       this.errors = ['filesizeTooLarge'];
     }
 
