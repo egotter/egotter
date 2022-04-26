@@ -178,8 +178,6 @@ module Tasks
       end
 
       def update_datadog(role = nil)
-        backend('sudo rm /etc/datadog-agent/conf.d/nginx.d/conf.yaml')
-
         if role == 'web'
           # Do nothing
         elsif role == 'sidekiq'
