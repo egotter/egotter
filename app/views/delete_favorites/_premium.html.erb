@@ -34,6 +34,15 @@
           <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
           <%= t('.button') %>
         <% end %>
+        <script>
+          $(function () {
+            $('#disable-delete-favorites-button').on('click', function () {
+              var message = '<%= t('.notice2') %>';
+              window.alert(message);
+              return true;
+            });
+          });
+        </script>
       </div>
       <div class="text-muted small">
         <div class="mt-1"><%= t('.note1_html', url: delete_favorites_faq_path(anchor: 'what_is_archive_data')) %></div>
