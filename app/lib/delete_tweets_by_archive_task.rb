@@ -47,6 +47,13 @@ class DeleteTweetsByArchiveTask
     end
     puts "user=#{user.screen_name}"
 
+    begin
+      user.api_client.twitter.verify_credentials
+    rescue => e
+      send_expired_credentials_message
+      raise
+    end
+
     if @tweets.empty?
       send_no_tweet_found_message
       raise "There are no tweets user_id=#{user.id}"
@@ -92,6 +99,12 @@ class DeleteTweetsByArchiveTask
 
   def send_completed_message(request)
     report = DeleteTweetsByArchiveReport.delete_completed(user, request.deletions_count, request.errors_count)
+    report.deliver!
+    puts report.message
+  end
+
+  def send_expired_credentials_message
+    report = DeleteTweetsByArchiveReport.expired_credentials(user)
     report.deliver!
     puts report.message
   end

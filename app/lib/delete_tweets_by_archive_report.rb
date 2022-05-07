@@ -35,6 +35,13 @@ class DeleteTweetsByArchiveReport
       new(User.egotter_cs, user, message, buttons)
     end
 
+    def expired_credentials(user)
+      template = Rails.root.join('app/views/delete_tweets_by_archive/expired_credentials.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash({})
+      buttons = [{label: I18n.t('quick_replies.delete_reports.label1'), description: I18n.t('quick_replies.delete_reports.description1')}]
+      new(User.egotter_cs, user, message, buttons)
+    end
+
     def no_tweet_found(user)
       template = Rails.root.join('app/views/delete_tweets_by_archive/no_tweet_found.ja.text.erb')
       message = ERB.new(template.read).result_with_hash({})
