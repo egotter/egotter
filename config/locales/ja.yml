@@ -1705,7 +1705,7 @@ ja:
         <p>個別に対応しますので このメッセージのスクリーンショットを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
         %{debug_message}
       broken_file_html:
-        <p>壊れたファイルが指定されています。<span class="text-danger">アップロードの前に、アーカイブデータをパソコンでダブルクリックして開けるかを確認してください。</span></p>
+        <p>壊れたファイルが指定されています。<span class="text-danger">自分で編集していないこと、パソコンでダブルクリックして開けることの両方を確認してください。</span></p>
         %{support_message}
         <div>reason={reason}</div>
         %{debug_message}
