@@ -7,7 +7,8 @@ module AdsenseHelper
     pricing = controller_name == 'pricing'
     misc = controller_name == 'misc'
     suspicious = controller_name == 'error_pages' && action_name == 'suspicious_access_detected'
-    %w(login blockers settings).include?(controller_name) || delete_tweets || delete_favorites || pricing || misc || suspicious
+    locked = controller_name == 'error_pages' && action_name == 'account_locked'
+    %w(login blockers settings).include?(controller_name) || delete_tweets || delete_favorites || pricing || misc || suspicious || locked
   end
 
   def ad_ng_user?(user)
