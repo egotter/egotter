@@ -4,7 +4,7 @@
 
 filename=$(aws s3api head-object --bucket ${BUCKET} --key ${KEY} | jq -r '.Metadata.filename')
 
-if [[ ${filename} =~ twitter-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9a-z]{64}\.zip ]]; then
+if [[ ${filename} =~ twitter-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9a-z-]+\.zip ]]; then
   aws s3 cp s3://${BUCKET}/${KEY} ${filename}
 else
   echo "Invalid filename"

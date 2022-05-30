@@ -1674,7 +1674,7 @@ ja:
       loading: '読み込み中'
     uploader:
       debug_message_html:
-        <div>
+        <div class="uploader-debug-message">
           name={name}<br>
           type={type}<br>
           size={size}<br>

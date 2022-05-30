@@ -65,7 +65,7 @@ class ArchiveDataUploader {
         showMessage(i18n['brokenFile'], Object.assign({reason: err}, file.attrs()));
       });
 
-    }, 10 * 1000);
+    }, 3 * 1000);
   }
 
   uploadFile(fileObj, fileAttrs) {
@@ -138,7 +138,7 @@ class ArchiveFile {
     var file = this.file;
     this.errors = [];
 
-    if (!file.name.match(/^twitter-20\d{2}-\d{2}-\d{2}-[a-z0-9]+.zip$/i)) {
+    if (!file.name.match(/^twitter-20\d{2}-\d{2}-\d{2}-[a-z0-9-]+.zip$/i)) {
       this.errors = ['invalidFilename'];
     } else if (Date.now() - Date.parse(file.name.match(/20\d{2}-\d{2}-\d{2}/)[0]) > 7 * 24 * 60 * 60 * 1000) {
       this.errors = ['tooOldFile'];
@@ -193,15 +193,7 @@ function readableSize(size) {
   return (size / Math.pow(1024, i)).toFixed(2) * 1 + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 }
 
-function truncateFilename(name) {
-  return name.slice(0, 22) + '...' + name.slice(name.length - 10);
-}
-
 function escapeHtml(str) {
-  if (str.length >= 30) {
-    str = truncateFilename(str);
-  }
-
   var type = '';
   try {
     type = str.replace(/<\/?[^>]+(>|$)/g, '');
