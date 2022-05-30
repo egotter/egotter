@@ -33,8 +33,8 @@ def lambda_handler(event, context):
     if not re.match('^twitter-[0-9a-zA-Z-]+\\.zip$', meta_filename):
         raise Exception(f'Invalid filename value={meta_filename} key={key}')
 
-    # 30 GB
-    if int(meta_filesize) > 30000000000:
+    # 60 GB
+    if int(meta_filesize) > 60000000000:
         raise Exception(f'Invalid filesize value={meta_filesize} key={key}')
 
     rootdir = '/mnt/data/'
