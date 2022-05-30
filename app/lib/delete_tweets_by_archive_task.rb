@@ -15,8 +15,11 @@ class DeleteTweetsByArchiveTask
     puts "last_tweet=#{@tweets[-1].created_at.to_s(:db)}"
 
     initialize_task
-    # request = DeleteTweetsByArchiveRequest.create!(user_id: user.id, since_date: @since, until_date: @until, reservations_count: @deletable_tweets.size)
-    request = DeleteTweetsByArchiveRequest.order(created_at: :desc).find_by(user_id: user.id)
+
+    unless (request = DeleteTweetsByArchiveRequest.order(created_at: :desc).find_by(user_id: user.id))
+      # When uploading failed
+      request = DeleteTweetsByArchiveRequest.create!(user_id: user.id, archive_name: "twitter-#{Time.zone.now.to_date}-dummy.zip", since_date: @since, until_date: @until)
+    end
     request.update(reservations_count: @deletable_tweets.size)
 
     send_started_message(request)
