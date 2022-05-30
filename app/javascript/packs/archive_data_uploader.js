@@ -12,6 +12,7 @@ class ArchiveDataUploader {
   }
 
   openFileSelector() {
+    logger.log('Open file selector');
     this.$input.trigger('click');
     return false;
   }
