@@ -2,7 +2,7 @@
 
 <div class="mt-3 mb-5"><%= t('.page_description_html', count: DeleteTweetsRequest::DESTROY_LIMIT) %></div>
 
-<ul class="nav nav-tabs oneline-tabs">
+<ul id="select-menu-tabs" class="nav nav-tabs oneline-tabs">
   <li class="nav-item">
     <a id="delete-tweets-search-tab" class="nav-link <%= class_names(active: delete_tweets_search_tab?) %>" href="#search-tab" data-toggle="tab"><%= t('delete_tweets.search.title') %></a>
   </li>
@@ -38,14 +38,64 @@
 <p class="small"><%= t('.support_html', user: 'egotter_cs', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_tweets_inquiry'))) %></p>
 <p class="small"><%= t('.faq_html', url: delete_tweets_faq_path(via: current_via)) %></p>
 
-<% if delete_tweets_history_tab? %>
-  <script>
-    document.getElementById('delete-tweets-faq-tab').scrollIntoView();
-  </script>
+<%= modal_dialog(id: 'select-delete-tweets-menu-modal', title: t('.select_delete_tweets_menu_modal.title'), button: {positive: t('.select_delete_tweets_menu_modal.close'), category: 'outline-secondary'}) do %>
+  <a href="#" id="show-search-tab" class="text-body">
+    <div class="d-flex align-items-center">
+      <div>
+        <div class="font-weight-bold mb-2"><%= t('delete_tweets.search.title') %></div>
+        <div><%= t('.select_delete_tweets_menu_modal.body.search', count: 100) %></div>
+      </div>
+      <div class="pl-2"><i class="fas fa-arrow-right"></i></div>
+    </div>
+  </a>
+  <hr>
+  <a href="#" id="show-free-tab" class="text-body">
+    <div class="d-flex align-items-center">
+      <div>
+        <div class="font-weight-bold mb-2"><%= t('delete_tweets.free.title') %></div>
+        <div><%= t('.select_delete_tweets_menu_modal.body.free', count: DeleteTweetsRequest::DESTROY_LIMIT) %></div>
+      </div>
+      <div class="pl-2"><i class="fas fa-arrow-right"></i></div>
+    </div>
+  </a>
+  <hr>
+  <a href="#" id="show-premium-tab" class="text-body">
+    <div class="d-flex align-items-center">
+      <div>
+        <div class="font-weight-bold mb-2"><%= t('delete_tweets.premium.title') %></div>
+        <div><%= t('.select_delete_tweets_menu_modal.body.premium') %></div>
+      </div>
+      <div class="pl-2"><i class="fas fa-arrow-right"></i></div>
+    </div>
+  </a>
+  <hr>
+  <a href="#" id="show-history-tab" class="text-body">
+    <div class="d-flex align-items-center">
+      <div>
+        <div class="font-weight-bold mb-2"><%= t('delete_tweets.history.title') %></div>
+        <div><%= t('.select_delete_tweets_menu_modal.body.history') %></div>
+      </div>
+      <div class="pl-2"><i class="fas fa-arrow-right"></i></div>
+    </div>
+  </a>
+  <hr>
+  <a href="<%= delete_tweets_faq_path(via: current_via('modal')) %>" target="_blank" id="show-faq-tab" class="text-body">
+    <div class="d-flex align-items-center">
+      <div>
+        <div class="font-weight-bold mb-2"><%= t('delete_tweets.faq.tab_title') %></div>
+        <div><%= t('.select_delete_tweets_menu_modal.body.faq') %></div>
+      </div>
+      <div class="pl-2"><i class="fas fa-arrow-right"></i></div>
+    </div>
+  </a>
 <% end %>
 
 <script>
-  $(function () {
+  function scrollIntoHistoryTab() {
+    document.getElementById('select-menu-tabs').scrollLeft += 200;
+  }
+
+  function initializeTabs() {
     var urls = [
       '<%= raw delete_tweets_mypage_search_path %>',
       '<%= raw delete_tweets_mypage_path %>',
@@ -64,6 +114,41 @@
     $('#delete-tweets-history-tab').on('shown.bs.tab', function () {
       window.history.replaceState(null, null, urls[3]);
     });
+  }
+
+  function initializeModal() {
+    var $modal = $('#select-delete-tweets-menu-modal');
+    $modal.modal();
+    $modal.find('#show-search-tab').on('click', function () {
+      $modal.modal('hide');
+      $('#delete-tweets-search-tab').tab('show');
+      return false;
+    });
+    $modal.find('#show-free-tab').on('click', function () {
+      $modal.modal('hide');
+      $('#delete-tweets-free-tab').tab('show');
+      return false;
+    });
+    $modal.find('#show-premium-tab').on('click', function () {
+      $modal.modal('hide');
+      $('#delete-tweets-premium-tab').tab('show');
+      return false;
+    });
+    $modal.find('#show-history-tab').on('click', function () {
+      $modal.modal('hide');
+      $('#delete-tweets-history-tab').tab('show');
+      scrollIntoHistoryTab();
+      return false;
+    });
+  }
+
+  <% if delete_tweets_history_tab? %>
+    scrollIntoHistoryTab();
+  <% end %>
+
+  $(function () {
+    initializeTabs();
+    initializeModal();
   });
 </script>
 
