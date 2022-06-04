@@ -677,6 +677,7 @@ ja:
             price_html: '%{value} <span class="small">円/月</span>'
             body_html:
               ・1ヶ月だけ有効<br>
+              ・お試し期間無し<br>
               ・クレジットカード/コンビニ払い/キャリア決済/Amazon Pay/銀行振込 対応
             button: '1ヶ月分だけ購入する'
         bulk_purchase:
@@ -687,6 +688,7 @@ ja:
             price_html: '<span class="small">最大割引</span> %{value}%'
             body_html:
               ・長期間になるほど割引率アップ<br>
+              ・お試し期間無し<br>
               ・クレジットカード/コンビニ払い/キャリア決済/Amazon Pay/銀行振込 対応
             button: '購入する期間を選ぶ'
       payment_method:
@@ -723,7 +725,7 @@ ja:
           note_html: |
             ※ 決済手数料は購入者のご負担となります<br>
             ※ 支払いの完了後、5営業日以内に有効になります<br>
-            ※ お試し期間は無く、返金の対象外です
+            <span class="text-danger">※ 固定期間のプランにお試し期間は無く、返金の対象外です</span>
           specified_commercial_transactions: '特定商取引法に基づく表記'
           refund_policy: '返金ポリシー'
           'yes': '閉じる'
@@ -752,7 +754,7 @@ ja:
           note_html: |
             ※ 決済手数料は購入者のご負担となります<br>
             ※ 支払いの完了後、5営業日以内に有効になります<br>
-            ※ お試し期間は無く、返金の対象外です
+            <span class="text-danger">※ 固定期間のプランにお試し期間は無く、返金の対象外です</span>
           specified_commercial_transactions: '特定商取引法に基づく表記'
           refund_policy: '返金ポリシー'
           'yes': '閉じる'
