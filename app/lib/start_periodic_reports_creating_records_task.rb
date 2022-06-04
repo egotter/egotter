@@ -1,5 +1,5 @@
 class StartPeriodicReportsCreatingRecordsTask
-  def initialize(period:)
+  def initialize(period: nil, user_ids: nil)
     @period = period || 'none'
 
     if period == 'morning'
@@ -8,6 +8,9 @@ class StartPeriodicReportsCreatingRecordsTask
       @user_ids = StartPeriodicReportsTask.afternoon_user_ids
     elsif period == 'night'
       @user_ids = StartPeriodicReportsTask.night_user_ids
+    else
+      # For debugging
+      @user_ids = user_ids
     end
   end
 
@@ -17,6 +20,7 @@ class StartPeriodicReportsCreatingRecordsTask
     if @user_ids.any?
       requests = create_requests(@user_ids)
       create_jobs(requests)
+      # run_jobs(requests)
     end
 
     SlackBotClient.channel('cron').post_message("Finished user_ids=#{@user_ids.size} period=#{@period}", thread_ts: response['ts']) rescue nil
@@ -43,6 +47,19 @@ class StartPeriodicReportsCreatingRecordsTask
   def create_jobs(requests)
     requests.each do |request|
       CreateReportTwitterUserWorker.perform_async(request.id, period: @period)
+    end
+  end
+
+  def run_jobs(requests)
+    requests.each_slice(5) do |partial_requests|
+      threads = partial_requests.map do |request|
+        Thread.new do
+          CreateReportTwitterUserWorker.new.perform(request.id, period: @period)
+        rescue => e
+          puts "#{e.inspect} request_id=#{request.id}"
+        end
+      end
+      threads.each(&:join)
     end
   end
 
