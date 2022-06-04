@@ -12,6 +12,7 @@ class DeleteRecordsTask
     min_time = time.beginning_of_month
     max_time = time.end_of_month
     total = @klass.where(@column => min_time..max_time).size
+    puts "Total records #{total}"
 
     return if total == 0
 
@@ -48,7 +49,7 @@ class DeleteRecordsTask
     total = ids.size
     deleted_count = 0
 
-    ids.each_slice(1000) do |ids_array|
+    ids.each_slice(3000) do |ids_array|
       @klass.where(id: ids_array).delete_all
       @progress.increment(ids_array.size, "(deleting #{deleted_count += ids_array.size}/#{total} records)")
       break if @sigint.trapped?
