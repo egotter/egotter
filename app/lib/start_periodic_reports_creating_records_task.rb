@@ -11,6 +11,7 @@ class StartPeriodicReportsCreatingRecordsTask
     else
       # For debugging
       @user_ids = user_ids
+      @threads = 10
     end
   end
 
@@ -19,8 +20,11 @@ class StartPeriodicReportsCreatingRecordsTask
 
     if @user_ids.any?
       requests = create_requests(@user_ids)
-      create_jobs(requests)
-      # run_jobs(requests)
+      if @threads
+        run_jobs(requests, threads: @threads)
+      else
+        create_jobs(requests)
+      end
     end
 
     SlackBotClient.channel('cron').post_message("Finished user_ids=#{@user_ids.size} period=#{@period}", thread_ts: response['ts']) rescue nil
@@ -50,11 +54,13 @@ class StartPeriodicReportsCreatingRecordsTask
     end
   end
 
-  def run_jobs(requests)
-    requests.each_slice(5) do |partial_requests|
+  def run_jobs(requests, threads: 10)
+    requests.each_slice(threads) do |partial_requests|
       threads = partial_requests.map do |request|
         Thread.new do
-          CreateReportTwitterUserWorker.new.perform(request.id, period: @period)
+          ActiveRecord::Base.connection_pool.with_connection do
+            CreateReportTwitterUserWorker.new.perform(request.id, period: @period)
+          end
         rescue => e
           puts "#{e.inspect} request_id=#{request.id}"
         end
