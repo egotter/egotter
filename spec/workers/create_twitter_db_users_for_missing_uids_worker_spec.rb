@@ -4,17 +4,19 @@ RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
   let(:worker) { described_class.new }
 
   describe '.perform_async' do
+    class TestCreateTwitterDBUsersForMissingUidsWorker < CreateTwitterDBUsersForMissingUidsWorker
+      def perform(uids, user_id, options)
+        self.class.do_perform(uids, user_id, options)
+      end
+
+      class << self
+        def do_perform(*) end
+      end
+    end
+
     let(:user_id) { 1 }
     let(:worker_wrapper) do
-      Class.new(described_class) do
-        def perform(uids, user_id, options)
-          self.class.do_perform(uids, user_id, options)
-        end
-
-        class << self
-          def do_perform(*) end
-        end
-      end
+      TestCreateTwitterDBUsersForMissingUidsWorker
     end
 
     context '100 < uids.size' do

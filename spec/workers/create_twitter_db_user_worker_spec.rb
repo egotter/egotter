@@ -9,16 +9,18 @@ RSpec.describe CreateTwitterDBUserWorker do
   end
 
   describe '.perform_async' do
-    let(:worker_wrapper) do
-      Class.new(described_class) do
-        def perform(uids, options)
-          self.class.do_perform(uids, options)
-        end
-
-        class << self
-          def do_perform(*) end
-        end
+    class TestCreateTwitterDBUserWorker < CreateTwitterDBUserWorker
+      def perform(uids, options)
+        self.class.do_perform(uids, options)
       end
+
+      class << self
+        def do_perform(*) end
+      end
+    end
+
+    let(:worker_wrapper) do
+      TestCreateTwitterDBUserWorker
     end
 
     context '100 < uids.size' do
