@@ -1,34 +1,44 @@
 html, body {
-  background-color: #070707 !important;
-  color: #ccc;
+  background-color: #171717 !important;
+  color: #DEDEDE;
 }
 
 a,
 .title,
 .summary_bar ul .count,
+span.current-interval,
 .navbar .navbar-brand {
-  color: #af0014;
+  color: #d04;
+}
+
+.history-graph.active,
+.beacon .dot {
+  background-color: #d04;
 }
 
 .navbar .navbar-brand:hover {
-  color: #ccc;
+  color: #ddd;
 }
 
 .navbar .navbar-brand .status {
-  color: #ccc;
+  color: #ddd;
+}
+
+.navbar-default .navbar-nav > li > a {
+  color: #ddd;
 }
 
 .navbar-inverse {
-  background-color: #000;
-  border-color: #333;
+  background-color: #222;
+  border-color: #444;
 }
 
-table.table-white {
-  background-color: #111;
+table {
+  background-color: #1D1D1D;
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) {
-  background-color: #222;
+  background-color: #2E2E2E;
 }
 
 .table-bordered,
@@ -38,64 +48,67 @@ table.table-white {
 .table-bordered > tfoot > tr > th,
 .table-bordered > thead > tr > td,
 .table-bordered > thead > tr > th {
-  border: 1px solid #333;
+  border: 1px solid #444;
 }
 
 .table-hover > tbody > tr:hover {
-  background-color: #333;
+  background-color: #444;
 }
 
 .alert {
   border: none;
-  color: #ccc;
+  color: #ddd;
 }
 
 .alert-success {
-  background-color: #182d11;
+  background-color: #484;
 }
 
-a:link,
-a:active,
-a:hover,
-a:visited {
-  color: #63798c;
+.alert-danger {
+  background-color: #980035;
 }
 
-a.btn {
-  color: #000;
+.alert-info {
+  background-color: #31708f;
+}
+
+a:link, a:active, a:hover, a:visited {
+  color: #ddd;
+}
+
+input {
+  background-color: #444;
+  color: #ccc;
+  padding: 3px;
 }
 
 .summary_bar .summary {
-  background-color: #111;
-  border: 1px solid #333;
-
-  -webkit-box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
-  -moz-box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+  background-color: #232323;
+  border: 1px solid #444;
 }
 
 .navbar-default {
-  background-color: #000;
-  border-color: #3d3d3d;
+  background-color: #0F0F0F;
+  border-color: #444;
 }
 
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:focus,
 .navbar-default .navbar-nav > .active > a:hover {
-  color: #ccc;
-  background-color: #282828;
+  color: #ddd;
+  background-color: #333;
 }
 
 .navbar-default .navbar-nav > li > a:hover {
-  color: #ccc;
+  color: #ddd;
 }
 
 .pagination > li > a,
 .pagination > li > a:hover,
 .pagination > li > span {
-  color: #ccc;
-  background-color: #282828;
-  border-color: #353535;
+  color: #ddd;
+  background-color: #333;
+  border-color: #444;
 }
 .pagination > .disabled > a,
 .pagination > .disabled > a:focus,
@@ -103,31 +116,28 @@ a.btn {
 .pagination > .disabled > span,
 .pagination > .disabled > span:focus,
 .pagination > .disabled > span:hover {
-  color: #a5a5a5;
-  background-color: #282828;
-  border-color: #353535;
+  color: #ddd;
+  background-color: #333;
+  border-color: #444;
 }
 
 .stat {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-#live-poll {
-  color: #ccc;
-}
-
-.btn-warn {
-  color: #333;
+  border: 1px solid #888;
 }
 
 .rickshaw_graph .detail {
-  background: rgba(255, 255, 255, .1)
+  background: #888;
 }
 .rickshaw_graph .x_tick {
-  border-color: rgba(255, 255, 255, .2);
+  border-color: #888;
 }
 
 .rickshaw_graph .y_ticks.glow text {
-  fill: #ccc;
-  color: #ccc;
+  fill: #ddd;
+  color: #ddd;
+}
+
+.info-circle {
+  color: #222;
+  background-color: #888;
 }
