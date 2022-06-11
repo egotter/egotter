@@ -64,7 +64,7 @@ class ApiClient
     create_direct_message_event(event: event)
   end
 
-  def can_dm?(uid)
+  def can_send_dm?(uid)
     twitter.friendship(@user.uid, uid).source.can_dm?
   end
 

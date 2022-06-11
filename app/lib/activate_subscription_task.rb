@@ -60,8 +60,9 @@ class ActivateSubscriptionTask
 
   def send_starting_message(user)
     cs = User.egotter_cs
-    unless cs.api_client.can_dm?(user.uid)
+    unless cs.api_client.can_send_dm?(user.uid)
       OrdersReport.starting_message(user, cs).deliver!
+      sleep 3 # Fix Twitter::Error::Forbidden: You cannot send messages to this user.
     end
   end
 
