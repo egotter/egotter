@@ -62,13 +62,25 @@ class ActivateSubscriptionTask
     cs = User.egotter_cs
     unless cs.api_client.can_send_dm?(user.uid)
       OrdersReport.starting_message(user, cs).deliver!
-      sleep 3 # Fix Twitter::Error::Forbidden: You cannot send messages to this user.
     end
   end
 
   def send_finishing_message(user, months_count)
     report = OrdersReport.creation_succeeded_message(user, months_count)
-    report.deliver!
+
+    3.times do
+      report.deliver!
+      break
+    rescue => e
+      if DirectMessageStatus.cannot_send_messages?(e)
+        puts "Retry sending a DM error=#{e.inspect}"
+        sleep 1
+        retry
+      else
+        raise
+      end
+    end
+
     report
   end
 
