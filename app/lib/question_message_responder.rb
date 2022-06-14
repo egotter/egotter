@@ -12,7 +12,7 @@ class QuestionMessageResponder < AbstractMessageResponder
     end
 
     def received_regexp
-      /([?？]|ですか)$/
+      /(([?？]|ですか)$)|プラン|お試し|トライアル|有料|有償|購入|返金/
     end
 
     def send_message

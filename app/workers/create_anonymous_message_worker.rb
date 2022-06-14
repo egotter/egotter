@@ -4,13 +4,13 @@ class CreateAnonymousMessageWorker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   MESSAGE = <<~TEXT
-    DMの送信ありがとうございます。(๑•ᴗ•๑)
+    DMの送信ありがとうございます。
+    (๑•ᴗ•๑)
 
     リムられ通知にはWebサイトでのログインが必要です。
     ログインお待ちしております。<%= url %>
 
-    何かご質問でしょうか？ お返事が必要な場合は @egotter_cs までご連絡ください。
-    （質問の送り先は ego_tter ではなく egotter_cs です）
+    お返事が必要な質問は @ego_tter ではなく @egotter_cs にお送りください。
 
     #egotter
   TEXT

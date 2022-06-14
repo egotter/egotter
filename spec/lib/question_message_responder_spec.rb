@@ -8,7 +8,14 @@ describe QuestionMessageResponder::Processor do
   describe '#received?' do
     subject { instance.received? }
 
-    ['ですか?', 'ですか？', 'ですか'].each do |word|
+    [
+        'ですか?',
+        'ですか？',
+        'ですか',
+        'プラン',
+        'お試し',
+        'トライアル',
+    ].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
