@@ -36,7 +36,7 @@ class BlockReport < ApplicationRecord
 
     def report_attributes(user, token)
       has_subscription = user.has_valid_subscription?
-      blocked_users = fetch_blocked_users(user)
+      blocked_users = fetch_blocked_users(user, limit: 20)
       url_options = campaign_params('block_report_profile').merge(dialog_params).merge(token: token, medium: 'dm', type: 'block', via: 'block_report')
       blocked_names = generate_profile_urls(blocked_users, url_options, user.reveal_names_on_block_report?)
 
@@ -44,7 +44,7 @@ class BlockReport < ApplicationRecord
           has_subscription: has_subscription,
           screen_name: user.screen_name,
           users_count: BlockingRelationship.where(to_uid: user.uid).size,
-          remaining_users_count: remaining_users_count(user),
+          remaining_users_count: remaining_users_count(user, blocked_users.size),
           stop_requested: StopBlockReportRequest.exists?(user_id: user.id),
           blocked_names: blocked_names,
           timeline_url: url_helper.timeline_url(user, url_options),
@@ -245,8 +245,8 @@ class BlockReport < ApplicationRecord
       fetched_users
     end
 
-    def remaining_users_count(user, limit: 10)
-      BlockingRelationship.where(to_uid: user.uid).size - limit
+    def remaining_users_count(user, offset)
+      BlockingRelationship.where(to_uid: user.uid).size - offset
     end
 
     def mask_name(name, has_subscription = false)
