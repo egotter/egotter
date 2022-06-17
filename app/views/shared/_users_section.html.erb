@@ -24,7 +24,7 @@
   <% if current_user.has_valid_subscription? %>
     <% if current_user.has_trial_subscription? %>
       <%= t('.need_click') %>
-      <%= link_to t('.see_more'), '#', class: 'btn btn-primary btn-end-trial btn-sm' %>
+      <%= link_to t('.see_more'), '#', id: 'btn-bottom-reached-end-trial', class: 'btn btn-primary btn-end-trial btn-sm' %>
     <% else %>
       <%# Render nothing %>
     <% end %>

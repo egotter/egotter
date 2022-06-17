@@ -43,7 +43,7 @@
       <% if current_user.has_valid_subscription? %>
         <% if current_user.has_trial_subscription? %>
           <div class="text-center mt-3">
-            <%= link_to '#', class: 'btn btn-outline-primary btn-end-trial' do %>
+            <%= link_to '#', id: 'btn-delete-tweets-end-trial', class: 'btn btn-outline-primary btn-end-trial' do %>
               <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
               <%= t('.button') %>
             <% end %>

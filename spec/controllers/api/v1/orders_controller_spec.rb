@@ -16,7 +16,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
     end
     it do
       expect(order).to receive(:end_trial!)
-      expect(controller).to receive(:send_message).with(order)
+      expect(controller).to receive(:send_slack_message).with(order)
       is_expected.to have_http_status(:ok)
     end
   end
@@ -29,13 +29,13 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
     end
     it do
       expect(order).to receive(:cancel!)
-      expect(controller).to receive(:send_message).with(order)
+      expect(controller).to receive(:send_slack_message).with(order)
       is_expected.to have_http_status(:ok)
     end
   end
 
-  describe '#send_message' do
-    subject { controller.send(:send_message, order) }
+  describe '#send_slack_message' do
+    subject { controller.send(:send_slack_message, order) }
     it { is_expected.to be_truthy }
   end
 end

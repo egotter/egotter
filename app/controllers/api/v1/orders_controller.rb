@@ -24,7 +24,7 @@ module Api
       def end_trial
         order = current_user.valid_order
         order.end_trial! if order.trial?
-        send_message(order)
+        send_slack_message(order)
         render json: {message: t('.success_html'), interval: INTERVAL}
       rescue => e
         Airbag.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
@@ -34,7 +34,7 @@ module Api
       def cancel
         order = current_user.orders.find_by(id: params[:id])
         order.cancel!('user') unless order.canceled?
-        send_message(order)
+        send_slack_message(order)
         render json: {message: t('.success_html', count: INTERVAL), interval: INTERVAL}
       rescue => e
         Airbag.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
@@ -43,9 +43,13 @@ module Api
 
       private
 
-      def send_message(order)
+      def send_slack_message(order)
         channel = tracking_channel
-        message = "#{tracking_params.merge(order_id: order.id)}"
+        message = {
+            user_id: current_user.id,
+            order_id: order.id,
+            button_id: params[:button_id] || "#{controller_name}/#{action_name}",
+        }
         SlackMessage.create(channel: channel, message: message)
         SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{message}")
       end
@@ -59,14 +63,6 @@ module Api
         else
           'orders'
         end
-      end
-
-      def tracking_params
-        {
-            user_id: current_user.id,
-            button_id: params[:button_id],
-            referer: request.referer.to_s.truncate(200),
-        }
       end
     end
   end

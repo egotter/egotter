@@ -17,7 +17,7 @@
     <% if user_signed_in? %>
       <% if current_user.has_valid_subscription? %>
         <% if current_user.has_trial_subscription? %>
-          <button type="button" class="btn btn-outline-primary btn-sm btn-end-trial">利用制限の解除を申請する</button>
+          <button type="button" id="btn-blocker-detected-end-trial" class="btn btn-outline-primary btn-sm btn-end-trial">利用制限の解除を申請する</button>
           <div class="text-muted small mt-1">※ トライアル期間の終了を先に済ませてください。</div>
         <% else %>
           <button type="button" id="destroy-banned-user-button" class="btn btn-outline-primary btn-sm">利用制限の解除を申請する</button>
