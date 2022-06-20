@@ -1,8 +1,9 @@
 class ArchiveDataUploader {
-  constructor(btnId, inputId, notifyUrl, options, i18n) {
+  constructor(btnId, inputId, notifyUrl, notifyErrorUrl, options, i18n) {
     this.$btn = $('#' + btnId);
     this.$input = $('#' + inputId);
     this.notifyUrl = notifyUrl;
+    this.notifyErrorUrl = notifyErrorUrl;
     this.options = options;
     this.i18n = i18n;
     this.errors = [];
@@ -27,6 +28,7 @@ class ArchiveDataUploader {
       this.$input[0].value = '';
       this.$btn.prop('disabled', false).removeClass('disabled');
       showMessage(file.errorMessage(), file.attrs());
+      this.notifyError('ValidationFailed', {errors: file.errors, file_attrs: file.attrs()});
     }
   }
 
@@ -52,18 +54,22 @@ class ArchiveDataUploader {
               showMessage(i18n['success']);
             }, function () {
               showMessage(i18n['duplicateFileUploaded'], file.attrs());
+              self.notifyError('DuplicateFileUploaded', {file_attrs: file.attrs()});
             });
           }).catch(function (err) {
             logger.warn('uploadFile() failed', err);
             showMessage(i18n['fail'], Object.assign({reason: err}, file.attrs()));
+            self.notifyError('UploadingFileFailed', {file_attrs: file.attrs()});
           });
         }).catch(function (err) {
           logger.warn('writeTweetFiles() failed', err);
           showMessage(i18n['fail'], Object.assign({reason: err}, file.attrs()));
+          self.notifyError('WritingTweetFilesFailed', {file_attrs: file.attrs()});
         });
       }).catch(function (err) {
         logger.warn('readTweetFiles() failed', err);
         showMessage(i18n['brokenFile'], Object.assign({reason: err}, file.attrs()));
+        self.notifyError('ReadingTweetFilesFailed', {file_attrs: file.attrs()});
       });
 
     }, 3 * 1000);
@@ -123,6 +129,10 @@ class ArchiveDataUploader {
 
   notifyUploadCompleted(metadata, callback, error_callback) {
     $.post(this.notifyUrl, metadata).done(callback).fail(error_callback);
+  }
+
+  notifyError(message, props) {
+    $.post(this.notifyErrorUrl, {message: message, props: props});
   }
 }
 

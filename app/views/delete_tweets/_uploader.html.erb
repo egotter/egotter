@@ -28,6 +28,6 @@
       bucket: '<%= bucket_name %>',
       key: '<%= current_user.uid %>' + '-' + '<%= current_user.screen_name %>' + '-' + new Date().getTime() + '-' + Math.random().toString(36).substring(7)
     };
-    new ArchiveDataUploader('<%= button_id %>', '<%= file_id %>', '<%= raw notify_url %>', options, i18n);
+    new ArchiveDataUploader('<%= button_id %>', '<%= file_id %>', '<%= raw notify_url %>', '<%= raw notify_error_url %>', options, i18n);
   });
 </script>

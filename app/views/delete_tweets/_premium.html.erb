@@ -99,6 +99,7 @@
             file_id: 'delete-tweets-file',
             button_id: 'delete-tweets-button',
             notify_url: api_v1_delete_tweets_notifications_path,
+            notify_error_url: api_v1_delete_tweets_error_notifications_path,
             bucket_name: S3::ArchiveData.delete_tweets_bucket_name,
             identity_pool_id: S3::ArchiveData.delete_tweets_identity_pool_id} %>
         <% end %>
