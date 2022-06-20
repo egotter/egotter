@@ -7,7 +7,7 @@ RSpec.describe ProcessStripeCheckoutSessionCompletedEventWorker do
   let(:order) { create(:order, user_id: user.id) }
 
   before do
-    allow(worker).to receive(:send_message).with(an_instance_of(String), checkout_session_id, user_id: user.id, order_id: order.id)
+    allow(worker).to receive(:send_message).with(:orders_cs_completed, an_instance_of(String), checkout_session_id, user_id: user.id, order_id: order.id)
   end
 
   describe '#perform' do
