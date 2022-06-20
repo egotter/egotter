@@ -49,7 +49,7 @@ class DeleteTweetsBySearchRequest < ApplicationRecord
     else
       message = DeleteTweetsReport.finished_tweet(user, self).message
       user.api_client.twitter.update(message)
-      SendMessageToSlackWorker.perform_async(:monit_delete_tweets, "`Tweet` tweet=#{message} #{to_message}")
+      SendMessageToSlackWorker.perform_async(:monit_delete_tweets_tweet, "`Search` tweet=#{message} #{to_message}")
     end
   rescue => e
     unless TwitterApiStatus.invalid_or_expired_token?(e)
