@@ -116,6 +116,16 @@
       </div>
       <div class="ml-auto small text-muted">{{index}}</div>
     </div>
+    {{#deletion_reserved}}
+    <div class="badge badge-secondary">
+      {{deletion_reserved_label}}
+    </div>
+    {{/deletion_reserved}}
+    {{#deleted}}
+    <div class="badge badge-danger">
+      {{deleted_label}}
+    </div>
+    {{/deleted}}
     <div class="tweet-text" style="cursor: pointer; overflow: hidden; word-break: break-word; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;">
       {{{text}}}
     </div>

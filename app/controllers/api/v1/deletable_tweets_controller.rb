@@ -17,7 +17,7 @@ module Api
         total = query.size
         records = query.order(tweet_id: :desc).limit(100)
         message = records.empty? ? t('.not_found') : nil
-        render json: {user: user_json, tweets: tweets_json(current_user, records), total: total, message: message}
+        render json: {user: DeletableTweetsUserDecorator.new(current_user).to_json, tweets: DeletableTweetsDecorator.new(records, current_user).to_json, total: total, message: message}
       end
 
       # TODO Remove later
@@ -66,38 +66,8 @@ module Api
       end
 
       def filter_applied_query(hash)
-        query = DeletableTweet.not_deletion_reserved.where(uid: current_user.uid)
+        query = DeletableTweet.where(uid: current_user.uid)
         DeletableTweetsFilter.from_hash(hash).apply(query)
-      end
-
-      def user_json
-        user = current_user
-        twitter_db_user = TwitterDB::User.find_by(uid: current_user.uid)
-        {
-            id: user.uid.to_s,
-            screen_name: user.screen_name,
-            name: twitter_db_user&.name,
-            profile_image_url: twitter_db_user&.profile_image_url_https,
-        }
-      end
-
-      def strip_tags(html)
-        ApplicationController.helpers.strip_tags(html)
-      end
-
-      def tweets_json(user, records)
-        records.map.with_index do |record, i|
-          {
-              id: record.tweet_id.to_s,
-              text: strip_tags(record.properties['text']).gsub("\n", '<br>'),
-              retweet_count: record.retweet_count,
-              favorite_count: record.favorite_count,
-              media: record.media&.map { |m| {url: m['media_url_https']} },
-              url: tweet_url(user.screen_name, record.tweet_id),
-              created_at: l(record.tweeted_at.in_time_zone('Tokyo'), format: :deletable_tweets_long),
-              index: i + 1,
-          }
-        end
       end
 
       def destroy_records(user, tweet_ids, filter_params = {})

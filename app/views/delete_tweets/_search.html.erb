@@ -312,11 +312,13 @@
 
     function loadDeletableTweets(options) {
       var url = '<%= raw api_v1_deletable_tweets_path(via: current_via) %>';
+      var filters = collectFilterParams();
       var retry = (options && options.hasOwnProperty('retry')) ? options['retry'] : 10;
       var container = $('#deletable-tweets-container');
-      logger.log('Load tweets', retry);
+      logger.log('Load tweets', {filters: filters, retry: retry});
 
-      $.get(url, collectFilterParams()).done(function (res) {
+      $.get(url, filters).done(function (res) {
+        logger.log('Tweets loaded', {tweets: res.tweets});
         lastResponse = res;
         container.empty();
 
@@ -341,6 +343,7 @@
 
         resetDeletableTweetsCounts(res);
         resetSelectedDeletableTweetsState(res);
+
       }).fail(function (xhr, textStatus, errorThrown) {
         try {
           var res = JSON.parse(xhr.responseText);
