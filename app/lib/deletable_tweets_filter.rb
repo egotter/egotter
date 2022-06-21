@@ -115,6 +115,10 @@ class DeletableTweetsFilter
   end
 
   class << self
+    def filtered_records(params, uid)
+      from_hash(params).apply(DeletableTweet.where(uid: uid))
+    end
+
     def from_hash(hash)
       new(
           retweet_count: hash[:retweet_count],
