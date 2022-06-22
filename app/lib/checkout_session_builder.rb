@@ -9,7 +9,6 @@ class CheckoutSessionBuilder
     def build_subscription(user)
       attrs = {
           client_reference_id: user.id,
-          payment_method_types: ['card'],
           mode: 'subscription',
           line_items: [{quantity: 1, price: Order::BASIC_PLAN_PRICE_ID}],
           subscription_data: {default_tax_rates: [Order::TAX_RATE_ID]},
