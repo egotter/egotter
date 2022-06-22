@@ -1578,7 +1578,7 @@ ja:
       notice1_html: '「検索して削除」を短い時間で何回か実行しても、<strong>%{count}件までしかツイートは削除されません。</strong>これは全世界共通のツイッターの制限です。'
       notice2_html: 'まだ残っているツイートを削除するには、<a href="%{url1}" target="_blank">有料プラン</a> を購入後に <a href="%{url2}">完全に削除</a> をご利用ください。'
       loading: 'ツイートを読み込んでいます。初回は1〜5分ほど時間がかかることがあります。'
-      reload_confirmation_message: 'ページ内の表示を更新します。よろしいですか？\n\n検索条件と表示されるツイートが一致しない時に利用してください。新しいツイートの取得は行いません。'
+      reload_confirmation_message: 'ページ内の表示を更新します。よろしいですか？\n\n新しいツイートの取得は行いません。検索条件と表示されるツイートが一致しない時に利用してください。'
       force_reload_confirmation_message: '最新のツイートを同期します。よろしいですか？\n\nツイッターから最新のツイートを取得してきます。この操作には1〜5分ほど時間がかかることがあります。'
       filter:
         modal: '検索条件の指定'
@@ -2360,19 +2360,48 @@ ja:
             archive: '完全'
       deletable_tweets:
         index:
-          completed_html: |
+          tweets_not_found_html: |
             <div class="card">
               <div class="card-body">
-                <p>ツイートの削除は完了しています。</p>
-                <p>既に%{count}件のツイートを削除済みの場合は、古いツイートの削除をすぐに始めることができません。これは全世界共通のツイッターの制限です。</p>
+                <p>ツイートがまだ同期されていません。</p>
+                <div class="font-weight-bold bt-1">初めて利用する場合</div>
+                <p><a class="force-reload-deletable-tweets-button" href="#">同期</a> を押してツイートを読み込んでください。最新のツイートが反映されます。</p>
+                <div class="font-weight-bold bt-1">既に%{count}件のツイートを削除済みの場合</div>
                 <p>
+                  この場合は古いツイートの削除をすぐに始めることができません。これは全世界共通のツイッターの制限です。
                   残りの古いツイートも完全に削除するには、えごったー有料プランをご活用ください。
-                  <a href="%{url}" class="btn btn-outline-primary btn-sm" target="_blank">料金プラン</a>
+                  <a href="%{url}" target="_blank">料金を見る</a>
                 </p>
               </div>
             </div>
-          preparing: 'ツイートの取得に時間がかかっています。5〜30分後に再度アクセスしてください。'
-          not_found: '検索条件に該当するツイートは見付かりませんでした。'
+          not_deleted_tweets_not_found_html: |
+            <div class="card">
+              <div class="card-body">
+                <p>以前に同期したツイートはすべて削除済みです。</p>
+                <div class="font-weight-bold bt-1">新しくツイートしている場合</div>
+                <p><a class="force-reload-deletable-tweets-button" href="#">同期</a> を押してツイートを読み込んでください。最新のツイートが反映されます。</p>
+                <div class="font-weight-bold bt-1">既に%{count}件のツイートを削除済みの場合</div>
+                <p>
+                  この場合は古いツイートの削除をすぐに始めることができません。これは全世界共通のツイッターの制限です。
+                  残りの古いツイートも完全に削除するには、えごったー有料プランをご活用ください。
+                  <a href="%{url}" target="_blank">料金を見る</a>
+                </p>
+              </div>
+            </div>
+          filtered_tweets_not_found_html: |
+            <div class="card">
+              <div class="card-body">
+                <p>検索条件に該当するツイートは見付かりませんでした。</p>
+                <div class="font-weight-bold bt-1">新しくツイートしている場合</div>
+                <p><a class="force-reload-deletable-tweets-button" href="#">同期</a> を押してツイートを読み込んでください。最新のツイートが反映されます。</p>
+                <div class="font-weight-bold bt-1">既に%{count}件のツイートを削除済みの場合</div>
+                <p>
+                  この場合は古いツイートの削除をすぐに始めることができません。これは全世界共通のツイッターの制限です。
+                  残りの古いツイートも完全に削除するには、えごったー有料プランをご活用ください。
+                  <a href="%{url}" target="_blank">料金を見る</a>
+                </p>
+              </div>
+            </div>
           internal_server_error: 'エラーが起きました。5〜30分後に再度アクセスしてください。'
         destroy:
           failed_html: '<a href="%{url}" target="_blank">このツイート</a>の削除に失敗しました。5〜30分後に再度アクセスしてください。'

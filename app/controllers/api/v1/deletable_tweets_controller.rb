@@ -16,8 +16,11 @@ module Api
         records = DeletableTweetsFilter.filtered_records(params, current_user.uid)
         total = records.size
         limited_records = records.order(tweet_id: :desc).limit(100)
-        message = limited_records.empty? ? t('.not_found') : nil
-        render json: {user: DeletableTweetsUserDecorator.new(current_user).to_json, tweets: DeletableTweetsDecorator.new(limited_records, current_user).to_json, total: total, message: message}
+        if limited_records.empty?
+          render json: {tweets: [], message: t('.filtered_tweets_not_found_html', count: DeleteTweetsRequest::DESTROY_LIMIT, url: pricing_path(via: current_via))}
+        else
+          render json: {user: DeletableTweetsUserDecorator.new(current_user).to_json, tweets: DeletableTweetsDecorator.new(limited_records, current_user).to_json, total: total}
+        end
       end
 
       # TODO Remove later
@@ -47,21 +50,27 @@ module Api
       def force_reload
         SyncDeletableTweetsRequest.create!(user_id: current_user.id)
         DeletableTweet.where(uid: current_user.uid).delete_all
+
+        request = CreateDeletableTweetsRequest.create!(user_id: current_user.id)
+        CreateDeletableTweetsWorker.perform_async(request.id)
+
         render json: {message: t('.success_html')}
       end
 
       private
 
       def user_must_have_tweets
-        unless DeletableTweet.not_deletion_reserved.not_deleted.where(uid: current_user.uid).exists?
-          request = CreateDeletableTweetsRequest.create!(user_id: current_user.id)
-          CreateDeletableTweetsWorker.perform_async(request.id)
-          if DeletableTweet.where(uid: current_user.uid).exists?
-            message = t('.index.completed_html', count: DeleteTweetsRequest::DESTROY_LIMIT, url: pricing_path(via: current_via))
-            render json: {message: message, retry: false}, status: :not_found
-          else
-            render json: {message: t('.index.preparing'), retry: true}, status: :not_found
-          end
+        query = DeletableTweet.where(uid: current_user.uid)
+
+        unless query.exists?
+          message = t('.index.tweets_not_found_html', count: DeleteTweetsRequest::DESTROY_LIMIT, url: pricing_path(via: current_via))
+          render json: {message: message, retry: false}, status: :not_found
+          return
+        end
+
+        if !query.not_deletion_reserved.not_deleted.exists? && !DeletableTweetsFilter.from_hash(params).to_hash[:deleted]
+          message = t('.index.not_deleted_tweets_not_found_html', count: DeleteTweetsRequest::DESTROY_LIMIT, url: pricing_path(via: current_via))
+          render json: {message: message, retry: false}, status: :not_found
         end
       end
 

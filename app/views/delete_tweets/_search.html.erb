@@ -88,7 +88,7 @@
           <span class="text-muted"><i class="fas fa-redo"></i></span>
           <span class="ml-1"><%= t('.filter.reload') %></span>
         </div>
-        <div id="force-reload-deletable-tweets-button" class="cursor-pointer ml-3">
+        <div class="force-reload-deletable-tweets-button cursor-pointer ml-3">
           <span><i class="fas fa-sync"></i></span>
           <span class="ml-1"><%= t('.filter.force_reload') %></span>
         </div>
@@ -181,10 +181,10 @@
     });
     $('.filter-modal').on('hidden.bs.modal', loadDeletableTweets);
 
-    $('#force-reload-deletable-tweets-button').on('click', function () {
+    $(document).on('click', '.force-reload-deletable-tweets-button', function () {
       var confirmationMessage = '<%= t('.force_reload_confirmation_message') %>';
       if (!window.confirm(confirmationMessage)) {
-        return;
+        return false;
       }
 
       var url = '<%= raw api_v1_deletable_tweet_force_reload_path(via: current_via) %>';
@@ -200,6 +200,8 @@
           window.location.href = redirectUrl;
         }, 3000);
       }).fail(showErrorMessage);
+
+      return false;
     });
 
     $body.on('deletable-tweets-menu-closed', function () {
@@ -338,7 +340,7 @@
             container.append(rendered);
           }
         } else {
-          container.text(res.message || 'Not found');
+          container.html(res.message || 'Not found');
         }
 
         resetDeletableTweetsCounts(res);
