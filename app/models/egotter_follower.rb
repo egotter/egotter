@@ -19,6 +19,18 @@ class EgotterFollower < ApplicationRecord
   validates_with Validations::UidValidator
 
   class << self
+    def update_all_uids
+      uids = collect_uids
+
+      necessary_uids = filter_necessary_uids(uids)
+      import_uids(necessary_uids)
+      Airbag.info { "#{self}: Import #{necessary_uids.size} uids" }
+
+      unnecessary_uids = filter_unnecessary_uids(uids)
+      delete_uids(unnecessary_uids)
+      Airbag.info { "#{self}: Delete #{unnecessary_uids.size} uids" }
+    end
+
     def collect_uids(uid = User::EGOTTER_UID)
       client = nil
 
@@ -35,7 +47,7 @@ class EgotterFollower < ApplicationRecord
       options = {count: 5000, cursor: -1}
       collection = []
 
-      50.times do
+      60.times do
         response = yield(options)
         break if response.nil?
 
