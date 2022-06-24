@@ -16,9 +16,11 @@ class CreateDeleteTweetsUploadCompletedMessageWorker
   #   :until
   def perform(user_id, options = {})
     user = User.find(user_id)
-    return unless user.authorized?
+    user.api_client.verify_credentials
 
-    DeleteTweetsReport.send_upload_completed_starting_message(user)
+    unless user.api_client.can_send_dm?(User::EGOTTER_CS_UID)
+      DeleteTweetsReport.send_upload_completed_starting_message(user)
+    end
 
     quick_replies = [
         {label: I18n.t('quick_replies.delete_reports.label2'), description: I18n.t('quick_replies.delete_reports.description2')},
@@ -27,8 +29,7 @@ class CreateDeleteTweetsUploadCompletedMessageWorker
     ]
     DeleteTweetsReport.upload_completed_message(user, options.merge('quick_replies' => quick_replies)).deliver!
   rescue => e
-    unless ignorable_report_error?(e)
-      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
-    end
+    Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 end
