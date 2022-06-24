@@ -224,7 +224,7 @@ class PeriodicReport < ApplicationRecord
       dialog_params = {follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}.merge(campaign_params('web_access_hard_limited'))
       template = Rails.root.join('app/views/periodic_reports/web_access_hard_limited.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          access_day: user.access_days.last,
+          access_day: user.access_days.order(date: :desc).first,
           access_url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(user_token: user.user_token)),
           screen_name: user.screen_name,
           support_url: support_url(dialog_params),
@@ -412,7 +412,7 @@ class PeriodicReport < ApplicationRecord
     # ID-000-000-24h-ttt-0101-0-b
     def request_id_text(user, request_id, worker_context)
       setting = user.periodic_report_setting
-      access_day = user.access_days.last
+      access_day = user.access_days.order(date: :desc).first
 
       [
           request_id.to_i % 1000,
@@ -577,7 +577,7 @@ class PeriodicReport < ApplicationRecord
     end
 
     def access_interval_too_long?(user)
-      access_day = user.access_days.last
+      access_day = user.access_days.order(date: :desc).first
       access_day && access_day.date < ACCESS_DAYS_SOFT_LIMIT.ago
     end
 
