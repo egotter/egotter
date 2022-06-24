@@ -14,7 +14,7 @@ ActiveRecord::Schema.define(version: 2021_12_31_151054) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.string "date", null: false
+    t.date "date", null: false
     t.timestamp "time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
