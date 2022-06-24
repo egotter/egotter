@@ -21,7 +21,7 @@ class AccessDay < ApplicationRecord
   validates :date, presence: true
 
   def short_date
-    words = date.split('-')
+    words = date.to_s.split('-')
     words[1] + words[2]
   end
 
