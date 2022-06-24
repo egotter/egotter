@@ -14,7 +14,51 @@
 #  index_blocking_relationships_on_to_uid_and_from_uid  (to_uid,from_uid) UNIQUE
 #
 class BlockingRelationship < ApplicationRecord
+  validates :from_uid, presence: true
+  validates :to_uid, presence: true
+
   class << self
+    def update_all_blocks(user)
+      uids = collect_uids(user.id)
+      return [] if uids.blank?
+
+      additional_uids = filter_additional_blocks(user.uid, uids)
+      import_blocks(user.uid, additional_uids)
+      Airbag.info { "#{self}: Import #{additional_uids.size} blocks" }
+
+      deletable_uids = filter_deletable_blocks(user.uid, uids)
+      delete_blocks(user.uid, deletable_uids)
+      Airbag.info { "#{self}: Delete #{deletable_uids.size} blocks" }
+
+      uids
+    end
+
+    def import_blocks(from_uid, to_uids)
+      to_uids.each_slice(1000) do |uids_array|
+        time = Time.zone.now
+        if where(from_uid: from_uid, to_uid: uids_array).size != uids_array.size
+          data = uids_array.map { |to_uid| [from_uid, to_uid, time] }
+          import %i(from_uid to_uid created_at), data, on_duplicate_key_update: %i(from_uid to_uid created_at), validate: false, timestamps: false
+        end
+      end
+    end
+
+    def filter_additional_blocks(from_uid, to_uids)
+      to_uids - where(from_uid: from_uid).pluck(:to_uid)
+    end
+
+    def filter_deletable_blocks(from_uid, to_uids)
+      where(from_uid: from_uid).pluck(:to_uid) - to_uids
+    end
+
+    def delete_blocks(from_uid, to_uids)
+      to_uids.each_slice(1000) do |uids_array|
+        where(from_uid: from_uid, to_uid: uids_array).delete_all
+      end
+
+    end
+
+    # TODO Remove later
     def import_from(from_uid, to_uids)
       values = to_uids.map { |to_uid| [from_uid, to_uid] }
 

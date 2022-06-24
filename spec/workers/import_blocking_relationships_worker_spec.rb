@@ -16,8 +16,7 @@ RSpec.describe ImportBlockingRelationshipsWorker do
     end
 
     it do
-      expect(BlockingRelationship).to receive(:collect_uids).with(user.id).and_return(blocked_ids)
-      expect(BlockingRelationship).to receive(:import_from).with(user.uid, blocked_ids)
+      expect(BlockingRelationship).to receive(:update_all_blocks).with(user).and_return(blocked_ids)
       expect(CreateBlockReportWorker).to receive(:perform_in).with(anything, user2.id)
       subject
     end
