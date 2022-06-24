@@ -17,10 +17,8 @@ class ImportMutingRelationshipsWorker
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
-    collected_uids = MutingRelationship.collect_uids(user.id)
+    collected_uids = MutingRelationship.update_all_mutes(user)
     return if collected_uids.blank?
-
-    MutingRelationship.import_from(user.uid, collected_uids)
 
     collected_uids.each_slice(100).each do |uids_array|
       CreateTwitterDBUserWorker.perform_async(uids_array, user_id: user_id, enqueued_by: self.class)
@@ -32,12 +30,7 @@ class ImportMutingRelationshipsWorker
       end
     end
   rescue => e
-    if TwitterApiStatus.invalid_or_expired_token?(e) ||
-        TwitterApiStatus.temporarily_locked?(e)
-      # Do nothing
-    else
-      Airbag.warn "#{e.inspect.truncate(200)} user_id=#{user_id} options=#{options.inspect}"
-      Airbag.info e.backtrace.join("\n")
-    end
+    Airbag.warn "#{e.inspect.truncate(200)} user_id=#{user_id} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
   end
 end

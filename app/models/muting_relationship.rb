@@ -14,7 +14,51 @@
 #  index_muting_relationships_on_to_uid_and_from_uid  (to_uid,from_uid) UNIQUE
 #
 class MutingRelationship < ApplicationRecord
+  validates :from_uid, presence: true
+  validates :to_uid, presence: true
+
   class << self
+    def update_all_mutes(user)
+      uids = collect_uids(user.id)
+      return [] if uids.blank?
+
+      additional_uids = filter_additional_mutes(user.uid, uids)
+      import_mutes(user.uid, additional_uids)
+      Airbag.info { "#{self}: Import #{additional_uids.size} mutes" }
+
+      deletable_uids = filter_deletable_mutes(user.uid, uids)
+      delete_mutes(user.uid, deletable_uids)
+      Airbag.info { "#{self}: Delete #{deletable_uids.size} mutes" }
+
+      uids
+    end
+
+    def import_mutes(from_uid, to_uids)
+      to_uids.each_slice(1000) do |uids_array|
+        time = Time.zone.now
+        if where(from_uid: from_uid, to_uid: uids_array).size != uids_array.size
+          data = uids_array.map { |to_uid| [from_uid, to_uid, time] }
+          import %i(from_uid to_uid created_at), data, on_duplicate_key_update: %i(from_uid to_uid created_at), validate: false, timestamps: false
+        end
+      end
+    end
+
+    def filter_additional_mutes(from_uid, to_uids)
+      to_uids - where(from_uid: from_uid).pluck(:to_uid)
+    end
+
+    def filter_deletable_mutes(from_uid, to_uids)
+      where(from_uid: from_uid).pluck(:to_uid) - to_uids
+    end
+
+    def delete_mutes(from_uid, to_uids)
+      to_uids.each_slice(1000) do |uids_array|
+        where(from_uid: from_uid, to_uid: uids_array).delete_all
+      end
+
+    end
+
+    # TODO Remove later
     def import_from(from_uid, to_uids)
       values = to_uids.map { |to_uid| [from_uid, to_uid] }
 
@@ -30,14 +74,16 @@ class MutingRelationship < ApplicationRecord
       uids = collect_with_cursor do |options|
         client.muted_ids(options)
       rescue => e
-        unless TwitterApiStatus.invalid_or_expired_token?(e) || TwitterApiStatus.temporarily_locked?(e)
+        if TwitterApiStatus.invalid_or_expired_token?(e) || TwitterApiStatus.temporarily_locked?(e)
+          # Do nothing
+        else
           Airbag.warn "#{self}##{__method__}: #{e.inspect} user_id=#{user_id}"
         end
         nil
       end
 
       if uids.size != uids.uniq.size
-        Airbag.warn "#{self}##{__method__}: uids is not unique"
+        Airbag.warn "#{self}##{__method__}: uids is not unique user_id=#{user_id}"
         uids.uniq!
       end
 

@@ -16,9 +16,8 @@ RSpec.describe ImportMutingRelationshipsWorker do
     end
 
     it do
-      expect(MutingRelationship).to receive(:collect_uids).with(user.id).and_return(muted_ids)
-      expect(MutingRelationship).to receive(:import_from).with(user.uid, muted_ids)
-      # expect(CreateBlockReportWorker).to receive(:perform_in).with(anything, user2.id)
+      expect(MutingRelationship).to receive(:update_all_mutes).with(user).and_return(muted_ids)
+      expect(CreateMuteReportWorker).to receive(:perform_in).with(anything, user2.id)
       subject
     end
   end
