@@ -30,7 +30,7 @@ class BlockingRelationship < ApplicationRecord
       delete_blocks(user.uid, deletable_uids)
       Airbag.info { "#{self}: Delete #{deletable_uids.size} blocks" }
 
-      uids
+      additional_uids
     end
 
     def import_blocks(from_uid, to_uids)

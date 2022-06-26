@@ -30,7 +30,7 @@ class MutingRelationship < ApplicationRecord
       delete_mutes(user.uid, deletable_uids)
       Airbag.info { "#{self}: Delete #{deletable_uids.size} mutes" }
 
-      uids
+      additional_uids
     end
 
     def import_mutes(from_uid, to_uids)

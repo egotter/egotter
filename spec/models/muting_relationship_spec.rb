@@ -36,8 +36,15 @@ RSpec.describe MutingRelationship, type: :model do
     let(:from_uid) { 1 }
     let(:to_uids) { [2, 3, 4] }
     subject { described_class.filter_additional_mutes(from_uid, to_uids) }
-    before { create(:muting_relationship, from_uid: from_uid, to_uid: 3) }
-    it { is_expected.to eq([2, 4]) }
+
+    context 'New uids' do
+      it { is_expected.to eq([2, 3, 4]) }
+    end
+
+    context 'One has been persisted' do
+      before { create(:muting_relationship, from_uid: from_uid, to_uid: 3) }
+      it { is_expected.to eq([2, 4]) }
+    end
   end
 
   describe '.filter_deletable_mutes' do
