@@ -44,6 +44,7 @@ class CreateDeleteTweetsUploadCompletedMessageWorker
       error_count += 1
       retry
     else
+      SendMessageToSlackWorker.perform_async(:monit_delete_tweets_error, "user_id=#{user.id} class=#{self.class} exception=#{e.inspect}")
       raise
     end
   end
