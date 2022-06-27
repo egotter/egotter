@@ -110,6 +110,7 @@ class App
 
     if @role == 'web'
       instance_type = 't3.medium'
+      market_type = 'not-spot'
     elsif @role == 'sidekiq'
       instance_type = 'm5.large'
     else
