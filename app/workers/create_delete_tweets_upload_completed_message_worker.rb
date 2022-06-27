@@ -22,14 +22,29 @@ class CreateDeleteTweetsUploadCompletedMessageWorker
       DeleteTweetsReport.send_upload_completed_starting_message(user)
     end
 
+    send_message(user, options)
+  rescue => e
+    Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
+    Airbag.info e.backtrace.join("\n")
+  end
+
+  private
+
+  def send_message(user, options)
+    error_count ||= 0
     quick_replies = [
         {label: I18n.t('quick_replies.delete_reports.label2'), description: I18n.t('quick_replies.delete_reports.description2')},
         {label: I18n.t('quick_replies.delete_reports.label3'), description: I18n.t('quick_replies.delete_reports.description3')},
         {label: I18n.t('quick_replies.delete_reports.label4'), description: I18n.t('quick_replies.delete_reports.description4')},
     ]
+
     DeleteTweetsReport.upload_completed_message(user, options.merge('quick_replies' => quick_replies)).deliver!
   rescue => e
-    Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    if DirectMessageStatus.cannot_send_messages?(e) && error_count < 4
+      error_count += 1
+      retry
+    else
+      raise
+    end
   end
 end
