@@ -7,6 +7,7 @@ module Api
 
       def create
         if DeleteTweetsByArchiveRequest.where(user_id: current_user.id, archive_name: validated_archive).where.not(started_at: nil).exists?
+          CreateDeleteTweetsDuplicateFileUploadedMessageWorker.perform_async(current_user.id)
           SendMessageToSlackWorker.perform_async(:monit_delete_tweets_error, "`Duplicate file uploaded` user_id=#{current_user.id}")
           head :bad_request
         else

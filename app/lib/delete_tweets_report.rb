@@ -72,14 +72,24 @@ class DeleteTweetsReport
     end
 
     def send_upload_completed_starting_message(user)
-      if PeriodicReport.messages_not_allotted?(user)
-        user.api_client.create_direct_message(User::EGOTTER_CS_UID, upload_completed_starting_message(user))
-      end
+      user.api_client.create_direct_message(User::EGOTTER_CS_UID, upload_completed_starting_message(user))
+    end
+
+    def send_duplicate_file_uploaded_starting_message(user)
+      user.api_client.create_direct_message(User::EGOTTER_CS_UID, upload_completed_starting_message(user))
     end
 
     def upload_completed_starting_message(user)
       template = Rails.root.join('app/views/delete_tweets/upload_completed_starting.ja.text.erb')
       ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
+    end
+
+    def duplicate_file_uploaded_message(user, options = {})
+      template = Rails.root.join('app/views/delete_tweets/duplicate_file_uploaded.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash(
+          url: delete_tweets_url('duplicate_file_uploaded'),
+      )
+      new(User.egotter_cs, user, message)
     end
 
     def upload_completed_message(user, options = {})
