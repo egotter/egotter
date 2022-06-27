@@ -1,12 +1,12 @@
 <%= modal_dialog id: 'end-trial-modal', title: t('.title'), button: {positive: t('.yes'), negative: t('.no')} do %>
-  <div class="mb-3"><%= t('.message_html') %></div>
+  <div class="mb-3"><%= t('.message') %></div>
   <div class="small text-center mb-3">
     <%= link_to t('.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank' %>
     &middot;
     <%= link_to t('.refund_policy'), refund_policy_path(via: current_via), target: '_blank' %>
   </div>
-  <div class="small text-muted mb-1"><%= t('.note1') %></div>
-  <div class="small text-muted mb-1"><%= t('.note2') %></div>
+  <div class="small mb-1"><%= t('.note1_html') %></div>
+  <div class="small mb-1"><%= t('.note2_html') %></div>
 <% end %>
 <script>
   $(function () {

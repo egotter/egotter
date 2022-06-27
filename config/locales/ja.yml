@@ -2562,14 +2562,14 @@ ja:
       'yes': 'OK'
     end_trial_modal:
       title: 'お試し期間の終了と課金の開始'
-      message_html: 'この機能を使うとお試し期間が終了しすぐに<span class="text-primary">課金を開始</span>します。よろしいですか？'
+      message: 'この機能を使うとお試し期間が終了しすぐに課金を開始します。よろしいですか？'
       specified_commercial_transactions: '特定商取引法に基づく表記'
       refund_policy: '返金ポリシー'
-      note1: '※ 「はい」を押すと無料期間が終わります。'
-      note2: '※ 「はい」を押すと返金の対象外となります。'
+      note1_html: '※ 「はい」を押すと<span class="text-danger">無料期間が終わり</span>ます。'
+      note2_html: '※ 「はい」を押すと<span class="text-danger">返金の対象外</span>となります。'
       processing_html: '購入処理中です。<img src="/ajax-loader.gif?a=1">'
-      'yes': 'はい'
-      'no': 'キャンセル'
+      'yes': 'はい、課金を開始します'
+      'no': 'やめる'
     reset_cache_modal:
       title: 'キャッシュをリセットする'
       body_html: |
