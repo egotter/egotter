@@ -37,24 +37,27 @@ class Servers
   end
 
   def adjust
-    prev_names = instance_names
-    current_count = prev_names.size
+    current_instances = fetch_instances
 
-    if current_count != ideal_count
-      @market_type = 'not-spot' if current_count == 0
-      logger.log("Adjust #{@role} servers from #{current_count} to #{ideal_count} current=#{prev_names}")
-      run_task
-      logger.log("Finish adjusting #{@role} servers prev=#{prev_names} cur=#{instance_names}", thread_ts: logger.last_thread)
+    if current_instances.size != ideal_count
+      @market_type = 'not-spot' if current_instances.size == 0
+      logger.log("Adjust #{@role} servers from #{current_instances.size} to #{ideal_count} current=#{current_instances.map(&:name)}")
+      adjust_task.run
+      logger.log("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
+    elsif current_instances.size == 1 && current_instances[0].market_type == 'spot'
+      logger.log("Launch #{@role} server current=#{current_instances.map(&:name)}")
+      launch_task.run
+      logger.log("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
     end
   end
 
   private
 
-  def instance_names
-    Tasks::TaskBuilder.new('list' => true, 'role' => @role, 'instance-type' => @instance_type).list_task.instance_names
+  def fetch_instances
+    Tasks::TaskBuilder.new('list' => true, 'role' => @role).list_task.fetched_instances
   end
 
-  def run_task
+  def adjust_task
     params = {
         'adjust' => true,
         'role' => @role,
@@ -63,7 +66,19 @@ class Servers
         'market-type' => @market_type,
         'without-tag' => true,
     }
-    Tasks::TaskBuilder.new(params).adjust_task.run
+    Tasks::TaskBuilder.new(params).adjust_task
+  end
+
+  def launch_task
+    params = {
+        'launch' => true,
+        'role' => @role,
+        'instance-type' => @instance_type,
+        'count' => 1,
+        'market-type' => 'not-spot',
+        'without-tag' => true,
+    }
+    Tasks::TaskBuilder.new(params).launch_task
   end
 
   def ideal_count

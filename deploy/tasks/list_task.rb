@@ -35,6 +35,10 @@ module Tasks
         fetch_instances.map(&:name)
       end
 
+      def fetched_instances
+        fetch_instances
+      end
+
       private
 
       def fetch_instances
