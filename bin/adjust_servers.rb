@@ -14,9 +14,10 @@ end
 def logger
   @logger_instance ||= Class.new do
     def log(message, options = {})
-      File.open('log/deploy.rb', 'a') { |f| f.write(message) }
+      File.open('log/deploy.log', 'a') { |f| f.write(message + "\n") }
       unless options[:only_file]
-        @response = Slack::Web::Client.new.chat_postMessage({channel: 'deploy', text: message}.merge(options))
+        params = {channel: 'deploy', text: message}.merge(options.except(:only_file))
+        @response = Slack::Web::Client.new.chat_postMessage(params)
       end
     end
 
