@@ -58,7 +58,7 @@ class Servers
       logger.info("Adjust #{@role} servers from #{current_instances.size} to #{ideal_count} current=#{current_instances.map(&:name)}")
       adjust_task.run
       logger.info("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
-    elsif current_instances.size == 1 && current_instances[0].instance_lifecycle == 'spot'
+    elsif current_instances.all? { |i| i.instance_lifecycle == 'spot' }
       logger.info("Launch #{@role} server current=#{current_instances.map(&:name)}")
       launch_task.run
       logger.info("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
