@@ -11,8 +11,16 @@ Slack.configure do |config|
   config.token = ENV['SLACK_BOT_TOKEN']
 end
 
-def post_message(text, thread_ts: nil)
-  Slack::Web::Client.new.chat_postMessage({channel: 'deploy', text: text, thread_ts: thread_ts})
+def logger
+  @logger_instance ||= Class.new do
+    def log(message, options = {})
+      @response = Slack::Web::Client.new.chat_postMessage({channel: 'deploy', text: message}.merge(options))
+    end
+
+    def last_thread
+      @response['ts']
+    end
+  end.new
 end
 
 require_relative '../deploy/lib/deploy'
@@ -34,9 +42,9 @@ class Servers
 
     if current_count != ideal_count
       @market_type = 'not-spot' if current_count == 0
-      res = post_message("Adjust #{@role} servers from #{current_count} to #{ideal_count} current=#{prev_names}")
+      logger.log("Adjust #{@role} servers from #{current_count} to #{ideal_count} current=#{prev_names}")
       run_task
-      post_message("Finish adjusting #{@role} servers prev=#{prev_names} cur=#{instance_names}", thread_ts: res['ts'])
+      logger.log("Finish adjusting #{@role} servers prev=#{prev_names} cur=#{instance_names}", thread_ts: logger.last_thread)
     end
   end
 
@@ -77,7 +85,7 @@ class App
   end
 
   def run
-    retries ||= 0
+    error_count ||= 0
     market_type ||= 'spot'
 
     if @role == 'web'
@@ -91,14 +99,14 @@ class App
 
     Servers.new(@role, instance_type, market_type).adjust
   rescue Aws::EC2::Errors::InsufficientInstanceCapacity => e
-    post_message("Retry adjusting #{@role} servers retries=#{retries} exception=#{e.inspect}")
+    logger.log("Retry adjusting #{@role} servers retries=#{error_count} exception=#{e.inspect}")
     market_type = 'not-spot'
     retry
   rescue => e
-    if (retries += 1) <= 3
+    if (error_count += 1) <= 3
       retry
     else
-      post_message("Adjusting #{@role} servers failed retries=#{retries} exception=#{e.inspect}")
+      logger.log("Adjusting #{@role} servers failed retries=#{error_count} exception=#{e.inspect}")
       raise
     end
   end
@@ -108,7 +116,7 @@ def main(role)
   lockfile = "deploy-#{role}.pid"
 
   if File.exist?(lockfile)
-    post_message("Another deployment is already running role=#{role}")
+    logger.log("Another deployment is already running role=#{role}")
     return
   end
 
