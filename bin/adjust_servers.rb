@@ -62,40 +62,12 @@ class Servers
     hour = Time.now.utc.hour
 
     if @role.include?('web')
-      @ideal_count ||= WEB_SERVERS[hour]
+      WEB_SERVERS[hour]
     elsif @role.include?('sidekiq')
-      unless @ideal_count
-        count = SIDEKIQ_SERVERS[hour]
-        count += 1 if remaining_jobs > 1000
-        count += 1 if remaining_jobs > 10000
-        @ideal_count = count
-      end
+      SIDEKIQ_SERVERS[hour]
     else
       raise "Invalid role value=#{@role}"
     end
-
-    @ideal_count
-  end
-
-  # Unused
-  def active_users
-    unless @active_users
-      uri = URI.parse('https://egotter.com/api/v1/access_stats?key=' + ENV['STATS_API_KEY'])
-      @active_users = JSON.parse(Net::HTTP.get(uri))['active_users']
-    end
-    @active_users
-  rescue => e
-    0
-  end
-
-  def remaining_jobs
-    unless @remaining_jobs
-      uri = URI.parse('https://egotter.com/api/v1/report_stats?key=' + ENV['STATS_API_KEY'])
-      @remaining_jobs = JSON.parse(Net::HTTP.get(uri))['CreateReportTwitterUserWorker']
-    end
-    @remaining_jobs
-  rescue => e
-    0
   end
 end
 
