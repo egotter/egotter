@@ -13,8 +13,18 @@ end
 
 def logger
   @logger_instance ||= Class.new do
-    def log(message, options = {})
+    def info(msg, options = {})
+      log(msg, 'INFO', options)
+    end
+
+    def warn(msg, options = {})
+      log(msg, 'WARN', options)
+    end
+
+    def log(msg, level, options)
+      message = "#{Time.now} pid=#{Process.pid} #{level}: #{msg}"
       File.open('log/deploy.log', 'a') { |f| f.write(message + "\n") }
+
       unless options[:only_file]
         params = {channel: 'deploy', text: message}.merge(options.except(:only_file))
         @response = Slack::Web::Client.new.chat_postMessage(params)
@@ -45,15 +55,15 @@ class Servers
 
     if current_instances.size != ideal_count
       @market_type = 'not-spot' if current_instances.size == 0
-      logger.log("Adjust #{@role} servers from #{current_instances.size} to #{ideal_count} current=#{current_instances.map(&:name)}")
+      logger.info("Adjust #{@role} servers from #{current_instances.size} to #{ideal_count} current=#{current_instances.map(&:name)}")
       adjust_task.run
-      logger.log("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
+      logger.info("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
     elsif current_instances.size == 1 && current_instances[0].instance_lifecycle == 'spot'
-      logger.log("Launch #{@role} server current=#{current_instances.map(&:name)}")
+      logger.info("Launch #{@role} server current=#{current_instances.map(&:name)}")
       launch_task.run
-      logger.log("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
+      logger.info("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
     else
-      logger.log("Neither start nor stop is performed cur=#{current_instances.map(&:name)}", only_file: true)
+      logger.info("Neither start nor stop is performed cur=#{current_instances.map(&:name)}", only_file: true)
     end
   end
 
@@ -119,14 +129,16 @@ class App
 
     Servers.new(@role, instance_type, market_type).adjust
   rescue Aws::EC2::Errors::InsufficientInstanceCapacity => e
-    logger.log("Retry adjusting #{@role} servers retries=#{error_count} exception=#{e.inspect}")
+    logger.warn("Retry adjusting role=#{@role} error_count=#{error_count} exception=#{e.inspect}")
+    error_count += 1
     market_type = 'not-spot'
     retry
   rescue => e
     if (error_count += 1) <= 3
+      logger.warn("Retry adjusting role=#{@role} error_count=#{error_count} exception=#{e.inspect}")
       retry
     else
-      logger.log("Adjusting #{@role} servers failed retries=#{error_count} exception=#{e.inspect}")
+      logger.warn("Adjusting failed role=#{@role} error_count=#{error_count} exception=#{e.inspect}")
       raise
     end
   end
@@ -136,7 +148,7 @@ def main(role)
   lockfile = "deploy-#{role}.pid"
 
   if File.exist?(lockfile)
-    logger.log("Another deployment is already running role=#{role}")
+    logger.info("Another deployment is already running role=#{role}")
     return
   end
 
@@ -144,7 +156,7 @@ def main(role)
     File.write(lockfile, Process.pid)
     App.new(role).run
   rescue => e
-    logger.log("Failed role=#{role} exception=#{e.inspect}")
+    logger.warn("Failed role=#{role} exception=#{e.inspect}")
   ensure
     File.delete(lockfile) if File.exist?(lockfile)
   end
