@@ -53,7 +53,7 @@ class Servers
       launch_task.run
       logger.log("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
     else
-      logger.log("Finished cur=#{current_instances.map(&:name)}", only_file: true)
+      logger.log("Neither start nor stop is performed cur=#{current_instances.map(&:name)}", only_file: true)
     end
   end
 
@@ -111,7 +111,6 @@ class App
 
     if @role == 'web'
       instance_type = 't3.medium'
-      market_type = 'not-spot'
     elsif @role == 'sidekiq'
       instance_type = 'm5.large'
     else
