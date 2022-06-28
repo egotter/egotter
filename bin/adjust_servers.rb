@@ -44,7 +44,7 @@ class Servers
       logger.log("Adjust #{@role} servers from #{current_instances.size} to #{ideal_count} current=#{current_instances.map(&:name)}")
       adjust_task.run
       logger.log("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
-    elsif current_instances.size == 1 && current_instances[0].market_type == 'spot'
+    elsif current_instances.size == 1 && current_instances[0].instance_lifecycle == 'spot'
       logger.log("Launch #{@role} server current=#{current_instances.map(&:name)}")
       launch_task.run
       logger.log("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
@@ -138,6 +138,8 @@ def main(role)
   begin
     File.write(lockfile, Process.pid)
     App.new(role).run
+  rescue => e
+    logger.log("Failed exception=#{e.inspect}")
   ensure
     File.delete(lockfile) if File.exist?(lockfile)
   end
