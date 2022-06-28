@@ -14,7 +14,10 @@ end
 def logger
   @logger_instance ||= Class.new do
     def log(message, options = {})
-      @response = Slack::Web::Client.new.chat_postMessage({channel: 'deploy', text: message}.merge(options))
+      File.open('log/deploy.rb', 'a') { |f| f.write(message) }
+      unless options[:only_file]
+        @response = Slack::Web::Client.new.chat_postMessage({channel: 'deploy', text: message}.merge(options))
+      end
     end
 
     def last_thread
@@ -48,6 +51,8 @@ class Servers
       logger.log("Launch #{@role} server current=#{current_instances.map(&:name)}")
       launch_task.run
       logger.log("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
+    else
+      logger.log("Finished cur=#{current_instances.map(&:name)}", only_file: true)
     end
   end
 
@@ -139,7 +144,7 @@ def main(role)
     File.write(lockfile, Process.pid)
     App.new(role).run
   rescue => e
-    logger.log("Failed exception=#{e.inspect}")
+    logger.log("Failed role=#{role} exception=#{e.inspect}")
   ensure
     File.delete(lockfile) if File.exist?(lockfile)
   end
