@@ -84,7 +84,7 @@ GEM
       zeitwerk (~> 2.3)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
-    ahoy_matey (4.0.2)
+    ahoy_matey (4.1.0)
       activesupport (>= 5.2)
       device_detector
       safely_block (>= 0.2.1)
@@ -133,7 +133,7 @@ GEM
       msgpack
     debase-ruby_core_source (0.10.12)
     declarative (0.0.20)
-    device_detector (1.0.6)
+    device_detector (1.0.7)
     devise (4.8.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -155,7 +155,7 @@ GEM
       activesupport (>= 5.0)
       request_store (>= 1.0)
     equalizer (0.0.11)
-    errbase (0.2.1)
+    errbase (0.2.2)
     erubi (1.10.0)
     erubis (2.7.0)
     expire_job (0.1.5.pre)
@@ -276,7 +276,7 @@ GEM
     method_source (1.0.0)
     mini_mime (1.1.2)
     mini_portile2 (2.8.0)
-    minitest (5.15.0)
+    minitest (5.16.1)
     msgpack (1.4.2)
     multi_json (1.15.0)
     multipart-post (2.1.1)
@@ -461,7 +461,7 @@ GEM
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     woothee (1.11.1)
-    zeitwerk (2.5.4)
+    zeitwerk (2.6.0)
 
 PLATFORMS
   ruby
