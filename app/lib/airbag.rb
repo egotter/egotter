@@ -2,23 +2,24 @@ require 'singleton'
 
 class Airbag
   class << self
+    def debug(message = nil, &block)
+      log(Logger::DEBUG, message, &block)
+    end
+
     def info(message = nil, &block)
       log(Logger::INFO, message, &block)
-    ensure
-      CreateAirbagLogWorker.perform_async('INFO', message, nil, Time.zone.now) rescue nil
     end
 
     def warn(message = nil, &block)
       log(Logger::WARN, message, &block)
-    ensure
-      CreateAirbagLogWorker.perform_async('WARN', message, nil, Time.zone.now) rescue nil
     end
 
     def log(level, message = nil, &block)
-      if block_given?
-        logger.add(level, &block)
-      else
-        logger.add(level, message)
+      message = yield if message.nil? && block_given?
+      logger.add(level, message)
+    ensure
+      if level > Logger::DEBUG
+        CreateAirbagLogWorker.perform_async(format_severity(level), message, nil, Time.zone.now)
       end
     end
 
@@ -44,6 +45,12 @@ class Airbag
 
     def disable!
       @logger = ::Logger.new(nil)
+    end
+
+    SEV_LABEL = %w(DEBUG INFO WARN ERROR FATAL ANY).freeze
+
+    def format_severity(severity)
+      SEV_LABEL[severity] || 'ANY'
     end
   end
 

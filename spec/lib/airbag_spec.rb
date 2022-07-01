@@ -9,19 +9,19 @@ RSpec.describe Airbag, type: :model do
       expect(described_class).to receive(:log).with(Logger::INFO, message) do |*args, &blk|
         expect(blk).to eq(block)
       end
-      expect(CreateAirbagLogWorker).to receive(:perform_async).with('INFO', message, nil, kind_of(Time))
       subject
     end
   end
 
   describe '.log' do
-    let(:logger) { double('logger') }
-    let(:level) { 'level' }
+    let(:logger) { instance_double(Logger, 'log/test.log') }
+    let(:level) { Logger::WARN }
     let(:message) { 'abc' }
     subject { described_class.log(level, message) }
     before { allow(described_class).to receive(:logger).and_return(logger) }
     it do
       expect(logger).to receive(:add).with(level, message)
+      expect(CreateAirbagLogWorker).to receive(:perform_async).with('WARN', message, nil, kind_of(Time))
       subject
     end
   end
