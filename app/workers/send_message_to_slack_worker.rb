@@ -6,6 +6,7 @@ class SendMessageToSlackWorker
   def perform(channel, text, title = nil, options = {})
     SlackBotClient.channel(channel).post_message(text)
   rescue => e
-    Airbag.warn "#{e.inspect} channel=#{channel} text=#{text} options=#{options.inspect}"
+    # Don't use Airbag.warn to avoid infinite loop
+    logger.warn "#{e.inspect} channel=#{channel} text=#{text} options=#{options.inspect}"
   end
 end

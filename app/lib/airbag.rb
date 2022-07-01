@@ -17,10 +17,16 @@ class Airbag
     def log(level, message = nil, &block)
       message = yield if message.nil? && block_given?
       logger.add(level, message)
-    ensure
+
       if level > Logger::DEBUG
         CreateAirbagLogWorker.perform_async(format_severity(level), message, nil, Time.zone.now)
       end
+
+      if level > Logger::INFO && @slack
+        msg = "#{"tag=#{@slack[:tag]} " if @slack[:tag]}#{format_severity(level)}: #{message}"
+        SendMessageToSlackWorker.perform_async(@slack[:channel], msg)
+      end
+    ensure
     end
 
     # options:
@@ -37,6 +43,12 @@ class Airbag
       end
 
       result
+    end
+
+    def broadcast(options)
+      if options[:target] == :slack
+        @slack = {channel: options[:channel], tag: options[:tag]}
+      end
     end
 
     def logger
