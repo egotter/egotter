@@ -96,8 +96,17 @@ class DeleteTweetsByArchiveTask
 
   def send_started_message(request)
     report = DeleteTweetsByArchiveReport.delete_started(user, request.reservations_count)
+    error_count ||= 0
     report.deliver!
     puts report.message
+  rescue => e
+    if DirectMessageStatus.cannot_send_messages?(e) && (error_count += 1) <= 3
+      puts "error_count=#{error_count} exception=#{e.inspect}"
+      sleep 1
+      retry
+    else
+      raise
+    end
   end
 
   def send_completed_message(request)
