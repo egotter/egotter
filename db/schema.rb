@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_31_151054) do
+ActiveRecord::Schema.define(version: 2022_07_01_035414) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.date "date", null: false
+    t.date "date"
     t.timestamp "time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -95,6 +95,15 @@ ActiveRecord::Schema.define(version: 2021_12_31_151054) do
     t.index ["started_at"], name: "index_ahoy_visits_on_started_at"
     t.index ["user_id"], name: "index_ahoy_visits_on_user_id"
     t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true
+  end
+
+  create_table "airbag_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "severity", null: false
+    t.text "message"
+    t.json "properties"
+    t.timestamp "time", null: false
+    t.index ["time", "severity"], name: "index_airbag_logs_on_time_and_severity"
+    t.index ["time"], name: "index_airbag_logs_on_time"
   end
 
   create_table "announcements", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

@@ -4,10 +4,14 @@ class Airbag
   class << self
     def info(message = nil, &block)
       log(Logger::INFO, message, &block)
+    ensure
+      CreateAirbagLogWorker.perform_async('INFO', message, nil, Time.zone.now) rescue nil
     end
 
     def warn(message = nil, &block)
       log(Logger::WARN, message, &block)
+    ensure
+      CreateAirbagLogWorker.perform_async('WARN', message, nil, Time.zone.now) rescue nil
     end
 
     def log(level, message = nil, &block)

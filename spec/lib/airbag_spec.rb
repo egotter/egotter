@@ -9,6 +9,7 @@ RSpec.describe Airbag, type: :model do
       expect(described_class).to receive(:log).with(Logger::INFO, message) do |*args, &blk|
         expect(blk).to eq(block)
       end
+      expect(CreateAirbagLogWorker).to receive(:perform_async).with('INFO', message, nil, kind_of(Time))
       subject
     end
   end
