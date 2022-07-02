@@ -89,6 +89,4 @@ class CreateTwitterDBUsersTask
   end
 
   class RetryExhausted < StandardError; end
-
-  class RetryDeadlockExhausted < StandardError; end
 end
