@@ -5,6 +5,6 @@ cmd="/usr/local/bin/bundle exec /usr/local/bin/ruby $1"
 
 SECONDS=0
 
-echo -e "$(date) \e[35m$cmd started\e[m"
+echo -e "$(date '+%Y/%m/%d %H:%M:%S') $cmd started"
 cd /var/egotter && RAILS_ENV=production $cmd
-echo -e "$(date) \e[35m$cmd finished elapsed=${SECONDS}\e[m"
+echo -e "$(date '+%Y/%m/%d %H:%M:%S') $cmd finished elapsed=${SECONDS}"
