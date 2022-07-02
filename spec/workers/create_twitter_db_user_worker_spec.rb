@@ -58,7 +58,7 @@ RSpec.describe CreateTwitterDBUserWorker do
 
   describe '#perform' do
     let(:uids) { [1] }
-    let(:options) { {'user_id' => user.id} }
+    let(:options) { {'user_id' => user.id, 'enqueued_by' => 'test'} }
     let(:client) { 'client' }
     let(:task) { double('task') }
     subject { worker.perform(uids, options) }
@@ -68,7 +68,7 @@ RSpec.describe CreateTwitterDBUserWorker do
     end
 
     it do
-      expect(CreateTwitterDBUsersTask).to receive(:new).with(uids, user_id: user.id, force: nil).and_return(task)
+      expect(CreateTwitterDBUsersTask).to receive(:new).with(uids, user_id: user.id, force: nil, enqueued_by: 'test').and_return(task)
       expect(task).to receive(:start)
       expect(task).to receive(:debug_message)
       subject

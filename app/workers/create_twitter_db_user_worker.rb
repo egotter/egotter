@@ -39,7 +39,7 @@ class CreateTwitterDBUserWorker
 
     user_id = (options['user_id'] && options['user_id'].to_i != -1) ? options['user_id'] : nil
 
-    task = CreateTwitterDBUsersTask.new(uids, user_id: user_id, force: options['force_update'])
+    task = CreateTwitterDBUsersTask.new(uids, user_id: user_id, force: options['force_update'], enqueued_by: options['enqueued_by'])
     task.start
     Airbag.info "CreateTwitterDBUsersTask: DEBUG enqueued_by=#{options['enqueued_by']} user_id=#{user_id} #{task.debug_message}"
   rescue CreateTwitterDBUsersTask::RetryDeadlockExhausted => e
