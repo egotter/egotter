@@ -14,7 +14,7 @@ class ImportTwitterDBUserWorker
   end
 
   def after_skip(data, options = {})
-    SkippedImportTwitterDBUserWorker.perform_async(data, options.merge(_size: (decompress(data).size rescue -1), _time: Time.zone.now, _worker: self.class))
+    SkippedImportTwitterDBUserWorker.perform_async(data, options.merge(_size: (decompress(data).size rescue -1)).merge(debug_options))
   end
 
   def _timeout_in
@@ -27,10 +27,10 @@ class ImportTwitterDBUserWorker
     import_users(users)
   rescue Deadlocked => e
     delay = rand(20) + 15
-    ImportTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, data, options.merge(klass: self.class, error_class: e.class))
+    ImportTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, data, options.merge(debug_options(e)))
   rescue => e
     handle_worker_error(e, options: options)
-    FailedImportTwitterDBUserWorker.perform_async(data, options.merge(_time: Time.zone.now, _worker: self.class, error_class: e.class, error_message: e.message.truncate(200)))
+    FailedImportTwitterDBUserWorker.perform_async(data, options.merge(debug_options(e)))
   end
 
   private
@@ -56,6 +56,10 @@ class ImportTwitterDBUserWorker
 
   def decompress(data)
     data.is_a?(String) ? JSON.parse(Zlib::Inflate.inflate(Base64.decode64(data))) : data
+  end
+
+  def debug_options(e = nil)
+    {_time: Time.zone.now, _worker: self.class, error_class: e&.class, error_message: e&.message&.truncate(200)}.compact
   end
 
   class << self

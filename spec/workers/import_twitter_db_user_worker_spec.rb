@@ -27,8 +27,7 @@ RSpec.describe ImportTwitterDBUserWorker do
         allow(worker).to receive(:import_users).with(users).and_raise(error)
       end
       it do
-        expect(ImportTwitterDBUserForRetryingDeadlockWorker).to receive(:perform_in).
-            with(instance_of(Integer), users, klass: described_class, error_class: error.class)
+        expect(ImportTwitterDBUserForRetryingDeadlockWorker).to receive(:perform_in).with(instance_of(Integer), users, anything)
         subject
       end
     end

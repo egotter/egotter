@@ -14,7 +14,7 @@ class CreateTwitterDBUserWorker
   end
 
   def after_skip(data, options = {})
-    SkippedCreateTwitterDBUserWorker.perform_async(data, options.merge(_size: (decompress(data).size rescue -1), _time: Time.zone.now))
+    SkippedCreateTwitterDBUserWorker.perform_async(data, options.merge(_size: (decompress(data).size rescue -1)).merge(debug_options))
   end
 
   def _timeout_in
@@ -44,11 +44,11 @@ class CreateTwitterDBUserWorker
   rescue CreateTwitterDBUsersTask::RetryDeadlockExhausted => e
     Airbag.info "Retry deadlock error: #{e.inspect.truncate(200)}"
     delay = rand(20) + 15
-    CreateTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, data, options.merge(klass: self.class, error_class: e.class))
+    CreateTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, data, options.merge(debug_options(e)))
   rescue ApiClient::RetryExhausted => e
     Airbag.info "Retry retryable error: #{e.inspect.truncate(200)}"
     delay = rand(20) + 15
-    CreateTwitterDBUserForRetryableErrorWorker.perform_in(delay, data, options.merge(klass: self.class, error_class: e.class))
+    CreateTwitterDBUserForRetryableErrorWorker.perform_in(delay, data, options.merge(debug_options(e)))
   rescue ApiClient::ContainStrangeUid => e
     if uids && uids.size > 1
       slice_and_retry(uids, options)
@@ -57,7 +57,7 @@ class CreateTwitterDBUserWorker
     end
   rescue => e
     handle_worker_error(e, uids_size: uids.size, options: options)
-    FailedCreateTwitterDBUserWorker.perform_async(uids, options.merge(_time: Time.zone.now, _worker: self.class, error_class: e.class, error_message: e.message.truncate(200)))
+    FailedCreateTwitterDBUserWorker.perform_async(uids, options.merge(debug_options(e)))
   end
 
   private
@@ -67,6 +67,10 @@ class CreateTwitterDBUserWorker
     uids.each_slice(slice_size) do |partial_uids|
       self.class.perform_async(partial_uids, options)
     end
+  end
+
+  def debug_options(e = nil)
+    {_time: Time.zone.now, _worker: self.class, error_class: e&.class, error_message: e&.message&.truncate(200)}.compact
   end
 
   class << self
