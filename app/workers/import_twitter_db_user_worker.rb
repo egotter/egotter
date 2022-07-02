@@ -14,7 +14,7 @@ class ImportTwitterDBUserWorker
   end
 
   def after_skip(data, options = {})
-    SkippedImportTwitterDBUserWorker.perform_async(data, options.merge(_size: (decompress(data).size rescue -1), _time: Time.zone.now))
+    SkippedImportTwitterDBUserWorker.perform_async(data, options.merge(_size: (decompress(data).size rescue -1), _time: Time.zone.now, _worker: self.class))
   end
 
   def _timeout_in
