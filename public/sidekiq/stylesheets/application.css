@@ -931,6 +931,7 @@ div.interval-slider input {
 
 .toggle {
   display: none;
+  overflow-wrap: anywhere; /* Added 2022-07-02 */
 }
 
 .box {
