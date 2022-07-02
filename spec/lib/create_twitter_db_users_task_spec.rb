@@ -5,7 +5,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
   let(:users) { uids.map { |id| {id: id, screen_name: "sn-#{id}"} } }
   let(:twitter) { double('twitter') }
   let(:client) { double('client', twitter: twitter) }
-  let(:instance) { described_class.new(uids) }
+  let(:instance) { described_class.new(uids, enqueued_by: 'test') }
 
   before do
     allow(Bot).to receive(:api_client).and_return(client)
@@ -19,7 +19,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
       expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
       expect(instance).not_to receive(:import_suspended_users)
       expect(instance).to receive(:reject_fresh_users).with(users).and_return(users)
-      expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users)
+      expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test')
       subject
     end
 
@@ -29,18 +29,18 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
         expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
         expect(instance).to receive(:import_suspended_users).with(uids.slice(2, 3))
         expect(instance).to receive(:reject_fresh_users).with(users).and_return(users)
-        expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users)
+        expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test')
         subject
       end
     end
 
     context ':force is true' do
-      let(:instance) { described_class.new(uids, force: true) }
+      let(:instance) { described_class.new(uids, force: true, enqueued_by: 'test') }
       it do
         expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
         expect(instance).not_to receive(:import_suspended_users)
         expect(instance).not_to receive(:reject_fresh_users)
-        expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users)
+        expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test')
         subject
       end
     end
