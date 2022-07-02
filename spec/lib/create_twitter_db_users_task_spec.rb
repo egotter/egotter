@@ -19,7 +19,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
       expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
       expect(instance).not_to receive(:import_suspended_users)
       expect(instance).to receive(:reject_fresh_users).with(users).and_return(users)
-      expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test')
+      expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test', _user_id: nil)
       subject
     end
 
@@ -29,7 +29,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
         expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
         expect(instance).to receive(:import_suspended_users).with(uids.slice(2, 3))
         expect(instance).to receive(:reject_fresh_users).with(users).and_return(users)
-        expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test')
+        expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test', _user_id: nil)
         subject
       end
     end
@@ -40,7 +40,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
         expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
         expect(instance).not_to receive(:import_suspended_users)
         expect(instance).not_to receive(:reject_fresh_users)
-        expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test')
+        expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test', _user_id: nil)
         subject
       end
     end
