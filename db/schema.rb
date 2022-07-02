@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_01_035414) do
+ActiveRecord::Schema.define(version: 2022_07_02_111811) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1365,6 +1365,13 @@ ActiveRecord::Schema.define(version: 2022_07_01_035414) do
     t.index ["created_at"], name: "index_search_requests_on_created_at"
     t.index ["uid"], name: "index_search_requests_on_uid"
     t.index ["user_id"], name: "index_search_requests_on_user_id"
+  end
+
+  create_table "sidekiq_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.text "message"
+    t.json "properties"
+    t.timestamp "time", null: false
+    t.index ["time"], name: "index_sidekiq_logs_on_time"
   end
 
   create_table "sign_in_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

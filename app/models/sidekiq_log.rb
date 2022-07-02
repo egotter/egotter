@@ -1,0 +1,2 @@
+class SidekiqLog < ApplicationRecord
+end
