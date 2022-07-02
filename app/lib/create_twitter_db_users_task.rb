@@ -43,7 +43,7 @@ class CreateTwitterDBUsersTask
 
     if users.any?
       ImportTwitterDBUserWorker.perform_async(users, enqueued_by: @enqueued_by, _user_id: @user_id)
-      CreateSidekiqLogWorker.perform_async("CreateTwitterDBUsersTask user_id=#{@user_id} enqueued_by=#{@enqueued_by}", {users: users})
+      CreateSidekiqLogWorker.perform_async("CreateTwitterDBUsersTask user_id=#{@user_id} uids=#{@uids.size} users=#{users.size} enqueued_by=#{@enqueued_by}")
     end
   end
 
