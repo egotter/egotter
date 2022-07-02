@@ -1,10 +1,13 @@
 namespace :orders do
-  task update_stripe_attributes: :environment do
+  task update_stripe_attributes: :environment do |task|
+    processed_count = 0
     Order.where(canceled_at: nil).find_each.with_index do |order, i|
       interval = (0.1 * i).floor
       SyncOrderEmailWorker.perform_in(interval, order.id)
       SyncOrderSubscriptionWorker.perform_in(interval, order.id)
+      processed_count += 1
     end
+    puts "#{task.name}: processed_count=#{processed_count}"
   end
 
   task print_statuses: :environment do
