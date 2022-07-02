@@ -30,7 +30,7 @@ class ImportTwitterDBUserWorker
     ImportTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, data, options.merge(klass: self.class, error_class: e.class))
   rescue => e
     handle_worker_error(e, options: options)
-    FailedImportTwitterDBUserWorker.perform_async(data, options.merge(klass: self.class, error_class: e.class))
+    FailedImportTwitterDBUserWorker.perform_async(data, options.merge(_time: Time.zone.now, _worker: self.class, error_class: e.class, error_message: e.message.truncate(200)))
   end
 
   private

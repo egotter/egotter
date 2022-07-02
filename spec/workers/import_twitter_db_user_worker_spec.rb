@@ -39,8 +39,7 @@ RSpec.describe ImportTwitterDBUserWorker do
         allow(worker).to receive(:import_users).with(users).and_raise(error)
       end
       it do
-        expect(FailedImportTwitterDBUserWorker).to receive(:perform_async).
-            with(users, klass: described_class, error_class: error.class)
+        expect(FailedImportTwitterDBUserWorker).to receive(:perform_async).with(users, anything)
         subject
       end
     end

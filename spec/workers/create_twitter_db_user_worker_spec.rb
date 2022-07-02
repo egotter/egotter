@@ -73,5 +73,16 @@ RSpec.describe CreateTwitterDBUserWorker do
       expect(task).to receive(:debug_message)
       subject
     end
+
+    context 'error is raised' do
+      let(:error) { RuntimeError.new }
+      before do
+        allow(CreateTwitterDBUsersTask).to receive(:new).with(any_args).and_raise(error)
+      end
+      it do
+        expect(FailedCreateTwitterDBUserWorker).to receive(:perform_async).with(uids, anything)
+        subject
+      end
+    end
   end
 end
