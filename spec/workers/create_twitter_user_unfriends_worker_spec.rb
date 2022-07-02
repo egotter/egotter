@@ -24,7 +24,7 @@ RSpec.describe CreateTwitterUserUnfriendsWorker do
       expect(worker).to receive(:import_uids).with(S3::Unfriendship, twitter_user).and_return([1, 2])
       expect(worker).to receive(:import_uids).with(S3::Unfollowership, twitter_user).and_return([2, 3])
       expect(worker).to receive(:import_uids).with(S3::MutualUnfriendship, twitter_user).and_return([3])
-      expect(worker).to receive(:update_twitter_db_users).with([1, 2, 3], twitter_user.user_id)
+      expect(worker).to receive(:update_twitter_db_users).with([1, 2, 3], twitter_user.user_id, instance_of(String))
       expect(DeleteUnfriendshipsWorker).to receive(:perform_async).with(twitter_user.uid)
       subject
     end

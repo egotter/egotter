@@ -47,19 +47,19 @@ class CreateTwitterUserCloseFriendsWorker
   def import_close_friends(twitter_user, user)
     uids = twitter_user.calc_uids_for(S3::CloseFriendship, login_user: user)
     S3::CloseFriendship.import_from!(twitter_user.uid, uids)
-    update_twitter_db_users(uids, twitter_user.user_id)
+    update_twitter_db_users(uids, twitter_user.user_id, "#{self.class}-import_close_friends-#{twitter_user.id}")
   end
 
   def import_favorite_friends(twitter_user, user)
     uids = twitter_user.calc_uids_for(S3::FavoriteFriendship, login_user: user)
     S3::FavoriteFriendship.import_from!(twitter_user.uid, uids)
-    update_twitter_db_users(uids, twitter_user.user_id)
+    update_twitter_db_users(uids, twitter_user.user_id, "#{self.class}-import_favorite_friends-#{twitter_user.id}")
   end
 
-  def update_twitter_db_users(uids, user_id)
+  def update_twitter_db_users(uids, user_id, enqueued_by)
     if uids.any? && !TwitterDBUsersUpdatedFlag.on?(uids)
       TwitterDBUsersUpdatedFlag.on(uids)
-      CreateTwitterDBUserWorker.perform_async(uids, user_id: user_id, enqueued_by: self.class)
+      CreateTwitterDBUserWorker.perform_async(uids, user_id: user_id, enqueued_by: enqueued_by)
     end
   end
 end

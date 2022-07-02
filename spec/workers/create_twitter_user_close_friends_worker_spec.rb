@@ -37,7 +37,7 @@ RSpec.describe CreateTwitterUserCloseFriendsWorker do
     end
     it do
       expect(S3::CloseFriendship).to receive(:import_from!).with(twitter_user.uid, uids)
-      expect(worker).to receive(:update_twitter_db_users).with(uids, twitter_user.user_id)
+      expect(worker).to receive(:update_twitter_db_users).with(uids, twitter_user.user_id, instance_of(String))
       subject
     end
   end
@@ -50,17 +50,17 @@ RSpec.describe CreateTwitterUserCloseFriendsWorker do
     end
     it do
       expect(S3::FavoriteFriendship).to receive(:import_from!).with(twitter_user.uid, uids)
-      expect(worker).to receive(:update_twitter_db_users).with(uids, twitter_user.user_id)
+      expect(worker).to receive(:update_twitter_db_users).with(uids, twitter_user.user_id, instance_of(String))
       subject
     end
   end
 
   describe '#update_twitter_db_users' do
     let(:uids) { [1] }
-    subject { worker.send(:update_twitter_db_users, uids, user.id) }
+    subject { worker.send(:update_twitter_db_users, uids, user.id, 'test') }
     before { RedisClient.new.flushall }
     it do
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with(uids, user_id: user.id, enqueued_by: worker.class)
+      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with(uids, user_id: user.id, enqueued_by: 'test')
       subject
     end
   end
