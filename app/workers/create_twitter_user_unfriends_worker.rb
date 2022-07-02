@@ -61,7 +61,7 @@ class CreateTwitterUserUnfriendsWorker
   def update_twitter_db_users(uids, user_id, enqueued_by)
     if uids.any? && !TwitterDBUsersUpdatedFlag.on?(uids)
       TwitterDBUsersUpdatedFlag.on(uids)
-      CreateTwitterDBUserWorker.perform_async(uids, user_id: user_id, enqueued_by: enqueued_by)
+      CreateTwitterDBUserWorker.perform_async(uids, user_id: user_id, enqueued_by: "#{enqueued_by}-#{uids.size}")
     end
   end
 end
