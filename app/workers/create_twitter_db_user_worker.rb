@@ -41,7 +41,6 @@ class CreateTwitterDBUserWorker
 
     task = CreateTwitterDBUsersTask.new(uids, user_id: user_id, force: options['force_update'], enqueued_by: options['enqueued_by'])
     task.start
-    Airbag.info "CreateTwitterDBUsersTask: DEBUG enqueued_by=#{options['enqueued_by']} user_id=#{user_id} #{task.debug_message}"
   rescue CreateTwitterDBUsersTask::RetryDeadlockExhausted => e
     Airbag.info "Retry deadlock error: #{e.inspect.truncate(200)}"
     delay = rand(20) + 15

@@ -1,6 +1,4 @@
 class CreateTwitterDBUsersTask
-  attr_reader :debug_message
-
   def initialize(uids, user_id: nil, force: false, enqueued_by: nil)
     @uids = uids.uniq.map(&:to_i)
     @user_id = user_id
@@ -11,35 +9,21 @@ class CreateTwitterDBUsersTask
     end
     @force = force
     @enqueued_by = enqueued_by
-    @debug_message = ''
   end
 
   def start
-    initial_uids = @uids
-    @debug_message = "uids=#{@uids.size}"
-
     @uids = reject_fresh_uids(@uids)
-    stale_uids = @uids
-    @debug_message += ", stale_uids=#{@uids.size}"
     return if @uids.empty?
 
     users = fetch_users(@client, @uids)
-    @debug_message += ", users=#{users.size}"
 
     if @uids.size != users.size && (suspended_uids = @uids - users.map { |u| u[:id] }).any?
       import_suspended_users(suspended_uids)
-      @debug_message += ", suspended_uids=#{suspended_uids.size}"
     end
 
     return if users.empty?
 
     users = reject_fresh_users(users) unless @force
-
-    @debug_message += ", import_users=#{users.size}"
-    if users.empty?
-      @debug_message += ", initial_uids=#{initial_uids.join(',')}"
-      @debug_message += ", stale_uids=#{stale_uids.join(',')}"
-    end
 
     if users.any?
       ImportTwitterDBUserWorker.perform_async(users, enqueued_by: @enqueued_by, _user_id: @user_id)

@@ -70,7 +70,6 @@ RSpec.describe CreateTwitterDBUserWorker do
     it do
       expect(CreateTwitterDBUsersTask).to receive(:new).with(uids, user_id: user.id, force: nil, enqueued_by: 'test').and_return(task)
       expect(task).to receive(:start)
-      expect(task).to receive(:debug_message)
       subject
     end
 
