@@ -1,7 +1,7 @@
 class CreateTwitterDBUsersTask
   attr_reader :debug_message
 
-  def initialize(uids, user_id: nil, force: false)
+  def initialize(uids, user_id: nil, force: false, enqueued_by: nil)
     @uids = uids.uniq.map(&:to_i)
     @user_id = user_id
     if user_id && !RateLimitExceededFlag.on?(@user_id)
@@ -10,6 +10,7 @@ class CreateTwitterDBUsersTask
       @client = Bot.api_client
     end
     @force = force
+    @enqueued_by = enqueued_by
     @debug_message = ''
   end
 
