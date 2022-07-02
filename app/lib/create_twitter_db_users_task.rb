@@ -41,7 +41,10 @@ class CreateTwitterDBUsersTask
       @debug_message += ", stale_uids=#{stale_uids.join(',')}"
     end
 
-    ImportTwitterDBUserWorker.perform_async(users, enqueued_by: @enqueued_by) if users.any?
+    if users.any?
+      ImportTwitterDBUserWorker.perform_async(users, enqueued_by: @enqueued_by)
+      CreateSidekiqLogWorker.perform_async('CreateTwitterDBUsersTask', {user_id: @user_id, enqueued_by: @enqueued_by, users: users})
+    end
   end
 
   private
