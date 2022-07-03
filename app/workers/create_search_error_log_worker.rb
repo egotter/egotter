@@ -3,8 +3,8 @@ class CreateSearchErrorLogWorker
   sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
   def perform(attrs)
-    SearchErrorLog.create!(attrs)
+    Rails.logger.silence { SearchErrorLog.create!(attrs) }
   rescue => e
-    Airbag.warn "#{e.class} #{e.message} #{attrs.inspect}"
+    Airbag.warn "#{self.class}: #{e.inspect} attrs=#{attrs.inspect.truncate(100)}"
   end
 end

@@ -5,6 +5,6 @@ class CreateSearchLogWorker
   def perform(attrs)
     Rails.logger.silence { SearchLog.create!(attrs) }
   rescue => e
-    Airbag.warn "#{e.inspect} attrs=#{attrs.inspect}"
+    Airbag.warn "#{self.class}: #{e.inspect} attrs=#{attrs.inspect.truncate(100)}"
   end
 end
