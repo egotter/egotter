@@ -16,7 +16,7 @@ class CreateDeleteTweetsDuplicateFileUploadedMessageWorker
     user = User.find(user_id)
     user.api_client.verify_credentials
 
-    unless user.api_client.can_send_dm?(User::EGOTTER_CS_UID)
+    unless User.egotter_cs.api_client.can_send_dm?(user.uid)
       DeleteTweetsReport.send_duplicate_file_uploaded_starting_message(user)
     end
 

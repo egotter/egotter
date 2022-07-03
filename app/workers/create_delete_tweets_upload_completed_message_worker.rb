@@ -18,7 +18,7 @@ class CreateDeleteTweetsUploadCompletedMessageWorker
     user = User.find(user_id)
     user.api_client.verify_credentials
 
-    unless user.api_client.can_send_dm?(User::EGOTTER_CS_UID)
+    unless User.egotter_cs.api_client.can_send_dm?(user.uid)
       DeleteTweetsReport.send_upload_completed_starting_message(user)
     end
 
