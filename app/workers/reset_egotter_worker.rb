@@ -15,13 +15,13 @@ class ResetEgotterWorker
     Airbag.warn "Skipped #{request_id}"
   end
 
-  def timeout_in
+  def _timeout_in
     1.minute
   end
 
   def after_timeout(request_id, options = {})
     Airbag.warn "Timeout #{timeout_in} #{request_id}"
-    ResetEgotterWorker.perform_in(retry_in, request_id, options)
+    # ResetEgotterWorker.perform_in(retry_in, request_id, options)
   end
 
   def retry_in

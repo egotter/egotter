@@ -1,3 +1,4 @@
+# Not used
 class ResetCacheWorker
   include Sidekiq::Worker
   include WorkerErrorHandler
