@@ -29,7 +29,7 @@ class CreateCloseFriendsOgImageWorker
     return unless twitter_user
 
     if options['uids']
-      friends = TwitterDB::User.where_and_order_by_field(uids: options['uids'])
+      friends = TwitterDB::User.order_by_field(options['uids']).where(uid: options['uids'])
       if friends.size != options['uids'].size && (users = (Bot.api_client.users(options['uids']) rescue nil))
         friends = users
       end

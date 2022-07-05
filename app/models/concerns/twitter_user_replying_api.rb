@@ -27,7 +27,7 @@ module TwitterUserReplyingApi
 
   def replying(uniq: true)
     uids = replying_uids(uniq: uniq)
-    TwitterDB::User.where_and_order_by_field(uids: uids)
+    TwitterDB::User.order_by_field(uids).where(uid: uids)
   end
 
   def reply_tweets(login_user: nil)

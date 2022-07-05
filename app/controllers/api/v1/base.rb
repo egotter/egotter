@@ -14,7 +14,7 @@ module Api
         uids, size = summary_uids
         update_twitter_db_users(uids)
 
-        users = TwitterDB::User.where_and_order_by_field(uids: uids)
+        users = TwitterDB::User.order_by_field(uids).where(uid: uids)
 
         if remove_related_page? && uids.any? && uids.size != users.size
           users = users.index_by(&:uid)
@@ -35,7 +35,7 @@ module Api
             paginate
 
         candidate_uids = paginator.users.map(&:uid)
-        users = TwitterDB::User.where_and_order_by_field(uids: candidate_uids)
+        users = TwitterDB::User.order_by_field(candidate_uids).where(uid: candidate_uids)
 
         if remove_related_page? && candidate_uids.any? && candidate_uids.size != users.size
           users = users.index_by(&:uid)

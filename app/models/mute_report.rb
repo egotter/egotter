@@ -171,7 +171,7 @@ class MuteReport < ApplicationRecord
 
     def fetch_muted_users(user, limit: 10)
       fetched_uids = MutingRelationship.where(to_uid: user.uid).order(created_at: :desc).limit(limit).pluck(:from_uid).uniq
-      fetched_users = TwitterDB::User.where_and_order_by_field(uids: fetched_uids)
+      fetched_users = TwitterDB::User.order_by_field(fetched_uids).where(uid: fetched_uids)
 
       if (missing_uids = fetched_uids - fetched_users.map(&:uid)).any?
         CreateTwitterDBUserWorker.perform_async(missing_uids, user_id: user.id, enqueued_by: self.class)

@@ -122,9 +122,9 @@ class CreatePeriodicReportRequest < ApplicationRecord
       account_statuses = attach_status(unfriends + unfollowers + total_unfollowers).map { |s| s.slice(:uid, :screen_name, :account_status) }
 
       new_friend_uids = TwitterUser.calc_total_new_friend_uids(@target_users).uniq.take(10)
-      new_friends = TwitterDB::User.where_and_order_by_field(uids: new_friend_uids).map { |user| user.slice(:uid, :screen_name) }
+      new_friends = TwitterDB::User.order_by_field(new_friend_uids).where(uid: new_friend_uids).map { |user| user.slice(:uid, :screen_name) }
       new_follower_uids = TwitterUser.calc_total_new_follower_uids(@target_users).uniq.take(10)
-      new_followers = TwitterDB::User.where_and_order_by_field(uids: new_follower_uids).map { |user| user.slice(:uid, :screen_name) }
+      new_followers = TwitterDB::User.order_by_field(new_follower_uids).where(uid: new_follower_uids).map { |user| user.slice(:uid, :screen_name) }
 
       properties = {
           version: 1,
@@ -179,7 +179,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       target_uids = uids.take(limit)
       return [] if target_uids.empty?
 
-      users = TwitterDB::User.where_and_order_by_field(uids: target_uids)
+      users = TwitterDB::User.order_by_field(target_uids).where(uid: target_uids)
 
       if target_uids.size != users.size
         missing_uids = target_uids - users.map(&:uid)
