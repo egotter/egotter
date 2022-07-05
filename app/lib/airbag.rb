@@ -23,7 +23,7 @@ class Airbag
       end
 
       if level > Logger::INFO && @slack
-        msg = "#{"tag=#{@slack[:tag]} " if @slack[:tag]}#{format_severity(level)}: #{message}".truncate(200)
+        msg = "#{"env=#{Rails.env} tag=#{@slack[:tag]} " if @slack[:tag]}#{format_severity(level)}: #{message}".truncate(200)
         SendMessageToSlackWorker.perform_async(@slack[:channel], msg)
       end
     ensure
