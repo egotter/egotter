@@ -18,6 +18,10 @@ namespace :delete_tweets do
       screen_name = User.find_by(uid: ENV['KEY'].split('-')[0]).screen_name
     end
 
+    unless User.where(screen_name: screen_name).one?
+      raise 'There are two or more users with the same name'
+    end
+
     unless ENV['FILE']
       raise 'Specify both KEY and FILE' unless ENV['KEY']
       dir = "/efs/lambda_production/#{ENV['KEY']}"

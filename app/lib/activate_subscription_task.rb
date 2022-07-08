@@ -23,7 +23,7 @@ class ActivateSubscriptionTask
     end
 
     unless User.where(screen_name: @screen_name).one?
-      raise 'The number of users is not one.'
+      raise 'There are two or more users with the same name'
     end
     @user = User.find_by(screen_name: @screen_name)
 
