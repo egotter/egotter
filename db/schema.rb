@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_02_111811) do
+ActiveRecord::Schema.define(version: 2022_07_06_000325) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1681,6 +1681,33 @@ ActiveRecord::Schema.define(version: 2022_07_02_111811) do
     t.integer "sequence", null: false
     t.index ["follower_uid"], name: "index_unfollowerships_on_follower_uid"
     t.index ["from_uid"], name: "index_unfollowerships_on_from_uid"
+  end
+
+  create_table "unfriend_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "from_uid", null: false
+    t.integer "sort_order", null: false
+    t.string "account_status"
+    t.bigint "uid", null: false
+    t.string "screen_name", null: false
+    t.integer "friends_count", null: false
+    t.integer "followers_count", null: false
+    t.boolean "protected", null: false
+    t.boolean "suspended", null: false
+    t.datetime "status_created_at"
+    t.datetime "account_created_at"
+    t.integer "statuses_count", null: false
+    t.integer "favourites_count", null: false
+    t.integer "listed_count", null: false
+    t.string "name", null: false
+    t.string "location", null: false
+    t.text "description"
+    t.string "url", null: false
+    t.boolean "verified", null: false
+    t.string "profile_image_url", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_unfriend_users_on_created_at"
+    t.index ["from_uid", "sort_order"], name: "index_unfriend_users_on_from_uid_and_sort_order", unique: true
   end
 
   create_table "unfriends_count_points", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
