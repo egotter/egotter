@@ -34,6 +34,11 @@
 
 %hr
 
+%h2.h4.text-center.my-5= t('.not_included.title')
+%p= t('.not_included.description_html')
+
+%hr
+
 %h2.h4.text-center.my-5= t('.type.title')
 %p= t('.type.description_html')
 
@@ -42,6 +47,9 @@
 
 %h3.h5.font-weight-bold.mt-5.mb-3= t('.type.basic.title')
 %p= t('.type.basic.description_html')
+
+= alert_box class: 'my-5' do
+  = t('.type.note_html')
 
 %hr
 

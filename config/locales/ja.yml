@@ -643,6 +643,11 @@ ja:
           title: 'ツイートの完全な削除'
           description: 'アーカイブデータを利用してすべてのツイートを一括削除できます。'
         note_html: '<strong>ヒント</strong><br>「いいね」の削除は全て無料です。有料プランを購入せずに利用できます。'
+      not_included:
+        title: '有料プランに含まれない要素'
+        description_html:
+          <p>各種の質問への回答は有料プランに含まれません。質問はいつでも送って大丈夫ですが、回答があるとは限らないことにご注意ください。</p>
+          えごったーに関する質問は <a href="%{faq_url}">よくある質問</a> または <a href="%{delete_tweets_faq_url}">ツイート削除のよくある質問</a> をご覧になってください。
       type:
         title: 'プランの種類'
         description_html: |
@@ -654,6 +659,7 @@ ja:
         basic:
           title: '有料プラン'
           description_html: '購入することでいくつかの機能がパワーアップします。購入方法は、毎月更新の定期購読、1ヶ月分の単体購入、複数月の一括購入があります。買い方によって価格が違います。'
+        note_html: '<strong>ヒント</strong><br>無料のお試し期間があるのは <span class="egotter-pink">定期購読プランのみ</span> です。'
       payment_options:
         title: '有料プランのお得な買い方'
         description: '毎月更新の定期購読、1ヶ月分の単体購入、複数月の一括購入のどれを選ぶのかによって、価格やお試し期間の有無が変わってきます。'
@@ -664,8 +670,8 @@ ja:
             title: '定期購読プラン'
             price_html: '<del class="text-muted">¥%{regular_price}</del> ¥%{discount_price} <span class="small">円/月</span>'
             body_html:
-              ・50%オフ <span class="text-primary small">初回限定</span><br>
-              ・%{trial_days}日間は無料 <span class="text-primary small">初回限定</span><br>
+              ・50%オフ <span class="egotter-pink">初回限定</span><br>
+              ・%{trial_days}日間は無料 <span class="egotter-pink">初回限定</span><br>
               ・その後は毎月自動更新<br>
               ・クレジットカード 対応
             button: '定期購読で購入する'
@@ -677,7 +683,7 @@ ja:
             price_html: '%{value} <span class="small">円/月</span>'
             body_html:
               ・1ヶ月だけ有効<br>
-              ・お試し期間無し<br>
+              ・お試し期間無し/返金無し<br>
               ・クレジットカード/コンビニ払い/キャリア決済/Amazon Pay/銀行振込 対応
             button: '1ヶ月分だけ購入する'
         bulk_purchase:
@@ -688,7 +694,7 @@ ja:
             price_html: '<span class="small">最大割引</span> %{value}%'
             body_html:
               ・長期間になるほど割引率アップ<br>
-              ・お試し期間無し<br>
+              ・お試し期間無し/返金無し<br>
               ・クレジットカード/コンビニ払い/キャリア決済/Amazon Pay/銀行振込 対応
             button: '購入する期間を選ぶ'
       payment_method:
@@ -939,7 +945,9 @@ ja:
       description_html: 'えごったーの有料プランは、特別な事情がある場合は返金を行っています。気になることがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
       trial:
         title: 'お試し期間中の場合'
-        description: '期間内にプランを解約すれば支払いは発生しません。'
+        description_html:
+          <span class="egotter-pink">定期購読プラン かつ 初回の購入の場合のみ</span> お試し期間が適用されます。このお試し期間内にプランを解約すれば支払いは発生しません。
+          <span class="egotter-pink">期間固定プラン（1〜12ヶ月）にお試し期間はありません。</span>
       not_trial:
         title: 'お試し期間中ではない場合'
         description_html: |
@@ -952,12 +960,15 @@ ja:
           - '単月購入から複数月購入への切り替え'
           - '未成年者の購入を法定代理人が取り消す場合'
           - 'その他の特別な事情があると認められる場合'
-        note: '※ 法定代理人からの連絡であっても、小遣いの範囲の少額な契約、結婚をしている者、成人であると積極的にウソをついたり、法定代理人の同意があるとウソをついたりした場合等は、契約の取り消しができません。詳しくはお住まいの地域の消費生活センターへお問い合わせください。'
+        note_html:
+          法定代理人からの連絡であっても、小遣いの範囲の少額な契約、結婚をしている者、成人であると積極的にウソをついたり、法定代理人の同意があるとウソをついたりした場合等は、契約の取り消しができません。
+          （<a href="https://www.shouhiseikatu.metro.tokyo.jp/sodan/s_faq/kiso/k_miseinen.html" target="_blank">東京都消費生活総合センター</a>）
+          詳しくはお住まいの地域の消費生活センターへお問い合わせください。
       deny_list:
         title: '返金が認められない例'
         items:
           - 'クレジットカード以外で支払っている'
-          - '複数月を一括で購入している'
+          - '期間固定プラン（1〜12ヶ月）を購入している'
           - '購入した機能を既に複数回利用している'
           - '購入から1時間以内に返金の連絡がない'
           - '契約者が解約することを忘れていた'
@@ -965,7 +976,7 @@ ja:
           - 'ツイッターの不具合が原因の動作不良'
           - 'その他返金に適していないと判断した場合'
         faq_html: '<a href="%{url}">よくある質問</a> の確認不足'
-        note: '※ 原則として返金不可である旨は、商品ページや購入前の注意事項にも明記されています。注意事項や利用規約をよくお読みになった上で同意できる場合のみ商品をご購入ください。'
+        note_html: '<span class="egotter-pink">原則として返金不可</span>である旨は、商品ページや購入前の注意事項にも明記されています。注意事項や利用規約をよくお読みになった上で同意できる場合のみ商品をご購入ください。'
     maintenance:
       title: "メンテナンス中"
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください。"
@@ -2101,7 +2112,7 @@ ja:
       visitor: 'まだログインしていません。'
       description: '購入済みの有料プランについてお問い合わせをする際は、購入したアカウントでログインしているかを事前にご確認ください。'
       canceling_html: 'プランの解約は <a href="%{url}">設定 &gt; 購入履歴</a> から行うことができます。'
-      cancel_form_html: '既にツイッターIDを削除済みでえごったーWebサイトにログインできない場合は <a href="%{url}" target="_blank">プラン解約の窓口</a> からご連絡ください。'
+      cancel_form_html: '既にツイッターIDを削除済みでえごったーWebサイトにログインできない場合は <a href="%{url}" target="_blank">ツイッターIDが削除済みの場合のプラン解約窓口</a> からご連絡ください。'
     announcement:
       title: "お知らせ"
     features:

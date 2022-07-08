@@ -8,7 +8,7 @@
 <hr>
 
 <h3 class="h5 mt-5 mb-3"><%= t('.trial.title') %></h3>
-<p><%= t('.trial.description') %></p>
+<p><%= t('.trial.description_html') %></p>
 
 <h3 class="h5 mt-5 mb-3"><%= t('.not_trial.title') %></h3>
 <p><%= t('.not_trial.description_html', url: refund_form) %></p>
@@ -21,7 +21,7 @@
   <li><%= t('.allow_list.items')[3] %></li>
 </ul>
 
-<div class="text-muted small"><%= t('.allow_list.note') %></div>
+<p><%= t('.allow_list.note_html') %></p>
 
 <h4 class="h6 mt-5 mb-3"><%= t('.deny_list.title') %></h4>
 <ul class="pl-4">
@@ -35,4 +35,4 @@
   <li><%= t('.deny_list.items')[6] %></li>
 </ul>
 
-<div class="text-muted small"><%= t('.deny_list.note') %></div>
+<p><%= t('.deny_list.note_html') %></p>
