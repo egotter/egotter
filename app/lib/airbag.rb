@@ -16,6 +16,7 @@ class Airbag
 
     def log(level, message = nil, &block)
       message = yield if message.nil? && block_given?
+      message = "#{format_context}#{format_severity(level)}: #{message}"
       logger.add(level, message)
 
       if level > Logger::DEBUG
@@ -23,8 +24,7 @@ class Airbag
       end
 
       if level > Logger::INFO && @slack
-        msg = "#{"env=#{Rails.env} tag=#{@slack[:tag]} " if @slack[:tag]}#{format_severity(level)}: #{message}".truncate(200)
-        SendMessageToSlackWorker.perform_async(@slack[:channel], msg)
+        SendMessageToSlackWorker.perform_async(@slack[:channel], message.truncate(200))
       end
     ensure
     end
@@ -49,6 +49,29 @@ class Airbag
       if options[:target] == :slack
         @slack = {channel: options[:channel], tag: options[:tag]}
       end
+    end
+
+    def format_context
+      if Sidekiq.server?
+        ctx = {
+            env: Rails.env,
+            tag: @slack && @slack[:tag],
+            pid: ::Process.pid,
+            tid: Thread.current["sidekiq_tid"],
+
+        }.merge(Thread.current[:sidekiq_context].except(:jid))
+      else
+        ctx = {
+            env: Rails.env,
+            tag: @slack && @slack[:tag],
+        }
+      end
+
+      if ctx.any?
+        ctx.compact.map { |k, v| "#{k}=#{v}" }.join(' ') + ' '
+      end
+    rescue => e
+      ''
     end
 
     def logger
