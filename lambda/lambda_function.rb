@@ -12,7 +12,7 @@ def lambda_handler(event:, context:)
   url = close_friends_og_image_url(uid: uid)
 
   5.times do
-    resp = get_response(url)
+    resp = get_response(url, context)
 
     if resp.code == '200'
       key = JSON.parse(resp.body)['key']
@@ -33,12 +33,12 @@ def close_friends_og_image_url(uid:)
   "#{ENV['OG_IMAGE_URL']}#{uid}"
 end
 
-def get_response(url)
+def get_response(url, context)
   uri = URI.parse(url)
   https = Net::HTTP.new(uri.host, uri.port)
   https.use_ssl = true
   req = Net::HTTP::Get.new(uri)
-  req['User-Agent'] = 'UnzipArchiveData'
+  req['User-Agent'] = "#{context.function_name} #{context.function_version}"
   https.start { https.request(req) }
 end
 

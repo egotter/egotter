@@ -2,7 +2,7 @@ module Api
   module V1
     class CloseFriendsOgImagesController < ApplicationController
 
-      skip_before_action :reject_spam_ip!, if: -> { request.user_agent.to_s.match?(/\AUnzipArchiveData/) }
+      skip_before_action :reject_spam_ip!, if: -> { request.user_agent.to_s.match?(/\AOgImageProxy/) }
 
       before_action :valid_uid?
 
