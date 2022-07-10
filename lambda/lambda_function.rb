@@ -1,8 +1,10 @@
+require 'logger'
 require 'net/http'
 require 'base64'
 require 'aws-sdk-s3'
 
 def lambda_handler(event:, context:)
+  logger = Logger.new(STDOUT)
   uid = event.dig('queryStringParameters', 'uid')
 
   unless uid.to_s.match?(/\A[0-9]{1,30}\z/)
@@ -17,15 +19,19 @@ def lambda_handler(event:, context:)
     if resp.code == '200'
       key = JSON.parse(resp.body)['key']
       return SUCCESS.dup.tap { |res| res[:body] = load_image(key) }
+    elsif resp.code == '404'
+      logger.info { "Retry uid=#{uid} url=#{url} code=#{resp.code}" }
+      sleep 3
+    else
+      logger.warn { "Stop retrying uid=#{uid} url=#{url} code=#{resp.code} body=#{resp.body}" }
     end
-
-    sleep 3
   end
 
+  logger.info { "Retry exhausted uid=#{uid}" }
   NOT_FOUND
 rescue => e
-  puts "#{e.inspect} params=#{event.dig('queryStringParameters').inspect}"
-  puts e.backtrace.join("\n")
+  logger.error "#{e.inspect} params=#{event.dig('queryStringParameters').inspect}"
+  logger.error e.backtrace.join("\n") unless e.backtrace.nil?
   INTERNAL_SERVER_ERROR
 end
 
