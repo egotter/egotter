@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   def head(status, options = {})
-    create_error_log('', '') unless status == :ok
+    create_error_log("Return an empty body with status: #{status}", '') unless status == :ok
     super
   end
 
