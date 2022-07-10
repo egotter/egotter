@@ -3,109 +3,58 @@ require 'base64'
 require 'aws-sdk-s3'
 
 def lambda_handler(event:, context:)
-  params = Params.from_event(event)
+  uid = event.dig('queryStringParameters', 'uid')
 
-  unless params.valid?
-    return BadRequest.new.to_response
+  unless uid.to_s.match?(/\A[0-9]{1,30}\z/)
+    return BAD_REQUEST
   end
 
-  url = close_friends_og_image_url(uid: params.uid)
+  url = close_friends_og_image_url(uid: uid)
 
   5.times do
-    resp = Net::HTTP.get_response(url)
+    resp = get_response(url)
 
     if resp.code == '200'
       key = JSON.parse(resp.body)['key']
-      return Image.new(key).to_response
+      return SUCCESS.dup.tap { |res| res[:body] = load_image(key) }
     end
 
     sleep 3
   end
 
-  NotFound.new.to_response
+  NOT_FOUND
 rescue => e
   puts "#{e.inspect} params=#{event.dig('queryStringParameters').inspect}"
   puts e.backtrace.join("\n")
-  InternalServerError.new.to_response
+  INTERNAL_SERVER_ERROR
 end
 
 def close_friends_og_image_url(uid:)
-  URI.parse("#{ENV['OG_IMAGE_URL']}#{uid}")
+  "#{ENV['OG_IMAGE_URL']}#{uid}"
 end
 
-class Params
-  attr_reader :uid
+def get_response(url)
+  uri = URI.parse(url)
+  https = Net::HTTP.new(uri.host, uri.port)
+  https.use_ssl = true
+  req = Net::HTTP::Get.new(uri)
+  req['User-Agent'] = 'UnzipArchiveData'
+  https.start { https.request(req) }
+end
 
-  def initialize(uid:)
-    @uid = uid
-  end
-
-  class << self
-    def from_event(event)
-      uid = event.dig('queryStringParameters', 'uid')
-      new(uid: uid)
-    end
-  end
-
-  def valid?
-    @uid.to_s.match?(/\A[0-9]{1,30}\z/)
+def load_image(key)
+  s3 = Aws::S3::Resource.new(region: ENV['REGION']).bucket(ENV['BUCKET'])
+  if (obj = s3.object(key)).exists?
+    Base64.strict_encode64(obj.get.body.read)
   end
 end
 
-class Image
-  def initialize(key)
-    @key = key
-  end
-
-  def load
-    s3 = Aws::S3::Resource.new(region: ENV['REGION']).bucket(ENV['BUCKET'])
-    obj = s3.object(@key)
-    if obj.exists?
-      @binary = obj.get.body.read
-    end
-  end
-
-  def to_response
-    load unless @binary
-
-    {
-        statusCode: 200,
-        headers: {'Content-Type': 'image/png'},
-        isBase64Encoded: true,
-        body: Base64.strict_encode64(@binary),
-    }
-  end
-end
-
-class ErrorResponse
-  def initialize(code, message)
-    @code = code
-    @message = message
-  end
-
-  def to_response
-    {
-        statusCode: @code,
-        headers: {'Content-Type': 'text/plain'},
-        body: @message
-    }
-  end
-end
-
-class BadRequest < ErrorResponse
-  def initialize
-    super(400, 'Bad request')
-  end
-end
-
-class NotFound < ErrorResponse
-  def initialize
-    super(404, 'Not found')
-  end
-end
-
-class InternalServerError < ErrorResponse
-  def initialize
-    super(500, 'Internal server error')
-  end
-end
+SUCCESS = {
+    statusCode: 200,
+    headers: {'Content-Type': 'image/png'},
+    isBase64Encoded: true,
+    body: nil,
+}
+BAD_REQUEST = {statusCode: 400, headers: {'Content-Type': 'text/plain'}, body: 'Bad request'}
+NOT_FOUND = {statusCode: 404, headers: {'Content-Type': 'text/plain'}, body: 'Not found'}
+INTERNAL_SERVER_ERROR = {statusCode: 500, headers: {'Content-Type': 'text/plain'}, body: 'Internal server error'}
