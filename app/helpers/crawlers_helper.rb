@@ -33,10 +33,6 @@ module CrawlersHelper
 
   end
 
-  def og_image_checker?
-    request.user_agent.to_s == 'Ruby' && controller_name == 'close_friends_og_images' && action_name == 'show'
-  end
-
   SEARCH_ENGINES = [
       'https://www.google.co.jp/',
       'https://www.google.com/',
