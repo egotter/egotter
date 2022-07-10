@@ -3,6 +3,17 @@ require 'net/http'
 require 'base64'
 require 'aws-sdk-s3'
 
+# Deploy
+# cd lambda/og_image_proxy
+# zip function.zip lambda_function.rb
+# aws lambda update-function-code --function-name [NAME] --zip-file fileb://function.zip
+# aws lambda publish-version --function-name [NAME]
+# aws lambda update-alias --function-name [NAME] --name [ALIAS NAME] --function-version [VERSION]
+# rm function.zip
+#
+# Show code diffs
+# aws lambda get-function --function-name [NAME] | jq .Code.Location -r | xargs curl -s -o code.zip && unzip -p code.zip lambda_function.rb | colordiff -u lambda_function.rb -
+# rm code.zip
 def lambda_handler(event:, context:)
   logger = Logger.new(STDOUT)
   uid = event.dig('queryStringParameters', 'uid')
