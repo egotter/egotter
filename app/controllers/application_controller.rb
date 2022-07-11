@@ -46,8 +46,8 @@ class ApplicationController < ActionController::Base
     super
   end
 
-  def redirect_to(path)
-    create_error_log("Redirect path: #{path}", '') if path.match?(/\A\/error_pages\//)
+  def redirect_to(options = {}, response_options = {})
+    create_error_log("Redirect path: #{options}", '') if options.is_a?(String) && options.match?(/\A\/error_pages\//)
     super
   end
 
