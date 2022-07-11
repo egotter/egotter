@@ -85,7 +85,7 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
   describe 'friend_ids' do
     subject { instance.friend_ids(1) }
     it do
-      expect(twitter).to receive(:friend_ids).with(1, count: 5000, cursor: -1)
+      expect(twitter).to receive(:friend_ids).with(1, {count: 5000, cursor: -1})
       subject
     end
   end
@@ -93,7 +93,7 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
   describe 'follower_ids' do
     subject { instance.follower_ids(1) }
     it do
-      expect(twitter).to receive(:follower_ids).with(1, count: 5000, cursor: -1)
+      expect(twitter).to receive(:follower_ids).with(1, {count: 5000, cursor: -1})
       subject
     end
   end

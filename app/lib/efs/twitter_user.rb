@@ -67,7 +67,7 @@ module Efs
           dir = Rails.root.join(CacheDirectory.find_by(name: 'efs_twitter_user')&.dir || 'tmp/efs_cache')
           FileUtils.mkdir_p(dir) unless File.exists?(dir)
           options = {expires_in: 1.month, race_condition_ttl: 5.minutes}
-          @efs = ActiveSupport::Cache::FileStore.new(dir, options)
+          @efs = ActiveSupport::Cache::FileStore.new(dir, **options)
         end
 
         def read(id)
