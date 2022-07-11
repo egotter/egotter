@@ -24,7 +24,7 @@ class Airbag
       end
 
       if level > Logger::INFO && @slack
-        SendMessageToSlackWorker.perform_async(@slack[:channel], message.truncate(200))
+        SendMessageToSlackWorker.perform_async(@slack[:channel], message.truncate(1000))
       end
     ensure
     end
