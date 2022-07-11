@@ -12,7 +12,7 @@ RSpec.describe TwitterHelper, type: :helper do
 
     context 'text is passed' do
       subject { helper.direct_message_url(1, 'a b') }
-      it { is_expected.to eq("https://twitter.com/messages/compose?recipient_id=1&text=a%20b") }
+      it { is_expected.to eq("https://twitter.com/messages/compose?recipient_id=1&text=a+b") }
     end
   end
 

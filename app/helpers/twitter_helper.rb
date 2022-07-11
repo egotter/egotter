@@ -13,12 +13,12 @@ module TwitterHelper
   end
 
   def direct_message_url(uid, text = nil)
-    text = "&text=#{URI.encode(text)}" if text
+    text = "&text=#{CGI.escape(text)}" if text
     "https://twitter.com/messages/compose?recipient_id=#{uid}#{text}"
   end
 
   def twitter_search_url(query)
-    "https://twitter.com/search?q=#{URI.encode(query)}"
+    "https://twitter.com/search?q=#{CGI.escape(query)}"
   end
 
   def direct_message_link(uid, screen_name, text = nil)
