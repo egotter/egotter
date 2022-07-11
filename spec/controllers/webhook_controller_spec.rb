@@ -2,6 +2,22 @@ require 'rails_helper'
 
 RSpec.describe WebhookController, type: :controller do
 
+  describe 'GET #challenge' do
+    let(:params) { {crc_token: 'token'} }
+    subject { get :challenge, params: params }
+
+    before do
+      allow(controller).to receive(:twitter_webhook?).and_return(true)
+    end
+
+    it do
+      expect(controller).not_to receive(:reject_spam_ip!)
+      expect(controller).not_to receive(:verify_authenticity_token)
+      expect(controller).to receive(:create_webhook_log)
+      is_expected.to have_http_status(:ok)
+    end
+  end
+
   describe 'POST #twitter' do
     let(:params) { {direct_message_events: ['event1', 'event2']} }
     subject { post :twitter, params: params }

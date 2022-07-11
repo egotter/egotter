@@ -17,7 +17,7 @@ module CrawlersHelper
   end
 
   def twitter_webhook?
-    request.user_agent.to_s == '' && controller_name == 'webhook' && action_name == 'twitter'
+    request.user_agent.to_s == '' && controller_name == 'webhook'
   end
 
   def twitter_crawler?

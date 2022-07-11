@@ -3,7 +3,8 @@ require 'base64'
 
 class WebhookController < ApplicationController
 
-  skip_before_action :verify_authenticity_token, only: :twitter
+  skip_before_action :reject_spam_ip!
+  skip_before_action :verify_authenticity_token
 
   before_action :verify_webhook_request, only: :twitter
 
