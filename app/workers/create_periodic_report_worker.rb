@@ -49,8 +49,7 @@ class CreatePeriodicReportWorker
 
     do_perform(request, options)
   rescue => e
-    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}", backtrace: e.backtrace
   end
 
   private
