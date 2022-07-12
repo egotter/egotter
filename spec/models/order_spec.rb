@@ -43,7 +43,22 @@ RSpec.describe Order, type: :model do
       end
 
       it do
+        expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders_warning, instance_of(String))
         expect(Stripe::Subscription).not_to receive(:delete)
+        subject
+        order.reload
+        expect(order.canceled_at).to eq(canceled_at)
+      end
+    end
+
+    context 'Stripe::InvalidRequestError is raised' do
+      let(:error) { Stripe::InvalidRequestError.new('No such subscription', nil) }
+      before do
+        allow(Stripe::Subscription).to receive(:retrieve).with(anything).and_raise(error)
+      end
+
+      it do
+        expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders_warning, instance_of(String))
         subject
         order.reload
         expect(order.canceled_at).to eq(canceled_at)
@@ -57,7 +72,10 @@ RSpec.describe Order, type: :model do
 
     context '#charge_failed_at is present' do
       before { order.update(charge_failed_at: Time.zone.now) }
-      it { is_expected.to be_truthy }
+      it do
+        expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders_warning, instance_of(String))
+        is_expected.to be_truthy
+      end
     end
   end
 
