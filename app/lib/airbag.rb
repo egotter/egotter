@@ -2,31 +2,30 @@ require 'singleton'
 
 class Airbag
   class << self
-    def debug(message = nil, &block)
-      log(Logger::DEBUG, message, &block)
+    def debug(message = nil, props = {}, &block)
+      log(Logger::DEBUG, message, props, &block)
     end
 
-    def info(message = nil, &block)
-      log(Logger::INFO, message, &block)
+    def info(message = nil, props = {}, &block)
+      log(Logger::INFO, message, props, &block)
     end
 
-    def warn(message = nil, &block)
-      log(Logger::WARN, message, &block)
+    def warn(message = nil, props = {}, &block)
+      log(Logger::WARN, message, props, &block)
     end
 
-    def log(level, message = nil, &block)
+    def log(level, message = nil, props = {}, &block)
       message = yield if message.nil? && block_given?
       message = "#{format_context}#{format_severity(level)}: #{message}"
       logger.add(level, message)
 
       if level > Logger::DEBUG
-        CreateAirbagLogWorker.perform_async(format_severity(level), message, nil, Time.zone.now)
+        CreateAirbagLogWorker.perform_async(format_severity(level), message, props, Time.zone.now)
       end
 
       if level > Logger::INFO && @slack
         SendMessageToSlackWorker.perform_async(@slack[:channel], message.truncate(1000))
       end
-    ensure
     end
 
     # options:
@@ -58,8 +57,9 @@ class Airbag
             tag: @slack && @slack[:tag],
             pid: ::Process.pid,
             tid: Thread.current["sidekiq_tid"],
+            class: (Thread.current[:sidekiq_context][:class] rescue nil),
 
-        }.merge(Thread.current[:sidekiq_context].except(:jid))
+        }
       else
         ctx = {
             env: Rails.env,
