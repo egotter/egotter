@@ -40,6 +40,7 @@ class SlackBotClient
     )
   end
 
+  # Not used
   def upload_snippet(text, initial_comment: '')
     response = @client.files_upload(
         channels: @channel,
