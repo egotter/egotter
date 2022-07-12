@@ -138,9 +138,16 @@ module Logging
   def create_webhook_log
     save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
     if twitter_webhook?
-      save_params['webhook'] = '[FILTERED]' if save_params.has_key?('webhook')
-      save_params['apps'] = '[FILTERED]' if save_params.has_key?('apps')
-      save_params['users'] = '[FILTERED]' if save_params.has_key?('users')
+      save_params['webhook'] = '[REMOVED]' if save_params.has_key?('webhook')
+      save_params['apps'] = '[REMOVED]' if save_params.has_key?('apps')
+      save_params['users'] = '[REMOVED]' if save_params.has_key?('users')
+      if save_params.has_key?('direct_message_events')
+        save_params['direct_message_events'].each do |event|
+          if (message_data = event.dig('message_create', 'message_data'))
+            message_data['entities'] = '[REMOVED]'
+          end
+        end
+      end rescue nil
     end
 
     attrs = {

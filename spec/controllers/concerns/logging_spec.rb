@@ -17,4 +17,21 @@ RSpec.describe Logging do
       subject
     end
   end
+
+  describe '#create_webhook_log' do
+    let(:request) do
+      double('request', query_parameters: {}, request_parameters: {}, path: '/', ip: '1.1.1.1', method: 'GET', user_agent: 'TEST')
+    end
+    let(:response) { double('response', status: 200) }
+    subject { controller.create_webhook_log }
+    before do
+      allow(controller).to receive(:request).and_return(request)
+      allow(controller).to receive(:response).and_return(response)
+      allow(controller).to receive(:twitter_webhook?).and_return(true)
+    end
+    it do
+      expect(CreateWebhookLogWorker).to receive(:perform_async).with(anything)
+      subject
+    end
+  end
 end
