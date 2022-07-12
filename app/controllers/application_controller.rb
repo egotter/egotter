@@ -41,7 +41,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   def head(status, options = {})
-    create_error_log("Return an empty body with status: #{status}", '') unless status == :ok
+    if status != :ok && !twitter_crawler?
+      create_error_log("Return an empty body with status: #{status}", '')
+    end
     super
   end
 
