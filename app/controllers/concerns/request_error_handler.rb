@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module InternalServerErrorHandler
+module RequestErrorHandler
   extend ActiveSupport::Concern
 
   included do
