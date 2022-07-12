@@ -12,7 +12,7 @@ module InternalServerErrorHandler
   private
 
   def handle_general_error(ex)
-    handle_request_error(ex)
+    log_request_error(ex)
 
     if request.xhr?
       head :internal_server_error
@@ -22,7 +22,7 @@ module InternalServerErrorHandler
   end
 
   def handle_request_timeout(ex)
-    handle_request_error(ex)
+    log_request_error(ex)
 
     if request.xhr?
       head :request_timeout
@@ -37,5 +37,30 @@ module InternalServerErrorHandler
     else
       redirect_to error_pages_csrf_error_path(via: current_via) unless performed?
     end
+  end
+
+  def log_request_error(ex)
+    if Rails.env.production?
+      details = request_details.merge(backtrace: ex.backtrace)
+      message = "#{ex.inspect.truncate(200)}#{" caused by #{ex.inspect.truncate(200)}" if ex.cause} user_id=#{details[:user_id]} device_type=#{details[:device_type]}"
+      Airbag.warn message, details
+    end
+  end
+
+  private
+
+  def request_details
+    {
+        user_id: current_user&.id,
+        method: request.method,
+        device_type: request.device_type,
+        browser: request.browser,
+        xhr: request.xhr?,
+        full_path: request.fullpath,
+        referer: request.referer,
+        user_agent: request.user_agent,
+        params: request.query_parameters,
+        twitter_user_id: @twitter_user&.id,
+    }
   end
 end

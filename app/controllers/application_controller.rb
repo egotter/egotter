@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::Base
-  include RequestErrorHandler
   include SearchCountLimitationConcern
   include ApplicationHelper
   include InternalServerErrorHandler
