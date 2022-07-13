@@ -64,7 +64,7 @@ class CreateTwitterDBUsersTask
   def import_suspended_users(uids)
     users = uids.map { |uid| Hashie::Mash.new(id: uid, screen_name: 'suspended', description: '') }
     users = reject_persisted_users(users)
-    TwitterDB::User.import_by!(users: users) if users.any?
+    ImportTwitterDBUserWorker.perform_async(users.map(&:to_h), enqueued_by: @enqueued_by, _user_id: @user_id) if users.any?
   end
 
   # Note: This query uses the index on uid instead of the index on updated_at.

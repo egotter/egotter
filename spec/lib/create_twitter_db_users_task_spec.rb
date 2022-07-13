@@ -58,7 +58,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
     let(:users) { uids.map { |id| Hashie::Mash.new(id: id, screen_name: 'suspended', description: '') } }
     subject { instance.send(:import_suspended_users, uids) }
     it do
-      expect(TwitterDB::User).to receive(:import_by!).with(users: users)
+      expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users.map(&:to_h), anything)
       subject
     end
   end
