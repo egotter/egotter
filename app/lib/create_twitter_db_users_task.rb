@@ -15,6 +15,12 @@ class CreateTwitterDBUsersTask
     @uids = reject_fresh_uids(@uids)
     return if @uids.empty?
 
+    begin
+      TwitterDB::QueuedUser.import_data(@uids)
+    rescue => e
+      Airbag.warn "CreateTwitterDBUsersTask#start: #{e.inspect.truncate(200)}"
+    end
+
     users = fetch_users(@client, @uids)
 
     if @uids.size != users.size && (suspended_uids = @uids - users.map { |u| u[:id] }).any?

@@ -49,7 +49,7 @@ class ImportTwitterDBUserWorker
 
   def import_queued_users(users)
     uids = users.map { |u| u[:id] }
-    TwitterDB::QueuedUser.import_data(uids)
+    TwitterDB::QueuedUser.where(uid: uids).update_all(processed_at: Time.zone.now)
   rescue => e
     Airbag.warn "#import_queued_users: #{e.inspect.truncate(200)}"
   end

@@ -57,7 +57,8 @@ RSpec.describe ImportTwitterDBUserWorker do
     let(:users) { [{id: 1}, {id: 2}] }
     subject { worker.send(:import_queued_users, users) }
     it do
-      expect(TwitterDB::QueuedUser).to receive(:import_data).with([1, 2])
+      expect(TwitterDB::QueuedUser).to receive_message_chain(:where, :update_all).
+          with([1, 2]).with(processed_at: instance_of(ActiveSupport::TimeWithZone))
       subject
     end
   end
