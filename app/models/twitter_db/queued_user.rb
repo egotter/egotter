@@ -32,5 +32,21 @@ class TwitterDB::QueuedUser < ApplicationRecord
         Airbag.info "TwitterDB::QueuedUser#import_data #{ee.inspect.truncate(200)}"
       end
     end
+
+    def delete_stale_records
+      query = select(:id).where('created_at < ?', 6.hours.ago)
+
+      processed_ids = query.where.not(processed_at: nil).find_in_batches.map do |records|
+        records.map(&:id)
+      end.flatten
+
+      unprocessed_ids = query.where(processed_at: nil).find_in_batches.map do |records|
+        records.map(&:id)
+      end.flatten
+
+      (processed_ids + unprocessed_ids).each_slice(1000) do |ids|
+        where(id: ids).delete_all
+      end
+    end
   end
 end

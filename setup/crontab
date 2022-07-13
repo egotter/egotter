@@ -5,6 +5,7 @@ RUBY='/var/egotter/bin/cron/ruby.sh'
 #  * * * * * /bin/sh -c "$RUBY bin/invalidate_expired_credentials.rb"
 # 30 * * * * /bin/sh -c "$RAKE orders:update_stripe_attributes"
 # 45 * * * * /bin/sh -c "$RAKE periodic_reports:send_remind_messages"
+# 50 * * * * /bin/sh -c "$RAKE twitter_db:queued_users:delete"
 # 25 * * * * /bin/sh -c "$RUNNER 'UpdateEgotterFollowersWorker.perform_async'"
 #  * * * * * /bin/sh -c "$RUBY bin/send_metrics_to_cloudwatch.rb"
 #  * * * * * /bin/sh -c "$RUBY bin/delete_not_found_users.rb"
