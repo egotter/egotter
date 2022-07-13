@@ -24,7 +24,9 @@ class ImportTwitterDBUserWorker
   # options:
   def perform(data, options = {})
     users = decompress(data)
+    users.each(&:deep_symbolize_keys!)
     import_users(users)
+    import_queued_users(users)
   rescue Deadlocked => e
     delay = rand(20) + 15
     ImportTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, data, options.merge(debug_options(e)))
@@ -36,7 +38,6 @@ class ImportTwitterDBUserWorker
   private
 
   def import_users(users)
-    users.each(&:deep_symbolize_keys!)
     TwitterDB::User.import_by!(users: users)
   rescue => e
     if deadlock_error?(e)
@@ -44,6 +45,13 @@ class ImportTwitterDBUserWorker
     else
       raise
     end
+  end
+
+  def import_queued_users(users)
+    uids = users.map { |u| u[:id] }
+    TwitterDB::QueuedUser.import_data(uids)
+  rescue => e
+    Airbag.warn "#import_queued_users: #{e.inspect.truncate(200)}"
   end
 
   class Deadlocked < StandardError; end

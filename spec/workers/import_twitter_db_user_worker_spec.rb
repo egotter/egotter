@@ -4,7 +4,7 @@ RSpec.describe ImportTwitterDBUserWorker do
   let(:worker) { described_class.new }
 
   describe '#perform' do
-    let(:users) { [{'id' => 1, 'screen_name' => 'name1'}, {'id' => 2, 'screen_name' => 'name2'}] }
+    let(:users) { [{id: 1, screen_name: 'name1'}, {id: 2, screen_name: 'name2'}] }
     subject { worker.perform(users) }
 
     it do
@@ -41,6 +41,24 @@ RSpec.describe ImportTwitterDBUserWorker do
         expect(FailedImportTwitterDBUserWorker).to receive(:perform_async).with(users, anything)
         subject
       end
+    end
+  end
+
+  describe '#import_users' do
+    let(:users) { double('users') }
+    subject { worker.send(:import_users, users) }
+    it do
+      expect(TwitterDB::User).to receive(:import_by!).with(users: users)
+      subject
+    end
+  end
+
+  describe '#import_queued_users' do
+    let(:users) { [{id: 1}, {id: 2}] }
+    subject { worker.send(:import_queued_users, users) }
+    it do
+      expect(TwitterDB::QueuedUser).to receive(:import_data).with([1, 2])
+      subject
     end
   end
 end

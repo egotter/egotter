@@ -1584,6 +1584,8 @@ ActiveRecord::Schema.define(version: 2022_07_13_203718) do
     t.timestamp "processed_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_twitter_db_queued_users_on_created_at"
+    t.index ["uid"], name: "index_twitter_db_queued_users_on_uid", unique: true
   end
 
   create_table "twitter_db_statuses", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
