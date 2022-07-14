@@ -17,6 +17,7 @@ class ImportTwitterDBUserWorker
 
   def after_skip(data, options = {})
     SkippedImportTwitterDBUserWorker.perform_async(data, options.merge(_size: (decompress(data).size rescue -1)).merge(debug_options))
+    CreateSidekiqLogWorker.perform_async("class=#{self.class} options=#{options} key=#{Digest::MD5.hexdigest(data.to_json)} skipped=true") rescue nil
   end
 
   def _timeout_in
