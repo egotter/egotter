@@ -7,7 +7,6 @@ class CreateTwitterDBUsersTask
     else
       @client = Bot.api_client
     end
-    @force = force
     @enqueued_by = enqueued_by
   end
 
@@ -26,10 +25,6 @@ class CreateTwitterDBUsersTask
     if @uids.size != users.size && (suspended_uids = @uids - users.map { |u| u[:id] }).any?
       import_suspended_users(suspended_uids)
     end
-
-    return if users.empty?
-
-    users = reject_fresh_users(users) unless @force
 
     if users.any?
       ImportTwitterDBUserWorker.perform_async(users, enqueued_by: @enqueued_by, _user_id: @user_id)
@@ -69,14 +64,8 @@ class CreateTwitterDBUsersTask
 
   # Note: This query uses the index on uid instead of the index on updated_at.
   def reject_fresh_uids(uids)
-    fresh_uids = TwitterDB::User.where(uid: uids).where('updated_at > ?', 6.hours.ago).pluck(:uid)
-    uids.reject { |uid| fresh_uids.include? uid }
-  end
-
-  # Note: This query uses the index on uid instead of the index on updated_at.
-  def reject_fresh_users(users)
-    persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }).where('updated_at > ?', 6.hours.ago).pluck(:uid)
-    users.reject { |user| persisted_uids.include? user[:id] }
+    fresh_uids = TwitterDB::QueuedUser.where(uid: uids).pluck(:uid).map { |uid| [uid, true] }.to_h
+    uids.select { |uid| !fresh_uids.has_key?(uid) }
   end
 
   def reject_persisted_users(users)
