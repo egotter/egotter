@@ -59,7 +59,6 @@ class CreateTwitterUserRequest < ApplicationRecord
 
     CreateTwitterDBUsersForMissingUidsWorker.perform_async(snapshot.friend_uids + snapshot.follower_uids, twitter_user.user_id)
     CreateTwitterUserNewFriendsWorker.perform_in(delay_for_importing, twitter_user.id)
-    CreateTwitterUserNewFollowersWorker.perform_in(delay_for_importing, twitter_user.id)
 
     twitter_user
   end
