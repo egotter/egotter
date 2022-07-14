@@ -20,9 +20,7 @@ class ImportBlockingRelationshipsWorker
     collected_uids = BlockingRelationship.update_all_blocks(user)
     return if collected_uids.blank?
 
-    collected_uids.each_slice(100).each do |uids_array|
-      CreateTwitterDBUserWorker.perform_async(uids_array, user_id: user_id, enqueued_by: self.class)
-    end
+    CreateTwitterDBUserWorker.perform_async(collected_uids, user_id: user_id, enqueued_by: self.class)
 
     collected_uids.each_slice(1000) do |uids_array|
       User.authorized.where(uid: uids_array).each do |user|
