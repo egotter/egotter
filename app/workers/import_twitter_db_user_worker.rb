@@ -6,7 +6,9 @@ class ImportTwitterDBUserWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(data, options = {})
-    Digest::MD5.hexdigest(data.to_json)
+    key = Digest::MD5.hexdigest(data.to_json)
+    CreateSidekiqLogWorker.perform_async("class=#{self.class} options=#{options} key=#{key}") rescue nil
+    key
   end
 
   def unique_in
