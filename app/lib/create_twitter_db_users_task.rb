@@ -2,27 +2,22 @@ class CreateTwitterDBUsersTask
   def initialize(uids, user_id: nil, force: false, enqueued_by: nil)
     @uids = uids.uniq.map(&:to_i)
     @user_id = user_id
-    if user_id && !RateLimitExceededFlag.on?(@user_id)
-      @client = User.find(user_id).api_client
-    else
-      @client = Bot.api_client
-    end
     @enqueued_by = enqueued_by
   end
 
   def start
-    @uids = reject_fresh_uids(@uids)
-    return if @uids.empty?
+    uids = @uids - TwitterDB::QueuedUser.where(uid: @uids).pluck(:uid)
+    return if uids.empty?
 
     begin
-      TwitterDB::QueuedUser.import_data(@uids)
+      TwitterDB::QueuedUser.import_data(uids)
     rescue => e
       Airbag.warn "CreateTwitterDBUsersTask#start: #{e.inspect.truncate(200)}"
     end
 
-    users = fetch_users(@client, @uids)
+    users = fetch_users(uids)
 
-    if @uids.size != users.size && (suspended_uids = @uids - users.map { |u| u[:id] }).any?
+    if uids.size != users.size && (suspended_uids = uids - users.map { |u| u[:id] }).any?
       ImportTwitterDBSuspendedUserWorker.perform_async(suspended_uids)
     end
 
@@ -33,9 +28,9 @@ class CreateTwitterDBUsersTask
 
   private
 
-  def fetch_users(client, uids)
+  def fetch_users(uids)
     retries ||= 3
-    client.twitter.users(uids).map(&:to_h)
+    client.users(uids).map(&:to_h)
   rescue => e
     if TwitterApiStatus.no_user_matches?(e)
       []
@@ -46,7 +41,7 @@ class CreateTwitterDBUsersTask
 
       if (retries -= 1) >= 0
         Airbag.info { "#{self.class}: Client is switched #{e.inspect} user_id=#{@user_id}" }
-        client = Bot.api_client
+        @client = Bot.api_client.twitter
         retry
       else
         raise RetryExhausted.new(e.inspect)
@@ -56,10 +51,13 @@ class CreateTwitterDBUsersTask
     end
   end
 
-  # Note: This query uses the index on uid instead of the index on updated_at.
-  def reject_fresh_uids(uids)
-    fresh_uids = TwitterDB::QueuedUser.where(uid: uids).pluck(:uid).map { |uid| [uid, true] }.to_h
-    uids.select { |uid| !fresh_uids.has_key?(uid) }
+  def client
+    @client ||=
+        if @user_id && !RateLimitExceededFlag.on?(@user_id)
+          User.find(@user_id).api_client.twitter
+        else
+          Bot.api_client.twitter
+        end
   end
 
   def retryable_twitter_error?(e)
