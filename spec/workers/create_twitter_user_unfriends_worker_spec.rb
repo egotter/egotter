@@ -19,12 +19,15 @@ RSpec.describe CreateTwitterUserUnfriendsWorker do
   end
 
   describe '#perform' do
+    let(:uids1) { [1, 2] }
+    let(:uids2) { [2, 3] }
+    let(:uids3) { [3, 4] }
     subject { worker.perform(twitter_user.id) }
     it do
-      expect(worker).to receive(:import_uids).with(S3::Unfriendship, twitter_user).and_return([1, 2])
-      expect(worker).to receive(:import_uids).with(S3::Unfollowership, twitter_user).and_return([2, 3])
-      expect(worker).to receive(:import_uids).with(S3::MutualUnfriendship, twitter_user).and_return([3])
-      expect(worker).to receive(:update_twitter_db_users).with([1, 2, 3], twitter_user.user_id, instance_of(String))
+      expect(worker).to receive(:import_uids).with(S3::Unfriendship, twitter_user).and_return(uids1)
+      expect(worker).to receive(:import_uids).with(S3::Unfollowership, twitter_user).and_return(uids2)
+      expect(worker).to receive(:import_uids).with(S3::MutualUnfriendship, twitter_user).and_return(uids3)
+      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with([1, 2, 3, 4], user_id: user.id, enqueued_by: described_class)
       expect(DeleteUnfriendshipsWorker).to receive(:perform_async).with(twitter_user.uid)
       subject
     end

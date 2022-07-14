@@ -37,18 +37,9 @@ class CreateTwitterUserNewFriendsWorker
       CreateNewFollowersCountPointWorker.perform_async(twitter_user.uid, new_follower_uids.size)
     end
 
-    update_twitter_db_users((new_friend_uids + new_follower_uids).uniq, twitter_user.user_id)
+    CreateTwitterDBUserWorker.perform_async((new_friend_uids + new_follower_uids).uniq, user_id: twitter_user.user_id, enqueued_by: self.class)
   rescue => e
     Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
     Airbag.info e.backtrace.join("\n")
-  end
-
-  private
-
-  def update_twitter_db_users(uids, user_id)
-    if uids.any? && !TwitterDBUsersUpdatedFlag.on?(uids)
-      TwitterDBUsersUpdatedFlag.on(uids)
-      CreateTwitterDBUserWorker.perform_async(uids, user_id: user_id, enqueued_by: self.class)
-    end
   end
 end

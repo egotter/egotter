@@ -70,9 +70,12 @@ class CreateTwitterDBUserWorker
   end
 
   class << self
-    def perform_async(uids, options = {})
-      uids.uniq.each_slice(100) do |uids_array|
-        super(compress(uids_array), options)
+    def perform_async(total_uids, options = {})
+      total_uids.uniq.each_slice(100) do |uids|
+        unless TwitterDBUsersUpdatedFlag.on?(uids)
+          TwitterDBUsersUpdatedFlag.on(uids)
+          super(compress(uids), options)
+        end
       end
     end
 

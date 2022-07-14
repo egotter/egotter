@@ -35,7 +35,7 @@ class CreateTwitterUserUnfriendsWorker
     unfriend_uids = import_uids(S3::Unfriendship, twitter_user)
     unfollower_uids = import_uids(S3::Unfollowership, twitter_user)
     mutual_unfriend_uids = import_uids(S3::MutualUnfriendship, twitter_user)
-    update_twitter_db_users((unfriend_uids + unfollower_uids + mutual_unfriend_uids).uniq, twitter_user.user_id, "#{self.class}-#{twitter_user.id}")
+    CreateTwitterDBUserWorker.perform_async((unfriend_uids + unfollower_uids + mutual_unfriend_uids).uniq, user_id: twitter_user.user_id, enqueued_by: self.class)
 
     CreateUnfriendsCountPointWorker.perform_async(twitter_user.uid, unfriend_uids.size)
     CreateUnfollowersCountPointWorker.perform_async(twitter_user.uid, unfollower_uids.size)
@@ -56,12 +56,5 @@ class CreateTwitterUserUnfriendsWorker
     klass.import_from!(twitter_user.uid, uids)
     twitter_user.update_counter_cache_for(klass, uids.size)
     uids
-  end
-
-  def update_twitter_db_users(uids, user_id, enqueued_by)
-    if uids.any? && !TwitterDBUsersUpdatedFlag.on?(uids)
-      TwitterDBUsersUpdatedFlag.on(uids)
-      CreateTwitterDBUserWorker.perform_async(uids, user_id: user_id, enqueued_by: "#{enqueued_by}-#{uids.size}")
-    end
   end
 end

@@ -12,7 +12,10 @@ module Api
 
       def summary
         uids, size = summary_uids
-        update_twitter_db_users(uids)
+
+        if user_signed_in?
+          CreateTwitterDBUserWorker.perform_async(uids, user_id: current_user.id, enqueued_by: current_via)
+        end
 
         users = TwitterDB::User.order_by_field(uids).where(uid: uids)
 
@@ -42,7 +45,9 @@ module Api
           users = candidate_uids.map { |uid| users[uid] }.compact
         end
 
-        update_twitter_db_users(candidate_uids)
+        if user_signed_in?
+          CreateTwitterDBUserWorker.perform_async(candidate_uids, user_id: current_user.id, enqueued_by: current_via)
+        end
 
         options = {}
         options[:suspended_uids] = collect_suspended_uids(request_context_client, paginator.users.map(&:uid)) if remove_related_page?
@@ -114,13 +119,6 @@ module Api
         uids - users.map { |u| u[:id] }
       rescue => e
         TwitterApiStatus.no_user_matches?(e) ? uids : []
-      end
-
-      def update_twitter_db_users(uids)
-        if user_signed_in? && uids.any? && !TwitterDBUsersUpdatedFlag.on?(uids)
-          TwitterDBUsersUpdatedFlag.on(uids)
-          CreateTwitterDBUserWorker.perform_async(uids, user_id: current_user.id, enqueued_by: current_via)
-        end
       end
     end
   end

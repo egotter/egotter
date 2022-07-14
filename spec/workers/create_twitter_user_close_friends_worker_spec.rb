@@ -29,20 +29,10 @@ RSpec.describe CreateTwitterUserCloseFriendsWorker do
       expect(twitter_user).to receive(:calc_uids_for).with(S3::FavoriteFriendship, login_user: user).and_return(favorite_friend_uids)
       expect(S3::FavoriteFriendship).to receive(:import_from!).with(twitter_user.uid, favorite_friend_uids)
 
-      expect(worker).to receive(:update_twitter_db_users).with([1, 2, 3, 4, 5, 6], user.id, described_class)
+      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with([1, 2, 3, 4, 5, 6], user_id: user.id, enqueued_by: described_class)
 
       expect(CloseFriendship).to receive(:delete_by_uid).with(twitter_user.uid)
       expect(FavoriteFriendship).to receive(:delete_by_uid).with(twitter_user.uid)
-      subject
-    end
-  end
-
-  describe '#update_twitter_db_users' do
-    let(:uids) { [1] }
-    subject { worker.send(:update_twitter_db_users, uids, user.id, 'test') }
-    before { RedisClient.new.flushall }
-    it do
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with(uids, user_id: user.id, enqueued_by: 'test')
       subject
     end
   end

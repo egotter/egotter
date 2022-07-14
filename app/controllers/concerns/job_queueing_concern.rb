@@ -42,8 +42,7 @@ module JobQueueingConcern
   end
 
   def update_twitter_db_user(uid)
-    if user_signed_in? && !TwitterDBUsersUpdatedFlag.on?([uid])
-      TwitterDBUsersUpdatedFlag.on([uid])
+    if user_signed_in?
       CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
     end
   end

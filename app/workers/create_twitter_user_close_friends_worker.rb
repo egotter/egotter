@@ -41,21 +41,12 @@ class CreateTwitterUserCloseFriendsWorker
       S3::FavoriteFriendship.import_from!(twitter_user.uid, favorite_friend_uids)
     end
 
-    update_twitter_db_users((close_friend_uids + favorite_friend_uids).uniq, twitter_user.user_id, self.class)
+    CreateTwitterDBUserWorker.perform_async((close_friend_uids + favorite_friend_uids).uniq, user_id: twitter_user.user_id, enqueued_by: self.class)
 
     CloseFriendship.delete_by_uid(twitter_user.uid)
     FavoriteFriendship.delete_by_uid(twitter_user.uid)
   rescue => e
     Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
     Airbag.info e.backtrace.join("\n")
-  end
-
-  private
-
-  def update_twitter_db_users(uids, user_id, enqueued_by)
-    if uids.any? && !TwitterDBUsersUpdatedFlag.on?(uids)
-      TwitterDBUsersUpdatedFlag.on(uids)
-      CreateTwitterDBUserWorker.perform_async(uids, user_id: user_id, enqueued_by: enqueued_by)
-    end
   end
 end

@@ -2,11 +2,8 @@ require 'rails_helper'
 
 RSpec.describe CreateTwitterDBUserWorker do
   let(:user) { create(:user) }
-  let(:worker) { described_class.new }
 
-  before do
-    allow(User).to receive(:find_by).with(id: user.id).and_return(user)
-  end
+  before { allow(User).to receive(:find_by).with(id: user.id).and_return(user) }
 
   describe '.perform_async' do
     class TestCreateTwitterDBUserWorker < CreateTwitterDBUserWorker
@@ -19,44 +16,48 @@ RSpec.describe CreateTwitterDBUserWorker do
       end
     end
 
-    let(:worker_wrapper) do
+    let(:worker) do
       TestCreateTwitterDBUserWorker
+    end
+
+    before { Redis.new.flushall }
+
+    subject do
+      worker.perform_async(uids)
+      worker.drain
+    end
+
+    context 'uids.size < 100' do
+      let(:uids1) { (1..50).to_a }
+      let(:encoded_uids1) { 'encoded_uids1' }
+      let(:uids) { (1..50).to_a }
+      before { allow(worker).to receive(:compress).with(uids1).and_return(encoded_uids1) }
+      it do
+        expect(worker).to receive(:do_perform).with(encoded_uids1, {})
+        subject
+      end
     end
 
     context '100 < uids.size' do
       let(:uids1) { (1..100).to_a }
-      let(:encoded_uids1) { Base64.encode64(Zlib::Deflate.deflate(uids1.join(','))) }
+      let(:encoded_uids1) { 'encoded_uids1' }
       let(:uids2) { (101..110).to_a }
+      let(:encoded_uids2) { 'encoded_uids2' }
       let(:uids) { (1..110).to_a }
-      it do
-        expect(worker_wrapper).to receive(:do_perform).with(encoded_uids1, {})
-        expect(worker_wrapper).to receive(:do_perform).with(uids2, {})
-        worker_wrapper.perform_async(uids)
-        worker_wrapper.drain
+      before do
+        allow(worker).to receive(:compress).with(uids1).and_return(encoded_uids1)
+        allow(worker).to receive(:compress).with(uids2).and_return(encoded_uids2)
       end
-    end
-
-    context '10 < uids.size < 100' do
-      let(:uids) { (1..50).to_a }
-      let(:encoded_uids) { Base64.encode64(Zlib::Deflate.deflate(uids.join(','))) }
       it do
-        expect(worker_wrapper).to receive(:do_perform).with(encoded_uids, {})
-        worker_wrapper.perform_async(uids)
-        worker_wrapper.drain
-      end
-    end
-
-    context 'uids.size < 10' do
-      let(:uids) { (1..5).to_a }
-      it do
-        expect(worker_wrapper).to receive(:do_perform).with(uids, {})
-        worker_wrapper.perform_async(uids)
-        worker_wrapper.drain
+        expect(worker).to receive(:do_perform).with(encoded_uids1, {})
+        expect(worker).to receive(:do_perform).with(encoded_uids2, {})
+        subject
       end
     end
   end
 
   describe '#perform' do
+    let(:worker) { described_class.new }
     let(:uids) { [1] }
     let(:options) { {'user_id' => user.id, 'enqueued_by' => 'test'} }
     let(:client) { 'client' }
