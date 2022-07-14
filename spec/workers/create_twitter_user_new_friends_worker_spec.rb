@@ -2,20 +2,24 @@ require 'rails_helper'
 
 RSpec.describe CreateTwitterUserNewFriendsWorker do
   let(:twitter_user) { create(:twitter_user, user_id: 1) }
-  let(:uids) { [1, 2, 3] }
+  let(:new_friend_uids) { [1, 2, 3] }
+  let(:new_follower_uids) { [3, 4, 5, 6] }
   let(:worker) { described_class.new }
 
   before do
-    allow(twitter_user).to receive(:calc_new_friend_uids).and_return(uids)
+    allow(twitter_user).to receive(:calc_new_friend_uids).and_return(new_friend_uids)
+    allow(twitter_user).to receive(:calc_new_follower_uids).and_return(new_follower_uids)
     allow(TwitterUser).to receive(:find).with(twitter_user.id).and_return(twitter_user)
   end
 
   describe '#perform' do
     subject { worker.perform(twitter_user.id) }
     it do
-      expect(twitter_user).to receive(:update).with(new_friends_size: uids.size)
-      expect(worker).to receive(:update_twitter_db_users).with(uids, twitter_user.user_id)
-      expect(CreateNewFriendsCountPointWorker).to receive(:perform_async).with(twitter_user.uid, uids.size)
+      expect(twitter_user).to receive(:update).with(new_friends_size: new_friend_uids.size)
+      expect(twitter_user).to receive(:update).with(new_followers_size: new_follower_uids.size)
+      expect(CreateNewFriendsCountPointWorker).to receive(:perform_async).with(twitter_user.uid, new_friend_uids.size)
+      expect(CreateNewFollowersCountPointWorker).to receive(:perform_async).with(twitter_user.uid, new_follower_uids.size)
+      expect(worker).to receive(:update_twitter_db_users).with((new_friend_uids + new_follower_uids).uniq, twitter_user.user_id)
       subject
     end
   end

@@ -27,12 +27,17 @@ class CreateTwitterUserNewFriendsWorker
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
 
-    if (uids = twitter_user.calc_new_friend_uids)
-      twitter_user.update(new_friends_size: uids.size)
-      update_twitter_db_users(uids, twitter_user.user_id)
-      CreateSidekiqLogWorker.perform_async("class=#{self.class} twitter_user_id=#{twitter_user_id} uid=#{uids.take(100)}") if uids.any?
-      CreateNewFriendsCountPointWorker.perform_async(twitter_user.uid, uids.size)
+    if (new_friend_uids = twitter_user.calc_new_friend_uids)
+      twitter_user.update(new_friends_size: new_friend_uids.size)
+      CreateNewFriendsCountPointWorker.perform_async(twitter_user.uid, new_friend_uids.size)
     end
+
+    if (new_follower_uids = twitter_user.calc_new_follower_uids)
+      twitter_user.update(new_followers_size: new_follower_uids.size)
+      CreateNewFollowersCountPointWorker.perform_async(twitter_user.uid, new_follower_uids.size)
+    end
+
+    update_twitter_db_users((new_friend_uids + new_follower_uids).uniq, twitter_user.user_id)
   rescue => e
     Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
     Airbag.info e.backtrace.join("\n")
