@@ -16,6 +16,9 @@
 class TwitterDB::QueuedUser < ApplicationRecord
   validates :uid, presence: true, uniqueness: true
 
+  scope :processed, -> { where.not(processed_at: nil) }
+  scope :unprocessed, -> { where(processed_at: nil) }
+
   IMPORT_COLUMNS = %i(uid created_at updated_at)
 
   class << self
@@ -40,11 +43,11 @@ class TwitterDB::QueuedUser < ApplicationRecord
     def delete_stale_records
       query = select(:id).where('created_at < ?', 6.hours.ago)
 
-      processed_ids = query.where.not(processed_at: nil).find_in_batches.map do |records|
+      processed_ids = query.processed.find_in_batches.map do |records|
         records.map(&:id)
       end.flatten
 
-      unprocessed_ids = query.where(processed_at: nil).find_in_batches.map do |records|
+      unprocessed_ids = query.unprocessed.find_in_batches.map do |records|
         records.map(&:id)
       end.flatten
 
