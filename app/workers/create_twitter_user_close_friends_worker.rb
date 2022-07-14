@@ -33,8 +33,16 @@ class CreateTwitterUserCloseFriendsWorker
     twitter_user = TwitterUser.find(twitter_user_id)
     user = User.find_by(id: twitter_user.user_id)
 
-    import_close_friends(twitter_user, user)
-    import_favorite_friends(twitter_user, user)
+    if (close_friend_uids = twitter_user.calc_uids_for(S3::CloseFriendship, login_user: user))
+      S3::CloseFriendship.import_from!(twitter_user.uid, close_friend_uids)
+    end
+
+    if (favorite_friend_uids = twitter_user.calc_uids_for(S3::FavoriteFriendship, login_user: user))
+      S3::FavoriteFriendship.import_from!(twitter_user.uid, favorite_friend_uids)
+    end
+
+    update_twitter_db_users((close_friend_uids + favorite_friend_uids).uniq, twitter_user.user_id, self.class)
+
     CloseFriendship.delete_by_uid(twitter_user.uid)
     FavoriteFriendship.delete_by_uid(twitter_user.uid)
   rescue => e
@@ -43,18 +51,6 @@ class CreateTwitterUserCloseFriendsWorker
   end
 
   private
-
-  def import_close_friends(twitter_user, user)
-    uids = twitter_user.calc_uids_for(S3::CloseFriendship, login_user: user)
-    S3::CloseFriendship.import_from!(twitter_user.uid, uids)
-    update_twitter_db_users(uids, twitter_user.user_id, "#{self.class}-import_close_friends-#{twitter_user.id}-#{uids.size}")
-  end
-
-  def import_favorite_friends(twitter_user, user)
-    uids = twitter_user.calc_uids_for(S3::FavoriteFriendship, login_user: user)
-    S3::FavoriteFriendship.import_from!(twitter_user.uid, uids)
-    update_twitter_db_users(uids, twitter_user.user_id, "#{self.class}-import_favorite_friends-#{twitter_user.id}-#{uids.size}")
-  end
 
   def update_twitter_db_users(uids, user_id, enqueued_by)
     if uids.any? && !TwitterDBUsersUpdatedFlag.on?(uids)
