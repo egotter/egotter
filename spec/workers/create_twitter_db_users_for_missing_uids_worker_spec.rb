@@ -3,6 +3,18 @@ require 'rails_helper'
 RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
   let(:worker) { described_class.new }
 
+  describe '#perform' do
+    let(:data) { 'data' }
+    let(:uids) { [1, 2, 3] }
+    subject { worker.perform(data, 1) }
+    it do
+      expect(worker).to receive(:decompress).with(data).and_return(uids)
+      expect(worker).to receive(:filter_missing_uids).with(uids).and_return([1, 2])
+      expect(worker).to receive(:enqueue).with([1, 2], 1)
+      subject
+    end
+  end
+
   describe '.perform_async' do
     class TestCreateTwitterDBUsersForMissingUidsWorker < CreateTwitterDBUsersForMissingUidsWorker
       def perform(uids, user_id, options)
@@ -15,9 +27,7 @@ RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
     end
 
     let(:user_id) { 1 }
-    let(:worker_wrapper) do
-      TestCreateTwitterDBUsersForMissingUidsWorker
-    end
+    let(:worker_wrapper) { TestCreateTwitterDBUsersForMissingUidsWorker }
 
     context '100 < uids.size' do
       let(:uids1) { (1..100).to_a }
@@ -52,9 +62,20 @@ RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
     end
   end
 
-  describe '#fetch_missing_uids' do
+  describe '#decompress' do
+    let(:data) { [1, 2, 3] }
+    subject { worker.send(:decompress, data) }
+    it { is_expected.to eq([1, 2, 3]) }
+
+    context 'data is compressed' do
+      let(:data) { Base64.encode64(Zlib::Deflate.deflate([1, 2, 3].to_json)) }
+      it { is_expected.to eq([1, 2, 3]) }
+    end
+  end
+
+  describe '#filter_missing_uids' do
     let(:uids) { [1, 2, 3] }
-    subject { worker.send(:fetch_missing_uids, uids) }
+    subject { worker.send(:filter_missing_uids, uids) }
     before { create(:twitter_db_user, uid: 2) }
     it { is_expected.to eq([1, 3]) }
   end
