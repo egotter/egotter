@@ -189,7 +189,11 @@ module TwitterUserCalculator
   end
 
   def previous_version
-    @previous_version ||= TwitterUser.where(uid: uid).where('created_at < ?', created_at).order(created_at: :desc).first
+    if instance_variable_defined?(:@previous_version)
+      @previous_version
+    else
+      @previous_version = TwitterUser.where(uid: uid).where('created_at < ?', created_at).order(created_at: :desc).first
+    end
   end
 
   # For debugging
