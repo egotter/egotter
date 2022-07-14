@@ -30,7 +30,7 @@ class CreateTwitterUserNewFollowersWorker
     if (uids = twitter_user.calc_new_follower_uids)
       twitter_user.update(new_followers_size: uids.size)
       update_twitter_db_users(uids, twitter_user.user_id)
-      CreateSidekiqLogWorker.perform_async("class=#{self.class} uid=#{uids.take(100)}")
+      CreateSidekiqLogWorker.perform_async("class=#{self.class} twitter_user_id=#{twitter_user_id} uid=#{uids.take(100)}") if uids.any?
       CreateNewFollowersCountPointWorker.perform_async(twitter_user.uid, uids.size)
     end
   rescue => e
