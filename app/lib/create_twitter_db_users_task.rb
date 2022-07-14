@@ -23,7 +23,7 @@ class CreateTwitterDBUsersTask
     users = fetch_users(@client, @uids)
 
     if @uids.size != users.size && (suspended_uids = @uids - users.map { |u| u[:id] }).any?
-      import_suspended_users(suspended_uids)
+      ImportTwitterDBSuspendedUserWorker.perform_async(suspended_uids)
     end
 
     if users.any?
@@ -56,22 +56,10 @@ class CreateTwitterDBUsersTask
     end
   end
 
-  def import_suspended_users(uids)
-    users = uids.map { |uid| Hashie::Mash.new(id: uid, screen_name: 'suspended', description: '') }
-    users = reject_persisted_users(users)
-    ImportTwitterDBUserWorker.perform_async(users.map(&:to_h), enqueued_by: @enqueued_by, _user_id: @user_id) if users.any?
-  end
-
   # Note: This query uses the index on uid instead of the index on updated_at.
   def reject_fresh_uids(uids)
     fresh_uids = TwitterDB::QueuedUser.where(uid: uids).pluck(:uid).map { |uid| [uid, true] }.to_h
     uids.select { |uid| !fresh_uids.has_key?(uid) }
-  end
-
-  def reject_persisted_users(users)
-    # Note: This query uses the index on uid instead of the index on updated_at.
-    persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }).pluck(:uid)
-    users.reject { |user| persisted_uids.include? user[:id] }
   end
 
   def retryable_twitter_error?(e)

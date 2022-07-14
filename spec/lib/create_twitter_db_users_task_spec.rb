@@ -17,7 +17,6 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
     it do
       expect(instance).to receive(:reject_fresh_uids).with(uids).and_return(uids)
       expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
-      expect(instance).not_to receive(:import_suspended_users)
       expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test', _user_id: nil)
       subject
     end
@@ -26,7 +25,6 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
       let(:users) { uids.slice(0, 2).map { |id| {id: id, screen_name: "sn-#{id}"} } }
       it do
         expect(instance).to receive(:fetch_users).with(client, uids).and_return(users)
-        expect(instance).to receive(:import_suspended_users).with(uids.slice(2, 3))
         expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test', _user_id: nil)
         subject
       end
@@ -41,15 +39,6 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
     end
   end
 
-  describe '#import_suspended_users' do
-    let(:users) { uids.map { |id| Hashie::Mash.new(id: id, screen_name: 'suspended', description: '') } }
-    subject { instance.send(:import_suspended_users, uids) }
-    it do
-      expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users.map(&:to_h), anything)
-      subject
-    end
-  end
-
   describe '#reject_fresh_uids' do
     subject { instance.send(:reject_fresh_uids, uids) }
     it { is_expected.to eq(uids) }
@@ -58,9 +47,5 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
       before { create(:twitter_db_queued_user, uid: uids[0]) }
       it { is_expected.to eq(uids[1..-1]) }
     end
-  end
-
-  describe '#reject_persisted_users' do
-    # TODO
   end
 end
