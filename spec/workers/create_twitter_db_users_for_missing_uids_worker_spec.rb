@@ -79,7 +79,39 @@ RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
   describe '#filter_missing_uids' do
     let(:uids) { [1, 2, 3] }
     subject { worker.send(:filter_missing_uids, uids) }
-    before { create(:twitter_db_user, uid: 2) }
-    it { is_expected.to eq([1, 3]) }
+
+    context 'all uids are persisted to TwitterDB::QueuedUser' do
+      before { uids.each { |uid| create(:twitter_db_queued_user, uid: uid) } }
+      it do
+        expect(TwitterDB::QueuedUser).to receive(:where).with(anything).and_call_original
+        expect(TwitterDB::User).not_to receive(:where)
+        is_expected.to eq([])
+      end
+    end
+
+    context 'all uids are persisted to TwitterDB::QueuedUser and TwitterDB::User' do
+      before do
+        create(:twitter_db_queued_user, uid: uids[0])
+        create(:twitter_db_user, uid: uids[1])
+        create(:twitter_db_user, uid: uids[2])
+      end
+      it do
+        expect(TwitterDB::QueuedUser).to receive(:where).with(anything).and_call_original.twice
+        expect(TwitterDB::User).to receive(:where).with(anything).and_call_original
+        is_expected.to eq([])
+      end
+    end
+
+    context 'some uids are persisted to TwitterDB::QueuedUser and TwitterDB::User' do
+      before do
+        create(:twitter_db_queued_user, uid: uids[0])
+        create(:twitter_db_user, uid: uids[1])
+      end
+      it do
+        expect(TwitterDB::QueuedUser).to receive(:where).with(anything).and_call_original.twice
+        expect(TwitterDB::User).to receive(:where).with(anything).and_call_original.twice
+        is_expected.to eq([3])
+      end
+    end
   end
 end
