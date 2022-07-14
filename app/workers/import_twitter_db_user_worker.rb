@@ -72,10 +72,11 @@ class ImportTwitterDBUserWorker
 
   class << self
     def perform_async(users, options = {})
-      if users.size > 1
-        users = Base64.encode64(Zlib::Deflate.deflate(users.to_json))
-      end
-      super(users, options)
+      super(compress(users), options)
+    end
+
+    def compress(users)
+      users.size > 3 ? Base64.encode64(Zlib::Deflate.deflate(users.to_json)) : users
     end
   end
 end
