@@ -71,22 +71,13 @@ class CreateTwitterDBUserWorker
 
   class << self
     def perform_async(uids, options = {})
-      uids = uids.uniq
-
-      if uids.size > 100
-        uids.each_slice(100) do |uids_array|
-          perform_async(uids_array, options)
-        end
-      else
-        if uids.size > 10
-          uids = compress(uids)
-        end
-        super(uids, options)
+      uids.uniq.each_slice(100) do |uids_array|
+        super(compress(uids_array), options)
       end
     end
 
     def compress(uids)
-      Base64.encode64(Zlib::Deflate.deflate(uids.join(',')))
+      uids.size > 10 ? Base64.encode64(Zlib::Deflate.deflate(uids.join(','))) : uids
     end
   end
 
