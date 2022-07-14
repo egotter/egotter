@@ -45,7 +45,7 @@ class ApiClient
     if e.class == ApiClient::RetryExhausted
       if failed_dm.recipient_id != User::EGOTTER_UID && @user
         CreateDirectMessageEventWorker.perform_in(5.seconds, @user.id, event)
-        raise MessageWillBeResent.new("user_id=#{@user.id} recipient_id=#{failed_dm.recipient_id} message=#{failed_dm.text&.truncate(50)}")
+        raise MessageWillBeResent.new("user_id=#{@user.id} recipient_id=#{failed_dm.recipient_id} message=#{failed_dm.text.to_s.truncate(50).gsub("\n", ' ')}")
       end
     elsif DirectMessageStatus.enhance_your_calm?(e)
       SendEnhanceYourCalmCountToSlackWorker.perform_async
