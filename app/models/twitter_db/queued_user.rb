@@ -24,12 +24,16 @@ class TwitterDB::QueuedUser < ApplicationRecord
       time = Time.zone.now
       data = uids.map { |uid| [uid, time, time] }
       import IMPORT_COLUMNS, data, on_duplicate_key_update: %i(uid updated_at), validate: false, timestamps: false
-    rescue ActiveRecord::Deadlocked => e
+    rescue ActiveRecord::Deadlocked, ActiveRecord::StatementInvalid => e
       Airbag.info "TwitterDB::QueuedUser#import_data #{e.inspect.truncate(200)}"
+      handle_deadlock(uids)
+    end
+
+    def handle_deadlock(uids)
       uids.each do |uid|
         create!(uid: uid)
       rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => ee
-        Airbag.info "TwitterDB::QueuedUser#import_data #{ee.inspect.truncate(200)}"
+        Airbag.info "TwitterDB::QueuedUser#handle_deadlock #{ee.inspect.truncate(200)}"
       end
     end
 
