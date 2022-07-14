@@ -41,18 +41,17 @@ class TwitterDB::QueuedUser < ApplicationRecord
     end
 
     def delete_stale_records
-      query = select(:id).where('created_at < ?', 6.hours.ago)
+      query = select(:id, :uid).where('created_at < ?', 6.hours.ago)
+      processed_records = query.processed.find_in_batches.map { |records| records }.flatten
+      unprocessed_records = query.unprocessed.find_in_batches.map { |records| records }.flatten
 
-      processed_ids = query.processed.find_in_batches.map do |records|
-        records.map(&:id)
-      end.flatten
+      (processed_records + unprocessed_records).each_slice(100) do |records|
+        uids = records.map(&:uid)
+        if TwitterDB::User.where(uid: uids).size != records.size
+          puts "Not persisted records found uids=#{uids}"
+        end
 
-      unprocessed_ids = query.unprocessed.find_in_batches.map do |records|
-        records.map(&:id)
-      end.flatten
-
-      (processed_ids + unprocessed_ids).each_slice(1000) do |ids|
-        where(id: ids).delete_all
+        where(id: records.map(&:id)).delete_all
       end
     end
   end
