@@ -46,7 +46,7 @@ class CreateBlockReportWorker
     BlockReport.you_are_blocked(user.id, requested_by: requested_by_user? ? 'user' : nil).deliver!
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
-      retry_current_report(user_id, options, exception: e)
+      retry_current_report(user_id, options)
     elsif ignorable_report_error?(e)
       # Do nothing
     else

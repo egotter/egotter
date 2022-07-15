@@ -7,8 +7,7 @@ module ReportRetryHandler
     1.hour + rand(30).minutes
   end
 
-  def retry_current_report(*job_args, exception: nil)
-    Airbag.info { "#{__method__}: Retry again exception=#{exception.inspect} job_args=#{job_args.inspect.truncate(150)}" }
+  def retry_current_report(*job_args)
     self.class.perform_in(report_retry_delay, *job_args)
   end
 end

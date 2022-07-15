@@ -29,7 +29,7 @@ class CreateSearchReportWorker
     SearchReport.you_are_searched(searchee.id, options['searcher_uid']).deliver!
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
-      retry_current_report(searchee_id, options, exception: e)
+      retry_current_report(searchee_id, options)
     elsif ignorable_report_error?(e)
       # Do nothing
     else

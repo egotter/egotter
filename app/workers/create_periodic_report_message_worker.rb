@@ -67,7 +67,7 @@ class CreatePeriodicReportMessageWorker
     PeriodicReport.periodic_message(user.id, options).deliver!
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
-      retry_current_report(user.id, options, exception: e)
+      retry_current_report(user.id, options)
     elsif ignorable_report_error?(e)
       Airbag.info "#{e.class} #{e.message} user_id=#{user.id} options=#{options}"
     else

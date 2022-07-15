@@ -72,7 +72,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       context 'the exception is Twitter::Error::EnhanceYourCalm' do
         before { allow(DirectMessageStatus).to receive(:enhance_your_calm?).with(anything).and_return(true) }
         it do
-          expect(worker).to receive(:retry_current_report).with(user.id, options, exception: instance_of(RuntimeError))
+          expect(worker).to receive(:retry_current_report).with(user.id, options)
           expect { subject }.not_to raise_error
         end
       end

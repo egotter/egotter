@@ -35,7 +35,7 @@ class CreateWelcomeMessageWorker
     message.deliver!
   rescue => e
     if DirectMessageStatus.enhance_your_calm?(e)
-      retry_current_report(user.id, options, exception: e)
+      retry_current_report(user.id, options)
     else
       error_message = "#{e.inspect} user_id=#{user.id} screen_name=#{user.screen_name} options=#{options.inspect}"
       SendMessageToSlackWorker.perform_async(:messages_welcome, error_message)
