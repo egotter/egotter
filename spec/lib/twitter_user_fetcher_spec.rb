@@ -17,6 +17,23 @@ RSpec.describe TwitterUserFetcher do
 
   describe '#fetch' do
     subject { instance.fetch }
+    it do
+      expect(instance).to receive(:fetch_in_threads)
+      subject
+    end
+
+    context 'ThreadError is raised' do
+      let(:error) { ThreadError.new("can't alloc thread") }
+      before { allow(instance).to receive(:fetch_in_threads).and_raise(error) }
+      it do
+        expect(instance).to receive(:fetch_without_threads)
+        subject
+      end
+    end
+  end
+
+  describe '#fetch_without_threads' do
+    subject { instance.fetch_without_threads }
 
     it do
       expect(client).to receive(:friend_ids).with(uid)

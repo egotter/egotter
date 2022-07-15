@@ -211,7 +211,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     it do
       expect(TwitterUserFetcher).to receive(:new).
           with(client, snapshot.uid, snapshot.screen_name, true, false, false).and_return(fetcher)
-      expect(fetcher).to receive(:fetch_in_threads).and_return('result')
+      expect(fetcher).to receive(:fetch).and_return('result')
       is_expected.to eq('result')
     end
 
@@ -220,7 +220,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
       it do
         expect(Bot).to receive(:api_client).with(cache_store: :null_store).and_return(client)
         expect(TwitterUserFetcher).to receive(:new).with(any_args).and_return(fetcher)
-        expect(fetcher).to receive(:fetch_in_threads).and_return('result')
+        expect(fetcher).to receive(:fetch).and_return('result')
         is_expected.to eq('result')
       end
     end

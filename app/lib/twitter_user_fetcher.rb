@@ -11,8 +11,15 @@ class TwitterUserFetcher
     @reporting = reporting
   end
 
-  # Not using uniq for mentions, search_results and favorites intentionally
   def fetch
+    fetch_in_threads
+  rescue ThreadError => e
+    Airbag.warn "TwitterUserFetcher#fetch: ThreadError is detected and retry without threads exception=#{e.inspect}"
+    fetch_without_threads
+  end
+
+  # Not using uniq for mentions, search_results and favorites intentionally
+  def fetch_without_threads
     result = {}
 
     if @fetch_friends
