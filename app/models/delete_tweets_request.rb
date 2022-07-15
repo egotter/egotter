@@ -160,7 +160,8 @@ class DeleteTweetsRequest < ApplicationRecord
   def destroy_statuses!(tweets)
     tweets.each.with_index do |tweet, i|
       interval = (0.1 * i).floor
-      DeleteTweetWorker.perform_in(interval, user_id, tweet.id, request_id: id, last_tweet: tweet == tweets.last)
+      options = {request_id: id, last_tweet: tweet == tweets.last}.reject { |_, v| !v }
+      DeleteTweetWorker.perform_in(interval, user_id, tweet.id, options)
     end
     update(last_tweet: tweets.last.id)
   end

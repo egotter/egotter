@@ -15,7 +15,7 @@ class DeleteTweetWorker
       request.increment!(:destroy_count)
     end
 
-    if options['last_tweet']
+    if request.last_tweet == tweet_id || options['last_tweet']
       SendDeleteTweetsFinishedMessageWorker.perform_in(5.seconds, request.id)
     end
   rescue => e
