@@ -20,7 +20,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
 
   describe '#perform' do
     let(:user_id) { user.id }
-    let(:options) { {} }
+    let(:options) { {'periodic_report_id' => 1} }
     subject { worker.perform(user_id, options) }
 
     before do
@@ -34,10 +34,19 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       subject
     end
 
+    context ':periodic_report_id is not passed' do
+      before { options['periodic_report_id'] = nil }
+      it do
+        expect(worker).not_to receive(:send_push_message)
+        expect(worker).not_to receive(:send_direct_message)
+        subject
+      end
+    end
+
     context 'sending DM is rate-limited' do
       before { allow(PeriodicReport).to receive(:send_report_limited?).with(user.uid).and_return(true) }
       it do
-        expect(worker).to receive(:retry_current_report).with(user.id, options)
+        expect(worker).to receive(:retry_current_report).with(user.id, options.symbolize_keys)
         expect(worker).not_to receive(:send_push_message)
         expect(worker).not_to receive(:send_direct_message)
         subject

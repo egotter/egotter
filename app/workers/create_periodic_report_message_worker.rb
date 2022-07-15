@@ -41,6 +41,12 @@ class CreatePeriodicReportMessageWorker
   #   worker_context
   def perform(user_id, options = {})
     options = options.symbolize_keys!
+
+    unless options[:periodic_report_id]
+      Airbag.warn "options[:periodic_report_id] is not passed user_id=#{user_id} options=#{options}"
+      return
+    end
+
     user = User.find(user_id)
 
     if PeriodicReport.send_report_limited?(user.uid)
