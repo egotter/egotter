@@ -59,7 +59,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
     let(:request) { CreatePeriodicReportRequest.create(user_id: user.id) }
     subject { controller.send(:enqueue_create_periodic_report_job, user, 'smartphone') }
     before do
-      allow(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: 'smartphone').and_return(request)
+      allow(CreatePeriodicReportRequest).to receive(:create!).with(user_id: user.id, requested_by: 'smartphone').and_return(request)
     end
     it do
       expect(CreateAndroidRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id, requested_by: 'android_app')

@@ -120,7 +120,7 @@ class PeriodicReportResponder < AbstractMessageResponder
         end
       end
 
-      request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: 'user')
+      request = CreatePeriodicReportRequest.create!(user_id: user.id, requested_by: 'user')
       CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
     end
   end

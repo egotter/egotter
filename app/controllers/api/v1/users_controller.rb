@@ -62,7 +62,7 @@ module Api
       end
 
       def enqueue_create_periodic_report_job(user, device_type)
-        request = CreatePeriodicReportRequest.create(user_id: user.id, requested_by: device_type)
+        request = CreatePeriodicReportRequest.create!(user_id: user.id, requested_by: device_type)
         CreateAndroidRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, requested_by: 'android_app')
       end
 
