@@ -13,6 +13,7 @@
 #  reservations_count :integer          default(0), not null
 #  destroy_count      :integer          default(0), not null
 #  errors_count       :integer          default(0), not null
+#  last_tweet         :bigint(8)
 #  started_at         :datetime
 #  stopped_at         :datetime
 #  finished_at        :datetime
@@ -74,6 +75,10 @@ class DeleteTweetsRequest < ApplicationRecord
 
   def started?
     !started_at.nil?
+  end
+
+  def stopped?
+    !stopped_at.nil?
   end
 
   def finished?

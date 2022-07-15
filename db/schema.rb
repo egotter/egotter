@@ -635,6 +635,7 @@ ActiveRecord::Schema.define(version: 2022_07_13_203718) do
     t.integer "reservations_count", default: 0, null: false
     t.integer "destroy_count", default: 0, null: false
     t.integer "errors_count", default: 0, null: false
+    t.bigint "last_tweet"
     t.datetime "started_at"
     t.datetime "stopped_at"
     t.datetime "finished_at"

@@ -8,10 +8,7 @@ class DeleteTweetWorker
   #   last_tweet
   def perform(user_id, tweet_id, options = {})
     request = DeleteTweetsRequest.find(options['request_id'])
-    if request.stopped_at
-      Airbag.info "This request is already stopped user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
-      return
-    end
+    return if request.stopped?
 
     client = User.find(user_id).api_client.twitter
     if destroy_status!(client, tweet_id, request)
