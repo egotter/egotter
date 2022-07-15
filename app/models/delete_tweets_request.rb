@@ -162,6 +162,7 @@ class DeleteTweetsRequest < ApplicationRecord
       interval = (0.1 * i).floor
       DeleteTweetWorker.perform_in(interval, user_id, tweet.id, request_id: id, last_tweet: tweet == tweets.last)
     end
+    update(last_tweet: tweets.last.id)
   end
 
   def exception_handler(e, last_method = nil)

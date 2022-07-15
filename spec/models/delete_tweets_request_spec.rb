@@ -143,9 +143,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
   end
 
   describe '#destroy_statuses!' do
-    let(:tweets) do
-      [double('tweet', id: 1), double('tweet', id: 2)]
-    end
+    let(:tweets) { [double('tweet', id: 1), double('tweet', id: 2)] }
     subject { request.destroy_statuses!(tweets) }
 
     it do
@@ -153,6 +151,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
         interval = (0.1 * i).floor
         expect(DeleteTweetWorker).to receive(:perform_in).with(interval, user.id, tweet.id, request_id: request.id, last_tweet: tweet == tweets.last)
       end
+      expect(request).to receive(:update).with(last_tweet: tweets.last.id)
       subject
     end
   end
