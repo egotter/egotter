@@ -12,7 +12,7 @@ class CreatePeriodicReportTask
     request.perform!
     request.finished!
   rescue => e
-    request.update(status: e.message.truncate(150)) rescue nil
+    request.update(status: e.inspect.truncate(150))
     raise
   end
 end
