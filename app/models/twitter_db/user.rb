@@ -87,9 +87,8 @@ module TwitterDB
       class_methods do
         # TODO Set user_id
         # This method makes the result unique.
-        def where_and_order_by_field(uids:, inactive: nil, thread: true)
+        def where_and_order_by_field(uids:, inactive: nil, slice_count: 1000, thread: true)
           caller_name = (caller[0][/`([^']*)'/, 1] rescue '')
-          slice_count = 1000
 
           if thread && uids.size > slice_count
             # TODO Experimental

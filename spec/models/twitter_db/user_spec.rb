@@ -35,24 +35,29 @@ end
 
 RSpec.describe TwitterDB::User::QueryMethods do
   describe '.where_and_order_by_field' do
-    let(:uids) { [1, 2, 3] + (1..1200).to_a } # Including duplicate values
+    let(:uids) { [1, 2, 3, 3, 4, 5] }
+    let(:slice_count) { 2 }
     let(:use_thread) { false }
-    subject { TwitterDB::User.where_and_order_by_field(uids: uids, thread: use_thread) }
+    subject { TwitterDB::User.where_and_order_by_field(uids: uids, slice_count: slice_count, thread: use_thread) }
 
-    it do
-      expect(Parallel).not_to receive(:each_with_index)
-      expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1..1000).to_a, nil, anything).and_return(['result1'])
-      expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1001..1200).to_a, nil, anything).and_return(['result2'])
-      is_expected.to eq(['result1', 'result2'])
+    context 'thread is disabled' do
+      it do
+        expect(Parallel).not_to receive(:each_with_index)
+        expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with([1, 2], nil, anything).and_return(['result1'])
+        expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with([3, 4], nil, anything).and_return(['result2'])
+        expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with([5], nil, anything).and_return(['result3'])
+        is_expected.to eq(['result1', 'result2', 'result3'])
+      end
     end
 
-    context 'thread is true' do
+    context 'thread is enabled' do
       let(:use_thread) { true }
       it do
         expect(Parallel).to receive(:each_with_index).with(any_args).and_call_original
-        expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1..1000).to_a, nil, anything).and_return(['result1'])
-        expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with((1001..1200).to_a, nil, anything).and_return(['result2'])
-        is_expected.to eq(['result1', 'result2'])
+        expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with([1, 2], nil, anything).and_return(['result1'])
+        expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with([3, 4], nil, anything).and_return(['result2'])
+        expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with([5], nil, anything).and_return(['result3'])
+        is_expected.to eq(['result1', 'result2', 'result3'])
       end
     end
   end
