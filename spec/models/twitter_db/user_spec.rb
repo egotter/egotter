@@ -59,6 +59,17 @@ RSpec.describe TwitterDB::User::QueryMethods do
         expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with([5], nil, anything).and_return(['result3'])
         is_expected.to eq(['result1', 'result2', 'result3'])
       end
+
+      context 'ThreadError is raised' do
+        let(:error) { ThreadError.new("can't alloc thread") }
+        before { allow(Parallel).to receive(:each_with_index).and_raise(error) }
+        it do
+          expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with([1, 2], nil, anything).and_return(['result1'])
+          expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with([3, 4], nil, anything).and_return(['result2'])
+          expect(TwitterDB::User).to receive(:where_and_order_by_field_each_slice).with([5], nil, anything).and_return(['result3'])
+          is_expected.to eq(['result1', 'result2', 'result3'])
+        end
+      end
     end
   end
 

@@ -102,6 +102,14 @@ module TwitterDB
               where_and_order_by_field_each_slice(uids_array, inactive, caller_name)
             end.flatten
           end
+        rescue ThreadError => e
+          if thread
+            Airbag.warn "ThreadError is detected and retry without threads exception=#{e.inspect}"
+            thread = false
+            retry
+          else
+            raise
+          end
         end
 
         private
