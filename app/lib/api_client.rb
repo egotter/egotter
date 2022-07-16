@@ -210,6 +210,7 @@ class ApiClient
     # TODO List api methods
     def method_missing(method, *args, **kwargs, &block)
       if @twitter.respond_to?(method)
+        Airbag.info { "ApiClient::TwitterWrapper#method_missing: #{method} is not implemented" }
         call_api(method, *args, **kwargs, &block)
       else
         super
