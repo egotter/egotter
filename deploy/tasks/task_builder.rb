@@ -72,8 +72,8 @@ module Tasks
 
         logger.info "Launch #{tasks_count} instances in parallel"
 
-        tasks.map.with_index do |task, i|
-          Thread.new { task.launch_instance(i) }
+        tasks.map.with_index do |task, index|
+          Thread.new(task, index) { |t, i| t.launch_instance(i) }
         end.each(&:join)
 
         EnumerableTask.new(tasks)

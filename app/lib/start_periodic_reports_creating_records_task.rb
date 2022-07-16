@@ -54,16 +54,15 @@ class StartPeriodicReportsCreatingRecordsTask
 
   def run_jobs(requests, threads)
     requests.each_slice(threads) do |partial_requests|
-      threads = partial_requests.map do |request|
-        Thread.new do
+      partial_requests.map do |request|
+        Thread.new(request) do |req|
           ActiveRecord::Base.connection_pool.with_connection do
-            CreateReportTwitterUserWorker.new.perform(request.id, period: @period)
+            CreateReportTwitterUserWorker.new.perform(req.id, period: @period)
           end
         rescue => e
-          puts "#{e.inspect} request_id=#{request.id}"
+          puts "#{e.inspect} request_id=#{req.id}"
         end
-      end
-      threads.each(&:join)
+      end.each(&:join)
     end
   end
 
