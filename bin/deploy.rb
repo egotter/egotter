@@ -69,7 +69,7 @@ def parse_params
 end
 
 def git_tag?(params)
-  params.has_key?('with-tag') && !params['list'] && !params['terminate'] && params['role'] != 'plain'
+  params.has_key?('with-tag') && params['with-tag'] && !params['list'] && !params['terminate'] && params['role'] != 'plain'
 end
 
 def main(params)
