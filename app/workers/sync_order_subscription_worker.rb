@@ -8,8 +8,8 @@ class SyncOrderSubscriptionWorker
     order = Order.find(order_id)
 
     if (subscription = fetch_subscription(order.subscription_id))
-      update_canceled_at(order, subscription)
-      update_trial_end(order, subscription)
+      cancel_order(order, subscription)
+      end_trial_period(order, subscription)
     end
   rescue => e
     handle_worker_error(e, order_id: order_id, options: options)
@@ -21,22 +21,23 @@ class SyncOrderSubscriptionWorker
     subscription_id && Stripe::Subscription.retrieve(subscription_id)
   end
 
-  def update_canceled_at(order, subscription)
+  def cancel_order(order, subscription)
     if (timestamp = subscription.canceled_at)
       order.update!(canceled_at: Time.zone.at(timestamp))
-      send_message(order)
+      send_message(order, 'cancel_order')
     end
   end
 
-  def update_trial_end(order, subscription)
+  def end_trial_period(order, subscription)
     if !order.trial_end && (trial_end = subscription.trial_end)
       order.update!(trial_end: trial_end)
-      send_message(order)
+      send_message(order, 'end_trial_period')
     end
   end
 
-  def send_message(order, channel = 'orders_sync')
-    message = "#{self.class}: #{order.id} #{order.saved_changes.except('updated_at')}"
+  def send_message(order, location)
+    channel = 'orders_sync'
+    message = "#{self.class}: location=#{location} order_id=#{order.id} #{order.saved_changes}"
     SlackMessage.create(channel: channel, message: message)
     SlackBotClient.channel(channel).post_message(message)
   end
