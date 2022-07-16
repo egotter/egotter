@@ -1,9 +1,11 @@
 namespace :orders do
   task update_stripe_attributes: :environment do |task|
     processed_count = 0
+    check_email_time = (1.hour + 5.minutes).ago
+
     Order.where(canceled_at: nil).find_each.with_index do |order, i|
       interval = (0.1 * i).floor
-      SyncOrderEmailWorker.perform_in(interval, order.id)
+      SyncOrderEmailWorker.perform_in(interval, order.id) if order.created_at > check_email_time
       SyncOrderSubscriptionWorker.perform_in(interval, order.id)
       processed_count += 1
     end
