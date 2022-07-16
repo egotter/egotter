@@ -35,8 +35,8 @@
 %hr
 
 %h2.h4.text-center.my-5= t('.not_included.title')
-%p= t('.not_included.description_html')
-%p= t('.not_included.custom_support_html')
+%p= t('.not_included.description_html', faq_url: support_path(via: current_via), delete_tweets_faq_url: delete_tweets_faq_path(via: current_via))
+%p= t('.not_included.custom_support_html', url: '#enterprise-plan')
 
 %hr
 
