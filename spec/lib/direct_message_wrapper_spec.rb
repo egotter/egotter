@@ -45,10 +45,11 @@ RSpec.describe DirectMessageWrapper, type: :model do
   end
 
   describe '.from_args' do
-    subject { described_class.from_args(args) }
+    subject { described_class.from_args(args, kwargs) }
 
     context 'Pass uid and message' do
       let(:args) { [1, 'text'] }
+      let(:kwargs) { {} }
       it do
         dm = subject
         expect(dm.recipient_id).to eq(1)
@@ -68,7 +69,8 @@ RSpec.describe DirectMessageWrapper, type: :model do
             }
         }
       end
-      let(:args) { [event: event] }
+      let(:args) { [] }
+      let(:kwargs) { {event: event} }
       it do
         dm = subject
         expect(dm.recipient_id).to eq(1)

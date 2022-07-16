@@ -271,10 +271,8 @@ RSpec.describe ApiClient::TwitterWrapper, type: :model do
   end
 
   describe 'create_direct_message_event' do
-    subject { instance.create_direct_message_event(*args) }
-
     context 'Pass uid and message' do
-      let(:args) { [1, 'text'] }
+      subject { instance.create_direct_message_event(1, 'text') }
       it do
         expect(DirectMessageReceiveLog).to receive(:message_received?).with(1).and_return(true)
         expect(twitter).to receive(:create_direct_message_event).with(1, 'text')
@@ -294,7 +292,7 @@ RSpec.describe ApiClient::TwitterWrapper, type: :model do
             }
         }
       end
-      let(:args) { [event: event] }
+      subject { instance.create_direct_message_event(event: event) }
       it do
         expect(DirectMessageReceiveLog).to receive(:message_received?).with(1).and_return(true)
         expect(twitter).to receive(:create_direct_message_event).with(event: event)

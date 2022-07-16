@@ -14,11 +14,11 @@ class DirectMessageWrapper
       new(JSON.parse(json, symbolize_names: true))
     end
 
-    def from_args(args)
-      if args.length == 1 && args[0].is_a?(Hash)
-        new(event: args[0][:event])
-      else
+    def from_args(args, kwargs)
+      if kwargs.empty?
         new(event: DirectMessageEvent.build(args[0], args[1]))
+      else
+        new(event: kwargs[:event])
       end
     end
   end
