@@ -17,22 +17,22 @@ RSpec.describe DeleteTweetsByArchiveRequest, type: :model do
   end
 
   describe '#delete_tweets' do
-    let(:tweets) { [double('tweet1', id: 1), double('tweet2', id: 2), double('tweet2', id: 3)] }
+    let(:tweets) { 100.times.map { |i| double("tweet#{i}", id: i) } }
     let(:client) { double('client') }
-    subject { instance.send(:delete_tweets, client, tweets, 1) }
-    before { instance.update(reservations_count: 3, started_at: Time.zone.now) }
+    subject { instance.send(:delete_tweets, client, tweets, 4) }
+    before { instance.update(reservations_count: tweets.size, started_at: Time.zone.now) }
     it do
-      expect(client).to receive(:destroy_status).with(tweets[0].id)
-      expect(client).to receive(:destroy_status).with(tweets[1].id).and_raise('error')
-      expect(client).to receive(:destroy_status).with(tweets[2].id)
+      tweets.each.with_index do |tweet, i|
+        if i % 10 == 0
+          expect(client).to receive(:destroy_status).with(tweets[i].id).and_raise('error')
+        else
+          expect(client).to receive(:destroy_status).with(tweets[i].id)
+        end
+      end
       subject
-      expect(instance.reload.deletions_count).to eq(2)
-      expect(instance.reload.errors_count).to eq(1)
+      instance.reload
+      expect(instance.deletions_count).to eq(90)
+      expect(instance.errors_count).to eq(10)
     end
-  end
-
-  describe '#stop_processing?' do
-    subject { instance.send(:stop_processing?, 10, 5) }
-    it { is_expected.to be_falsey }
   end
 end
