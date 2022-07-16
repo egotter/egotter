@@ -104,7 +104,7 @@ module TwitterDB
           end
         rescue ThreadError => e
           if thread
-            Airbag.warn "#where_and_order_by_field: ThreadError is detected and retry without threads exception=#{e.inspect}"
+            Airbag.warn "#where_and_order_by_field: ThreadError is detected and retry without threads exception=#{e.inspect} thread=#{Thread.current.inspect}", backtrace: e.backtrace
             thread = false
             retry
           else
