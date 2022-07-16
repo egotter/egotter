@@ -60,7 +60,7 @@ class StartPeriodicReportsCreatingRecordsTask
             CreateReportTwitterUserWorker.new.perform(req.id, period: @period)
           end
         rescue => e
-          puts "#{e.inspect} request_id=#{req.id}"
+          puts "StartPeriodicReportsCreatingRecordsTask#run_jobs: #{e.inspect} request_id=#{req.id}"
         end
       end.each(&:join)
     end
