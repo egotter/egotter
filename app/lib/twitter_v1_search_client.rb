@@ -6,7 +6,7 @@ class TwitterV1SearchClient
       user = User.find_by(screen_name: screen_name)
     end
 
-    @client = user.api_client.twitter # TwitterWrapper
+    @client = user.api_client.twitter # TwitterClient
   end
 
   CONVERT_TIME_FORMAT = Proc.new do |time|
