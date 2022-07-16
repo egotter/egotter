@@ -20,6 +20,17 @@ Sidekiq.configure_server do |config|
   config.client_middleware do |chain|
     chain.add UniqueJob::ClientMiddleware, redis_options
   end
+
+  config.error_handlers.push(Proc.new do |e, context|
+    if (job = context[:job])
+      message = "class=#{job['class']} args=#{job['args']}"
+    else
+      message = "context=#{context}"
+    end
+    Airbag.error "[ERROR HANDLER] #{e.inspect.truncate(200)} #{message}", backtrace: e.backtrace
+  rescue => ee
+    Sidekiq.logger.error "[ERROR HANDLER] original=#{e.inspect.truncate(200)} current=#{ee.inspect.truncate(200)} context=#{context}"
+  end)
 end
 
 Sidekiq.configure_client do |config|
