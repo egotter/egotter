@@ -37,6 +37,18 @@ RSpec.describe Airbag, type: :model do
     end
   end
 
+  describe '.error' do
+    let(:message) { 'msg' }
+    let(:block) { Proc.new {} }
+    subject { described_class.error(message, &block) }
+    it do
+      expect(described_class).to receive(:log).with(Logger::ERROR, message, {}) do |*args, &blk|
+        expect(blk).to eq(block)
+      end
+      subject
+    end
+  end
+
   describe '.log' do
     let(:logger) { instance_double(Logger, 'log/test.log') }
     let(:level) { Logger::WARN }

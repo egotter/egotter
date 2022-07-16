@@ -14,6 +14,10 @@ class Airbag
       log(Logger::WARN, message, props, &block)
     end
 
+    def error(message = nil, props = {}, &block)
+      log(Logger::ERROR, message, props, &block)
+    end
+
     def log(level, message = nil, props = {}, &block)
       message = yield if message.nil? && block_given?
       message = "#{format_context}#{format_severity(level)}: #{message}"
