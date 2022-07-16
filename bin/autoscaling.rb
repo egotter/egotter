@@ -80,7 +80,6 @@ class Servers
         'instance-type' => @instance_type,
         'count' => ideal_count,
         'market-type' => @market_type,
-        'without-tag' => true,
     }
     Tasks::TaskBuilder.new(params).adjust_task
   end
@@ -92,7 +91,6 @@ class Servers
         'instance-type' => @instance_type,
         'count' => 1,
         'market-type' => 'not-spot',
-        'without-tag' => true,
     }
     Tasks::TaskBuilder.new(params).launch_task
   end

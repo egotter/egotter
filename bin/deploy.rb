@@ -63,17 +63,13 @@ def parse_params
       'sync',
       'rotate',
       'list',
-      'without-tag',
+      'with-tag',
       'debug',
   )
 end
 
 def git_tag?(params)
-  !params['without-tag'] && !params['list'] && !params['terminate'] && params['role'] != 'plain'
-end
-
-def logger
-  Deploy.logger
+  params.has_key?('with-tag') && !params['list'] && !params['terminate'] && params['role'] != 'plain'
 end
 
 def main(params)
@@ -89,7 +85,7 @@ def main(params)
     return
   end
 
-  logger.info "Deploy started params=#{params.compact.inspect}" unless params['list']
+  Deploy.logger.info "Deploy started params=#{params.compact.inspect}" unless params['list']
   begin
     File.write(lockfile, Process.pid)
     task = Tasks::TaskBuilder.build(params)
@@ -97,7 +93,7 @@ def main(params)
   ensure
     File.delete(lockfile) if File.exist?(lockfile)
   end
-  logger.info "Deploy finished params=#{params.compact.inspect}" unless params['list']
+  Deploy.logger.info "Deploy finished params=#{params.compact.inspect}" unless params['list']
 
   if git_tag?(params)
     system("git tag #{task.action}-#{params['role']}-#{Time.now.strftime("%Y-%m-%d_%H%M%S")}")
