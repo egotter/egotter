@@ -648,6 +648,9 @@ ja:
         description_html:
           <p>各種の質問への回答は有料プランに含まれません。質問はいつでも送って大丈夫ですが、回答があるとは限らないことにご注意ください。</p>
           えごったーに関する質問は <a href="%{faq_url}">よくある質問</a> または <a href="%{delete_tweets_faq_url}">ツイート削除のよくある質問</a> をご覧になってください。
+        custom_support_html:
+          有料プランを購入していても、<span class="egotter-pink">質問の回答が必ずあるとは限りません</span>。
+          それでもどうしても質問の回答がほしいという方は、通常の有料プランとは別に用意している <a href="#enterprise-plan">有償サポート</a> をご購入ください。
       type:
         title: 'プランの種類'
         description_html: |
