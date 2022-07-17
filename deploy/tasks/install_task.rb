@@ -160,7 +160,6 @@ module Tasks
       end
 
       def update_puma
-        run_copy('./setup/etc/init.d/puma', '/etc/init.d/puma')
         run_copy('./setup/etc/init/puma.conf', '/etc/init/puma.conf')
         self
       end

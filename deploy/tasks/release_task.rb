@@ -38,7 +38,7 @@ module Tasks
             'bundle check || bundle install',
             'RAILS_ENV=production bundle exec rake assets:precompile assets:upload',
             'sudo cp ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf',
-            'sudo cp ./setup/etc/init.d/puma /etc/init.d/',
+            'sudo cp ./setup/etc/init/puma.conf /etc/init/',
             'sudo service nginx restart',
             'sudo restart puma && sleep 10',
             'ab -n 50 -c 2 http://localhost:80/'

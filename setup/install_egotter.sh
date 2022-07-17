@@ -107,8 +107,8 @@ cp -f ./setup/etc/init/sidekiq* /etc/init
 # start sidekiq
 
 # puma
-cp -f ./setup/etc/init.d/puma /etc/init.d
-# service puma start
+cp -f ./setup/etc/init/puma.conf /etc/init
+# start puma
 
 # yarn
 curl --silent --location https://rpm.nodesource.com/setup_10.x | bash -
