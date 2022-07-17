@@ -145,16 +145,6 @@ class ApiClient
 
       new(client, options[:user])
     end
-
-    def cs_client
-      client = TwitterWithAutoPagination::Client.new(
-          consumer_key: ENV['TWITTER_API_KEY_CS'],
-          consumer_secret: ENV['TWITTER_API_SECRET_CS'],
-          access_token: ENV['TWITTER_ACCESS_TOKEN_CS'],
-          access_token_secret: ENV['TWITTER_ACCESS_TOKEN_SECRET_CS'],
-          timeouts: {connect: 1, read: 2, write: 4})
-      new(client, User.egotter_cs)
-    end
   end
 
   private
