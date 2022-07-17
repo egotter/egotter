@@ -5,7 +5,8 @@ RSpec.describe TwitterClient, type: :model do
   let(:twitter) { double('twitter') }
   let(:instance) { described_class.new(api_client, twitter) }
 
-  [:user_agent, :user_token?, :credentials, :proxy, :timeouts].each do |method|
+  [:user_agent, :user_token?, :credentials, :proxy, :timeouts,
+   :friend_ids, :follower_ids, :friendship?].each do |method|
     describe "##{method}" do
       let(:args) { [] }
       let(:kwargs) { {} }
