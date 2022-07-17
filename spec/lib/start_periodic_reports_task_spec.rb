@@ -11,14 +11,14 @@ RSpec.describe StartPeriodicReportsTask, type: :model do
     end
   end
 
-  describe '#start!' do
+  describe '#start' do
     let(:user_ids) { [1, 2] }
     let(:instance) { described_class.new }
-    subject { instance.start! }
+    subject { instance.start }
     before { instance.instance_variable_set(:@user_ids, user_ids) }
     it do
       expect(instance).to receive(:create_requests).with(user_ids).and_return('requests')
-      expect(instance).to receive(:create_jobs).with('requests')
+      expect(instance).to receive(:run_jobs).with('requests', 6)
       subject
     end
   end

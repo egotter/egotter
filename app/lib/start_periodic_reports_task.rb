@@ -1,6 +1,7 @@
 class StartPeriodicReportsTask
-  def initialize(period: nil, user_ids: nil, start_date: nil, end_date: nil, limit: 5000)
+  def initialize(period: nil, user_ids: nil, threads: nil)
     @period = period || 'none'
+    @threads = threads || 6
 
     if user_ids.present?
       @user_ids = self.class.reject_stop_requested_user_ids(user_ids)
@@ -18,7 +19,8 @@ class StartPeriodicReportsTask
 
     if @user_ids.any?
       requests = create_requests(@user_ids)
-      create_jobs(requests)
+      run_jobs(requests, @threads)
+      # create_jobs(requests)
     end
 
     SlackBotClient.channel('cron').post_message("Finished user_ids=#{@user_ids.size} period=#{@period}", thread_ts: response['ts']) rescue nil
@@ -36,10 +38,31 @@ class StartPeriodicReportsTask
     CreatePeriodicReportRequest.where('id > ?', max_id).where(requested_by: requested_by).select(:id, :user_id)
   end
 
+  # Not used
   def create_jobs(requests)
     seconds = (requests.size / 400 + 1) * 60 # Send 400 messages/minute
     requests.each do |request|
       CreatePeriodicReportWorker.perform_in(rand(seconds), request.id, user_id: request.user_id)
+    end
+  end
+
+  def run_jobs(requests, threads)
+    requests.each_slice(threads) do |partial_requests|
+      start_time = Time.zone.now
+
+      partial_requests.map do |request|
+        Thread.new(request) do |req|
+          ActiveRecord::Base.connection_pool.with_connection do
+            CreatePeriodicReportWorker.new.perform(req.id, user_id: req.user_id)
+          end
+        rescue => e
+          puts "StartPeriodicReportsTask#run_jobs: #{e.inspect} request_id=#{req.id}"
+        end
+      end.each(&:join)
+
+      if (elapsed_time = Time.zone.now - start_time) < 1
+        sleep 1.0 - elapsed_time
+      end
     end
   end
 
