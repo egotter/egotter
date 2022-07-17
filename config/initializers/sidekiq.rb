@@ -16,9 +16,9 @@ error_handler = Proc.new do |e, context|
   else
     message = "context=#{context}"
   end
-  Airbag.error "[ERROR HANDLER] #{e.inspect.truncate(200)} #{message}", backtrace: e.backtrace
+  Airbag.error "Sidekiq.error_handler: #{e.inspect.truncate(200)} #{message}", backtrace: e.backtrace
 rescue => ee
-  Sidekiq.logger.error "[ERROR HANDLER] original=#{e.inspect.truncate(200)} current=#{ee.inspect.truncate(200)} context=#{context}"
+  Sidekiq.logger.error "Sidekiq.error_handler: original=#{e.inspect.truncate(200)} current=#{ee.inspect.truncate(200)} context=#{context}"
 end
 
 Sidekiq.configure_server do |config|
