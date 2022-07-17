@@ -7,9 +7,9 @@ class TwitterClient
     @api_name = nil
   end
 
-  [:user_agent, :user_token?, :credentials, :proxy, :timeouts].each do |method_name|
-    define_method(method_name) do |*args, &blk|
-      @twitter.send(method_name, *args, &blk)
+  [:user_agent, :user_token?, :credentials, :proxy, :timeouts].each do |method|
+    define_method(method) do |*args, &blk|
+      @twitter.send(method, *args, &blk)
     end
   end
 
@@ -59,7 +59,7 @@ class TwitterClient
     end
   end
 
-  # TODO Implement all methods
+  # TODO Implement all methods and stop using #method_missing
   def method_missing(method, *args, **kwargs, &block)
     if @twitter.respond_to?(method)
       Airbag.info { "TwitterClient#method_missing: #{method} is not implemented" }

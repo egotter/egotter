@@ -68,21 +68,36 @@ class ApiClient
     twitter.friendship(@user.uid, uid).source.can_dm?
   end
 
-  # TODO Implement all methods
-  def method_missing(method, *args, &block)
+  [:user, :user_timeline, :mentions_timeline, :favorites, :friendship?].each do |method|
+    define_method(method) do |*args, **kwargs, &blk|
+      call_api(method, *args, **kwargs, &blk)
+    end
+  end
+
+  # TODO Implement all methods and stop using #method_missing
+  def method_missing(method, *args, **kwargs, &block)
     if @client.respond_to?(method)
-      TwitterRequest.new(method).perform do
-        Airbag.info { "ApiClient#method_missing: #{method} is not implemented" }
-        @client.send(method, *args, &block)
-      end
+      Airbag.info { "ApiClient#method_missing: #{method} is not implemented" }
+      call_api(method, *args, **kwargs, &block)
     else
       super
+    end
+  end
+
+  def call_api(method, *args, **kwargs, &block)
+    TwitterRequest.new(method).perform do
+      # TODO This conditional branch may not be needed on Ruby30
+      if kwargs.empty?
+        @client.send(method, *args, &block)
+      else
+        @client.send(method, *args, **kwargs, &block)
+      end
     end
   rescue => e
     update_authorization_status(e)
     update_lock_status(e)
-    create_not_found_user(e, method, *args)
-    create_forbidden_user(e, method, *args)
+    create_not_found_user(e, *args) if method == :user
+    create_forbidden_user(e, *args) if method == :user
     raise
   end
 
@@ -104,14 +119,14 @@ class ApiClient
     end
   end
 
-  def create_not_found_user(e, method, *args)
-    if TwitterApiStatus.not_found?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
+  def create_not_found_user(e, *args)
+    if TwitterApiStatus.not_found?(e) && args.length >= 1 && args[0].is_a?(String)
       CreateNotFoundUserWorker.perform_async(args[0], location: (caller[2][/`([^']*)'/, 1] rescue ''))
     end
   end
 
-  def create_forbidden_user(e, method, *args)
-    if TwitterApiStatus.suspended?(e) && method == :user && args.length >= 1 && args[0].is_a?(String)
+  def create_forbidden_user(e, *args)
+    if TwitterApiStatus.suspended?(e) && args.length >= 1 && args[0].is_a?(String)
       CreateForbiddenUserWorker.perform_async(args[0], location: (caller[2][/`([^']*)'/, 1] rescue ''))
     end
   end

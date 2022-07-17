@@ -5,13 +5,13 @@ RSpec.describe TwitterClient, type: :model do
   let(:twitter) { double('twitter') }
   let(:instance) { described_class.new(api_client, twitter) }
 
-  [:user_agent, :user_token?, :credentials, :proxy, :timeouts].each do |method_name|
-    describe "##{method_name}" do
+  [:user_agent, :user_token?, :credentials, :proxy, :timeouts].each do |method|
+    describe "##{method}" do
       let(:args) { [] }
       let(:kwargs) { {} }
       it do
-        expect(twitter).to receive(:send).with(method_name, args, kwargs)
-        instance.send(method_name, args, kwargs)
+        expect(twitter).to receive(:send).with(method, args, kwargs)
+        instance.send(method, args, kwargs)
       end
     end
   end

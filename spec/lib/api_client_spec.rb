@@ -95,13 +95,24 @@ RSpec.describe ApiClient, type: :model do
     end
   end
 
+  [:user, :user_timeline, :mentions_timeline, :favorites, :friendship?].each do |method|
+    describe "##{method}" do
+      let(:args) { [] }
+      let(:kwargs) { {} }
+      it do
+        expect(instance).to receive(:send).with(method, args, kwargs)
+        instance.send(method, args, kwargs)
+      end
+    end
+  end
+
   describe '#method_missing' do
     subject { instance.send(:method_missing, :user, 1) }
 
     context 'client responds to specified method' do
       before { allow(client).to receive(:respond_to?).with(:user).and_return(true) }
       it do
-        expect(client).to receive(:user).with(1).and_return('user')
+        expect(instance).to receive(:call_api).with(:user, 1).and_return('user')
         is_expected.to eq('user')
       end
     end
@@ -109,20 +120,29 @@ RSpec.describe ApiClient, type: :model do
     context "client doesn't respond to specified method" do
       before { allow(client).to receive(:respond_to?).with(:user).and_return(false) }
       it do
-        expect(client).not_to receive(:user)
+        expect(instance).not_to receive(:call_api)
         expect { subject }.to raise_error(NameError) # Or NoMethodError
       end
     end
+  end
+
+  describe '#call_api' do
+    subject { instance.send(:call_api, :user, 1) }
+
+    it do
+      expect(client).to receive(:user).with(1).and_return('user')
+      is_expected.to eq('user')
+    end
 
     context 'exception is raised' do
-      let(:error) { NameError.new }
-      before { allow(client).to receive(:respond_to?).with(:user).and_raise(error) }
+      let(:error) { RuntimeError.new }
+      before { allow(client).to receive(:user).with(1).and_raise(error) }
       it do
         expect(instance).to receive(:update_authorization_status).with(error)
         expect(instance).to receive(:update_lock_status).with(error)
-        expect(instance).to receive(:create_not_found_user).with(error, :user, 1)
-        expect(instance).to receive(:create_forbidden_user).with(error, :user, 1)
-        expect { subject }.to raise_error(error) # Or NoMethodError
+        expect(instance).to receive(:create_not_found_user).with(error, 1)
+        expect(instance).to receive(:create_forbidden_user).with(error, 1)
+        expect { subject }.to raise_error(error)
       end
     end
   end
@@ -174,7 +194,7 @@ RSpec.describe ApiClient, type: :model do
 
   describe '#create_not_found_user' do
     let(:error) { Twitter::Error::NotFound.new('User not found.') }
-    subject { instance.create_not_found_user(error, :user, 'name') }
+    subject { instance.create_not_found_user(error, 'name') }
     it do
       expect(CreateNotFoundUserWorker).to receive(:perform_async).with('name', anything)
       subject
@@ -183,7 +203,7 @@ RSpec.describe ApiClient, type: :model do
 
   describe '#create_forbidden_user' do
     let(:error) { Twitter::Error::Forbidden.new('User has been suspended.') }
-    subject { instance.create_forbidden_user(error, :user, 'name') }
+    subject { instance.create_forbidden_user(error, 'name') }
     it do
       expect(CreateForbiddenUserWorker).to receive(:perform_async).with('name', anything)
       subject
