@@ -115,9 +115,6 @@ curl --silent --location https://rpm.nodesource.com/setup_10.x | bash -
 wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo
 yum install -y nodejs yarn
 
-# egotter
-cp -f ./setup/etc/init.d/egotter /etc/init.d
-
 # nginx
 [ ! -f "/etc/nginx/nginx.conf.bak" ] && cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 \cp -f ./setup/etc/nginx/nginx.conf /etc/nginx

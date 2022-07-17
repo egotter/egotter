@@ -39,7 +39,6 @@ module Tasks
             'RAILS_ENV=production bundle exec rake assets:precompile assets:upload',
             'sudo cp ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf',
             'sudo cp ./setup/etc/init.d/puma /etc/init.d/',
-            'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
             'sudo service nginx restart',
             'sudo restart puma && sleep 10',
             'ab -n 50 -c 2 http://localhost:80/'
@@ -79,7 +78,6 @@ module Tasks
             'bundle config set without "test development"',
             'bundle check || bundle install',
             'sudo cp ./setup/etc/init/sidekiq* /etc/init/',
-            'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
         ].each do |cmd|
           exec_command(@instance.public_ip, cmd)
         end

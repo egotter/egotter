@@ -134,11 +134,6 @@ module Tasks
         self
       end
 
-      def update_egotter
-        run_copy('./setup/etc/init.d/egotter', '/etc/init.d/egotter')
-        self
-      end
-
       def update_crontab
         backend('crontab -r || :')
         backend('sudo crontab -r || :')
@@ -224,7 +219,6 @@ module Tasks
             pull_latest_code.
             update_datadog('web').
             precompile.
-            update_egotter.
             update_crontab.
             update_logrotate.
             update_nginx.
@@ -275,7 +269,6 @@ module Tasks
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_datadog('sidekiq').
-            update_egotter.
             update_crontab.
             update_logrotate.
             update_sidekiq.
@@ -334,7 +327,6 @@ module Tasks
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_datadog.
-            update_egotter.
             update_crontab.
             update_logrotate.
             update_nginx.
