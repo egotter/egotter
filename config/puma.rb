@@ -39,9 +39,10 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 #
 # preload_app!
 
-# Allow puma to be restarted by `rails restart` command.
+# Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
 
+# TODO Remove later
 if ENV.fetch("RAILS_ENV") == 'production'
   # There is no request timeout mechanism inside of Puma.
   # rack-timeout 15, proxy_read_timeout(nginx) 35
