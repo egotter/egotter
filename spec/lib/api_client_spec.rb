@@ -95,7 +95,7 @@ RSpec.describe ApiClient, type: :model do
     end
   end
 
-  [:user, :user_timeline, :mentions_timeline, :favorites, :friendship?].each do |method|
+  [:verify_credentials, :user, :users, :user_timeline, :mentions_timeline, :favorites, :friendship?].each do |method|
     describe "##{method}" do
       let(:args) { [] }
       let(:kwargs) { {} }
