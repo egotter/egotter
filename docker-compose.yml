@@ -43,7 +43,7 @@ services:
   sidekiq:
     build: .
     working_dir: /home/root/egotter
-    command: bundle exec sidekiq -C config/sidekiq_dev.yml
+    command: bundle exec sidekiq -C config/sidekiq/development.yml
     volumes:
       - bundle:/usr/local/bundle
       - .:/home/root/egotter:cached
