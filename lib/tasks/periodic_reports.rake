@@ -1,6 +1,6 @@
 namespace :periodic_reports do
   task send_messages: :environment do
-    StartPeriodicReportsTask.new(period: ENV['PERIOD']).start!
+    StartPeriodicReportsTask.new(period: ENV['PERIOD']).start
   end
 
   task send_remind_messages: :environment do
@@ -42,7 +42,7 @@ namespace :periodic_reports do
     puts "users=#{users.size} (limited)"
 
     if users.any?
-      StartPeriodicReportsTask.new(user_ids: users.map(&:id)).start!
+      StartPeriodicReportsTask.new(user_ids: users.map(&:id)).start
     end
   end
 
@@ -52,15 +52,15 @@ namespace :periodic_reports do
 
   namespace :send_messages do
     task morning: :environment do
-      StartPeriodicReportsTask.new(period: 'morning').start!
+      StartPeriodicReportsTask.new(period: 'morning').start
     end
 
     task afternoon: :environment do
-      StartPeriodicReportsTask.new(period: 'afternoon').start!
+      StartPeriodicReportsTask.new(period: 'afternoon').start
     end
 
     task night: :environment do
-      StartPeriodicReportsTask.new(period: 'night').start!
+      StartPeriodicReportsTask.new(period: 'night').start
     end
   end
 

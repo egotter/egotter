@@ -13,7 +13,7 @@ class StartPeriodicReportsTask
     end
   end
 
-  def start!
+  def start
     response = SlackBotClient.channel('cron').post_message("Start sending reports period=#{@period}") rescue {}
 
     if @user_ids.any?
