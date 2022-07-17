@@ -1,5 +1,5 @@
 Rails.application.reloader.to_prepare do
-  ApiClient::RequestWithRetryHandler.prepend(Module.new do
+  TwitterRequest.prepend(Module.new do
     %i(
         perform
       ).each do |method_name|

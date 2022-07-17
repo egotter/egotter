@@ -59,10 +59,10 @@ class TwitterClient
     end
   end
 
-  # TODO List api methods
+  # TODO Implement all methods
   def method_missing(method, *args, **kwargs, &block)
     if @twitter.respond_to?(method)
-      Airbag.info { "ApiClient::TwitterClient#method_missing: #{method} is not implemented" }
+      Airbag.info { "TwitterClient#method_missing: #{method} is not implemented" }
       call_api(method, *args, **kwargs, &block)
     else
       super
@@ -72,7 +72,7 @@ class TwitterClient
   def call_api(method, *args, **kwargs, &block)
     @api_name = method
 
-    ApiClient::RequestWithRetryHandler.new(method).perform do
+    TwitterRequest.new(method).perform do
       # TODO This conditional branch may not be needed on Ruby30
       if kwargs.empty?
         @twitter.send(method, *args, &block)

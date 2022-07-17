@@ -68,10 +68,11 @@ class ApiClient
     twitter.friendship(@user.uid, uid).source.can_dm?
   end
 
+  # TODO Implement all methods
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
-      RequestWithRetryHandler.new(method).perform do
-        # client#parallel uses block
+      TwitterRequest.new(method).perform do
+        Airbag.info { "ApiClient#method_missing: #{method} is not implemented" }
         @client.send(method, *args, &block)
       end
     else
@@ -168,39 +169,5 @@ class ApiClient
   end
 
   class EnhanceYourCalm < StandardError
-  end
-
-  class RequestWithRetryHandler
-    def initialize(method)
-      @method = method
-      @retries = 0
-    end
-
-    def perform(&block)
-      yield
-    rescue => e
-      @retries += 1
-      handle_retryable_error(e)
-      sleep 0.1 * @retries
-      retry
-    end
-
-    private
-
-    MAX_RETRIES = 3
-
-    def handle_retryable_error(e)
-      if ServiceStatus.http_timeout?(e) && @method == :users
-        raise ContainStrangeUid.new('It may contain a uid that always causes an error.')
-      elsif ServiceStatus.retryable_error?(e)
-        if @retries > MAX_RETRIES
-          raise RetryExhausted.new("#{e.inspect} method=#{@method} retries=#{@retries}")
-        else
-          Airbag.info { "RequestWithRetryHandler#perform: This error is retryable. error=#{e.class} method=#{@method}" }
-        end
-      else
-        raise e
-      end
-    end
   end
 end
