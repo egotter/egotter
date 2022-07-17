@@ -4,7 +4,7 @@ RSpec.describe TwitterUserFetcher do
   let(:user) { create(:user) }
   let(:uid) { user.uid }
   let(:screen_name) { user.screen_name }
-  let(:passed_client) { double('passed_client') }
+  let(:passed_client) { double('passed_client', twitter: 'twitter') }
   let(:client) { double('client', start_bm: nil, finish_bm: nil) }
   let(:fetch_friends) { true }
   let(:search_for_yourself) { true }
@@ -12,7 +12,7 @@ RSpec.describe TwitterUserFetcher do
   let(:instance) { described_class.new(passed_client, uid, screen_name, fetch_friends, search_for_yourself, reporting) }
 
   before do
-    allow(described_class::ClientWrapper).to receive(:new).with(passed_client).and_return(client)
+    allow(described_class::ClientWrapper).to receive(:new).with(passed_client, 'twitter').and_return(client)
   end
 
   describe '#fetch' do
@@ -96,8 +96,8 @@ end
 
 RSpec.describe TwitterUserFetcher::ClientWrapper do
   let(:twitter) { double('twitter') }
-  let(:client) { double('client', twitter: twitter) }
-  let(:instance) { described_class.new(client) }
+  let(:client) { double('client') }
+  let(:instance) { described_class.new(client, twitter) }
 
   describe 'friend_ids' do
     subject { instance.friend_ids(1) }

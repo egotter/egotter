@@ -3,7 +3,7 @@ class TwitterUserFetcher
 
   # client: An instance of ApiClient with :null_store
   def initialize(client, uid, screen_name, fetch_friends, search_for_yourself, reporting)
-    @client = ClientWrapper.new(client)
+    @client = ClientWrapper.new(client, client.twitter)
     @uid = uid
     @search_query = "@#{screen_name}"
     @fetch_friends = fetch_friends
@@ -73,9 +73,9 @@ class TwitterUserFetcher
   private
 
   class ClientWrapper
-    def initialize(client)
+    def initialize(client, ids_client)
       @client = client
-      @ids_client = client.twitter
+      @ids_client = ids_client
     end
 
     def friend_ids(uid)
