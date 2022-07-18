@@ -1,4 +1,14 @@
 GIT
+  remote: https://github.com/egotter/sidekiq.git
+  revision: c62e5b2ea5ebd4cc41f398c00306065186ce860b
+  branch: v6_5_1
+  specs:
+    sidekiq (6.5.1)
+      connection_pool (>= 2.2.2)
+      rack (~> 2.0)
+      redis (>= 4.2.0)
+
+GIT
   remote: https://github.com/egotter/twitter.git
   revision: 7411e9bb8f2dda6a16e2e145074f8fd2c57478ea
   specs:
@@ -395,10 +405,6 @@ GEM
       tilt
     semantic_range (2.3.0)
     sexp_processor (4.15.1)
-    sidekiq (6.5.1)
-      connection_pool (>= 2.2.2)
-      rack (~> 2.0)
-      redis (>= 4.2.0)
     signet (0.16.0)
       addressable (~> 2.8)
       faraday (>= 0.17.3, < 2.0)
@@ -502,7 +508,7 @@ DEPENDENCIES
   redis
   rspec-rails
   sass-rails (>= 6)
-  sidekiq (= 6.5.1)
+  sidekiq!
   sinatra
   sitemap_generator
   slack-ruby-client
