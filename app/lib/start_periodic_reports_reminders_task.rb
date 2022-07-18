@@ -1,10 +1,17 @@
 class StartPeriodicReportsRemindersTask
-  def start
-    user_ids = StartPeriodicReportsTask.allotted_messages_will_expire_user_ids.uniq.sort
-    return if user_ids.empty?
+  def initialize
+    @user_ids = StartPeriodicReportsTask.allotted_messages_will_expire_user_ids.uniq.sort
+  end
 
-    create_requests(user_ids)
-    create_jobs(user_ids)
+  def start
+    response = SlackBotClient.channel('cron').post_message('Start sending reminders') rescue {}
+
+    if @user_ids.any?
+      create_requests(@user_ids)
+      create_jobs(@user_ids)
+    end
+
+    SlackBotClient.channel('cron').post_message("Finished user_ids=#{@user_ids.size}", thread_ts: response['ts']) rescue nil
   end
 
   def create_requests(user_ids)
