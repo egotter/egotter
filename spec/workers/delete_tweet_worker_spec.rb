@@ -22,13 +22,24 @@ RSpec.describe DeleteTweetWorker do
     end
 
     context 'retryable error is raised' do
-      let(:error) { RuntimeError.new('error') }
       before { allow(worker).to receive(:destroy_status!).and_raise(error) }
 
-      before { allow(TwitterApiStatus).to receive(:retry_timeout?).with(error).and_return(true) }
-      it do
-        expect(described_class).to receive(:perform_in).with(instance_of(Integer), user.id, tweet_id, 'request_id' => request.id, 'retries' => 1)
-        subject
+      context '#retry_timeout? is true' do
+        let(:error) { RuntimeError.new('error') }
+        before { allow(TwitterApiStatus).to receive(:retry_timeout?).with(error).and_return(true) }
+        it do
+          expect(described_class).to receive(:perform_in).with(instance_of(Integer), user.id, tweet_id, 'request_id' => request.id, 'retries' => 1)
+          subject
+        end
+      end
+
+      context '#connection_reset_by_peer? is true' do
+        let(:error) { RuntimeError.new('error') }
+        before { allow(ServiceStatus).to receive(:connection_reset_by_peer?).with(error).and_return(true) }
+        it do
+          expect(described_class).to receive(:perform_in).with(instance_of(Integer), user.id, tweet_id, 'request_id' => request.id, 'retries' => 1)
+          subject
+        end
       end
     end
   end

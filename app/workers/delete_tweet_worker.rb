@@ -11,6 +11,7 @@ class DeleteTweetWorker
     return if request.stopped?
 
     client = User.find(user_id).api_client.twitter
+
     if destroy_status!(client, tweet_id, request)
       request.increment!(:destroy_count)
     end
@@ -19,7 +20,7 @@ class DeleteTweetWorker
       SendDeleteTweetsFinishedMessageWorker.perform_in(5.seconds, request.id)
     end
   rescue => e
-    if TwitterApiStatus.retry_timeout?(e)
+    if TwitterApiStatus.retry_timeout?(e) || ServiceStatus.connection_reset_by_peer?(e)
       RETRY_HANDLER.call(e, self.class, user_id, tweet_id, options)
     else
       handle_worker_error(e, user_id: user_id, tweet_id: tweet_id, options: options)
@@ -36,7 +37,7 @@ class DeleteTweetWorker
 
   RETRY_HANDLER = Proc.new do |e, worker_class, user_id, tweet_id, options|
     if options['retries']
-      Airbag.warn { "#{e.inspect} user_id=#{user_id} tweet_id=#{tweet_id} options=#{options}" }
+      Airbag.warn "Retry exhausted exception=#{e.inspect} user_id=#{user_id} tweet_id=#{tweet_id} options=#{options}", backtrace: e.backtrace
     else
       options['retries'] = 1
       worker_class.perform_in(rand(10) + 10, user_id, tweet_id, options)

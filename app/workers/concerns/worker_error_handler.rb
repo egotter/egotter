@@ -1,6 +1,6 @@
 module WorkerErrorHandler
   def handle_worker_error(ex, **props)
-    Airbag.warn "#{extract_message(ex)}#{extract_hash(props)}", backtrace: ex.backtrace
+    Airbag.warn "#handle_worker_error: #{extract_message(ex)}#{extract_hash(props)}", backtrace: ex.backtrace
   end
 
   private
