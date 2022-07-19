@@ -95,12 +95,12 @@ RSpec.describe ApiClient, type: :model do
     end
   end
 
-  [:verify_credentials, :user, :users, :user_timeline, :mentions_timeline, :favorites, :friendship?].each do |method|
+  [:verify_credentials, :user, :users, :user_timeline, :mentions_timeline, :search, :favorites, :friendship?].each do |method|
     describe "##{method}" do
       let(:args) { [] }
       let(:kwargs) { {} }
       it do
-        expect(instance).to receive(:send).with(method, args, kwargs)
+        expect(instance).to receive(:call_api).with(method, args)
         instance.send(method, args, kwargs)
       end
     end

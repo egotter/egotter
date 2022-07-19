@@ -8,9 +8,10 @@ class TwitterClient
   end
 
   [:user_agent, :user_token?, :credentials, :proxy, :timeouts,
-   :friend_ids, :follower_ids, :friendship?, :destroy_status].each do |method|
-    define_method(method) do |*args, &blk|
-      @twitter.send(method, *args, &blk)
+   :friend_ids, :follower_ids, :friendship?, :destroy_status, :unfavorite!,
+   :muted_ids, :blocked_ids].each do |method|
+    define_method(method) do |*args, **kwargs, &blk|
+      call_api(method, *args, **kwargs, &blk)
     end
   end
 
