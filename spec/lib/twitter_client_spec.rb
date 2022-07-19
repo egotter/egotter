@@ -64,9 +64,9 @@ RSpec.describe TwitterClient, type: :model do
     subject { instance.send(:call_api, :user, 1) }
 
     it do
-      expect(twitter).to receive(:user).with(1)
+      expect(twitter).to receive(:user).with(1).and_return('user_result')
       expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: "TwitterClient#user")
-      subject
+      is_expected.to eq('user_result')
     end
 
     context 'error is raised' do

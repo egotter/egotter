@@ -100,6 +100,8 @@ class ApiClient
     create_not_found_user(e, *args) if method == :user
     create_forbidden_user(e, *args) if method == :user
     raise
+  ensure
+    CreateTwitterApiLogWorker.perform_async(name: "ApiClient##{method}")
   end
 
   def update_blocker_status(e)

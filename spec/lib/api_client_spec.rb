@@ -95,7 +95,8 @@ RSpec.describe ApiClient, type: :model do
     end
   end
 
-  [:verify_credentials, :user, :users, :user_timeline, :mentions_timeline, :search, :favorites, :friendship?].each do |method|
+  [:verify_credentials, :user, :users, :user_timeline, :mentions_timeline, :search,
+   :favorites, :friendship?].each do |method|
     describe "##{method}" do
       let(:args) { [] }
       let(:kwargs) { {} }
@@ -130,8 +131,9 @@ RSpec.describe ApiClient, type: :model do
     subject { instance.send(:call_api, :user, 1) }
 
     it do
-      expect(client).to receive(:user).with(1).and_return('user')
-      is_expected.to eq('user')
+      expect(client).to receive(:user).with(1).and_return('user_result')
+      expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: "ApiClient#user")
+      is_expected.to eq('user_result')
     end
 
     context 'exception is raised' do
