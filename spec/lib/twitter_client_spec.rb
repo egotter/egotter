@@ -7,8 +7,8 @@ RSpec.describe TwitterClient, type: :model do
 
   [:user_agent, :user_token?, :credentials, :proxy, :timeouts,
    :friend_ids, :follower_ids, :friendship?, :destroy_status, :unfavorite!,
-   :user, :user?, :status, :friendships_outgoing, :muted_ids, :blocked_ids,
-   :favorites, :update].each do |method|
+   :user, :users, :user?, :status, :friendships_outgoing, :muted_ids, :blocked_ids,
+   :favorites, :update, :verify_credentials, :follow!, :unfollow, :user_timeline].each do |method|
     describe "##{method}" do
       let(:args) { [] }
       let(:kwargs) { {} }
@@ -16,51 +16,6 @@ RSpec.describe TwitterClient, type: :model do
         expect(instance).to receive(:call_api).with(method, args)
         instance.send(method, args, kwargs)
       end
-    end
-  end
-
-  describe 'verify_credentials' do
-    subject { instance.verify_credentials }
-    it do
-      expect(instance).to receive(:call_api).with(:verify_credentials)
-      expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: :verify_credentials)
-      subject
-    end
-  end
-
-  describe 'users' do
-    subject { instance.users([1, 2, 3]) }
-    it do
-      expect(instance).to receive(:call_api).with(:users, [1, 2, 3])
-      expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: :users)
-      subject
-    end
-  end
-
-  describe 'follow!' do
-    subject { instance.follow!(1) }
-    it do
-      expect(instance).to receive(:call_api).with(:follow!, 1)
-      expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: :follow!)
-      subject
-    end
-  end
-
-  describe 'unfollow' do
-    subject { instance.unfollow(1) }
-    it do
-      expect(instance).to receive(:call_api).with(:unfollow, 1)
-      expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: :unfollow)
-      subject
-    end
-  end
-
-  describe 'user_timeline' do
-    subject { instance.user_timeline(1) }
-    it do
-      expect(instance).to receive(:call_api).with(:user_timeline, 1)
-      expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: :user_timeline)
-      subject
     end
   end
 
@@ -109,7 +64,8 @@ RSpec.describe TwitterClient, type: :model do
     subject { instance.send(:call_api, :user, 1) }
 
     it do
-      expect(instance).to receive(:call_api).with(:user, 1)
+      expect(twitter).to receive(:user).with(1)
+      expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: "TwitterClient#user")
       subject
     end
 

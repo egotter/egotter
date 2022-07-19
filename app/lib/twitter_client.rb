@@ -9,41 +9,11 @@ class TwitterClient
 
   [:user_agent, :user_token?, :credentials, :proxy, :timeouts,
    :friend_ids, :follower_ids, :friendship?, :destroy_status, :unfavorite!,
-   :user, :user?, :status, :friendships_outgoing, :muted_ids, :blocked_ids,
-   :favorites, :update].each do |method|
+   :user, :users, :user?, :status, :friendships_outgoing, :muted_ids, :blocked_ids,
+   :favorites, :update, :verify_credentials, :follow!, :unfollow, :user_timeline].each do |method|
     define_method(method) do |*args, **kwargs, &blk|
       call_api(method, *args, **kwargs, &blk)
     end
-  end
-
-  def verify_credentials(*args, **kwargs)
-    call_api(__method__, *args, **kwargs)
-  ensure
-    CreateTwitterApiLogWorker.perform_async(name: __method__)
-  end
-
-  def users(*args, **kwargs)
-    call_api(__method__, *args, **kwargs)
-  ensure
-    CreateTwitterApiLogWorker.perform_async(name: __method__)
-  end
-
-  def follow!(*args, **kwargs)
-    call_api(__method__, *args, **kwargs)
-  ensure
-    CreateTwitterApiLogWorker.perform_async(name: __method__)
-  end
-
-  def unfollow(*args, **kwargs)
-    call_api(__method__, *args, **kwargs)
-  ensure
-    CreateTwitterApiLogWorker.perform_async(name: __method__)
-  end
-
-  def user_timeline(*args, **kwargs)
-    call_api(__method__, *args, **kwargs)
-  ensure
-    CreateTwitterApiLogWorker.perform_async(name: __method__)
   end
 
   def create_direct_message_event(*args, **kwargs)
@@ -87,5 +57,7 @@ class TwitterClient
     @api_client.update_authorization_status(e)
     @api_client.update_lock_status(e)
     raise
+  ensure
+    CreateTwitterApiLogWorker.perform_async(name: "TwitterClient##{method}")
   end
 end
