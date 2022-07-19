@@ -27,7 +27,7 @@ class Airbag
         CreateAirbagLogWorker.perform_async(format_severity(level), message, props, Time.zone.now)
       end
 
-      if level > Logger::INFO && @slack
+      if @slack && level > @slack[:level]
         SendMessageToSlackWorker.perform_async(@slack[:channel], message.truncate(1000))
       end
     end
@@ -50,7 +50,7 @@ class Airbag
 
     def broadcast(options)
       if options[:target] == :slack
-        @slack = {channel: options[:channel], tag: options[:tag]}
+        @slack = {channel: options[:channel], tag: options[:tag], level: options[:level]}
       end
     end
 
