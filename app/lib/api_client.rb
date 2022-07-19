@@ -68,7 +68,8 @@ class ApiClient
     twitter.friendship(@user.uid, uid).source.can_dm?
   end
 
-  [:verify_credentials, :user, :users, :user_timeline, :mentions_timeline, :search, :favorites, :friendship?].each do |method|
+  [:verify_credentials, :user, :users, :user_timeline, :mentions_timeline, :search,
+   :favorites, :friendship?].each do |method|
     define_method(method) do |*args, **kwargs, &blk|
       call_api(method, *args, **kwargs, &blk)
     end
