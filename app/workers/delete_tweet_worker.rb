@@ -20,7 +20,7 @@ class DeleteTweetWorker
       SendDeleteTweetsFinishedMessageWorker.perform_in(5.seconds, request.id)
     end
   rescue => e
-    if TwitterApiStatus.retry_timeout?(e) || ServiceStatus.connection_reset_by_peer?(e)
+    if TwitterApiStatus.retry_timeout?(e)
       RETRY_HANDLER.call(e, self.class, user_id, tweet_id, options)
     else
       handle_worker_error(e, user_id: user_id, tweet_id: tweet_id, options: options)
