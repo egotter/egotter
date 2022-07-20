@@ -62,7 +62,7 @@ RSpec.describe OrdersController, type: :controller do
   end
 
   describe '#process_webhook_event' do
-    let(:event) { double('event', type: type) }
+    let(:event) { double('event', id: 'eid', type: type, data: double('event_data', object: {})) }
     subject { controller.send(:process_webhook_event, event) }
 
     [
@@ -75,6 +75,7 @@ RSpec.describe OrdersController, type: :controller do
         let(:type) { event_type }
         it do
           expect(controller).to receive(method_name).with(event)
+          expect(controller).to receive(:create_stripe_webhook_log).with('eid', type, {})
           subject
         end
       end

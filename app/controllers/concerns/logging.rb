@@ -166,6 +166,25 @@ module Logging
     Airbag.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
   end
 
+  def create_stripe_webhook_log(event_id, event_type, event_data)
+    attrs = {
+        controller:  controller_name,
+        action:      action_name,
+        path:        request.path.to_s.truncate(180),
+        event_id:    event_id,
+        event_type:  event_type,
+        event_data:  event_data,
+        ip:          request.ip,
+        method:      request.method,
+        status:      response.status,
+        user_agent:  request.user_agent.to_s.truncate(180),
+    }
+
+    CreateStripeWebhookLogWorker.perform_async(attrs)
+  rescue => e
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} event_id=#{event_id} event_type=#{event_type} event_data=#{event_data}"
+  end
+
   def track_page_order_activity(options = {})
     properties = {
         path: request.path,
