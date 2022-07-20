@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_13_203718) do
+ActiveRecord::Schema.define(version: 2022_07_20_112830) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1458,6 +1458,21 @@ ActiveRecord::Schema.define(version: 2022_07_13_203718) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_stop_search_report_requests_on_created_at"
     t.index ["user_id"], name: "index_stop_search_report_requests_on_user_id", unique: true
+  end
+
+  create_table "stripe_webhook_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "controller"
+    t.string "action"
+    t.string "path"
+    t.string "event_id"
+    t.string "event_type"
+    t.json "event_data"
+    t.string "ip"
+    t.string "method"
+    t.integer "status"
+    t.string "user_agent"
+    t.timestamp "created_at", null: false
+    t.index ["created_at"], name: "index_stripe_webhook_logs_on_created_at"
   end
 
   create_table "sync_deletable_tweets_requests", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
