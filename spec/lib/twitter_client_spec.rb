@@ -8,7 +8,7 @@ RSpec.describe TwitterClient, type: :model do
   [:user_agent, :user_token?, :credentials, :proxy, :timeouts,
    :friend_ids, :follower_ids, :friendship?, :destroy_status, :unfavorite!,
    :user, :users, :user?, :status, :friendships_outgoing, :muted_ids, :blocked_ids,
-   :favorites, :update, :verify_credentials, :follow!, :unfollow, :user_timeline].each do |method|
+   :favorites, :update, :update!, :verify_credentials, :follow!, :unfollow, :user_timeline].each do |method|
     describe "##{method}" do
       let(:args) { [] }
       let(:kwargs) { {} }
