@@ -35,20 +35,27 @@ class CreateFollowWorker
     Airbag.info "Skip #{e.inspect}"
   rescue FollowRequest::TooManyFollows, FollowRequest::ServiceUnavailable => e
     retry_interval = retry_in
-    process_rate = [1.minute, 5.minutes, 15.minutes, 30.minutes, 1.hour, 3.hours].map do |time|
-      [time, FollowRequest.where('created_at > ?', time.ago).size]
-    end.map { |time, count| "#{time.inspect.remove(' ')}=#{count}" }.join(' ') rescue nil
-    Airbag.warn "Retry later exception=#{e.inspect}#{" cause=#{e.cause.inspect}" if e.cause} retry_interval=#{retry_interval} process_rate=#{process_rate}"
+    Airbag.warn "Retry later exception=#{e.inspect}#{" cause=#{e.cause.inspect}" if e.cause} request_id=#{request_id} retry_interval=#{retry_interval} process_rate=#{calc_process_rate}"
     CreateFollowWorker.perform_in(retry_interval, request_id, options)
 
   rescue FollowRequest::RetryableError => e
     CreateFollowWorker.perform_async(request_id, options)
 
   rescue FollowRequest::Error => e
-    Airbag.warn "Don't care. #{e.inspect} request_id=#{request_id} options=#{options.inspect}"
+    Airbag.warn "Don't care. #{e.inspect} request_id=#{request_id} options=#{options}"
 
   rescue => e
-    Airbag.warn "Don't retry. #{e.class} #{e.message} request_id=#{request_id} options=#{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
+    Airbag.warn "Don't retry. #{e.inspect} request_id=#{request_id} options=#{options} #{"Caused by #{e.cause.inspect}" if e.cause}"
     Airbag.info e.backtrace.join("\n")
+  end
+
+  # Requests / 24-hour window: 400 per user; 1000 per app
+  # 0.69/1min, 20.8/30min, 41/hour, 125/3hours, 500/12hours
+  def calc_process_rate
+    [1.minute, 30.minutes, 1.hour, 3.hours, 12.hours, 24.hours].map do |time|
+      [time, FollowRequest.where('created_at > ?', time.ago).size]
+    end.map { |time, count| "#{time.inspect.remove(' ')}=#{count}" }.join(' ')
+  rescue => e
+    nil
   end
 end
