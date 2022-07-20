@@ -194,6 +194,7 @@ module Tasks
             "sudo rm #{dir}/logs/amazon-cloudwatch-agent.log",
             'wget https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm',
             'sudo yum localinstall -y amazon-cloudwatch-agent.rpm',
+            'sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc/',
         ].each do |cmd|
           backend(cmd)
         end
@@ -235,12 +236,12 @@ module Tasks
 
       def sync
         update_misc.
-            update_cwagent.
             update_bashrc.
             update_env.
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_datadog('web').
+            update_cwagent.
             precompile.
             update_crontab.
             update_logrotate.
@@ -287,12 +288,12 @@ module Tasks
 
       def sync
         update_misc.
-            update_cwagent.
             update_bashrc.
             update_env.
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_datadog('sidekiq').
+            update_cwagent.
             update_crontab.
             update_logrotate.
             update_sidekiq.
@@ -348,10 +349,10 @@ module Tasks
 
       def sync
         update_misc.
-            update_cwagent.
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_datadog.
+            update_cwagent.
             update_crontab.
             update_logrotate.
             update_nginx.
