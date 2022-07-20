@@ -1992,6 +1992,7 @@ ja:
     delete_favorites_inquiry: 'いいね削除のお問い合わせ：お問い合わせ内容をここに書いてください'
     charge_failed_inquiry: 'カードに問題が無いのに支払いに失敗しました。定期購読の継続を希望します。'
     error_inquiry: '%{name} エラーが複数回起きています。（スクリーンショットも送ってください）'
+    starting_message: 'レポートの送信を開始します。通常は30秒以内にレポートが届きます。このメッセージはレポートの開始時に自動で送信されます。#egotter'
     recovery_message: 'リクエストの処理に失敗しました…！お手数ですが再度お試しください。3回以上連続して起きる場合は @egotter_cs にご連絡ください。#egotter'
   email_messages:
     shop_order_ask_id_subject: '【えごったーショップ】IDの記載を忘れていませんか？'

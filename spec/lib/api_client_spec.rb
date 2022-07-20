@@ -14,19 +14,6 @@ RSpec.describe ApiClient, type: :model do
       expect(client).to receive_message_chain(:twitter, :create_direct_message_event).with(1, 'text')
       subject
     end
-
-    context 'async is true' do
-      subject { instance.create_direct_message(1, 'text', async: true) }
-
-      before do
-        allow(CreateDirectMessageRequest).to receive(:create).with(sender_id: user.uid, recipient_id: 1, properties: {message: 'text'}).and_return(request)
-      end
-
-      it do
-        expect(request).to receive(:perform)
-        subject
-      end
-    end
   end
 
   describe '#create_direct_message_event' do
@@ -92,6 +79,16 @@ RSpec.describe ApiClient, type: :model do
         expect(instance).to receive(:create_direct_message_event).with(event: 'event')
         subject
       end
+    end
+  end
+
+  describe '#send_report_message' do
+    let(:quick_reply) { {label: 'l', description: 'd'} }
+    subject { instance.send_report_message(1, 'message', quick_reply) }
+    before { user.uid = User::EGOTTER_UID }
+    it do
+      expect(CreateReportMessageWorker).to receive(:perform_async).with(instance_of(Integer))
+      subject
     end
   end
 

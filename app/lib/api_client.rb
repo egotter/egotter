@@ -8,8 +8,8 @@ class ApiClient
 
   def create_direct_message(recipient_id, message, async: false)
     if async
-      request = CreateDirectMessageRequest.create(sender_id: @user&.uid, recipient_id: recipient_id, properties: {message: message})
-      request.perform
+      # TODO Remove later
+      raise NotImplementedError
     else
       twitter.create_direct_message_event(recipient_id, message)
       DirectMessageSendCounter.increment(recipient_id) if recipient_id != User::EGOTTER_UID
@@ -62,6 +62,13 @@ class ApiClient
       event = DirectMessageEvent.build_with_replies(uid, message, buttons)
     end
     create_direct_message_event(event: event)
+  end
+
+  def send_report_message(uid, message, quick_reply)
+    raise 'Only egotter can send reports' if @user.uid != User::EGOTTER_UID
+    event = DirectMessageEvent.build_with_replies(uid, message, quick_reply)
+    request = CreateDirectMessageRequest.create!(sender_id: User::EGOTTER_UID, recipient_id: uid, properties: {event: event})
+    CreateReportMessageWorker.perform_async(request.id)
   end
 
   def can_send_dm?(uid)
