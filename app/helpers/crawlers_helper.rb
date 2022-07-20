@@ -8,6 +8,7 @@ module CrawlersHelper
     request.from_crawler? || from_minor_crawler?(request.user_agent)
   end
 
+  # TODO Remove later
   def from_webhook?
     twitter_webhook? || stripe_webhook?
   end

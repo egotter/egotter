@@ -19,7 +19,7 @@ module Logging
   end
 
   def create_access_log(options = {})
-    return create_webhook_log if from_webhook?
+    return create_webhook_log if twitter_webhook?
     return create_crawler_log if from_crawler?
 
     uid, screen_name = find_uid_and_screen_name
