@@ -38,7 +38,7 @@ class CreateFollowWorker
     process_rate = [1.minute, 5.minutes, 15.minutes, 30.minutes, 1.hour, 3.hours].map do |time|
       [time, FollowRequest.where('created_at > ?', time.ago).size]
     end.map { |time, count| "#{time.inspect.remove(' ')}=#{count}" }.join(' ') rescue nil
-    Airbag.warn "Retry later exception=#{e.inspect} retry_interval=#{retry_interval} process_rate=#{process_rate}"
+    Airbag.warn "Retry later exception=#{e.inspect}#{" cause=#{e.cause.inspect}" if e.cause} retry_interval=#{retry_interval} process_rate=#{process_rate}"
     CreateFollowWorker.perform_in(retry_interval, request_id, options)
 
   rescue FollowRequest::RetryableError => e
