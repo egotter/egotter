@@ -55,7 +55,7 @@ ja:
         check_007: "フォロー外し"
         check_008: "ブロックチェック"
     create:
-      redirect_to: "@%{user} の結果へ転送します"
+      redirect_to: "@%{user} の分析結果ページへ移動します"
     usage_stats:
       name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
