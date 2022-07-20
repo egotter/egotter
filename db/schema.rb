@@ -374,6 +374,7 @@ ActiveRecord::Schema.define(version: 2022_07_13_203718) do
     t.index ["created_at"], name: "index_create_direct_message_requests_on_created_at"
     t.index ["recipient_id"], name: "index_create_direct_message_requests_on_recipient_id"
     t.index ["sender_id"], name: "index_create_direct_message_requests_on_sender_id"
+    t.index ["sent_at"], name: "index_create_direct_message_requests_on_sent_at"
   end
 
   create_table "create_follow_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

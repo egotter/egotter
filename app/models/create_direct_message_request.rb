@@ -17,6 +17,7 @@
 #  index_create_direct_message_requests_on_created_at    (created_at)
 #  index_create_direct_message_requests_on_recipient_id  (recipient_id)
 #  index_create_direct_message_requests_on_sender_id     (sender_id)
+#  index_create_direct_message_requests_on_sent_at       (sent_at)
 #
 class CreateDirectMessageRequest < ApplicationRecord
   def perform

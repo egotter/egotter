@@ -10,9 +10,10 @@ class CreateCreateDirectMessageRequests < ActiveRecord::Migration[6.0]
 
       t.timestamps null: false
 
-      t.index :created_at
       t.index :sender_id
       t.index :recipient_id
+      t.index :sent_at
+      t.index :created_at
     end
   end
 end
