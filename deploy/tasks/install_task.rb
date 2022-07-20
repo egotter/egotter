@@ -198,7 +198,7 @@ module Tasks
           backend(cmd)
         end
 
-        run_copy("./setup#{dir}/etc/amazon-cloudwatch-agent.json", '#{dir}/etc/amazon-cloudwatch-agent.json')
+        run_copy("./setup#{dir}/etc/amazon-cloudwatch-agent.json", "#{dir}/etc/amazon-cloudwatch-agent.json")
 
         [
             "sudo rm #{dir}/etc/amazon-cloudwatch-agent.d/default",
