@@ -1,0 +1,27 @@
+{
+  "agent": {
+    "run_as_user": "cwagent"
+  },
+  "metrics": {
+    "metrics_collected": {
+      "net": {
+        "measurement": [
+          "drop_in",
+          "drop_out"
+        ]
+      },
+      "ethtool": {
+        "metrics_include": [
+          "bw_in_allowance_exceeded",
+          "bw_out_allowance_exceeded",
+          "conntrack_allowance_exceeded",
+          "linklocal_allowance_exceeded",
+          "pps_allowance_exceeded"
+        ]
+      }
+    },
+    "append_dimensions": {
+      "InstanceId": "${aws:InstanceId}"
+    }
+  }
+}

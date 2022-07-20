@@ -186,11 +186,34 @@ module Tasks
         self
       end
 
+      def update_cwagent
+        dir = '/opt/aws/amazon-cloudwatch-agent'
+
+        [
+            "sudo #{dir}/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop",
+            "sudo rm #{dir}/logs/amazon-cloudwatch-agent.log",
+            'wget https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm',
+            'sudo yum localinstall -y amazon-cloudwatch-agent.rpm',
+        ].each do |cmd|
+          backend(cmd)
+        end
+
+        run_copy("./setup#{dir}/etc/amazon-cloudwatch-agent.json", '#{dir}/etc/amazon-cloudwatch-agent.json')
+
+        [
+            "sudo rm #{dir}/etc/amazon-cloudwatch-agent.d/default",
+            "sudo #{dir}/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start",
+            'rm amazon-cloudwatch-agent.rpm',
+        ].each do |cmd|
+          backend(cmd)
+        end
+
+        self
+      end
+
       def update_misc
         [
             'sudo yum install -y libidn-devel',
-            'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status',
-            'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
             'sudo rm -rf /var/tmp/aws-mon/*',
             'sudo rm -rf /var/egotter/tmp/cache/*',
             'sudo rm -rf /var/egotter/log/*',
@@ -212,6 +235,7 @@ module Tasks
 
       def sync
         update_misc.
+            update_cwagent.
             update_bashrc.
             update_env.
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
@@ -263,6 +287,7 @@ module Tasks
 
       def sync
         update_misc.
+            update_cwagent.
             update_bashrc.
             update_env.
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
@@ -323,6 +348,7 @@ module Tasks
 
       def sync
         update_misc.
+            update_cwagent.
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_datadog.
