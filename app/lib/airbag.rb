@@ -30,17 +30,19 @@ class Airbag
 
   def log(level, raw_message = nil, props = {}, &block)
     message = raw_message.nil? && block_given? ? yield : raw_message
-    message = format_message(level, message)
+    context = current_context
+    message = format_message(level, message, context)
 
     logger.add(level, message)
 
     if level >= logger.level
-      CreateAirbagLogWorker.perform_async(format_severity(level), raw_message.to_s.truncate(50000), truncate_hash(props), Time.zone.now)
+      CreateAirbagLogWorker.perform_async(
+          format_severity(level), raw_message.to_s.truncate(50000), truncate_hash(context.merge(props)), Time.zone.now)
     end
 
     if @callbacks&.any?
       @callbacks.each do |blk|
-        blk.call(level, raw_message, message, props)
+        blk.call(level, raw_message, message, props, context)
       end
     end
 
@@ -67,13 +69,9 @@ class Airbag
     (@callbacks ||= []) << block
   end
 
-  def format_message(level, message)
-    "#{format_context}#{format_severity(level)}: #{message}"
-  end
-
-  def format_context
+  def current_context
     if Sidekiq.server?
-      ctx = {
+      {
           env: Rails.env,
           tag: @tag,
           pid: ::Process.pid,
@@ -82,17 +80,17 @@ class Airbag
 
       }
     else
-      ctx = {
+      {
           env: Rails.env,
           tag: @tag,
       }
     end
-
-    if ctx.any?
-      format_hash(ctx) + ' '
-    end
   rescue => e
-    ''
+    {}
+  end
+
+  def format_message(level, message, context)
+    "#{format_hash(context)} #{format_severity(level)}: #{message}"
   end
 
   def format_hash(hash)
