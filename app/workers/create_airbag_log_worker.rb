@@ -5,6 +5,6 @@ class CreateAirbagLogWorker
   def perform(severity, message, properties = nil, time = nil)
     AirbagLog.create!(severity: severity, message: message, properties: properties.presence, time: time || Time.zone.now)
   rescue => e
-    logger.error "#{self.class}: #{e.inspect.truncate(1000)} severity=#{severity} message=#{message.truncate(1000)} properties=#{properties} time=#{time}"
+    logger.error "#{e.inspect.truncate(1000)} severity=#{severity} message=#{message.truncate(1000)} properties=#{properties} time=#{time}"
   end
 end

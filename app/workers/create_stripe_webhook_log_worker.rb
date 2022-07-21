@@ -3,8 +3,8 @@ class CreateStripeWebhookLogWorker
   sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
   def perform(attrs)
-    Rails.logger.silence { StripeWebhookLog.create!(attrs) }
+    StripeWebhookLog.create!(attrs)
   rescue => e
-    Airbag.warn "#{self.class}: #{e.class} #{e.message} #{attrs.inspect}"
+    Airbag.error "#{e.inspect} attrs=#{attrs}", backtrace: e.backtrace
   end
 end

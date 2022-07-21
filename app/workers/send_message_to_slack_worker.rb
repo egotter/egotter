@@ -6,10 +6,8 @@ class SendMessageToSlackWorker
   def perform(channel, text, title = nil, options = {})
     SlackBotClient.channel(channel).post_message(text)
   rescue Slack::Web::Api::Errors::TooManyRequestsError => e
-    # Don't use Airbag.warn to avoid infinite loop
-    logger.warn "#{e.class} channel=#{channel} text=#{text} options=#{options.inspect}"
+    logger.error "#{e.class} channel=#{channel} text=#{text} options=#{options}"
   rescue => e
-    # Don't use Airbag.warn to avoid infinite loop
-    logger.warn "#{e.inspect} channel=#{channel} text=#{text} options=#{options.inspect}"
+    logger.error "#{e.inspect.truncate(1000)} channel=#{channel} text=#{text} options=#{options}"
   end
 end
