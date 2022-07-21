@@ -18,8 +18,8 @@ class Airbag
       log(Logger::ERROR, message, props, &block)
     end
 
-    def log(level, message = nil, props = {}, &block)
-      message = yield if message.nil? && block_given?
+    def log(level, raw_message = nil, props = {}, &block)
+      message = message.nil? && block_given? ? yield : raw_message
       message = format_message(level, message)
 
       logger.add(level, message)
@@ -30,6 +30,10 @@ class Airbag
 
       if @slack && level > @slack[:level]
         SendMessageToSlackWorker.perform_async(@slack[:channel], message.truncate(1000))
+      end
+
+      if @broadcast_logger
+        @broadcast_logger[:instance].add(level, "[airbag] #{raw_message}")
       end
     end
 
@@ -52,6 +56,8 @@ class Airbag
     def broadcast(options)
       if options[:target] == :slack
         @slack = {channel: options[:channel], tag: options[:tag], level: options[:level]}
+      elsif options[:target] == :logger
+        @broadcast_logger = {instance: options[:instance]}
       end
     end
 
