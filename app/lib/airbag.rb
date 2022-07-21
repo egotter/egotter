@@ -20,11 +20,12 @@ class Airbag
 
     def log(level, message = nil, props = {}, &block)
       message = yield if message.nil? && block_given?
-      message = "#{format_context}#{format_severity(level)}: #{message}"
+      message = format_message(level, message)
+
       logger.add(level, message)
 
       if level > Logger::DEBUG
-        CreateAirbagLogWorker.perform_async(format_severity(level), message, props, Time.zone.now)
+        CreateAirbagLogWorker.perform_async(format_severity(level), message.truncate(50000), props, Time.zone.now)
       end
 
       if @slack && level > @slack[:level]
@@ -52,6 +53,10 @@ class Airbag
       if options[:target] == :slack
         @slack = {channel: options[:channel], tag: options[:tag], level: options[:level]}
       end
+    end
+
+    def format_message(level, message)
+      "#{format_context}#{format_severity(level)}: #{message}"
     end
 
     def format_context
