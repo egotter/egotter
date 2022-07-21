@@ -19,7 +19,7 @@ class Airbag
     end
 
     def log(level, raw_message = nil, props = {}, &block)
-      message = message.nil? && block_given? ? yield : raw_message
+      message = raw_message.nil? && block_given? ? yield : raw_message
       message = format_message(level, message)
 
       logger.add(level, message)
