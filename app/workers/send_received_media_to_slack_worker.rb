@@ -20,6 +20,6 @@ class SendReceivedMediaToSlackWorker
       end
     end
   rescue => e
-    Airbag.error "#{e.inspect.truncate(200)} json=#{json.inspect.truncate(200)}", backtrace: e.backtrace
+    Airbag.exception e, json: json
   end
 end

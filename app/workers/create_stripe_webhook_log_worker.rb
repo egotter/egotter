@@ -5,6 +5,6 @@ class CreateStripeWebhookLogWorker
   def perform(attrs)
     StripeWebhookLog.create!(attrs)
   rescue => e
-    Airbag.error "#{e.inspect} attrs=#{attrs}", backtrace: e.backtrace
+    Airbag.exception e, attrs: attrs
   end
 end
