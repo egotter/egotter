@@ -35,7 +35,7 @@ class Airbag
     logger.add(level, message)
 
     if level >= logger.level
-      CreateAirbagLogWorker.perform_async(format_severity(level), message.truncate(50000), props, Time.zone.now)
+      CreateAirbagLogWorker.perform_async(format_severity(level), raw_message.to_s.truncate(50000), truncate_hash(props), Time.zone.now)
     end
 
     if @callbacks&.any?
@@ -96,7 +96,11 @@ class Airbag
   end
 
   def format_hash(hash)
-    hash.compact.map { |k, v| "#{k}=#{v.to_s.truncate(100)}" }.join(' ')
+    hash.map { |k, v| "#{k}=#{v.to_s.truncate(200)}" }.join(' ')
+  end
+
+  def truncate_hash(hash)
+    hash.transform_values { |v| v.is_a?(String) ? v.to_s.truncate(200) : v }
   end
 
   def tag=(value)

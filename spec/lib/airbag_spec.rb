@@ -66,17 +66,17 @@ RSpec.describe Airbag, type: :model do
     let(:message) { 'msg' }
     let(:formatted_message) { "warn: #{message}" }
     let(:callback_result) { [] }
-    subject { instance.log(level, message, {}) }
+    subject { instance.log(level, message, {a: 1}) }
 
     before do
-      Airbag.broadcast { callback_result << true }
+      described_class.broadcast { callback_result << true }
       allow(instance).to receive(:logger).and_return(logger)
       allow(instance).to receive(:format_message).with(Logger::WARN, message).and_return(formatted_message)
     end
 
     it do
       expect(logger).to receive(:add).with(level, formatted_message)
-      expect(CreateAirbagLogWorker).to receive(:perform_async).with('WARN', formatted_message, {}, kind_of(Time))
+      expect(CreateAirbagLogWorker).to receive(:perform_async).with('WARN', message, {a: 1}, kind_of(Time))
       subject
       expect(callback_result[0]).to be_truthy
     end
@@ -85,7 +85,7 @@ RSpec.describe Airbag, type: :model do
       let(:message) { 'a' * 70000 }
       it do
         expect(logger).to receive(:add).with(level, formatted_message)
-        expect(CreateAirbagLogWorker).to receive(:perform_async).with('WARN', "#{formatted_message.slice(0, 49997)}...", {}, kind_of(Time))
+        expect(CreateAirbagLogWorker).to receive(:perform_async).with('WARN', "#{message.slice(0, 49997)}...", {a: 1}, kind_of(Time))
         subject
         expect(callback_result[0]).to be_truthy
       end
