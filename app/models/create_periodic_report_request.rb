@@ -145,7 +145,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
           account_statuses: account_statuses,
           new_friends: new_friends,
           new_followers: new_followers,
-          worker_context: @request.worker_context,
+          worker_context: @request.worker_context.to_s,
       }
 
       record = PeriodicReport.create!(user_id: @request.user.id, token: PeriodicReport.generate_token, message_id: '', properties: properties)
