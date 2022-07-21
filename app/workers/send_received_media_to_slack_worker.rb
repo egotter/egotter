@@ -20,7 +20,6 @@ class SendReceivedMediaToSlackWorker
       end
     end
   rescue => e
-    Airbag.warn "#{e.inspect} json=#{json.inspect.truncate(100)}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect.truncate(200)} json=#{json.inspect.truncate(200)}", backtrace: e.backtrace
   end
 end

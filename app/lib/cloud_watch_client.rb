@@ -50,6 +50,7 @@ class CloudWatchClient
     -1
   end
 
+  # Not used
   def get_rds_burst_balance
     dimensions = [
         {
