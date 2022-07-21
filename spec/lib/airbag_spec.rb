@@ -51,6 +51,15 @@ RSpec.describe Airbag, type: :model do
     end
   end
 
+  describe '#exception' do
+    let(:error) { RuntimeError.new }
+    subject { instance.exception(error) }
+    it do
+      expect(instance).to receive(:log).with(Logger::ERROR, instance_of(String), {backtrace: error.backtrace})
+      subject
+    end
+  end
+
   describe '#log' do
     let(:logger) { instance_double(Logger, 'log/test.log', level: Logger::INFO) }
     let(:level) { Logger::WARN }

@@ -23,6 +23,11 @@ class Airbag
     log(::Logger::ERROR, message, props, &block)
   end
 
+  def exception(e, props = {})
+    message = "#{e.inspect.truncate(200)}#{' ' + format_hash(props) if props.any?}"
+    log(::Logger::ERROR, message, props.merge(backtrace: e.backtrace))
+  end
+
   def log(level, raw_message = nil, props = {}, &block)
     message = raw_message.nil? && block_given? ? yield : raw_message
     message = format_message(level, message)
@@ -84,10 +89,14 @@ class Airbag
     end
 
     if ctx.any?
-      ctx.compact.map { |k, v| "#{k}=#{v}" }.join(' ') + ' '
+      format_hash(ctx) + ' '
     end
   rescue => e
     ''
+  end
+
+  def format_hash(hash)
+    hash.compact.map { |k, v| "#{k}=#{v.to_s.truncate(100)}" }.join(' ')
   end
 
   def tag=(value)
@@ -111,7 +120,7 @@ class Airbag
 
   class << self
     extend Forwardable
-    def_delegators :instance, :debug, :info, :warn, :error, :benchmark, :broadcast, :tag=, :disable!
+    def_delegators :instance, :debug, :info, :warn, :error, :exception, :benchmark, :broadcast, :tag=, :disable!
   end
 
   class Logger < ::Logger
