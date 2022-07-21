@@ -52,14 +52,15 @@ RSpec.describe Airbag, type: :model do
   end
 
   describe '#log' do
-    let(:logger) { instance_double(Logger, 'log/test.log') }
+    let(:logger) { instance_double(Logger, 'log/test.log', level: Logger::INFO) }
     let(:level) { Logger::WARN }
     let(:message) { 'msg' }
     let(:formatted_message) { "warn: #{message}" }
+    let(:callback_result) { [] }
     subject { instance.log(level, message, {}) }
 
     before do
-      Airbag.broadcast(target: :slack, channel: :airbag, tag: 'test', level: Logger::INFO)
+      Airbag.broadcast { callback_result << true }
       allow(instance).to receive(:logger).and_return(logger)
       allow(instance).to receive(:format_message).with(Logger::WARN, message).and_return(formatted_message)
     end
@@ -67,8 +68,8 @@ RSpec.describe Airbag, type: :model do
     it do
       expect(logger).to receive(:add).with(level, formatted_message)
       expect(CreateAirbagLogWorker).to receive(:perform_async).with('WARN', formatted_message, {}, kind_of(Time))
-      expect(SendMessageToSlackWorker).to receive(:perform_async).with(:airbag, formatted_message)
       subject
+      expect(callback_result[0]).to be_truthy
     end
 
     context 'too long message is passed' do
@@ -76,8 +77,8 @@ RSpec.describe Airbag, type: :model do
       it do
         expect(logger).to receive(:add).with(level, formatted_message)
         expect(CreateAirbagLogWorker).to receive(:perform_async).with('WARN', "#{formatted_message.slice(0, 49997)}...", {}, kind_of(Time))
-        expect(SendMessageToSlackWorker).to receive(:perform_async).with(:airbag, "#{formatted_message.slice(0, 997)}...")
         subject
+        expect(callback_result[0]).to be_truthy
       end
     end
   end

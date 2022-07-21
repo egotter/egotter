@@ -29,17 +29,17 @@ class Airbag
 
     logger.add(level, message)
 
-    if level > ::Logger::DEBUG
+    if level >= logger.level
       CreateAirbagLogWorker.perform_async(format_severity(level), message.truncate(50000), props, Time.zone.now)
     end
 
-    if @slack && level > @slack[:level]
-      SendMessageToSlackWorker.perform_async(@slack[:channel], message.truncate(1000))
+    if @callbacks&.any?
+      @callbacks.each do |blk|
+        blk.call(level, raw_message, message, props)
+      end
     end
 
-    if @broadcast_logger
-      @broadcast_logger[:instance].add(level, "[airbag] #{raw_message}")
-    end
+    true
   end
 
   # options:
@@ -58,12 +58,8 @@ class Airbag
     result
   end
 
-  def broadcast(options = {})
-    if options[:target] == :slack
-      @slack = {channel: options[:channel], tag: options[:tag], level: options[:level]}
-    elsif options[:target] == :logger
-      @broadcast_logger = {instance: options[:instance]}
-    end
+  def broadcast(&block)
+    (@callbacks ||= []) << block
   end
 
   def format_message(level, message)
@@ -74,7 +70,7 @@ class Airbag
     if Sidekiq.server?
       ctx = {
           env: Rails.env,
-          tag: @slack && @slack[:tag],
+          tag: @tag,
           pid: ::Process.pid,
           tid: Thread.current["sidekiq_tid"],
           class: (Thread.current[:sidekiq_context][:class] rescue nil),
@@ -83,7 +79,7 @@ class Airbag
     else
       ctx = {
           env: Rails.env,
-          tag: @slack && @slack[:tag],
+          tag: @tag,
       }
     end
 
@@ -94,14 +90,17 @@ class Airbag
     ''
   end
 
+  def tag=(value)
+    @tag = value
+  end
+
   def logger
     @logger ||= Logger.instance
   end
 
   def disable!
     @logger = ::Logger.new(nil)
-    @slack = nil
-    @broadcast_logger = nil
+    @callbacks = []
   end
 
   SEV_LABEL = %w(DEBUG INFO WARN ERROR FATAL ANY).freeze
@@ -112,7 +111,7 @@ class Airbag
 
   class << self
     extend Forwardable
-    def_delegators :instance, :debug, :info, :warn, :error, :benchmark, :broadcast, :disable!
+    def_delegators :instance, :debug, :info, :warn, :error, :benchmark, :broadcast, :tag=, :disable!
   end
 
   class Logger < ::Logger
