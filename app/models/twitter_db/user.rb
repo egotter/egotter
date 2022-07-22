@@ -63,14 +63,7 @@ module TwitterDB
       screen_name
     end
 
-    INACTIVE_INTERVAL = 2.weeks
-
     class << self
-      # TODO Remove later
-      def inactive_user
-        where.not(status_created_at: nil).where('status_created_at < ?', INACTIVE_INTERVAL.ago)
-      end
-
       def import_by!(users:)
         built_users = users.map { |user| build_by(user: user) }
         built_users.sort_by!(&:uid)
