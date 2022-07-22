@@ -74,11 +74,32 @@ module TwitterDB
     end
 
     def work_in_threads(queries, count)
+      stopped = false
+      result = []
+
       queries.each_slice(count).map do |group|
-        threads = group.map { |query| Thread.new(query) { |q| q.to_a } }
+        threads = group.map do |query|
+          Thread.new(query) do |q|
+            q.to_a unless timeout?
+          end
+        end
+
         threads.each(&:join)
-        threads.map(&:value)
-      end.flatten
+        cur_result = threads.map(&:value)
+
+        if cur_result.any?(&:nil?)
+          stopped = true
+          break
+        else
+          result << cur_result
+        end
+      end
+
+      if stopped
+        raise TimeoutError.new("timeout=#{@timeout} waited=#{Time.zone.now - @start_time}")
+      end
+
+      result.flatten
     end
 
     def work_direct(queries)

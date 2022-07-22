@@ -59,6 +59,17 @@ RSpec.describe TwitterDB::Sort, type: :model do
     let(:queries) { 1000.times.map { |n| [n] } }
     subject { instance.work_in_threads(queries, 10) }
     it { is_expected.to eq(queries.flatten) }
+
+    context 'TimeoutError is raised' do
+      let(:task) { double('task') }
+      let(:queries) { 10.times.map { task } }
+      before do
+        instance.instance_variable_set(:@start_time, Time.zone.now)
+        allow(instance).to receive(:timeout?).and_return(true)
+        allow(task).to receive(:to_a).and_raise('Not allowed to perform any tasks')
+      end
+      it { expect { subject }.to raise_error(described_class::TimeoutError) }
+    end
   end
 
   describe '#work_direct' do
