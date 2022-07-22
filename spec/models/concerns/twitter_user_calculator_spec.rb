@@ -167,30 +167,24 @@ RSpec.describe TwitterUserCalculator do
   end
 
   describe '#calc_inactive_friend_uids' do
-    let(:users) { 3.times.map { create(:twitter_db_user) } }
+    let(:users) { 3.times.map { create(:twitter_db_user, status_created_at: 1.month.ago) } }
     subject { twitter_user.calc_inactive_friend_uids }
-    it do
-      expect(twitter_user).to receive(:friends).with(inactive: true).and_return(users)
-      is_expected.to eq(users.map(&:uid))
-    end
+    before { allow(twitter_user).to receive(:friend_uids).and_return(users.map(&:uid)) }
+    it { is_expected.to eq(users.map(&:uid)) }
   end
 
   describe '#calc_inactive_follower_uids' do
-    let(:users) { 3.times.map { create(:twitter_db_user) } }
+    let(:users) { 3.times.map { create(:twitter_db_user, status_created_at: 1.month.ago) } }
     subject { twitter_user.calc_inactive_follower_uids }
-    it do
-      expect(twitter_user).to receive(:followers).with(inactive: true).and_return(users)
-      is_expected.to eq(users.map(&:uid))
-    end
+    before { allow(twitter_user).to receive(:follower_uids).and_return(users.map(&:uid)) }
+    it { is_expected.to eq(users.map(&:uid)) }
   end
 
   describe '#calc_inactive_mutual_friend_uids' do
-    let(:users) { 3.times.map { create(:twitter_db_user) } }
+    let(:users) { 3.times.map { create(:twitter_db_user, status_created_at: 1.month.ago) } }
     subject { twitter_user.calc_inactive_mutual_friend_uids }
-    it do
-      expect(twitter_user).to receive(:mutual_friends).with(inactive: true).and_return(users)
-      is_expected.to eq(users.map(&:uid))
-    end
+    before { allow(twitter_user).to receive(:mutual_friend_uids).and_return(users.map(&:uid)) }
+    it { is_expected.to eq(users.map(&:uid)) }
   end
 
   describe '#calc_unfriend_uids' do

@@ -85,120 +85,32 @@ RSpec.describe TwitterUserAssociations do
     end
   end
 
-  describe '#close_friends' do
-    subject { twitter_user.close_friends }
-    before { allow(twitter_user).to receive(:close_friend_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
-      subject
-    end
-  end
-
-  describe '#favorite_friends' do
-    subject { twitter_user.favorite_friends }
-    before { allow(twitter_user).to receive(:favorite_friend_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
-      subject
-    end
-  end
-
-  describe '#mutual_friends' do
-    subject { twitter_user.mutual_friends }
-    before { allow(twitter_user).to receive(:mutual_friend_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1], inactive: nil)
-      subject
-    end
-  end
-
-  describe '#one_sided_friends' do
-    subject { twitter_user.one_sided_friends }
-    before { allow(twitter_user).to receive(:one_sided_friend_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
-      subject
-    end
-  end
-
-  describe '#one_sided_followers' do
-    subject { twitter_user.one_sided_followers }
-    before { allow(twitter_user).to receive(:one_sided_follower_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
-      subject
-    end
-  end
-
-  describe '#inactive_friends' do
-    subject { twitter_user.inactive_friends }
-    before { allow(twitter_user).to receive(:inactive_friend_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
-      subject
-    end
-  end
-
-  describe '#inactive_followers' do
-    subject { twitter_user.inactive_followers }
-    before { allow(twitter_user).to receive(:inactive_follower_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
-      subject
-    end
-  end
-
-  describe '#inactive_mutual_friends' do
-    subject { twitter_user.inactive_mutual_friends }
-    before { allow(twitter_user).to receive(:inactive_mutual_friend_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
-      subject
-    end
-  end
-
-  describe '#friends' do
-    subject { twitter_user.friends }
-    before { allow(twitter_user).to receive(:friend_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1], inactive: nil)
-      subject
-    end
-  end
-
-  describe '#followers' do
-    subject { twitter_user.followers }
-    before { allow(twitter_user).to receive(:follower_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1], inactive: nil)
-      subject
-    end
-  end
-
-  describe '#mutual_unfriends' do
-    subject { twitter_user.mutual_unfriends }
-    before { allow(twitter_user).to receive(:mutual_unfriend_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
-      subject
-    end
-  end
-
-  describe '#unfriends' do
-    subject { twitter_user.unfriends }
-    before { allow(twitter_user).to receive(:unfriend_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
-      subject
-    end
-  end
-
-  describe '#unfollowers' do
-    subject { twitter_user.unfollowers }
-    before { allow(twitter_user).to receive(:unfollower_uids).and_return([1]) }
-    it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1])
-      subject
+  [
+      [:close_friends, :close_friend_uids],
+      [:favorite_friends, :favorite_friend_uids],
+      [:mutual_friends, :mutual_friend_uids],
+      [:one_sided_friends, :one_sided_friend_uids],
+      [:one_sided_followers, :one_sided_follower_uids],
+      [:inactive_friends, :inactive_friend_uids],
+      [:inactive_followers, :inactive_follower_uids],
+      [:inactive_mutual_friends, :inactive_mutual_friend_uids],
+      [:friends, :friend_uids],
+      [:followers, :follower_uids],
+      [:mutual_unfriends, :mutual_unfriend_uids],
+      [:unfriends, :unfriend_uids],
+      [:unfollowers, :unfollower_uids],
+      [:blockers, :blocker_uids],
+  ].each do |method_name, api_name|
+    describe "##{method_name}" do
+      let(:method) { method_name }
+      let(:api) { api_name }
+      let(:uids) { [1, 2, 3] }
+      subject { twitter_user.send(method_name) }
+      before { uids.map { |uid| create(:twitter_db_user, uid: uid) } }
+      it do
+        expect(twitter_user).to receive(api).and_return(uids)
+        expect(subject.map(&:uid)).to eq(uids)
+      end
     end
   end
 

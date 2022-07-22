@@ -150,59 +150,59 @@ module TwitterUserAssociations
   FETCH_USERS_LIMIT = 10000
 
   def close_friends(limit: FETCH_USERS_LIMIT)
-    TwitterDB::User.where_and_order_by_field(uids: close_friend_uids.take(limit))
+    TwitterDB::Proxy.new(close_friend_uids).limit(limit).to_a
   end
 
   def favorite_friends(limit: FETCH_USERS_LIMIT)
-    TwitterDB::User.where_and_order_by_field(uids: favorite_friend_uids.take(limit))
+    TwitterDB::Proxy.new(favorite_friend_uids).limit(limit).to_a
   end
 
-  def mutual_friends(limit: FETCH_USERS_LIMIT, inactive: nil)
-    TwitterDB::User.where_and_order_by_field(uids: mutual_friend_uids.take(limit), inactive: inactive)
+  def mutual_friends(limit: FETCH_USERS_LIMIT)
+    TwitterDB::Proxy.new(mutual_friend_uids).limit(limit).to_a
   end
 
   def one_sided_friends(limit: FETCH_USERS_LIMIT)
-    TwitterDB::User.where_and_order_by_field(uids: one_sided_friend_uids.take(limit))
+    TwitterDB::Proxy.new(one_sided_friend_uids).limit(limit).to_a
   end
 
   def one_sided_followers(limit: FETCH_USERS_LIMIT)
-    TwitterDB::User.where_and_order_by_field(uids: one_sided_follower_uids.take(limit))
+    TwitterDB::Proxy.new(one_sided_follower_uids).limit(limit).to_a
   end
 
   def inactive_friends(limit: FETCH_USERS_LIMIT)
-    TwitterDB::User.where_and_order_by_field(uids: inactive_friend_uids.take(limit))
+    TwitterDB::Proxy.new(inactive_friend_uids).limit(limit).to_a
   end
 
   def inactive_followers(limit: FETCH_USERS_LIMIT)
-    TwitterDB::User.where_and_order_by_field(uids: inactive_follower_uids.take(limit))
+    TwitterDB::Proxy.new(inactive_follower_uids).limit(limit).to_a
   end
 
   def inactive_mutual_friends(limit: FETCH_USERS_LIMIT)
-    TwitterDB::User.where_and_order_by_field(uids: inactive_mutual_friend_uids.take(limit))
+    TwitterDB::Proxy.new(inactive_mutual_friend_uids).limit(limit).to_a
   end
 
-  def friends(limit: FETCH_USERS_LIMIT, inactive: nil)
-    TwitterDB::User.where_and_order_by_field(uids: friend_uids.take(limit), inactive: inactive)
+  def friends(limit: FETCH_USERS_LIMIT)
+    TwitterDB::Proxy.new(friend_uids).limit(limit).to_a
   end
 
-  def followers(limit: FETCH_USERS_LIMIT, inactive: nil)
-    TwitterDB::User.where_and_order_by_field(uids: follower_uids.take(limit), inactive: inactive)
+  def followers(limit: FETCH_USERS_LIMIT)
+    TwitterDB::Proxy.new(follower_uids).limit(limit).to_a
   end
 
   def mutual_unfriends(limit: FETCH_USERS_LIMIT)
-    TwitterDB::User.where_and_order_by_field(uids: mutual_unfriend_uids.take(limit))
+    TwitterDB::Proxy.new(mutual_unfriend_uids).limit(limit).to_a
   end
 
   def unfriends(limit: FETCH_USERS_LIMIT)
-    TwitterDB::User.where_and_order_by_field(uids: unfriend_uids.take(limit))
+    TwitterDB::Proxy.new(unfriend_uids).limit(limit).to_a
   end
 
   def unfollowers(limit: FETCH_USERS_LIMIT)
-    TwitterDB::User.where_and_order_by_field(uids: unfollower_uids.take(limit))
+    TwitterDB::Proxy.new(unfollower_uids).limit(limit).to_a
   end
 
   def blockers(limit: FETCH_USERS_LIMIT)
-    TwitterDB::User.where_and_order_by_field(uids: blocker_uids.take(limit))
+    TwitterDB::Proxy.new(blocker_uids).limit(limit).to_a
   end
 
   def top_follower

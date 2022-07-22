@@ -66,6 +66,7 @@ module TwitterDB
     INACTIVE_INTERVAL = 2.weeks
 
     class << self
+      # TODO Remove later
       def inactive_user
         where.not(status_created_at: nil).where('status_created_at < ?', INACTIVE_INTERVAL.ago)
       end

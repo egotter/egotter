@@ -14,14 +14,13 @@ RSpec.describe TwitterUserMultiplePeopleApi do
   end
 
   describe '#common_mutual_friends' do
-    let(:other) { create(:twitter_user, with_relations: true) }
+    let(:uids) { [1, 2, 3] }
+    let(:other) { double('twitter_user') }
     subject { twitter_user.common_mutual_friends(other) }
-    before do
-      allow(twitter_user).to receive(:common_mutual_friend_uids).with(other).and_return('uids')
-    end
+    before { uids.map { |uid| create(:twitter_db_user, uid: uid) } }
     it do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: 'uids').and_return('result')
-      is_expected.to eq('result')
+      expect(twitter_user).to receive(:common_mutual_friend_uids).with(other).and_return(uids)
+      expect(subject.map(&:uid)).to eq(uids)
     end
   end
 end

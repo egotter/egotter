@@ -24,6 +24,7 @@ module TwitterUserMultiplePeopleApi
   end
 
   def common_mutual_friends(other)
-    TwitterDB::User.where_and_order_by_field(uids: common_mutual_friend_uids(other))
+    uids = common_mutual_friend_uids(other)
+    TwitterDB::Proxy.new(uids).limit(uids.size).to_a
   end
 end
