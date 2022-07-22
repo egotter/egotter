@@ -16,8 +16,8 @@ class SlackBotClient
     @client.conversations_list.channels.find { |c| c.name == @channel.slice(1..-1) }
   end
 
-  def messages
-    @client.conversations_history(channel: channel.id).messages
+  def messages(count: 100)
+    @client.conversations_history(channel: channel.id, count: count).messages
   end
 
   def delete_message(ts)
