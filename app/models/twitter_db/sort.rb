@@ -38,17 +38,18 @@ module TwitterDB
     end
 
     def apply(model, uids)
+      if @value == VALUES[0]
+        return uids
+      elsif @value == VALUES[1]
+        return uids.reverse
+      end
+
       @start_time = Time.zone.now
       query = model.select(:uid, :friends_count, :followers_count, :statuses_count)
       queries = []
-      uids.reverse! if @value == VALUES[1]
 
       uids.each_slice(@slice) do |group|
-        q = query.where(uid: group)
-        if @value == VALUES[0] || @value == VALUES[1]
-          q = q.order_by_field(group)
-        end
-        queries << q
+        queries << query.where(uid: group)
       end
 
       if @threads > 0
@@ -62,13 +63,7 @@ module TwitterDB
         result = work_direct(queries)
       end
 
-      if @value == VALUES[0] || @value == VALUES[1]
-        # Do nothing
-      else
-        result.sort_by!(&sorter)
-      end
-
-      result.map(&:uid)
+      result.sort_by(&sorter).map(&:uid)
     ensure
       @start_time = nil
     end
