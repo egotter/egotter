@@ -15,7 +15,7 @@ module TwitterDB
       @value = value && VALUES.include?(value) ? value : VALUES[0]
       @slice = 1000
       @threads = 0
-      @timeout = 5
+      @timeout = 8
     end
 
     def slice(value)
@@ -25,6 +25,11 @@ module TwitterDB
 
     def threads(value)
       @threads = value.to_i
+      self
+    end
+
+    def timeout(value)
+      @timeout = value.to_i
       self
     end
 
