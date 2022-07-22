@@ -1,6 +1,6 @@
 module Api
   module V1
-    class UnfollowersController < ::Api::V1::Base
+    class UnfollowersController < ::Api::BaseController
 
       private
 

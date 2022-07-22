@@ -1,6 +1,6 @@
 module Api
   module V1
-    class BlockersController < ::Api::V1::Base
+    class BlockersController < ::Api::BaseController
       include BlockersConcern
 
       before_action :authenticate_user!

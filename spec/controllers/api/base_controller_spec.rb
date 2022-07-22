@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::Base, type: :controller do
-  controller Api::V1::Base do
+RSpec.describe Api::BaseController, type: :controller do
+  controller Api::BaseController do
     def summary_uids
     end
 

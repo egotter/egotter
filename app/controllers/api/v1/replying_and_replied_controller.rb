@@ -1,6 +1,6 @@
 module Api
   module V1
-    class ReplyingAndRepliedController < ::Api::V1::Base
+    class ReplyingAndRepliedController < ::Api::BaseController
 
       private
 

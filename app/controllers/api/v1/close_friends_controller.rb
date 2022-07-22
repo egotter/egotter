@@ -1,6 +1,6 @@
 module Api
   module V1
-    class CloseFriendsController < ::Api::V1::Base
+    class CloseFriendsController < ::Api::BaseController
 
       def show
         # CreateCloseFriendsOgImageWorker.perform_async(@twitter_user.uid) if user_signed_in?

@@ -1,6 +1,6 @@
 module Api
   module V1
-    class MutualFriendsController < ::Api::V1::Base
+    class MutualFriendsController < ::Api::BaseController
 
       private
 
