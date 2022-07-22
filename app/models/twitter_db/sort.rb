@@ -27,8 +27,8 @@ module TwitterDB
       self
     end
 
-    def apply(query, uids)
-      query = query.select(:uid, :friends_count, :followers_count, :statuses_count)
+    def apply(model, uids)
+      query = model.select(:uid, :friends_count, :followers_count, :statuses_count)
       queries = []
       uids.reverse! if @value == VALUES[1]
 

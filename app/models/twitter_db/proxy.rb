@@ -45,7 +45,7 @@ module TwitterDB
     def to_a
       raise '#limit must be called before calling #to_a' unless @limit
 
-      sorted_uids = @sort.apply(TwitterDB::User.where(uid: @uids), @uids)
+      sorted_uids = @sort.apply(TwitterDB::User, @uids)
 
       if @last_uid && (index = sorted_uids.index(@last_uid))
         sorted_uids = sorted_uids.slice((index + 1)..-1)
