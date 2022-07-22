@@ -62,6 +62,10 @@ class TwitterApiStatus
       ex && ex.class == Twitter::Error::Forbidden && ex.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
     end
 
+    def might_be_automated?(ex)
+      ex.class == Twitter::Error::Forbidden && ex.message == "This request looks like it might be automated. To protect our users from spam and other malicious activity, we can't complete this action right now. Please try again later."
+    end
+
     def your_account_suspended?(ex)
       ex.class == Twitter::Error::Forbidden && ex.message == "Your account is suspended and is not permitted to access this feature."
     end

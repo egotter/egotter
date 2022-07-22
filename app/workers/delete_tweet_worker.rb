@@ -52,14 +52,13 @@ class DeleteTweetWorker
         TweetStatus.not_authorized?(e) ||
         TweetStatus.that_page_does_not_exist?(e) ||
         TweetStatus.forbidden?(e)
-      nil
+      # Do nothing
     elsif TwitterApiStatus.your_account_suspended?(e) ||
         TwitterApiStatus.invalid_or_expired_token?(e) ||
         TwitterApiStatus.suspended?(e) ||
-        TweetStatus.temporarily_locked?(e)
+        TweetStatus.temporarily_locked?(e) ||
+        TwitterApiStatus.might_be_automated?(e)
       request.update(stopped_at: Time.zone.now)
-      Airbag.info { "Request stopped request_id=#{request.id} user_id=#{request.user_id}" }
-      nil
     else
       raise e
     end

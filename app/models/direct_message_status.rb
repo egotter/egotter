@@ -18,7 +18,7 @@ class DirectMessageStatus
     end
 
     def might_be_automated?(ex)
-      ex.class == Twitter::Error::Forbidden && ex.message == "This request looks like it might be automated. To protect our users from spam and other malicious activity, we can't complete this action right now. Please try again later."
+      TwitterApiStatus.might_be_automated?(ex)
     end
 
     def protect_out_users_from_spam?(ex)

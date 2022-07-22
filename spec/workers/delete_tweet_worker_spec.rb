@@ -45,25 +45,45 @@ RSpec.describe DeleteTweetWorker do
       end
     end
 
-    context 'error raised' do
+    context 'error is raised' do
       let(:error) { RuntimeError.new('error') }
       before { allow(client).to receive(:destroy_status).and_raise(error) }
 
-      context 'the error can be ignored' do
-        before { allow(TweetStatus).to receive(:no_status_found?).with(error).and_return(true) }
-        it do
-          expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
-          expect(request).to receive(:increment!).with(:errors_count)
-          is_expected.to be_nil
-        end
+      it do
+        expect(described_class::ERROR_HANDLER).to receive(:call).with(error, request)
+        subject
       end
+    end
+  end
+end
 
-      context 'the error cannot be ignored' do
-        before { allow(TwitterApiStatus).to receive(:your_account_suspended?).with(error).and_return(true) }
-        it do
-          is_expected.to be_nil
-          expect(request.reload.stopped_at).to be_truthy
-        end
+RSpec.describe DeleteTweetWorker::ERROR_HANDLER do
+  let(:error) { RuntimeError.new('error') }
+  let(:request) { create(:delete_tweets_request, user_id: create(:user).id) }
+  subject { described_class.call(error, request) }
+
+  describe '#call' do
+    context '"no status found" error is raised' do
+      before { allow(TweetStatus).to receive(:no_status_found?).with(error).and_return(true) }
+
+      it do
+        expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
+        expect(request).to receive(:increment!).with(:errors_count)
+        subject
+        expect(request.reload.stopped_at).to be_falsey
+      end
+    end
+
+    context '"your account suspended" error is raised' do
+      let(:error) { RuntimeError.new('error') }
+      before { allow(TwitterApiStatus).to receive(:your_account_suspended?).with(error).and_return(true) }
+
+      it do
+        expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
+        expect(request).to receive(:update).with(stopped_at: instance_of(ActiveSupport::TimeWithZone)).and_call_original
+        expect(request).to receive(:increment!).with(:errors_count)
+        subject
+        expect(request.reload.stopped_at).to be_truthy
       end
     end
   end

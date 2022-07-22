@@ -43,21 +43,13 @@ RSpec.describe DeleteFavoriteWorker do
       end
     end
 
-    context 'error raised' do
+    context 'error is raised' do
       let(:error) { RuntimeError.new('error') }
       before { allow(client).to receive(:unfavorite!).and_raise(error) }
 
-      context 'the error can be ignored' do
-        before { allow(TweetStatus).to receive(:no_status_found?).with(error).and_return(true) }
-        it { is_expected.to be_nil }
-      end
-
-      context 'the error cannot be ignored' do
-        before { allow(TwitterApiStatus).to receive(:your_account_suspended?).with(error).and_return(true) }
-        it do
-          is_expected.to be_nil
-          expect(request.reload.stopped_at).to be_truthy
-        end
+      it do
+        expect(DeleteTweetWorker::ERROR_HANDLER).to receive(:call).with(error, request)
+        subject
       end
     end
   end
