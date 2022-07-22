@@ -45,6 +45,7 @@ module TwitterDB
     def to_a
       raise '#limit must be called before calling #to_a' unless @limit
 
+      @sort.threads(4) if @uids.size > 10000
       sorted_uids = @sort.apply(TwitterDB::User, @uids)
 
       if @last_uid && (index = sorted_uids.index(@last_uid))
