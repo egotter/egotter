@@ -22,38 +22,39 @@ module TwitterDB
     end
 
     def apply(query, uids)
-      query = sort(query, uids)
-      fetch(query, uids)
+      result = []
+      query = query.select(:uid, :friends_count, :followers_count, :statuses_count)
+      uids.reverse! if @value == VALUES[1]
+
+      uids.each_slice(@slice) do |partial_uids|
+        partial_query = query.where(uid: partial_uids)
+        if @value == VALUES[0] || @value == VALUES[1]
+          partial_query = partial_query.order_by_field(partial_uids)
+        end
+        result.concat(partial_query.to_a)
+      end
+
+      if @value == VALUES[0] || @value == VALUES[1]
+        # Do nothing
+      else
+        result.sort_by!(&sorter)
+      end
+
+      result.map(&:uid)
     end
 
-    def sort(query, uids)
+    def sorter
       case @value
-      when VALUES[0] then query.order_by_field(uids)
-      when VALUES[1] then query.order_by_field(uids.reverse)
-      when VALUES[2] then query.order(friends_count: :desc)
-      when VALUES[3] then query.order(friends_count: :asc)
-      when VALUES[4] then query.order(followers_count: :desc)
-      when VALUES[5] then query.order(followers_count: :asc)
-      when VALUES[6] then query.order(statuses_count: :desc)
-      when VALUES[7] then query.order(statuses_count: :asc)
+      when VALUES[0] then Proc.new {}
+      when VALUES[1] then Proc.new {}
+      when VALUES[2] then Proc.new { |record| -record.friends_count }
+      when VALUES[3] then Proc.new { |record| record.friends_count }
+      when VALUES[4] then Proc.new { |record| -record.followers_count }
+      when VALUES[5] then Proc.new { |record| record.followers_count }
+      when VALUES[6] then Proc.new { |record| -record.statuses_count }
+      when VALUES[7] then Proc.new { |record| record.statuses_count }
       else raise "Invalid sort value=#{@value}"
       end
-    end
-
-    def fetch(query, uids)
-      result = []
-      offset = 0
-
-      (uids.size / @slice + 1).times do
-        if (records = query.offset(offset).limit(@slice).pluck(:uid)).empty?
-          break
-        else
-          result.concat(records)
-          offset = result.size
-        end
-      end
-
-      result
     end
   end
 end
