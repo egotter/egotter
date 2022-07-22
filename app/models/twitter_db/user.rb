@@ -82,53 +82,7 @@ module TwitterDB
       end
     end
 
-    module QueryMethods
-      extend ActiveSupport::Concern
-
-      class_methods do
-        # TODO Set user_id
-        # This method makes the result unique.
-        def where_and_order_by_field(uids:, inactive: nil, slice_count: 1000, thread: true)
-          caller_name = (caller[0][/`([^']*)'/, 1] rescue '')
-
-          if thread && uids.size > slice_count
-            # TODO Experimental
-            result = Queue.new
-            Parallel.each_with_index(uids.uniq.each_slice(slice_count), in_threads: 2) do |uids_array, i|
-              result << [i, where_and_order_by_field_each_slice(uids_array, inactive, caller_name)]
-            end
-            result.size.times.map { result.pop }.sort_by { |i, _| i }.map(&:second).flatten
-          else
-            uids.uniq.each_slice(slice_count).map do |uids_array|
-              where_and_order_by_field_each_slice(uids_array, inactive, caller_name)
-            end.flatten
-          end
-        rescue ThreadError => e
-          if thread
-            Airbag.warn "#where_and_order_by_field: ThreadError is detected and retry without threads exception=#{e.inspect} thread=#{Thread.current.inspect}", backtrace: e.backtrace
-            thread = false
-            retry
-          else
-            raise
-          end
-        end
-
-        private
-
-        def where_and_order_by_field_each_slice(uids, inactive, caller_name = nil)
-          Rails.logger.silence do
-            records = where(uid: uids)
-            records = records.inactive_user if !inactive.nil? && inactive
-            records.order_by_field(uids).to_a
-          end
-        end
-      end
-
-      included do
-        scope :order_by_field, -> (uids) { order(Arel.sql("field(uid, #{uids.join(',')})")) }
-      end
-    end
-    include QueryMethods
+    scope :order_by_field, -> (uids) { order(Arel.sql("field(uid, #{uids.join(',')})")) }
 
     scope :active_period, -> (time) { where('status_created_at is null OR status_created_at > ?', time) }
     scope :active_2weeks, -> { active_period(2.weeks.ago) }
