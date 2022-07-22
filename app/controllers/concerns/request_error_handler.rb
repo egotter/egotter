@@ -12,7 +12,7 @@ module RequestErrorHandler
   private
 
   def handle_general_error(ex)
-    log_request_error(ex)
+    Airbag.exception ex, request_details
 
     if request.xhr?
       head :internal_server_error
@@ -22,7 +22,7 @@ module RequestErrorHandler
   end
 
   def handle_request_timeout(ex)
-    log_request_error(ex)
+    Airbag.exception ex, request_details
 
     if request.xhr?
       head :request_timeout
@@ -36,14 +36,6 @@ module RequestErrorHandler
       head :bad_request
     else
       redirect_to error_pages_csrf_error_path(via: current_via) unless performed?
-    end
-  end
-
-  def log_request_error(ex)
-    if Rails.env.production?
-      details = request_details.merge(backtrace: ex.backtrace)
-      message = "#{ex.inspect.truncate(200)}#{" caused by #{ex.inspect.truncate(200)}" if ex.cause} user_id=#{details[:user_id]} device_type=#{details[:device_type]}"
-      Airbag.warn message, details
     end
   end
 
