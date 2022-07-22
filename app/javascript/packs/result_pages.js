@@ -14,23 +14,8 @@ class Cache {
   }
 }
 
-class Fetcher {
-  fetch(url, params) {
-    var self = this;
-    return new Promise(function (resolve, reject) {
-      $.getJSON(url, params).done(function (res) {
-        logger.log(self.constructor.name, 'done', res);
-        resolve(res);
-      }).fail(function (xhr, textStatus, errorThrown) {
-        showErrorMessage(xhr, textStatus, errorThrown);
-        reject(xhr);
-      });
-    });
-  }
-}
-
 class FetchTask {
-  constructor(url, uid, options, callback) {
+  constructor(url, uid, options, callback, errCallback) {
     this.url = url;
     this.uid = uid;
     this.maxSequence = 0;
@@ -40,7 +25,9 @@ class FetchTask {
     this.loading = false;
     this.template = window.templates['userRectangle'];
     this.callback = callback;
+    this.errCallback = errCallback;
     this.cache = new Cache();
+    this.errorCount = 0;
   }
 
   reset(options) {
@@ -51,6 +38,33 @@ class FetchTask {
     }
     if ('filter' in options) {
       this.filter = options['filter'];
+    }
+  }
+
+  responseReceived(res) {
+    this.updateState(res);
+    var users = this.renderUsers(res);
+
+    if (this.callback) {
+      var state = {loaded: true, completed: this.maxSequence === -1};
+      this.callback(users, state);
+    }
+  }
+
+  errorReceived(xhr, textStatus, errorThrown) {
+    if (++this.errorCount <= 3) {
+      logger.log('Retry fetching', this.errorCount);
+      var self = this;
+      setTimeout(function () {
+        self.loading = false;
+        self.fetch();
+      }, 3000 * this.errorCount);
+    } else {
+      logger.log('Retry exhausted');
+      showErrorMessage(xhr, textStatus, errorThrown);
+      if (this.errCallback) {
+        this.errCallback();
+      }
     }
   }
 
@@ -72,29 +86,22 @@ class FetchTask {
       filter: this.filter,
     };
 
-    logger.log('fetch params', params);
+    logger.log('Start fetching params', params);
 
     var self = this;
-
-    var responseReceived = function (res) {
-      self.updateState(res);
-      var users = self.renderUsers(res);
-
-      if (self.callback) {
-        var state = {loaded: true, completed: self.maxSequence === -1};
-        self.callback(users, state);
-      }
-    };
 
     var res = this.cache.read(params);
     if (res) {
       logger.log('response[CACHE]', res);
-      responseReceived(res);
+      self.responseReceived(res);
     } else {
-      new Fetcher().fetch(this.url, params).then(function (res) {
-        logger.log('response', res);
+      $.getJSON(this.url, params).done(function (res) {
+        logger.log('Response received', res);
         self.cache.write(params, res);
-        responseReceived(res);
+        self.responseReceived(res);
+      }).fail(function (xhr, textStatus, errorThrown) {
+        logger.log('Error received');
+        self.errorReceived(xhr, textStatus, errorThrown);
       });
     }
   }
@@ -108,6 +115,7 @@ class FetchTask {
     }
 
     this.loading = false;
+    this.errorCount = 0;
   }
 
   renderUsers(res) {

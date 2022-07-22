@@ -8,6 +8,10 @@
   <%= t('.not_found') %>
 </div>
 
+<div id="description-for-error" style="display: none;">
+  <%= t('.error') %>
+</div>
+
 <div id="loading-placeholders">
   <% 3.times do %>
     <%= render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'} %>
@@ -81,8 +85,15 @@
     }
   }
 
+  var updateErrorView = function () {
+    $('#fetched-users').hide();
+    $('#loading-placeholders').hide();
+    $('#bottom-reached').hide();
+    $('#description-for-error').show();
+  }
+
   $(function () {
-    var task = new FetchTask(url, uid, params, updateView);
+    var task = new FetchTask(url, uid, params, updateView, updateErrorView);
     task.fetch();
 
     if (signedIn) {

@@ -11,7 +11,9 @@ function extractErrorMessage(xhr, textStatus, errorThrown) {
   }
   if (!message) {
     if (errorThrown === 'Forbidden') {
-      message = '<%= I18n.t('js.messages.forbidden') %>' + xhr.status;
+      message = '<%= I18n.t('js.messages.forbidden') %>' + '(' + errorThrown + ')';
+    } else if (errorThrown === 'Request Timeout') {
+      message = '<%= I18n.t('js.messages.timeout') %>' + '(' + errorThrown + ')';
     } else {
       message = xhr.status + ' (' + errorThrown + ')';
       logger.warn('Set default error message', message);

@@ -2107,6 +2107,7 @@ ja:
       loading_follow_html: 'フォロー履歴を確認中です。<img src="/ajax-loader.gif?a=1">'
     users_section:
       not_found: "指定された条件での検索結果は0件でした。"
+      error: '一時的なエラーが起きました。ページを再読み込みしてください。'
       need_click: '続きを読み込むには「もっと見る」をクリックしてください。'
       need_purchase: '%{count}人 以上の結果を見るには有料プランの購入が必要です。'
       see_more: "もっと見る"
@@ -2667,7 +2668,8 @@ ja:
     already_have_valid_subscription: '有料プランを購入済みです。'
   js:
     messages:
-      forbidden: 'ページを再読込してください。'
+      forbidden: '一時的なエラーが起きました。ページを再読込してください。'
+      timeout: '一時的なエラーが起きました。ページを再読込してください。'
   dm:
     searchNotification:
       relationship:

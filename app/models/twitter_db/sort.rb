@@ -15,6 +15,7 @@ module TwitterDB
       @value = value && VALUES.include?(value) ? value : VALUES[0]
       @slice = 1000
       @threads = 0
+      @timeout = 5
     end
 
     def slice(value)
@@ -27,7 +28,12 @@ module TwitterDB
       self
     end
 
+    def timeout?
+      @start_time && @timeout && Time.zone.now - @start_time > @timeout
+    end
+
     def apply(model, uids)
+      @start_time = Time.zone.now
       query = model.select(:uid, :friends_count, :followers_count, :statuses_count)
       queries = []
       uids.reverse! if @value == VALUES[1]
@@ -58,6 +64,8 @@ module TwitterDB
       end
 
       result.map(&:uid)
+    ensure
+      @start_time = nil
     end
 
     def work_in_threads(queries, count)
@@ -69,7 +77,10 @@ module TwitterDB
     end
 
     def work_direct(queries)
-      queries.map(&:to_a).flatten
+      queries.map do |q|
+        raise TimeoutError.new("timeout=#{@timeout} waited=#{Time.zone.now - @start_time}") if timeout?
+        q.to_a
+      end.flatten
     end
 
     def sorter
@@ -84,6 +95,9 @@ module TwitterDB
       when VALUES[7] then Proc.new { |record| record.statuses_count }
       else raise "Invalid sort value=#{@value}"
       end
+    end
+
+    class TimeoutError < StandardError
     end
   end
 end
