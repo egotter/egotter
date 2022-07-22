@@ -3,7 +3,8 @@ Rails.application.reloader.to_prepare do
 
   Airbag.broadcast do |level, raw_message, message, props, ctx|
     if level > Logger::INFO
-      SendMessageToSlackWorker.perform_async(:airbag, message.truncate(1000))
+      channel = Rails.env.production? ? :airbag : :airbag_dev
+      SendMessageToSlackWorker.perform_async(channel, message.truncate(1000))
     end
   rescue => e
   end
