@@ -52,7 +52,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::CloseFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
+      Airbag.info "Fetch records from outdated table method=#{__method__} uid=#{uid} created=#{created_at.to_s}"
       CloseFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -61,7 +61,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::FavoriteFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
+      Airbag.info "Fetch records from outdated table method=#{__method__} uid=#{uid} created=#{created_at.to_s}"
       FavoriteFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -70,7 +70,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::MutualFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
+      Airbag.info "Fetch records from outdated table method=#{__method__} uid=#{uid} created=#{created_at.to_s}"
       MutualFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -79,7 +79,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::OneSidedFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
+      Airbag.info "Fetch records from outdated table method=#{__method__} uid=#{uid} created=#{created_at.to_s}"
       OneSidedFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -88,7 +88,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::OneSidedFollowership.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
+      Airbag.info "Fetch records from outdated table method=#{__method__} uid=#{uid} created=#{created_at.to_s}"
       OneSidedFollowership.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -97,7 +97,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::InactiveFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
+      Airbag.info "Fetch records from outdated table method=#{__method__} uid=#{uid} created=#{created_at.to_s}"
       InactiveFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -106,7 +106,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::InactiveFollowership.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
+      Airbag.info "Fetch records from outdated table method=#{__method__} uid=#{uid} created=#{created_at.to_s}"
       InactiveFollowership.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -115,7 +115,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::InactiveMutualFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
+      Airbag.info "Fetch records from outdated table method=#{__method__} uid=#{uid} created=#{created_at.to_s}"
       InactiveMutualFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -124,7 +124,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::MutualUnfriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
+      Airbag.info "Fetch records from outdated table method=#{__method__} uid=#{uid} created=#{created_at.to_s}"
       BlockFriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -133,7 +133,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::Unfriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
+      Airbag.info "Fetch records from outdated table method=#{__method__} uid=#{uid} created=#{created_at.to_s}"
       Unfriendship.where(from_uid: uid).order(sequence: :asc)
     end
   end
@@ -142,7 +142,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::Unfollowership.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info "#{__method__}: Fetch records from outdated table uid=#{uid}"
+      Airbag.info "Fetch records from outdated table method=#{__method__} uid=#{uid} created=#{created_at.to_s}"
       Unfollowership.where(from_uid: uid).order(sequence: :asc)
     end
   end
