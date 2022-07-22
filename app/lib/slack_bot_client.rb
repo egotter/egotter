@@ -12,12 +12,20 @@ class SlackBotClient
     end
   end
 
+  def channel
+    @client.conversations_list.channels.find { |c| c.name == @channel.slice(1..-1) }
+  end
+
+  def messages
+    @client.conversations_history(channel: channel.id).messages
+  end
+
+  def delete_message(ts)
+    @client.chat_delete(channel: channel.id, ts: ts)
+  end
+
   def post_message(text, options = {})
-    response = @client.chat_postMessage({channel: @channel, text: text}.merge(options))
-    # begin
-    #   SlackMessage.create(channel: @channel, message: text, properties: {response: response.slice('channel', 'ts')})
-    # rescue => e
-    # end
+    @client.chat_postMessage({channel: @channel, text: text}.merge(options))
   end
 
   def post_context_message(text, screen_name, icon_url, urls)
