@@ -62,12 +62,12 @@ module TwitterDB
 
         result.concat(query.to_a)
 
-        if result.slice(@offset..-1).size >= @limit
+        if result.slice(@offset..-1).to_a.size >= @limit
           break
         end
       end
 
-      result.slice(@offset..-1).take(@limit)
+      result.slice(@offset..-1).to_a.take(@limit)
     end
 
     def result
