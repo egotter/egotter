@@ -10,10 +10,6 @@ module Api
         [uids, size]
       end
 
-      def list_users
-        @twitter_user.one_sided_followers(limit: api_list_users_limit)
-      end
-
       def list_uids
         @twitter_user.one_sided_follower_uids
       end

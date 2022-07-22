@@ -18,10 +18,6 @@ module Api
         [uids, size]
       end
 
-      def list_users
-        @twitter_user.close_friends
-      end
-
       def list_uids
         @twitter_user.close_friend_uids
       end

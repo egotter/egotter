@@ -14,10 +14,6 @@ module Api
         [uids.take(limit), uids.size]
       end
 
-      def list_users
-        @twitter_user.blockers(limit: api_list_users_limit)
-      end
-
       def list_uids
         @twitter_user.blocker_uids
       end

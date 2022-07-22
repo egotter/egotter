@@ -12,14 +12,6 @@ module Api
         [uids.take(limit), uids.size]
       end
 
-      def list_users
-        if user_signed_in? && current_user.twitter_user
-          @twitter_user.common_followers(current_user.twitter_user)
-        else
-          []
-        end
-      end
-
       def list_uids
         if user_signed_in? && current_user.twitter_user
           @twitter_user.common_follower_uids(current_user.twitter_user)

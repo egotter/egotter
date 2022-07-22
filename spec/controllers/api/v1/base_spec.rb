@@ -5,9 +5,6 @@ RSpec.describe Api::V1::Base, type: :controller do
     def summary_uids
     end
 
-    def list_users
-    end
-
     def list_uids
     end
   end

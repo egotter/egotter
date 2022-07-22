@@ -10,10 +10,6 @@ module Api
         [uids, size]
       end
 
-      def list_users
-        @twitter_user.inactive_friends(limit: api_list_users_limit)
-      end
-
       def list_uids
         @twitter_user.inactive_friend_uids
       end

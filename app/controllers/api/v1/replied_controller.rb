@@ -9,10 +9,6 @@ module Api
         [uids.take(limit), uids.size]
       end
 
-      def list_users
-        @twitter_user.replied(login_user: current_user)
-      end
-
       def list_uids
         @twitter_user.replied_uids(login_user: current_user)
       end

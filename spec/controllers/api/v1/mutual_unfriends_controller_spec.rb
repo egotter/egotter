@@ -22,17 +22,12 @@ RSpec.describe Api::V1::MutualUnfriendsController, type: :controller do
     end
   end
 
-  describe '#list_users' do
+  describe '#list_uids' do
     let(:uids) { [1, 2, 2] }
-    subject { controller.send(:list_users) }
-    before do
-      create(:twitter_db_user, uid: uids[0])
-      create(:twitter_db_user, uid: uids[1])
-    end
+    subject { controller.send(:list_uids) }
     it do
       expect(twitter_user).to receive(:mutual_unfriend_uids).and_return(uids)
-      result = subject
-      expect(result.map(&:uid)).to eq(uids)
+      is_expected.to eq(uids)
     end
   end
 end
