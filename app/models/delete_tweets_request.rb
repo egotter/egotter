@@ -166,6 +166,10 @@ class DeleteTweetsRequest < ApplicationRecord
     update(last_tweet: tweets.last.id)
   end
 
+  def too_many_errors?
+    reservations_count > 100 && errors_count > 10 && errors_count > reservations_count / 10
+  end
+
   def exception_handler(e, last_method = nil)
     if e.is_a?(Error)
       raise e

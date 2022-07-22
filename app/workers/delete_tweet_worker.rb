@@ -59,6 +59,8 @@ class DeleteTweetWorker
         TweetStatus.temporarily_locked?(e) ||
         TwitterApiStatus.might_be_automated?(e)
       request.update(stopped_at: Time.zone.now)
+    elsif request.respond_to?(:too_many_errors?) && request.too_many_errors?
+      request.update(stopped_at: Time.zone.now)
     else
       raise e
     end
