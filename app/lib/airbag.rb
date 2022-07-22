@@ -24,7 +24,7 @@ class Airbag
   end
 
   def exception(e, props = {})
-    message = "#{e.inspect.truncate(200)}#{' ' + format_hash(props) if props.any?}"
+    message = "#{format_exception(e)}#{' ' + format_hash(props) if props.any?}"
     log(::Logger::ERROR, message, props.merge(backtrace: e.backtrace))
   end
 
@@ -87,6 +87,10 @@ class Airbag
     end
   rescue => e
     {}
+  end
+
+  def format_exception(e)
+    "#{e.inspect.truncate(200)}#{" caused by #{e.inspect.truncate(200)}" if e.cause}"
   end
 
   def format_message(level, message, context)
