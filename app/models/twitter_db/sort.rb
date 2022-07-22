@@ -18,6 +18,7 @@ module TwitterDB
 
     def slice(value)
       @slice = value.to_i
+      self
     end
 
     def apply(query, uids)
