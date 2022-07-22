@@ -13,6 +13,11 @@ module TwitterDB
 
     def initialize(value = nil)
       @value = value && VALUES.include?(value) ? value : VALUES[0]
+      @slice = 1000
+    end
+
+    def slice(value)
+      @slice = value.to_i
     end
 
     def apply(query, uids)
@@ -37,10 +42,9 @@ module TwitterDB
     def fetch(query, uids)
       result = []
       offset = 0
-      slice = 1000
 
-      (uids.size / slice + 1).times do
-        if (records = query.offset(offset).limit(slice).pluck(:uid)).empty?
+      (uids.size / @slice + 1).times do
+        if (records = query.offset(offset).limit(@slice).pluck(:uid)).empty?
           break
         else
           result.concat(records)
