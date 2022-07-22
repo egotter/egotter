@@ -17,7 +17,21 @@ class SlackBotClient
   end
 
   def messages(count: 100)
-    @client.conversations_history(channel: channel.id, count: count).messages
+    collection = []
+    options = {channel: channel.id, count: 100}
+
+    while collection.size < count
+      response = @client.conversations_history(options)
+
+      if response.messages.empty?
+        break
+      end
+
+      collection.concat(response.messages)
+      options[:cursor] = response.next_cursor
+    end
+
+    collection.take(count)
   end
 
   def delete_message(ts)
