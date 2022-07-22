@@ -7,6 +7,9 @@ RSpec.describe Api::V1::Base, type: :controller do
 
     def list_users
     end
+
+    def list_uids
+    end
   end
 
   describe 'GET #summary' do

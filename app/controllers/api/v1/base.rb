@@ -30,15 +30,20 @@ module Api
       end
 
       def list
-        paginator = Paginator.new(list_users).
-            max_sequence(params[:max_sequence]).
-            limit(params[:limit]).
-            sort_order(params[:sort_order]).
-            filter(params[:filter]).
-            paginate
+        if params[:max_sequence].to_i + 1 >= api_list_users_limit
+          render json: {name: controller_name, max_sequence: -1, limit: 0, users: []}
+          return
+        end
 
-        candidate_uids = paginator.users.map(&:uid)
-        users = TwitterDB::User.order_by_field(candidate_uids).where(uid: candidate_uids)
+        proxy = TwitterDB::Proxy.new(list_uids).
+            slice(10).
+            offset(params[:max_sequence]).
+            limit([params[:limit].to_i, 10].min).
+            sort(params[:sort_order]).
+            filter(params[:filter])
+        result = proxy.result
+        users = result[:users]
+        candidate_uids = users.map(&:uid)
 
         if remove_related_page? && candidate_uids.any? && candidate_uids.size != users.size
           users = users.index_by(&:uid)
@@ -50,14 +55,14 @@ module Api
         end
 
         options = {}
-        options[:suspended_uids] = collect_suspended_uids(request_context_client, paginator.users.map(&:uid)) if remove_related_page?
+        options[:suspended_uids] = collect_suspended_uids(request_context_client, users.map(&:uid)) if remove_related_page?
         options[:blocking_uids] = current_user_blocking_uids if remove_related_page?
         options[:friend_uids] = current_user_friend_uids if unfriend_related_page?
         options[:follower_uids] = current_user_follower_uids if unfollower_related_page?
 
         users = to_list_hash(users, params[:max_sequence].to_i + 1, options)
 
-        render json: {name: controller_name, max_sequence: paginator.max_sequence, limit: paginator.limit, users: users}
+        render json: {name: controller_name, max_sequence: result[:offset] + users.size - 1, limit: result[:limit], users: users}
       end
 
       private

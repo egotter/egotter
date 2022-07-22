@@ -48,12 +48,15 @@
   var via = '<%= current_via('users_section') %>';
 
   var resetView = function () {
+    logger.log('resetView called');
     $('#fetched-users').empty();
     $('#loading-placeholders').show();
+    $('#bottom-reached').show();
+    $('#need-purchase-description').hide();
   }
 
   var updateView = function (users, state) {
-    logger.log('task.fetch', state);
+    logger.log('updateView called', state);
 
     $('#loading-placeholders').hide();
     var $users = $('#fetched-users');
@@ -71,7 +74,7 @@
     }
 
     if (state.completed) {
-      $('#bottom-reached').off('appear').remove();
+      $('#bottom-reached').hide();
       $('#need-purchase-description').show();
     } else if (state.loaded) {
       $('#bottom-reached').find('img').hide();

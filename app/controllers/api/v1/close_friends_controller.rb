@@ -21,6 +21,10 @@ module Api
       def list_users
         @twitter_user.close_friends
       end
+
+      def list_uids
+        @twitter_user.close_friend_uids
+      end
     end
   end
 end

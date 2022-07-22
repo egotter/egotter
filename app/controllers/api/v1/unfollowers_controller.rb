@@ -16,6 +16,10 @@ module Api
         users = users.index_by(&:uid)
         uids.map { |uid| users[uid] }.compact
       end
+
+      def list_uids
+        @twitter_user.unfollower_uids
+      end
     end
   end
 end

@@ -19,6 +19,14 @@ module Api
           []
         end
       end
+
+      def list_uids
+        if user_signed_in? && current_user.twitter_user
+          @twitter_user.common_follower_uids(current_user.twitter_user)
+        else
+          []
+        end
+      end
     end
   end
 end

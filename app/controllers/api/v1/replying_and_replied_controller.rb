@@ -12,6 +12,10 @@ module Api
       def list_users
         @twitter_user.replying_and_replied(login_user: current_user)
       end
+
+      def list_uids
+        @twitter_user.replying_and_replied_uids(login_user: current_user)
+      end
     end
   end
 end

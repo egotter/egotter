@@ -13,6 +13,10 @@ module Api
       def list_users
         @twitter_user.one_sided_friends(limit: api_list_users_limit)
       end
+
+      def list_uids
+        @twitter_user.one_sided_friend_uids
+      end
     end
   end
 end

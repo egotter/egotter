@@ -12,6 +12,10 @@ module Api
       def list_users
         @twitter_user.replying
       end
+
+      def list_uids
+        @twitter_user.replying_uids
+      end
     end
   end
 end
