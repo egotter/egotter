@@ -500,7 +500,6 @@ DEPENDENCIES
   natto
   oj
   omniauth-twitter
-  parallel
   puma (~> 5.0)
   rack-timeout
   rack-user_agent

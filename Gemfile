@@ -51,7 +51,6 @@ end
 gem 'jquery-rails'
 gem 'hashie'
 gem 'twitter', github: 'egotter/twitter'
-gem 'parallel'
 gem 'activerecord-import'
 gem 'rack-timeout'
 gem 'meta-tags'
