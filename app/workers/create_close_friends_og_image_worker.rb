@@ -43,7 +43,7 @@ class CreateCloseFriendsOgImageWorker
     @generator.generate(friends)
 
   rescue => e
-    Airbag.warn "#{e.inspect.truncate(100)} uid=#{uid} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, uid: uid, options: options
   ensure
     @generator&.cleanup
   end

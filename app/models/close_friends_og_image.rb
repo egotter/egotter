@@ -57,7 +57,7 @@ class CloseFriendsOgImage < ApplicationRecord
 
   class Generator
 
-    OG_IMAGE_IMAGEMAGICK = "env OMP_NUM_THREADS=1 MAGICK_THREAD_LIMIT=1 #{ENV['OG_IMAGE_IMAGEMAGICK']}"
+    OG_IMAGE_IMAGEMAGICK_BIN = ENV['OG_IMAGE_IMAGEMAGICK']
     OG_IMAGE_OUTLINE = Rails.root.join('app/views/og_images/egotter_og_outline_840x450.png')
     OG_IMAGE_HEART = Rails.root.join('app/views/og_images/heart_300x350.svg.erb').read
     OG_IMAGE_RECT = Rails.root.join('app/views/og_images/pink_48x48.gif')
@@ -107,13 +107,21 @@ class CloseFriendsOgImage < ApplicationRecord
     private
 
     def write_text_to_image(text, outfile)
-      system(%Q(#{OG_IMAGE_IMAGEMAGICK} #{OG_IMAGE_OUTLINE} -font "#{OG_IMAGE_FONT}" -fill black -pointsize 24 -interline-spacing 20 -annotate +50+120 "#{text}" #{outfile}))
+      if File.exists?(OG_IMAGE_IMAGEMAGICK_BIN)
+        system(%Q(env OMP_NUM_THREADS=1 MAGICK_THREAD_LIMIT=1 #{OG_IMAGE_IMAGEMAGICK_BIN} #{OG_IMAGE_OUTLINE} -font "#{OG_IMAGE_FONT}" -fill black -pointsize 24 -interline-spacing 20 -annotate +50+120 "#{text}" #{outfile}))
+      else
+        raise "#{OG_IMAGE_IMAGEMAGICK_BIN} is not found"
+      end
     end
 
     def composite_images(heart, outfile)
-      Tempfile.open(['heart', '.svg']) do |f|
-        f.write heart
-        system(%Q(#{OG_IMAGE_IMAGEMAGICK} #{outfile} #{f.path} -gravity center -geometry +200+0 -composite #{outfile}))
+      if File.exists?(OG_IMAGE_IMAGEMAGICK_BIN)
+        Tempfile.open(['heart', '.svg']) do |f|
+          f.write heart
+          system(%Q(env OMP_NUM_THREADS=1 MAGICK_THREAD_LIMIT=1 #{OG_IMAGE_IMAGEMAGICK_BIN} #{outfile} #{f.path} -gravity center -geometry +200+0 -composite #{outfile}))
+        end
+      else
+        raise "#{OG_IMAGE_IMAGEMAGICK_BIN} is not found"
       end
     end
 
@@ -189,17 +197,22 @@ class CloseFriendsOgImage < ApplicationRecord
 
     def load
       # dir_path # Create a dir
-      queue = Queue.new
+      result = []
 
-      Parallel.each(@urls, in_threads: @concurrency) do |url|
-        data = benchmark("load image uid=#{@uid} url=#{url}") { url2base64(url) }
-        queue << [url, data]
-      rescue => e
-        Rails.logger.debug { "#{self.class}##{__method__}: open url failed url=#{url} exception=#{e.inspect}" }
-        queue << [url, nil]
+      @urls.each_slice(@concurrency) do |group|
+        threads = group.map do |url|
+          Thread.new(url) do |u|
+            [u, url2base64(u)]
+          rescue => e
+            nil
+          end
+        end
+
+        threads.each(&:join)
+        result.concat(threads.map(&:value).compact)
       end
 
-      queue.size.times.map { queue.pop }.to_h
+      result.to_h
     end
 
     class << self
