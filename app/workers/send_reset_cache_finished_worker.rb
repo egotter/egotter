@@ -7,7 +7,6 @@ class SendResetCacheFinishedWorker
     request = ResetCacheRequest.find(request_id)
     SendMessageToSlackWorker.perform_async(:monit_reset_cache, "`Finished` #{request.to_message}")
   rescue => e
-    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}", backtrace: e.backtrace
   end
 end

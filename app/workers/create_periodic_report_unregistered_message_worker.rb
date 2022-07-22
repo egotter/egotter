@@ -23,8 +23,7 @@ class CreatePeriodicReportUnregisteredMessageWorker
     User.egotter.api_client.send_report(uid, message, buttons)
   rescue => e
     unless ignorable_report_error?(e)
-      Airbag.warn "#{e.inspect} uid=#{uid} options=#{options}"
-      Airbag.info e.backtrace.join("\n")
+      Airbag.warn "#{e.inspect} uid=#{uid} options=#{options}", backtrace: e.backtrace
     end
   end
 end

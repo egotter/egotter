@@ -44,8 +44,7 @@ class AppStatsController < ApplicationController
 
     {categories: categories, series: series}
   rescue => e
-    Airbag.warn "#{__method__}: #{e.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "#{__method__}: #{e.inspect}", backtrace: e.backtrace
     {error: e.inspect}
   end
 

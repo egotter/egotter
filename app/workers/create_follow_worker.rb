@@ -45,8 +45,7 @@ class CreateFollowWorker
     Airbag.warn "Don't care. #{e.inspect} request_id=#{request_id} options=#{options}"
 
   rescue => e
-    Airbag.warn "Don't retry. #{e.inspect} request_id=#{request_id} options=#{options} #{"Caused by #{e.cause.inspect}" if e.cause}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "Don't retry. #{e.inspect} request_id=#{request_id} options=#{options} #{"Caused by #{e.cause.inspect}" if e.cause}", backtrace: e.backtrace
   end
 
   # Requests / 24-hour window: 400 per user; 1000 per app

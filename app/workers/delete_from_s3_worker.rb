@@ -22,7 +22,6 @@ class DeleteFromS3Worker
 
     client.delete_object(request_options)
   rescue => e
-    Airbag.warn "#{e.class}: #{e.message.truncate(100)} #{params.inspect} #{options.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "#{e.class}: #{e.message.truncate(100)} #{params.inspect} #{options.inspect}", backtrace: e.backtrace
   end
 end

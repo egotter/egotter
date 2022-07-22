@@ -69,8 +69,7 @@ module TwitterHelper
     end
     TwitterTextAutoLink.auto_link(text, username_include_symbol: true, link_attribute_block: link_attribute_block, link_text_block: link_text_block).html_safe
   rescue => e
-    Airbag.warn "linkify error: #{e.inspect} text=#{text}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "linkify error: #{e.inspect} text=#{text}", backtrace: e.backtrace
     text
   end
 

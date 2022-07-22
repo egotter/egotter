@@ -28,7 +28,6 @@ class ImportMutingRelationshipsWorker
       end
     end
   rescue => e
-    Airbag.warn "#{e.inspect.truncate(200)} user_id=#{user_id} options=#{options.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.exception e, user_id: user_id, options: options
   end
 end

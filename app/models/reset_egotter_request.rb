@@ -56,8 +56,7 @@ class ResetEgotterRequest < ApplicationRecord
         DirectMessageStatus.you_have_blocked?(e)
       # Do nothing
     else
-      Airbag.warn "#{self.class}##{__method__}: #{e.inspect} request_id=#{id} user_id=#{user_id}"
-      Airbag.info e.backtrace.join("\n")
+      Airbag.warn "#{self.class}##{__method__}: #{e.inspect} request_id=#{id} user_id=#{user_id}", backtrace: e.backtrace
     end
   end
 

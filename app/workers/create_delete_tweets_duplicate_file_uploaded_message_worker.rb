@@ -22,7 +22,6 @@ class CreateDeleteTweetsDuplicateFileUploadedMessageWorker
 
     DeleteTweetsReport.duplicate_file_uploaded_message(user).deliver!
   rescue => e
-    Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}", backtrace: e.backtrace
   end
 end

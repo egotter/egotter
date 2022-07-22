@@ -25,8 +25,7 @@ class CreatePeriodicReportUnauthorizedMessageWorker
     User.egotter.api_client.send_report(user.uid, message, buttons)
   rescue => e
     unless ignorable_report_error?(e)
-      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options}"
-      Airbag.info e.backtrace.join("\n")
+      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options}", backtrace: e.backtrace
     end
   end
 end

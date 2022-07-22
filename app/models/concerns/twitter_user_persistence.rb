@@ -28,8 +28,7 @@ module TwitterUserPersistence
   def perform_before_commit
     InMemory::TwitterUser.import_from(id, uid, screen_name, profile_text, copied_friend_uids, copied_follower_uids)
   rescue => e
-    Airbag.warn "#{__method__}: #{e.class} #{e.message.truncate(120)} twitter_user=#{self.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "#{__method__}: #{e.class} #{e.message.truncate(120)} twitter_user=#{self.inspect}", backtrace: e.backtrace
     raise ActiveRecord::Rollback
   end
 

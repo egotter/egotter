@@ -42,8 +42,7 @@ class CreateTwitterUserOneSidedFriendsWorker
 
     DeleteOneSidedFriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
-    Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}", backtrace: e.backtrace
   end
 
   private

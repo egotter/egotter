@@ -24,8 +24,7 @@ class CreateDeleteTweetsUploadCompletedMessageWorker
 
     send_message(user, options)
   rescue => e
-    Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}", backtrace: e.backtrace
   end
 
   private

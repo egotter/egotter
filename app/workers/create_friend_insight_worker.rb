@@ -21,7 +21,6 @@ class CreateFriendInsightWorker
       FriendInsight.builder(uid).build&.save!
     end
   rescue => e
-    Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}", backtrace: e.backtrace
   end
 end

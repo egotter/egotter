@@ -10,8 +10,7 @@ class SendReceivedMessageWorker
     return if ignore?(options['text'])
     send_message(sender_uid, options['text'])
   rescue => e
-    Airbag.warn "#{e.inspect} sender_uid=#{sender_uid} options=#{options.inspect}"
-    Airbag.info e.backtrace.join("\n")
+    Airbag.warn "#{e.inspect} sender_uid=#{sender_uid} options=#{options.inspect}", backtrace: e.backtrace
   end
 
   QUICK_REPLIES = [
