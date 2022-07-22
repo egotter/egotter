@@ -129,6 +129,34 @@ module TwitterDB
     end
     include QueryMethods
 
+    scope :active_period, -> (time) { where('status_created_at is null OR status_created_at > ?', time) }
+    scope :active_2weeks, -> { active_period(2.weeks.ago) }
+
+    scope :inactive_period, -> (time) { where('status_created_at < ?', time) }
+    scope :inactive_2weeks, -> { inactive_period(2.weeks.ago) }
+    scope :inactive_1month, -> { inactive_period(1.month.ago) }
+    scope :inactive_3months, -> { inactive_period(3.months.ago) }
+    scope :inactive_6months, -> { inactive_period(6.months.ago) }
+    scope :inactive_1year, -> { inactive_period(1.year.ago) }
+
+    scope :protected_account, -> { where(protected: true) }
+    scope :verified_account, -> { where(verified: true) }
+    scope :has_more_friends, -> { where('friends_count > followers_count') }
+    scope :has_more_followers, -> { where('followers_count > friends_count') }
+
+    scope :investor, -> { where('description regexp ?', TwitterUserDecorator::INVESTOR_STR) }
+    scope :engineer, -> { where('description regexp ?', TwitterUserDecorator::ENGINEER_STR) }
+    scope :designer, -> { where('description regexp ?', TwitterUserDecorator::DESIGNER_STR) }
+    scope :bikini_model, -> { where('description regexp ?', TwitterUserDecorator::BIKINIMODEL_STR) }
+    scope :fashion_model, -> { where('description regexp ?', TwitterUserDecorator::FASHION_MODEL_STR) }
+    scope :pop_idol, -> { where('description regexp ?', TwitterUserDecorator::POP_IDOL_STR) }
+    scope :too_emotional, -> { where('description regexp ?', TwitterUserDecorator::TOO_EMOTIONAL_STR) }
+
+    scope :has_instagram, -> { where('description regexp "instagram\.com" OR url regexp "instagram\.com"') }
+    scope :has_tiktok, -> { where('description regexp "tiktok\.com" OR url regexp "tiktok\.com"') }
+    scope :secret_account, -> { where('description regexp ?', TwitterUserDecorator::SECRET_ACCOUNT_STR) }
+    scope :adult_account, -> { where('description regexp ?', TwitterUserDecorator::ADULT_ACCOUNT_STR) }
+
     module Builder
       extend ActiveSupport::Concern
 

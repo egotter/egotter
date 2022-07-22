@@ -95,32 +95,46 @@ class TwitterUserDecorator < ApplicationDecorator
     description.present?
   end
 
+  INVESTOR_STR = '投資|Founder|ベンチャーキャピタル|VC|アーリーステージ|インキュベータ|インキュベーション'
+
   def investor?
-    description&.match?(/投資|Founder|ベンチャーキャピタル|VC|アーリーステージ|インキュベータ|インキュベーション/)
+    description&.match?(Regexp.new(INVESTOR_STR))
   end
+
+  ENGINEER_STR = '([Ee])ngineer|エンジニア|開発者|Python|Ruby|Golang|Java'
 
   def engineer?
-    description&.match?(/([Ee])ngineer|エンジニア|開発者|Python|Ruby|Golang|Java/)
+    description&.match?(Regexp.new(ENGINEER_STR))
   end
+
+  DESIGNER_STR = '([Dd])esigner|デザイナ|イラストレータ'
 
   def designer?
-    description&.match?(/([Dd])esigner|デザイナ|イラストレータ/)
+    description&.match?(Regexp.new(DESIGNER_STR))
   end
+
+  BIKINIMODEL_STR = 'グラビア'
 
   def bikini_model?
-    description&.match?(/グラビア/)
+    description&.match?(Regexp.new(BIKINIMODEL_STR))
   end
+
+  FASHION_MODEL_STR = 'モデル'
 
   def fashion_model?
-    description&.match?(/モデル/)
+    description&.match?(Regexp.new(FASHION_MODEL_STR))
   end
+
+  TOO_EMOTIONAL_STR = '精神疾患|自傷行為|障害年金\d級|精神\d級|発達障害|人格障害|双極|統失|セルフネグレクト|病み垢'
 
   def too_emotional?
-    description&.match?(/精神疾患|自傷行為|障害年金\d級|精神\d級|発達障害|人格障害|双極|統失|セルフネグレクト|病み垢/)
+    description&.match?(Regexp.new(TOO_EMOTIONAL_STR))
   end
 
+  POP_IDOL_STR = 'アイドル'
+
   def pop_idol?
-    description&.match?(/アイドル/)
+    description&.match?(Regexp.new(POP_IDOL_STR))
   end
 
   def has_instagram?
@@ -131,14 +145,18 @@ class TwitterUserDecorator < ApplicationDecorator
     description&.include?('tiktok.com') || url&.include?('tiktok.com')
   end
 
+  SECRET_ACCOUNT_STR = '(裏|サブ)(垢|アカ)'
+
   def has_secret_account?
-    description&.match?(/(裏|サブ)(垢|アカ)/)
+    description&.match?(Regexp.new(SECRET_ACCOUNT_STR))
   end
 
-  ADULT_ACCOUNT_REGEXP = Regexp.new(File.read(Rails.root.join('config/adult_ng_words.txt')).split("\n").uniq.join('|'))
+  ADULT_ACCOUNT_STR = File.read(Rails.root.join('config/adult_ng_words.txt')).split("\n").uniq.join('|')
+  ADULT_ACCOUNT_REGEXP = Regexp.new(ADULT_ACCOUNT_STR)
 
   def adult_account?
-    name&.match?(ADULT_ACCOUNT_REGEXP) || description&.match?(ADULT_ACCOUNT_REGEXP) || location&.match?(ADULT_ACCOUNT_REGEXP)
+    regexp = Regexp.new(ADULT_ACCOUNT_STR)
+    name&.match?(regexp) || description&.match?(regexp) || location&.match?(regexp)
   end
 
   def can_see_adult_account?
@@ -222,7 +240,6 @@ class TwitterUserDecorator < ApplicationDecorator
       h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.blocked') }
     end
   end
-
 
   def inactive_2weeks_label
     if !suspended? && inactive_2weeks?
