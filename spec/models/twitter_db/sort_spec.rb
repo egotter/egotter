@@ -53,4 +53,18 @@ RSpec.describe TwitterDB::Sort, type: :model do
       it { is_expected.to eq([3, 1, 2]) }
     end
   end
+
+  describe '#work_in_threads' do
+    let(:instance) { described_class.new(nil) }
+    let(:queries) { 1000.times.map { |n| [n] } }
+    subject { instance.work_in_threads(queries, 10) }
+    it { is_expected.to eq(queries.flatten) }
+  end
+
+  describe '#work_direct' do
+    let(:instance) { described_class.new(nil) }
+    let(:queries) { 1000.times.map { |n| [n] } }
+    subject { instance.work_direct(queries) }
+    it { is_expected.to eq(queries.flatten) }
+  end
 end

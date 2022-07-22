@@ -14,6 +14,7 @@ module TwitterDB
     def initialize(value = nil)
       @value = value && VALUES.include?(value) ? value : VALUES[0]
       @slice = 1000
+      @threads = 0
     end
 
     def slice(value)
@@ -21,17 +22,33 @@ module TwitterDB
       self
     end
 
+    def threads(value)
+      @threads = value.to_i
+      self
+    end
+
     def apply(query, uids)
-      result = []
       query = query.select(:uid, :friends_count, :followers_count, :statuses_count)
+      queries = []
       uids.reverse! if @value == VALUES[1]
 
-      uids.each_slice(@slice) do |partial_uids|
-        partial_query = query.where(uid: partial_uids)
+      uids.each_slice(@slice) do |group|
+        q = query.where(uid: group)
         if @value == VALUES[0] || @value == VALUES[1]
-          partial_query = partial_query.order_by_field(partial_uids)
+          q = q.order_by_field(group)
         end
-        result.concat(partial_query.to_a)
+        queries << q
+      end
+
+      if @threads > 0
+        begin
+          result = work_in_threads(queries, @threads)
+        rescue ThreadError => e
+          Airbag.exception e, threads: @threads, slice: @slice, uids: uids.size
+          result = work_direct(queries)
+        end
+      else
+        result = work_direct(queries)
       end
 
       if @value == VALUES[0] || @value == VALUES[1]
@@ -41,6 +58,18 @@ module TwitterDB
       end
 
       result.map(&:uid)
+    end
+
+    def work_in_threads(queries, count)
+      queries.each_slice(count).map do |group|
+        threads = group.map { |query| Thread.new(query) { |q| q.to_a } }
+        threads.each(&:join)
+        threads.map(&:value)
+      end.flatten
+    end
+
+    def work_direct(queries)
+      queries.map(&:to_a).flatten
     end
 
     def sorter
