@@ -1219,17 +1219,6 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.index ["user_id"], name: "index_reset_egotter_requests_on_user_id"
   end
 
-  create_table "scores", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "uid", null: false
-    t.string "klout_id", null: false
-    t.float "klout_score", limit: 53, null: false
-    t.text "influence_json", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_scores_on_created_at"
-    t.index ["uid"], name: "index_scores_on_uid", unique: true
-  end
-
   create_table "search_error_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "session_id", default: "", null: false
     t.integer "user_id", default: -1, null: false
