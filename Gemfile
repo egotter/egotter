@@ -72,7 +72,7 @@ gem 'omniauth-twitter'
 
 # Sidekiq
 gem 'sidekiq', github: 'egotter/sidekiq', branch: 'v6_5_1'
-gem 'unique_job', '0.4.3'
+gem 'unique_job', '0.5.0'
 gem 'expire_job', '0.1.5.pre'
 gem 'sinatra', require: false
 gem 'hiredis'
