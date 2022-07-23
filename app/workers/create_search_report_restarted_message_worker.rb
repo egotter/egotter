@@ -22,7 +22,7 @@ class CreateSearchReportRestartedMessageWorker
 
   rescue => e
     unless ignorable_report_error?(e)
-      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
+      Airbag.exception e, user_id: user_id, options: options
     end
   end
 end

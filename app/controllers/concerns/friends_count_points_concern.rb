@@ -8,7 +8,7 @@ module FriendsCountPointsConcern
     before_action { :validate_search_request_by_uid! }
 
     rescue_from Rack::Timeout::RequestTimeoutException do |e|
-      Airbag.warn "#{e.message} user_id=#{current_user&.id} controller=#{controller_path} action=#{action_name}"
+      Airbag.exception e, request_details
       head :request_timeout unless performed?
     end
   end

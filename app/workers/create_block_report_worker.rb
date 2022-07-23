@@ -50,7 +50,7 @@ class CreateBlockReportWorker
     elsif ignorable_report_error?(e)
       # Do nothing
     else
-      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
+      Airbag.exception e, user_id: user_id, options: options
     end
   end
 

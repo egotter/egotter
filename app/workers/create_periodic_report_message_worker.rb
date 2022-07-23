@@ -57,7 +57,7 @@ class CreatePeriodicReportMessageWorker
     send_push_message(user, options)
     send_direct_message(user, options)
   rescue => e
-    Airbag.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}", backtrace: e.backtrace
+    Airbag.exception e, user_id: user_id, options: options
   end
 
   def send_push_message(user, options)

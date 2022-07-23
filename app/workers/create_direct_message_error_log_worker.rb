@@ -5,6 +5,6 @@ class CreateDirectMessageErrorLogWorker
   def perform(attrs)
     DirectMessageErrorLog.create!(attrs)
   rescue => e
-    Airbag.warn "#{e.inspect} attrs=#{attrs.inspect}"
+    Airbag.exception e, attrs: attrs
   end
 end

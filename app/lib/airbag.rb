@@ -98,7 +98,7 @@ class Airbag
   end
 
   def format_hash(hash)
-    hash.map { |k, v| "#{k}=#{v.to_s.truncate(200)}" }.join(' ')
+    hash.map { |k, v| "#{k}=#{v.inspect.truncate(200)}" }.join(' ')
   end
 
   def truncate_hash(hash)

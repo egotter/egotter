@@ -27,7 +27,7 @@ class CreateReportTwitterUserWorker < CreateTwitterUserWorker
     task.start!(:reporting)
   rescue CreateTwitterUserRequest::TimeoutError => e
     if options['retries']
-      Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options}"
+      Airbag.exception e, request_id: request_id, options: options
     else
       options['retries'] = 1
       CreateReportTwitterUserWorker.perform_in(rand(20) + unique_in, request_id, options)

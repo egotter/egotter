@@ -16,6 +16,6 @@ class DeleteOneSidedFriendshipsWorker
     OneSidedFollowership.delete_by_uid(uid)
     MutualFriendship.delete_by_uid(uid)
   rescue => e
-    Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
+    Airbag.exception e, uid: uid, options: options
   end
 end

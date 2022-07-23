@@ -11,7 +11,7 @@ class ProcessStripeChargeSucceededEventWorker
       send_message("Order not found customer_id=#{customer_id}")
     end
   rescue => e
-    Airbag.warn "#{e.inspect} customer_id=#{customer_id}"
+    Airbag.exception e, customer_id: customer_id
   end
 
   private

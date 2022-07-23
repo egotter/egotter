@@ -10,6 +10,6 @@ class CreateSearchHistoryWorker
       SearchHistory.create!(session_id: session_id, user_id: user_id, uid: uid, ahoy_visit_id: ahoy_visit_id, via: via)
     end
   rescue => e
-    Airbag.warn "#{e.inspect} uid=#{uid} session_id=#{session_id} user_id=#{user_id} ahoy_visit_id=#{ahoy_visit_id} via=#{via}"
+    Airbag.exception e, uid: uid, session_id: session_id, user_id: user_id, ahoy_visit_id: ahoy_visit_id, via: via
   end
 end

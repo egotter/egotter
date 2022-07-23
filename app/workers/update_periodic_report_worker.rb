@@ -15,6 +15,6 @@ class UpdatePeriodicReportWorker
       Airbag.info "Too fast read #{report.id} #{attrs}"
     end
   rescue => e
-    Airbag.warn "#{e.class} #{e.message} #{attrs}"
+    Airbag.exception e, attrs: attrs
   end
 end

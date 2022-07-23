@@ -32,6 +32,6 @@ class ProcessWebhookFollowEventWorker
       return
     end
   rescue => e
-    Airbag.warn "#{e.inspect} event=#{event.inspect}"
+    Airbag.exception e, event: event
   end
 end

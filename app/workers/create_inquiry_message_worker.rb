@@ -64,7 +64,7 @@ class CreateInquiryMessageWorker
     sender.api_client.send_report(uid, build_message(user), buttons)
   rescue => e
     unless ignorable_report_error?(e)
-      Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
+      Airbag.exception e, uid: uid, options: options
     end
   end
 

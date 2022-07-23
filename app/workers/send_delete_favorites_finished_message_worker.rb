@@ -7,6 +7,6 @@ class SendDeleteFavoritesFinishedMessageWorker
     request = DeleteFavoritesRequest.find(request_id)
     request.finished!
   rescue => e
-    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
+    Airbag.exception e, request_id: request_id, options: options
   end
 end

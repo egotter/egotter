@@ -24,7 +24,7 @@ class CreateMuteReportRestartRequestedWorker
     User.egotter.api_client.create_direct_message_event(event: event)
   rescue => e
     unless ignorable_report_error?(e)
-      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options}", backtrace: e.backtrace
+      Airbag.exception e, user_id: user_id, options: options
     end
   end
 end

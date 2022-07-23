@@ -7,6 +7,6 @@ class SendResetEgotterFinishedWorker
     request = ResetEgotterRequest.find(request_id)
     SendMessageToSlackWorker.perform_async(:monit_reset_egotter, "`Finished` #{request.to_message}")
   rescue => e
-    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, request_id: request_id, options: options
   end
 end

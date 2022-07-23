@@ -49,7 +49,7 @@ class CreatePeriodicReportWorker
 
     do_perform(request, options)
   rescue => e
-    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, request_id: request_id, options: options
   end
 
   private

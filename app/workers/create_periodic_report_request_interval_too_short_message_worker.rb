@@ -24,7 +24,7 @@ class CreatePeriodicReportRequestIntervalTooShortMessageWorker
     User.egotter.api_client.send_report(user.uid, message, buttons)
   rescue => e
     unless ignorable_report_error?(e)
-      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options}", backtrace: e.backtrace
+      Airbag.exception e, user_id: user_id, options: options
     end
   end
 end

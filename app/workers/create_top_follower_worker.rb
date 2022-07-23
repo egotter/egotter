@@ -21,7 +21,7 @@ class CreateTopFollowerWorker
       twitter_user.update(top_follower_uid: top_follower.uid)
     end
   rescue => e
-    Airbag.warn "#{e.inspect} twitter_user_id=#{twitter_user_id} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, twitter_user_id: twitter_user_id, options: options
   end
 
   private

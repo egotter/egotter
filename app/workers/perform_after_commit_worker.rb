@@ -64,6 +64,6 @@ class PerformAfterCommitWorker
 
     TwitterUser.find(twitter_user_id).update(cache_created_at: Time.zone.now)
   rescue => e
-    Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id}", backtrace: e.backtrace
+    Airbag.exception e, twitter_user_id: twitter_user_id
   end
 end

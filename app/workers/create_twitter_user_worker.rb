@@ -51,7 +51,7 @@ class CreateTwitterUserWorker
     TwitterUserAssembledFlag.on(task.twitter_user.uid)
   rescue CreateTwitterUserRequest::TimeoutError => e
     if options['retries']
-      Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options}"
+      Airbag.exception e, request_id: request_id, options: options
     else
       options['retries'] = 1
       CreateTwitterUserWorker.perform_in(rand(20) + unique_in, request_id, options)

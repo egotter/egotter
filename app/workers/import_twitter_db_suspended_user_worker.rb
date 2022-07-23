@@ -23,6 +23,6 @@ class ImportTwitterDBSuspendedUserWorker
       ImportTwitterDBUserWorker.perform_async(users)
     end
   rescue => e
-    Airbag.warn "#{e.inspect.truncate(200)} uids=#{uids}"
+    Airbag.exception e, uids: uids
   end
 end

@@ -7,6 +7,6 @@ class SendCreateTweetDeletedWorker
     request = TweetRequest.find(request_id)
     SendMessageToSlackWorker.perform_async(:monit_tweet, "`Deleted` #{request.to_message}")
   rescue => e
-    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, request_id: request_id, options: options
   end
 end

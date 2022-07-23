@@ -67,7 +67,7 @@ class CreatePersonalityInsightWorker
         TwitterApiStatus.blocked?(e)
       # Do nothing
     else
-      Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}", backtrace: e.backtrace
+      Airbag.exception e, uid: uid, options: options
     end
   end
 end

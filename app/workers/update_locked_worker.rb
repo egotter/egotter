@@ -31,7 +31,7 @@ class UpdateLockedWorker
         TwitterApiStatus.no_user_matches?(e)
       # Do nothing
     else
-      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}", backtrace: e.backtrace
+      Airbag.exception e, user_id: user_id, options: options
     end
   end
 end

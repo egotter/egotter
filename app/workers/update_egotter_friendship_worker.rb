@@ -34,7 +34,7 @@ class UpdateEgotterFriendshipWorker
         TwitterApiStatus.retry_timeout?(e)
       # Do nothing
     else
-      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options.inspect}"
+      Airbag.exception e, user_id: user_id, options: options
     end
   end
 

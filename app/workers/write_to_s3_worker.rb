@@ -15,8 +15,7 @@ class WriteToS3Worker
   rescue => e
     retry_count = (options['retry_count'] || 0) + 1
     WriteToS3Worker.perform_in(retry_count * 2, params, options.merge('retry_count' => retry_count))
-
-    Airbag.warn "#{e.inspect} klass=#{params['klass']} bucket=#{params['bucket']} key=#{params['key']} options=#{options}", backtrace: e.backtrace
+    Airbag.exception e, params: params, options: options
   end
 
   private

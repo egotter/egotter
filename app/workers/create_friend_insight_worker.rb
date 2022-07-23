@@ -21,6 +21,6 @@ class CreateFriendInsightWorker
       FriendInsight.builder(uid).build&.save!
     end
   rescue => e
-    Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, uid: uid, options: options
   end
 end

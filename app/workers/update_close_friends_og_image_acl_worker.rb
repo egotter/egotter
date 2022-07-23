@@ -23,6 +23,6 @@ class UpdateCloseFriendsOgImageAclWorker
   def perform(image_id, options = {})
     CloseFriendsOgImage.find(image_id).update_acl
   rescue => e
-    Airbag.warn "#{e.inspect} image_id=#{image_id} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, image_id: image_id, options: options
   end
 end

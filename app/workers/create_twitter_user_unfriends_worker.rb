@@ -45,7 +45,7 @@ class CreateTwitterUserUnfriendsWorker
 
     DeleteUnfriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
-    Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, twitter_user_id: twitter_user_id, options: options
   end
 
   private

@@ -41,7 +41,7 @@ class CreatePushNotificationWorker
     end
 
   rescue => e
-    Airbag.warn "#{e.inspect} #{user_id} #{title} #{body} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
+    Airbag.exception e, user_id: user_id, title: title, body: body, options: options
   end
 
   private

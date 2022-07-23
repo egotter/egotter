@@ -14,7 +14,7 @@ class ProcessStripePaymentIntentSucceededEventWorker
 
     create_order(stripe_payment_intent, payment_intent)
   rescue => e
-    Airbag.warn "#{e.inspect} stripe_payment_intent_id=#{stripe_payment_intent_id}"
+    Airbag.exception e, stripe_payment_intent_id: stripe_payment_intent_id
   end
 
   private

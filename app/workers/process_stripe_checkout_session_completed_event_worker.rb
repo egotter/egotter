@@ -22,7 +22,7 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
 
     send_message(:orders_cs_completed, '', checkout_session_id, user_id: user.id, order_id: order.id)
   rescue => e
-    Airbag.warn "#{e.inspect} checkout_session_id=#{checkout_session_id}"
+    Airbag.exception e, checkout_session_id: checkout_session_id
     send_message(:orders_cs_failed, e.inspect, checkout_session_id, user_id: user&.id, order_id: order&.id)
   end
 

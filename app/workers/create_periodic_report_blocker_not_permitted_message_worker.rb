@@ -30,7 +30,7 @@ class CreatePeriodicReportBlockerNotPermittedMessageWorker
     User.egotter.api_client.create_direct_message(user.uid, build_message)
   rescue => e
     unless ignorable_report_error?(e)
-      Airbag.warn "#{e.inspect} user_id=#{user_id} options=#{options}", backtrace: e.backtrace
+      Airbag.exception e, user_id: user_id, options: options
     end
   end
 

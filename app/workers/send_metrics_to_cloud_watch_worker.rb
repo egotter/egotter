@@ -34,7 +34,7 @@ class SendMetricsToCloudWatchWorker
 
     client.update
   rescue => e
-    Airbag.warn "#{e.inspect} type=#{type}"
+    Airbag.exception e, type: type
   end
 
   private
@@ -42,7 +42,7 @@ class SendMetricsToCloudWatchWorker
   def calc_metrics(type)
     send(type)
   rescue => e
-    Airbag.warn "#{e.inspect} type=#{type}"
+    Airbag.exception e, type: type
   end
 
   def send_sidekiq_metrics

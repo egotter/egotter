@@ -20,7 +20,7 @@ class CreateGreetingGoodAfternoonMessageWorker
     User.egotter.api_client.create_direct_message(uid, MESSAGE + Kaomoji::KAWAII.sample)
   rescue => e
     unless ignorable_report_error?(e)
-      Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
+      Airbag.exception e, uid: uid, options: options
     end
   end
 end

@@ -39,6 +39,6 @@ class CreateTwitterUserNewFriendsWorker
 
     CreateTwitterDBUserWorker.perform_async((new_friend_uids + new_follower_uids).uniq, user_id: twitter_user.user_id, enqueued_by: self.class)
   rescue => e
-    Airbag.warn "#{e.inspect.truncate(100)} twitter_user_id=#{twitter_user_id} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, twitter_user_id: twitter_user_id, options: options
   end
 end

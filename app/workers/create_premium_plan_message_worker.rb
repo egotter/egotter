@@ -45,7 +45,7 @@ class CreatePremiumPlanMessageWorker
     User.egotter_cs.api_client.send_report(uid, build_message, buttons)
   rescue => e
     unless ignorable_report_error?(e)
-      Airbag.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
+      Airbag.exception e, uid: uid, options: options
     end
   end
 

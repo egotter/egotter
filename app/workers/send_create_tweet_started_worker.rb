@@ -8,6 +8,6 @@ class SendCreateTweetStartedWorker
     request = TweetRequest.find(request_id)
     SendMessageToSlackWorker.perform_async(:monit_tweet, "`Started` #{request.to_message(via: options['via'])}")
   rescue => e
-    Airbag.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, request_id: request_id, options: options
   end
 end

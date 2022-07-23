@@ -21,6 +21,6 @@ class DeleteForbiddenUsersWorker
       ForbiddenUser.where(id: ids).delete_all
     end
   rescue => e
-    Airbag.warn "#{e.inspect} options=#{options.inspect}"
+    Airbag.exception e, options: options
   end
 end

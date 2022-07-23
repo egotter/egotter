@@ -32,7 +32,7 @@ class ProcessWebhookEventWorker
 
     process_direct_message_event(event)
   rescue => e
-    Airbag.warn "#{e.inspect} event=#{event.inspect}"
+    Airbag.exception e, event: event
   end
 
   private

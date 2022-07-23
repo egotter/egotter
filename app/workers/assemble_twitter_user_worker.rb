@@ -39,6 +39,6 @@ class AssembleTwitterUserWorker
     request.perform!
     request.finished!
   rescue => e
-    Airbag.warn "#{e.class} #{e.message.truncate(100)} request_id=#{request_id} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, request_id: request_id, options: options
   end
 end

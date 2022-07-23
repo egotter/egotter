@@ -14,6 +14,6 @@ class SetUsageCountWorker
     count = User.all.size
     UsageCount.set(count)
   rescue => e
-    Airbag.warn "#{e.class} #{e.message}"
+    Airbag.exception e
   end
 end

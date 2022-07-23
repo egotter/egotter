@@ -35,7 +35,7 @@ class CreateAccountStatusWorker
 
     CreateTwitterDBUserWorker.perform_async([uid], user_id: user.id, enqueued_by: self.class) if uid
   rescue => e
-    Airbag.warn "#{e.inspect} screen_name=#{screen_name} options=#{options.inspect}", backtrace: e.backtrace
+    Airbag.exception e, screen_name: screen_name, options: options
   end
 
   private

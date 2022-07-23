@@ -33,7 +33,7 @@ class CreateSearchReportWorker
     elsif ignorable_report_error?(e)
       # Do nothing
     else
-      Airbag.warn "#{e.inspect} searchee_id=#{searchee_id} options=#{options.inspect}"
+      Airbag.exception e, searchee_id: searchee_id, options: options
     end
   end
 end

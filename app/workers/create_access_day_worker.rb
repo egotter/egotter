@@ -16,7 +16,7 @@ class CreateAccessDayWorker
   rescue ActiveRecord::RecordNotUnique => e
     Airbag.info e.message.truncate(100)
   rescue => e
-    Airbag.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
+    Airbag.exception e, user_id: user_id, options: options
   end
 
   def create_record(user)
