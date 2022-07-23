@@ -1098,21 +1098,6 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
-  create_table "page_cache_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "session_id", default: "", null: false
-    t.integer "user_id", default: -1, null: false
-    t.string "context", default: "", null: false
-    t.string "device_type", default: "", null: false
-    t.string "os", default: "", null: false
-    t.string "browser", default: "", null: false
-    t.string "user_agent", default: "", null: false
-    t.string "referer", default: "", null: false
-    t.string "referral", default: "", null: false
-    t.string "channel", default: "", null: false
-    t.datetime "created_at", null: false
-    t.index ["created_at"], name: "index_page_cache_logs_on_created_at"
-  end
-
   create_table "payment_intents", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "stripe_payment_intent_id", null: false
