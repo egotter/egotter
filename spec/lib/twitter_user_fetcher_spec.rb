@@ -95,13 +95,14 @@ RSpec.describe TwitterUserFetcher do
 end
 
 RSpec.describe TwitterUserFetcher::ClientWrapper do
-  let(:twitter) { double('twitter') }
   let(:client) { double('client') }
+  let(:twitter) { double('twitter', app_context?: true) }
   let(:instance) { described_class.new(client, twitter) }
 
   describe 'friend_ids' do
     subject { instance.friend_ids(1) }
     it do
+      expect(instance).to receive(:collect_with_max_id).with(1).and_call_original
       expect(twitter).to receive(:friend_ids).with(1, {count: 5000, cursor: -1})
       subject
     end
@@ -110,6 +111,7 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
   describe 'follower_ids' do
     subject { instance.follower_ids(1) }
     it do
+      expect(instance).to receive(:collect_with_max_id).with(1).and_call_original
       expect(twitter).to receive(:follower_ids).with(1, {count: 5000, cursor: -1})
       subject
     end
@@ -181,5 +183,23 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
       end
       it { expect { subject }.not_to raise_error }
     end
+  end
+
+  describe '#collect_with_max_id' do
+    let(:block) { Proc.new { double('response', attrs: {ids: [1, 2, 3], next_cursor: 0}) } }
+    subject { instance.send(:collect_with_max_id, 1, &block) }
+    it { is_expected.to eq([1, 2, 3]) }
+  end
+
+  describe '#client_reloadable?' do
+    let(:error) { RuntimeError.new }
+    subject { instance.send(:client_reloadable?, error, 1) }
+    it { is_expected.to be_falsey }
+  end
+
+  describe '#handle_exception' do
+    let(:error) { RuntimeError.new }
+    subject { instance.send(:handle_exception, error) }
+    it { expect { subject }.to raise_error(error) }
   end
 end

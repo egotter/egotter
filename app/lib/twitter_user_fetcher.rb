@@ -72,20 +72,20 @@ class TwitterUserFetcher
   private
 
   class ClientWrapper
-    def initialize(client, ids_client)
+    def initialize(client, twitter_client)
       @client = client
-      @ids_client = ids_client
+      @twitter_client = twitter_client
     end
 
     def friend_ids(uid)
-      collect_with_max_id do |options|
-        @ids_client.friend_ids(uid, options)
+      collect_with_max_id(uid) do |options|
+        @twitter_client.friend_ids(uid, options)
       end
     end
 
     def follower_ids(uid)
-      collect_with_max_id do |options|
-        @ids_client.follower_ids(uid, options)
+      collect_with_max_id(uid) do |options|
+        @twitter_client.follower_ids(uid, options)
       end
     end
 
@@ -115,20 +115,22 @@ class TwitterUserFetcher
 
     private
 
-    def collect_with_max_id(&block)
+    def collect_with_max_id(uid, &block)
       options = {count: 5000, cursor: -1}
       collection = []
       calls_count = 0
 
       50.times do
         begin
-          raise Twitter::Error::TooManyRequests if (calls_count += 1) > 3
+          if @twitter_client.app_context? && (calls_count += 1) > 3
+            raise Twitter::Error::TooManyRequests.new('periodic reload')
+          end
           response = yield(options)
         rescue => e
-          if TwitterApiStatus.too_many_requests?(e)
-            @ids_client = Bot.api_client.twitter
+          if client_reloadable?(e, uid)
+            @twitter_client = Bot.api_client.twitter
             calls_count = 0
-            Airbag.info 'TwitterUserFetcher::ClientWrapper: Client is reloaded.'
+            Airbag.info "TwitterUserFetcher::ClientWrapper: Reloaded uid=#{uid} message=#{e.message}"
             retry
           else
             raise
@@ -145,6 +147,11 @@ class TwitterUserFetcher
       end
 
       collection
+    end
+
+    def client_reloadable?(e, uid)
+      TwitterApiStatus.too_many_requests?(e) &&
+          (@twitter_client.app_context? || !(@client.user(uid)[:protected] rescue true))
     end
 
     def handle_exception(e)
