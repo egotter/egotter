@@ -121,7 +121,7 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
       context "#{error} is raised" do
         before { allow(CreateTwitterUserTask).to receive(:new).and_raise(error) }
         it do
-          expect(Airbag).to receive(:warn).with(instance_of(String), backtrace: instance_of(Array))
+          expect(Airbag).to receive(:exception).with(error, anything)
           subject
         end
       end

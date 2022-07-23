@@ -211,7 +211,7 @@ class CreateTwitterUserRequest < ApplicationRecord
       raise TimeoutError.new(e.inspect)
     end
 
-    Airbag.info "#{self.class}##{__method__}: error_class=#{e.class} error_message=#{e.message}"
+    Airbag.info "#{self.class}##{__method__}: exception=#{e.inspect}#{" cause=#{e.cause.inspect}" if e.cause}", {backtrace: e.backtrace, cause_backtrace: e.cause&.backtrace}.compact
     raise Unknown.new(e.inspect)
   end
 

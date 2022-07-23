@@ -49,7 +49,6 @@ module TwitterUserAssociations
   end
 
   def close_friendships
-    Airbag.info "Fetch records from outdated table method=#{__method__} twitter_user_id=#{id} uid=#{uid} created=#{created_at.to_s}", caller: caller
     if (from_s3 = S3::CloseFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else

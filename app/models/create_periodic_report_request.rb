@@ -88,7 +88,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       CreateTwitterUserRequest::NotChanged => e
     Airbag.info "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
   rescue => e
-    Airbag.warn "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}", backtrace: e.backtrace
+    Airbag.exception e, method: __method__, request_id: id, create_request_id: request&.id
   end
 
   def report_options_builder
