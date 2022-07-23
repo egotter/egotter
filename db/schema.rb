@@ -147,21 +147,6 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.index ["uid"], name: "index_audience_insights_on_uid", unique: true
   end
 
-  create_table "background_update_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "user_id", default: -1, null: false
-    t.string "uid", default: "-1", null: false
-    t.string "screen_name", default: "", null: false
-    t.string "bot_uid", default: "-1", null: false
-    t.boolean "status", default: false, null: false
-    t.string "reason", default: "", null: false
-    t.text "message", null: false
-    t.integer "call_count", default: -1, null: false
-    t.datetime "created_at", null: false
-    t.index ["created_at"], name: "index_background_update_logs_on_created_at"
-    t.index ["screen_name"], name: "index_background_update_logs_on_screen_name"
-    t.index ["uid"], name: "index_background_update_logs_on_uid"
-  end
-
   create_table "banned_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.timestamp "created_at", null: false
