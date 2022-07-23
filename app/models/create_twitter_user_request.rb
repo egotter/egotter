@@ -141,7 +141,7 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   def save_twitter_user(snapshot)
-    twitter_user = snapshot.copy_attrs
+    twitter_user = TwitterUser.new(snapshot.attributes)
     twitter_user.perform_before_transaction
     twitter_user.save!
     twitter_user.perform_after_commit

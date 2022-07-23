@@ -76,8 +76,8 @@ class TwitterSnapshot
     @favorite_tweets = value.map { |tweet| collect_tweet_attrs(tweet) } if value&.any?
   end
 
-  def copy_attrs
-    TwitterUser.new(
+  def attributes
+    {
         user_id: user_id,
         uid: uid,
         screen_name: screen_name,
@@ -91,12 +91,7 @@ class TwitterSnapshot
         copied_user_timeline: user_timeline,
         copied_mention_tweets: mention_tweets,
         copied_favorite_tweets: favorite_tweets
-    )
-  end
-
-  def copy
-    Airbag.warn "#{self.class}##{__method__} is deprecated"
-    copy_attrs
+    }
   end
 
   def too_little_friends?

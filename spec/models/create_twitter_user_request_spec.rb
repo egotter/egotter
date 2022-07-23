@@ -167,10 +167,12 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
   describe '#save_twitter_user' do
     let(:snapshot) { TwitterSnapshot.new(nil) }
-    let(:twitter_user) { TwitterUser.new(id: 1) }
+    let(:attributes) { double('attributes') }
+    let(:twitter_user) { double('twitter_user', id: 1) }
     subject { request.send(:save_twitter_user, snapshot) }
+    before { allow(TwitterUser).to receive(:new).with(attributes).and_return(twitter_user) }
     it do
-      expect(snapshot).to receive(:copy_attrs).and_return(twitter_user)
+      expect(snapshot).to receive(:attributes).and_return(attributes)
       expect(twitter_user).to receive(:perform_before_transaction)
       expect(twitter_user).to receive(:save!)
       expect(twitter_user).to receive(:perform_after_commit)
