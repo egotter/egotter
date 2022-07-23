@@ -16,7 +16,7 @@ class SendMetricsToCloudWatchWorker
     55.seconds
   end
 
-  def _timeout_in
+  def timeout_in
     55.seconds
   end
 

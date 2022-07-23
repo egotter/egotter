@@ -22,7 +22,7 @@ class CreatePeriodicReportMessageWorker
     Airbag.warn "The job of #{self.class} is skipped args=#{args.inspect}"
   end
 
-  def _timeout_in
+  def timeout_in
     30.seconds
   end
 

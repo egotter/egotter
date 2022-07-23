@@ -11,9 +11,8 @@ class CreateTwitterUserInactiveFriendsWorker
     10.minutes
   end
 
-  def after_skip(twitter_user_id, options = {})
-    twitter_user = TwitterUser.find(twitter_user_id)
-    Airbag.warn "The job of #{self.class} is skipped twitter_user_id=#{twitter_user_id} created_at=#{twitter_user.created_at}"
+  def after_skip(*args)
+    Airbag.warn "The job of #{self.class} is skipped", job_details(*args)
   end
 
   def expire_in
@@ -21,11 +20,22 @@ class CreateTwitterUserInactiveFriendsWorker
   end
 
   def after_expire(*args)
-    Airbag.warn "The job of #{self.class} is expired args=#{args.inspect}"
+    Airbag.warn "The job of #{self.class} is expired", job_details(*args)
   end
 
-  def _timeout_in
+  def timeout_in
     30.seconds
+  end
+
+  def after_timeout(*args)
+    Airbag.warn "The job of #{self.class} timed out", job_details(*args)
+  end
+
+  def job_details(twitter_user_id, options = {})
+    user = TwitterUser.find(twitter_user_id)
+    {twitter_user_id: twitter_user_id, friends_count: user.friends_count, followers_count: user.followers_count}
+  rescue
+    {twitter_user_id: twitter_user_id}
   end
 
   # options:

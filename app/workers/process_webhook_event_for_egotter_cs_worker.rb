@@ -17,7 +17,7 @@ class ProcessWebhookEventForEgotterCsWorker
     Airbag.info "The job of #{self.class} is skipped digest=#{digest(args[0])} args=#{args.inspect}"
   end
 
-  def _timeout_in
+  def timeout_in
     10.seconds
   end
 

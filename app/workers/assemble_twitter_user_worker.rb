@@ -25,7 +25,7 @@ class AssembleTwitterUserWorker
     AssembleTwitterUserRequest.find(request_id).append_status('expired')
   end
 
-  def _timeout_in
+  def timeout_in
     3.minutes
   end
 

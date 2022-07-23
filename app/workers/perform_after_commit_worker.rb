@@ -24,7 +24,7 @@ class PerformAfterCommitWorker
     Airbag.warn "The job of #{self.class} is expired twitter_user_id=#{twitter_user_id}"
   end
 
-  def _timeout_in
+  def timeout_in
     1.minute
   end
 

@@ -12,7 +12,7 @@ class UpdateEgotterFollowersWorker
     30.minutes
   end
 
-  def _timeout_in
+  def timeout_in
     3.minute
   end
 

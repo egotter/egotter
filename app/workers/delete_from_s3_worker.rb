@@ -2,7 +2,7 @@ class DeleteFromS3Worker
   include Sidekiq::Worker
   sidekiq_options queue: 'deleting_low', retry: 0, backtrace: false
 
-  def _timeout_in
+  def timeout_in
     10.seconds
   end
 

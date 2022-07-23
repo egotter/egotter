@@ -10,14 +10,6 @@ RSpec.describe CreateTwitterUserOneSidedFriendsWorker do
     allow(User).to receive(:find_by).with(id: twitter_user.user_id).and_return(user)
   end
 
-  describe '#after_skip' do
-    subject { worker.after_skip(twitter_user.id) }
-    it do
-      expect(Airbag).to receive(:warn).with(instance_of(String))
-      subject
-    end
-  end
-
   describe '#perform' do
     subject { worker.perform(twitter_user.id) }
     it do

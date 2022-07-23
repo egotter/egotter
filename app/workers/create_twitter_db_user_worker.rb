@@ -17,7 +17,7 @@ class CreateTwitterDBUserWorker
     SkippedCreateTwitterDBUserWorker.perform_async(data, options.merge(_size: (decompress(data).size rescue -1)).merge(debug_options))
   end
 
-  def _timeout_in
+  def timeout_in
     10.seconds
   end
 

@@ -26,7 +26,7 @@ class CreatePeriodicReportWorker
     Airbag.info "The job of #{self.class} is skipped request_id=#{request_id} options=#{options.inspect}"
   end
 
-  def _timeout_in(*args)
+  def timeout_in
     60.seconds
   end
 

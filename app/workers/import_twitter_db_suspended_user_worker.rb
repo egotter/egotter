@@ -12,7 +12,7 @@ class ImportTwitterDBSuspendedUserWorker
     10.seconds
   end
 
-  def _timeout_in
+  def timeout_in
     10.seconds
   end
 

@@ -20,7 +20,7 @@ class ImportTwitterDBUserWorker
     CreateSidekiqLogWorker.perform_async("class=#{self.class} options=#{options} key=#{Digest::MD5.hexdigest(data.to_json)} skipped=true") rescue nil
   end
 
-  def _timeout_in
+  def timeout_in
     10.seconds
   end
 

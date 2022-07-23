@@ -24,7 +24,7 @@ class CreateTwitterUserWorker
     ExpiredCreateTwitterUserWorker.perform_async(request_id, options)
   end
 
-  def _timeout_in
+  def timeout_in
     3.minutes
   end
 

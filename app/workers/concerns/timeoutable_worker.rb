@@ -1,6 +1,6 @@
 module TimeoutableWorker
   def timeout?
-    @start && Time.zone.now - @start > _timeout_in
+    @start && Time.zone.now - @start > timeout_in
   end
 
   def elapsed_time

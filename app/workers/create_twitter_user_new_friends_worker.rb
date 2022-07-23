@@ -19,7 +19,7 @@ class CreateTwitterUserNewFriendsWorker
     Airbag.warn "The job of #{self.class} is expired args=#{args.inspect}"
   end
 
-  def _timeout_in
+  def timeout_in
     3.minutes
   end
 

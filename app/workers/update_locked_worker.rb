@@ -14,7 +14,7 @@ class UpdateLockedWorker
     1.minute
   end
 
-  def _timeout_in
+  def timeout_in
     5.seconds
   end
 
