@@ -141,6 +141,10 @@ class ApiClient
     end
   end
 
+  def app_context?
+    @user.nil?
+  end
+
   def twitter
     TwitterClient.new(self, @client.twitter)
   end

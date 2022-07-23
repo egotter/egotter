@@ -60,4 +60,8 @@ class TwitterClient
   ensure
     CreateTwitterApiLogWorker.perform_async(name: "TwitterClient##{method}")
   end
+
+  def app_context?
+    @api_client.app_context?
+  end
 end

@@ -79,4 +79,12 @@ RSpec.describe TwitterClient, type: :model do
       end
     end
   end
+
+  describe '#app_context?' do
+    subject { instance.app_context? }
+    it do
+      expect(api_client).to receive(:app_context?)
+      subject
+    end
+  end
 end

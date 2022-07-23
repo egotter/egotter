@@ -209,6 +209,11 @@ RSpec.describe ApiClient, type: :model do
     end
   end
 
+  describe '#app_context?' do
+    subject { instance.app_context? }
+    it { is_expected.to be_falsey }
+  end
+
   describe '.config' do
     let(:option) do
       {
