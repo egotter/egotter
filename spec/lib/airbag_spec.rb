@@ -52,10 +52,21 @@ RSpec.describe Airbag, type: :model do
   end
 
   describe '#exception' do
-    let(:error) { RuntimeError.new }
-    subject { instance.exception(error) }
+    let(:errors) { [] }
+    subject { instance.exception(errors[0]) }
+    before do
+      begin
+        raise 'aaa'
+      rescue
+        begin
+          raise 'bbb'
+        rescue => e
+          errors << e
+        end
+      end
+    end
     it do
-      expect(instance).to receive(:log).with(Logger::ERROR, instance_of(String), {backtrace: error.backtrace})
+      expect(instance).to receive(:log).with(Logger::ERROR, instance_of(String), {backtrace: errors[0].backtrace, cause_backtrace: errors[0].cause.backtrace})
       subject
     end
   end
