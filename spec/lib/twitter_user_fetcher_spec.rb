@@ -5,7 +5,7 @@ RSpec.describe TwitterUserFetcher do
   let(:uid) { user.uid }
   let(:screen_name) { user.screen_name }
   let(:passed_client) { double('passed_client', twitter: 'twitter') }
-  let(:client) { double('client', start_bm: nil, finish_bm: nil) }
+  let(:client) { double('client') }
   let(:fetch_friends) { true }
   let(:search_for_yourself) { true }
   let(:reporting) { false }

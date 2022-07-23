@@ -45,7 +45,6 @@ class TwitterUserFetcher
   def fetch_in_threads
     threads = []
     result = Queue.new
-    @client.start_bm
 
     if @fetch_friends
       threads << Thread.new { result << [:friend_ids, @client.friend_ids(@uid)] }
@@ -79,59 +78,39 @@ class TwitterUserFetcher
     end
 
     def friend_ids(uid)
-      bm(__method__) do
-        collect_with_max_id do |options|
-          @ids_client.friend_ids(uid, options)
-        end
+      collect_with_max_id do |options|
+        @ids_client.friend_ids(uid, options)
       end
     end
 
     def follower_ids(uid)
-      bm(__method__) do
-        collect_with_max_id do |options|
-          @ids_client.follower_ids(uid, options)
-        end
+      collect_with_max_id do |options|
+        @ids_client.follower_ids(uid, options)
       end
     end
 
     def user_timeline(uid)
-      bm(__method__) { @client.user_timeline(uid, include_rts: false) }
+      @client.user_timeline(uid, include_rts: false)
     rescue => e
       handle_exception(e)
     end
 
     def mentions_timeline
-      bm(__method__) { @client.mentions_timeline }
+      @client.mentions_timeline
     rescue => e
       handle_exception(e)
     end
 
     def search(word)
-      bm(__method__) { @client.search(word) }
+      @client.search(word)
     rescue => e
       handle_exception(e)
     end
 
     def favorites(uid)
-      bm(__method__) { @client.favorites(uid) }
+      @client.favorites(uid)
     rescue => e
       handle_exception(e)
-    end
-
-    def start_bm
-      @bm_result = Queue.new
-      @start = Time.zone.now
-    end
-
-    def finish_bm(message)
-      if (elapsed = Time.zone.now - @start) > 3.0
-        result = @bm_result.size.times.map { @bm_result.pop }.to_h
-        result['sum'] = result.values.sum
-        result['elapsed'] = elapsed
-        result.transform_values! { |v| sprintf("%.3f", v) }
-        Airbag.info "#{message} #{result}"
-      end
-    rescue => e
     end
 
     private
@@ -175,17 +154,6 @@ class TwitterUserFetcher
         []
       else
         raise e
-      end
-    end
-
-    def bm(message, &block)
-      if @bm_result
-        start = Time.zone.now
-        result = yield
-        @bm_result << [message, Time.zone.now - start]
-        result
-      else
-        yield
       end
     end
   end
