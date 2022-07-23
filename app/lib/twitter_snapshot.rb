@@ -44,6 +44,10 @@ class TwitterSnapshot
     @follower_uids.size
   end
 
+  def protected?
+    @user[:protected]
+  end
+
   def [](key)
     if %i(friends_count followers_count).include?(key)
       @user[key]
