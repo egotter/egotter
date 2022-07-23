@@ -8,19 +8,19 @@ class Airbag
   end
 
   def debug(message = nil, props = {}, &block)
-    log(::Logger::DEBUG, message, props, &block)
+    log(::Logger::DEBUG, block_given? ? yield : message, props)
   end
 
   def info(message = nil, props = {}, &block)
-    log(::Logger::INFO, message, props, &block)
+    log(::Logger::INFO, block_given? ? yield : message, props)
   end
 
   def warn(message = nil, props = {}, &block)
-    log(::Logger::WARN, message, props, &block)
+    log(::Logger::WARN, block_given? ? yield : message, props)
   end
 
   def error(message = nil, props = {}, &block)
-    log(::Logger::ERROR, message, props, &block)
+    log(::Logger::ERROR, block_given? ? yield : message, props)
   end
 
   def exception(e, props = {})
@@ -30,10 +30,9 @@ class Airbag
     log(::Logger::ERROR, message, props)
   end
 
-  def log(level, raw_message = nil, props = {}, &block)
-    message = raw_message.nil? && block_given? ? yield : raw_message
+  def log(level, raw_message, props)
     context = current_context
-    message = format_message(level, message, context)
+    message = format_message(level, raw_message, context)
 
     logger.add(level, message)
 

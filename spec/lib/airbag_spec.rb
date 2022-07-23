@@ -3,51 +3,28 @@ require 'rails_helper'
 RSpec.describe Airbag, type: :model do
   let(:instance) { described_class.instance }
 
-  describe '#debug' do
-    let(:message) { 'msg' }
-    let(:block) { Proc.new {} }
-    subject { instance.debug(message, &block) }
-    it do
-      expect(instance).to receive(:log).with(Logger::DEBUG, message, {}) do |*args, &blk|
-        expect(blk).to eq(block)
+  [
+      [:debug, Logger::DEBUG],
+      [:info, Logger::INFO],
+      [:warn, Logger::WARN],
+      [:error, Logger::ERROR],
+  ].each do |method, level|
+    describe "##{method}" do
+      let(:message) { 'msg' }
+      subject { instance.send(method, message) }
+      it do
+        expect(instance).to receive(:log).with(level, message, {})
+        subject
       end
-      subject
-    end
-  end
 
-  describe '#info' do
-    let(:message) { 'msg' }
-    let(:block) { Proc.new {} }
-    subject { instance.info(message, &block) }
-    it do
-      expect(instance).to receive(:log).with(Logger::INFO, message, {}) do |*args, &blk|
-        expect(blk).to eq(block)
+      context 'block is passed' do
+        let(:block) { Proc.new { 'block' } }
+        subject { instance.send(method, &block) }
+        it do
+          expect(instance).to receive(:log).with(level, 'block', {})
+          subject
+        end
       end
-      subject
-    end
-  end
-
-  describe '#warn' do
-    let(:message) { 'msg' }
-    let(:block) { Proc.new {} }
-    subject { instance.warn(message, &block) }
-    it do
-      expect(instance).to receive(:log).with(Logger::WARN, message, {}) do |*args, &blk|
-        expect(blk).to eq(block)
-      end
-      subject
-    end
-  end
-
-  describe '#error' do
-    let(:message) { 'msg' }
-    let(:block) { Proc.new {} }
-    subject { instance.error(message, &block) }
-    it do
-      expect(instance).to receive(:log).with(Logger::ERROR, message, {}) do |*args, &blk|
-        expect(blk).to eq(block)
-      end
-      subject
     end
   end
 
