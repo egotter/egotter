@@ -147,40 +147,6 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.index ["uid"], name: "index_audience_insights_on_uid", unique: true
   end
 
-  create_table "background_search_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "session_id", default: "", null: false
-    t.integer "user_id", default: -1, null: false
-    t.string "uid", default: "-1", null: false
-    t.string "screen_name", default: "", null: false
-    t.string "action", default: "", null: false
-    t.string "bot_uid", default: "-1", null: false
-    t.boolean "auto", default: false, null: false
-    t.boolean "status", default: false, null: false
-    t.string "reason", default: "", null: false
-    t.text "message", null: false
-    t.integer "call_count", default: -1, null: false
-    t.string "via", default: "", null: false
-    t.string "device_type", default: "", null: false
-    t.string "os", default: "", null: false
-    t.string "browser", default: "", null: false
-    t.string "user_agent", default: "", null: false
-    t.string "referer", default: "", null: false
-    t.string "referral", default: "", null: false
-    t.string "channel", default: "", null: false
-    t.string "medium", default: "", null: false
-    t.string "error_class", default: "", null: false
-    t.string "error_message", default: "", null: false
-    t.datetime "enqueued_at"
-    t.datetime "started_at"
-    t.datetime "finished_at"
-    t.datetime "created_at", null: false
-    t.index ["created_at"], name: "index_background_search_logs_on_created_at"
-    t.index ["screen_name"], name: "index_background_search_logs_on_screen_name"
-    t.index ["uid"], name: "index_background_search_logs_on_uid"
-    t.index ["user_id", "status"], name: "index_background_search_logs_on_user_id_and_status"
-    t.index ["user_id"], name: "index_background_search_logs_on_user_id"
-  end
-
   create_table "background_update_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", default: -1, null: false
     t.string "uid", default: "-1", null: false
