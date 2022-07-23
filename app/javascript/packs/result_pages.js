@@ -82,11 +82,15 @@ class FetchTask {
       uid: this.uid,
       limit: this.limit,
       max_sequence: this.maxSequence,
+      offset: this.maxSequence,
       sort_order: this.sortOrder,
-      filter: this.filter,
+      filter: this.filter
     };
+    if (this.errorCount > 0) {
+      params['error_count'] = this.errorCount;
+    }
 
-    logger.log('Start fetching params', params);
+    logger.log('Start fetching', params);
 
     var self = this;
 

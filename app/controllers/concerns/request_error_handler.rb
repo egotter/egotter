@@ -43,16 +43,16 @@ module RequestErrorHandler
 
   def request_details
     {
-        user_id: current_user&.id,
+        user_id: user_signed_in? ? current_user.id : -1,
         method: request.method,
         device_type: request.device_type,
         browser: request.browser,
         xhr: request.xhr?,
         full_path: request.fullpath,
         referer: request.referer,
-        user_agent: request.user_agent,
-        params: request.query_parameters,
+        user_agent: user_signed_in? ? nil : request.user_agent,
+        params: request.method == 'GET' ? nil : request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token),
         twitter_user_id: @twitter_user&.id,
-    }
+    }.compact
   end
 end

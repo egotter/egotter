@@ -23,7 +23,7 @@ module Logging
     return create_crawler_log if from_crawler?
 
     uid, screen_name = find_uid_and_screen_name
-    save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+    save_params = request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
 
     attrs = {
       session_id:  egotter_visit_id,
@@ -77,7 +77,7 @@ module Logging
     message = ActionController::Base.helpers.strip_tags(message)
     message += ex.message if ex
 
-    save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+    save_params = request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
 
     if from_crawler? && request.device_type != 'crawler'
       device_type = 'crawler'
@@ -115,7 +115,7 @@ module Logging
   end
 
   def create_crawler_log
-    save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+    save_params = request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
 
     attrs = {
       controller:  controller_name,
@@ -136,7 +136,7 @@ module Logging
   end
 
   def create_webhook_log
-    save_params = request.query_parameters.dup.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+    save_params = request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
     if twitter_webhook?
       save_params['webhook'] = '[REMOVED]' if save_params.has_key?('webhook')
       save_params['apps'] = '[REMOVED]' if save_params.has_key?('apps')
@@ -204,7 +204,7 @@ module Logging
 
   # TODO Remove later
   def track_order_activity(prop = {})
-    event_params = request.query_parameters.dup.merge(request.request_parameters).except(:data, :locale, :utf8, :authenticity_token)
+    event_params = request.query_parameters.merge(request.request_parameters).except(:data, :locale, :utf8, :authenticity_token)
     properties = {path: request.path, params: event_params}.merge(prop)
     ahoy.track('Order activity', properties)
   rescue => e
