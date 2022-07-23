@@ -24,15 +24,14 @@ class Airbag
   end
 
   def exception(e, props = {})
-    message = "#{format_exception(e)}#{' ' + format_hash(props) if props.any?}"
-    props = props.merge(backtrace: e.backtrace)
-    props = props.merge(cause_backtrace: e.cause.backtrace) if e.cause
-    log(::Logger::ERROR, message, props)
+    props[:backtrace] = e.backtrace
+    props[:cause_backtrace] = e.cause.backtrace if e.cause
+    log(::Logger::ERROR, format_exception(e), props)
   end
 
   def log(level, raw_message, props)
     context = current_context
-    message = format_message(level, raw_message, context)
+    message = format_message(level, raw_message, props, context)
 
     logger.add(level, message)
 
@@ -43,7 +42,7 @@ class Airbag
 
     if @callbacks&.any?
       @callbacks.each do |blk|
-        blk.call(level, raw_message, message, props, context)
+        blk.call(level, raw_message, props, context)
       end
     end
 
@@ -94,16 +93,16 @@ class Airbag
     "#{e.inspect.truncate(200)}#{" caused by #{e.cause.inspect.truncate(200)}" if e.cause}"
   end
 
-  def format_message(level, message, context)
-    "#{format_hash(context)} #{format_severity(level)}: #{message}"
+  def format_message(level, message, props, context)
+    "#{format_hash(context)} #{format_severity(level)}: #{message} #{format_hash(props)}"
   end
 
   def format_hash(hash)
-    hash.map { |k, v| "#{k}=#{v.inspect.truncate(200)}" }.join(' ')
+    hash.except(:backtrace, :cause_backtrace, :caller).map { |k, v| "#{k}=#{v.inspect.truncate(200)}" }.join(' ')
   end
 
   def truncate_hash(hash)
-    hash.transform_values { |v| v.is_a?(String) ? v.to_s.truncate(200) : v }
+    hash.transform_values { |v| v.is_a?(String) ? v.inspect.truncate(200) : v }
   end
 
   def tag=(value)
@@ -127,7 +126,7 @@ class Airbag
 
   class << self
     extend Forwardable
-    def_delegators :instance, :debug, :info, :warn, :error, :exception, :benchmark, :broadcast, :tag=, :disable!
+    def_delegators :instance, :debug, :info, :warn, :error, :exception, :benchmark, :broadcast, :format_hash, :truncate_hash, :tag=, :disable!, :format_severity
   end
 
   class Logger < ::Logger

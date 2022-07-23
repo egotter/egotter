@@ -11,17 +11,17 @@ RSpec.describe Airbag, type: :model do
   ].each do |method, level|
     describe "##{method}" do
       let(:message) { 'msg' }
-      subject { instance.send(method, message) }
+      subject { instance.send(method, message, id: 1) }
       it do
-        expect(instance).to receive(:log).with(level, message, {})
+        expect(instance).to receive(:log).with(level, message, {id: 1})
         subject
       end
 
       context 'block is passed' do
-        let(:block) { Proc.new { 'block' } }
+        let(:block) { Proc.new { 'blk' } }
         subject { instance.send(method, &block) }
         it do
-          expect(instance).to receive(:log).with(level, 'block', {})
+          expect(instance).to receive(:log).with(level, 'blk', {})
           subject
         end
       end
@@ -52,16 +52,17 @@ RSpec.describe Airbag, type: :model do
     let(:logger) { instance_double(Logger, 'log/test.log', level: Logger::INFO) }
     let(:level) { Logger::WARN }
     let(:message) { 'msg' }
+    let(:props) { {a: 1} }
     let(:context) { {x: 1} }
     let(:formatted_message) { "warn: #{message}" }
     let(:callback_result) { [] }
-    subject { instance.log(level, message, {a: 1}) }
+    subject { instance.log(level, message, props) }
 
     before do
       described_class.broadcast { callback_result << true }
       allow(instance).to receive(:logger).and_return(logger)
       allow(instance).to receive(:current_context).and_return(context)
-      allow(instance).to receive(:format_message).with(Logger::WARN, message, context).and_return(formatted_message)
+      allow(instance).to receive(:format_message).with(Logger::WARN, message, props, context).and_return(formatted_message)
     end
 
     it do
