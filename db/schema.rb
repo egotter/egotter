@@ -333,31 +333,6 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.index ["user_id"], name: "index_create_periodic_tweet_requests_on_user_id", unique: true
   end
 
-  create_table "create_relationship_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "session_id", default: "", null: false
-    t.integer "user_id", default: -1, null: false
-    t.string "uid", default: "-1", null: false
-    t.string "screen_name", default: "", null: false
-    t.string "bot_uid", default: "-1", null: false
-    t.boolean "status", default: false, null: false
-    t.string "reason", default: "", null: false
-    t.text "message", null: false
-    t.integer "call_count", default: -1, null: false
-    t.string "via", default: "", null: false
-    t.string "device_type", default: "", null: false
-    t.string "os", default: "", null: false
-    t.string "browser", default: "", null: false
-    t.string "user_agent", default: "", null: false
-    t.string "referer", default: "", null: false
-    t.string "referral", default: "", null: false
-    t.string "channel", default: "", null: false
-    t.datetime "created_at", null: false
-    t.index ["created_at"], name: "index_create_relationship_logs_on_created_at"
-    t.index ["screen_name"], name: "index_create_relationship_logs_on_screen_name"
-    t.index ["uid"], name: "index_create_relationship_logs_on_uid"
-    t.index ["user_id"], name: "index_create_relationship_logs_on_user_id"
-  end
-
   create_table "create_test_report_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", default: -1, null: false
     t.integer "request_id", default: -1, null: false
