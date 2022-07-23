@@ -74,7 +74,6 @@ gem 'omniauth-twitter'
 gem 'sidekiq', github: 'egotter/sidekiq', branch: 'v6_5_1'
 gem 'unique_job', '0.4.3'
 gem 'expire_job', '0.1.5.pre'
-gem 'timeout_job'
 gem 'sinatra', require: false
 gem 'hiredis'
 gem 'redis', require: %w[redis redis/connection/hiredis]

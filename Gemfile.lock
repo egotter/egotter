@@ -436,8 +436,6 @@ GEM
     thor (1.2.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
-    timeout_job (0.1.2)
-      sidekiq (> 6.0, < 7.0)
     trailblazer-option (0.1.2)
     twitter-text (3.1.0)
       idn-ruby
@@ -512,7 +510,6 @@ DEPENDENCIES
   sitemap_generator
   slack-ruby-client
   stripe
-  timeout_job
   twitter!
   twitter-text
   twitter_with_auto_pagination

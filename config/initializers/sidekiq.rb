@@ -27,7 +27,6 @@ Sidekiq.configure_server do |config|
   config.server_middleware do |chain|
     chain.add UniqueJob::ServerMiddleware, redis_options
     chain.add ExpireJob::Middleware
-    chain.add TimeoutJob::Middleware
   end
 
   config.client_middleware do |chain|
