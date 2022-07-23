@@ -1170,30 +1170,6 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.index ["uid"], name: "index_personality_insights_on_uid", unique: true
   end
 
-  create_table "polling_logs", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "session_id", default: "", null: false
-    t.integer "user_id", default: -1, null: false
-    t.string "uid", default: "", null: false
-    t.string "screen_name", default: "", null: false
-    t.string "action", default: "", null: false
-    t.boolean "status", default: false, null: false
-    t.float "time", default: 0.0, null: false
-    t.integer "retry_count", default: 0, null: false
-    t.string "device_type", default: "", null: false
-    t.string "os", default: "", null: false
-    t.string "browser", default: "", null: false
-    t.string "user_agent", default: "", null: false
-    t.string "referer", default: "", null: false
-    t.string "referral", default: "", null: false
-    t.string "channel", default: "", null: false
-    t.datetime "created_at", null: false
-    t.index ["created_at"], name: "index_polling_logs_on_created_at"
-    t.index ["screen_name"], name: "index_polling_logs_on_screen_name"
-    t.index ["session_id"], name: "index_polling_logs_on_session_id"
-    t.index ["uid"], name: "index_polling_logs_on_uid"
-    t.index ["user_id"], name: "index_polling_logs_on_user_id"
-  end
-
   create_table "private_mode_settings", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
