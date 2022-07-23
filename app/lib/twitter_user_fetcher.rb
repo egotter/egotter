@@ -1,9 +1,8 @@
 class TwitterUserFetcher
   attr_reader :api_name
 
-  # client: An instance of ApiClient with :null_store
   def initialize(client, uid, screen_name, fetch_friends, search_for_yourself, reporting)
-    @client = ClientWrapper.new(client, client.twitter)
+    @api_client = client # with :null_store
     @uid = uid
     @search_query = "@#{screen_name}"
     @fetch_friends = fetch_friends
@@ -21,52 +20,51 @@ class TwitterUserFetcher
   # Not using uniq for mentions, search_results and favorites intentionally
   def fetch_without_threads
     result = {}
+    client = ClientWrapper.new(@api_client, @api_client.twitter)
 
     if @fetch_friends
-      result[:friend_ids] = @client.friend_ids(@uid)
-      result[:follower_ids] = @client.follower_ids(@uid)
+      result[:friend_ids] = client.friend_ids(@uid)
+      result[:follower_ids] = client.follower_ids(@uid)
     end
 
     if @search_for_yourself
-      result[:mentions_timeline] = @client.mentions_timeline
+      result[:mentions_timeline] = client.mentions_timeline
     else
-      result[:search] = @client.search(@search_query)
+      result[:search] = client.search(@search_query)
     end
 
     unless @reporting
-      result[:user_timeline] = @client.user_timeline(@uid)
+      result[:user_timeline] = client.user_timeline(@uid)
     end
 
-    result[:favorites] = @client.favorites(@uid)
+    result[:favorites] = client.favorites(@uid)
 
     result
   end
 
   def fetch_in_threads
     threads = []
-    result = Queue.new
+    client = ClientWrapper.new(@api_client, @api_client.twitter)
 
     if @fetch_friends
-      threads << Thread.new { result << [:friend_ids, @client.friend_ids(@uid)] }
-      threads << Thread.new { result << [:follower_ids, @client.follower_ids(@uid)] }
+      threads << Thread.new(client.copy, @uid) { |c, u| [:friend_ids, c.friend_ids(u)] }
+      threads << Thread.new(client.copy, @uid) { |c, u| [:follower_ids, c.follower_ids(u)] }
     end
 
     if @search_for_yourself
-      threads << Thread.new { result << [:mentions_timeline, @client.mentions_timeline] }
+      threads << Thread.new(client) { |c| [:mentions_timeline, c.mentions_timeline] }
     else
-      threads << Thread.new { result << [:search, @client.search(@search_query)] }
+      threads << Thread.new(client, @search_query) { |c, q| [:search, c.search(q)] }
     end
 
     unless @reporting
-      threads << Thread.new { result << [:user_timeline, @client.user_timeline(@uid)] }
+      threads << Thread.new(client, @uid) { |c, u| [:user_timeline, c.user_timeline(u)] }
     end
 
-    threads << Thread.new { result << [:favorites, @client.favorites(@uid)] }
+    threads << Thread.new(client, @uid) { |c, u| [:favorites, c.favorites(u)] }
 
     threads.each(&:join)
-
-    @client.finish_bm("Benchmark TwitterUserFetcher uid=#{@uid}")
-    result.size.times.map { result.pop }.to_h
+    threads.map(&:value).to_h
   end
 
   private
@@ -111,6 +109,10 @@ class TwitterUserFetcher
       @client.favorites(uid)
     rescue => e
       handle_exception(e)
+    end
+
+    def copy
+      self.class.new(@client, @twitter_client)
     end
 
     private

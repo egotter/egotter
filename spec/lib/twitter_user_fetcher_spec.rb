@@ -4,16 +4,13 @@ RSpec.describe TwitterUserFetcher do
   let(:user) { create(:user) }
   let(:uid) { user.uid }
   let(:screen_name) { user.screen_name }
-  let(:passed_client) { double('passed_client', twitter: 'twitter') }
+  let(:twitter_client) { double('twitter_client') }
+  let(:api_client) { double('api_client', twitter: twitter_client) }
   let(:client) { double('client') }
   let(:fetch_friends) { true }
   let(:search_for_yourself) { true }
   let(:reporting) { false }
-  let(:instance) { described_class.new(passed_client, uid, screen_name, fetch_friends, search_for_yourself, reporting) }
-
-  before do
-    allow(described_class::ClientWrapper).to receive(:new).with(passed_client, 'twitter').and_return(client)
-  end
+  let(:instance) { described_class.new(api_client, uid, screen_name, fetch_friends, search_for_yourself, reporting) }
 
   describe '#fetch' do
     subject { instance.fetch }
@@ -34,6 +31,10 @@ RSpec.describe TwitterUserFetcher do
 
   describe '#fetch_without_threads' do
     subject { instance.fetch_without_threads }
+
+    before do
+      allow(described_class::ClientWrapper).to receive(:new).with(api_client, twitter_client).and_return(client)
+    end
 
     it do
       expect(client).to receive(:friend_ids).with(uid)
@@ -83,6 +84,10 @@ RSpec.describe TwitterUserFetcher do
 
   describe '#fetch_in_threads' do
     subject { instance.fetch_in_threads }
+    before do
+      allow(described_class::ClientWrapper).to receive(:new).with(api_client, twitter_client).and_return(client)
+      allow(client).to receive(:copy).and_return(client)
+    end
     it do
       expect(client).to receive(:friend_ids).with(uid)
       expect(client).to receive(:follower_ids).with(uid)
@@ -99,7 +104,7 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
   let(:twitter) { double('twitter', app_context?: true) }
   let(:instance) { described_class.new(client, twitter) }
 
-  describe 'friend_ids' do
+  describe '#friend_ids' do
     subject { instance.friend_ids(1) }
     it do
       expect(instance).to receive(:collect_with_max_id).with(1).and_call_original
@@ -108,7 +113,7 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
     end
   end
 
-  describe 'follower_ids' do
+  describe '#follower_ids' do
     subject { instance.follower_ids(1) }
     it do
       expect(instance).to receive(:collect_with_max_id).with(1).and_call_original
@@ -117,7 +122,7 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
     end
   end
 
-  describe 'user_timeline' do
+  describe '#user_timeline' do
     subject { instance.user_timeline(1) }
     it do
       expect(client).to receive(:user_timeline).with(1, include_rts: false)
@@ -134,7 +139,7 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
     end
   end
 
-  describe 'mentions_timeline' do
+  describe '#mentions_timeline' do
     subject { instance.mentions_timeline }
     it do
       expect(client).to receive(:mentions_timeline)
@@ -151,7 +156,7 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
     end
   end
 
-  describe 'search' do
+  describe '#search' do
     subject { instance.search('word') }
     it do
       expect(client).to receive(:search).with('word')
@@ -168,7 +173,7 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
     end
   end
 
-  describe 'favorites' do
+  describe '#favorites' do
     subject { instance.favorites(1) }
     it do
       expect(client).to receive(:favorites).with(1)
@@ -183,6 +188,11 @@ RSpec.describe TwitterUserFetcher::ClientWrapper do
       end
       it { expect { subject }.not_to raise_error }
     end
+  end
+
+  describe '#copy' do
+    subject { instance.copy }
+    it { is_expected.to be_truthy }
   end
 
   describe '#collect_with_max_id' do
