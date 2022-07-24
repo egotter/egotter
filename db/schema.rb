@@ -378,6 +378,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.integer "twitter_user_id"
     t.string "status_message"
     t.string "requested_by", default: "", null: false
+    t.datetime "started_at"
     t.datetime "finished_at"
     t.bigint "ahoy_visit_id"
     t.datetime "created_at", null: false

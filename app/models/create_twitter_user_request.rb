@@ -9,6 +9,7 @@
 #  twitter_user_id :integer
 #  status_message  :string(191)
 #  requested_by    :string(191)      default(""), not null
+#  started_at      :datetime
 #  finished_at     :datetime
 #  ahoy_visit_id   :bigint(8)
 #  created_at      :datetime         not null
