@@ -5,6 +5,31 @@ RSpec.describe Logging do
     include Logging
   end
 
+  let(:response) { double('response', status: 200) }
+
+  before do
+    allow(controller).to receive(:response).and_return(response)
+  end
+
+  describe '#create_access_log?' do
+    subject { controller.create_access_log? }
+    before { allow(response).to receive(:successful?).and_return(true) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '#apache_bench?' do
+    subject { controller.apache_bench? }
+    it { is_expected.to be_falsey }
+  end
+
+  describe '#create_access_log' do
+    subject { controller.create_access_log }
+    it do
+      expect(CreateSearchLogWorker).to receive(:perform_async).with(anything)
+      subject
+    end
+  end
+
   describe '#create_access_day' do
     let(:user) { create(:user) }
     subject { controller.create_access_day }
@@ -18,20 +43,44 @@ RSpec.describe Logging do
     end
   end
 
+  describe '#create_error_log' do
+    subject { controller.create_error_log('location', 'message') }
+    before { allow(controller).to receive(:performed?).and_return(false) }
+    it do
+      expect(CreateSearchErrorLogWorker).to receive(:perform_async).with(anything)
+      subject
+    end
+  end
+
+  describe '#create_crawler_log' do
+    subject { controller.create_crawler_log }
+    before { allow(controller).to receive(:performed?).and_return(false) }
+    it do
+      expect(CreateCrawlerLogWorker).to receive(:perform_async).with(anything)
+      subject
+    end
+  end
+
   describe '#create_webhook_log' do
-    let(:request) do
-      double('request', query_parameters: {}, request_parameters: {}, path: '/', ip: '1.1.1.1', method: 'GET', user_agent: 'TEST')
-    end
-    let(:response) { double('response', status: 200) }
     subject { controller.create_webhook_log }
-    before do
-      allow(controller).to receive(:request).and_return(request)
-      allow(controller).to receive(:response).and_return(response)
-      allow(controller).to receive(:twitter_webhook?).and_return(true)
-    end
+    before { allow(controller).to receive(:twitter_webhook?).and_return(true) }
     it do
       expect(CreateWebhookLogWorker).to receive(:perform_async).with(anything)
       subject
     end
+  end
+
+  describe '#create_stripe_webhook_log' do
+    subject { controller.create_stripe_webhook_log('eid', 'etype', 'edata') }
+    it do
+      expect(CreateStripeWebhookLogWorker).to receive(:perform_async).with(anything)
+      subject
+    end
+  end
+
+  describe '#ensure_utf8' do
+    let(:str) { "あ".force_encoding('ASCII-8BIT') }
+    subject { controller.send(:ensure_utf8, str) }
+    it { expect(subject.encoding.name).to eq('UTF-8') }
   end
 end

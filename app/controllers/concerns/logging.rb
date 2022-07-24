@@ -23,7 +23,7 @@ module Logging
     return create_crawler_log if from_crawler?
 
     uid, screen_name = find_uid_and_screen_name
-    save_params = request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+    save_params = concatenated_params
 
     attrs = {
       session_id:  egotter_visit_id,
@@ -41,7 +41,7 @@ module Logging
       os:          request.os,
       browser:     request.browser,
       ip:          request.ip,
-      user_agent:  ensure_utf8(request.user_agent.to_s.truncate(180)),
+      user_agent:  ensure_utf8(request.user_agent).truncate(180),
       referer:     request.referer.to_s.truncate(1000),
       created_at:  Time.zone.now
     }
@@ -58,16 +58,19 @@ module Logging
       end
     end
   rescue Encoding::UndefinedConversionError => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+    # This error occurs when multibyte characters are passed to JSON.generate to enqueue the job.
+    # Some crawlers use multibyte characters in the User-Agent even though only ASCII characters can be used.
+    # To avoid this error use #inspect instead of #to_s.
+    # Reproduce: str = "あ".force_encoding('ASCII-8BIT'); JSON.generate(str)
+    Airbag.exception e, path: request.path, user_agent: request.user_agent.inspect
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+    Airbag.exception e, path: request.path, user_agent: request.user_agent.inspect
   end
 
   def create_access_day
-    # TODO Create a record synchronously as a workaround to "ThreadError: can't alloc thread"
     CreateAccessDayWorker.perform_async(current_user.id) if user_signed_in?
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} user_id=#{current_user.id}"
+    Airbag.exception e, user_id: current_user&.id
   end
 
   def create_error_log(location, message, ex = nil)
@@ -77,7 +80,7 @@ module Logging
     message = ActionController::Base.helpers.strip_tags(message)
     message += ex.message if ex
 
-    save_params = request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+    save_params = concatenated_params
 
     if from_crawler? && request.device_type != 'crawler'
       device_type = 'crawler'
@@ -104,18 +107,18 @@ module Logging
         os:          request.os,
         browser:     request.browser,
         ip:          request.ip,
-        user_agent:  ensure_utf8(request.user_agent.to_s.truncate(180)),
+        user_agent:  ensure_utf8(request.user_agent).truncate(180),
         referer:     request.referer.to_s.truncate(180),
         created_at:  Time.zone.now
     }
 
     CreateSearchErrorLogWorker.perform_async(attrs)
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+    Airbag.exception e, path: request.path, user_agent: request.user_agent.inspect
   end
 
   def create_crawler_log
-    save_params = request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+    save_params = concatenated_params
 
     attrs = {
       controller:  controller_name,
@@ -128,15 +131,15 @@ module Logging
       path:        request.path.to_s.truncate(180),
       params:      save_params.empty? ? '' : save_params.to_json.truncate(180),
       status:      response.status,
-      user_agent:  request.user_agent.to_s.truncate(180),
+      user_agent:  ensure_utf8(request.user_agent).truncate(180),
     }
     CreateCrawlerLogWorker.perform_async(attrs)
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+    Airbag.exception e, path: request.path, user_agent: request.user_agent.inspect
   end
 
   def create_webhook_log
-    save_params = request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+    save_params = concatenated_params
     if twitter_webhook?
       save_params['webhook'] = '[REMOVED]' if save_params.has_key?('webhook')
       save_params['apps'] = '[REMOVED]' if save_params.has_key?('apps')
@@ -158,12 +161,12 @@ module Logging
         ip:          request.ip,
         method:      request.method,
         status:      response.status,
-        user_agent:  request.user_agent.to_s.truncate(180),
+        user_agent:  ensure_utf8(request.user_agent).truncate(180),
     }
 
     CreateWebhookLogWorker.perform_async(attrs)
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} params=#{params.inspect} user_agent=#{request.user_agent}"
+    Airbag.exception e, path: request.path, user_agent: request.user_agent.inspect
   end
 
   def create_stripe_webhook_log(event_id, event_type, event_data)
@@ -177,12 +180,12 @@ module Logging
         ip:          request.ip,
         method:      request.method,
         status:      response.status,
-        user_agent:  request.user_agent.to_s.truncate(180),
+        user_agent:  ensure_utf8(request.user_agent).truncate(180),
     }
 
     CreateStripeWebhookLogWorker.perform_async(attrs)
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} event_id=#{event_id} event_type=#{event_type} event_data=#{event_data}"
+    Airbag.exception e, event_id: event_id, event_type: event_type, event_data: event_data
   end
 
   def track_page_order_activity(options = {})
@@ -192,14 +195,14 @@ module Logging
     }.merge(options).delete_if { |_, v| v.blank? }.presence
     ahoy.track('Order activity', properties)
   rescue => e
-    Airbag.warn "#{controller_name}##{action_name}: #{e.inspect} options=#{options}"
+    Airbag.exception e, controller: controller_name, action: action_name, options: options
   end
 
   def track_webhook_order_activity
     properties = {path: request.path, id: params[:id], type: params[:type]}
     ahoy.track('Order activity', properties)
   rescue => e
-    Airbag.warn "#{action_name}: #{e.inspect}"
+    Airbag.exception e, controller: controller_name, action: action_name
   end
 
   # TODO Remove later
@@ -208,7 +211,7 @@ module Logging
     properties = {path: request.path, params: event_params}.merge(prop)
     ahoy.track('Order activity', properties)
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} prop=#{prop}"
+    Airbag.exception e, prop: prop
   end
 
   private
@@ -227,7 +230,11 @@ module Logging
     [uid, screen_name]
   end
 
+  def concatenated_params
+    request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+  end
+
   def ensure_utf8(str)
-    str.encode("UTF-8", "binary", invalid: :replace, undef: :replace, replace: '')
+    str.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
   end
 end

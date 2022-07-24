@@ -48,7 +48,7 @@ module RequestErrorHandler
         device_type: request.device_type,
         browser: request.browser,
         xhr: request.xhr?,
-        full_path: request.fullpath,
+        fullpath: request.fullpath,
         referer: request.referer,
         user_agent: user_signed_in? ? nil : request.user_agent,
         params: request.method == 'GET' ? nil : request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token),

@@ -98,6 +98,7 @@ module CrawlersHelper
       'CriteoBot',
       'Slackbot',
       'um-LN/1.0',
+      'Baiduspider',
   ]
   CRAWLERS_REGEXP = Regexp.union(CRAWLER_WORDS)
 
