@@ -13,26 +13,20 @@ end
 
 def logger
   @logger_instance ||= Class.new do
-    def info(msg, options = {})
-      log(msg, 'INFO', options)
+    def info(msg, without_slack: false)
+      Deploy.logger.info msg
+      post_message(msg) unless without_slack
     end
 
-    def warn(msg, options = {})
-      log(msg, 'WARN', options)
+    def warn(msg, without_slack: false)
+      Deploy.logger.warn msg
+      post_message(msg) unless without_slack
     end
 
-    def log(msg, level, options)
-      message = "#{Time.now} pid=#{Process.pid} #{level}: #{msg}"
-      File.open('log/deploy.log', 'a') { |f| f.write(message + "\n") }
-
-      unless options[:only_file]
-        params = {channel: 'deploy', text: message}.merge(options.except(:only_file))
-        @response = Slack::Web::Client.new.chat_postMessage(params)
-      end
-    end
-
-    def last_thread
-      @response['ts']
+    def post_message(msg)
+      options = {channel: 'deploy', text: msg}
+      options[:ts] = @response['ts'] if @response
+      @response = Slack::Web::Client.new.chat_postMessage(params)
     end
   end.new
 end
@@ -57,13 +51,13 @@ class Servers
       @market_type = 'not-spot' if current_instances.size == 0
       logger.info("Adjust #{@role} servers from #{current_instances.size} to #{ideal_count} current=#{current_instances.map(&:name)}")
       adjust_task.run
-      logger.info("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
+      logger.info("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}")
     elsif current_instances.all? { |i| i.instance_lifecycle == 'spot' }
       logger.info("Launch #{@role} server current=#{current_instances.map(&:name)}")
       launch_task.run
-      logger.info("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}", thread_ts: logger.last_thread)
+      logger.info("Finished prev=#{current_instances.map(&:name)} cur=#{fetch_instances.map(&:name)}")
     else
-      logger.info("Neither start nor stop is performed cur=#{current_instances.map(&:name)}", only_file: true)
+      logger.info("Neither start nor stop is performed cur=#{current_instances.map(&:name)}", without_slack: true)
     end
   end
 
@@ -143,21 +137,11 @@ class App
 end
 
 def main(role)
-  lockfile = "deploy-#{role}.pid"
-
-  if File.exist?(lockfile)
-    logger.info("Another deployment is already running role=#{role}")
-    return
-  end
-
-  begin
-    File.write(lockfile, Process.pid)
+  Deploy.with_lock("deploy-#{role}.pid") do
     App.new(role).run
-  rescue => e
-    logger.warn("Failed role=#{role} exception=#{e.inspect}")
-  ensure
-    File.delete(lockfile) if File.exist?(lockfile)
   end
+rescue => e
+  logger.warn("Failed role=#{role} exception=#{e.inspect}")
 end
 
 if __FILE__ == $0

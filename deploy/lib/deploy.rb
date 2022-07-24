@@ -3,9 +3,22 @@ require_relative './deploy/aws'
 require_relative '../tasks/task_builder'
 
 module Deploy
+  module_function
+
   def logger(file = 'log/deploy.log')
-    Logger.logger(file)
+    Logger.instance(file)
   end
 
-  module_function :logger
+  def with_lock(file, &block)
+    if File.exist?(file)
+      logger.info 'Another deployment is already running'
+      return
+    end
+
+    File.write(file, Process.pid)
+
+    yield
+  ensure
+    File.delete(file) if File.exist?(file)
+  end
 end

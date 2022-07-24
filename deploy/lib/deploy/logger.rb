@@ -1,28 +1,34 @@
+require 'singleton'
+
 require 'active_support'
 require 'active_support/logger'
 
 module Deploy
-  class Logger
+  class Logger < ::Logger
+    include Singleton
+
+    def initialize
+      super(STDOUT)
+      self.level = ::Logger::INFO
+      self.datetime_format = '%Y-%m-%d %H:%M:%S'
+      self.formatter = Proc.new do |severity, timestamp, _, msg|
+        "#{timestamp} #{severity} -- #{msg}\n"
+      end
+    end
+
     class << self
-      def logger(file = nil)
-        console = ActiveSupport::Logger.new(STDOUT)
-        console.level = ::Logger::INFO
-        console.datetime_format = '%Y-%m-%d %H:%M:%S'
-        console.formatter = Proc.new do |severity, timestamp, _, msg|
+      def instance(file = 'log/deploy.log')
+        logger = super()
+
+        file_logger = ActiveSupport::Logger.new(file)
+        file_logger.level = ::Logger::INFO
+        file_logger.datetime_format = '%Y-%m-%d %H:%M:%S'
+        file_logger.formatter = Proc.new do |severity, timestamp, _, msg|
           "#{timestamp} #{severity} -- #{msg}\n"
         end
+        logger.extend ActiveSupport::Logger.broadcast(file_logger)
 
-        if file
-          log = ActiveSupport::Logger.new(file)
-          log.level = ::Logger::INFO
-          log.datetime_format = '%Y-%m-%d %H:%M:%S'
-          console.formatter = Proc.new do |severity, timestamp, _, msg|
-            "#{timestamp} #{severity} -- #{msg}\n"
-          end
-          console.extend ActiveSupport::Logger.broadcast(log)
-        end
-
-        console
+        logger
       end
     end
   end

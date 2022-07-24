@@ -78,22 +78,16 @@ def main(params)
     return
   end
 
-  lockfile = "deploy-#{params['role']}.pid"
-
-  if !params['list'] && File.exist?(lockfile)
-    puts 'Another deployment is already running'
+  if params['list']
+    Tasks::TaskBuilder.build(params).run
     return
   end
 
-  Deploy.logger.info "Deploy started params=#{params.compact.inspect}" unless params['list']
-  begin
-    File.write(lockfile, Process.pid)
-    task = Tasks::TaskBuilder.build(params)
-    task.run
-  ensure
-    File.delete(lockfile) if File.exist?(lockfile)
+  Deploy.with_lock("deploy-#{params['role']}.pid") do
+    Deploy.logger.info "Deploy started params=#{params}"
+    Tasks::TaskBuilder.build(params).run
+    Deploy.logger.info "Deploy finished params=#{params}"
   end
-  Deploy.logger.info "Deploy finished params=#{params.compact.inspect}" unless params['list']
 
   if git_tag?(params)
     system("git tag #{task.action}-#{params['role']}-#{Time.now.strftime("%Y-%m-%d_%H%M%S")}")
