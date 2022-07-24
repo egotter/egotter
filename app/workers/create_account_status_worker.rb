@@ -1,6 +1,6 @@
 class CreateAccountStatusWorker
   include Sidekiq::Worker
-  prepend TimeoutableWorker
+  prepend WorkMeasurement
   sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
 
   def unique_key(screen_name, options = {})

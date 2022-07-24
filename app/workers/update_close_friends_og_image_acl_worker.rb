@@ -1,6 +1,6 @@
 class UpdateCloseFriendsOgImageAclWorker
   include Sidekiq::Worker
-  prepend TimeoutableWorker
+  prepend WorkMeasurement
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(image_id, options = {})

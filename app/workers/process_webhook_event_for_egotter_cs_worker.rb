@@ -2,7 +2,7 @@ require 'digest/md5'
 
 class ProcessWebhookEventForEgotterCsWorker
   include Sidekiq::Worker
-  prepend TimeoutableWorker
+  prepend WorkMeasurement
   sidekiq_options queue: 'webhook', retry: 0, backtrace: false
 
   def unique_key(event, options = {})

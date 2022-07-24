@@ -3,7 +3,7 @@ require 'digest/md5'
 # TODO Rename to ProcessWebhookDirectMessageEventWorker
 class ProcessWebhookEventWorker
   include Sidekiq::Worker
-  prepend TimeoutableWorker
+  prepend WorkMeasurement
   include ScheduleTweetsConcern
   sidekiq_options queue: 'webhook', retry: 0, backtrace: false
 

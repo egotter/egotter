@@ -1,6 +1,6 @@
 class CreateTwitterUserWorker
   include Sidekiq::Worker
-  prepend TimeoutableWorker
+  prepend WorkMeasurement
   include WorkerErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 

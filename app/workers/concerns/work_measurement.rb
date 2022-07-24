@@ -1,4 +1,4 @@
-module TimeoutableWorker
+module WorkMeasurement
   def timeout?(sec)
     @start && Time.zone.now - @start > sec
   end

@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe TimeoutableWorker do
-  class TestTimeoutableWorker
-    prepend TimeoutableWorker
+RSpec.describe WorkMeasurement do
+  class TestWorkMeasurement
+    prepend WorkMeasurement
 
     def timeout_in
       1
@@ -13,12 +13,12 @@ RSpec.describe TimeoutableWorker do
     end
   end
 
-  class TestTimeoutableWorkerWithCallback < TestTimeoutableWorker
+  class TestWorkMeasurementWithCallback < TestWorkMeasurement
     def after_timeout(*) end
   end
 
   describe '#measure_time' do
-    let(:instance) { TestTimeoutableWorker.new }
+    let(:instance) { TestWorkMeasurement.new }
     subject { instance.measure_time('a') }
     before { allow(instance).to receive(:timeout?).with(1).and_return(true) }
 
@@ -28,7 +28,7 @@ RSpec.describe TimeoutableWorker do
     end
 
     context 'worker implements #after_timeout' do
-      let(:instance) { TestTimeoutableWorkerWithCallback.new }
+      let(:instance) { TestWorkMeasurementWithCallback.new }
       it do
         expect(instance).to receive(:after_timeout).with('a')
         subject
@@ -37,7 +37,7 @@ RSpec.describe TimeoutableWorker do
   end
 
   describe '#perform' do
-    let(:instance) { TestTimeoutableWorker.new }
+    let(:instance) { TestWorkMeasurement.new }
     subject { instance.perform('a') }
     it do
       expect(instance).to receive(:measure_time).with('a')

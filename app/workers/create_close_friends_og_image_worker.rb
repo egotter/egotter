@@ -1,6 +1,6 @@
 class CreateCloseFriendsOgImageWorker
   include Sidekiq::Worker
-  prepend TimeoutableWorker
+  prepend WorkMeasurement
   sidekiq_options queue: 'misc_low', retry: 0, backtrace: false
 
   def unique_key(uid, options = {})
