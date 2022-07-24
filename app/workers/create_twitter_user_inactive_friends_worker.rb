@@ -12,7 +12,7 @@ class CreateTwitterUserInactiveFriendsWorker
   end
 
   def after_skip(*args)
-    Airbag.warn "The job of #{self.class} is skipped", job_details(*args)
+    Airbag.warn 'Job skipped', job_details(*args)
   end
 
   def expire_in
@@ -20,7 +20,7 @@ class CreateTwitterUserInactiveFriendsWorker
   end
 
   def after_expire(*args)
-    Airbag.warn "The job of #{self.class} is expired", job_details(*args)
+    Airbag.warn 'Job expired', job_details(*args)
   end
 
   def timeout_in
@@ -28,14 +28,14 @@ class CreateTwitterUserInactiveFriendsWorker
   end
 
   def after_timeout(*args)
-    Airbag.warn "The job of #{self.class} timed out", job_details(*args)
+    Airbag.warn 'Job timed out', job_details(*args)
   end
 
   def job_details(twitter_user_id, options = {})
     user = TwitterUser.find(twitter_user_id)
-    {twitter_user_id: twitter_user_id, friends_count: user.friends_count, followers_count: user.followers_count}
+    {class: self.class, twitter_user_id: twitter_user_id, friends_count: user.friends_count, followers_count: user.followers_count}
   rescue
-    {twitter_user_id: twitter_user_id}
+    {class: self.class, twitter_user_id: twitter_user_id}
   end
 
   # options:
