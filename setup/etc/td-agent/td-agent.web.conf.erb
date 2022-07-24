@@ -41,7 +41,7 @@
 
 <match <%= name %>.rails.*>
   @type slack
-  webhook_url <%= webhook_rails_web %>
+  token <%= slack_td_agent_token %>
   channel rails_web
   username <%= name %>
   flush_interval 2s
@@ -49,7 +49,7 @@
 
 <match <%= name %>.puma.*>
   @type slack
-  webhook_url <%= webhook_puma %>
+  token <%= slack_td_agent_token %>
   channel puma
   username <%= name %>
   flush_interval 2s
@@ -57,7 +57,7 @@
 
 <match <%= name %>.syslog.*>
   @type slack
-  webhook_url <%= webhook_syslog %>
+  token <%= slack_td_agent_token %>
   channel syslog
   username <%= name %>
   flush_interval 2s
@@ -65,7 +65,7 @@
 
 <match <%= name %>.error_log.*>
   @type slack
-  webhook_url <%= webhook_error_log %>
+  token <%= slack_td_agent_token %>
   channel error_log
   username <%= name %>
   flush_interval 2s

@@ -41,7 +41,7 @@
 
 <match <%= name %>.rails.*>
   @type slack
-  webhook_url <%= webhook_rails_sidekiq %>
+  token <%= slack_td_agent_token %>
   channel rails_sidekiq
   username <%= name %>
   flush_interval 2s
@@ -49,7 +49,7 @@
 
 <match <%= name %>.sidekiq.*>
   @type slack
-  webhook_url <%= webhook_sidekiq %>
+  token <%= slack_td_agent_token %>
   channel sidekiq
   username <%= name %>
   flush_interval 2s
@@ -57,7 +57,7 @@
 
 <match <%= name %>.sidekiq_misc.*>
   @type slack
-  webhook_url <%= webhook_sidekiq_misc %>
+  token <%= slack_td_agent_token %>
   channel sidekiq_misc
   username <%= name %>
   flush_interval 2s
@@ -65,7 +65,7 @@
 
 <match <%= name %>.syslog.*>
   @type slack
-  webhook_url <%= webhook_syslog %>
+  token <%= slack_td_agent_token %>
   channel syslog
   username <%= name %>
   flush_interval 2s
