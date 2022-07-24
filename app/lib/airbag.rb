@@ -90,7 +90,7 @@ class Airbag
   end
 
   def format_exception(e)
-    "#{e.inspect.truncate(200)}#{" caused by #{e.cause.inspect.truncate(200)}" if e.cause}"
+    "#{e.inspect.truncate(200)}#{" caused by #{e.cause.inspect.truncate(200)}" if e.cause} location=#{e.backtrace[0][/`([^']*)'/, 1] rescue nil}"
   end
 
   def format_message(level, message, props, context)
@@ -98,11 +98,21 @@ class Airbag
   end
 
   def format_hash(hash)
-    hash.except(:backtrace, :cause_backtrace, :caller).map { |k, v| "#{k}=#{v.inspect.truncate(200)}" }.join(' ')
+    hash.except(:backtrace, :cause_backtrace, :caller).map { |k, v| "#{k}=#{truncate_string(v)}" }.join(' ')
   end
 
   def truncate_hash(hash)
-    hash.transform_values { |v| v.is_a?(String) ? v.inspect.truncate(200) : v }
+    hash.transform_values { |v| truncate_string(v) }
+  end
+
+  def truncate_string(obj, length = 200)
+    if obj.is_a?(String)
+      obj.truncate(length)
+    elsif obj.is_a?(Symbol)
+      obj.to_s.truncate(length)
+    else
+      obj
+    end
   end
 
   def tag=(value)
@@ -111,6 +121,10 @@ class Airbag
 
   def logger
     @logger ||= Logger.instance
+  end
+
+  def logger=(value)
+    @logger = value
   end
 
   def disable!
@@ -126,7 +140,7 @@ class Airbag
 
   class << self
     extend Forwardable
-    def_delegators :instance, :debug, :info, :warn, :error, :exception, :benchmark, :broadcast, :format_hash, :truncate_hash, :tag=, :disable!, :format_severity
+    def_delegators :instance, :debug, :info, :warn, :error, :exception, :benchmark, :broadcast, :format_hash, :truncate_hash, :tag=, :logger=, :disable!, :format_severity
   end
 
   class Logger < ::Logger

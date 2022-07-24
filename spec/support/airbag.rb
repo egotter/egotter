@@ -1,1 +1,1 @@
-Airbag.disable!
+Airbag.logger = Logger.new(STDOUT)
