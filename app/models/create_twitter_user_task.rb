@@ -10,8 +10,9 @@ class CreateTwitterUserTask
   # context:
   #   :reporting
   def start!(context = nil)
+    @request.update(started_at: Time.zone.now)
     @twitter_user = @request.perform!(context)
-    @request.finished!
+    @request.update(finished_at: Time.zone.now)
     self
   rescue => e
     @request.update(status_message: e.class) if @request

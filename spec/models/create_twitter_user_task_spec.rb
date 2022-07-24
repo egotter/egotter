@@ -11,8 +11,9 @@ RSpec.describe CreateTwitterUserTask, type: :model do
     subject { task.start!(context) }
 
     it do
+      expect(request).to receive(:update).with(started_at: instance_of(ActiveSupport::TimeWithZone))
       expect(request).to receive(:perform!).with(context).and_return(twitter_user)
-      expect(request).to receive(:finished!)
+      expect(request).to receive(:update).with(finished_at: instance_of(ActiveSupport::TimeWithZone))
       subject
     end
   end
