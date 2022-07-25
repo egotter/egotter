@@ -19,9 +19,12 @@ class CreateReportTwitterUserWorker < CreateTwitterUserWorker
     ExpiredReportTwitterUserWorker.perform_async(request_id, options)
   end
 
+  # options:
+  #   period
   def perform(request_id, options = {})
     request = CreateTwitterUserRequest.find(request_id)
     PeriodicReportReportableFlag.create(user_id: request.user_id)
+    PeriodicReportReportableFlag.on(request.user_id, options['period'])
     request.perform(:reporting)
   rescue CreateTwitterUserRequest::TimeoutError => e
     if options['retries']

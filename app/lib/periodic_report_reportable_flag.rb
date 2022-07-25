@@ -1,9 +1,19 @@
 class PeriodicReportReportableFlag
   class << self
+    def on(user_id, period)
+      store.write(key(user_id, period), 1)
+    end
+
+    def on?(user_id, period)
+      store.exist?(key(user_id, period))
+    end
+
+    # TODO Remove later
     def create(user_id:)
       store.write("reportable:#{user_id}", 1)
     end
 
+    # TODO Remove later
     def exists?(user_id:)
       store.exist?("reportable:#{user_id}")
     end
@@ -19,6 +29,14 @@ class PeriodicReportReportableFlag
     end
 
     private
+
+    def key(user_id, period)
+      "reportable:#{user_id}:#{date}:#{period}"
+    end
+
+    def date
+      Time.zone.now.in_time_zone('Tokyo').strftime('%Y%m%d')
+    end
 
     def store
       @store ||= ActiveSupport::Cache::RedisCacheStore.new(

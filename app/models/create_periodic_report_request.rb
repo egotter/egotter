@@ -35,11 +35,16 @@ class CreatePeriodicReportRequest < ApplicationRecord
     self
   end
 
+  def current_period
+    requested_by.to_s[/(morning|afternoon|night)/, 1]
+  end
+
   def perform!
     return unless validate_report!
 
     if worker_context == CreatePeriodicReportWorker # TODO Replace by requested_by == 'batch'
       if PeriodicReportReportableFlag.exists?(user_id: user_id) ||
+          PeriodicReportReportableFlag.on?(user_id, current_period) ||
           TwitterUser.where(uid: user.uid).where('created_at > ?', 3.hours.ago).exists?
         Airbag.info "Don't create new record id=#{id} user_id=#{user_id}"
       else

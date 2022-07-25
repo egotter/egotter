@@ -21,11 +21,11 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     end
   end
 
-  describe 'perform!' do
+  describe 'perform' do
     let(:snapshot) { TwitterSnapshot.new({}) }
     let(:twitter_user) { create(:twitter_user, user_id: create(:user).id) }
     let(:context) { 'context' }
-    subject { request.perform!(context) }
+    subject { request.perform(context) }
     before do
       snapshot.friend_uids = [1, 2, 3]
       snapshot.follower_uids = [3, 4, 5]
