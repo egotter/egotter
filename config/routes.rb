@@ -43,7 +43,6 @@ Rails.application.routes.draw do
       post 'users/update_device_token', to: 'users#update_device_token'
       post 'users/invalidate_expired_credentials', to: 'users#invalidate_expired_credentials'
       post 'bots/invalidate_expired_credentials', to: 'bots#invalidate_expired_credentials'
-      post 'metrics/send_to_cloudwatch', to: 'metrics#send_to_cloudwatch'
       post 'not_found_users/delete', to: 'not_found_users#delete'
       post 'forbidden_users/delete', to: 'forbidden_users#delete'
       post 'periodic_report_settings', to: 'periodic_report_settings#update'
