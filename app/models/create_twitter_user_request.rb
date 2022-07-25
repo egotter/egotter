@@ -64,10 +64,10 @@ class CreateTwitterUserRequest < ApplicationRecord
     twitter_user
   end
 
-  def enqueue_creation_jobs(friend_uids, follower_uids, user_id)
-    CreateTwitterDBUserWorker.perform_async(friend_uids.take(100) + follower_uids.take(100), user_id: user_id, enqueued_by: self.class)
+  def enqueue_creation_jobs(friend_uids, follower_uids, user_id, slice: 50)
+    CreateTwitterDBUserWorker.perform_async(friend_uids.take(slice) + follower_uids.take(slice), user_id: user_id, enqueued_by: self.class)
     CreateTwitterDBUsersForMissingUidsWorker.perform_async(
-        (friend_uids.slice(100..-1) || []) + (follower_uids.slice(100..-1) || []), user_id)
+        (friend_uids.slice(slice..-1) || []) + (follower_uids.slice(slice..-1) || []), user_id)
   end
 
   def delay_for_importing

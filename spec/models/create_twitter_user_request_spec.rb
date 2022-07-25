@@ -45,30 +45,30 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   end
 
   describe '#enqueue_creation_jobs' do
-    let(:friend_uids) { (1..150).to_a }
-    let(:follower_uids) { (101..250).to_a }
+    let(:friend_uids) { (1..100).to_a }
+    let(:follower_uids) { (101..200).to_a }
     let(:user_id) { 1 }
     subject { request.enqueue_creation_jobs(friend_uids, follower_uids, user_id) }
     it do
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..100).to_a + (101..200).to_a, user_id: user_id, enqueued_by: described_class)
-      expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with((101..150).to_a + (201..250).to_a, user_id)
+      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..50).to_a + (101..150).to_a, user_id: user_id, enqueued_by: described_class)
+      expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with((51..100).to_a + (151..200).to_a, user_id)
       subject
     end
 
-    context 'friend_uids is less than 100' do
-      let(:friend_uids) { (1..50).to_a }
+    context 'friend_uids is less than 50' do
+      let(:friend_uids) { (1..20).to_a }
       it do
-        expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..50).to_a + (101..200).to_a, user_id: user_id, enqueued_by: described_class)
-        expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with((201..250).to_a, user_id)
+        expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..20).to_a + (101..150).to_a, user_id: user_id, enqueued_by: described_class)
+        expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with((151..200).to_a, user_id)
         subject
       end
     end
 
-    context 'follower_uids is less than 100' do
-      let(:follower_uids) { (1..50).to_a }
+    context 'follower_uids is less than 50' do
+      let(:follower_uids) { (1..20).to_a }
       it do
-        expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..100).to_a + (1..50).to_a, user_id: user_id, enqueued_by: described_class)
-        expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with((101..150).to_a, user_id)
+        expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..50).to_a + (1..20).to_a, user_id: user_id, enqueued_by: described_class)
+        expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with((51..100).to_a, user_id)
         subject
       end
     end
