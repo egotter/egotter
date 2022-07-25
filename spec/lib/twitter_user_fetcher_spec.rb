@@ -19,6 +19,14 @@ RSpec.describe TwitterUserFetcher do
       subject
     end
 
+    context '@reporting is true' do
+      let(:reporting) { true }
+      it do
+        expect(instance).to receive(:fetch_without_threads)
+        subject
+      end
+    end
+
     context 'ThreadError is raised' do
       let(:error) { ThreadError.new("can't alloc thread") }
       before { allow(instance).to receive(:fetch_in_threads).and_raise(error) }
