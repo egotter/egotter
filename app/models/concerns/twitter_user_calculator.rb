@@ -132,20 +132,20 @@ module TwitterUserCalculator
     sort_by_count_desc(uids).take(100)
   end
 
-  def calc_inactive_friend_uids
-    friend_uids.each_slice(1000).map do |group|
+  def calc_inactive_friend_uids(slice: 1000)
+    friend_uids.each_slice(slice).map do |group|
       TwitterDB::User.where(uid: group).inactive_2weeks.order_by_field(group).pluck(:uid)
     end.flatten
   end
 
-  def calc_inactive_follower_uids
-    follower_uids.each_slice(1000).map do |group|
+  def calc_inactive_follower_uids(slice: 1000)
+    follower_uids.each_slice(slice).map do |group|
       TwitterDB::User.where(uid: group).inactive_2weeks.order_by_field(group).pluck(:uid)
     end.flatten
   end
 
-  def calc_inactive_mutual_friend_uids
-    mutual_friend_uids.each_slice(1000).map do |group|
+  def calc_inactive_mutual_friend_uids(slice: 1000)
+    mutual_friend_uids.each_slice(slice).map do |group|
       TwitterDB::User.where(uid: group).inactive_2weeks.order_by_field(group).pluck(:uid)
     end.flatten
   end
