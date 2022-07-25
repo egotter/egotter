@@ -6,7 +6,9 @@ class CreateTwitterDBUsersForMissingUidsWorker
   # options:
   def perform(data, user_id, options = {})
     uids = decompress(data)
-    CreateTwitterDBUserWorker.perform_async(filter_missing_uids(uids), user_id: user_id, enqueued_by: self.class)
+    filtered_uids = filter_missing_uids(uids)
+    Airbag.info "#{self.class}: passed=#{uids.size} filtered=#{filtered_uids.size}"
+    CreateTwitterDBUserWorker.perform_async(filtered_uids, user_id: user_id, enqueued_by: self.class)
   rescue => e
     handle_worker_error(e, uids: uids, user_id: user_id)
   end
