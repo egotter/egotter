@@ -7,30 +7,17 @@ RSpec.describe CreateTwitterUserInactiveFriendsWorker do
 
   before do
     allow(TwitterUser).to receive(:find).with(twitter_user.id).and_return(twitter_user)
-    allow(User).to receive(:find_by).with(id: twitter_user.user_id).and_return(user)
   end
 
   describe '#perform' do
     subject { worker.perform(twitter_user.id) }
     it do
-      expect(worker).to receive(:import_uids).with(S3::InactiveFriendship, twitter_user).and_return([1, 2])
-      expect(worker).to receive(:import_uids).with(S3::InactiveFollowership, twitter_user).and_return([2, 3, 4])
-      expect(worker).to receive(:import_uids).with(S3::InactiveMutualFriendship, twitter_user)
+      expect(twitter_user).to receive(:calc_and_import).with(S3::InactiveFriendship).and_return([1, 2])
+      expect(twitter_user).to receive(:calc_and_import).with(S3::InactiveFollowership).and_return([2, 3, 4])
+      expect(twitter_user).to receive(:calc_and_import).with(S3::InactiveMutualFriendship)
       expect(CreateInactiveFriendsCountPointWorker).to receive(:perform_async).with(twitter_user.uid, 2)
       expect(CreateInactiveFollowersCountPointWorker).to receive(:perform_async).with(twitter_user.uid, 3)
       expect(DeleteInactiveFriendshipsWorker).to receive(:perform_async).with(twitter_user.uid)
-      subject
-    end
-  end
-
-  describe '#import_uids' do
-    let(:klass) { S3::InactiveFriendship }
-    let(:uids) { [1] }
-    subject { worker.send(:import_uids, klass, twitter_user) }
-    before { allow(twitter_user).to receive(:calc_uids_for).with(klass).and_return(uids) }
-    it do
-      expect(klass).to receive(:import_from!).with(twitter_user.uid, uids)
-      expect(twitter_user).to receive(:update_counter_cache_for).with(klass, uids.size)
       subject
     end
   end

@@ -42,9 +42,9 @@ class CreateTwitterUserInactiveFriendsWorker
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
 
-    inactive_friend_uids = import_uids(S3::InactiveFriendship, twitter_user)
-    inactive_follower_uids = import_uids(S3::InactiveFollowership, twitter_user)
-    import_uids(S3::InactiveMutualFriendship, twitter_user)
+    inactive_friend_uids = twitter_user.calc_and_import(S3::InactiveFriendship)
+    inactive_follower_uids = twitter_user.calc_and_import(S3::InactiveFollowership)
+    twitter_user.calc_and_import(S3::InactiveMutualFriendship)
 
     CreateInactiveFriendsCountPointWorker.perform_async(twitter_user.uid, inactive_friend_uids.size)
     CreateInactiveFollowersCountPointWorker.perform_async(twitter_user.uid, inactive_follower_uids.size)
@@ -52,14 +52,5 @@ class CreateTwitterUserInactiveFriendsWorker
     DeleteInactiveFriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
     Airbag.exception e, twitter_user_id: twitter_user_id, options: options
-  end
-
-  private
-
-  def import_uids(klass, twitter_user)
-    uids = twitter_user.calc_uids_for(klass)
-    klass.import_from!(twitter_user.uid, uids)
-    twitter_user.update_counter_cache_for(klass, uids.size)
-    uids
   end
 end

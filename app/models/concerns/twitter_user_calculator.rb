@@ -28,6 +28,13 @@ module TwitterUserCalculator
     end
   end
 
+  def calc_and_import(klass)
+    uids = calc_uids_for(klass)
+    klass.import_from!(uid, uids)
+    update_counter_cache_for(klass, uids.size)
+    uids
+  end
+
   def calc_uids_for(klass, login_user: nil)
     if klass == S3::CloseFriendship
       calc_close_friend_uids(login_user: login_user)
