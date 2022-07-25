@@ -1478,6 +1478,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_at"], name: "index_twitter_db_users_on_created_at"
     t.index ["screen_name"], name: "index_twitter_db_users_on_screen_name"
+    t.index ["uid", "status_created_at"], name: "index_twitter_db_users_on_uid_and_status_created_at", unique: true
     t.index ["uid"], name: "index_twitter_db_users_on_uid", unique: true
     t.index ["updated_at"], name: "index_twitter_db_users_on_updated_at"
   end

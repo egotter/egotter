@@ -26,6 +26,7 @@ class CreateTwitterDBUsers < ActiveRecord::Migration[6.0]
       t.timestamps null: false
 
       t.index :uid, unique: true
+      t.index [:uid, :status_created_at], unique: true
       t.index :screen_name
       t.index :created_at
       t.index :updated_at
