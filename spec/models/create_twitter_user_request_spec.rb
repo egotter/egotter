@@ -38,9 +38,39 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
       expect(SearchLimitation).to receive(:warn_limit?).with(snapshot)
       expect(request).to receive(:assemble_twitter_user).with(snapshot, 'relations')
       expect(request).to receive(:save_twitter_user).with(snapshot).and_return(twitter_user)
-      expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with([1, 2, 3, 3, 4, 5], twitter_user.user_id)
+      expect(request).to receive(:enqueue_creation_jobs).with(snapshot.friend_uids, snapshot.follower_uids, twitter_user.user_id)
       expect(CreateTwitterUserNewFriendsWorker).to receive(:perform_in).with(5.seconds, twitter_user.id)
       is_expected.to eq(twitter_user)
+    end
+  end
+
+  describe '#enqueue_creation_jobs' do
+    let(:friend_uids) { (1..150).to_a }
+    let(:follower_uids) { (101..250).to_a }
+    let(:user_id) { 1 }
+    subject { request.enqueue_creation_jobs(friend_uids, follower_uids, user_id) }
+    it do
+      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..100).to_a + (101..200).to_a, user_id: user_id, enqueued_by: described_class)
+      expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with((101..150).to_a + (201..250).to_a, user_id)
+      subject
+    end
+
+    context 'friend_uids is less than 100' do
+      let(:friend_uids) { (1..50).to_a }
+      it do
+        expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..50).to_a + (101..200).to_a, user_id: user_id, enqueued_by: described_class)
+        expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with((201..250).to_a, user_id)
+        subject
+      end
+    end
+
+    context 'follower_uids is less than 100' do
+      let(:follower_uids) { (1..50).to_a }
+      it do
+        expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..100).to_a + (1..50).to_a, user_id: user_id, enqueued_by: described_class)
+        expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with((101..150).to_a, user_id)
+        subject
+      end
     end
   end
 
