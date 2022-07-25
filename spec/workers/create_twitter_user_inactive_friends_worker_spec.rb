@@ -15,8 +15,8 @@ RSpec.describe CreateTwitterUserInactiveFriendsWorker do
       expect(twitter_user).to receive(:calc_and_import).with(S3::InactiveFriendship).and_return([1, 2])
       expect(twitter_user).to receive(:calc_and_import).with(S3::InactiveFollowership).and_return([2, 3, 4])
       expect(twitter_user).to receive(:calc_and_import).with(S3::InactiveMutualFriendship)
-      expect(CreateInactiveFriendsCountPointWorker).to receive(:perform_async).with(twitter_user.uid, 2)
-      expect(CreateInactiveFollowersCountPointWorker).to receive(:perform_async).with(twitter_user.uid, 3)
+      expect(InactiveFriendsCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 2)
+      expect(InactiveFollowersCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 3)
       expect(DeleteInactiveFriendshipsWorker).to receive(:perform_async).with(twitter_user.uid)
       subject
     end

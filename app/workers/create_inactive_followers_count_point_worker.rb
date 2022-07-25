@@ -1,3 +1,4 @@
+# TODO Remove later
 class CreateInactiveFollowersCountPointWorker
   include Sidekiq::Worker
   include WorkerErrorHandler
