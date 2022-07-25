@@ -140,26 +140,22 @@ module TwitterUserCalculator
   end
 
   def calc_inactive_friend_uids(slice: 1000, threads: 0)
-    if threads > 0
-      fetch_inactive_uids_in_threads(friend_uids, slice, threads)
-    else
-      fetch_inactive_uids_direct(friend_uids, slice)
-    end
+    fetch_inactive_uids(friend_uids, slice, threads)
   end
 
   def calc_inactive_follower_uids(slice: 1000, threads: 0)
-    if threads > 0
-      fetch_inactive_uids_in_threads(follower_uids, slice, threads)
-    else
-      fetch_inactive_uids_direct(follower_uids, slice)
-    end
+    fetch_inactive_uids(follower_uids, slice, threads)
   end
 
   def calc_inactive_mutual_friend_uids(slice: 1000, threads: 0)
-    if threads > 0
-      fetch_inactive_uids_in_threads(mutual_friend_uids, slice, threads)
+    fetch_inactive_uids(mutual_friend_uids, slice, threads)
+  end
+
+  def fetch_inactive_uids(uids, slice, threads)
+    if threads > 0 && uids.size > slice
+      fetch_inactive_uids_in_threads(uids, slice, threads)
     else
-      fetch_inactive_uids_direct(mutual_friend_uids, slice)
+      fetch_inactive_uids_direct(uids, slice)
     end
   end
 

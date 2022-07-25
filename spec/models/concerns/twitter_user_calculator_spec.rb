@@ -170,16 +170,8 @@ RSpec.describe TwitterUserCalculator do
     subject { twitter_user.calc_inactive_friend_uids }
     before { allow(twitter_user).to receive(:friend_uids).and_return([1, 2, 3]) }
     it do
-      expect(twitter_user).to receive(:fetch_inactive_uids_direct).with([1, 2, 3], 1000)
+      expect(twitter_user).to receive(:fetch_inactive_uids).with([1, 2, 3], 1000, 0)
       subject
-    end
-
-    context 'threads is 2' do
-      subject { twitter_user.calc_inactive_friend_uids(threads: 2) }
-      it do
-        expect(twitter_user).to receive(:fetch_inactive_uids_in_threads).with([1, 2, 3], 1000, 2)
-        subject
-      end
     end
   end
 
@@ -187,16 +179,8 @@ RSpec.describe TwitterUserCalculator do
     subject { twitter_user.calc_inactive_follower_uids }
     before { allow(twitter_user).to receive(:follower_uids).and_return([1, 2, 3]) }
     it do
-      expect(twitter_user).to receive(:fetch_inactive_uids_direct).with([1, 2, 3], 1000)
+      expect(twitter_user).to receive(:fetch_inactive_uids).with([1, 2, 3], 1000, 0)
       subject
-    end
-
-    context 'threads is 2' do
-      subject { twitter_user.calc_inactive_follower_uids(threads: 2) }
-      it do
-        expect(twitter_user).to receive(:fetch_inactive_uids_in_threads).with([1, 2, 3], 1000, 2)
-        subject
-      end
     end
   end
 
@@ -204,14 +188,25 @@ RSpec.describe TwitterUserCalculator do
     subject { twitter_user.calc_inactive_mutual_friend_uids }
     before { allow(twitter_user).to receive(:mutual_friend_uids).and_return([1, 2, 3]) }
     it do
+      expect(twitter_user).to receive(:fetch_inactive_uids).with([1, 2, 3], 1000, 0)
+      subject
+    end
+  end
+
+  describe '#fetch_inactive_uids' do
+    let(:uids) { [1, 2, 3] }
+    let(:slice) { 1000 }
+    subject { twitter_user.fetch_inactive_uids(uids, slice, 0) }
+    it do
       expect(twitter_user).to receive(:fetch_inactive_uids_direct).with([1, 2, 3], 1000)
       subject
     end
 
     context 'threads is 2' do
-      subject { twitter_user.calc_inactive_mutual_friend_uids(threads: 2) }
+      let(:uids) { (1..1001).to_a }
+      subject { twitter_user.fetch_inactive_uids(uids, slice, 2) }
       it do
-        expect(twitter_user).to receive(:fetch_inactive_uids_in_threads).with([1, 2, 3], 1000, 2)
+        expect(twitter_user).to receive(:fetch_inactive_uids_in_threads).with(uids, 1000, 2)
         subject
       end
     end
