@@ -22,16 +22,7 @@ class SendMetricsToCloudWatchWorker
 
   # Run every minute
   def perform(type = nil)
-    if type
-      calc_metrics(type)
-    else
-      %i(
-        send_google_analytics_metrics
-      ).each do |method_name|
-        calc_metrics(method_name)
-      end
-    end
-
+    calc_metrics(:send_google_analytics_metrics)
     client.update
   rescue => e
     Airbag.exception e, type: type
@@ -45,39 +36,6 @@ class SendMetricsToCloudWatchWorker
     Airbag.exception e, type: type
   end
 
-  def send_sidekiq_metrics
-    # region = %x(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed -e 's/.$//')
-    # instance_id=%x(curl -s http://169.254.169.254/latest/meta-data/instance-id)
-
-    namespace = "Sidekiq/#{Rails.env}"
-
-    total = 0
-    Sidekiq::Queue.all.each do |queue|
-      next if queue.size == 0
-      total += queue.size
-      options = {namespace: namespace, dimensions: [{name: 'QueueName', value: queue.name}]}
-      put_metric_data('QueueSize', queue.size, options)
-      put_metric_data('QueueLatency', queue.latency, options)
-    end
-
-    options = {namespace: namespace, dimensions: [{name: 'QueueName', value: 'total'}]}
-    put_metric_data('QueueSize', total, options) if total > 0
-
-    duration = 10.minutes
-    long_running_jobs = []
-    Sidekiq::Workers.new.each do |pid, tid, work|
-      if Time.zone.at(work['run_at']) < duration.ago
-        long_running_jobs << work['payload']['class']
-      end
-    end
-
-    long_running_jobs.group_by { |name| name }.map { |k, v| [k, v.length] }.each do |job_name, count|
-      dimensions = [{name: 'JobName', value: job_name}, {name: 'RunningTime', value: "more than #{duration.inspect}"}] # "10 minutes"
-      options = {namespace: namespace, dimensions: dimensions}
-      put_metric_data('LongRunningSize', count, options)
-    end
-  end
-
   def send_google_analytics_metrics
     namespace = "Google Analytics#{"/#{Rails.env}" unless Rails.env.production?}"
     client = GoogleAnalyticsClient.new
@@ -85,168 +43,6 @@ class SendMetricsToCloudWatchWorker
     put_metric_data('rt:activeUsers', client.active_users, namespace: namespace, dimensions: [{name: 'rt:deviceCategory', value: 'TOTAL'}])
     put_metric_data('rt:activeUsers', client.mobile_active_users, namespace: namespace, dimensions: [{name: 'rt:deviceCategory', value: 'MOBILE'}])
     put_metric_data('rt:activeUsers', client.desktop_active_users, namespace: namespace, dimensions: [{name: 'rt:deviceCategory', value: 'DESKTOP'}])
-  end
-
-  def send_periodic_reports_metrics
-    namespace = "#{PeriodicReport.name.pluralize}#{"/#{Rails.env}" unless Rails.env.production?}"
-
-    [1.minute].each do |duration|
-      condition = {created_at: duration.ago..Time.zone.now}
-      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
-
-      send_count = PeriodicReport.where(condition).size
-      put_metric_data('SendCount', send_count, options) if send_count > 0
-
-      read_count = PeriodicReport.where(condition).where.not(read_at: nil).size
-      put_metric_data('ReadCount', read_count, options) if read_count > 0
-
-      if send_count > 0 && read_count > 0
-        read_rate = 100.0 * read_count / send_count
-        put_metric_data('ReadRate', read_rate, options)
-      end
-    end
-  end
-
-  def send_create_periodic_report_requests_metrics
-    namespace = "#{CreatePeriodicReportRequest.name.pluralize}#{"/#{Rails.env}" unless Rails.env.production?}"
-
-    [1.minute].each do |duration|
-      condition = {created_at: duration.ago..Time.zone.now}
-      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
-
-      CreatePeriodicReportRequest.where(condition).group(:status).count.each do |status, count|
-        next if status.blank?
-        put_metric_data(status, count, options)
-      end
-    end
-  end
-
-  def send_search_error_logs_metrics
-    namespace = "SearchErrorLogs/#{Rails.env}"
-    duration = {created_at: 10.minutes.ago..Time.zone.now}
-
-    SearchErrorLog.where(duration).where.not(device_type: 'crawler').where(user_id: -1).group(:location).count.each do |location, count|
-      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
-      put_metric_data(location, count, options)
-    end
-
-    SearchErrorLog.where(duration).where.not(device_type: 'crawler').where.not(user_id: -1).group(:location).count.each do |location, count|
-      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
-      put_metric_data(location, count, options)
-    end
-  end
-
-  def send_table_records_metrics
-    namespace = "TableRecords#{"/#{Rails.env}" unless Rails.env.production?}"
-    time_duration = 1.hour
-    time_condition = {created_at: time_duration.ago..Time.zone.now}
-
-    [
-        [TwitterUser, TwitterUser.where(time_condition)],
-        [PeriodicReport, PeriodicReport.where(time_condition)],
-    ].each do |klass, records_query|
-      dimensions = [{name: 'Table', value: klass.table_name}, {name: 'Duration', value: time_duration.inspect}]
-      put_metric_data('RecordsCount', records_query.size, {namespace: namespace, dimensions: dimensions})
-    end
-  end
-
-  # TODO Remove later
-  def send_twitter_users_metrics
-    namespace = "TwitterUsers#{"/#{Rails.env}" unless Rails.env.production?}"
-    duration = {created_at: 10.minutes.ago..Time.zone.now}
-
-    [
-        [TwitterUser.where(duration).where(user_id: -1), false],
-        [TwitterUser.where(duration).where.not(user_id: -1), true]
-    ].each do |records, signed_in|
-      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
-      records_count = records.size
-      unique_count = records.map(&:uid).uniq.size
-
-      if records_count != unique_count
-        put_metric_data('UniqueRecordsDiff', records_count - unique_count, options)
-      end
-
-      if records_count > 0
-        put_metric_data('RecordsCreationCount', records_count, options)
-        put_metric_data('MaxFriendsCount', records.map(&:friends_count).max, options)
-        put_metric_data('MaxFollowersCount', records.map(&:followers_count).max, options)
-      end
-    end
-  end
-
-  # TODO Remove later
-  def send_twitter_db_users_metrics
-    namespace = "TwitterDBUsers#{"/#{Rails.env}" unless Rails.env.production?}"
-
-    [1.minute].each do |duration|
-      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
-
-      condition = {created_at: duration.ago..Time.zone.now}
-      put_metric_data('RecordsCreateCount', TwitterDB::User.where(condition).size, options)
-
-      condition = {updated_at: duration.ago..Time.zone.now}
-      put_metric_data('RecordsUpdateCount', TwitterDB::User.where(condition).size, options)
-    end
-  end
-
-  def send_search_histories_metrics
-    namespace = "SearchHistories#{"/#{Rails.env}" unless Rails.env.production?}"
-    duration = {created_at: 10.minutes.ago..Time.zone.now}
-
-    #[
-    #    [SearchHistory.where(duration).where(user_id: -1), false],
-    #    [SearchHistory.where(duration).where.not(user_id: -1), true]
-    #].each do |records, signed_in|
-    #  key = signed_in ? :user_id : :session_id
-    #  avg = records.size / records.map{|r| r.send(key) }.uniq.size rescue nil
-    #  if avg
-    #    options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
-    #    put_metric_data('AvgSearchHistoriesCount', avg, options)
-    #  end
-    #
-    #  max = records.each_with_object(Hash.new(0)) { |record, memo| memo[record.send(key)] += 1 }.values.max
-    #  options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
-    #  put_metric_data('MaxSearchHistoriesCount', max, options)
-    #
-    #  records.group_by(&:via).map { |k, v| [k.blank? ? 'EMPTY' : k, v.length] }.each do |via, count|
-    #    next if count < 2
-    #    options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
-    #    put_metric_data("via(#{via})", count, options)
-    #  end
-    #end
-  end
-
-  def send_requests_metrics
-    namespace = "Requests#{"/#{Rails.env}" unless Rails.env.production?}"
-    duration = 1.minute
-    condition = {created_at: duration.ago..Time.zone.now}
-
-    [
-        CreateTwitterUserRequest,
-        AssembleTwitterUserRequest,
-        DeleteTweetsRequest,
-        FollowRequest,
-        ResetCacheRequest,
-        ResetEgotterRequest,
-        TweetRequest,
-    ].each do |klass|
-      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Duration', value: duration.inspect}]}
-
-      finished_count = klass.where(condition).where.not(finished_at: nil).count
-      put_metric_data('FinishCount', finished_count, options) if finished_count > 0
-
-      unfinished_count = klass.where(condition).where(finished_at: nil).count
-      put_metric_data('NotFinishedCount', unfinished_count, options) if unfinished_count > 0
-    end
-  end
-
-  def send_bots_metrics
-    namespace = "Bots#{"/#{Rails.env}" unless Rails.env.production?}"
-
-    count = Bot.where(authorized: false).size
-    options = {namespace: namespace, dimensions: []}
-    put_metric_data('UnauthorizedCount', count, options) if count > 0
   end
 
   private
@@ -285,7 +81,6 @@ class SendMetricsToCloudWatchWorker
 
       @metrics.each do |namespace, metric_data|
         Airbag.info "Send #{metric_data.size} metrics to #{namespace}"
-        # Airbag.info metric_data.inspect
 
         metric_data.each_slice(20).each do |data|
           params = {
@@ -294,7 +89,7 @@ class SendMetricsToCloudWatchWorker
           }
           client.put_metric_data(params)
         rescue => e
-          Airbag.warn "#update #{e.inspect} data=#{data.inspect}"
+          Airbag.exception e, data: data
         end
       end
     end
