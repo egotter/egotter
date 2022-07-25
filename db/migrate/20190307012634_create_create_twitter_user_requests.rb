@@ -9,6 +9,7 @@ class CreateCreateTwitterUserRequests < ActiveRecord::Migration[5.1]
       t.string   :requested_by,    null: false, default: ''
       t.datetime :started_at,      null: true
       t.datetime :finished_at,     null: true
+      t.datetime :failed_at,       null: true
       t.bigint   :ahoy_visit_id,   null: true
 
       t.timestamps null: false

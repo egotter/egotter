@@ -11,6 +11,7 @@
 #  requested_by    :string(191)      default(""), not null
 #  started_at      :datetime
 #  finished_at     :datetime
+#  failed_at       :datetime
 #  ahoy_visit_id   :bigint(8)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null

@@ -380,6 +380,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.string "requested_by", default: "", null: false
     t.datetime "started_at"
     t.datetime "finished_at"
+    t.datetime "failed_at"
     t.bigint "ahoy_visit_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
