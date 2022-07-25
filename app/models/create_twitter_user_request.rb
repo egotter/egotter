@@ -59,7 +59,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     twitter_user = save_twitter_user(snapshot)
 
     enqueue_creation_jobs(snapshot.friend_uids, snapshot.follower_uids, twitter_user.user_id, context)
-    CreateTwitterUserNewFriendsWorker.perform_in(delay_for_importing, twitter_user.id)
+    enqueue_new_friends_creation_jobs(twitter_user.id, context)
 
     twitter_user
   end
@@ -74,8 +74,13 @@ class CreateTwitterUserRequest < ApplicationRecord
     end
   end
 
-  def delay_for_importing
-    5.seconds
+  def enqueue_new_friends_creation_jobs(twitter_user_id, context)
+    if context == :reporting
+      CreateTwitterUserNewFriendsWorker.new.perform(twitter_user_id)
+    else
+      # TODO Always run CreateTwitterUserNewFriendsWorker synchronously
+      CreateTwitterUserNewFriendsWorker.perform_in(5.seconds, twitter_user_id)
+    end
   end
 
   private
