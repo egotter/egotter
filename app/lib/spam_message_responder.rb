@@ -20,7 +20,7 @@ class SpamMessageResponder < AbstractMessageResponder
     end
 
     def received_regexp1
-      /死ね|殺す|黙れ|馬鹿|役立たず|無能|やくたたず|きいてんのか|いいかげんに|うるせーよ|うるせ[えぇ]|うっせえ|気持ち悪い|キモい|きもい|きしょい|うるせえよ|うるさい/
+      /死ね|殺す|黙れ|馬鹿|役立たず|無能|やくたたず|きいてんのか|いいかげんに|うるせーよ|うるせ[えぇ]|うっせ[えぇ]|気持ち悪い|キモい|きもい|きしょい|うるせえよ|うるさい/
     end
 
     def received_regexp2
