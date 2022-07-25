@@ -167,24 +167,78 @@ RSpec.describe TwitterUserCalculator do
   end
 
   describe '#calc_inactive_friend_uids' do
-    let(:users) { 3.times.map { create(:twitter_db_user, status_created_at: 1.month.ago) } }
     subject { twitter_user.calc_inactive_friend_uids }
-    before { allow(twitter_user).to receive(:friend_uids).and_return(users.map(&:uid)) }
-    it { is_expected.to eq(users.map(&:uid)) }
+    before { allow(twitter_user).to receive(:friend_uids).and_return([1, 2, 3]) }
+    it do
+      expect(twitter_user).to receive(:fetch_inactive_uids_direct).with([1, 2, 3], 1000)
+      subject
+    end
+
+    context 'threads is 2' do
+      subject { twitter_user.calc_inactive_friend_uids(threads: 2) }
+      it do
+        expect(twitter_user).to receive(:fetch_inactive_uids_in_threads).with([1, 2, 3], 1000, 2)
+        subject
+      end
+    end
   end
 
   describe '#calc_inactive_follower_uids' do
-    let(:users) { 3.times.map { create(:twitter_db_user, status_created_at: 1.month.ago) } }
     subject { twitter_user.calc_inactive_follower_uids }
-    before { allow(twitter_user).to receive(:follower_uids).and_return(users.map(&:uid)) }
-    it { is_expected.to eq(users.map(&:uid)) }
+    before { allow(twitter_user).to receive(:follower_uids).and_return([1, 2, 3]) }
+    it do
+      expect(twitter_user).to receive(:fetch_inactive_uids_direct).with([1, 2, 3], 1000)
+      subject
+    end
+
+    context 'threads is 2' do
+      subject { twitter_user.calc_inactive_follower_uids(threads: 2) }
+      it do
+        expect(twitter_user).to receive(:fetch_inactive_uids_in_threads).with([1, 2, 3], 1000, 2)
+        subject
+      end
+    end
   end
 
   describe '#calc_inactive_mutual_friend_uids' do
-    let(:users) { 3.times.map { create(:twitter_db_user, status_created_at: 1.month.ago) } }
     subject { twitter_user.calc_inactive_mutual_friend_uids }
-    before { allow(twitter_user).to receive(:mutual_friend_uids).and_return(users.map(&:uid)) }
-    it { is_expected.to eq(users.map(&:uid)) }
+    before { allow(twitter_user).to receive(:mutual_friend_uids).and_return([1, 2, 3]) }
+    it do
+      expect(twitter_user).to receive(:fetch_inactive_uids_direct).with([1, 2, 3], 1000)
+      subject
+    end
+
+    context 'threads is 2' do
+      subject { twitter_user.calc_inactive_mutual_friend_uids(threads: 2) }
+      it do
+        expect(twitter_user).to receive(:fetch_inactive_uids_in_threads).with([1, 2, 3], 1000, 2)
+        subject
+      end
+    end
+  end
+
+  describe '#fetch_inactive_uids_in_threads' do
+    before do
+      create(:twitter_db_user, uid: 1, status_created_at: 1.days.ago)
+      create(:twitter_db_user, uid: 2, status_created_at: 15.days.ago)
+      create(:twitter_db_user, uid: 3, status_created_at: 1.days.ago)
+      create(:twitter_db_user, uid: 4, status_created_at: 15.days.ago)
+      create(:twitter_db_user, uid: 5, status_created_at: 1.days.ago)
+    end
+    subject { twitter_user.fetch_inactive_uids_in_threads([1, 2, 3, 4, 5], 2, 2) }
+    it { is_expected.to eq([2, 4]) }
+  end
+
+  describe '#fetch_inactive_uids_direct' do
+    before do
+      create(:twitter_db_user, uid: 1, status_created_at: 1.days.ago)
+      create(:twitter_db_user, uid: 2, status_created_at: 15.days.ago)
+      create(:twitter_db_user, uid: 3, status_created_at: 1.days.ago)
+      create(:twitter_db_user, uid: 4, status_created_at: 15.days.ago)
+      create(:twitter_db_user, uid: 5, status_created_at: 1.days.ago)
+    end
+    subject { twitter_user.fetch_inactive_uids_direct([1, 2, 3, 4, 5], 3) }
+    it { is_expected.to eq([2, 4]) }
   end
 
   describe '#calc_unfriend_uids' do

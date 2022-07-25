@@ -139,20 +139,42 @@ module TwitterUserCalculator
     sort_by_count_desc(uids).take(100)
   end
 
-  def calc_inactive_friend_uids(slice: 1000)
-    friend_uids.each_slice(slice).map do |group|
-      TwitterDB::User.where(uid: group).inactive_2weeks.order_by_field(group).pluck(:uid)
+  def calc_inactive_friend_uids(slice: 1000, threads: 0)
+    if threads > 0
+      fetch_inactive_uids_in_threads(friend_uids, slice, threads)
+    else
+      fetch_inactive_uids_direct(friend_uids, slice)
+    end
+  end
+
+  def calc_inactive_follower_uids(slice: 1000, threads: 0)
+    if threads > 0
+      fetch_inactive_uids_in_threads(follower_uids, slice, threads)
+    else
+      fetch_inactive_uids_direct(follower_uids, slice)
+    end
+  end
+
+  def calc_inactive_mutual_friend_uids(slice: 1000, threads: 0)
+    if threads > 0
+      fetch_inactive_uids_in_threads(mutual_friend_uids, slice, threads)
+    else
+      fetch_inactive_uids_direct(mutual_friend_uids, slice)
+    end
+  end
+
+  def fetch_inactive_uids_in_threads(uids, slice, threads)
+    uids.each_slice(slice * threads).map do |group|
+      group.each_slice(slice).map do |task|
+        Thread.new(task) do |t|
+          TwitterDB::User.where(uid: t).inactive_2weeks.order_by_field(t).pluck(:uid)
+        end
+      end.map(&:value)
     end.flatten
   end
 
-  def calc_inactive_follower_uids(slice: 1000)
-    follower_uids.each_slice(slice).map do |group|
-      TwitterDB::User.where(uid: group).inactive_2weeks.order_by_field(group).pluck(:uid)
-    end.flatten
-  end
-
-  def calc_inactive_mutual_friend_uids(slice: 1000)
-    mutual_friend_uids.each_slice(slice).map do |group|
+  def fetch_inactive_uids_direct(uids, slice)
+    uids.each_slice(slice).map do |group|
       TwitterDB::User.where(uid: group).inactive_2weeks.order_by_field(group).pluck(:uid)
     end.flatten
   end
