@@ -14,7 +14,10 @@ class RedisClient < Redis
         driver: :hiredis
     }.merge(opt)
 
-    Rails.logger.debug { "Initialize RedisClient options=#{options}" }
+    if Rails.env.development?
+      Airbag.debug 'Initialize RedisClient', options: options, location: caller[0]
+    end
+
     super(options)
   end
 end

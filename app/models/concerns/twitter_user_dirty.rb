@@ -20,11 +20,7 @@ module TwitterUserDirty
     older = self
 
     diff = Diff.from_record(older, newer)
-
-    if Rails.env.development?
-      logger.debug { "#{self.class}##{__method__} uid=#{uid} screen_name=#{screen_name} diff.keys=#{diff.keys}" }
-    end
-
+    Airbag.info "#{self.class}##{__method__}", uid: uid, screen_name: screen_name, keys: diff.keys
     diff
   end
 

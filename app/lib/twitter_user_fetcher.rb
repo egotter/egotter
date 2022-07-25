@@ -12,6 +12,7 @@ class TwitterUserFetcher
 
   def fetch
     if @reporting
+      Airbag.info '[REPORTING] Fetch data without threads', uid: @uid, context: :reporting
       fetch_without_threads
     else
       fetch_in_threads

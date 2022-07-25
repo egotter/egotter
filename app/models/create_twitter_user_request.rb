@@ -66,6 +66,7 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   def enqueue_creation_jobs(friend_uids, follower_uids, user_id, context, slice: 50)
     if context == :reporting
+      Airbag.info '[REPORTING] CreateTwitterDBUserWorker is not enqueued', request_id: id, uid: uid, context: context
       CreateTwitterDBUsersForMissingUidsWorker.perform_async(friend_uids + follower_uids, user_id)
     else
       CreateTwitterDBUserWorker.perform_async(friend_uids.take(slice) + follower_uids.take(slice), user_id: user_id, enqueued_by: self.class)
@@ -76,6 +77,7 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   def enqueue_new_friends_creation_jobs(twitter_user_id, context)
     if context == :reporting
+      Airbag.info '[REPORTING] CreateTwitterUserNewFriendsWorker is performed synchronously', request_id: id, uid: uid, context: context
       CreateTwitterUserNewFriendsWorker.new.perform(twitter_user_id)
     else
       # TODO Always run CreateTwitterUserNewFriendsWorker synchronously
