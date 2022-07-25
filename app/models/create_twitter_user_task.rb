@@ -15,7 +15,7 @@ class CreateTwitterUserTask
     @request.update(finished_at: Time.zone.now)
     self
   rescue => e
-    @request.update(status_message: e.class) if @request
+    @request.update(failed_at: Time.zone.now, status_message: e.class)
     raise
   end
 end
