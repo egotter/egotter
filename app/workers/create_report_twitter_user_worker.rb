@@ -22,9 +22,7 @@ class CreateReportTwitterUserWorker < CreateTwitterUserWorker
   def perform(request_id, options = {})
     request = CreateTwitterUserRequest.find(request_id)
     PeriodicReportReportableFlag.create(user_id: request.user_id)
-
-    task = CreateTwitterUserTask.new(request)
-    task.start!(:reporting)
+    request.perform(:reporting)
   rescue CreateTwitterUserRequest::TimeoutError => e
     if options['retries']
       Airbag.exception e, request_id: request_id, options: options

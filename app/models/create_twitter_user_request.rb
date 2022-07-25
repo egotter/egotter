@@ -39,7 +39,13 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   # context:
   #   :reporting
-  def perform!(context = nil)
+  def perform(context = nil)
+    # TODO
+    # if started_at || finished_at || failed_at
+    #   return
+    # end
+
+    update(started_at: Time.zone.now)
     validate_request!
     validate_creation_interval!
 
@@ -61,8 +67,12 @@ class CreateTwitterUserRequest < ApplicationRecord
 
     enqueue_creation_jobs(snapshot.friend_uids, snapshot.follower_uids, twitter_user.user_id, context)
     enqueue_new_friends_creation_jobs(twitter_user.id, context)
+    update(finished_at: Time.zone.now)
 
     twitter_user
+  rescue => e
+    update(failed_at: Time.zone.now, status_message: e.class)
+    raise
   end
 
   def enqueue_creation_jobs(friend_uids, follower_uids, user_id, context, slice: 50)

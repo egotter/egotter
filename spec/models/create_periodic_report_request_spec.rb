@@ -87,14 +87,16 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
   end
 
   describe '#create_new_twitter_user_record' do
-    let(:task) { double('task') }
+    let(:creation_request) { create(:create_twitter_user_request) }
     subject { request.create_new_twitter_user_record }
 
+    before do
+      allow(CreateTwitterUserRequest).to receive(:create).
+          with(requested_by: described_class, user_id: user.id, uid: user.uid).and_return(creation_request)
+    end
+
     it do
-      expect(CreateTwitterUserRequest).to receive(:create).
-          with(requested_by: described_class, user_id: user.id, uid: user.uid).and_return('request')
-      expect(CreateTwitterUserTask).to receive(:new).with('request').and_return(task)
-      expect(task).to receive(:start!)
+      expect(creation_request).to receive(:perform).with(:reporting)
       subject
     end
 
@@ -107,9 +109,9 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
         CreateTwitterUserRequest::NotChanged,
     ].each do |error|
       context "#{error} is raised" do
-        before { allow(CreateTwitterUserTask).to receive(:new).and_raise(error) }
+        before { allow(creation_request).to receive(:perform).with(:reporting).and_raise(error) }
         it do
-          expect(Airbag).to receive(:info).with(instance_of(String))
+          expect(Airbag).to receive(:info).with(instance_of(String), request_id: request.id, create_request_id: creation_request.id)
           subject
         end
       end
@@ -119,7 +121,7 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
         RuntimeError
     ].each do |error|
       context "#{error} is raised" do
-        before { allow(CreateTwitterUserTask).to receive(:new).and_raise(error) }
+        before { allow(creation_request).to receive(:perform).with(:reporting).and_raise(error) }
         it do
           expect(Airbag).to receive(:exception).with(error, anything)
           subject

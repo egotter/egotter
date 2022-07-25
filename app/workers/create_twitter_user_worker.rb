@@ -40,15 +40,14 @@ class CreateTwitterUserWorker
   #   ahoy_visit_id
   def perform(request_id, options = {})
     request = CreateTwitterUserRequest.find(request_id)
-    task = CreateTwitterUserTask.new(request)
     context = options['context'] == :reporting ? :reporting : nil
-    task.start!(context)
+    twitter_user = request.perform(context)
 
     notify(request.user, request.uid)
 
-    assemble_request = AssembleTwitterUserRequest.create!(twitter_user: task.twitter_user, user_id: task.twitter_user.user_id, uid: task.twitter_user.uid)
+    assemble_request = AssembleTwitterUserRequest.create!(twitter_user: twitter_user, user_id: twitter_user.user_id, uid: twitter_user.uid)
     AssembleTwitterUserWorker.perform_in(5.seconds, assemble_request.id, requested_by: self.class)
-    TwitterUserAssembledFlag.on(task.twitter_user.uid)
+    TwitterUserAssembledFlag.on(twitter_user.uid)
   rescue CreateTwitterUserRequest::TimeoutError => e
     if options['retries']
       Airbag.exception e, request_id: request_id, options: options

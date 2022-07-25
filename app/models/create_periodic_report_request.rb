@@ -76,17 +76,14 @@ class CreatePeriodicReportRequest < ApplicationRecord
         requested_by: self.class,
         user_id: user_id,
         uid: user.uid)
-
-    task = CreateTwitterUserTask.new(request)
-    task.start!(:reporting)
-
+    request.perform(:reporting)
   rescue CreateTwitterUserRequest::Unauthorized,
       CreateTwitterUserRequest::TooShortCreateInterval,
       CreateTwitterUserRequest::TooLittleFriends,
       CreateTwitterUserRequest::SoftSuspended,
       CreateTwitterUserRequest::TemporarilyLocked,
       CreateTwitterUserRequest::NotChanged => e
-    Airbag.info "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
+    Airbag.info "#{self.class}##{__method__} #{e.inspect}", request_id: id, create_request_id: request&.id
   rescue => e
     Airbag.exception e, method: __method__, request_id: id, create_request_id: request&.id
   end
