@@ -3,10 +3,11 @@ class Sigint
     @trapped = false
   end
 
-  def trap
+  def trap(&block)
     Signal.trap 'INT' do
       puts 'intercept INT and stop ..'
       @trapped = true
+      yield if block_given?
     end
 
     self

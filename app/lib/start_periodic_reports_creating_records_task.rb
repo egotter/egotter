@@ -58,11 +58,21 @@ class StartPeriodicReportsCreatingRecordsTask
   end
 
   def run_jobs(requests, threads, &block)
+    stopped = false
+    sigint = Sigint.new.trap do
+      stopped = true
+      @last_response = @slack.post_message('Stop requested', thread_ts: @last_response['ts']) rescue {}
+    end
     processed_count = 0
     errors_count = 0
     lock = Mutex.new
 
     requests.each_slice(threads) do |group|
+      if stopped || sigint.trapped?
+        CreateTwitterUserRequest.where(id: group.map(&:id)).update_all(status_message: 'Stop requested', failed_at: Time.zone.now)
+        next
+      end
+
       group.map do |request|
         Thread.new(request) do |req|
           ActiveRecord::Base.connection_pool.with_connection do
