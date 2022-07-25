@@ -178,7 +178,11 @@ class ApiClient
 
   private
 
+  # TODO Remove later
   class ContainStrangeUid < StandardError
+  end
+
+  class StrangeHttpTimeout < StandardError
   end
 
   class RetryExhausted < StandardError

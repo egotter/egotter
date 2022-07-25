@@ -19,7 +19,7 @@ class TwitterRequest
 
   def handle_exception(e)
     if ServiceStatus.http_timeout?(e) && @method == :users
-      raise ApiClient::ContainStrangeUid.new('It may contain a uid that always causes an error.')
+      raise ApiClient::StrangeHttpTimeout
     elsif ServiceStatus.retryable_error?(e)
       if @retries > MAX_RETRIES
         raise ApiClient::RetryExhausted.new("#{e.inspect} method=#{@method} retries=#{@retries}")
