@@ -1,5 +1,5 @@
 class CreateTwitterDBUsersTask
-  def initialize(uids, user_id: nil, force: false, enqueued_by: nil)
+  def initialize(uids, user_id: nil, enqueued_by: nil)
     @uids = uids.uniq.map(&:to_i)
     @user_id = user_id
     @enqueued_by = enqueued_by
@@ -34,13 +34,13 @@ class CreateTwitterDBUsersTask
   rescue => e
     if TwitterApiStatus.no_user_matches?(e)
       []
-    elsif retryable_twitter_error?(e)
+    elsif retryable_error?(e)
       if TwitterApiStatus.too_many_requests?(e) && @user_id
         RateLimitExceededFlag.on(@user_id)
       end
 
       if (retries -= 1) >= 0
-        Airbag.info "#{self.class}: Client is switched #{e.inspect} user_id=#{@user_id}"
+        Airbag.info "#{self.class}: Client reloaded", exception: e.inspect, user_id: @user_id
         @client = Bot.api_client.twitter
         retry
       else
@@ -60,7 +60,7 @@ class CreateTwitterDBUsersTask
         end
   end
 
-  def retryable_twitter_error?(e)
+  def retryable_error?(e)
     TwitterApiStatus.unauthorized?(e) ||
         TwitterApiStatus.temporarily_locked?(e) ||
         TwitterApiStatus.forbidden?(e) ||
