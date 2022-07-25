@@ -24,11 +24,11 @@ class MutingRelationship < ApplicationRecord
 
       additional_uids = filter_additional_mutes(user.uid, uids)
       import_mutes(user.uid, additional_uids)
-      Airbag.info { "#{self}: Import #{additional_uids.size} mutes" }
+      Airbag.info "#{self}: Import #{additional_uids.size} mutes"
 
       deletable_uids = filter_deletable_mutes(user.uid, uids)
       delete_mutes(user.uid, deletable_uids)
-      Airbag.info { "#{self}: Delete #{deletable_uids.size} mutes" }
+      Airbag.info "#{self}: Delete #{deletable_uids.size} mutes"
 
       additional_uids
     end

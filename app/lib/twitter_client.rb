@@ -35,7 +35,7 @@ class TwitterClient
   # TODO Implement all methods and stop using #method_missing
   def method_missing(method, *args, **kwargs, &block)
     if @twitter.respond_to?(method)
-      Airbag.info { "TwitterClient#method_missing: #{method} is not implemented" }
+      Airbag.info "TwitterClient#method_missing: #{method} is not implemented"
       call_api(method, *args, **kwargs, &block)
     else
       super

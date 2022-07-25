@@ -22,7 +22,7 @@ class ApiClient
     update_blocker_status(e)
 
     if e.class == ApiClient::RetryExhausted
-      Airbag.warn { "Sending DM failed method=#{__method__} user_id=#{@user&.id} recipient_id=#{recipient_id} message=#{message}" }
+      Airbag.warn "Sending DM failed method=#{__method__} user_id=#{@user&.id} recipient_id=#{recipient_id} message=#{message}"
     elsif DirectMessageStatus.enhance_your_calm?(e)
       SendEnhanceYourCalmCountToSlackWorker.perform_async
     end
@@ -85,7 +85,7 @@ class ApiClient
   # TODO Implement all methods and stop using #method_missing
   def method_missing(method, *args, **kwargs, &block)
     if @client.respond_to?(method)
-      Airbag.info { "ApiClient#method_missing: #{method} is not implemented" }
+      Airbag.info "ApiClient#method_missing: #{method} is not implemented"
       call_api(method, *args, **kwargs, &block)
     else
       super

@@ -24,11 +24,11 @@ class EgotterFollower < ApplicationRecord
 
       necessary_uids = filter_necessary_uids(uids)
       import_uids(necessary_uids)
-      Airbag.info { "#{self}: Import #{necessary_uids.size} uids" }
+      Airbag.info "#{self}: Import #{necessary_uids.size} uids"
 
       unnecessary_uids = filter_unnecessary_uids(uids)
       delete_uids(unnecessary_uids)
-      Airbag.info { "#{self}: Delete #{unnecessary_uids.size} uids" }
+      Airbag.info "#{self}: Delete #{unnecessary_uids.size} uids"
     end
 
     def collect_uids(uid = User::EGOTTER_UID)
@@ -39,7 +39,7 @@ class EgotterFollower < ApplicationRecord
         client.twitter.follower_ids(uid, options)
       end
     rescue => e
-      Airbag.warn { "#{e.inspect} screen_name=#{client.user[:screen_name]} rate_limit=#{client&.rate_limit&.inspect}" }
+      Airbag.exception e, screen_name: client.user[:screen_name], rate_limit: client&.rate_limit&.inspect
       raise
     end
 

@@ -166,7 +166,7 @@ module TwitterUserCalculator
     record ||= previous_version
     record ? friend_uids - record.friend_uids : []
   rescue => e
-    Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }
+    Airbag.info "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}"
     []
   end
 
@@ -174,7 +174,7 @@ module TwitterUserCalculator
     record ||= previous_version
     record ? follower_uids - record.follower_uids : []
   rescue => e
-    Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }
+    Airbag.info "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}"
     []
   end
 
@@ -182,7 +182,7 @@ module TwitterUserCalculator
     record ||= previous_version
     record ? record.friend_uids - friend_uids : []
   rescue => e
-    Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }
+    Airbag.info "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}"
     []
   end
 
@@ -190,7 +190,7 @@ module TwitterUserCalculator
     record ||= previous_version
     record ? record.follower_uids - follower_uids : []
   rescue => e
-    Airbag.info { "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}" }
+    Airbag.info "#{__method__}: #{e.inspect} twitter_user_id=#{id} uid=#{uid}"
     []
   end
 

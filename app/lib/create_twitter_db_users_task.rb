@@ -40,7 +40,7 @@ class CreateTwitterDBUsersTask
       end
 
       if (retries -= 1) >= 0
-        Airbag.info { "#{self.class}: Client is switched #{e.inspect} user_id=#{@user_id}" }
+        Airbag.info "#{self.class}: Client is switched #{e.inspect} user_id=#{@user_id}"
         @client = Bot.api_client.twitter
         retry
       else

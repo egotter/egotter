@@ -84,7 +84,7 @@ class ProcessWebhookEventWorker
     processed = MemoMessageResponder.from_dm(dm).respond unless processed
 
     unless processed
-      Airbag.info { "#{__method__} DM is ignored sender_id=#{dm.sender_id} text=#{dm.text}" }
+      Airbag.info "#{__method__} DM is ignored sender_id=#{dm.sender_id} text=#{dm.text}"
     end
 
     SendReceivedMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text)

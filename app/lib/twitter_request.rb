@@ -24,7 +24,7 @@ class TwitterRequest
       if @retries > MAX_RETRIES
         raise ApiClient::RetryExhausted.new("#{e.inspect} method=#{@method} retries=#{@retries}")
       else
-        Airbag.info { "TwitterRequest#perform: #{e.class} is detected and retry method=#{@method}" }
+        Airbag.info "TwitterRequest#perform: #{e.class} is detected and retry method=#{@method}"
       end
     else
       raise e

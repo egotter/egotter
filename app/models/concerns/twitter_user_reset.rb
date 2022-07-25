@@ -24,17 +24,17 @@ module TwitterUserReset
       result[klass.to_s] = klass.where(uid: uid).delete_all
     end
 
-    Airbag.info {"checkpoint start #{result.inspect}"}
+    Airbag.info "checkpoint start #{result.inspect}"
 
     DeleteDisusedRecordsWorker.perform_async(uid)
 
-    Airbag.info {"checkpoint 1 #{result.inspect}"}
+    Airbag.info "checkpoint 1 #{result.inspect}"
 
     ::S3::StatusTweet.delete(uid: uid)
     ::S3::FavoriteTweet.delete(uid: uid)
     ::S3::MentionTweet.delete(uid: uid)
 
-    Airbag.info {"checkpoint 3 #{result.inspect}"}
+    Airbag.info "checkpoint 3 #{result.inspect}"
 
     twitter_user_ids.each do |id|
       S3::Friendship.delete_by(twitter_user_id: id)
@@ -42,17 +42,17 @@ module TwitterUserReset
       S3::Profile.delete_by(twitter_user_id: id)
     end
 
-    Airbag.info {"checkpoint 3_2 #{result.inspect}"}
+    Airbag.info "checkpoint 3_2 #{result.inspect}"
 
     twitter_user_ids.each do |id|
       Efs::TwitterUser.delete_by(id)
     end
 
-    Airbag.info {"checkpoint 4 #{result.inspect}"}
+    Airbag.info "checkpoint 4 #{result.inspect}"
 
     result[self.class.to_s] = TwitterUser.where(id: twitter_user_ids).delete_all
 
-    Airbag.info {"checkpoint done #{result.inspect}"}
+    Airbag.info "checkpoint done #{result.inspect}"
 
     result
   end

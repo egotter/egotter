@@ -24,11 +24,11 @@ class BlockingRelationship < ApplicationRecord
 
       additional_uids = filter_additional_blocks(user.uid, uids)
       import_blocks(user.uid, additional_uids)
-      Airbag.info { "#{self}: Import #{additional_uids.size} blocks" }
+      Airbag.info "#{self}: Import #{additional_uids.size} blocks"
 
       deletable_uids = filter_deletable_blocks(user.uid, uids)
       delete_blocks(user.uid, deletable_uids)
-      Airbag.info { "#{self}: Delete #{deletable_uids.size} blocks" }
+      Airbag.info "#{self}: Delete #{deletable_uids.size} blocks"
 
       additional_uids
     end
