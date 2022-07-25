@@ -45,8 +45,8 @@ class CreateTwitterUserRequest < ApplicationRecord
     snapshot, relations = build_snapshot(context)
     validate_creation_interval!
 
-    CreateFriendsCountPointWorker.perform_async(snapshot.uid, snapshot.friends_count, snapshot.time)
-    CreateFollowersCountPointWorker.perform_async(snapshot.uid, snapshot.followers_count, snapshot.time)
+    FriendsCountPoint.create(uid: snapshot.uid, value: snapshot.friends_count)
+    FollowersCountPoint.create(uid: snapshot.uid, value: snapshot.followers_count)
 
     validate_twitter_user!(snapshot)
 

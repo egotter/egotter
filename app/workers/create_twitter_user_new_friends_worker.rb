@@ -29,12 +29,12 @@ class CreateTwitterUserNewFriendsWorker
 
     if (new_friend_uids = twitter_user.calc_new_friend_uids)
       twitter_user.update(new_friends_size: new_friend_uids.size)
-      CreateNewFriendsCountPointWorker.perform_async(twitter_user.uid, new_friend_uids.size)
+      NewFriendsCountPoint.create(uid: twitter_user.uid, value: new_friend_uids.size)
     end
 
     if (new_follower_uids = twitter_user.calc_new_follower_uids)
       twitter_user.update(new_followers_size: new_follower_uids.size)
-      CreateNewFollowersCountPointWorker.perform_async(twitter_user.uid, new_follower_uids.size)
+      NewFollowersCountPoint.create(uid: twitter_user.uid, value: new_follower_uids.size)
     end
 
     CreateTwitterDBUserWorker.perform_async((new_friend_uids + new_follower_uids).uniq, user_id: twitter_user.user_id, enqueued_by: self.class)

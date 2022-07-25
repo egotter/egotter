@@ -47,11 +47,11 @@ class CreateTwitterUserUnfriendsWorker
     mutual_unfriend_uids = import_uids(S3::MutualUnfriendship, twitter_user)
     CreateTwitterDBUserWorker.perform_async((unfriend_uids + unfollower_uids + mutual_unfriend_uids).uniq, user_id: twitter_user.user_id, enqueued_by: self.class)
 
-    CreateUnfriendsCountPointWorker.perform_async(twitter_user.uid, unfriend_uids.size)
-    CreateUnfollowersCountPointWorker.perform_async(twitter_user.uid, unfollower_uids.size)
+    UnfriendsCountPoint.create(uid: twitter_user.uid, value: unfriend_uids.size)
+    UnfollowersCountPoint.create(uid: twitter_user.uid, value: unfollower_uids.size)
 
-    CreateNewUnfriendsCountPointWorker.perform_async(twitter_user.uid, twitter_user.calc_new_unfriend_uids.size)
-    CreateNewUnfollowersCountPointWorker.perform_async(twitter_user.uid, twitter_user.calc_new_unfollower_uids.size)
+    NewUnfriendsCountPoint.create(uid: twitter_user.uid, value: twitter_user.calc_new_unfriend_uids.size)
+    NewUnfollowersCountPoint.create(uid: twitter_user.uid, value: twitter_user.calc_new_unfollower_uids.size)
 
     DeleteUnfriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e

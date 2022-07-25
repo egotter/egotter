@@ -1,3 +1,4 @@
+# TODO Remove later
 class CreateMutualFriendsCountPointWorker
   include Sidekiq::Worker
   include WorkerErrorHandler

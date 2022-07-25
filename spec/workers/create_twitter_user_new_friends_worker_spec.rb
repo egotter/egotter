@@ -17,8 +17,8 @@ RSpec.describe CreateTwitterUserNewFriendsWorker do
     it do
       expect(twitter_user).to receive(:update).with(new_friends_size: new_friend_uids.size)
       expect(twitter_user).to receive(:update).with(new_followers_size: new_follower_uids.size)
-      expect(CreateNewFriendsCountPointWorker).to receive(:perform_async).with(twitter_user.uid, new_friend_uids.size)
-      expect(CreateNewFollowersCountPointWorker).to receive(:perform_async).with(twitter_user.uid, new_follower_uids.size)
+      expect(NewFriendsCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 3)
+      expect(NewFollowersCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 4)
       expect(CreateTwitterDBUserWorker).to receive(:perform_async).with([1, 2, 3, 4, 5, 6], user_id: 1, enqueued_by: described_class)
       subject
     end

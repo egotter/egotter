@@ -1,3 +1,4 @@
+# TODO Remove later
 class CreateOneSidedFollowersCountPointWorker
   include Sidekiq::Worker
   include WorkerErrorHandler
