@@ -1,8 +1,14 @@
 <p class="mt-3"><%= t('.message_html', user: @screen_name, url: sign_in_path(via: current_via)) %></p>
 <p><%= t('.reason_html') %></p>
+
+<div><%= t('.solution', n: 1) %></div>
 <p><%= t('.sign_in_html', user: @screen_name, url: sign_in_path(via: current_via)) %></p>
+
+<div><%= t('.solution', n: 2) %></div>
 <p><%= t('.switch_account_html', user: @screen_name, url: force_sign_in_path(via: current_via)) %></p>
-<p><%= t('error_pages.support_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></p>
+
+<div><%= t('.solution', n: 3) %></div>
+<p><%= t('.authentication_html') %></p>
 
 <%= render partial: 'ad_section', locals: {screen_name: @screen_name} %>
 
