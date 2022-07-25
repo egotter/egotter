@@ -47,7 +47,17 @@ namespace :periodic_reports do
   end
 
   task create_records: :environment do
-    StartPeriodicReportsCreatingRecordsTask.new(period: ENV['PERIOD'], threads: ENV['THREADS']).start
+    task morning: :environment do
+      StartPeriodicReportsCreatingRecordsTask.new(period: 'morning', threads: ENV['THREADS']).start
+    end
+
+    task afternoon: :environment do
+      StartPeriodicReportsCreatingRecordsTask.new(period: 'afternoon', threads: ENV['THREADS']).start
+    end
+
+    task night: :environment do
+      StartPeriodicReportsCreatingRecordsTask.new(period: 'night', threads: ENV['THREADS']).start
+    end
   end
 
   namespace :send_messages do
