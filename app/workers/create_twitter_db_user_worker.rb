@@ -22,47 +22,41 @@ class CreateTwitterDBUserWorker
   end
 
   # options:
-  #   force_update
   #   user_id
   #   enqueued_by
   def perform(data, options = {})
     uids = decompress(data)
 
     if uids.empty?
-      Airbag.warn "the size of uids is 0 options=#{options.inspect}"
+      Airbag.warn 'the size of uids is 0', options: options
       return
     end
 
     if uids.size > 100
-      Airbag.warn "the size of uids is greater than 100 options=#{options.inspect}"
+      Airbag.warn 'the size of uids is greater than 100', options: options
     end
 
-    user_id = (options['user_id'] && options['user_id'].to_i != -1) ? options['user_id'] : nil
-
-    task = CreateTwitterDBUsersTask.new(uids, user_id: user_id, force: options['force_update'], enqueued_by: options['enqueued_by'])
-    task.start
+    do_perform(uids, options)
   rescue ApiClient::RetryExhausted => e
-    Airbag.info "Retry retryable error: #{e.inspect.truncate(200)}"
-    delay = rand(20) + 15
-    CreateTwitterDBUserForRetryableErrorWorker.perform_in(delay, data, options.merge(debug_options(e)))
-  rescue ApiClient::ContainStrangeUid => e
-    if uids && uids.size > 1
-      slice_and_retry(uids, options)
-    else
-      Airbag.info "#{e.message} uids=#{uids.inspect} options=#{options.inspect}"
-    end
+    CreateTwitterDBUserForRetryableErrorWorker.perform_in(rand(20) + 15, data, options.merge(debug_options(e)))
   rescue => e
-    handle_worker_error(e, uids_size: uids.size, options: options)
-    FailedCreateTwitterDBUserWorker.perform_async(uids, options.merge(debug_options(e)))
+    Airbag.exception e, uids: (decompress(data) rescue nil), options: options
+    FailedCreateTwitterDBUserWorker.perform_async(data, options.merge(debug_options(e)))
   end
 
   private
 
-  def slice_and_retry(uids, options)
-    slice_size = (uids.size > 10) ? 10 : 1
-    uids.each_slice(slice_size) do |partial_uids|
-      self.class.perform_async(partial_uids, options)
+  def do_perform(uids, options)
+    user_id = extract_user_id(options)
+    CreateTwitterDBUsersTask.new(uids, user_id: user_id, enqueued_by: options['enqueued_by']).start
+  rescue ApiClient::StrangeHttpTimeout => e
+    uids.each_slice(uids.size > 10 ? 10 : 1) do |group|
+      self.class.perform_async(group, options)
     end
+  end
+
+  def extract_user_id(options)
+    (options['user_id'] && options['user_id'].to_i != -1) ? options['user_id'] : nil
   end
 
   def debug_options(e = nil)
