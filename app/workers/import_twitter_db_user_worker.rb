@@ -6,9 +6,7 @@ class ImportTwitterDBUserWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(data, options = {})
-    key = Digest::MD5.hexdigest(data.to_json)
-    CreateSidekiqLogWorker.perform_async("class=#{self.class} options=#{options} key=#{key}") rescue nil
-    key
+    Digest::MD5.hexdigest(data.to_json)
   end
 
   def unique_in
@@ -17,7 +15,6 @@ class ImportTwitterDBUserWorker
 
   def after_skip(data, options = {})
     SkippedImportTwitterDBUserWorker.perform_async(data, options.merge(_size: (decompress(data).size rescue -1)).merge(debug_options))
-    CreateSidekiqLogWorker.perform_async("class=#{self.class} options=#{options} key=#{Digest::MD5.hexdigest(data.to_json)} skipped=true") rescue nil
   end
 
   def timeout_in
