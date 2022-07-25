@@ -47,11 +47,26 @@ module TwitterUserCalculator
     elsif klass == S3::MutualFriendship
       calc_mutual_friend_uids
     elsif klass == S3::InactiveFriendship
-      calc_inactive_friend_uids
+      begin
+        calc_inactive_friend_uids(threads: 2)
+      rescue ThreadError => e
+        Airbag.warn 'ThreadError is detected and retry without threads', klass: klass, exception: e.inspect, backtrace: e.backtrace
+        calc_inactive_friend_uids(threads: 0)
+      end
     elsif klass == S3::InactiveFollowership
-      calc_inactive_follower_uids
+      begin
+        calc_inactive_follower_uids(threads: 2)
+      rescue ThreadError => e
+        Airbag.warn 'ThreadError is detected and retry without threads', klass: klass, exception: e.inspect, backtrace: e.backtrace
+        calc_inactive_follower_uids(threads: 0)
+      end
     elsif klass == S3::InactiveMutualFriendship
-      calc_inactive_mutual_friend_uids
+      begin
+        calc_inactive_mutual_friend_uids(threads: 2)
+      rescue ThreadError => e
+        Airbag.warn 'ThreadError is detected and retry without threads', klass: klass, exception: e.inspect, backtrace: e.backtrace
+        calc_inactive_mutual_friend_uids(threads: 0)
+      end
     elsif klass == S3::Unfriendship
       calc_unfriend_uids
     elsif klass == S3::Unfollowership
