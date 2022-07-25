@@ -32,7 +32,7 @@
 #  index_twitter_db_users_on_created_at                 (created_at)
 #  index_twitter_db_users_on_screen_name                (screen_name)
 #  index_twitter_db_users_on_uid                        (uid) UNIQUE
-#  index_twitter_db_users_on_uid_and_status_created_at  (uid,status_created_at) UNIQUE
+#  index_twitter_db_users_on_uid_and_status_created_at  (uid,status_created_at)
 #  index_twitter_db_users_on_updated_at                 (updated_at)
 #
 
