@@ -26,7 +26,7 @@ def logger
     def post_message(msg)
       options = {channel: 'deploy', text: msg}
       options[:ts] = @response['ts'] if @response
-      @response = Slack::Web::Client.new.chat_postMessage(params)
+      @response = Slack::Web::Client.new.chat_postMessage(options)
     end
   end.new
 end
