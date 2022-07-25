@@ -35,8 +35,8 @@ class TwitterDB::QueuedUser < ApplicationRecord
     def handle_deadlock(uids)
       uids.each do |uid|
         create!(uid: uid)
-      rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => ee
-        Airbag.info "TwitterDB::QueuedUser#handle_deadlock #{ee.inspect.truncate(200)}"
+      rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+        Airbag.info "TwitterDB::QueuedUser#handle_deadlock #{e.inspect.truncate(200)}"
       end
     end
 
