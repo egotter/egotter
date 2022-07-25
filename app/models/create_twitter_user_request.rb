@@ -58,16 +58,20 @@ class CreateTwitterUserRequest < ApplicationRecord
     validate_creation_interval!
     twitter_user = save_twitter_user(snapshot)
 
-    enqueue_creation_jobs(snapshot.friend_uids, snapshot.follower_uids, twitter_user.user_id)
+    enqueue_creation_jobs(snapshot.friend_uids, snapshot.follower_uids, twitter_user.user_id, context)
     CreateTwitterUserNewFriendsWorker.perform_in(delay_for_importing, twitter_user.id)
 
     twitter_user
   end
 
-  def enqueue_creation_jobs(friend_uids, follower_uids, user_id, slice: 50)
-    CreateTwitterDBUserWorker.perform_async(friend_uids.take(slice) + follower_uids.take(slice), user_id: user_id, enqueued_by: self.class)
-    CreateTwitterDBUsersForMissingUidsWorker.perform_async(
-        (friend_uids.slice(slice..-1) || []) + (follower_uids.slice(slice..-1) || []), user_id)
+  def enqueue_creation_jobs(friend_uids, follower_uids, user_id, context, slice: 50)
+    if context == :reporting
+      CreateTwitterDBUsersForMissingUidsWorker.perform_async(friend_uids + follower_uids, user_id)
+    else
+      CreateTwitterDBUserWorker.perform_async(friend_uids.take(slice) + follower_uids.take(slice), user_id: user_id, enqueued_by: self.class)
+      CreateTwitterDBUsersForMissingUidsWorker.perform_async(
+          (friend_uids.slice(slice..-1) || []) + (follower_uids.slice(slice..-1) || []), user_id)
+    end
   end
 
   def delay_for_importing
@@ -103,11 +107,11 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   def validate_twitter_user!(twitter_user)
     if twitter_user.friend_uids.any? { |uid| uid.nil? || uid == 0 }
-      Airbag.warn "#{self.class}##{__method__} friend_uids includes nil or 0 user_id=#{user_id} uid=#{uid}"
+      Airbag.warn 'validate_twitter_user!: friend_uids includes nil or 0', user_id: user_id, uid: uid
     end
 
     if twitter_user.follower_uids.any? { |uid| uid.nil? || uid == 0 }
-      Airbag.warn "#{self.class}##{__method__} follower_uids includes nil or 0 user_id=#{user_id} uid=#{uid}"
+      Airbag.warn 'validate_twitter_user!: follower_uids includes nil or 0', user_id: user_id, uid: uid
     end
 
     if TwitterUser.exists?(uid: uid)
