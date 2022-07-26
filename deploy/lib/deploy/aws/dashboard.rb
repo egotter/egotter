@@ -1,5 +1,7 @@
 require 'aws-sdk-cloudwatch'
 
+require_relative '../logger'
+
 class Dashboard
   REGION = 'ap-northeast-1'
 
@@ -114,6 +116,6 @@ class Dashboard
   end
 
   def logger
-    Logger.new(STDOUT)
+    Deploy.logger
   end
 end

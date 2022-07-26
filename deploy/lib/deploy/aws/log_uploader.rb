@@ -1,3 +1,5 @@
+require_relative '../logger'
+
 class LogUploader
   REGION = 'ap-northeast-1'
   BUCKET = 'egotter-server-log'
@@ -31,6 +33,6 @@ class LogUploader
   end
 
   def logger
-    Logger.new(STDOUT)
+    Deploy.logger
   end
 end
