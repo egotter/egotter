@@ -1,5 +1,5 @@
 Rails.application.reloader.to_prepare do
-  Airbag.tag = Sidekiq.server? ? 'sidekiq' : 'web'
+  Airbag.tags = {name: ENV['AWS_NAME_TAG'], role: Sidekiq.server? ? 'sidekiq' : 'web'}
 
   Airbag.broadcast do |level, message, props, ctx|
     if level > Logger::INFO

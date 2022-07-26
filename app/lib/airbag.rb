@@ -73,7 +73,6 @@ class Airbag
     if Sidekiq.server?
       {
           env: Rails.env,
-          tag: @tag,
           pid: ::Process.pid,
           tid: Thread.current["sidekiq_tid"],
           class: (Thread.current[:sidekiq_context][:class] rescue nil),
@@ -82,9 +81,8 @@ class Airbag
     else
       {
           env: Rails.env,
-          tag: @tag,
       }
-    end
+    end.merge(@tags)
   rescue => e
     {}
   end
@@ -115,8 +113,8 @@ class Airbag
     end
   end
 
-  def tag=(value)
-    @tag = value
+  def tags=(value)
+    @tags = value
   end
 
   def logger
@@ -140,7 +138,7 @@ class Airbag
 
   class << self
     extend Forwardable
-    def_delegators :instance, :debug, :info, :warn, :error, :exception, :benchmark, :broadcast, :format_hash, :truncate_hash, :tag=, :logger=, :disable!, :format_severity
+    def_delegators :instance, :debug, :info, :warn, :error, :exception, :benchmark, :broadcast, :format_hash, :truncate_hash, :tags=, :logger=, :disable!, :format_severity
   end
 
   class Logger < ::Logger
