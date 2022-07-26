@@ -69,7 +69,7 @@ class CreatePeriodicReportWorker
       request.check_allotted_messages_count = batch_requested_job?
     end
 
-    CreatePeriodicReportTask.new(request).start!
+    request.perform
   end
 
   def user_requested_job?

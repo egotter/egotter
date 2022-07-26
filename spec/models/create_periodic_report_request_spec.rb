@@ -12,8 +12,8 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
     end
   end
 
-  describe '#perform!' do
-    subject { request.perform! }
+  describe '#perform' do
+    subject { request.perform }
 
     it do
       expect(request).to receive(:validate_report!).and_return(true)

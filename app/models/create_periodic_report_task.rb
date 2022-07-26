@@ -1,3 +1,4 @@
+# TODO Remove later
 # Perform a request and log an error
 class CreatePeriodicReportTask
   attr_reader :request

@@ -41,8 +41,18 @@ class CreatePeriodicReportRequest < ApplicationRecord
     requested_by.to_s[/(morning|afternoon|night)/, 1]
   end
 
-  def perform!
-    return unless validate_report!
+  def perform
+    # TODO
+    # if started_at || finished_at || failed_at
+    #   return
+    # end
+
+    update(started_at: Time.zone.now)
+
+    unless validate_report!
+      update(finished_at: Time.zone.now)
+      return
+    end
 
     if worker_context == CreatePeriodicReportWorker # TODO Replace by requested_by == 'batch'
       if PeriodicReportReportableFlag.exists?(user_id: user_id) ||
@@ -57,6 +67,10 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
 
     send_report!
+    update(finished_at: Time.zone.now)
+  rescue => e
+    update(failed_at: Time.zone.now, status: e.inspect.truncate(150))
+    raise
   end
 
   # validator: for debugging

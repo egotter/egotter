@@ -6,7 +6,7 @@ RSpec.describe CreatePeriodicReportWorker do
   let(:worker) { described_class.new }
 
   before do
-    allow(request).to receive(:perform!)
+    allow(request).to receive(:perform)
     allow(CreatePeriodicReportRequest).to receive(:find).with(request.id).and_return(request)
   end
 
@@ -69,16 +69,10 @@ RSpec.describe CreatePeriodicReportWorker do
   end
 
   describe '#do_perform' do
-    let(:task) { double('task') }
     subject { worker.send(:do_perform, request, {}) }
 
-    before do
-      allow(CreatePeriodicReportTask).to receive(:new).with(request).and_return(task)
-      allow(task).to receive(:start!)
-    end
-
     it do
-      expect(task).to receive(:start!)
+      expect(request).to receive(:perform)
       subject
       expect(request.worker_context).to eq(described_class)
       expect(request.check_credentials).to be_truthy
