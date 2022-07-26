@@ -6,7 +6,9 @@
 #  user_id      :integer          not null
 #  requested_by :string(191)
 #  status       :string(191)      default(""), not null
+#  started_at   :datetime
 #  finished_at  :datetime
+#  failed_at    :datetime
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #

@@ -318,7 +318,9 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.integer "user_id", null: false
     t.string "requested_by"
     t.string "status", default: "", null: false
+    t.datetime "started_at"
     t.datetime "finished_at"
+    t.datetime "failed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_create_periodic_report_requests_on_created_at"

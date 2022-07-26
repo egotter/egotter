@@ -4,7 +4,9 @@ class CreateCreatePeriodicReportRequests < ActiveRecord::Migration[5.2]
       t.integer  :user_id,      null: false
       t.string   :requested_by, null: true, default: nil
       t.string   :status,       null: false, default: ''
+      t.datetime :started_at,   null: true, default: nil
       t.datetime :finished_at,  null: true, default: nil
+      t.datetime :failed_at,    null: true, default: nil
 
       t.timestamps null: false
 
