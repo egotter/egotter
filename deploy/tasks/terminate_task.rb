@@ -54,6 +54,13 @@ module Tasks
       end
 
       def after_terminate
+        uploader = LogUploader.new(@instance.name)
+        uploader.upload('log/production.log')
+        uploader.upload('log/sidekiq.log')
+        uploader.upload('log/sidekiq_misc.log')
+        uploader.upload('log/airbag.log')
+        uploader.upload('log/cron.log')
+
         Dashboard.new('egotter-linux-system').
             remove_cpu_utilization(@role, @terminated.id).
             remove_memory_utilization(@role, @terminated.id).

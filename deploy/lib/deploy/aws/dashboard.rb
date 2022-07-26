@@ -1,7 +1,6 @@
 require 'aws-sdk-cloudwatch'
 
 class Dashboard
-
   REGION = 'ap-northeast-1'
 
   def initialize(name)
