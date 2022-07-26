@@ -90,7 +90,7 @@ class Airbag
   end
 
   def format_exception(e)
-    "#{e.inspect.truncate(200)}#{" caused by #{e.cause.inspect.truncate(200)}" if e.cause} location=#{e.backtrace[0][/`([^']*)'/, 1] rescue nil}"
+    "#{e.inspect.truncate(200)}#{" caused by #{e.cause.inspect.truncate(200)}" if e.cause}"
   end
 
   def format_message(level, message, props, context)

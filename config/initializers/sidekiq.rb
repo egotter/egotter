@@ -11,12 +11,7 @@ redis_options = {
 }
 
 error_handler = Proc.new do |e, context|
-  if (job = context[:job])
-    message = "class=#{job['class']} args=#{job['args']}"
-  else
-    message = "context=#{context}"
-  end
-  Airbag.error "Sidekiq.error_handler: #{e.inspect.truncate(200)} #{message}", backtrace: e.backtrace
+  Airbag.exception e, method: 'Sidekiq.error_handler', context: context
 rescue => ee
   Sidekiq.logger.error "Sidekiq.error_handler: original=#{e.inspect.truncate(200)} current=#{ee.inspect.truncate(200)} context=#{context}"
 end
