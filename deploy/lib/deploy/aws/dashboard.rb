@@ -116,6 +116,6 @@ class Dashboard
   end
 
   def logger
-    Deploy.logger
+    Deploy::Logger.instance
   end
 end

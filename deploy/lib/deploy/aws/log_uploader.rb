@@ -33,6 +33,6 @@ class LogUploader
   end
 
   def logger
-    Deploy.logger
+    Deploy::Logger.instance
   end
 end

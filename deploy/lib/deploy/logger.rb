@@ -14,22 +14,14 @@ module Deploy
       self.formatter = Proc.new do |severity, timestamp, _, msg|
         "#{timestamp} #{severity} -- #{msg}\n"
       end
-    end
 
-    class << self
-      def instance(file = 'log/deploy.log')
-        logger = super()
-
-        file_logger = ActiveSupport::Logger.new(file)
-        file_logger.level = ::Logger::INFO
-        file_logger.datetime_format = '%Y-%m-%d %H:%M:%S'
-        file_logger.formatter = Proc.new do |severity, timestamp, _, msg|
-          "#{timestamp} #{severity} -- #{msg}\n"
-        end
-        logger.extend ActiveSupport::Logger.broadcast(file_logger)
-
-        logger
+      file_logger = ActiveSupport::Logger.new('log/deploy.log')
+      file_logger.level = ::Logger::INFO
+      file_logger.datetime_format = '%Y-%m-%d %H:%M:%S'
+      file_logger.formatter = Proc.new do |severity, timestamp, _, msg|
+        "#{timestamp} #{severity} -- #{msg}\n"
       end
+      extend ActiveSupport::Logger.broadcast(file_logger)
     end
   end
 end
