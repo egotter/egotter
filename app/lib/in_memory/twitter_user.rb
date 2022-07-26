@@ -33,10 +33,6 @@ module InMemory
         }
         client.write(twitter_user_id, compress(payload.to_json))
       end
-
-      def import_from_twitter_user(twitter_user)
-        import_from(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.send(:profile), twitter_user.friend_uids, twitter_user.follower_uids)
-      end
     end
   end
 end

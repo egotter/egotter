@@ -43,19 +43,4 @@ RSpec.describe InMemory::TwitterUser do
     end
     it { is_expected.to eq('result') }
   end
-
-  describe '.import_from_twitter_user' do
-    let(:twitter_user) { create(:twitter_user) }
-    subject { described_class.import_from_twitter_user(twitter_user) }
-    before do
-      allow(twitter_user).to receive(:profile).and_return('profile')
-      allow(twitter_user).to receive(:friend_uids).and_return('uids1')
-      allow(twitter_user).to receive(:follower_uids).and_return('uids2')
-    end
-    it do
-      expect(described_class).to receive(:import_from).
-          with(twitter_user.id, twitter_user.uid, twitter_user.screen_name, 'profile', 'uids1', 'uids2')
-      subject
-    end
-  end
 end
