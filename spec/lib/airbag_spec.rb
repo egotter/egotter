@@ -16,15 +16,6 @@ RSpec.describe Airbag, type: :model do
         expect(instance).to receive(:log).with(level, message, {id: 1})
         subject
       end
-
-      context 'block is passed' do
-        let(:block) { Proc.new { 'blk' } }
-        subject { instance.send(method, &block) }
-        it do
-          expect(instance).to receive(:log).with(level, 'blk', {})
-          subject
-        end
-      end
     end
   end
 

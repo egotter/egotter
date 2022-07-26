@@ -7,20 +7,20 @@ class Airbag
   def initialize
   end
 
-  def debug(message = nil, props = {}, &block)
-    log(::Logger::DEBUG, block_given? ? yield : message, props)
+  def debug(message = nil, props = {})
+    log(::Logger::DEBUG, message, props)
   end
 
-  def info(message = nil, props = {}, &block)
-    log(::Logger::INFO, block_given? ? yield : message, props)
+  def info(message = nil, props = {})
+    log(::Logger::INFO, message, props)
   end
 
-  def warn(message = nil, props = {}, &block)
-    log(::Logger::WARN, block_given? ? yield : message, props)
+  def warn(message = nil, props = {})
+    log(::Logger::WARN, message, props)
   end
 
-  def error(message = nil, props = {}, &block)
-    log(::Logger::ERROR, block_given? ? yield : message, props)
+  def error(message = nil, props = {})
+    log(::Logger::ERROR, message, props)
   end
 
   def exception(e, props = {})

@@ -15,6 +15,6 @@ class SendEnhanceYourCalmCountToSlackWorker
     count = DirectMessageErrorLog.enhance_your_calm.size
     SlackBotClient.channel('sidekiq_misc').post_message("enhance_your_calm: #{count}")
   rescue => e
-    Airbag.warn { e.inspect }
+    Airbag.exception e
   end
 end
