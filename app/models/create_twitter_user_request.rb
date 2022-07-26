@@ -40,10 +40,9 @@ class CreateTwitterUserRequest < ApplicationRecord
   # context:
   #   :reporting
   def perform(context = nil)
-    # TODO
-    # if started_at || finished_at || failed_at
-    #   return
-    # end
+    if started_at || finished_at || failed_at
+      return
+    end
 
     update(started_at: Time.zone.now)
     validate_request!
