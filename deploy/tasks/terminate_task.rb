@@ -56,6 +56,7 @@ module Tasks
       def after_terminate
         LogUploader.new(@instance.name).with_ssh.
             add('log/production.log').
+            add('log/puma.log').
             add('log/sidekiq.log').
             add('log/sidekiq_misc.log').
             add('log/airbag.log').

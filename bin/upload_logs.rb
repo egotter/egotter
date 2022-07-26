@@ -10,6 +10,7 @@ def main(name)
 
   LogUploader.new(name).
       add('log/production.log').
+      add('log/puma.log').
       add('log/sidekiq.log').
       add('log/sidekiq_misc.log').
       add('log/airbag.log').
