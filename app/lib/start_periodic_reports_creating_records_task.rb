@@ -32,6 +32,7 @@ class StartPeriodicReportsCreatingRecordsTask
     end
 
     @slack.post_message("Finished user_ids=#{@user_ids.size} period=#{@period}  threads=#{@threads}", thread_ts: @last_response['ts']) rescue nil
+    nil
   end
 
   def create_requests(user_ids)
@@ -83,8 +84,10 @@ class StartPeriodicReportsCreatingRecordsTask
       work_in_threads(group, @period)
       processed_count += group.size
 
-      if processed_count == threads || processed_count % 1000 == 0 || processed_count == requests.size
-        @last_response = @slack.post_message("Progress total=#{requests.size} processed=#{processed_count} errors=#{@errors_count}", thread_ts: @last_response['ts']) rescue {}
+      if processed_count <= threads || processed_count % 1000 == 0 || processed_count == requests.size
+        elapsed = Time.zone.now - @start_time
+        avg = processed_count / elapsed
+        @last_response = @slack.post_message("Progress total=#{requests.size} processed=#{processed_count} errors=#{@errors_count} elapsed=#{sprintf('%.3f', elapsed)} avg=#{sprintf('%.3f', avg)}", thread_ts: @last_response['ts']) rescue nil
       end
     end
 
@@ -96,6 +99,7 @@ class StartPeriodicReportsCreatingRecordsTask
   def work_in_threads(requests, period)
     requests.map do |request|
       Thread.new(request, period) do |req, p|
+        # TODO Remove this line?
         ActiveRecord::Base.connection_pool.with_connection do
           CreateReportTwitterUserWorker.new.perform(req.id, 'period' => p)
         rescue => e
