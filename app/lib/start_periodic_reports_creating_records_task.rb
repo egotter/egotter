@@ -5,6 +5,7 @@ class StartPeriodicReportsCreatingRecordsTask
   def initialize(period: nil, user_ids: nil, threads: nil)
     @period = period || 'none'
     @threads = threads || 20
+    @timeout = 2.hours + 30.minutes
 
     if user_ids.present?
       @user_ids = user_ids
@@ -21,6 +22,7 @@ class StartPeriodicReportsCreatingRecordsTask
   end
 
   def start
+    @start_time = Time.zone.now
     @last_response = @slack.post_message("Start creating records period=#{@period} threads=#{@threads}") rescue {}
 
     if @user_ids.any?
@@ -64,8 +66,8 @@ class StartPeriodicReportsCreatingRecordsTask
       @last_response = @slack.post_message('Stop requested', thread_ts: @last_response['ts']) rescue {}
     end
     processed_count = 0
-    errors_count = 0
-    lock = Mutex.new
+    @errors_count = 0
+    @lock = Mutex.new
 
     requests.each_slice(threads) do |group|
       if stopped || sigint.trapped?
@@ -73,23 +75,39 @@ class StartPeriodicReportsCreatingRecordsTask
         next
       end
 
-      group.map do |request|
-        Thread.new(request) do |req|
-          ActiveRecord::Base.connection_pool.with_connection do
-            CreateReportTwitterUserWorker.new.perform(req.id, period: @period)
-          rescue => e
-            lock.synchronize { errors_count += 1 }
-            Airbag.warn "#{self.class}##{__method__}: #{e.inspect}", request_id: req.id
-          end
-        end
-      end.each(&:join)
+      if timeout?
+        CreateTwitterUserRequest.where(id: group.map(&:id)).update_all(status_message: 'Timeout', failed_at: Time.zone.now)
+        next
+      end
 
+      work_in_threads(group, @period)
       processed_count += group.size
 
       if processed_count == threads || processed_count % 1000 == 0 || processed_count == requests.size
-        @last_response = @slack.post_message("Progress total=#{requests.size} processed=#{processed_count} errors=#{errors_count}", thread_ts: @last_response['ts']) rescue {}
+        @last_response = @slack.post_message("Progress total=#{requests.size} processed=#{processed_count} errors=#{@errors_count}", thread_ts: @last_response['ts']) rescue {}
       end
     end
+
+    if timeout?
+      @last_response = @slack.post_message('Timeout', thread_ts: @last_response['ts']) rescue {}
+    end
+  end
+
+  def work_in_threads(requests, period)
+    requests.map do |request|
+      Thread.new(request, period) do |req, p|
+        ActiveRecord::Base.connection_pool.with_connection do
+          CreateReportTwitterUserWorker.new.perform(req.id, 'period' => p)
+        rescue => e
+          @lock.synchronize { @errors_count += 1 }
+          Airbag.warn "#{self.class}##{__method__}: #{e.inspect}", request_id: req.id
+        end
+      end
+    end.each(&:join)
+  end
+
+  def timeout?
+    @timeout && @start_time && Time.zone.now - @start_time > @timeout
   end
 
   class << self
