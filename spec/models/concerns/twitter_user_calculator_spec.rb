@@ -168,6 +168,14 @@ RSpec.describe TwitterUserCalculator do
 
   describe '#calc_inactive_friend_uids' do
     subject { twitter_user.calc_inactive_friend_uids }
+    it do
+      expect(twitter_user).to receive(:calc_inactive_friend_uids!).with(slice: 1000, threads: 0)
+      subject
+    end
+  end
+
+  describe '#calc_inactive_friend_uids!' do
+    subject { twitter_user.calc_inactive_friend_uids! }
     before { allow(twitter_user).to receive(:friend_uids).and_return([1, 2, 3]) }
     it do
       expect(twitter_user).to receive(:fetch_inactive_uids).with([1, 2, 3], 1000, 0)
@@ -177,6 +185,14 @@ RSpec.describe TwitterUserCalculator do
 
   describe '#calc_inactive_follower_uids' do
     subject { twitter_user.calc_inactive_follower_uids }
+    it do
+      expect(twitter_user).to receive(:calc_inactive_follower_uids!).with(slice: 1000, threads: 0)
+      subject
+    end
+  end
+
+  describe '#calc_inactive_follower_uids!' do
+    subject { twitter_user.calc_inactive_follower_uids! }
     before { allow(twitter_user).to receive(:follower_uids).and_return([1, 2, 3]) }
     it do
       expect(twitter_user).to receive(:fetch_inactive_uids).with([1, 2, 3], 1000, 0)
@@ -186,6 +202,14 @@ RSpec.describe TwitterUserCalculator do
 
   describe '#calc_inactive_mutual_friend_uids' do
     subject { twitter_user.calc_inactive_mutual_friend_uids }
+    it do
+      expect(twitter_user).to receive(:calc_inactive_mutual_friend_uids!).with(slice: 1000, threads: 0)
+      subject
+    end
+  end
+
+  describe '#calc_inactive_mutual_friend_uids!' do
+    subject { twitter_user.calc_inactive_mutual_friend_uids! }
     before { allow(twitter_user).to receive(:mutual_friend_uids).and_return([1, 2, 3]) }
     it do
       expect(twitter_user).to receive(:fetch_inactive_uids).with([1, 2, 3], 1000, 0)

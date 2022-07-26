@@ -47,26 +47,11 @@ module TwitterUserCalculator
     elsif klass == S3::MutualFriendship
       calc_mutual_friend_uids
     elsif klass == S3::InactiveFriendship
-      begin
-        calc_inactive_friend_uids(threads: 2)
-      rescue ThreadError => e
-        Airbag.warn 'ThreadError is detected and retry without threads', klass: klass, exception: e.inspect, backtrace: e.backtrace
-        calc_inactive_friend_uids(threads: 0)
-      end
+      calc_inactive_friend_uids(threads: 2)
     elsif klass == S3::InactiveFollowership
-      begin
-        calc_inactive_follower_uids(threads: 2)
-      rescue ThreadError => e
-        Airbag.warn 'ThreadError is detected and retry without threads', klass: klass, exception: e.inspect, backtrace: e.backtrace
-        calc_inactive_follower_uids(threads: 0)
-      end
+      calc_inactive_follower_uids(threads: 2)
     elsif klass == S3::InactiveMutualFriendship
-      begin
-        calc_inactive_mutual_friend_uids(threads: 2)
-      rescue ThreadError => e
-        Airbag.warn 'ThreadError is detected and retry without threads', klass: klass, exception: e.inspect, backtrace: e.backtrace
-        calc_inactive_mutual_friend_uids(threads: 0)
-      end
+      calc_inactive_mutual_friend_uids(threads: 2)
     elsif klass == S3::Unfriendship
       calc_unfriend_uids
     elsif klass == S3::Unfollowership
@@ -155,14 +140,35 @@ module TwitterUserCalculator
   end
 
   def calc_inactive_friend_uids(slice: 1000, threads: 0)
+    calc_inactive_friend_uids!(slice: slice, threads: threads)
+  rescue ThreadError => e
+    Airbag.warn 'calc_inactive_friend_uids: ThreadError is detected and retry without threads', exception: e.inspect, backtrace: e.backtrace
+    calc_inactive_friend_uids!(slice: slice, threads: 0)
+  end
+
+  def calc_inactive_friend_uids!(slice: 1000, threads: 0)
     fetch_inactive_uids(friend_uids, slice, threads)
   end
 
   def calc_inactive_follower_uids(slice: 1000, threads: 0)
+    calc_inactive_follower_uids!(slice: slice, threads: threads)
+  rescue ThreadError => e
+    Airbag.warn 'calc_inactive_follower_uids: ThreadError is detected and retry without threads', exception: e.inspect, backtrace: e.backtrace
+    calc_inactive_follower_uids!(slice: slice, threads: 0)
+  end
+
+  def calc_inactive_follower_uids!(slice: 1000, threads: 0)
     fetch_inactive_uids(follower_uids, slice, threads)
   end
 
   def calc_inactive_mutual_friend_uids(slice: 1000, threads: 0)
+    calc_inactive_mutual_friend_uids!(slice: slice, threads: threads)
+  rescue ThreadError => e
+    Airbag.warn 'calc_inactive_mutual_friend_uids: ThreadError is detected and retry without threads', exception: e.inspect, backtrace: e.backtrace
+    calc_inactive_mutual_friend_uids!(slice: slice, threads: 0)
+  end
+
+  def calc_inactive_mutual_friend_uids!(slice: 1000, threads: 0)
     fetch_inactive_uids(mutual_friend_uids, slice, threads)
   end
 
