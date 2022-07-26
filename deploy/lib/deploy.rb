@@ -5,8 +5,8 @@ require_relative '../tasks/task_builder'
 module Deploy
   module_function
 
-  def logger(file = 'log/deploy.log')
-    Logger.instance(file)
+  def logger
+    Logger.instance
   end
 
   def with_lock(file, &block)
