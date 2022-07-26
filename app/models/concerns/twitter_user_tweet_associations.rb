@@ -34,7 +34,7 @@ module TwitterUserTweetAssociations
     end
 
     if data.nil?
-      Airbag.info "Fetching data failed. method=#{method_name} id=#{id} screen_name=#{screen_name} created_at=#{created_at.to_s(:db)} exceptions=#{exceptions.inspect}", caller: caller
+      Airbag.info "Fetching #{method_name} failed", id: id, screen_name: screen_name, created_at: created_at.to_s(:db), exceptions: exceptions.inspect, caller: caller
       if exceptions.empty?
         ImportEmptyTweetsWorker.perform_async(s3_class, uid, screen_name)
       end

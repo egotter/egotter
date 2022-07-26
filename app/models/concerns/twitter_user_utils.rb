@@ -21,7 +21,7 @@ module TwitterUserUtils
     if instance_variable_defined?(:@persisted_friend_uids)
       @persisted_friend_uids
     else
-      @persisted_friend_uids = fetch_uids(:friend_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Friendship)
+      @persisted_friend_uids = fetch_uids(:friend_uids, S3::Friendship)
     end
   end
 
@@ -33,7 +33,7 @@ module TwitterUserUtils
     if instance_variable_defined?(:@persisted_follower_uids)
       @persisted_follower_uids
     else
-      @persisted_follower_uids = fetch_uids(:follower_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Followership)
+      @persisted_follower_uids = fetch_uids(:follower_uids, S3::Followership)
     end
   end
 
@@ -69,18 +69,18 @@ module TwitterUserUtils
 
   private
 
-  def fetch_uids(method_name, memory_class, efs_class, s3_class)
+  def fetch_uids(method_name, s3_class)
     data = nil
     exceptions = []
 
     begin
-      data = memory_class.find_by(id) if InMemory.enabled? && InMemory.cache_alive?(created_at)
+      data = InMemory::TwitterUser.find_by(id) if InMemory.enabled? && InMemory.cache_alive?(created_at)
     rescue => e
       exceptions << e
     end
 
     begin
-      data = efs_class.find_by(id) if data.nil? && Efs.enabled?
+      data = Efs::TwitterUser.find_by(id) if data.nil? && Efs.enabled?
     rescue => e
       exceptions << e
     end
@@ -92,8 +92,7 @@ module TwitterUserUtils
     end
 
     if data.nil?
-      Airbag.info "Fetching data failed. method=#{method_name} id=#{id} screen_name=#{screen_name} created_at=#{created_at.to_s(:db)} exceptions=#{exceptions.inspect}"
-      Airbag.info caller.join("\n")
+      Airbag.info "Fetching #{method_name} failed", id: id, screen_name: screen_name, created_at: created_at.to_s(:db), exceptions: exceptions.inspect, caller: caller
       # TODO Import collect uids or delete this record
       []
     else

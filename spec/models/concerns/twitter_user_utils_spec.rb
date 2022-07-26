@@ -13,7 +13,7 @@ RSpec.describe TwitterUserUtils do
     context 'twitter_user is persisted' do
       before { twitter_user.save! }
       it do
-        expect(twitter_user).to receive(:fetch_uids).with(:friend_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Friendship).and_return('result')
+        expect(twitter_user).to receive(:fetch_uids).with(:friend_uids, S3::Friendship).and_return('result')
         is_expected.to eq('result')
       end
     end
@@ -29,7 +29,7 @@ RSpec.describe TwitterUserUtils do
     context 'twitter_user is persisted' do
       before { twitter_user.save! }
       it do
-        expect(twitter_user).to receive(:fetch_uids).with(:follower_uids, InMemory::TwitterUser, Efs::TwitterUser, S3::Followership).and_return('result')
+        expect(twitter_user).to receive(:fetch_uids).with(:follower_uids, S3::Followership).and_return('result')
         is_expected.to eq('result')
       end
     end
@@ -40,7 +40,7 @@ RSpec.describe TwitterUserUtils do
     let(:memory_class) { InMemory::TwitterUser }
     let(:efs_class) { Efs::TwitterUser }
     let(:s3_class) { S3::Friendship }
-    subject { twitter_user.send(:fetch_uids, method_name, memory_class, efs_class, s3_class) }
+    subject { twitter_user.send(:fetch_uids, method_name, s3_class) }
     before { twitter_user.save! }
 
     context 'InMemory returns data' do
