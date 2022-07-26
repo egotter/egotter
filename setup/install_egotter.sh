@@ -135,8 +135,8 @@ chmod +rx /var/log/nginx
 # /etc/init.d/rsyslog restart
 
 # logrotate
-cp -fr ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter
-sed -i '/include \/etc\/logrotate.d/a include \/etc\/logrotate.d\/egotter' /etc/logrotate.conf
+# cp -fr ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter
+# sed -i '/include \/etc\/logrotate.d/a include \/etc\/logrotate.d\/egotter' /etc/logrotate.conf
 
 
 printf "\033[32m

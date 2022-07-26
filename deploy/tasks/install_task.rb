@@ -142,11 +142,6 @@ module Tasks
         self
       end
 
-      def update_logrotate
-        run_copy('./setup/etc/logrotate.d/nginx', '/etc/logrotate.d/nginx')
-        self
-      end
-
       def update_nginx
         run_copy('./setup/etc/nginx/nginx.conf', '/etc/nginx/nginx.conf')
         self
@@ -237,7 +232,6 @@ module Tasks
             update_cwagent.
             precompile.
             update_crontab.
-            update_logrotate.
             update_nginx.
             update_puma.
             install_td_agent('./setup/etc/td-agent/td-agent.web.conf.erb')
@@ -288,7 +282,6 @@ module Tasks
             update_datadog('sidekiq').
             update_cwagent.
             update_crontab.
-            update_logrotate.
             update_sidekiq.
             install_td_agent('./setup/etc/td-agent/td-agent.sidekiq.conf.erb')
       end
@@ -347,7 +340,6 @@ module Tasks
             update_datadog.
             update_cwagent.
             update_crontab.
-            update_logrotate.
             update_nginx.
             update_puma.
             update_sidekiq.
