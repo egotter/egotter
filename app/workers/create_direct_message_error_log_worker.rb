@@ -4,6 +4,8 @@ class CreateDirectMessageErrorLogWorker
 
   def perform(attrs)
     DirectMessageErrorLog.create!(attrs)
+  rescue ActiveRecord::StatementInvalid => e
+    Airbag.warn e.inspect, attrs: attrs
   rescue => e
     Airbag.exception e, attrs: attrs
   end

@@ -1,6 +1,5 @@
 class CreateDirectMessageEventLogsWorker
   include Sidekiq::Worker
-  include WorkerErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   # options:
@@ -27,6 +26,6 @@ class CreateDirectMessageEventLogsWorker
       end
     end
   rescue => e
-    handle_worker_error(e, sender_id: sender_id, recipient_id: recipient_id, message: message, time: time, **options)
+    Airbag.exception e, sender_id: sender_id, recipient_id: recipient_id, message: message, time: time, options: options
   end
 end

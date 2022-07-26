@@ -1,12 +1,13 @@
 class CreateDirectMessageEventLogWorker
   include Sidekiq::Worker
-  include WorkerErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   # options:
   def perform(attrs, options = {})
     DirectMessageEventLog.create!(attrs)
+  rescue ActiveRecord::StatementInvalid => e
+    Airbag.warn e.inspect, attrs: attrs, options: options
   rescue => e
-    handle_worker_error(e, attrs: attrs, **options)
+    Airbag.exception e, attrs: attrs, options: options
   end
 end
