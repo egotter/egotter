@@ -10,16 +10,14 @@ module Deploy
     def initialize
       super(STDOUT)
       self.level = ::Logger::INFO
-      self.datetime_format = '%Y-%m-%d %H:%M:%S'
-      self.formatter = Proc.new do |severity, timestamp, _, msg|
-        "#{timestamp} #{severity} -- #{msg}\n"
+      self.formatter = Proc.new do |_, timestamp, _, msg|
+        "#{timestamp.utc.iso8601(3)} #{msg}\n"
       end
 
       file_logger = ActiveSupport::Logger.new('log/deploy.log')
       file_logger.level = ::Logger::INFO
-      file_logger.datetime_format = '%Y-%m-%d %H:%M:%S'
-      file_logger.formatter = Proc.new do |severity, timestamp, _, msg|
-        "#{timestamp} #{severity} -- #{msg}\n"
+      file_logger.formatter = Proc.new do |_, timestamp, _, msg|
+        "#{timestamp.utc.iso8601(3)} #{msg}\n"
       end
       extend ActiveSupport::Logger.broadcast(file_logger)
     end

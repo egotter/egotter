@@ -59,7 +59,7 @@ class Airbag
     ms = Benchmark.ms { result = options[:silence] ? logger.silence { yield } : yield }
 
     if ms > options[:slow_duration]
-      logger.public_send(options[:level], "%s (%.1fms)" % [message, ms])
+      send(options[:level], "%s (%.1fms)" % [message, ms])
     end
 
     result
@@ -147,9 +147,8 @@ class Airbag
     def initialize
       super('log/airbag.log')
       self.level = Logger::INFO
-      self.datetime_format = '%Y-%m-%d %H:%M:%S'
-      self.formatter = Proc.new do |severity, timestamp, _, msg|
-        "#{severity[0]}, [#{timestamp}] #{severity} -- #{msg}\n"
+      self.formatter = Proc.new do |_, timestamp, _, msg|
+        "#{timestamp.utc.iso8601(3)} #{msg}\n"
       end
     end
   end
