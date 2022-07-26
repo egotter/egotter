@@ -31,7 +31,7 @@ class StartPeriodicReportsCreatingRecordsTask
       # create_jobs(requests)
     end
 
-    @slack.post_message("Finished user_ids=#{@user_ids.size} period=#{@period}  threads=#{@threads}", thread_ts: @last_response['ts']) rescue nil
+    @slack.post_message("Finished user_ids=#{@user_ids.size} period=#{@period} threads=#{@threads}", thread_ts: @last_response['ts']) rescue nil
     nil
   end
 
@@ -86,7 +86,7 @@ class StartPeriodicReportsCreatingRecordsTask
 
       if processed_count <= threads || processed_count % 1000 == 0 || processed_count == requests.size
         elapsed = Time.zone.now - @start_time
-        avg = processed_count / elapsed
+        avg = elapsed / processed_count
         @last_response = @slack.post_message("Progress total=#{requests.size} processed=#{processed_count} errors=#{@errors_count} elapsed=#{sprintf('%.3f', elapsed)} avg=#{sprintf('%.3f', avg)}", thread_ts: @last_response['ts']) rescue nil
       end
     end

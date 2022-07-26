@@ -12,10 +12,14 @@ class StartPeriodicReportsTask
     elsif period == 'night'
       @user_ids = self.class.night_user_ids
     end
+
+    @slack = SlackBotClient.channel('cron')
+    @last_response = {}
   end
 
   def start
-    response = SlackBotClient.channel('cron').post_message("Start sending reports period=#{@period}") rescue {}
+    @start_time = Time.zone.now
+    @last_response = @slack.post_message("Start sending reports period=#{@period} threads=#{@threads}") rescue {}
 
     if @user_ids.any?
       requests = create_requests(@user_ids)
@@ -23,7 +27,7 @@ class StartPeriodicReportsTask
       # create_jobs(requests)
     end
 
-    SlackBotClient.channel('cron').post_message("Finished user_ids=#{@user_ids.size} period=#{@period}", thread_ts: response['ts']) rescue nil
+    @slack.post_message("Finished user_ids=#{@user_ids.size} period=#{@period} threads=#{@threads}", thread_ts: response['ts']) rescue nil
   end
 
   def create_requests(user_ids)
@@ -47,23 +51,40 @@ class StartPeriodicReportsTask
   end
 
   def run_jobs(requests, threads)
-    requests.each_slice(threads) do |partial_requests|
+    processed_count = 0
+    @errors_count = 0
+    @lock = Mutex.new
+
+    requests.each_slice(threads) do |group|
       start_time = Time.zone.now
 
-      partial_requests.map do |request|
-        Thread.new(request) do |req|
-          ActiveRecord::Base.connection_pool.with_connection do
-            CreatePeriodicReportWorker.new.perform(req.id, user_id: req.user_id)
-          end
-        rescue => e
-          puts "StartPeriodicReportsTask#run_jobs: #{e.inspect} request_id=#{req.id}"
-        end
-      end.each(&:join)
+      work_in_threads(group)
+      processed_count += group.size
 
       if (elapsed_time = Time.zone.now - start_time) < 1
         sleep 1.0 - elapsed_time
       end
+
+      if processed_count <= threads || processed_count % 1000 == 0 || processed_count == requests.size
+        elapsed = Time.zone.now - @start_time
+        avg = elapsed / processed_count
+        @last_response = @slack.post_message("Progress total=#{requests.size} processed=#{processed_count} errors=#{@errors_count} elapsed=#{sprintf('%.3f', elapsed)} avg=#{sprintf('%.3f', avg)}", thread_ts: @last_response['ts']) rescue nil
+      end
     end
+  end
+
+  def work_in_threads(requests)
+    requests.map do |request|
+      Thread.new(request) do |req|
+        # TODO Remove this line?
+        ActiveRecord::Base.connection_pool.with_connection do
+          CreatePeriodicReportWorker.new.perform(req.id, user_id: req.user_id)
+        rescue => e
+          @lock.synchronize { @errors_count += 1 }
+          Airbag.warn "#{self.class}##{__method__}: #{e.inspect}", request_id: req.id
+        end
+      end
+    end.each(&:join)
   end
 
   class << self
