@@ -1,5 +1,6 @@
 require 'forwardable'
 require 'singleton'
+require 'time'
 
 class Airbag
   include Singleton

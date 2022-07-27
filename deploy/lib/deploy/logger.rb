@@ -1,4 +1,5 @@
 require 'singleton'
+require 'time'
 
 require 'active_support'
 require 'active_support/logger'
