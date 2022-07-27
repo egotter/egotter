@@ -4,12 +4,10 @@ RSpec.describe TwitterUserProfile do
   let(:twitter_user) { create(:twitter_user) }
 
   describe '#account_created_at' do
+    let(:time_str) { 'Tue Mar 02 20:43:57 +0000 2010' }
     subject { twitter_user.account_created_at }
-    it do
-      profile_created_at = twitter_user.send(:profile)[:created_at]
-      time = ActiveSupport::TimeZone['Asia/Tokyo'].parse(profile_created_at)
-      is_expected.to be_within(3.seconds).of(time)
-    end
+    before { allow(twitter_user).to receive(:profile).and_return(created_at: time_str) }
+    it { expect(subject.to_s).to eq(Time.zone.parse(time_str).to_s) }
   end
 
   describe 'status_created_at' do
@@ -20,7 +18,7 @@ RSpec.describe TwitterUserProfile do
 
   describe '#profile_not_found?' do
     subject { twitter_user.profile_not_found? }
-    it { is_expected.to be_falsey }
+    it { is_expected.to be_truthy }
   end
 
   describe '#profile' do

@@ -5,11 +5,8 @@ module TwitterUserPersistence
 
   included do
     attr_accessor :copied_friend_uids, :copied_follower_uids, :copied_user_timeline, :copied_mention_tweets, :copied_favorite_tweets
-
-    after_create :perform_before_commit
   end
 
-  # This method is called manually
   def perform_before_transaction
     if copied_user_timeline&.is_a?(Array)
       InMemory::StatusTweet.import_from(uid, copied_user_timeline)
@@ -24,16 +21,8 @@ module TwitterUserPersistence
     end
   end
 
-  # WARNING: Don't create threads in this method!
-  def perform_before_commit
-    InMemory::TwitterUser.import_from(id, uid, screen_name, profile_text, copied_friend_uids, copied_follower_uids)
-  rescue => e
-    Airbag.exception e, uid: uid, screen_name: screen_name, user_id: user_id
-    raise ActiveRecord::Rollback
-  end
-
-  # This method is called manually
   def perform_after_commit
+    InMemory::TwitterUser.import_from(id, uid, screen_name, profile_text, copied_friend_uids, copied_follower_uids)
     data = {
         id: id,
         uid: uid,

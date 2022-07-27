@@ -59,6 +59,8 @@ module S3
 
     def find_by_current_scope(payload_key, key_attr, key_value)
       text = fetch(key_value)
+      return nil if text.blank?
+
       item = parse_json(text)
       payload = item.has_key?('compress') ? unpack(item[payload_key.to_s]) : item[payload_key.to_s]
       values = {
