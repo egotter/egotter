@@ -117,6 +117,10 @@ class WebResource
   end
 end
 
+def upload_logs
+  `/usr/local/bin/bundle exec ruby /var/egotter/bin/upload_logs.rb #{@instance_name}`
+end
+
 def main
   return unless marked_to_be_terminated?
 
@@ -127,6 +131,8 @@ def main
   elsif sidekiq_instance?
     stop_sidekiq
   end
+
+  upload_logs
 
   post_message('Finished')
 rescue => e
