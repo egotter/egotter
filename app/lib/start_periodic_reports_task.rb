@@ -76,7 +76,6 @@ class StartPeriodicReportsTask
   def work_in_threads(requests)
     requests.map do |request|
       Thread.new(request) do |req|
-        # TODO Remove this line?
         ActiveRecord::Base.connection_pool.with_connection do
           CreatePeriodicReportWorker.new.perform(req.id, user_id: req.user_id)
         rescue => e

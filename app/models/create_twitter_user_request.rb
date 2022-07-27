@@ -236,7 +236,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     end
 
     if TwitterApiStatus.retry_timeout?(e)
-      raise TimeoutError.new(e.inspect)
+      raise HttpTimeout.new(e.inspect)
     end
 
     Airbag.info "#{self.class}##{__method__}: exception=#{e.inspect}#{" cause=#{e.cause.inspect}" if e.cause}", {backtrace: e.backtrace, cause_backtrace: e.cause&.backtrace}.compact
@@ -283,7 +283,10 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   class RetryExhausted < Error; end
 
+  # TODO Remove later
   class TimeoutError < Error; end
+
+  class HttpTimeout < Error; end
 
   class Unknown < StandardError; end
 end

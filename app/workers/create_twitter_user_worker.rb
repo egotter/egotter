@@ -1,7 +1,6 @@
 class CreateTwitterUserWorker
   include Sidekiq::Worker
   prepend WorkMeasurement
-  include WorkerErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
@@ -48,17 +47,10 @@ class CreateTwitterUserWorker
     assemble_request = AssembleTwitterUserRequest.create!(twitter_user: twitter_user, user_id: twitter_user.user_id, uid: twitter_user.uid)
     AssembleTwitterUserWorker.perform_in(5.seconds, assemble_request.id, requested_by: self.class)
     TwitterUserAssembledFlag.on(twitter_user.uid)
-  rescue CreateTwitterUserRequest::TimeoutError => e
-    if options['retries']
-      Airbag.exception e, request_id: request_id, options: options
-    else
-      options['retries'] = 1
-      CreateTwitterUserWorker.perform_in(rand(20) + unique_in, request_id, options)
-    end
-  rescue CreateTwitterUserRequest::Error => e
-    # Do nothing
+  rescue CreateTwitterUserRequest::HttpTimeout, CreateTwitterUserRequest::Error => e
+    Airbag.info "#{e.class} is ignored", exception: e.inspect
   rescue => e
-    handle_worker_error(e, request_id: request_id, options: options)
+    Airbag.exception e, request_id: request_id, options: options
   end
 
   private

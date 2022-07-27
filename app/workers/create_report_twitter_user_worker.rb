@@ -25,16 +25,9 @@ class CreateReportTwitterUserWorker < CreateTwitterUserWorker
     request = CreateTwitterUserRequest.find(request_id)
     PeriodicReportReportableFlag.on(request.user_id, options['period'])
     request.perform(:reporting)
-  rescue CreateTwitterUserRequest::TimeoutError => e
-    if options['retries']
-      Airbag.exception e, request_id: request_id, options: options
-    else
-      options['retries'] = 1
-      CreateReportTwitterUserWorker.perform_in(rand(20) + unique_in, request_id, options)
-    end
-  rescue CreateTwitterUserRequest::Error => e
-    # Do nothing
+  rescue CreateTwitterUserRequest::HttpTimeout, CreateTwitterUserRequest::Error => e
+    Airbag.info "#{e.class} is ignored", exception: e.inspect
   rescue => e
-    handle_worker_error(e, request_id: request_id, options: options)
+    Airbag.exception e, request_id: request_id, options: options
   end
 end

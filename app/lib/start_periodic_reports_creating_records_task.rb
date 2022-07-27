@@ -97,7 +97,6 @@ class StartPeriodicReportsCreatingRecordsTask
   def work_in_threads(requests, period)
     requests.map do |request|
       Thread.new(request, period) do |req, p|
-        # TODO Remove this line?
         ActiveRecord::Base.connection_pool.with_connection do
           CreateReportTwitterUserWorker.new.perform(req.id, 'period' => p)
         rescue => e
