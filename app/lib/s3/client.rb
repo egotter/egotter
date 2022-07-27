@@ -18,7 +18,7 @@ module S3
       if async
         WriteToS3Worker.perform_async(klass: @klass, bucket: @bucket_name, key: key, body: body)
       else
-        @s3.put_object(bucket: @bucket_name, key: key, body: body)
+        @s3.put_object(bucket: @bucket_name, key: key.to_s, body: body)
       end
     end
 
