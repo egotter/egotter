@@ -46,15 +46,20 @@ module Tasks
         @action = :terminate
         @instance = nil
         @role = nil
-        @terminated = nil
       end
 
       def run
-        after_terminate if @terminated && %w(web sidekiq).include?(@role)
+        raise NotImplementedError
       end
 
-      def after_terminate
-        LogUploader.new(@instance.name).with_ssh.
+      def update_dashboard(instance)
+        Dashboard.new('egotter-linux-system').
+            remove_all(@role, instance.id).
+            update
+      end
+
+      def upload_logs(instance)
+        LogUploader.new(instance.name).with_ssh.
             add('log/production.log').
             add('log/puma.log').
             add('log/sidekiq.log').
@@ -62,10 +67,6 @@ module Tasks
             add('log/airbag.log').
             add('log/cron.log').
             upload
-
-        Dashboard.new('egotter-linux-system').
-            remove_all(@role, @terminated.id).
-            update
       end
 
       def logger
@@ -95,8 +96,10 @@ module Tasks
 
         if instance && @target_group.deregister(instance.id)
           Tasks::UninstallTask::Web.new(instance.id).uninstall
+          upload_logs(instance)
+          update_dashboard(instance)
           instance.terminate
-          @instance = @terminated = instance
+          @instance = instance
         end
 
         super
@@ -123,8 +126,10 @@ module Tasks
 
         if instance
           Tasks::UninstallTask::Sidekiq.new(instance.id).uninstall
+          upload_logs(instance)
+          update_dashboard(instance)
           instance.terminate
-          @instance = @terminated = instance
+          @instance = instance
         end
 
         super
@@ -143,7 +148,7 @@ module Tasks
 
         if instance
           instance.terminate
-          @instance = @terminated = instance
+          @instance = instance
         end
 
         super
