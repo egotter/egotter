@@ -9,7 +9,8 @@ class WriteS3StatusTweetWorker
     S3::StatusTweet.import_from!(
         hash['uid'],
         hash['screen_name'],
-        hash['status_tweets']
+        hash['status_tweets'],
+        async: false
     )
   rescue => e
     Airbag.exception e, options: options

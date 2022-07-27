@@ -9,7 +9,8 @@ class WriteS3FavoriteTweetWorker
     S3::FavoriteTweet.import_from!(
         hash['uid'],
         hash['screen_name'],
-        hash['favorite_tweets']
+        hash['favorite_tweets'],
+        async: false
     )
   rescue => e
     Airbag.exception e, options: options

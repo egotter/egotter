@@ -9,7 +9,8 @@ class WriteS3MentionTweetWorker
     S3::MentionTweet.import_from!(
         hash['uid'],
         hash['screen_name'],
-        hash['mention_tweets']
+        hash['mention_tweets'],
+        async: false
     )
   rescue => e
     Airbag.exception e, options: options
