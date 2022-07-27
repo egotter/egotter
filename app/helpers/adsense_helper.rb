@@ -265,7 +265,7 @@ module AdsenseHelper
     if slot
       slot
     else
-      Airbag.info "#{__method__}: Ad ID is not found #{user_signed_in?} #{controller} #{action} #{position} #{request.original_fullpath}"
+      Airbag.info "#{__method__}: Ad ID is not found", signed_in: user_signed_in?, controller: controller, action: action, position: position, fullpath: request.original_fullpath
       user_signed_in? ? USER_OTHERS : GUEST_OTHERS
     end
   end
@@ -572,7 +572,7 @@ module AdsenseHelper
     if slot
       slot
     else
-      Airbag.info "#{__method__}: Ad ID is not found #{user_signed_in?} #{controller} #{action} #{position} #{request.original_fullpath}"
+      Airbag.info "#{__method__}: Ad ID is not found", signed_in: user_signed_in?, controller: controller, action: action, position: position, fullpath: request.original_fullpath
       user_signed_in? ? USER_OTHERS_RESP : GUEST_OTHERS_RESP
     end
   end
