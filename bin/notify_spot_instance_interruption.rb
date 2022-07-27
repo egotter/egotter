@@ -118,7 +118,7 @@ class WebResource
 end
 
 def upload_logs
-  `/usr/local/bin/bundle exec ruby /var/egotter/bin/upload_logs.rb #{@instance_name}`
+  `/usr/local/bin/bundle exec ruby /var/egotter/bin/upload_logs.rb #{instance_name}`
 end
 
 def main
