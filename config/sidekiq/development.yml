@@ -21,6 +21,7 @@
   - CreateTwitterUserWorker
   - CreateReportTwitterUserWorker
   - WriteToS3Worker
+  - import
   - follow
   - unfollow
   - misc_low

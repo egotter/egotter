@@ -11,6 +11,7 @@
   - AssembleTwitterUserWorker
   - CreateTwitterUserWorker
   - WriteToS3Worker
+  - import
   - ImportTwitterDBUserWorker
   - CreateTwitterDBUserWorker
   - CreateReportTwitterUserWorker
