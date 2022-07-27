@@ -48,7 +48,6 @@ class AssembleTwitterUserRequest < ApplicationRecord
   end
 
   def second_part
-    CreateTwitterUserOneSidedFriendsWorker.perform_async(twitter_user_id)
     CreateTwitterUserInactiveFriendsWorker.perform_async(twitter_user_id)
     CreateTwitterUserUnfriendsWorker.perform_async(twitter_user_id)
 

@@ -47,5 +47,6 @@ module TwitterUserPersistence
     }
     data = Base64.encode64(Zlib::Deflate.deflate(data.to_json))
     PerformAfterCommitWorker.perform_async(id, data)
+    CreateTwitterUserOneSidedFriendsWorker.perform_async(id)
   end
 end

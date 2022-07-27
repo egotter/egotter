@@ -64,8 +64,10 @@ RSpec.describe TwitterUserPersistence do
 
   describe '#perform_after_commit' do
     subject { twitter_user.perform_after_commit }
+    before { twitter_user.save! }
     it do
-      expect(PerformAfterCommitWorker).to receive(:perform_async).with(any_args)
+      expect(PerformAfterCommitWorker).to receive(:perform_async).with(twitter_user.id, anything)
+      expect(CreateTwitterUserOneSidedFriendsWorker).to receive(:perform_async).with(twitter_user.id)
       subject
     end
   end
