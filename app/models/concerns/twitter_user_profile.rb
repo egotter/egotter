@@ -64,18 +64,9 @@ module TwitterUserProfile
   end
 
   def account_created_at
-    time = profile[:created_at].to_s
-
-    if time_zone.present? && time.present?
-      rails_time_zone = ActiveSupport::TimeZone[TIME_ZONE_MAPPING[time_zone] || time_zone]
-      rails_time_zone.parse(time)
-    elsif time.present?
-      Time.zone.parse(time)
-    else
-      nil
-    end
+    Time.zone.parse(profile[:created_at])
   rescue => e
-    Airbag.info "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{time}]"
+    Airbag.info "account_created_at: #{e.message}", time: profile[:created_at], exception: e.inspect
     nil
   end
 
