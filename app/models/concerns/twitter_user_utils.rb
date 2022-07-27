@@ -72,30 +72,42 @@ module TwitterUserUtils
   def fetch_uids(method_name, s3_class)
     data = nil
     exceptions = []
+    source = nil
+    start = Time.zone.now
 
     begin
-      data = InMemory::TwitterUser.find_by(id) if InMemory.enabled? && InMemory.cache_alive?(created_at)
+      if InMemory.enabled? && InMemory.cache_alive?(created_at)
+        data = InMemory::TwitterUser.find_by(id)
+        source = 'memory'
+      end
     rescue => e
       exceptions << e
     end
 
     begin
-      data = Efs::TwitterUser.find_by(id) if data.nil? && Efs.enabled?
+      if data.nil? && Efs.enabled?
+        data = Efs::TwitterUser.find_by(id)
+        source = 'efs'
+      end
     rescue => e
       exceptions << e
     end
 
     begin
-      data = s3_class.find_by(twitter_user_id: id) if data.nil?
+      if data.nil?
+        data = s3_class.find_by(twitter_user_id: id)
+        source = 's3'
+      end
     rescue => e
       exceptions << e
     end
 
     if data.nil?
-      Airbag.info "Fetching #{method_name} failed", id: id, screen_name: screen_name, created_at: created_at.to_s(:db), exceptions: exceptions.inspect, caller: caller
+      Airbag.info "Fetching #{method_name} failed", twitter_user_id: id, uid: uid, created_at: created_at.to_s(:db), exceptions: exceptions.inspect, caller: caller
       # TODO Import collect uids or delete this record
       []
     else
+      Airbag.info "Fetching #{method_name} succeeded", twitter_user_id: id, uid: uid, source: source, elapsed: (Time.zone.now - start) if Rails.env.development?
       data.send(method_name) || []
     end
   end

@@ -107,29 +107,40 @@ module TwitterUserProfile
   def fetch_profile
     data = nil
     exceptions = []
+    source = nil
+    start = Time.zone.now
 
     begin
-      data = InMemory::TwitterUser.find_by(id)&.profile if InMemory.enabled? && InMemory.cache_alive?(created_at) # Hash
+      if InMemory.enabled? && InMemory.cache_alive?(created_at)
+        data = InMemory::TwitterUser.find_by(id)&.profile # Hash
+        source = 'memory'
+      end
     rescue => e
       exceptions << e
     end
 
     begin
-      data = Efs::TwitterUser.find_by(id)&.profile if data.blank? && Efs.enabled? # Hash
+      if data.blank? && Efs.enabled?
+        data = Efs::TwitterUser.find_by(id)&.profile # Hash
+        source = 'efs'
+      end
     rescue => e
       exceptions << e
     end
 
     begin
-      data = S3::Profile.find_by(twitter_user_id: id)&.fetch(:user_info, nil) if data.blank? # String
+      if data.blank?
+        data = S3::Profile.find_by(twitter_user_id: id)&.fetch(:user_info, nil) # String
+        source = 's3'
+      end
     rescue => e
       exceptions << e
     end
 
     if data.blank?
-      Airbag.warn 'Fetching profile failed', id: id, screen_name: screen_name, created_at: created_at.to_s(:db), exceptions: exceptions.inspect, caller: caller
+      Airbag.warn 'Fetching profile failed', twitter_user_id: id, uid: uid, created_at: created_at.to_s(:db), exceptions: exceptions.inspect, caller: caller
     end
-
+    Airbag.info 'Fetching profile succeeded', twitter_user_id: id, uid: uid, source: source, elapsed: (Time.zone.now - start) if Rails.env.development?
     data
   end
 end
