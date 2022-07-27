@@ -54,8 +54,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
 
     if worker_context == CreatePeriodicReportWorker # TODO Replace by requested_by == 'batch'
-      if PeriodicReportReportableFlag.exists?(user_id: user_id) ||
-          PeriodicReportReportableFlag.on?(user_id, current_period)
+      if PeriodicReportReportableFlag.on?(user_id, current_period)
         Airbag.info 'Reportable flag found', id: id, user_id: user_id
       elsif TwitterUser.where(uid: user.uid).where('created_at > ?', 4.hours.ago).exists?
         Airbag.info 'Recent record found', id: id, user_id: user_id

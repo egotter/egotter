@@ -23,7 +23,6 @@ class CreateReportTwitterUserWorker < CreateTwitterUserWorker
   #   period
   def perform(request_id, options = {})
     request = CreateTwitterUserRequest.find(request_id)
-    PeriodicReportReportableFlag.create(user_id: request.user_id)
     PeriodicReportReportableFlag.on(request.user_id, options['period'])
     request.perform(:reporting)
   rescue CreateTwitterUserRequest::TimeoutError => e
