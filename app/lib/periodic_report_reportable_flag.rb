@@ -7,7 +7,7 @@ class PeriodicReportReportableFlag
   def initialize
     @store = ActiveSupport::Cache::RedisCacheStore.new(
         namespace: "#{Rails.env}:#{self.class}",
-        expires_in: 3.hours,
+        expires_in: 6.hours,
         redis: RedisClient.new(host: ENV['REDIS_HOST'], db: 4)
     )
   end
