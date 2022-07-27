@@ -5,7 +5,7 @@ class StartPeriodicReportsCreatingRecordsTask
   def initialize(period: nil, user_ids: nil, threads: nil)
     @period = period || 'none'
     @threads = threads || 20
-    @timeout = 2.hours + 30.minutes
+    @timeout = 3.hours
 
     if user_ids.present?
       @user_ids = user_ids
@@ -85,14 +85,12 @@ class StartPeriodicReportsCreatingRecordsTask
       processed_count += group.size
 
       if processed_count <= threads || processed_count % 1000 == 0 || processed_count == requests.size
-        elapsed = Time.zone.now - @start_time
-        avg = elapsed / processed_count
-        @last_response = @slack.post_message("Progress total=#{requests.size} processed=#{processed_count}#{" errors=#{@errors_count}" if @errors_count > 0} elapsed=#{sprintf('%.3f', elapsed)} avg=#{sprintf('%.3f', avg)}", thread_ts: @last_response['ts']) rescue nil
+        @last_response = @slack.post_message("Progress #{format_progress(requests.size, processed_count, @errors_count, @start_time)}", thread_ts: @last_response['ts']) rescue nil
       end
     end
 
     if timeout?
-      @last_response = @slack.post_message('Timeout', thread_ts: @last_response['ts']) rescue {}
+      @last_response = @slack.post_message("Timeout #{format_progress(requests.size, processed_count, @errors_count, @start_time)}", thread_ts: @last_response['ts']) rescue {}
     end
   end
 
@@ -112,6 +110,12 @@ class StartPeriodicReportsCreatingRecordsTask
 
   def timeout?
     @timeout && @start_time && Time.zone.now - @start_time > @timeout
+  end
+
+  def format_progress(total, processed, errors, started)
+    elapsed = Time.zone.now - started
+    avg = elapsed / processed
+    "total=#{total} processed=#{processed}#{" errors=#{errors}" if errors > 0} elapsed=#{sprintf('%.3f', elapsed)} avg=#{sprintf('%.3f', avg)}"
   end
 
   class << self
