@@ -184,7 +184,9 @@ module TwitterUserCalculator
     uids.each_slice(slice * threads).map do |group|
       group.each_slice(slice).map do |task|
         Thread.new(task) do |t|
-          TwitterDB::User.where(uid: t).inactive_2weeks.order_by_field(t).pluck(:uid)
+          ActiveRecord::Base.connection_pool.with_connection do
+            TwitterDB::User.where(uid: t).inactive_2weeks.order_by_field(t).pluck(:uid)
+          end
         end
       end.map(&:value)
     end.flatten

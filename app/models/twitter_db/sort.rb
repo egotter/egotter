@@ -75,7 +75,9 @@ module TwitterDB
       queries.each_slice(count).map do |group|
         threads = group.map do |query|
           Thread.new(query) do |q|
-            q.to_a unless timeout?
+            ActiveRecord::Base.connection_pool.with_connection do
+              q.to_a unless timeout?
+            end
           end
         end
 
