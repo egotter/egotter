@@ -13,27 +13,15 @@ RSpec.describe CreateTwitterUserOneSidedFriendsWorker do
   describe '#perform' do
     subject { worker.perform(twitter_user.id) }
     it do
-      expect(worker).to receive(:import_uids).with(S3::OneSidedFriendship, twitter_user).and_return([1, 2])
-      expect(worker).to receive(:import_uids).with(S3::OneSidedFollowership, twitter_user).and_return([2, 3, 4])
-      expect(worker).to receive(:import_uids).with(S3::MutualFriendship, twitter_user).and_return([2])
+      expect(twitter_user).to receive(:calc_and_import).with(S3::OneSidedFriendship).and_return([1, 2])
+      expect(twitter_user).to receive(:calc_and_import).with(S3::OneSidedFollowership).and_return([2, 3, 4])
+      expect(twitter_user).to receive(:calc_and_import).with(S3::MutualFriendship).and_return([2])
 
       expect(OneSidedFriendsCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 2)
       expect(OneSidedFollowersCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 3)
       expect(MutualFriendsCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 1)
 
       expect(DeleteOneSidedFriendshipsWorker).to receive(:perform_async).with(twitter_user.uid)
-      subject
-    end
-  end
-
-  describe '#import_uids' do
-    let(:klass) { S3::OneSidedFriendship }
-    let(:uids) { [1] }
-    subject { worker.send(:import_uids, klass, twitter_user) }
-    before { allow(twitter_user).to receive(:calc_uids_for).with(klass).and_return(uids) }
-    it do
-      expect(klass).to receive(:import_from!).with(twitter_user.uid, uids)
-      expect(twitter_user).to receive(:update_counter_cache_for).with(klass, uids.size)
       subject
     end
   end

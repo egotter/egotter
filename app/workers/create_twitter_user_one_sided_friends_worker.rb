@@ -42,9 +42,9 @@ class CreateTwitterUserOneSidedFriendsWorker
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
 
-    one_sided_friend_uids = import_uids(S3::OneSidedFriendship, twitter_user)
-    one_sided_follower_uids = import_uids(S3::OneSidedFollowership, twitter_user)
-    mutual_friend_uids = import_uids(S3::MutualFriendship, twitter_user)
+    one_sided_friend_uids = twitter_user.calc_and_import(S3::OneSidedFriendship)
+    one_sided_follower_uids = twitter_user.calc_and_import(S3::OneSidedFollowership)
+    mutual_friend_uids = twitter_user.calc_and_import(S3::MutualFriendship)
 
     OneSidedFriendsCountPoint.create(uid: twitter_user.uid, value: one_sided_friend_uids.size)
     OneSidedFollowersCountPoint.create(uid: twitter_user.uid, value: one_sided_follower_uids.size)
@@ -53,14 +53,5 @@ class CreateTwitterUserOneSidedFriendsWorker
     DeleteOneSidedFriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
     Airbag.exception e, twitter_user_id: twitter_user_id, options: options
-  end
-
-  private
-
-  def import_uids(klass, twitter_user)
-    uids = twitter_user.calc_uids_for(klass)
-    klass.import_from!(twitter_user.uid, uids)
-    twitter_user.update_counter_cache_for(klass, uids.size)
-    uids
   end
 end
