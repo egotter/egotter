@@ -15,7 +15,8 @@ class WriteEfsTwitterUserWorker
         hash['follower_uids'],
     )
   rescue => e
-    Airbag.exception e, hash: (decompress(data) rescue nil), options: options
+    self.class.perform_in(rand(60) + 10, data, options.merge(error_class: e.class))
+    Airbag.warn "Always retry #{e.inspect}", options: options
   end
 
   def decompress(data)

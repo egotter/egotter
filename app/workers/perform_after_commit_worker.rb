@@ -42,16 +42,47 @@ class PerformAfterCommitWorker
     favorite_tweets = data['favorite_tweets']
     mention_tweets = data['mention_tweets']
 
-    WriteEfsTwitterUserWorker.perform_async(
-        {twitter_user_id: id, uid: uid, screen_name: screen_name, profile: profile,
-         friend_uids: friend_uids, follower_uids: follower_uids}, {twitter_user_id: id}
-    )
+    begin
+      WriteEfsTwitterUserWorker.perform_async(
+          {twitter_user_id: id, uid: uid, screen_name: screen_name, profile: profile,
+           friend_uids: friend_uids, follower_uids: follower_uids}, {twitter_user_id: id}
+      )
+    rescue Redis::CannotConnectError => e
+      Airbag.warn 'Queueing WriteEfsTwitterUserWorker failed', exception: e.inspect
+      Efs::TwitterUser.import_from!(id, uid, screen_name, profile, friend_uids, follower_uids)
+    end
 
     # Efs::StatusTweet, Efs::FavoriteTweet and Efs::MentionTweet are not imported for performance reasons
 
-    S3::Friendship.import_from!(id, uid, screen_name, friend_uids, async: true)
-    S3::Followership.import_from!(id, uid, screen_name, follower_uids, async: true)
-    S3::Profile.import_from!(id, uid, screen_name, profile, async: true)
+    begin
+      WriteS3FriendshipWorker.perform_async(
+          {twitter_user_id: id, uid: uid, screen_name: screen_name, friend_uids: friend_uids},
+          {twitter_user_id: id}
+      )
+    rescue Redis::CannotConnectError => e
+      Airbag.warn 'Queueing WriteS3FriendshipWorker failed', exception: e.inspect
+      S3::Friendship.import_from!(id, uid, screen_name, friend_uids, async: false)
+    end
+
+    begin
+      WriteS3FollowershipWorker.perform_async(
+          {twitter_user_id: id, uid: uid, screen_name: screen_name, follower_uids: follower_uids},
+          {twitter_user_id: id}
+      )
+    rescue Redis::CannotConnectError => e
+      Airbag.warn 'Queueing WriteS3FollowershipWorker failed', exception: e.inspect
+      S3::Followership.import_from!(id, uid, screen_name, follower_uids, async: false)
+    end
+
+    begin
+      WriteS3ProfileWorker.perform_async(
+          {twitter_user_id: id, uid: uid, screen_name: screen_name, profile: profile},
+          {twitter_user_id: id}
+      )
+    rescue Redis::CannotConnectError => e
+      Airbag.warn 'Queueing WriteS3ProfileWorker failed', exception: e.inspect
+      S3::Profile.import_from!(id, uid, screen_name, profile, async: false)
+    end
 
     if status_tweets&.is_a?(Array)
       S3::StatusTweet.import_from!(uid, screen_name, status_tweets)

@@ -33,9 +33,19 @@ RSpec.describe PerformAfterCommitWorker do
     it do
       expect(WriteEfsTwitterUserWorker).to receive(:perform_async).
           with({twitter_user_id: id, uid: uid, screen_name: screen_name, profile: profile, friend_uids: friend_uids, follower_uids: follower_uids}, twitter_user_id: id)
-      expect(S3::Friendship).to receive(:import_from!).with(id, uid, screen_name, friend_uids, async: true)
-      expect(S3::Followership).to receive(:import_from!).with(id, uid, screen_name, follower_uids, async: true)
-      expect(S3::Profile).to receive(:import_from!).with(id, uid, screen_name, profile, async: true)
+
+      # expect(S3::Friendship).to receive(:import_from!).with(id, uid, screen_name, friend_uids, async: true)
+      expect(WriteS3FriendshipWorker).to receive(:perform_async).
+          with({twitter_user_id: id, uid: uid, screen_name: screen_name, friend_uids: friend_uids}, twitter_user_id: id)
+
+      # expect(S3::Followership).to receive(:import_from!).with(id, uid, screen_name, follower_uids, async: true)
+      expect(WriteS3FollowershipWorker).to receive(:perform_async).
+          with({twitter_user_id: id, uid: uid, screen_name: screen_name, follower_uids: follower_uids}, twitter_user_id: id)
+
+      # expect(S3::Profile).to receive(:import_from!).with(id, uid, screen_name, profile, async: true)
+      expect(WriteS3ProfileWorker).to receive(:perform_async).
+          with({twitter_user_id: id, uid: uid, screen_name: screen_name, profile: profile}, twitter_user_id: id)
+
       expect(S3::StatusTweet).to receive(:import_from!).with(uid, screen_name, status_tweets)
       expect(S3::FavoriteTweet).to receive(:import_from!).with(uid, screen_name, favorite_tweets)
       expect(S3::MentionTweet).to receive(:import_from!).with(uid, screen_name, mention_tweets)

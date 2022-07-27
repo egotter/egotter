@@ -14,7 +14,7 @@ class WriteS3FollowershipWorker
         async: false
     )
   rescue => e
-    self.class.perform_in(rand(10) + 10, data, options.merge(error_class: e.class))
+    self.class.perform_in(rand(60) + 10, data, options.merge(error_class: e.class))
     Airbag.warn "Always retry #{e.inspect}", options: options
   end
 
