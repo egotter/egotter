@@ -85,15 +85,39 @@ class PerformAfterCommitWorker
     end
 
     if status_tweets&.is_a?(Array)
-      S3::StatusTweet.import_from!(uid, screen_name, status_tweets, async: true)
+      begin
+        WriteS3StatusTweetWorker.perform_async(
+            {uid: uid, screen_name: screen_name, status_tweets: status_tweets},
+            {uid: uid}
+        )
+      rescue Redis::CannotConnectError => e
+        Airbag.warn 'Queueing WriteS3StatusTweetWorker failed', exception: e.inspect
+        S3::StatusTweet.import_from!(uid, screen_name, status_tweets, async: false)
+      end
     end
 
     if favorite_tweets&.is_a?(Array)
-      S3::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets, async: true)
+      begin
+        WriteS3FavoriteTweetWorker.perform_async(
+            {uid: uid, screen_name: screen_name, favorite_tweets: favorite_tweets},
+            {uid: uid}
+        )
+      rescue Redis::CannotConnectError => e
+        Airbag.warn 'Queueing WriteS3FavoriteTweetWorker failed', exception: e.inspect
+        S3::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets, async: false)
+      end
     end
 
     if mention_tweets&.is_a?(Array)
-      S3::MentionTweet.import_from!(uid, screen_name, mention_tweets, async: true)
+      begin
+        WriteS3MentionTweetWorker.perform_async(
+            {uid: uid, screen_name: screen_name, mention_tweets: mention_tweets},
+            {uid: uid}
+        )
+      rescue Redis::CannotConnectError => e
+        Airbag.warn 'Queueing WriteS3MentionTweetWorker failed', exception: e.inspect
+        S3::MentionTweet.import_from!(uid, screen_name, mention_tweets, async: false)
+      end
     end
 
     TwitterUser.find(twitter_user_id).update(cache_created_at: Time.zone.now)

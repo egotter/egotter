@@ -3,7 +3,7 @@ class WriteS3MentionTweetWorker
   sidekiq_options queue: 'import', retry: 0, backtrace: false
 
   # options:
-  #   twitter_user_id
+  #   uid
   def perform(data, options = {})
     hash = decompress(data)
     S3::MentionTweet.import_from!(

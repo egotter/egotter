@@ -46,9 +46,18 @@ RSpec.describe PerformAfterCommitWorker do
       expect(WriteS3ProfileWorker).to receive(:perform_async).
           with({twitter_user_id: id, uid: uid, screen_name: screen_name, profile: profile}, twitter_user_id: id)
 
-      expect(S3::StatusTweet).to receive(:import_from!).with(uid, screen_name, status_tweets, async: true)
-      expect(S3::FavoriteTweet).to receive(:import_from!).with(uid, screen_name, favorite_tweets, async: true)
-      expect(S3::MentionTweet).to receive(:import_from!).with(uid, screen_name, mention_tweets, async: true)
+      # expect(S3::StatusTweet).to receive(:import_from!).with(uid, screen_name, status_tweets, async: true)
+      expect(WriteS3StatusTweetWorker).to receive(:perform_async).
+          with({uid: uid, screen_name: screen_name, status_tweets: status_tweets}, uid: uid)
+
+      # expect(S3::FavoriteTweet).to receive(:import_from!).with(uid, screen_name, favorite_tweets, async: true)
+      expect(WriteS3FavoriteTweetWorker).to receive(:perform_async).
+          with({uid: uid, screen_name: screen_name, favorite_tweets: favorite_tweets}, uid: uid)
+
+      # expect(S3::MentionTweet).to receive(:import_from!).with(uid, screen_name, mention_tweets, async: true)
+      expect(WriteS3MentionTweetWorker).to receive(:perform_async).
+          with({uid: uid, screen_name: screen_name, mention_tweets: mention_tweets}, uid: uid)
+
       subject
     end
   end
