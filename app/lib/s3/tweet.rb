@@ -42,9 +42,9 @@ module S3
         nil
       end
 
-      def import_from!(uid, screen_name, tweets)
+      def import_from!(uid, screen_name, tweets, async: true)
         body = encode(uid, screen_name, tweets)
-        client.write(uid, body)
+        client.write(uid, body, async: async)
       end
 
       def delete(uid:)

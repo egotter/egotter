@@ -13,9 +13,13 @@ module S3
       @s3.get_object(bucket: @bucket_name, key: key.to_s).body.read
     end
 
-    def write(key, body)
+    def write(key, body, async: true)
       raise BlankKey.new(@klass, __method__) if key.blank?
-      WriteToS3Worker.perform_async(klass: @klass, bucket: @bucket_name, key: key, body: body)
+      if async
+        WriteToS3Worker.perform_async(klass: @klass, bucket: @bucket_name, key: key, body: body)
+      else
+        @s3.put_object(bucket: @bucket_name, key: key, body: body)
+      end
     end
 
     def delete(key)

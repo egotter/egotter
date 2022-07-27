@@ -85,15 +85,15 @@ class PerformAfterCommitWorker
     end
 
     if status_tweets&.is_a?(Array)
-      S3::StatusTweet.import_from!(uid, screen_name, status_tweets)
+      S3::StatusTweet.import_from!(uid, screen_name, status_tweets, async: true)
     end
 
     if favorite_tweets&.is_a?(Array)
-      S3::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
+      S3::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets, async: true)
     end
 
     if mention_tweets&.is_a?(Array)
-      S3::MentionTweet.import_from!(uid, screen_name, mention_tweets)
+      S3::MentionTweet.import_from!(uid, screen_name, mention_tweets, async: true)
     end
 
     TwitterUser.find(twitter_user_id).update(cache_created_at: Time.zone.now)

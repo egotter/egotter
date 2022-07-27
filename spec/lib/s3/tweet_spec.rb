@@ -37,10 +37,10 @@ RSpec.describe S3::Tweet do
   end
 
   describe '.import_from!' do
-    subject { described_class.import_from!(1, 'sn', tweets) }
+    subject { described_class.import_from!(1, 'sn', tweets, async: true) }
     it do
       expect(described_class).to receive(:encode).with(1, 'sn', tweets).and_return('body')
-      expect(client).to receive(:write).with(1, 'body')
+      expect(client).to receive(:write).with(1, 'body', async: true)
       subject
     end
   end
