@@ -42,7 +42,10 @@ class PerformAfterCommitWorker
     favorite_tweets = data['favorite_tweets']
     mention_tweets = data['mention_tweets']
 
-    Efs::TwitterUser.import_from!(id, uid, screen_name, profile, friend_uids, follower_uids)
+    WriteEfsTwitterUserWorker.perform_async(
+        {twitter_user_id: id, uid: uid, screen_name: screen_name, profile: profile,
+         friend_uids: friend_uids, follower_uids: follower_uids}, {twitter_user_id: id}
+    )
 
     # Efs::StatusTweet, Efs::FavoriteTweet and Efs::MentionTweet are not imported for performance reasons
 

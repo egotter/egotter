@@ -31,7 +31,8 @@ RSpec.describe PerformAfterCommitWorker do
 
     subject { worker.perform(id, data) }
     it do
-      expect(Efs::TwitterUser).to receive(:import_from!).with(id, uid, screen_name, profile, friend_uids, follower_uids)
+      expect(WriteEfsTwitterUserWorker).to receive(:perform_async).
+          with({twitter_user_id: id, uid: uid, screen_name: screen_name, profile: profile, friend_uids: friend_uids, follower_uids: follower_uids}, twitter_user_id: id)
       expect(S3::Friendship).to receive(:import_from!).with(id, uid, screen_name, friend_uids, async: true)
       expect(S3::Followership).to receive(:import_from!).with(id, uid, screen_name, follower_uids, async: true)
       expect(S3::Profile).to receive(:import_from!).with(id, uid, screen_name, profile, async: true)
