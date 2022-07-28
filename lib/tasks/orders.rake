@@ -9,7 +9,8 @@ namespace :orders do
       SyncOrderSubscriptionWorker.perform_in(interval, order.id)
       processed_count += 1
     end
-    puts "#{task.name}: processed_count=#{processed_count}"
+
+    Airbag.info "#{task.name}: processed_count=#{processed_count}"
   end
 
   task print_statuses: :environment do
