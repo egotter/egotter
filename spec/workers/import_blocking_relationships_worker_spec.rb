@@ -17,7 +17,7 @@ RSpec.describe ImportBlockingRelationshipsWorker do
 
     it do
       expect(BlockingRelationship).to receive(:update_all_blocks).with(user).and_return(blocked_ids)
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with(blocked_ids, user_id: user.id, enqueued_by: described_class)
+      expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with(blocked_ids, user.id, enqueued_by: described_class)
       expect(CreateBlockReportWorker).to receive(:perform_in).with(anything, user2.id)
       subject
     end
