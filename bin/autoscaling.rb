@@ -137,6 +137,11 @@ class App
 end
 
 def main(role)
+  if role.nil? || role.empty?
+    logger.info "#{$0}: ROLE not found"
+    return
+  end
+
   Deploy.with_lock("deploy-#{role}.pid") do
     App.new(role).run
   end
