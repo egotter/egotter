@@ -50,6 +50,39 @@ RSpec.describe TwitterClient, type: :model do
     end
   end
 
+  describe '#safe_users' do
+    let(:api_client) { double('api_client', app_context: true, owner: nil) }
+    subject { instance.safe_users([1]) }
+    it do
+      expect(instance).to receive(:users).with([1]).and_return([{id: 1}])
+      subject
+    end
+
+    context 'all users are suspended' do
+      let(:error) { RuntimeError.new }
+      before do
+        allow(instance).to receive(:users).and_raise(error)
+        allow(TwitterApiStatus).to receive(:no_user_matches?).with(error).and_return(true)
+      end
+      it { is_expected.to eq([]) }
+    end
+
+    context 'retryable exception is raised' do
+      let(:error) { RuntimeError.new }
+      before { allow(instance).to receive(:users).and_raise(error).exactly(4).times }
+
+      context 'exception responds TwitterApiStatus.unauthorized?' do
+        before do
+          allow(TwitterApiStatus).to receive(:unauthorized?).with(error).and_return(true)
+        end
+        it do
+          expect(instance).to receive(:reload).exactly(3).times
+          expect { subject }.to raise_error(ApiClient::RetryExhausted)
+        end
+      end
+    end
+  end
+
   describe '#method_missing' do
     subject { instance.send(:method_missing, :user, 1) }
     before { allow(twitter).to receive(:respond_to?).with(:user).and_return(true) }

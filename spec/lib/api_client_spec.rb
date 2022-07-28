@@ -214,6 +214,11 @@ RSpec.describe ApiClient, type: :model do
     it { is_expected.to be_falsey }
   end
 
+  describe '#owner' do
+    subject { instance.owner }
+    it { is_expected.to eq(user) }
+  end
+
   describe '.config' do
     let(:option) do
       {

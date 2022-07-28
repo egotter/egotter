@@ -18,6 +18,7 @@ class CreateTwitterDBUsersTask
     users = fetch_users(uids)
 
     if uids.size != users.size && (suspended_uids = uids - users.map { |u| u[:id] }).any?
+      Airbag.info 'Import suspended uids', uids: uids, suspended_uids: suspended_uids
       ImportTwitterDBSuspendedUserWorker.perform_async(suspended_uids)
     end
 
@@ -29,6 +30,7 @@ class CreateTwitterDBUsersTask
 
   private
 
+  # TODO Use TwitterClient#safe_users
   def fetch_users(uids)
     retries ||= 3
     client.users(uids).map(&:to_h)
@@ -45,7 +47,7 @@ class CreateTwitterDBUsersTask
         @client = Bot.api_client.twitter
         retry
       else
-        raise RetryExhausted.new(e.inspect)
+        raise ApiClient::RetryExhausted.new(e.inspect)
       end
     else
       raise

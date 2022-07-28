@@ -32,6 +32,40 @@ class TwitterClient
     end
   end
 
+  def safe_users(uids)
+    retries ||= 3
+    users(uids).map(&:to_h)
+  rescue => e
+    if TwitterApiStatus.no_user_matches?(e)
+      []
+    elsif TwitterApiStatus.unauthorized?(e) ||
+        TwitterApiStatus.temporarily_locked?(e) ||
+        TwitterApiStatus.forbidden?(e) ||
+        TwitterApiStatus.too_many_requests?(e) ||
+        ServiceStatus.retryable_error?(e)
+
+      if TwitterApiStatus.too_many_requests?(e) && !@api_client.app_context?
+        RateLimitExceededFlag.on(@api_client.owner.id)
+        Airbag.info 'safe_users: RateLimitExceededFlag on', exception: e.inspect, user_id: @api_client.owner.id
+      end
+
+      if (retries -= 1) >= 0
+        Airbag.info 'safe_users: Client reloaded', exception: e.inspect, user_id: @api_client.owner&.id
+        reload
+        retry
+      else
+        raise ApiClient::RetryExhausted.new(e.inspect)
+      end
+    else
+      raise
+    end
+  end
+
+  def reload
+    @api_client = Bot.api_client
+    @twitter = @api_client.twitter
+  end
+
   # TODO Implement all methods and stop using #method_missing
   def method_missing(method, *args, **kwargs, &block)
     if @twitter.respond_to?(method)

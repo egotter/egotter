@@ -145,6 +145,10 @@ class ApiClient
     @user.nil?
   end
 
+  def owner
+    @user
+  end
+
   def twitter
     TwitterClient.new(self, @client.twitter)
   end
