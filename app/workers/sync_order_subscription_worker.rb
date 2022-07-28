@@ -6,9 +6,16 @@ class SyncOrderSubscriptionWorker
   def perform(order_id, options = {})
     order = Order.find(order_id)
 
+    if order.canceled_at
+      send_message('already canceled', order, 'none')
+      return
+    end
+
     if (subscription = fetch_subscription(order.subscription_id))
       cancel_order(order, subscription)
       end_trial_period(order, subscription)
+    else
+      send_message('subscription not found', order, 'none')
     end
   rescue => e
     Airbag.exception e, order_id: order_id, options: options
@@ -44,9 +51,9 @@ class SyncOrderSubscriptionWorker
     end
   end
 
-  def send_message(location, order, changes)
+  def send_message(reason, order, changes)
     channel = 'orders_sync'
-    message = "#{self.class}##{location}: order_id=#{order.id} user_id=#{order.user_id} subscription_id=#{order.subscription_id} changes=#{changes}"
+    message = "#{self.class}: reason=#{reason} order_id=#{order.id} user_id=#{order.user_id} subscription_id=#{order.subscription_id} changes=#{changes}"
     SlackMessage.create(channel: channel, message: message)
     SlackBotClient.channel(channel).post_message(message)
   end

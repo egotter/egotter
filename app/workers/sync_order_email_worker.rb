@@ -1,6 +1,5 @@
 class SyncOrderEmailWorker
   include Sidekiq::Worker
-  include WorkerErrorHandler
   sidekiq_options queue: 'misc_low', retry: 0, backtrace: false
 
   # options:
@@ -12,7 +11,7 @@ class SyncOrderEmailWorker
       send_message(order)
     end
   rescue => e
-    handle_worker_error(e, order_id: order_id, options: options)
+    Airbag.exception e, order_id: order_id, options: options
   end
 
   private
