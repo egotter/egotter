@@ -19,7 +19,7 @@ RSpec.describe CreateTwitterUserNewFriendsWorker do
       expect(twitter_user).to receive(:update).with(new_followers_size: new_follower_uids.size)
       expect(NewFriendsCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 3)
       expect(NewFollowersCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 4)
-      expect(CreateTwitterDBUserWorker).to receive(:push_bulk).with([1, 2, 3, 3, 4, 5, 6], user_id: 1, enqueued_by: described_class)
+      expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:push_bulk).with([1, 2, 3, 3, 4, 5, 6], 1, enqueued_by: described_class)
       subject
     end
   end

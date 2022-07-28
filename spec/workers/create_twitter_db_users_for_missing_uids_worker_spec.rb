@@ -30,8 +30,8 @@ RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
         allow(described_class).to receive(:compress).with(uids2).and_return(encoded_uids2)
       end
       it do
-        expect(described_class).to receive(:perform_async).with(encoded_uids1, user_id, {})
-        expect(described_class).to receive(:perform_async).with(encoded_uids2, user_id, {})
+        expect(described_class).to receive(:perform_in).with(instance_of(Integer), encoded_uids1, user_id, {})
+        expect(described_class).to receive(:perform_in).with(instance_of(Integer), encoded_uids2, user_id, {})
         subject
       end
     end
@@ -44,7 +44,7 @@ RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
         allow(described_class).to receive(:compress).with(uids1).and_return(encoded_uids1)
       end
       it do
-        expect(described_class).to receive(:perform_async).with(encoded_uids1, user_id, {})
+        expect(described_class).to receive(:perform_in).with(instance_of(Integer), encoded_uids1, user_id, {})
         subject
       end
     end

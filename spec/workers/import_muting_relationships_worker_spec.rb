@@ -17,7 +17,7 @@ RSpec.describe ImportMutingRelationshipsWorker do
 
     it do
       expect(MutingRelationship).to receive(:update_all_mutes).with(user).and_return(muted_ids)
-      expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:perform_async).with(muted_ids, user.id, enqueued_by: described_class)
+      expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:push_bulk).with(muted_ids, user.id, enqueued_by: described_class)
       expect(CreateMuteReportWorker).to receive(:perform_in).with(anything, user2.id)
       subject
     end

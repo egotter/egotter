@@ -51,7 +51,7 @@ class CreateTwitterUserCloseFriendsWorker
       S3::FavoriteFriendship.import_from!(twitter_user.uid, favorite_friend_uids)
     end
 
-    CreateTwitterDBUserWorker.push_bulk(close_friend_uids + favorite_friend_uids, user_id: twitter_user.user_id, enqueued_by: self.class)
+    CreateTwitterDBUsersForMissingUidsWorker.push_bulk(close_friend_uids + favorite_friend_uids, twitter_user.user_id, enqueued_by: self.class)
 
     CloseFriendship.delete_by_uid(twitter_user.uid)
     FavoriteFriendship.delete_by_uid(twitter_user.uid)

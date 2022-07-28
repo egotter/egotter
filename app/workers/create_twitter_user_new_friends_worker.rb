@@ -37,7 +37,7 @@ class CreateTwitterUserNewFriendsWorker
       NewFollowersCountPoint.create(uid: twitter_user.uid, value: new_follower_uids.size)
     end
 
-    CreateTwitterDBUserWorker.push_bulk(new_friend_uids + new_follower_uids, user_id: twitter_user.user_id, enqueued_by: self.class)
+    CreateTwitterDBUsersForMissingUidsWorker.push_bulk(new_friend_uids + new_follower_uids, twitter_user.user_id, enqueued_by: self.class)
   rescue => e
     Airbag.exception e, twitter_user_id: twitter_user_id, options: options
   end

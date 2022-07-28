@@ -46,7 +46,7 @@ class CreateTwitterUserUnfriendsWorker
     unfollower_uids = twitter_user.calc_and_import(S3::Unfollowership)
     mutual_unfriend_uids = twitter_user.calc_and_import(S3::MutualUnfriendship)
 
-    CreateTwitterDBUserWorker.push_bulk(unfriend_uids + unfollower_uids + mutual_unfriend_uids, user_id: twitter_user.user_id, enqueued_by: self.class)
+    CreateTwitterDBUsersForMissingUidsWorker.push_bulk(unfriend_uids + unfollower_uids + mutual_unfriend_uids, twitter_user.user_id, enqueued_by: self.class)
 
     UnfriendsCountPoint.create(uid: twitter_user.uid, value: unfriend_uids.size)
     UnfollowersCountPoint.create(uid: twitter_user.uid, value: unfollower_uids.size)
