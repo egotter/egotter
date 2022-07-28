@@ -42,10 +42,11 @@ class CreateTwitterUserUnfriendsWorker
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
 
-    unfriend_uids = import_uids(S3::Unfriendship, twitter_user)
-    unfollower_uids = import_uids(S3::Unfollowership, twitter_user)
-    mutual_unfriend_uids = import_uids(S3::MutualUnfriendship, twitter_user)
-    CreateTwitterDBUserWorker.perform_async((unfriend_uids + unfollower_uids + mutual_unfriend_uids).uniq, user_id: twitter_user.user_id, enqueued_by: self.class)
+    unfriend_uids = twitter_user.calc_and_import(S3::Unfriendship)
+    unfollower_uids = twitter_user.calc_and_import(S3::Unfollowership)
+    mutual_unfriend_uids = twitter_user.calc_and_import(S3::MutualUnfriendship)
+
+    CreateTwitterDBUserWorker.perform_async(unfriend_uids + unfollower_uids + mutual_unfriend_uids, user_id: twitter_user.user_id, enqueued_by: self.class)
 
     UnfriendsCountPoint.create(uid: twitter_user.uid, value: unfriend_uids.size)
     UnfollowersCountPoint.create(uid: twitter_user.uid, value: unfollower_uids.size)
@@ -56,14 +57,5 @@ class CreateTwitterUserUnfriendsWorker
     DeleteUnfriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
     Airbag.exception e, twitter_user_id: twitter_user_id, options: options
-  end
-
-  private
-
-  def import_uids(klass, twitter_user)
-    uids = twitter_user.calc_uids_for(klass)
-    klass.import_from!(twitter_user.uid, uids)
-    twitter_user.update_counter_cache_for(klass, uids.size)
-    uids
   end
 end

@@ -16,23 +16,11 @@ RSpec.describe CreateTwitterUserUnfriendsWorker do
     let(:uids3) { [3, 4] }
     subject { worker.perform(twitter_user.id) }
     it do
-      expect(worker).to receive(:import_uids).with(S3::Unfriendship, twitter_user).and_return(uids1)
-      expect(worker).to receive(:import_uids).with(S3::Unfollowership, twitter_user).and_return(uids2)
-      expect(worker).to receive(:import_uids).with(S3::MutualUnfriendship, twitter_user).and_return(uids3)
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with([1, 2, 3, 4], user_id: user.id, enqueued_by: described_class)
+      expect(twitter_user).to receive(:calc_and_import).with(S3::Unfriendship).and_return(uids1)
+      expect(twitter_user).to receive(:calc_and_import).with(S3::Unfollowership).and_return(uids2)
+      expect(twitter_user).to receive(:calc_and_import).with(S3::MutualUnfriendship).and_return(uids3)
+      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with([1, 2, 2, 3, 3, 4], user_id: user.id, enqueued_by: described_class)
       expect(DeleteUnfriendshipsWorker).to receive(:perform_async).with(twitter_user.uid)
-      subject
-    end
-  end
-
-  describe '#import_uids' do
-    let(:klass) { S3::Unfriendship }
-    let(:uids) { [1] }
-    subject { worker.send(:import_uids, klass, twitter_user) }
-    before { allow(twitter_user).to receive(:calc_uids_for).with(klass).and_return(uids) }
-    it do
-      expect(klass).to receive(:import_from!).with(twitter_user.uid, uids)
-      expect(twitter_user).to receive(:update_counter_cache_for).with(klass, uids.size)
       subject
     end
   end
