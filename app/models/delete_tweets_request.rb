@@ -164,7 +164,12 @@ class DeleteTweetsRequest < ApplicationRecord
       options = {request_id: id, last_tweet: tweet == tweets.last}.reject { |_, v| !v }
       DeleteTweetWorker.perform_in(interval, user_id, tweet.id, options)
     end
-    update(last_tweet: tweets.last.id)
+
+    begin
+      update(last_tweet: tweets.last.id, tweet_ids: tweets.map(&:id))
+    rescue => e
+      update(last_tweet: tweets.last.id)
+    end
   end
 
   def too_many_errors?

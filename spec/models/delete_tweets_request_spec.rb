@@ -151,7 +151,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
         interval = (0.1 * i).floor
         expect(DeleteTweetWorker).to receive(:perform_in).with(interval, user.id, tweet.id, {request_id: request.id, last_tweet: tweet == tweets.last}.reject { |_, v| !v })
       end
-      expect(request).to receive(:update).with(last_tweet: tweets.last.id)
+      expect(request).to receive(:update).with(last_tweet: tweets.last.id, tweet_ids: [1, 2])
       subject
     end
   end
