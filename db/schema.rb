@@ -545,6 +545,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.datetime "finished_at"
     t.string "error_class", default: "", null: false
     t.text "error_message"
+    t.json "tweet_ids"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_delete_tweets_requests_on_created_at"

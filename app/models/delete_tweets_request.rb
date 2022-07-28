@@ -19,6 +19,7 @@
 #  finished_at        :datetime
 #  error_class        :string(191)      default(""), not null
 #  error_message      :text(65535)
+#  tweet_ids          :json
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #

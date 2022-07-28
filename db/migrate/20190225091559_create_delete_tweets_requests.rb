@@ -17,6 +17,7 @@ class CreateDeleteTweetsRequests < ActiveRecord::Migration[5.1]
       t.datetime :finished_at,        null: true, default: nil
       t.string   :error_class,        null: false, default: ''
       t.text     :error_message
+      t.json     :tweet_ids
 
       t.timestamps null: false
 
