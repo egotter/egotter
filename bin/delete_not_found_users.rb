@@ -2,6 +2,7 @@
 
 require 'net/http'
 require 'uri'
+require 'json'
 
 if __FILE__ == $0
   url = 'https://egotter.com/api/v1/not_found_users/delete'

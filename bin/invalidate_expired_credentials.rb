@@ -2,6 +2,7 @@
 
 require 'net/http'
 require 'uri'
+require 'json'
 
 if __FILE__ == $0
   # api_v1_bots_invalidate_expired_credentials_path
