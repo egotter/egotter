@@ -81,26 +81,30 @@ class ImportTwitterDBUserWorker
 
     def consume_scheduled_jobs(limit: 100)
       processed_count = 0
+      errors_count = 0
+      jobs = []
 
-      ss = Sidekiq::ScheduledSet.new
-      jobs = ss.scan(name).select { |job| job.klass == name }
-      jobs.each(&:delete)
-
-      jobs.each do |job|
-        begin
-          new.perform(*job.args)
-        rescue => e
-          puts e.inspect
+      Sidekiq::ScheduledSet.new.scan(name).each do |job|
+        if job.klass == name
+          jobs << job
         end
 
-        print '.'
-
-        if (processed_count += 1) >= limit
+        if jobs.size >= limit
           break
         end
       end
 
-      puts "consume_scheduled_jobs: processed_count=#{processed_count}"
+      jobs.each(&:delete)
+
+      jobs.each do |job|
+        new.perform(*job.args)
+        processed_count += 1
+      rescue => e
+        puts e.inspect
+        errors_count += 1
+      end
+
+      puts "consume_scheduled_jobs: processed=#{processed_count} errors=#{errors_count}"
     end
   end
 end
