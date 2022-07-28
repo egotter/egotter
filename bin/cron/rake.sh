@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
 
-exec >>/var/egotter/log/cron.log 2>&1
 cmd="/usr/local/bin/bundle exec rake $1"
-
-SECONDS=0
-
-echo -e "$(date '+%Y/%m/%d %H:%M:%S') $cmd started"
-cd /var/egotter && RAILS_ENV=production $cmd
-echo -e "$(date '+%Y/%m/%d %H:%M:%S') $cmd finished elapsed=${SECONDS}"
+/var/egotter/bin/cron/start.sh "$cmd"
