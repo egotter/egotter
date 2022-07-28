@@ -78,5 +78,29 @@ class ImportTwitterDBUserWorker
     def compress(users)
       users.size > 3 ? Base64.encode64(Zlib::Deflate.deflate(users.to_json)) : users
     end
+
+    def consume_scheduled_jobs(limit: 100)
+      processed_count = 0
+
+      ss = Sidekiq::ScheduledSet.new
+      jobs = ss.scan(name).select { |job| job.klass == name }
+      jobs.each(&:delete)
+
+      jobs.each do |job|
+        begin
+          new.perform(*job.args)
+        rescue => e
+          puts e.inspect
+        end
+
+        print '.'
+
+        if (processed_count += 1) >= limit
+          break
+        end
+      end
+
+      puts "consume_scheduled_jobs: processed_count=#{processed_count}"
+    end
   end
 end
