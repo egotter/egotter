@@ -64,11 +64,20 @@ class CreateTwitterDBUserWorker
   end
 
   class << self
-    def push_bulk(uids, options = {})
-      uids.uniq.sort.each_slice(100) do |group|
+    def perform_async(uids, options = {})
+      uids.uniq.sort.each_slice(100).with_index do |group, i|
         unless TwitterDBUsersUpdatedFlag.on?(group)
           TwitterDBUsersUpdatedFlag.on(group)
-          perform_async(compress(group), options)
+          super(compress(group), options)
+        end
+      end
+    end
+
+    def push_bulk(uids, options = {})
+      uids.uniq.sort.each_slice(100).with_index do |group, i|
+        unless TwitterDBUsersUpdatedFlag.on?(group)
+          TwitterDBUsersUpdatedFlag.on(group)
+          perform_in((0.1 * i).floor, compress(group), options)
         end
       end
     end

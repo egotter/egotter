@@ -10,7 +10,7 @@ RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
     it do
       expect(worker).to receive(:decompress).with(data).and_return(uids)
       expect(worker).to receive(:filter_missing_uids).with(uids).and_return([1, 2])
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with([1, 2], user_id: 1, enqueued_by: described_class)
+      expect(CreateTwitterDBUserWorker).to receive(:push_bulk).with([1, 2], user_id: 1, enqueued_by: described_class)
       subject
     end
   end
