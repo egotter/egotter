@@ -84,6 +84,7 @@ def main(params)
   end
 
   Deploy.with_lock("deploy-#{params['role']}.pid") do
+    Deploy.logger.broadcast(STDOUT)
     Deploy.logger.info "Deploy started params=#{params}"
     Tasks::TaskBuilder.build(params).run
     Deploy.logger.info "Deploy finished params=#{params}"

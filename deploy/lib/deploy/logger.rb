@@ -9,18 +9,18 @@ module Deploy
     include Singleton
 
     def initialize
-      super(STDOUT)
+      super('log/deploy.log')
       self.level = ::Logger::INFO
       self.formatter = Proc.new do |_, timestamp, _, msg|
         "#{timestamp.utc.iso8601(3)} #{msg}\n"
       end
+    end
 
-      file_logger = ActiveSupport::Logger.new('log/deploy.log')
-      file_logger.level = ::Logger::INFO
-      file_logger.formatter = Proc.new do |_, timestamp, _, msg|
-        "#{timestamp.utc.iso8601(3)} #{msg}\n"
-      end
-      extend ActiveSupport::Logger.broadcast(file_logger)
+    def broadcast(io)
+      logger = ActiveSupport::Logger.new(io)
+      logger.level = self.level
+      logger.formatter = self.formatter
+      extend ActiveSupport::Logger.broadcast(logger)
     end
   end
 end
