@@ -104,7 +104,9 @@ class ImportTwitterDBUserWorker
         errors_count += 1
       end
 
-      puts "consume_scheduled_jobs: processed=#{processed_count} errors=#{errors_count}"
+      if processed_count > 0 || errors_count > 0
+        puts "consume_scheduled_jobs: processed=#{processed_count}#{" errors=#{errors_count}" if errors_count > 0}"
+      end
     end
   end
 end
