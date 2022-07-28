@@ -47,44 +47,41 @@ RSpec.describe DeleteTweetWorker do
 
     context 'error is raised' do
       let(:error) { RuntimeError.new('error') }
-      before { allow(client).to receive(:destroy_status).and_raise(error) }
+      let(:error_handler) { described_class::ErrorHandler.new(nil) }
+      before do
+        allow(client).to receive(:destroy_status).and_raise(error)
+        allow(described_class::ErrorHandler).to receive(:new).with(error).and_return(error_handler)
+      end
 
       it do
-        expect(described_class::ERROR_HANDLER).to receive(:call).with(error, request)
-        subject
+        expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
+        expect(request).to receive(:increment!).with(:errors_count)
+        expect(request).to receive(:too_many_errors?)
+        expect(error_handler).to receive(:raise?).and_return(true)
+        expect { subject }.to raise_error(error)
       end
     end
   end
 end
 
-RSpec.describe DeleteTweetWorker::ERROR_HANDLER do
-  let(:error) { RuntimeError.new('error') }
-  let(:request) { create(:delete_tweets_request, user_id: create(:user).id) }
-  subject { described_class.call(error, request) }
+RSpec.describe DeleteTweetWorker::ErrorHandler do
+  let(:error) { RuntimeError.new }
+  let(:instance) { described_class.new(error) }
 
-  describe '#call' do
-    context '"no status found" error is raised' do
-      before { allow(TweetStatus).to receive(:no_status_found?).with(error).and_return(true) }
+  describe '#noop?' do
+    subject { instance.noop? }
+    before { allow(TweetStatus).to receive(:forbidden?).with(error).and_return(true) }
+    it { is_expected.to be_truthy }
+  end
 
-      it do
-        expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
-        expect(request).to receive(:increment!).with(:errors_count)
-        subject
-        expect(request.reload.stopped_at).to be_falsey
-      end
-    end
+  describe '#stop?' do
+    subject { instance.stop? }
+    before { allow(TwitterApiStatus).to receive(:might_be_automated?).with(error).and_return(true) }
+    it { is_expected.to be_truthy }
+  end
 
-    context '"your account suspended" error is raised' do
-      let(:error) { RuntimeError.new('error') }
-      before { allow(TwitterApiStatus).to receive(:your_account_suspended?).with(error).and_return(true) }
-
-      it do
-        expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
-        expect(request).to receive(:update).with(stopped_at: instance_of(ActiveSupport::TimeWithZone)).and_call_original
-        expect(request).to receive(:increment!).with(:errors_count)
-        subject
-        expect(request.reload.stopped_at).to be_truthy
-      end
-    end
+  describe '#raise?' do
+    subject { instance.raise? }
+    it { is_expected.to be_truthy }
   end
 end

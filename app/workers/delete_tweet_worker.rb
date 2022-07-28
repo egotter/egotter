@@ -31,7 +31,20 @@ class DeleteTweetWorker
   def destroy_status!(client, tweet_id, request)
     client.destroy_status(tweet_id)
   rescue => e
-    ERROR_HANDLER.call(e, request)
+    request.update(error_class: e.class, error_message: e.message)
+    request.increment!(:errors_count)
+
+    if request.too_many_errors?
+      request.update(stopped_at: Time.zone.now)
+    end
+
+    handler = ErrorHandler.new(e)
+
+    if handler.stop?
+      request.update(stopped_at: Time.zone.now)
+    elsif handler.raise?
+      raise
+    end
   end
 
   class << self
@@ -74,25 +87,28 @@ class DeleteTweetWorker
     end
   end
 
-  ERROR_HANDLER = Proc.new do |e, request|
-    request.update(error_class: e.class, error_message: e.message)
-    request.increment!(:errors_count)
+  class ErrorHandler
+    def initialize(e)
+      @e = e
+    end
 
-    if TweetStatus.no_status_found?(e) ||
-        TweetStatus.not_authorized?(e) ||
-        TweetStatus.that_page_does_not_exist?(e) ||
-        TweetStatus.forbidden?(e)
-      # Do nothing
-    elsif TwitterApiStatus.your_account_suspended?(e) ||
-        TwitterApiStatus.invalid_or_expired_token?(e) ||
-        TwitterApiStatus.suspended?(e) ||
-        TweetStatus.temporarily_locked?(e) ||
-        TwitterApiStatus.might_be_automated?(e)
-      request.update(stopped_at: Time.zone.now)
-    elsif request.respond_to?(:too_many_errors?) && request.too_many_errors?
-      request.update(stopped_at: Time.zone.now)
-    else
-      raise e
+    def noop?
+      TweetStatus.no_status_found?(@e) ||
+          TweetStatus.not_authorized?(@e) ||
+          TweetStatus.that_page_does_not_exist?(@e) ||
+          TweetStatus.forbidden?(@e)
+    end
+
+    def stop?
+      TwitterApiStatus.your_account_suspended?(@e) ||
+          TwitterApiStatus.invalid_or_expired_token?(@e) ||
+          TwitterApiStatus.suspended?(@e) ||
+          TweetStatus.temporarily_locked?(@e) ||
+          TwitterApiStatus.might_be_automated?(@e)
+    end
+
+    def raise?
+      !noop? && !stop?
     end
   end
 end

@@ -45,12 +45,20 @@ RSpec.describe DeleteFavoriteWorker do
 
     context 'error is raised' do
       let(:error) { RuntimeError.new('error') }
-      before { allow(client).to receive(:unfavorite!).and_raise(error) }
+      let(:error_handler) { DeleteTweetWorker::ErrorHandler.new(nil) }
+      before do
+        allow(client).to receive(:unfavorite!).and_raise(error)
+        allow(DeleteTweetWorker::ErrorHandler).to receive(:new).with(error).and_return(error_handler)
+      end
 
       it do
-        expect(DeleteTweetWorker::ERROR_HANDLER).to receive(:call).with(error, request)
-        subject
+        expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
+        expect(request).to receive(:increment!).with(:errors_count)
+        expect(request).to receive(:too_many_errors?)
+        expect(error_handler).to receive(:raise?).and_return(true)
+        expect { subject }.to raise_error(error)
       end
+
     end
   end
 end
