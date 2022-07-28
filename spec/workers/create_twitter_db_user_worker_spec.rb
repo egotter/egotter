@@ -5,35 +5,17 @@ RSpec.describe CreateTwitterDBUserWorker do
 
   before { allow(User).to receive(:find_by).with(id: user.id).and_return(user) }
 
-  describe '.perform_async' do
-    class TestCreateTwitterDBUserWorker < CreateTwitterDBUserWorker
-      def perform(uids, options)
-        self.class.do_perform(uids, options)
-      end
-
-      class << self
-        def do_perform(*) end
-      end
-    end
-
-    let(:worker) do
-      TestCreateTwitterDBUserWorker
-    end
-
+  describe '.push_bulk' do
     before { Redis.new.flushall }
-
-    subject do
-      worker.perform_async(uids)
-      worker.drain
-    end
+    subject { described_class.push_bulk(uids) }
 
     context 'uids.size < 100' do
       let(:uids1) { (1..50).to_a }
       let(:encoded_uids1) { 'encoded_uids1' }
       let(:uids) { (1..50).to_a }
-      before { allow(worker).to receive(:compress).with(uids1).and_return(encoded_uids1) }
+      before { allow(described_class).to receive(:compress).with(uids1).and_return(encoded_uids1) }
       it do
-        expect(worker).to receive(:do_perform).with(encoded_uids1, {})
+        expect(described_class).to receive(:perform_async).with(encoded_uids1, {})
         subject
       end
     end
@@ -45,12 +27,12 @@ RSpec.describe CreateTwitterDBUserWorker do
       let(:encoded_uids2) { 'encoded_uids2' }
       let(:uids) { (1..110).to_a }
       before do
-        allow(worker).to receive(:compress).with(uids1).and_return(encoded_uids1)
-        allow(worker).to receive(:compress).with(uids2).and_return(encoded_uids2)
+        allow(described_class).to receive(:compress).with(uids1).and_return(encoded_uids1)
+        allow(described_class).to receive(:compress).with(uids2).and_return(encoded_uids2)
       end
       it do
-        expect(worker).to receive(:do_perform).with(encoded_uids1, {})
-        expect(worker).to receive(:do_perform).with(encoded_uids2, {})
+        expect(described_class).to receive(:perform_async).with(encoded_uids1, {})
+        expect(described_class).to receive(:perform_async).with(encoded_uids2, {})
         subject
       end
     end

@@ -52,7 +52,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     let(:context) { 'context' }
     subject { request.enqueue_creation_jobs(friend_uids, follower_uids, user_id, context) }
     it do
-      expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..50).to_a + (101..150).to_a, user_id: user_id, enqueued_by: described_class)
+      expect(CreateTwitterDBUserWorker).to receive(:push_bulk).with((1..50).to_a + (101..150).to_a, user_id: user_id, enqueued_by: described_class)
       expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:push_bulk).with((51..100).to_a + (151..200).to_a, user_id, enqueued_by: described_class)
       subject
     end
@@ -60,7 +60,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     context 'friend_uids is less than 50' do
       let(:friend_uids) { (1..20).to_a }
       it do
-        expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..20).to_a + (101..150).to_a, user_id: user_id, enqueued_by: described_class)
+        expect(CreateTwitterDBUserWorker).to receive(:push_bulk).with((1..20).to_a + (101..150).to_a, user_id: user_id, enqueued_by: described_class)
         expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:push_bulk).with((151..200).to_a, user_id, enqueued_by: described_class)
         subject
       end
@@ -69,7 +69,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     context 'follower_uids is less than 50' do
       let(:follower_uids) { (1..20).to_a }
       it do
-        expect(CreateTwitterDBUserWorker).to receive(:perform_async).with((1..50).to_a + (1..20).to_a, user_id: user_id, enqueued_by: described_class)
+        expect(CreateTwitterDBUserWorker).to receive(:push_bulk).with((1..50).to_a + (1..20).to_a, user_id: user_id, enqueued_by: described_class)
         expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:push_bulk).with((51..100).to_a, user_id, enqueued_by: described_class)
         subject
       end
@@ -78,7 +78,7 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     context 'context is :reporting' do
       let(:context) { :reporting }
       it do
-        expect(CreateTwitterDBUserWorker).not_to receive(:perform_async)
+        expect(CreateTwitterDBUserWorker).not_to receive(:push_bulk)
         expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:push_bulk).with((1..100).to_a + (101..200).to_a, user_id, enqueued_by: described_class)
         subject
       end

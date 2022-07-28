@@ -68,7 +68,7 @@ class Trend < ApplicationRecord
     update_trend_insight(tweets)
 
     uids = tweets.map(&:uid).uniq
-    CreateTwitterDBUserWorker.perform_async(uids)
+    CreateTwitterDBUserWorker.push_bulk(uids)
 
     tweets.size
   end
