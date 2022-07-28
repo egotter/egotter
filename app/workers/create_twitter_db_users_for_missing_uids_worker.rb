@@ -12,9 +12,9 @@ class CreateTwitterDBUsersForMissingUidsWorker
   end
 
   class << self
-    def perform_async(total_uids, user_id, options = {})
-      total_uids.uniq.each_slice(100) do |uids|
-        super(compress(uids), user_id, options)
+    def perform_async(uids, user_id, options = {})
+      uids.uniq.sort.each_slice(100) do |group|
+        super(compress(group), user_id, options)
       end
     end
 
