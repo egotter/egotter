@@ -21,11 +21,13 @@ RSpec.describe DeleteFavoriteWorker do
       subject
     end
 
-    context 'retryable error is raised' do
+    context 'error is raised' do
       let(:error) { RuntimeError.new('error') }
-      before { allow(worker).to receive(:destroy_favorite!).and_raise(error) }
+      before do
+        allow(worker).to receive(:destroy_favorite!).and_raise(error)
+        allow(TwitterApiStatus).to receive(:retry_timeout?).with(error).and_return(true)
+      end
 
-      before { allow(TwitterApiStatus).to receive(:retry_timeout?).with(error).and_return(true) }
       it do
         expect(described_class).to receive(:perform_in).with(instance_of(Integer), user.id, tweet_id, 'request_id' => request.id, 'retries' => 1)
         subject

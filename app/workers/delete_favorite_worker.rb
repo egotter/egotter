@@ -22,7 +22,11 @@ class DeleteFavoriteWorker
     end
   rescue => e
     if TwitterApiStatus.retry_timeout?(e)
-      DeleteTweetWorker::RETRY_HANDLER.call(e, self.class, user_id, tweet_id, options)
+      if options['retries']
+        Airbag.warn 'Retry exhausted', exception: e.inspect, user_id: user_id, tweet_id: tweet_id, options: options
+      else
+        self.class.perform_in(rand(10) + 10, user_id, tweet_id, options.merge('retries' => 1))
+      end
     else
       Airbag.exception e, user_id: user_id, tweet_id: tweet_id, options: options
     end
