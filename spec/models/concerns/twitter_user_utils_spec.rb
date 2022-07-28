@@ -13,7 +13,7 @@ RSpec.describe TwitterUserUtils do
     context 'twitter_user is persisted' do
       before { twitter_user.save! }
       it do
-        expect(twitter_user).to receive(:fetch_uids).with(:friend_uids, S3::Friendship).and_return('result')
+        expect(twitter_user).to receive(:fetch_uids).with(:friend_uids, S3::Friendship, false).and_return('result')
         is_expected.to eq('result')
       end
     end
@@ -29,7 +29,7 @@ RSpec.describe TwitterUserUtils do
     context 'twitter_user is persisted' do
       before { twitter_user.save! }
       it do
-        expect(twitter_user).to receive(:fetch_uids).with(:follower_uids, S3::Followership).and_return('result')
+        expect(twitter_user).to receive(:fetch_uids).with(:follower_uids, S3::Followership, false).and_return('result')
         is_expected.to eq('result')
       end
     end
@@ -37,28 +37,26 @@ RSpec.describe TwitterUserUtils do
 
   describe '#fetch_uids' do
     let(:method_name) { :friend_uids }
-    let(:memory_class) { InMemory::TwitterUser }
-    let(:efs_class) { Efs::TwitterUser }
     let(:s3_class) { S3::Friendship }
-    subject { twitter_user.send(:fetch_uids, method_name, s3_class) }
+    subject { twitter_user.send(:fetch_uids, method_name, s3_class, false) }
     before { twitter_user.save! }
 
     context 'InMemory returns data' do
-      let(:wrapper) { memory_class.new({}) }
+      let(:wrapper) { InMemory::TwitterUser.new({}) }
       it do
-        expect(memory_class).to receive(:find_by).with(twitter_user.id).and_return(wrapper)
-        expect(wrapper).to receive(method_name)
-        subject
+        expect(InMemory::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(wrapper)
+        expect(wrapper).to receive(method_name).and_return([1, 2, 3])
+        is_expected.to eq([1, 2, 3])
       end
     end
 
     context 'Efs returns data' do
-      let(:wrapper) { efs_class.new({}) }
+      let(:wrapper) { Efs::TwitterUser.new({}) }
       before { allow(InMemory).to receive(:enabled?).and_return(false) }
       it do
-        expect(efs_class).to receive(:find_by).with(twitter_user.id).and_return(wrapper)
-        expect(wrapper).to receive(method_name)
-        subject
+        expect(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(wrapper)
+        expect(wrapper).to receive(method_name).and_return([1, 2, 3])
+        is_expected.to eq([1, 2, 3])
       end
     end
 
@@ -70,8 +68,8 @@ RSpec.describe TwitterUserUtils do
       end
       it do
         expect(s3_class).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(wrapper)
-        expect(wrapper).to receive(method_name)
-        subject
+        expect(wrapper).to receive(method_name).and_return([1, 2, 3])
+        is_expected.to eq([1, 2, 3])
       end
     end
   end

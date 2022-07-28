@@ -13,7 +13,7 @@ module TwitterUserUtils
     friends_count == 0 && followers_count == 0 && friends_size == 0 && followers_size == 0
   end
 
-  def friend_uids
+  def friend_uids(exception: false)
     if new_record?
       raise "The ##{__method__} should not be called if the records is not persisted"
     end
@@ -21,11 +21,11 @@ module TwitterUserUtils
     if instance_variable_defined?(:@persisted_friend_uids)
       @persisted_friend_uids
     else
-      @persisted_friend_uids = fetch_uids(:friend_uids, S3::Friendship)
+      @persisted_friend_uids = fetch_uids(:friend_uids, S3::Friendship, exception)
     end
   end
 
-  def follower_uids
+  def follower_uids(exception: false)
     if new_record?
       raise "The ##{__method__} should not be called if the records is not persisted"
     end
@@ -33,7 +33,7 @@ module TwitterUserUtils
     if instance_variable_defined?(:@persisted_follower_uids)
       @persisted_follower_uids
     else
-      @persisted_follower_uids = fetch_uids(:follower_uids, S3::Followership)
+      @persisted_follower_uids = fetch_uids(:follower_uids, S3::Followership, exception)
     end
   end
 
@@ -69,9 +69,9 @@ module TwitterUserUtils
 
   private
 
-  def fetch_uids(method_name, s3_class)
+  def fetch_uids(method_name, s3_class, exception)
     data = nil
-    exceptions = []
+    errors = []
     source = nil
     start = Time.zone.now
 
@@ -81,7 +81,8 @@ module TwitterUserUtils
         source = 'memory'
       end
     rescue => e
-      exceptions << e
+      raise if exception
+      errors << e
     end
 
     begin
@@ -90,7 +91,8 @@ module TwitterUserUtils
         source = 'efs'
       end
     rescue => e
-      exceptions << e
+      raise if exception
+      errors << e
     end
 
     begin
@@ -99,16 +101,26 @@ module TwitterUserUtils
         source = 's3'
       end
     rescue => e
-      exceptions << e
+      raise if exception
+      errors << e
     end
 
     if data.nil?
-      Airbag.info "Fetching #{method_name} failed", twitter_user_id: id, uid: uid, created_at: created_at.to_s(:db), exceptions: exceptions.inspect, caller: caller
+      Airbag.info "Fetching #{method_name} failed", twitter_user_id: id, uid: uid, created_at: created_at.to_s(:db), exceptions: errors.inspect, caller: caller
       # TODO Import collect uids or delete this record
       []
     else
       Airbag.info "Fetching #{method_name} succeeded", twitter_user_id: id, uid: uid, source: source, elapsed: (Time.zone.now - start) if Rails.env.development?
-      data.send(method_name) || []
+      ArrayWithSource.new(data.send(method_name) || [], source)
+    end
+  end
+
+  class ArrayWithSource < ::Array
+    attr_reader :source
+
+    def initialize(ary, source)
+      super(ary)
+      @source = source
     end
   end
 end
