@@ -1,6 +1,5 @@
 class DeleteTweetWorker
   include Sidekiq::Worker
-  include WorkerErrorHandler
   sidekiq_options queue: 'batch', retry: 0, backtrace: false
 
   # options:
@@ -23,7 +22,7 @@ class DeleteTweetWorker
     if TwitterApiStatus.retry_timeout?(e)
       RETRY_HANDLER.call(e, self.class, user_id, tweet_id, options)
     else
-      handle_worker_error(e, user_id: user_id, tweet_id: tweet_id, options: options)
+      Airbag.exception e, user_id: user_id, tweet_id: tweet_id, options: options
     end
   end
 
@@ -35,9 +34,40 @@ class DeleteTweetWorker
     ERROR_HANDLER.call(e, request)
   end
 
+  class << self
+    def consume_scheduled_jobs(limit: 10)
+      processed_count = 0
+      errors_count = 0
+      jobs = []
+
+      Sidekiq::ScheduledSet.new.scan(name).each do |job|
+        if job.klass == name && job.at > 3.minutes.since
+          jobs << job
+        end
+
+        if jobs.size >= limit
+          break
+        end
+      end
+
+      jobs.each do |job|
+        new.perform(*job.args)
+        job.delete
+        processed_count += 1
+      rescue => e
+        puts e.inspect
+        errors_count += 1
+      end
+
+      if processed_count > 0 || errors_count > 0
+        puts "consume_scheduled_jobs: processed=#{processed_count}#{" errors=#{errors_count}" if errors_count > 0}"
+      end
+    end
+  end
+
   RETRY_HANDLER = Proc.new do |e, worker_class, user_id, tweet_id, options|
     if options['retries']
-      Airbag.warn "Retry exhausted exception=#{e.inspect} user_id=#{user_id} tweet_id=#{tweet_id} options=#{options}", backtrace: e.backtrace
+      Airbag.warn "Retry exhausted exception=#{e.inspect}", user_id: user_id, tweet_id: tweet_id, options: options, backtrace: e.backtrace
     else
       options['retries'] = 1
       worker_class.perform_in(rand(10) + 10, user_id, tweet_id, options)
