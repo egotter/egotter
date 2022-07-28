@@ -151,5 +151,5 @@ end
 
 if __FILE__ == $0
   Dir.chdir('/var/egotter') if Dir.exist?('/var/egotter')
-  main(ENV['ROLE'])
+  main(ARGV[0] || ENV['ROLE'])
 end

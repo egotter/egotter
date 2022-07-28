@@ -1,6 +1,5 @@
 class InvalidateExpiredCredentialWorker
   include Sidekiq::Worker
-  include WorkerErrorHandler
   sidekiq_options queue: 'misc_low', retry: 0, backtrace: false
 
   def unique_key(bot_id, options = {})
@@ -37,7 +36,7 @@ class InvalidateExpiredCredentialWorker
     elsif TwitterApiStatus.temporarily_locked?(e)
       bot.update(locked: true)
     else
-      handle_worker_error(e, bot_id: bot_id, **options)
+      Airbag.exception e, bot_id: bot_id, options: options
     end
   end
 
