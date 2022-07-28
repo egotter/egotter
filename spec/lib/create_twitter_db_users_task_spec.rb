@@ -4,12 +4,14 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
   let(:instance) { described_class.new(uids, enqueued_by: 'test') }
 
   describe '#start' do
+    let(:client) { double('client') }
     let(:uids) { [1, 2, 3] }
     let(:users) { uids.map { |id| {id: id, screen_name: "sn-#{id}"} } }
     subject { instance.start }
+    before { allow(instance).to receive(:client).and_return(client) }
 
     it do
-      expect(instance).to receive(:fetch_users).with(uids).and_return(users)
+      expect(client).to receive(:safe_users).with(uids).and_return(users)
       # expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test', _user_id: nil, _size: 3)
       expect(ImportTwitterDBUserWorker).to receive(:perform_in).with(instance_of(Integer), users, enqueued_by: 'test', _user_id: nil, _size: 3)
       subject
@@ -18,22 +20,10 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
     context 'suspended uids found' do
       let(:users) { [{id: 1, screen_name: 'sn1'}, {id: 2, screen_name: 'sn2'}] }
       it do
-        expect(instance).to receive(:fetch_users).with(uids).and_return(users)
+        expect(client).to receive(:safe_users).with(uids).and_return(users)
         expect(ImportTwitterDBSuspendedUserWorker).to receive(:perform_async).with([3])
         subject
       end
-    end
-  end
-
-  describe '#fetch_users' do
-    let(:client) { double('client') }
-    let(:uids) { [1, 2, 3] }
-    let(:users) { uids.map { |id| {id: id, screen_name: "sn-#{id}"} } }
-    subject { instance.send(:fetch_users, uids) }
-    before { instance.instance_variable_set(:@client, client) }
-    it do
-      expect(client).to receive(:users).with(uids).and_return(users)
-      subject
     end
   end
 

@@ -34,7 +34,7 @@ class TwitterClient
 
   def safe_users(uids)
     retries ||= 3
-    users(uids).map(&:to_h)
+    users(uids)
   rescue => e
     if TwitterApiStatus.no_user_matches?(e)
       []
