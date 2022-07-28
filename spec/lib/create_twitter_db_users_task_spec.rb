@@ -10,7 +10,7 @@ RSpec.describe CreateTwitterDBUsersTask, type: :model do
 
     it do
       expect(instance).to receive(:fetch_users).with(uids).and_return(users)
-      expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test', _user_id: nil)
+      expect(ImportTwitterDBUserWorker).to receive(:perform_async).with(users, enqueued_by: 'test', _user_id: nil, _size: 3)
       subject
     end
 

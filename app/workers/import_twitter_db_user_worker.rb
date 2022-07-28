@@ -2,7 +2,6 @@ require 'digest/md5'
 
 class ImportTwitterDBUserWorker
   include Sidekiq::Worker
-  include WorkerErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(data, options = {})
@@ -32,7 +31,7 @@ class ImportTwitterDBUserWorker
     delay = rand(20) + 15
     ImportTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, data, options.merge(debug_options(e)))
   rescue => e
-    handle_worker_error(e, options: options)
+    Airbag.exception e, options: options
     FailedImportTwitterDBUserWorker.perform_async(data, options.merge(debug_options(e)))
   end
 
