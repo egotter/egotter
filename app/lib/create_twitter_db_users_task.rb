@@ -1,3 +1,4 @@
+# TODO Remove later
 class CreateTwitterDBUsersTask
   def initialize(uids, user_id: nil, enqueued_by: nil)
     @uids = uids.uniq.map(&:to_i)

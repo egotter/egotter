@@ -36,7 +36,7 @@ class CreateTwitterDBUserWorker
       Airbag.warn 'the size of uids is greater than 100', options: options
     end
 
-    do_perform(uids, options)
+    do_perform(uids, extract_user_id(options), options)
   rescue ApiClient::RetryExhausted => e
     CreateTwitterDBUserForRetryableErrorWorker.perform_in(rand(20) + 15, data, options.merge(debug_options(e)))
   rescue => e
@@ -46,9 +46,21 @@ class CreateTwitterDBUserWorker
 
   private
 
-  def do_perform(uids, options)
-    user_id = extract_user_id(options)
-    CreateTwitterDBUsersTask.new(uids, user_id: user_id, enqueued_by: options['enqueued_by']).start
+  def do_perform(uids, user_id, options)
+    uids -= TwitterDB::QueuedUser.where(uid: uids).pluck(:uid)
+    return if uids.empty?
+
+    import_queued_users(uids)
+    users = client(user_id).safe_users(uids).map(&:to_h)
+
+    if (suspended_uids = extract_suspended_uids(uids, users)).any?
+      Airbag.info 'Import suspended uids', uids: uids, suspended_uids: suspended_uids
+      ImportTwitterDBSuspendedUserWorker.perform_async(suspended_uids)
+    end
+
+    if users.any?
+      ImportTwitterDBUserWorker.perform_in(rand(10) + 3, users, enqueued_by: options['enqueued_by'], _user_id: user_id, _size: users.size)
+    end
   rescue ApiClient::StrangeHttpTimeout => e
     uids.each_slice(uids.size > 10 ? 10 : 1) do |group|
       self.class.perform_async(group, options)
@@ -57,6 +69,24 @@ class CreateTwitterDBUserWorker
 
   def extract_user_id(options)
     (options['user_id'] && options['user_id'].to_i != -1) ? options['user_id'] : nil
+  end
+
+  def client(user_id)
+    if user_id && !RateLimitExceededFlag.on?(user_id)
+      User.find(user_id).api_client.twitter
+    else
+      Bot.api_client.twitter
+    end
+  end
+
+  def import_queued_users(uids)
+    TwitterDB::QueuedUser.import_data(uids)
+  rescue => e
+    Airbag.warn "CreateTwitterDBUsersTask#start: #{e.inspect.truncate(200)}"
+  end
+
+  def extract_suspended_uids(uids, users)
+    uids.size == users.size ? [] : (uids - users.map { |u| u[:id] })
   end
 
   def debug_options(e = nil)

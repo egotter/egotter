@@ -42,7 +42,8 @@ RSpec.describe CreateTwitterDBUserWorker do
     let(:worker) { described_class.new }
     let(:data) { double('data') }
     let(:uids) { [1, 2, 3] }
-    let(:options) { {} }
+    let(:user_id) { 1 }
+    let(:options) { {'user_id' => user_id, 'enqueued_by' => 'test'} }
     subject { worker.perform(data, options) }
 
     before do
@@ -50,13 +51,13 @@ RSpec.describe CreateTwitterDBUserWorker do
     end
 
     it do
-      expect(worker).to receive(:do_perform).with(uids, options)
+      expect(worker).to receive(:do_perform).with(uids, user_id, options)
       subject
     end
 
     context 'ApiClient::RetryExhausted is raised' do
       let(:error) { ApiClient::RetryExhausted.new }
-      before { allow(worker).to receive(:do_perform).with(uids, options).and_raise(error) }
+      before { allow(worker).to receive(:do_perform).with(uids, user_id, options).and_raise(error) }
       it do
         expect(CreateTwitterDBUserForRetryableErrorWorker).to receive(:perform_in).
             with(instance_of(Integer), data, anything)
@@ -66,7 +67,7 @@ RSpec.describe CreateTwitterDBUserWorker do
 
     context 'RuntimeError is raised' do
       let(:error) { RuntimeError.new }
-      before { allow(worker).to receive(:do_perform).with(uids, options).and_raise(error) }
+      before { allow(worker).to receive(:do_perform).with(uids, user_id, options).and_raise(error) }
       it do
         expect(FailedCreateTwitterDBUserWorker).to receive(:perform_async).with(data, anything)
         subject
@@ -76,14 +77,22 @@ RSpec.describe CreateTwitterDBUserWorker do
 
   describe '#do_perform' do
     let(:worker) { described_class.new }
-    let(:uids) { [1, 2, 3] }
+    let(:uids) { [1, 2, 3, 4, 5] }
+    let(:users) { [{id: 1}, {id: 3}, {id: 5}] }
     let(:user_id) { 1 }
+    let(:client) { double('client') }
     let(:options) { {'user_id' => user_id, 'enqueued_by' => 'test'} }
-    subject { worker.send(:do_perform, uids, options) }
+    subject { worker.send(:do_perform, uids, user_id, options) }
+    before do
+      create(:twitter_db_queued_user, uid: 2)
+      allow(worker).to receive(:client).with(user_id).and_return(client)
+    end
     it do
-      expect(worker).to receive(:extract_user_id).with(options).and_return(user_id)
-      expect(CreateTwitterDBUsersTask).to receive_message_chain(:new, :start).
-          with(uids, user_id: user_id, enqueued_by: 'test').with(no_args)
+      expect(worker).to receive(:import_queued_users).with([1, 3, 4, 5])
+      expect(client).to receive(:safe_users).with([1, 3, 4, 5]).and_return(users)
+      expect(ImportTwitterDBSuspendedUserWorker).to receive(:perform_async).with([4])
+      expect(ImportTwitterDBUserWorker).to receive(:perform_in).
+          with(instance_of(Integer), users, enqueued_by: 'test', _user_id: user_id, _size: users.size)
       subject
     end
   end
