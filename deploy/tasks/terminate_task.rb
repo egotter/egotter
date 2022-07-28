@@ -101,8 +101,6 @@ module Tasks
           instance.terminate
           @instance = instance
         end
-
-        super
       end
     end
 
@@ -131,8 +129,6 @@ module Tasks
           instance.terminate
           @instance = instance
         end
-
-        super
       end
     end
 
@@ -150,8 +146,6 @@ module Tasks
           instance.terminate
           @instance = instance
         end
-
-        super
       end
     end
   end
