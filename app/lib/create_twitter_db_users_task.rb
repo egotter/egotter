@@ -22,7 +22,8 @@ class CreateTwitterDBUsersTask
     end
 
     if users.any?
-      ImportTwitterDBUserWorker.perform_async(users, enqueued_by: @enqueued_by, _user_id: @user_id, _size: users.size)
+      # ImportTwitterDBUserWorker.perform_async(users, enqueued_by: @enqueued_by, _user_id: @user_id, _size: users.size)
+      ImportTwitterDBUserWorker.perform_in(rand(10) + 3, users, enqueued_by: @enqueued_by, _user_id: @user_id, _size: users.size)
     end
   end
 
