@@ -12,9 +12,9 @@ class CreateTwitterDBUsersForMissingUidsWorker
   end
 
   class << self
-    def perform_async(uids, user_id, options = {})
+    def push_bulk(uids, user_id, options = {})
       uids.uniq.sort.each_slice(100) do |group|
-        super(compress(group), user_id, options)
+        perform_async(compress(group), user_id, options)
       end
     end
 

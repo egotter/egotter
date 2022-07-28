@@ -15,24 +15,9 @@ RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
     end
   end
 
-  describe '.perform_async' do
-    class TestCreateTwitterDBUsersForMissingUidsWorker < CreateTwitterDBUsersForMissingUidsWorker
-      def perform(uids, user_id, options)
-        self.class.do_perform(uids, user_id, options)
-      end
-
-      class << self
-        def do_perform(*) end
-      end
-    end
-
+  describe '.push_bulk' do
     let(:user_id) { 1 }
-    let(:worker) { TestCreateTwitterDBUsersForMissingUidsWorker }
-
-    subject do
-      worker.perform_async(uids, user_id)
-      worker.drain
-    end
+    subject { described_class.push_bulk(uids, user_id) }
 
     context '100 < uids.size' do
       let(:uids1) { (1..100).to_a }
@@ -41,12 +26,12 @@ RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
       let(:encoded_uids2) { 'encoded_uids2' }
       let(:uids) { (1..110).to_a }
       before do
-        allow(worker).to receive(:compress).with(uids1).and_return(encoded_uids1)
-        allow(worker).to receive(:compress).with(uids2).and_return(encoded_uids2)
+        allow(described_class).to receive(:compress).with(uids1).and_return(encoded_uids1)
+        allow(described_class).to receive(:compress).with(uids2).and_return(encoded_uids2)
       end
       it do
-        expect(worker).to receive(:do_perform).with(encoded_uids1, user_id, {})
-        expect(worker).to receive(:do_perform).with(encoded_uids2, user_id, {})
+        expect(described_class).to receive(:perform_async).with(encoded_uids1, user_id, {})
+        expect(described_class).to receive(:perform_async).with(encoded_uids2, user_id, {})
         subject
       end
     end
@@ -56,10 +41,10 @@ RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
       let(:encoded_uids1) { 'encoded_uids1' }
       let(:uids) { (1..50).to_a }
       before do
-        allow(worker).to receive(:compress).with(uids1).and_return(encoded_uids1)
+        allow(described_class).to receive(:compress).with(uids1).and_return(encoded_uids1)
       end
       it do
-        expect(worker).to receive(:do_perform).with(encoded_uids1, user_id, {})
+        expect(described_class).to receive(:perform_async).with(encoded_uids1, user_id, {})
         subject
       end
     end
