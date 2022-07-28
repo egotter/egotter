@@ -28,6 +28,7 @@ class ImportTwitterDBUserWorker
     import_users(users)
     import_queued_users(users)
   rescue Deadlocked => e
+    Airbag.info "#{e.class} found", options: options
     delay = rand(20) + 15
     ImportTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, data, options.merge(debug_options(e)))
   rescue => e
