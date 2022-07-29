@@ -62,8 +62,8 @@ module Api
       users = to_list_hash(users, params[:max_sequence].to_i + 1, options)
 
       render json: {name: controller_name, max_sequence: result[:offset] + users.size - 1, limit: result[:limit], users: users}
-    rescue TwitterDB::Sort::TimeoutError => e
-      Airbag.exception e, request_details
+    rescue TwitterDB::Sort::SafeTimeout, TwitterDB::Sort::CreatingCache => e
+      Airbag.warn e.inspect, request_details.except(:referer)
       head :request_timeout
     end
 

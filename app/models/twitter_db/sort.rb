@@ -14,6 +14,7 @@ module TwitterDB
     def initialize(value = nil)
       @value = value && VALUES.include?(value) ? value : VALUES[0]
       @slice = 1000
+      @threshold = 5000
       @threads = 0
       @timeout = 8
     end
@@ -25,6 +26,17 @@ module TwitterDB
 
     def threads(value)
       @threads = value.to_i
+      self
+    end
+
+    def without_cache
+      @without_cache = true
+      self
+    end
+
+    # For test
+    def threshold(value)
+      @threshold = value.to_i
       self
     end
 
@@ -42,6 +54,28 @@ module TwitterDB
         return uids
       elsif @value == VALUES[1]
         return uids.reverse
+      end
+
+      if @without_cache
+        Airbag.info 'TwitterDB::Sort: Sort uids because :without_cache is specified', value: @value
+      else
+        if uids.size > @threshold
+          cache = SortCache.instance
+
+          if cache.exists?(@value, uids)
+            Airbag.info 'TwitterDB::Sort: a cache found', value: @value
+            return cache.read(@value, uids)
+          else
+            if (jid = CreateTwitterDBSortCacheWorker.perform_async(@value, uids))
+              Airbag.info 'TwitterDB::Sort: Start creating a cache', value: @value, jid: jid
+            else
+              Airbag.info 'TwitterDB::Sort: Already creating a cache', value: @value
+            end
+            raise CreatingCache
+          end
+        else
+          Airbag.info 'TwitterDB::Sort: Sort uids because the size of uids is small enough', value: @value
+        end
       end
 
       @start_time = Time.zone.now
@@ -93,7 +127,7 @@ module TwitterDB
       end
 
       if stopped
-        raise TimeoutError.new("timeout=#{@timeout} waited=#{Time.zone.now - @start_time}")
+        raise SafeTimeout.new("timeout=#{@timeout} waited=#{Time.zone.now - @start_time}")
       end
 
       result.flatten
@@ -101,7 +135,7 @@ module TwitterDB
 
     def work_direct(queries)
       queries.map do |q|
-        raise TimeoutError.new("timeout=#{@timeout} waited=#{Time.zone.now - @start_time}") if timeout?
+        raise SafeTimeout.new("timeout=#{@timeout} waited=#{Time.zone.now - @start_time}") if timeout?
         q.to_a
       end.flatten
     end
@@ -120,7 +154,17 @@ module TwitterDB
       end
     end
 
+    # TODO Remove later
     class TimeoutError < StandardError
+    end
+
+    class SafeTimeout < StandardError
+    end
+
+    class CreatingCache < StandardError
+      def initialize
+        super('')
+      end
     end
   end
 end
