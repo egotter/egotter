@@ -88,7 +88,7 @@ RSpec.describe CreateTwitterDBUserWorker do
       allow(worker).to receive(:client).with(user_id).and_return(client)
     end
     it do
-      expect(worker).to receive(:import_queued_users).with([1, 3, 4, 5])
+      expect(TwitterDB::QueuedUser).to receive(:mark_uids_as_processing).with([1, 3, 4, 5])
       expect(client).to receive(:safe_users).with([1, 3, 4, 5]).and_return(users)
       expect(ImportTwitterDBSuspendedUserWorker).to receive(:perform_async).with([4])
       expect(ImportTwitterDBUserWorker).to receive(:perform_in).

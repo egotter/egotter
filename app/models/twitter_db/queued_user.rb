@@ -40,6 +40,18 @@ class TwitterDB::QueuedUser < ApplicationRecord
       end
     end
 
+    def mark_uids_as_processing(uids)
+      import_data(uids)
+    rescue => e
+      Airbag.warn "mark_uids_as_processing: #{e.inspect.truncate(200)}"
+    end
+
+    def mark_uids_as_processed(uids)
+      where(uid: uids).update_all(processed_at: Time.zone.now)
+    rescue => e
+      Airbag.warn "mark_uids_as_processed: #{e.inspect.truncate(200)}"
+    end
+
     def delete_stale_records
       query = select(:id, :uid).where('created_at < ?', 6.hours.ago)
       processed_records = query.processed.find_in_batches.map { |records| records }.flatten

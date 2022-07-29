@@ -14,6 +14,25 @@ RSpec.describe TwitterDB::QueuedUser, type: :model do
     end
   end
 
+  describe '#mark_uids_as_processing' do
+    let(:uids) { [1, 2] }
+    subject { described_class.mark_uids_as_processing(uids) }
+    it do
+      expect(described_class).to receive(:import_data).with([1, 2])
+      subject
+    end
+  end
+
+  describe '#mark_uids_as_processed' do
+    let(:uids) { [1, 2] }
+    subject { described_class.mark_uids_as_processed(uids) }
+    it do
+      expect(described_class).to receive_message_chain(:where, :update_all).
+          with([1, 2]).with(processed_at: instance_of(ActiveSupport::TimeWithZone))
+      subject
+    end
+  end
+
   describe '.delete_stale_records' do
     subject { described_class.delete_stale_records }
     before do

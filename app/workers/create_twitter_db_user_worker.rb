@@ -50,7 +50,7 @@ class CreateTwitterDBUserWorker
     uids -= TwitterDB::QueuedUser.where(uid: uids).pluck(:uid)
     return if uids.empty?
 
-    import_queued_users(uids)
+    TwitterDB::QueuedUser.mark_uids_as_processing(uids)
     users = client(user_id).safe_users(uids).map(&:to_h)
 
     if (suspended_uids = extract_suspended_uids(uids, users)).any?
@@ -77,12 +77,6 @@ class CreateTwitterDBUserWorker
     else
       Bot.api_client.twitter
     end
-  end
-
-  def import_queued_users(uids)
-    TwitterDB::QueuedUser.import_data(uids)
-  rescue => e
-    Airbag.warn "CreateTwitterDBUsersTask#start: #{e.inspect.truncate(200)}"
   end
 
   def extract_suspended_uids(uids, users)

@@ -25,7 +25,7 @@ class ImportTwitterDBUserWorker
     users = decompress(data)
     users.each(&:deep_symbolize_keys!)
     import_users(users)
-    import_queued_users(users)
+    TwitterDB::QueuedUser.mark_uids_as_processed(users.map { |u| u[:id] })
   rescue Deadlocked => e
     Airbag.info "#{e.class} found", options: options
     delay = rand(20) + 15
@@ -45,13 +45,6 @@ class ImportTwitterDBUserWorker
     else
       raise
     end
-  end
-
-  def import_queued_users(users)
-    uids = users.map { |u| u[:id] }
-    TwitterDB::QueuedUser.where(uid: uids).update_all(processed_at: Time.zone.now)
-  rescue => e
-    Airbag.warn "#import_queued_users: #{e.inspect.truncate(200)}"
   end
 
   class Deadlocked < StandardError; end
