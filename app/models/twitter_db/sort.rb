@@ -68,10 +68,11 @@ module TwitterDB
           else
             if (jid = CreateTwitterDBSortCacheWorker.perform_async(@value, uids))
               Airbag.info 'TwitterDB::Sort: Start creating a cache', value: @value, jid: jid
+              raise CreatingCacheStarted
             else
               Airbag.info 'TwitterDB::Sort: Already creating a cache', value: @value
+              raise AlreadyCreatingCache
             end
-            raise CreatingCache
           end
         else
           Airbag.info 'TwitterDB::Sort: Sort uids because the size of uids is small enough', value: @value
@@ -165,6 +166,12 @@ module TwitterDB
       def initialize
         super('')
       end
+    end
+
+    class CreatingCacheStarted < CreatingCache
+    end
+
+    class AlreadyCreatingCache < CreatingCache
     end
   end
 end

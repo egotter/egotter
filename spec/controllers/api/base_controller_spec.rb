@@ -17,4 +17,29 @@ RSpec.describe Api::BaseController, type: :controller do
       subject
     end
   end
+
+  describe 'GET #list' do
+    subject { controller.list }
+    it do
+      expect(controller).to receive(:list_uids).and_return([])
+      expect(controller).to receive(:render).with(json: {name: 'base', max_sequence: -1, limit: 0, users: []})
+      subject
+    end
+
+    [
+        TwitterDB::Sort::SafeTimeout,
+        TwitterDB::Sort::CreatingCache,
+        TwitterDB::Sort::CreatingCacheStarted,
+        TwitterDB::Sort::AlreadyCreatingCache,
+    ].each do |error_class|
+      context "#{error_class} is raised" do
+        let(:error) { error_class.new }
+        before { allow(TwitterDB::Proxy).to receive(:new).with(anything).and_raise(error) }
+        it do
+          expect(controller).to receive(:head).with(:request_timeout)
+          subject
+        end
+      end
+    end
+  end
 end

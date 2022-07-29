@@ -30,7 +30,7 @@ class CreateTwitterDBSortCacheWorker
   end
 
   def decompress(data)
-    JSON.parse(Zlib::Inflate.inflate(Base64.decode64(data)))
+    data.is_a?(String) ? JSON.parse(Zlib::Inflate.inflate(Base64.decode64(data))) : data
   end
 
   class << self
