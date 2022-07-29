@@ -27,6 +27,7 @@ class DeleteTweetsBySearchRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform
+    update(started_at: Time.zone.now)
     tweet_ids.each do |tweet_id|
       DeleteTweetBySearchWorker.perform_async(id, tweet_id)
     end
