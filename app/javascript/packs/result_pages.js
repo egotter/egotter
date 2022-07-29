@@ -72,13 +72,14 @@ class FetchTask {
   }
 
   fetch() {
+    if (this.loading) {
+      return;
+    }
+
     if (this.maxSequence === -1) {
       return;
     }
 
-    if (this.loading) {
-      return;
-    }
     this.loading = true;
 
     var params = {

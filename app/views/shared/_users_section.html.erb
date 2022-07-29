@@ -101,7 +101,9 @@
         var $elem = $(this);
         logger.log('appear', $elem.attr('id'));
         $elem.find('img').show();
-        task.fetch();
+        if (!task.loading) {
+          task.fetch();
+        }
       });
 
       new SortButton(function (options) {
