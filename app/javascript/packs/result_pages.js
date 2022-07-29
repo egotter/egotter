@@ -28,11 +28,14 @@ class FetchTask {
     this.errCallback = errCallback;
     this.cache = new Cache();
     this.errorCount = 0;
+    this.retryLimit = 10;
+    this.retryInterval = 3000;
   }
 
   reset(options) {
     this.maxSequence = 0;
     this.limit = this.minLimit;
+    this.errorCount = 0;
     if ('sortOrder' in options) {
       this.sortOrder = options['sortOrder'];
     }
@@ -52,13 +55,13 @@ class FetchTask {
   }
 
   errorReceived(xhr, textStatus, errorThrown) {
-    if (++this.errorCount <= 3) {
+    if (++this.errorCount <= this.retryLimit) {
       logger.log('Retry fetching', this.errorCount);
       var self = this;
       setTimeout(function () {
         self.loading = false;
         self.fetch();
-      }, 3000 * this.errorCount);
+      }, this.retryInterval);
     } else {
       logger.log('Retry exhausted');
       showErrorMessage(xhr, textStatus, errorThrown);
