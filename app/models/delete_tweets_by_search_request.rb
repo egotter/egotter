@@ -13,6 +13,7 @@
 #  filters            :json
 #  tweet_ids          :json
 #  started_at         :datetime
+#  stopped_at         :datetime
 #  finished_at        :datetime
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null

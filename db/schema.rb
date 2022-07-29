@@ -509,6 +509,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.json "filters"
     t.json "tweet_ids"
     t.datetime "started_at"
+    t.datetime "stopped_at"
     t.datetime "finished_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
