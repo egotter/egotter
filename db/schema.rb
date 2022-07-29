@@ -470,6 +470,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.integer "reservations_count", default: 0, null: false
     t.integer "destroy_count", default: 0, null: false
     t.integer "errors_count", default: 0, null: false
+    t.datetime "started_at"
     t.datetime "stopped_at"
     t.datetime "finished_at"
     t.string "error_class", default: "", null: false

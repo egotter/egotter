@@ -10,6 +10,7 @@ class CreateDeleteFavoritesRequests < ActiveRecord::Migration[6.0]
       t.integer  :reservations_count, null: false, default: 0
       t.integer  :destroy_count,      null: false, default: 0
       t.integer  :errors_count,       null: false, default: 0
+      t.datetime :started_at,         null: true, default: nil
       t.datetime :stopped_at,         null: true, default: nil
       t.datetime :finished_at,        null: true, default: nil
       t.string   :error_class,        null: false, default: ''
