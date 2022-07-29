@@ -83,6 +83,8 @@ def main(params)
     return
   end
 
+  Deploy.logger.broadcast(STDOUT)
+
   Deploy.with_lock("deploy-#{params['role']}.pid") do
     Deploy.logger.broadcast(STDOUT)
     Deploy.logger.info "Deploy started params=#{params}"
