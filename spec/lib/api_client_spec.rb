@@ -129,7 +129,7 @@ RSpec.describe ApiClient, type: :model do
 
     it do
       expect(client).to receive(:user).with(1).and_return('user_result')
-      expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: "ApiClient#user")
+      # expect(CreateTwitterApiLogWorker).to receive(:perform_async).with(name: "ApiClient#user")
       is_expected.to eq('user_result')
     end
 

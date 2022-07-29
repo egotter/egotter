@@ -92,7 +92,7 @@ class TwitterClient
     @api_client.update_lock_status(e)
     raise
   ensure
-    CreateTwitterApiLogWorker.perform_async(name: "TwitterClient##{method}")
+    # CreateTwitterApiLogWorker.perform_async(name: "TwitterClient##{method}")
   end
 
   def app_context?
