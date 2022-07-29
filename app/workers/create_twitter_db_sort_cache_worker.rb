@@ -8,6 +8,10 @@ class CreateTwitterDBSortCacheWorker
     "#{sort_value}:#{Digest::MD5.hexdigest(data)}"
   end
 
+  def unique_in
+    TwitterDB::SortCache::TTL - 10
+  end
+
   # options:
   def perform(sort_value, data, options = {})
     do_perform(sort_value, decompress(data))

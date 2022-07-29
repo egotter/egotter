@@ -5,9 +5,11 @@ module TwitterDB
   class SortCache
     include Singleton
 
+    TTL = 300
+
     def initialize
       @redis = RedisClient.new(host: ENV['SORT_CACHE_REDIS_HOST'], db: 2)
-      @ttl = 300
+      @ttl = TTL
     end
 
     def read(sort, uids)
@@ -26,6 +28,11 @@ module TwitterDB
     # Not used
     def delete(sort, uids)
       @redis.del(key(sort, uids))
+    end
+
+    # Not used
+    def keys(sort)
+      @redis.keys("#{Rails.env}:sort_cache:#{sort}:*")
     end
 
     private
