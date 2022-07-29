@@ -1,6 +1,5 @@
 class DeleteTweetBySearchWorker
   include Sidekiq::Worker
-  include WorkerErrorHandler
   sidekiq_options queue: 'batch', retry: 0, backtrace: false
 
   # options:
@@ -21,6 +20,6 @@ class DeleteTweetBySearchWorker
     end
   rescue => e
     request.update(error_message: e.inspect)
-    handle_worker_error(e, request_id: request_id, tweet_id: tweet_id, options: options)
+    Airbag.exception e, request_id: request_id, tweet_id: tweet_id, options: options
   end
 end

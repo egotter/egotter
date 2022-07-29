@@ -10,6 +10,7 @@ class DeleteFavoritesTask
       return
     end
 
+    @request.update(started_at: Time.zone.now)
     perform_request!(@request)
   end
 

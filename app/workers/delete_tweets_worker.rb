@@ -1,6 +1,5 @@
 class DeleteTweetsWorker
   include Sidekiq::Worker
-  include WorkerErrorHandler
   sidekiq_options queue: 'deleting_high', retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
@@ -17,6 +16,6 @@ class DeleteTweetsWorker
     request = DeleteTweetsRequest.find(request_id)
     DeleteTweetsTask.new(request, options).start!
   rescue => e
-    handle_worker_error(e, request_id: request_id, options: options)
+    Airbag.exception e, request_id: request_id, options: options
   end
 end
