@@ -31,7 +31,7 @@ class StartPeriodicReportsCreatingRecordsTask
       # create_jobs(requests)
     end
 
-    @slack.post_message("Finished user_ids=#{@user_ids.size} period=#{@period} threads=#{@threads}", thread_ts: @last_response['ts']) rescue nil
+    @slack.post_message("Finished user_ids=#{@user_ids.size} period=#{@period} threads=#{@threads}", thread_ts: @last_response['ts'])
     nil
   end
 
