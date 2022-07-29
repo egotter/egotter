@@ -7,13 +7,10 @@ class DeleteTweetWorker
   #   last_tweet
   def perform(user_id, tweet_id, options = {})
     request = DeleteTweetsRequest.find(options['request_id'])
-    return if request.stopped?
+    return if request.stopped_at
 
     client = User.find(user_id).api_client.twitter
-
-    if destroy_status!(client, tweet_id, request)
-      request.increment!(:destroy_count)
-    end
+    destroy_status!(client, tweet_id, request)
 
     if request.last_tweet == tweet_id || options['last_tweet']
       SendDeleteTweetsFinishedMessageWorker.perform_in(5.seconds, request.id)
@@ -34,6 +31,7 @@ class DeleteTweetWorker
 
   def destroy_status!(client, tweet_id, request)
     client.destroy_status(tweet_id)
+    request.increment!(:destroy_count)
   rescue => e
     request.update(error_class: e.class, error_message: e.message)
     request.increment!(:errors_count)

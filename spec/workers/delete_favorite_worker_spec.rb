@@ -16,8 +16,7 @@ RSpec.describe DeleteFavoriteWorker do
   describe '#perform' do
     subject { worker.perform(user.id, tweet_id, 'request_id' => request.id) }
     it do
-      expect(worker).to receive(:destroy_favorite!).with(client, tweet_id, request).and_return('result')
-      expect(request).to receive(:increment!).with(:destroy_count)
+      expect(worker).to receive(:destroy_favorite!).with(client, tweet_id, request)
       subject
     end
 
@@ -41,6 +40,7 @@ RSpec.describe DeleteFavoriteWorker do
     context 'deletion succeeded' do
       it do
         expect(client).to receive(:unfavorite!).with(tweet_id)
+        expect(request).to receive(:increment!).with(:destroy_count)
         subject
       end
     end
@@ -54,6 +54,7 @@ RSpec.describe DeleteFavoriteWorker do
       end
 
       it do
+        expect(request).not_to receive(:increment!).with(:destroy_count)
         expect(request).to receive(:update).with(error_class: error.class, error_message: error.message)
         expect(request).to receive(:increment!).with(:errors_count)
         expect(request).to receive(:too_many_errors?)

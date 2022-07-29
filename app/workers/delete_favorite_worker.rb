@@ -7,15 +7,10 @@ class DeleteFavoriteWorker
   #   last_tweet
   def perform(user_id, tweet_id, options = {})
     request = DeleteFavoritesRequest.find(options['request_id'])
-    if request.stopped_at
-      Airbag.info "This request is already stopped user_id=#{user_id} tweet_id=#{tweet_id} options=#{options.inspect}"
-      return
-    end
+    return if request.stopped_at
 
     client = User.find(user_id).api_client.twitter
-    if destroy_favorite!(client, tweet_id, request)
-      request.increment!(:destroy_count)
-    end
+    destroy_favorite!(client, tweet_id, request)
 
     if options['last_tweet']
       SendDeleteFavoritesFinishedMessageWorker.perform_in(5.seconds, request.id)
@@ -36,6 +31,7 @@ class DeleteFavoriteWorker
 
   def destroy_favorite!(client, tweet_id, request)
     client.unfavorite!(tweet_id)
+    request.increment!(:destroy_count)
   rescue => e
     request.update(error_class: e.class, error_message: e.message)
     request.increment!(:errors_count)
