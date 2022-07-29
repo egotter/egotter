@@ -9,6 +9,7 @@ class CreateDeleteTweetsBySearchRequests < ActiveRecord::Migration[6.0]
       t.text     :error_message,      null: true
       t.json     :filters
       t.json     :tweet_ids
+      t.datetime :started_at,         null: true, default: nil
       t.datetime :finished_at,        null: true, default: nil
 
       t.timestamps null: false
