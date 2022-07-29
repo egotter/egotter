@@ -4,6 +4,7 @@ class CreateDeleteTweetsBySearchRequests < ActiveRecord::Migration[6.0]
       t.integer  :user_id,            null: false
       t.integer  :reservations_count, null: false, default: 0
       t.integer  :deletions_count,    null: false, default: 0
+      t.integer  :errors_count,       null: false, default: 0
       t.boolean  :send_dm,            null: false, default: false
       t.boolean  :post_tweet,         null: false, default: false
       t.text     :error_message,      null: true

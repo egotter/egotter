@@ -502,6 +502,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.integer "user_id", null: false
     t.integer "reservations_count", default: 0, null: false
     t.integer "deletions_count", default: 0, null: false
+    t.integer "errors_count", default: 0, null: false
     t.boolean "send_dm", default: false, null: false
     t.boolean "post_tweet", default: false, null: false
     t.text "error_message"

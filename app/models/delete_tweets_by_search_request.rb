@@ -6,6 +6,7 @@
 #  user_id            :integer          not null
 #  reservations_count :integer          default(0), not null
 #  deletions_count    :integer          default(0), not null
+#  errors_count       :integer          default(0), not null
 #  send_dm            :boolean          default(FALSE), not null
 #  post_tweet         :boolean          default(FALSE), not null
 #  error_message      :text(65535)
