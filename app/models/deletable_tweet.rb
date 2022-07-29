@@ -42,31 +42,16 @@ class DeletableTweet < ApplicationRecord
   end
 
   def delete_tweet!
-    destroy_status!
+    user.api_client.twitter.destroy_status(tweet_id)
+    update(deleted_at: Time.zone.now)
   rescue => e
+    Airbag.info '#delete_tweet! failed', exception: e.inspect, uid: uid, tweet_id: tweet_id
     update(deletion_reserved_at: nil)
     # TODO update(deletion_failed_at: Time.zone.now)
     raise
   end
 
   private
-
-  def destroy_status!
-    user.api_client.twitter.destroy_status(tweet_id)
-    update(deleted_at: Time.zone.now)
-  rescue => e
-    if TwitterApiStatus.invalid_or_expired_token?(e) ||
-        TwitterApiStatus.suspended?(e) ||
-        TweetStatus.no_status_found?(e) ||
-        TweetStatus.not_authorized?(e) ||
-        TweetStatus.temporarily_locked?(e) ||
-        TweetStatus.that_page_does_not_exist?(e) ||
-        TweetStatus.forbidden?(e)
-      nil
-    else
-      raise
-    end
-  end
 
   class << self
     def reserve_deletion(user, tweet_ids)
