@@ -22,7 +22,7 @@ class CreateTwitterDBSortCacheWorker
   private
 
   def do_perform(sort_value, uids)
-    sort = TwitterDB::Sort.new(sort_value).without_cache
+    sort = TwitterDB::Sort.new(sort_value).without_cache.timeout(30)
     sort.threads(4) if uids.size > 10000
 
     sorted_uids = sort.apply(TwitterDB::User, uids)
