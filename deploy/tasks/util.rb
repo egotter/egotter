@@ -1,5 +1,7 @@
 module Tasks
   module Util
+    module_function
+
     def logger
       Deploy.logger
     end
@@ -24,40 +26,93 @@ module Tasks
       "\e[33m#{str}\e[0m"
     end
 
+    def gray(str)
+      "\e[90m#{str}\e[0m"
+    end
+
     def exec_command(ip_address, cmd, dir: '/var/egotter', exception: true, colored: true)
-      cmd = "cd #{dir} && #{cmd}"
-      ssh_cmd = "ssh -i ~/.ssh/egotter.pem ec2-user@#{ip_address}"
-
-      if colored
-        logger.info cyan(ssh_cmd) + ' ' + green(%Q("#{cmd}"))
-      else
-        logger.info ssh_cmd + ' ' + %Q("#{cmd}")
-      end
-
-      start = Time.now
-      out, err, status = Open3.capture3(%Q(#{ssh_cmd} "#{cmd}"))
-      elapsed = Time.now - start
-      out = out.to_s.chomp
-      err = err.to_s.chomp
-
-      logger.info out unless out.empty?
-
-      if status.exitstatus == 0
-        logger.info blue("success elapsed=#{sprintf("%.3f sec", elapsed)}\n")
-      else
-        if exception
-          raise "error='#{err}' command='#{cmd}' elapsed=#{sprintf("%.3f sec", elapsed)}" unless err.empty?
-        else
-          logger.info err unless err.empty?
-          logger.error red("fail(continue) elapsed=#{sprintf("%.3f sec", elapsed)}\n")
-        end
-      end
-
-      status.exitstatus == 0
+      command = Command.new(cmd).dir(dir).color(colored).exception(exception)
+      command.ssh("ssh -i ~/.ssh/egotter.pem ec2-user@#{ip_address}") if !ip_address.nil? && !ip_address.empty?
+      command.run
     end
 
     def ssh_connection_test(ip_address)
       exec_command(ip_address, 'echo "ssh connection test"')
+    end
+
+    class Command
+      def initialize(cmd)
+        @cmd = cmd
+      end
+
+      def dir(value)
+        @dir = value
+        self
+      end
+
+      def ssh(value)
+        @ssh = value
+        self
+      end
+
+      def color(value)
+        @color = value
+        self
+      end
+
+      def exception(value)
+        @exception = value
+        self
+      end
+
+      def run
+        logger.info colorize_message
+
+        cmd = @cmd
+        cmd = "cd #{@dir} && #{cmd}" unless empty?(@dir)
+        cmd = %Q(#{@ssh} "#{cmd}") unless empty?(@ssh)
+
+        start = Time.now
+        out, err, status = Open3.capture3(cmd)
+        elapsed = Time.now - start
+        out = out.to_s.chomp
+        err = err.to_s.chomp
+
+        logger.info out unless out.empty?
+
+        if status.exitstatus == 0
+          logger.info Util.blue("succeeded elapsed=#{sprintf("%.3f sec", elapsed)}\n")
+        else
+          if @exception
+            logger.error Util.red(err) unless err.empty?
+            logger.error Util.red("failed elapsed=#{sprintf("%.3f sec", elapsed)}\n")
+            raise "failed command='#{cmd}' elapsed=#{sprintf("%.3f sec", elapsed)}" unless err.empty?
+          else
+            logger.warn Util.yellow(err) unless err.empty?
+            logger.warn Util.yellow("failed elapsed=#{sprintf("%.3f sec", elapsed)}\n")
+          end
+        end
+
+        status.exitstatus == 0
+      end
+
+      private
+
+      def colorize_message
+        if @color
+          Util.gray((empty?(@ssh) ? 'localhost' : @ssh) + ' cd ' + @dir + ' &&') + ' ' + @cmd
+        else
+          (empty?(@ssh) ? 'localhost' : @ssh + ' cd ' + @dir + ' &&') + ' ' + @cmd
+        end
+      end
+
+      def empty?(value)
+        value.nil? || value.empty?
+      end
+
+      def logger
+        Deploy.logger
+      end
     end
   end
 end
