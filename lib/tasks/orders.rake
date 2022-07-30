@@ -1,16 +1,26 @@
 namespace :orders do
   task update_stripe_attributes: :environment do |task|
     processed_count = 0
+    order_ids = []
     check_email_time = (1.hour + 5.minutes).ago
+    start = Time.zone.now
 
-    Order.where(canceled_at: nil).find_each.with_index do |order, i|
+    Order.select(:id).where(canceled_at: nil).find_in_batches do |orders|
+      order_ids.concat(orders.map(&:id))
+    end
+
+    order_ids.each.with_index do |id, i|
+      order = Order.select(:id, :created_at).find(id)
       SyncOrderEmailWorker.new.perform(order.id) if order.created_at > check_email_time
       SyncOrderSubscriptionWorker.new.perform(order.id)
       processed_count += 1
-      sleep (0.1 * i).floor
+
+      if Time.zone.now - start > 50.minutes
+        raise "#{task.name}: Timeout total=#{order_ids.size} processed=#{processed_count} elapsed=#{Time.zone.now - start}"
+      end
     end
 
-    Airbag.info "#{task.name}: processed_count=#{processed_count}"
+    Airbag.info "#{task.name}: Finished total=#{order_ids.size} processed=#{processed_count} elapsed=#{Time.zone.now - start}"
   end
 
   task print_statuses: :environment do
