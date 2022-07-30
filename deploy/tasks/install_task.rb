@@ -28,7 +28,7 @@ module Tasks
         exec_command("sudo test -f #{file}", exception: false, file_cmd: true)
       end
 
-      def run_copy(src, dst)
+      def copy(src, dst)
         raise 'Cannot specify wildcard characters' if src.include?('*') || dst.include?('*')
         raise 'src not found' unless exists?(src)
 
@@ -46,7 +46,7 @@ module Tasks
       def upload_file(src, dst)
         tmp = File.join('/var/egotter', "#{File.basename(dst)}.#{Time.now.to_f}.#{Process.pid}.tmp")
         rsync(src, tmp)
-        run_copy(tmp, dst)
+        copy(tmp, dst)
       ensure
         exec_command("rm #{tmp}") if exists?(tmp)
       end
@@ -121,11 +121,11 @@ module Tasks
         backend('crontab -r || :')
         backend('sudo crontab -r || :')
 
-        run_copy('./setup/etc/crontab', '/etc/crontab')
+        copy('./setup/etc/crontab', '/etc/crontab')
         backend('sudo chown root:root /etc/crontab')
         backend('sudo chmod 644 /etc/crontab')
 
-        run_copy('./setup/var/spool/cron/ec2-user', '/var/spool/cron/ec2-user')
+        copy('./setup/var/spool/cron/ec2-user', '/var/spool/cron/ec2-user')
         backend('sudo chown ec2-user:ec2-user /var/spool/cron/ec2-user')
         backend('sudo chmod 644 /var/spool/cron/ec2-user')
 
@@ -133,26 +133,26 @@ module Tasks
       end
 
       def update_nginx
-        run_copy('./setup/etc/nginx/nginx.conf', '/etc/nginx/nginx.conf')
+        copy('./setup/etc/nginx/nginx.conf', '/etc/nginx/nginx.conf')
         self
       end
 
       def update_puma
-        run_copy('./setup/etc/init/puma.conf', '/etc/init/puma.conf')
+        copy('./setup/etc/init/puma.conf', '/etc/init/puma.conf')
         self
       end
 
       def update_sidekiq
-        run_copy('./setup/etc/init/sidekiq.conf', '/etc/init/sidekiq.conf')
-        run_copy('./setup/etc/init/sidekiq_misc.conf', '/etc/init/sidekiq_misc.conf')
-        run_copy('./setup/etc/init/_sidekiq.conf', '/etc/init/_sidekiq.conf')
-        run_copy('./setup/etc/init/_sidekiq_misc.conf', '/etc/init/_sidekiq_misc.conf')
+        copy('./setup/etc/init/sidekiq.conf', '/etc/init/sidekiq.conf')
+        copy('./setup/etc/init/sidekiq_misc.conf', '/etc/init/sidekiq_misc.conf')
+        copy('./setup/etc/init/_sidekiq.conf', '/etc/init/_sidekiq.conf')
+        copy('./setup/etc/init/_sidekiq_misc.conf', '/etc/init/_sidekiq_misc.conf')
         self
       end
 
       def update_datadog
         backend('sudo mkdir -p /etc/datadog-agent/conf.d/sidekiq.d')
-        run_copy('./setup/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml', '/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml')
+        copy('./setup/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml', '/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml')
         self
       end
 
@@ -169,7 +169,7 @@ module Tasks
           backend(cmd)
         end
 
-        run_copy("./setup#{dir}/etc/amazon-cloudwatch-agent.json", "#{dir}/etc/amazon-cloudwatch-agent.json")
+        copy("./setup#{dir}/etc/amazon-cloudwatch-agent.json", "#{dir}/etc/amazon-cloudwatch-agent.json")
 
         [
             "sudo rm #{dir}/etc/amazon-cloudwatch-agent.d/default",
@@ -209,7 +209,7 @@ module Tasks
             pull_latest_code.
             update_bashrc.
             update_env.
-            run_copy('./setup/root/.irbrc', '/root/.irbrc').
+            copy('./setup/root/.irbrc', '/root/.irbrc').
             update_datadog.
             update_cwagent.
             precompile.
@@ -261,7 +261,7 @@ module Tasks
             pull_latest_code.
             update_bashrc.
             update_env.
-            run_copy('./setup/root/.irbrc', '/root/.irbrc').
+            copy('./setup/root/.irbrc', '/root/.irbrc').
             update_datadog.
             update_cwagent.
             update_crontab.
@@ -320,7 +320,7 @@ module Tasks
       def sync
         update_misc.
             pull_latest_code.
-            run_copy('./setup/root/.irbrc', '/root/.irbrc').
+            copy('./setup/root/.irbrc', '/root/.irbrc').
             update_datadog.
             update_cwagent.
             update_crontab.
