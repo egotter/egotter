@@ -21,11 +21,11 @@ module Tasks
       end
 
       def diff?(*files)
-        !exec_command("sudo colordiff -u #{files[0]} #{files[1]}", exception: false, status: true)
+        !exec_command("sudo colordiff -u #{files[0]} #{files[1]}", exception: false, diff_cmd: true)
       end
 
       def exists?(file)
-        exec_command("sudo test -f #{file}", exception: false, status: true)
+        exec_command("sudo test -f #{file}", exception: false, file_cmd: true)
       end
 
       def run_copy(src, dst)
