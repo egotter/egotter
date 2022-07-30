@@ -1,4 +1,9 @@
-<p><%= t('.message_html', url: sign_in_path(via: current_via)) %></p>
+<% if user_signed_in? %>
+  <p class="mt-3"><%= t('.user_message_html', url: sign_in_path(via: current_via)) %></p>
+<% else %>
+  <p class="mt-3"><%= t('.visitor_message_html', url: sign_in_path(via: current_via)) %></p>
+<% end %>
+
 <p><%= t('error_pages.support_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></p>
 
 <div class="text-center">

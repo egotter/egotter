@@ -1547,7 +1547,8 @@ ja:
     internal_server_error:
       message_html: '一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     request_timeout_error:
-      message_html: 'アクセスが多すぎてリクエストがタイムアウトしました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      user_message_html: 'アクセスが多すぎてリクエストがタイムアウトしました。アクセスの少ない時間帯に再度お試しください。'
+      visitor_message_html: 'アクセスが多すぎてリクエストがタイムアウトしました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     csrf_error:
       message_html: 'ページの有効期限が切れました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     trends_section:
