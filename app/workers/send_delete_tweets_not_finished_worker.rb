@@ -1,6 +1,5 @@
 class SendDeleteTweetsNotFinishedWorker
   include Sidekiq::Worker
-  include WorkerErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   # options:
@@ -11,6 +10,6 @@ class SendDeleteTweetsNotFinishedWorker
       SendMessageToSlackWorker.perform_async(:monit_delete_tweets, "`Not finished` #{request.to_message}")
     end
   rescue => e
-    handle_worker_error(e, request_id: request_id, options: options)
+    Airbag.exception e, request_id: request_id, options: options
   end
 end
