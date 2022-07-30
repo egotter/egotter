@@ -2,7 +2,8 @@ module Directory
   class TimelinesController < ApplicationController
 
     rescue_from Rack::Timeout::RequestTimeoutException do |e|
-      head :request_timeout
+      Airbag.exception e, request_details
+      head :request_timeout unless performed?
     end
 
     NUM_REGEXP = /\A\d{1,2}\z/
