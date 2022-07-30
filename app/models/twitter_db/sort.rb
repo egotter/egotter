@@ -15,6 +15,7 @@ module TwitterDB
       @value = value && VALUES.include?(value) ? value : VALUES[0]
       @slice = 1000
       @threshold = 5000
+      @limit = 50000
       @threads = 0
       @timeout = 8
     end
@@ -56,6 +57,11 @@ module TwitterDB
         return uids.reverse
       end
 
+      if uids.size > @limit
+        Airbag.info 'TwitterDB::Sort: There are too many uids to sort', value: @value
+        raise TooManySortTargets
+      end
+
       if @without_cache
         Airbag.info 'TwitterDB::Sort: Sort uids because :without_cache is specified', value: @value
       else
@@ -75,7 +81,7 @@ module TwitterDB
             end
           end
         else
-          Airbag.info 'TwitterDB::Sort: Sort uids because the size of uids is small enough', value: @value
+          Airbag.info 'TwitterDB::Sort: Sort uids because the size is small enough', value: @value
         end
       end
 
@@ -155,10 +161,6 @@ module TwitterDB
       end
     end
 
-    # TODO Remove later
-    class TimeoutError < StandardError
-    end
-
     class SafeTimeout < StandardError
     end
 
@@ -172,6 +174,12 @@ module TwitterDB
     end
 
     class AlreadyCreatingCache < CreatingCache
+    end
+
+    class TooManySortTargets < StandardError
+      def initialize
+        super('')
+      end
     end
   end
 end

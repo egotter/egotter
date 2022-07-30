@@ -27,6 +27,19 @@ RSpec.describe Api::BaseController, type: :controller do
     end
 
     [
+        TwitterDB::Sort::TooManySortTargets,
+    ].each do |error_class|
+      context "#{error_class} is raised" do
+        let(:error) { error_class.new }
+        before { allow(TwitterDB::Proxy).to receive(:new).with(anything).and_raise(error) }
+        it do
+          expect(controller).to receive(:render).with(json: {name: 'base', message: instance_of(String)}, status: :bad_request)
+          subject
+        end
+      end
+    end
+
+    [
         TwitterDB::Sort::SafeTimeout,
         TwitterDB::Sort::CreatingCache,
         TwitterDB::Sort::CreatingCacheStarted,
@@ -36,7 +49,7 @@ RSpec.describe Api::BaseController, type: :controller do
         let(:error) { error_class.new }
         before { allow(TwitterDB::Proxy).to receive(:new).with(anything).and_raise(error) }
         it do
-          expect(controller).to receive(:head).with(:request_timeout)
+          expect(controller).to receive(:render).with(json: {name: 'base', message: instance_of(String)}, status: :request_timeout)
           subject
         end
       end

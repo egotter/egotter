@@ -55,19 +55,29 @@ class FetchTask {
   }
 
   errorReceived(xhr, textStatus, errorThrown) {
-    if (++this.errorCount <= this.retryLimit) {
-      logger.log('Retry fetching', this.errorCount);
-      var self = this;
-      setTimeout(function () {
-        self.loading = false;
-        self.fetch();
-      }, this.retryInterval);
-    } else {
-      logger.log('Retry exhausted');
+    var runCallback = false;
+
+    if (xhr.status === 400) {
+      logger.log('Bad request');
       showErrorMessage(xhr, textStatus, errorThrown);
-      if (this.errCallback) {
-        this.errCallback();
+      runCallback = true;
+    } else if (xhr.status === 408) {
+      if (++this.errorCount <= this.retryLimit) {
+        logger.log('Retry fetching', this.errorCount);
+        this.retryFetch();
+      } else {
+        logger.log('Retry exhausted');
+        showErrorMessage(xhr, textStatus, errorThrown);
+        runCallback = true;
       }
+    } else {
+      logger.log('Unknown error');
+      showErrorMessage(xhr, textStatus, errorThrown);
+      runCallback = true;
+    }
+
+    if (runCallback && this.errCallback) {
+      this.errCallback();
     }
   }
 
@@ -112,6 +122,14 @@ class FetchTask {
         self.errorReceived(xhr, textStatus, errorThrown);
       });
     }
+  }
+
+  retryFetch() {
+    var self = this;
+    setTimeout(function () {
+      self.loading = false;
+      self.fetch();
+    }, this.retryInterval);
   }
 
   updateState(res) {

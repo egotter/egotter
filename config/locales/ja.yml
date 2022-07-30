@@ -2230,6 +2230,10 @@ ja:
     stripe:
       already_purchased: '購入済み'
   api:
+    base:
+      list:
+        too_many_sort_targets_html: 'データが多すぎて並び替えできませんでした。アクセスの少ない時間帯に再度試してみてください。<br><br>もしくは、ダウンロードして手元のパソコンまたはスマートフォンで並び替えしてください。'
+        timeout: '一時的なエラーが起きました。ページを再読み込みしてください。'
     v1:
       payment_intents:
         create:
