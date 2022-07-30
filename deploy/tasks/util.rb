@@ -30,10 +30,9 @@ module Tasks
       "\e[90m#{str}\e[0m"
     end
 
-    def exec_command(ip_address, cmd, dir: '/var/egotter', exception: true, status: true, colored: true)
+    def exec_command(ip_address, cmd, dir: '/var/egotter', exception: true, status: true)
       command = Command.new(cmd).
           dir(dir).
-          color(colored).
           exception(exception).
           status(status)
       command.ssh("ssh -i ~/.ssh/egotter.pem ec2-user@#{ip_address}") if !ip_address.nil? && !ip_address.empty?
@@ -59,11 +58,6 @@ module Tasks
         self
       end
 
-      def color(value)
-        @color = value
-        self
-      end
-
       def exception(value)
         @exception = value
         self
@@ -75,7 +69,7 @@ module Tasks
       end
 
       def run
-        logger.info colorize_message
+        logger.info colorized_cmd
 
         cmd = @cmd
         cmd = "cd #{@dir} && #{cmd}" unless empty?(@dir)
@@ -109,12 +103,8 @@ module Tasks
 
       private
 
-      def colorize_message
-        if @color
-          Util.gray((empty?(@ssh) ? 'localhost' : @ssh) + ' cd ' + @dir + ' &&') + ' ' + @cmd
-        else
-          (empty?(@ssh) ? 'localhost' : @ssh + ' cd ' + @dir + ' &&') + ' ' + @cmd
-        end
+      def colorized_cmd
+        Util.gray((empty?(@ssh) ? 'localhost' : @ssh) + ' cd ' + @dir + ' &&') + ' ' + @cmd
       end
 
       def empty?(value)
