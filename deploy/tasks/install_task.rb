@@ -14,7 +14,7 @@ module Tasks
         super(@ip_address, *args)
       end
 
-      def run_rsync(src_path, dst_path)
+      def rsync(src_path, dst_path)
         cmd = "rsync -auz -e 'ssh -i ~/.ssh/egotter.pem' #{src_path} ec2-user@#{@ip_address}:#{dst_path}"
         logger.info gray("rsync -auz -e 'ssh -i ~/.ssh/egotter.pem'") + ' ' + "#{src_path} ec2-user@#{@ip_address}:#{dst_path}"
         system(cmd, exception: true)
@@ -45,7 +45,7 @@ module Tasks
 
       def upload_file(src, dst)
         tmp = File.join('/var/egotter', "#{File.basename(dst)}.#{Time.now.to_f}.#{Process.pid}.tmp")
-        run_rsync(src, tmp)
+        rsync(src, tmp)
         run_copy(tmp, dst)
       ensure
         exec_command("rm #{tmp}") if exists?(tmp)
