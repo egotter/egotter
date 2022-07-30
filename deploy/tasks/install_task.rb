@@ -39,8 +39,6 @@ module Tasks
         else
           logger.info "Diff not found src=#{src} dst=#{dst}"
         end
-
-        self
       end
 
       def upload_file(src, dst)
@@ -84,7 +82,6 @@ module Tasks
 
       def update_bashrc
         backend("sed -i -e 's/_HOSTNAME_/#{@name}/g' ~/.bashrc")
-        self
       end
 
       def install_td_agent(src)
@@ -97,8 +94,6 @@ module Tasks
 
         conf = ERB.new(File.read(src)).result_with_hash(options)
         upload_text(conf, '/etc/td-agent/td-agent.conf')
-
-        self
       end
 
       def pull_latest_code
@@ -107,14 +102,12 @@ module Tasks
         backend('bundle config set path ".bundle"')
         backend('bundle config set without "test development"')
         backend('bundle install | grep -v Using')
-        self
       end
 
       def precompile
         backend('RAILS_ENV=production bundle exec rake assets:precompile')
         backend('RAILS_ENV=production bundle exec rake assets:upload')
         backend('RAILS_ENV=production bundle exec rake assets:download')
-        self
       end
 
       def update_crontab
@@ -128,18 +121,14 @@ module Tasks
         copy('./setup/var/spool/cron/ec2-user', '/var/spool/cron/ec2-user')
         backend('sudo chown ec2-user:ec2-user /var/spool/cron/ec2-user')
         backend('sudo chmod 644 /var/spool/cron/ec2-user')
-
-        self
       end
 
       def update_nginx
         copy('./setup/etc/nginx/nginx.conf', '/etc/nginx/nginx.conf')
-        self
       end
 
       def update_puma
         copy('./setup/etc/init/puma.conf', '/etc/init/puma.conf')
-        self
       end
 
       def update_sidekiq
@@ -147,13 +136,11 @@ module Tasks
         copy('./setup/etc/init/sidekiq_misc.conf', '/etc/init/sidekiq_misc.conf')
         copy('./setup/etc/init/_sidekiq.conf', '/etc/init/_sidekiq.conf')
         copy('./setup/etc/init/_sidekiq_misc.conf', '/etc/init/_sidekiq_misc.conf')
-        self
       end
 
       def update_datadog
         backend('sudo mkdir -p /etc/datadog-agent/conf.d/sidekiq.d')
         copy('./setup/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml', '/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml')
-        self
       end
 
       def update_cwagent
@@ -178,8 +165,6 @@ module Tasks
         ].each do |cmd|
           backend(cmd)
         end
-
-        self
       end
 
       def update_misc
@@ -191,7 +176,6 @@ module Tasks
         ].each do |cmd|
           backend(cmd)
         end
-        self
       end
     end
 
@@ -205,22 +189,23 @@ module Tasks
       end
 
       def sync
-        update_misc.
-            pull_latest_code.
-            update_bashrc.
-            update_env.
-            copy('./setup/root/.irbrc', '/root/.irbrc').
-            update_datadog.
-            update_cwagent.
-            precompile.
-            update_crontab.
-            update_nginx.
-            update_puma.
-            install_td_agent('./setup/etc/td-agent/td-agent.web.conf.erb')
+        update_misc
+        pull_latest_code
+        update_bashrc
+        update_env
+        copy('./setup/root/.irbrc', '/root/.irbrc')
+        update_datadog
+        update_cwagent
+        precompile
+        update_crontab
+        update_nginx
+        update_puma
+        install_td_agent('./setup/etc/td-agent/td-agent.web.conf.erb')
       end
 
       def install
-        sync.restart_processes
+        sync
+        restart_processes
       rescue => e
         logger.error red("Terminate #{@id} since #{e.class} is raised")
         ::Deploy::Aws::EC2.new.terminate_instance(@id)
@@ -229,7 +214,6 @@ module Tasks
 
       def update_env
         upload_env('env/web.env.enc')
-        self
       end
 
       def restart_processes
@@ -242,8 +226,6 @@ module Tasks
         ].each do |cmd|
           backend(cmd)
         end
-
-        self
       end
     end
 
@@ -257,20 +239,21 @@ module Tasks
       end
 
       def sync
-        update_misc.
-            pull_latest_code.
-            update_bashrc.
-            update_env.
-            copy('./setup/root/.irbrc', '/root/.irbrc').
-            update_datadog.
-            update_cwagent.
-            update_crontab.
-            update_sidekiq.
-            install_td_agent('./setup/etc/td-agent/td-agent.sidekiq.conf.erb')
+        update_misc
+        pull_latest_code
+        update_bashrc
+        update_env
+        copy('./setup/root/.irbrc', '/root/.irbrc')
+        update_datadog
+        update_cwagent
+        update_crontab
+        update_sidekiq
+        install_td_agent('./setup/etc/td-agent/td-agent.sidekiq.conf.erb')
       end
 
       def install
-        sync.restart_processes
+        sync
+        restart_processes
       rescue => e
         logger.error red("Terminate #{@id} since #{e.class} is raised")
         before_terminate
@@ -280,7 +263,6 @@ module Tasks
 
       def update_env
         upload_env('env/sidekiq.env.enc')
-        self
       end
 
       def restart_processes
@@ -294,8 +276,6 @@ module Tasks
         ].each do |cmd|
           backend(cmd)
         end
-
-        self
       end
 
       def before_terminate
@@ -318,20 +298,21 @@ module Tasks
       end
 
       def sync
-        update_misc.
-            pull_latest_code.
-            copy('./setup/root/.irbrc', '/root/.irbrc').
-            update_datadog.
-            update_cwagent.
-            update_crontab.
-            update_nginx.
-            update_puma.
-            update_sidekiq.
-            install_td_agent('./setup/etc/td-agent/td-agent.web.conf.erb')
+        update_misc
+        pull_latest_code
+        copy('./setup/root/.irbrc', '/root/.irbrc')
+        update_datadog
+        update_cwagent
+        update_crontab
+        update_nginx
+        update_puma
+        update_sidekiq
+        install_td_agent('./setup/etc/td-agent/td-agent.web.conf.erb')
       end
 
       def install
-        sync.stop_processes
+        sync
+        stop_processes
       rescue => e
         logger.error red("Terminate #{@id} since #{e.class} is raised")
         ::Deploy::Aws::EC2.new.terminate_instance(@id)
@@ -349,8 +330,6 @@ module Tasks
         ].each do |cmd|
           backend(cmd)
         end
-
-        self
       end
     end
   end
