@@ -83,6 +83,7 @@ class ImportTwitterDBUserWorker
 
     def start
       start_time = Time.zone.now
+      @looped_count = 0
       @processed_count = 0
       @errors_count = 0
 
@@ -103,12 +104,13 @@ class ImportTwitterDBUserWorker
           break
         end
 
+        @looped_count += 1
         sleep 0.5
       end
     end
 
     def format_progress
-      "processed=#{@processed_count}#{" errors=#{@errors_count}" if @errors_count > 0}"
+      "looped=#{@looped_count} processed=#{@processed_count}#{" errors=#{@errors_count}" if @errors_count > 0}"
     end
 
     private
