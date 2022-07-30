@@ -30,8 +30,12 @@ module Tasks
       "\e[90m#{str}\e[0m"
     end
 
-    def exec_command(ip_address, cmd, dir: '/var/egotter', exception: true, colored: true)
-      command = Command.new(cmd).dir(dir).color(colored).exception(exception)
+    def exec_command(ip_address, cmd, dir: '/var/egotter', exception: true, status: true, colored: true)
+      command = Command.new(cmd).
+          dir(dir).
+          color(colored).
+          exception(exception).
+          status(status)
       command.ssh("ssh -i ~/.ssh/egotter.pem ec2-user@#{ip_address}") if !ip_address.nil? && !ip_address.empty?
       command.run
     end
@@ -65,6 +69,11 @@ module Tasks
         self
       end
 
+      def status(value)
+        @status = value
+        self
+      end
+
       def run
         logger.info colorize_message
 
@@ -78,10 +87,12 @@ module Tasks
         out = out.to_s.chomp
         err = err.to_s.chomp
 
-        logger.info out unless out.empty?
+        unless out.empty?
+          logger.info out
+        end
 
         if status.exitstatus == 0
-          logger.info Util.blue("succeeded elapsed=#{sprintf("%.3f sec", elapsed)}\n")
+          logger.info Util.blue("succeeded elapsed=#{sprintf("%.3f sec", elapsed)}\n") if @status
         else
           if @exception
             logger.error Util.red(err) unless err.empty?
@@ -89,7 +100,7 @@ module Tasks
             raise "failed command='#{cmd}' elapsed=#{sprintf("%.3f sec", elapsed)}" unless err.empty?
           else
             logger.warn Util.yellow(err) unless err.empty?
-            logger.warn Util.yellow("failed elapsed=#{sprintf("%.3f sec", elapsed)}\n")
+            logger.warn Util.yellow("failed elapsed=#{sprintf("%.3f sec", elapsed)}\n") if @status
           end
         end
 
