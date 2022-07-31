@@ -161,7 +161,7 @@ module Logging
         ip:          request.ip,
         method:      request.method,
         status:      response.status,
-        user_agent:  ensure_utf8(request.user_agent).truncate(180),
+        user_agent:  ensure_utf8(request.user_agent).to_s.truncate(180),
     }
 
     CreateWebhookLogWorker.perform_async(attrs)
