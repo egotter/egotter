@@ -32,3 +32,7 @@ Ahoy.geocode = false
 Safely.report_exception_method = Proc.new do |e, context|
   Airbag.exception e, location: 'Safely.report_exception_method', context: context
 end
+
+Rails.application.reloader.to_prepare do
+  Ahoy::EventsController.include(RequestErrorHandler)
+end
