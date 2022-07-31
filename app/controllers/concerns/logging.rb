@@ -235,9 +235,6 @@ module Logging
   end
 
   def ensure_utf8(str)
-    return '' if str.nil?
-    str.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-  rescue
-    str
+    str.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '') if str
   end
 end

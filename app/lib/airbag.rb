@@ -106,11 +106,13 @@ class Airbag
 
   def truncate_string(obj, length = 200)
     if obj.is_a?(String)
-      obj.truncate(length)
+      ensure_utf8(obj).truncate(length)
     elsif obj.is_a?(Symbol)
       obj.to_s.truncate(length)
-    else
+    elsif obj.is_a?(Integer)
       obj
+    else
+      obj.inspect.truncate(length)
     end
   end
 
@@ -135,6 +137,10 @@ class Airbag
 
   def format_severity(severity)
     SEV_LABEL[severity] || 'ANY'
+  end
+
+  def ensure_utf8(str)
+    str.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '') if str
   end
 
   class << self
