@@ -1,3 +1,4 @@
+// Bootstrap's Toasts
 class ToastMessage {
   static ids = [];
 
@@ -11,8 +12,8 @@ class ToastMessage {
       body: message,
       time: this.currentTime(),
       autohide: true,
-      delay: 30000,
-      animation: false,
+      delay: 60000,
+      animation: true,
       ttl: 300
     }, options);
 
