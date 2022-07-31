@@ -32,6 +32,8 @@ module RequestErrorHandler
   end
 
   def handle_csrf_error(ex)
+    Airbag.info "handle_csrf_error: #{ex.inspect}", request_details
+
     if request.xhr?
       head :bad_request
     else
@@ -50,7 +52,7 @@ module RequestErrorHandler
         xhr: request.xhr?,
         fullpath: request.fullpath,
         referer: request.referer,
-        user_agent: user_signed_in? ? nil : request.user_agent,
+        user_agent: user_signed_in? ? nil : ensure_utf8(request.user_agent),
         params: request.method == 'GET' ? nil : request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token),
         twitter_user_id: @twitter_user&.id,
     }.compact
