@@ -1,4 +1,4 @@
 <%= javascript_pack_tag 'error_handler' %>
 <script>
-  new ErrorHandler({userId: '<%= current_user&.id %>', visitId: '<%= current_visit&.id %>', controllerAction: '<%= "#{controller_name}##{action_name}" %>', deviceType: '<%= request.device_type %>', os: '<%= request.os + ' ' + request.os_version %>', browser: '<%= request.browser + ' ' + request.browser_version %>'});
+  new ErrorHandler({userId: '<%= current_user&.id %>', visitId: '<%= current_visit&.id %>', method: '<%= request.method %>', controllerAction: '<%= "#{controller_name}##{action_name}" %>', deviceType: '<%= request.device_type %>', os: '<%= request.os + ' ' + request.os_version %>', browser: '<%= request.browser + ' ' + request.browser_version %>'});
 </script>

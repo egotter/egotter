@@ -2,6 +2,7 @@ class ErrorHandler {
   constructor(attrs) {
     this.userId = attrs['userId'];
     this.visitId = attrs['visitId'];
+    this.method = attrs['method'];
     this.controllerAction = attrs['controllerAction'];
     this.deviceType = attrs['deviceType'];
     this.os = attrs['os'];
@@ -37,6 +38,7 @@ class ErrorHandler {
         browser: this.browser,
         cookie: navigator.cookieEnabled,
         message: message,
+        method: this.method,
         path: window.location.href,
         referer: document.referrer
       })
@@ -45,7 +47,7 @@ class ErrorHandler {
     try {
       if (window.ga) {
         window.ga('send', eventParams);
-        console.warn('Sent JS Exception to GA', eventParams);
+        console.warn('Sent ' + eventName + ' to GA', eventParams);
       } else {
         console.warn('ga is not defined', eventName, eventParams);
       }
@@ -55,26 +57,30 @@ class ErrorHandler {
   }
 
   sendAhoy(kind, message) {
-    if (this.controllerAction === 'home#new') {
-      var eventName = 'JS Exception (' + kind + ')';
-      var eventParams = {
-        os: this.os,
-        browser: this.browser,
-        cookie: navigator.cookieEnabled,
-        message: message,
-        path: window.location.href,
-        referer: document.referrer
-      };
+    if (this.controllerAction !== 'home#new') {
+      return;
+    }
 
-      try {
-        if (ahoy) {
-          ahoy.track(eventName, eventParams);
-        } else {
-          console.warn('ahoy is not defined', eventName, eventParams);
-        }
-      } catch (e) {
-        console.error('Sending JS Exception to ahoy failed', e);
+    var eventName = 'JS Exception (' + kind + ')';
+    var eventParams = {
+      os: this.os,
+      browser: this.browser,
+      cookie: navigator.cookieEnabled,
+      message: message,
+      method: this.method,
+      path: window.location.href,
+      referer: document.referrer
+    };
+
+    try {
+      if (ahoy) {
+        ahoy.track(eventName, eventParams);
+        console.warn('Sent ' + eventName + ' to Ahoy', eventParams);
+      } else {
+        console.warn('ahoy is not defined', eventName, eventParams);
       }
+    } catch (e) {
+      console.error('Sending JS Exception to ahoy failed', e);
     }
   }
 }
