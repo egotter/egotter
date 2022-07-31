@@ -12,10 +12,9 @@ Rails.application.reloader.to_prepare do
   end
 
   Airbag.broadcast do |level, message, props, ctx|
-    if level > Logger::INFO
-      channel = Rails.env.production? ? :airbag : :airbag_dev
+    if level >= Logger::WARN
       message = "#{Airbag.format_hash(ctx)} #{Airbag.format_severity(level)}: #{message.truncate(1000)} #{Airbag.format_hash(props)}"
-      SendMessageToSlackWorker.perform_async(channel, message)
+      SendAirbagMessageToSlackWorker.perform_in(10, message)
     end
   rescue => e
     Rails.logger.error "initializers/airbag.rb: target=slack #{e.inspect}"
