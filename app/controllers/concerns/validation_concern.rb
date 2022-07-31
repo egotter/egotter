@@ -22,9 +22,16 @@ module ValidationConcern
     end
   end
 
+  DENY_IPV4_PREFIXES = File.read(Rails.root.join('config/deny_ipv4_prefixes.txt')).split("\n").uniq.map { |str| IPAddr.new(str) }
+
+  def deny_ip?(ip)
+    DENY_IPV4_PREFIXES.any? { |addr| addr.include?(ip) } rescue false
+  end
+
   def reject_spam_ip!
     return if stripe_webhook?
-    return unless !user_signed_in? && request.remote_ip.to_s.match?(/\A3[45]\./)
+    return if user_signed_in?
+    return unless deny_ip?(request.remote_ip.to_s)
 
     if request.xhr?
       head :forbidden
