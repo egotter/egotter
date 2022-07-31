@@ -10,12 +10,6 @@ redis_options = {
     driver: :hiredis
 }
 
-error_handler = Proc.new do |e, context|
-  Airbag.exception e, method: 'Sidekiq.error_handler', context: context
-rescue => ee
-  Sidekiq.logger.error "Sidekiq.error_handler: original=#{e.inspect.truncate(200)} current=#{ee.inspect.truncate(200)} context=#{context}"
-end
-
 Sidekiq.configure_server do |config|
   config.redis = ConnectionPool.new(size: 20, timeout: 1) { Redis.new(host: ENV['REDIS_HOST'], db: database) }
 
@@ -28,7 +22,16 @@ Sidekiq.configure_server do |config|
     chain.add UniqueJob::ClientMiddleware, redis_options
   end
 
-  config.error_handlers << error_handler
+  config.error_handlers << Proc.new do |e, context|
+    Airbag.exception e, location: 'Sidekiq.error_handler', context: context
+  rescue => ee
+    Sidekiq.logger.error "Sidekiq.error_handler: #{ee.inspect} context=#{context}"
+    Sidekiq.logger.error "Sidekiq.error_handler: #{ee.backtrace.join("\n")}"
+    if ee.cause
+      Sidekiq.logger.error "Sidekiq.error_handler: cause: #{ee.cause.inspect}"
+      Sidekiq.logger.error "Sidekiq.error_handler: cause: #{ee.cause.backtrace.join("\n")}"
+    end
+  end
 end
 
 Sidekiq.configure_client do |config|
