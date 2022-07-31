@@ -112,7 +112,7 @@ class Airbag
     elsif obj.is_a?(Integer)
       obj
     else
-      obj.inspect.truncate(length)
+      obj
     end
   end
 

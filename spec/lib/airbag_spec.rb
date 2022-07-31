@@ -74,6 +74,15 @@ RSpec.describe Airbag, type: :model do
     end
   end
 
+  describe '#truncate_string' do
+    it do
+      expect(instance.truncate_string('aaa')).to eq('aaa')
+      expect(instance.truncate_string(:a)).to eq('a')
+      expect(instance.truncate_string(1)).to eq(1)
+      expect(instance.truncate_string(['aaa', 'bbb'])).to eq(['aaa', 'bbb'])
+    end
+  end
+
   [:debug, :info, :warn, :error, :benchmark, :broadcast, :disable!].each do |method_name|
     describe ".#{method_name}" do
       subject { described_class.send(method_name) }
