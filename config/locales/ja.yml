@@ -1460,6 +1460,7 @@ ja:
   error_pages:
     support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
     api_not_authorized:
+      consecutive_access_message_html: 'このエラーは <a href="%{url}">ログイン</a> することで直ります。書いている内容をよく読んで、<a href="%{url}">ログイン</a> をクリックしてください。'
       message_html: '@%{user} のツイッター連携（API）が無効になっています。間違いの場合は <a href="%{url}">ログイン</a> すればすぐに元に戻ります。'
       reason_html: 'ログイン連携の取り消しや、<span class="text-danger">アカウントの削除</span>をするとこの状態になります。'
       solution: '解決策 %{n}'

@@ -19,8 +19,11 @@ class ErrorPagesController < ApplicationController
 
   def api_not_authorized
     if user_signed_in?
-      UpdateUserAttrsWorker.perform_async(current_user.id)
-      @screen_name = current_user.screen_name
+      user = current_user
+      UpdateUserAttrsWorker.perform_async(user.id)
+      @screen_name = user.screen_name
+      @consecutive_access = ConsecutiveApiNotAuthorizedFlag.on?(user.id)
+      ConsecutiveApiNotAuthorizedFlag.on(user.id)
     end
   end
 

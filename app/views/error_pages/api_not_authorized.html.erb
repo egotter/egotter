@@ -1,3 +1,14 @@
+<% if @consecutive_access %>
+  <%= alert_box category: 'primary', class: 'my-4' do %>
+    <%= t('.consecutive_access_message_html', url: sign_in_path(via: current_via('consecutive_access'))) %>
+  <% end %>
+  <script>
+    setTimeout(function () {
+      window.alert('<%= strip_tags(t('.consecutive_access_message_html', url: '')) %>');
+    }, 1000);
+  </script>
+<% end %>
+
 <p class="mt-3"><%= t('.message_html', user: @screen_name, url: sign_in_path(via: current_via)) %></p>
 <p><%= t('.reason_html') %></p>
 
