@@ -7,9 +7,11 @@ class EventTracker {
 
     var self = this;
 
-    window.trackPageEvents = function (pageName, eventName, eventParams) {
-      self.track(pageName, eventName, eventParams);
+    window.trackPageEvents = function () {
     };
+    // window.trackPageEvents = function (pageName, eventName, eventParams) {
+    //   self.track(pageName, eventName, eventParams);
+    // };
 
     window.trackMessageEvent = function (eventName) {
       self.trackMessageEvent(eventName);
