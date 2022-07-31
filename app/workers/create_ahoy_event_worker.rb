@@ -1,17 +1,11 @@
-# TODO Remove later
 class CreateAhoyEventWorker
   include Sidekiq::Worker
-  include WorkerErrorHandler
-  sidekiq_options queue: 'misc', retry: 0, backtrace: false
-
-  def expire_in
-    1.minute
-  end
+  sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
   # options:
-  def perform(name, properties, time, options = {})
-    Ahoy::Event.new(name: name, properties: properties, time: time).save!(validate: false)
+  def perform(attrs)
+    Ahoy::Event.create!(attrs)
   rescue => e
-    handle_worker_error(e, attrs: attrs, **options)
+    Airbag.exception e, attrs: attrs
   end
 end
