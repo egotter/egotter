@@ -36,11 +36,6 @@ class Airbag
 
     logger.add(level, message)
 
-    if level >= logger.level
-      CreateAirbagLogWorker.perform_async(
-          format_severity(level), raw_message.to_s.truncate(50000), truncate_hash(context.merge(props)), Time.zone.now)
-    end
-
     if @callbacks&.any?
       @callbacks.each do |blk|
         blk.call(level, raw_message, props, context)

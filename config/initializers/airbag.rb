@@ -2,6 +2,16 @@ Rails.application.reloader.to_prepare do
   Airbag.tags = {name: ENV['AWS_NAME_TAG'], role: Sidekiq.server? ? 'sidekiq' : 'web'}
 
   Airbag.broadcast do |level, message, props, ctx|
+    if level >= Logger::INFO
+      CreateAirbagLogWorker.perform_async(
+          Airbag.format_severity(level), message.to_s.truncate(50000), Airbag.truncate_hash(ctx.merge(props)), Time.zone.now)
+    end
+  rescue => e
+    Rails.logger.error "CreateAirbagLogWorker: #{e.inspect}"
+    Rails.logger.error e.backtrace.join("\n")
+  end
+
+  Airbag.broadcast do |level, message, props, ctx|
     if level > Logger::INFO
       channel = Rails.env.production? ? :airbag : :airbag_dev
       message = "#{Airbag.format_hash(ctx)} #{Airbag.format_severity(level)}: #{message.truncate(1000)} #{Airbag.format_hash(props)}"
