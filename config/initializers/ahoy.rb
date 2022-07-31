@@ -1,4 +1,17 @@
 class Ahoy::Store < Ahoy::DatabaseStore
+  def track_event(data)
+    visit = visit_or_create(started_at: data[:time])
+    if visit
+      event = event_model.new(slice_data(event_model, data))
+      event.visit = visit
+      event.time = visit.started_at if event.time < visit.started_at
+      CreateAhoyEventWorker.perform_async(event.attributes.except('id'))
+    else
+      Ahoy.log "Event excluded since visit not created: #{data[:visit_token]}"
+    end
+  rescue => e
+    Airbag.exception e, location: 'Ahoy::Store#track_event', data: data
+  end
 end
 
 # set to true for JavaScript tracking
