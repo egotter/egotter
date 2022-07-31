@@ -52,7 +52,7 @@ module RequestErrorHandler
         xhr: request.xhr?,
         fullpath: request.fullpath,
         referer: request.referer,
-        user_agent: user_signed_in? ? nil : ensure_utf8(request.user_agent).to_s,
+        user_agent: user_signed_in? ? nil : safe_user_agent,
         params: request.method == 'GET' ? nil : request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token),
         twitter_user_id: @twitter_user&.id,
     }.compact

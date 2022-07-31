@@ -41,7 +41,7 @@ module Logging
       os:          request.os,
       browser:     request.browser,
       ip:          request.ip,
-      user_agent:  ensure_utf8(request.user_agent).to_s.truncate(180),
+      user_agent:  safe_user_agent,
       referer:     request.referer.to_s.truncate(1000),
       created_at:  Time.zone.now
     }
@@ -107,7 +107,7 @@ module Logging
         os:          request.os,
         browser:     request.browser,
         ip:          request.ip,
-        user_agent:  ensure_utf8(request.user_agent).to_s.truncate(180),
+        user_agent:  safe_user_agent,
         referer:     request.referer.to_s.truncate(180),
         created_at:  Time.zone.now
     }
@@ -131,7 +131,7 @@ module Logging
       path:        request.path.to_s.truncate(180),
       params:      save_params.empty? ? '' : save_params.to_json.truncate(180),
       status:      response.status,
-      user_agent:  ensure_utf8(request.user_agent).to_s.truncate(180),
+      user_agent:  safe_user_agent,
     }
     CreateCrawlerLogWorker.perform_async(attrs)
   rescue => e
@@ -161,7 +161,7 @@ module Logging
         ip:          request.ip,
         method:      request.method,
         status:      response.status,
-        user_agent:  ensure_utf8(request.user_agent).to_s.truncate(180),
+        user_agent:  safe_user_agent,
     }
 
     CreateWebhookLogWorker.perform_async(attrs)
@@ -180,7 +180,7 @@ module Logging
         ip:          request.ip,
         method:      request.method,
         status:      response.status,
-        user_agent:  ensure_utf8(request.user_agent).to_s.truncate(180),
+        user_agent:  safe_user_agent,
     }
 
     CreateStripeWebhookLogWorker.perform_async(attrs)
@@ -232,6 +232,10 @@ module Logging
 
   def concatenated_params
     request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
+  end
+
+  def safe_user_agent
+    ensure_utf8(request.user_agent).to_s.truncate(180)
   end
 
   def ensure_utf8(str)
