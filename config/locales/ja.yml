@@ -1946,6 +1946,9 @@ ja:
       description4: '現時点のデータを送信します'
       label5: 'ミュート通知 使い方'
       description5: '使い方を送信します'
+    all_report:
+      stop_label: '全ての通知 停止'
+      stop_description: '全ての通知を止めます'
     delete_reports:
       label1: 'DM届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
