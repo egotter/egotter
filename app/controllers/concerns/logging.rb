@@ -36,13 +36,13 @@ module Logging
       path:        request.path.to_s.truncate(180),
       params:      save_params.empty? ? '' : save_params.to_json.truncate(180),
       status:      response.status,
-      via:         params[:via] ? params[:via].to_s.truncate(180) : '',
+      via:         safe_via,
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
       ip:          request.ip,
       user_agent:  safe_user_agent,
-      referer:     request.referer.to_s.truncate(1000),
+      referer:     safe_referer,
       created_at:  Time.zone.now
     }
 
@@ -102,13 +102,13 @@ module Logging
         path:        request.path.to_s.truncate(180),
         params:      save_params.empty? ? '' : save_params.to_json.truncate(180),
         status:      performed? ? response.status : 500,
-        via:         params[:via] ? params[:via] : '',
+        via:         safe_via,
         device_type: device_type,
         os:          request.os,
         browser:     request.browser,
         ip:          request.ip,
         user_agent:  safe_user_agent,
-        referer:     request.referer.to_s.truncate(180),
+        referer:     safe_referer,
         created_at:  Time.zone.now
     }
 
@@ -191,7 +191,7 @@ module Logging
   def track_page_order_activity(options = {})
     properties = {
         path: request.path,
-        via: params[:via]
+        via: safe_via
     }.merge(options).delete_if { |_, v| v.blank? }.presence
     ahoy.track('Order activity', properties)
   rescue => e
@@ -234,8 +234,16 @@ module Logging
     request.query_parameters.merge(request.request_parameters).except(:locale, :utf8, :authenticity_token)
   end
 
+  def safe_via
+    params[:via].to_s.truncate(180)
+  end
+
   def safe_user_agent
     ensure_utf8(request.user_agent).to_s.truncate(180)
+  end
+
+  def safe_referer
+    params[:referer].to_s.truncate(180)
   end
 
   def ensure_utf8(str)
