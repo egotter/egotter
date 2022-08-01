@@ -28,7 +28,7 @@ module Api
 
       def extract_error_message(requests)
         if requests.any? && requests[0].error_message&.include?('expired')
-          t('.index.error_message_html', url: sign_in_path(redirect_path: delete_tweets_mypage_history_path, via: current_via('error')))
+          t('.index.error_message_html', url: sign_in_path(redirect_path: delete_favorites_mypage_path, via: current_via('error')))
         end
       end
 

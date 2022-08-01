@@ -1579,17 +1579,9 @@ ja:
         <p>ツイートクリーナーは、ツイートを簡単に素早く削除するためのツールです。</p>
         <p>無料プランの場合は、最新の%{count}件まで無料で削除することができます。
         有料プランの場合は、最大で200万件以上のツイートを削除することができます。</p>
-      support_html: 'ツイートクリーナーに分からないところがある場合は、<a href="%{url}" target="_blank">@%{user}</a> にいつでもご質問ください。'
-      faq_html: 'ツイートクリーナーの詳細については <a href="%{url}">ツイートクリーナーのよくある質問</a> をご覧ください。'
-      select_delete_tweets_menu_modal:
-        title: 'メニューを選択してください'
-        close: '閉じる'
-        body:
-          search: 'リツイート数、画像の有無等の条件指定で %{count}件 ずつツイートを削除できます。'
-          free: '日付指定で最大 %{count}件 のツイートを一括削除できます。'
-          premium: 'アーカイブデータを使って全てのツイートを完全に削除することができます。'
-          history: 'これまでに実行したツイート削除の履歴を見ることができます。'
-          faq: 'ツイート削除のよくある質問と回答です。'
+      history_html: 'これまでに削除した履歴は <a href="#" data-target="#%{modal_id}" data-toggle="modal">削除の履歴</a> をご覧ください。'
+      support_html: 'ツイートクリーナーに分からないところがある場合は <a href="%{url}" target="_blank">@%{user}</a> にいつでもご質問ください。'
+      faq_html: 'ツイートクリーナーの詳細については <a href="%{url}">よくある質問</a> をご覧ください。'
     search:
       title: '検索して削除'
       description: '「検索して削除」では、条件指定でツイートを検索し、見付かったツイートを一気に削除することができます。'
@@ -1663,7 +1655,7 @@ ja:
       test_message: 'DM送信テスト ※そのまま送信'
       post_tweet: '完了後にツイート'
       button: '無料で直近のツイートを削除する'
-      history_html: '「削除の履歴」で <a href="%{url}">進行中の履歴を見る</a> ことができます。'
+      history_html: '「削除の履歴」で <a href="#" data-target="#%{modal_id}" data-toggle="modal">進行中の履歴を見る</a> ことができます。'
       requested: '削除リクエスト済み'
       note1: '※ ツイート削除は取り消しできません。'
       note2: '※ 無料で削除できるのは%{count}件までです。'
@@ -1693,14 +1685,6 @@ ja:
       note2: 'twitter-0000-00-00-aaaaaa.zip を選択してください。'
       note3_html: '「完全に削除」には <a href="%{url}" target="_blank">有料プラン</a> の購入が必要です。'
       note4: 'パソコンとWi-Fiを使うと高速にアップロードできます。'
-    history:
-      title: '削除の履歴'
-      description: '「削除の履歴」では、これまでに実行したツイート削除の履歴を見ることができます。'
-      date: '日付'
-      type: '種類'
-      reservations: '予約'
-      deletions: '完了'
-      loading: '読み込み中'
     uploader:
       debug_message_html:
         <div class="uploader-debug-message">
@@ -1764,6 +1748,14 @@ ja:
         <p>ファイルのアップロードに失敗しました。何度も起きる場合はこのメッセージのスクリーンショットを <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。</p>
         <div>reason={reason}</div>
         %{debug_message}
+    menu_selector_modal:
+      title: 'メニューを選択してください'
+      close: '閉じる'
+      body:
+        search: 'リツイート数、画像の有無等の条件指定で %{count}件 ずつツイートを削除できます。'
+        free: '日付指定で最大 %{count}件 のツイートを一括削除できます。'
+        premium: 'アーカイブデータを使って全てのツイートを完全に削除することができます。'
+        faq: 'ツイート削除のよくある質問と回答です。'
     confirmation_modal:
       title: '@%{user} のツイート削除'
       body_html: '<img class="rounded-circle" src="%{icon}" width="28" height="28"> @%{user} のツイートを削除します。本当によろしいですか？'
@@ -1780,6 +1772,16 @@ ja:
       not_posted: 'しない'
       ok: "削除する"
       cancel: "キャンセル"
+    history_modal:
+      title: '削除の履歴'
+      description: '「削除の履歴」では、これまでに実行した削除の履歴を見ることができます。'
+      date: '日付'
+      type: '種類'
+      reservations: '予約'
+      deletions: '完了'
+      loading: '読み込み中'
+      body_html: '「削除の履歴」では、これまでに実行した削除の履歴を見ることができます。'
+      ok: "閉じる"
   delete_favorites:
     index:
       navbar_title: 'いいねクリーナー'
@@ -2388,47 +2390,35 @@ ja:
       deletable_tweets:
         index:
           tweets_not_found_html: |
-            <div class="card">
-              <div class="card-body">
-                <p>ツイートがまだ同期されていません。</p>
-                <div class="font-weight-bold bt-1">初めて利用する場合</div>
-                <p><a class="force-reload-deletable-tweets-button" href="#">同期</a> を押してツイートを読み込んでください。最新のツイートが反映されます。</p>
-                <div class="font-weight-bold bt-1">既に%{count}件のツイートを削除済みの場合</div>
-                <p>
-                  この場合は古いツイートの削除をすぐに始めることができません。これは全世界共通のツイッターの制限です。
-                  残りの古いツイートも完全に削除するには、えごったー有料プランをご活用ください。
-                  <a href="%{url}" target="_blank">料金を見る</a>
-                </p>
-              </div>
-            </div>
+            <p>ツイートがまだ同期されていません。</p>
+            <div class="font-weight-bold bt-1">初めて利用する場合</div>
+            <p><a class="force-reload-deletable-tweets-button" href="#">同期</a> を押してツイートを読み込んでください。最新のツイートが反映されます。</p>
+            <div class="font-weight-bold bt-1">既に%{count}件のツイートを削除済みの場合</div>
+            <p>
+              この場合は古いツイートの削除をすぐに始めることができません。これは全世界共通のツイッターの制限です。
+              残りの古いツイートも完全に削除するには、えごったー有料プランをご活用ください。
+              <a href="%{url}" target="_blank">料金を見る</a>
+            </p>
           not_deleted_tweets_not_found_html: |
-            <div class="card">
-              <div class="card-body">
-                <p>以前に同期したツイートはすべて削除済みです。</p>
-                <div class="font-weight-bold bt-1">新しくツイートしている場合</div>
-                <p><a class="force-reload-deletable-tweets-button" href="#">同期</a> を押してツイートを読み込んでください。最新のツイートが反映されます。</p>
-                <div class="font-weight-bold bt-1">既に%{count}件のツイートを削除済みの場合</div>
-                <p>
-                  この場合は古いツイートの削除をすぐに始めることができません。これは全世界共通のツイッターの制限です。
-                  残りの古いツイートも完全に削除するには、えごったー有料プランをご活用ください。
-                  <a href="%{url}" target="_blank">料金を見る</a>
-                </p>
-              </div>
-            </div>
+            <p>以前に同期したツイートはすべて削除済みです。</p>
+            <div class="font-weight-bold bt-1">新しくツイートしている場合</div>
+            <p><a class="force-reload-deletable-tweets-button" href="#">同期</a> を押してツイートを読み込んでください。最新のツイートが反映されます。</p>
+            <div class="font-weight-bold bt-1">既に%{count}件のツイートを削除済みの場合</div>
+            <p>
+              この場合は古いツイートの削除をすぐに始めることができません。これは全世界共通のツイッターの制限です。
+              残りの古いツイートも完全に削除するには、えごったー有料プランをご活用ください。
+              <a href="%{url}" target="_blank">料金を見る</a>
+            </p>
           filtered_tweets_not_found_html: |
-            <div class="card">
-              <div class="card-body">
-                <p>検索条件に該当するツイートは見付かりませんでした。</p>
-                <div class="font-weight-bold bt-1">新しくツイートしている場合</div>
-                <p><a class="force-reload-deletable-tweets-button" href="#">同期</a> を押してツイートを読み込んでください。最新のツイートが反映されます。</p>
-                <div class="font-weight-bold bt-1">既に%{count}件のツイートを削除済みの場合</div>
-                <p>
-                  この場合は古いツイートの削除をすぐに始めることができません。これは全世界共通のツイッターの制限です。
-                  残りの古いツイートも完全に削除するには、えごったー有料プランをご活用ください。
-                  <a href="%{url}" target="_blank">料金を見る</a>
-                </p>
-              </div>
-            </div>
+            <p>検索条件に該当するツイートは見付かりませんでした。</p>
+            <div class="font-weight-bold bt-1">新しくツイートしている場合</div>
+            <p><a class="force-reload-deletable-tweets-button" href="#">同期</a> を押してツイートを読み込んでください。最新のツイートが反映されます。</p>
+            <div class="font-weight-bold bt-1">既に%{count}件のツイートを削除済みの場合</div>
+            <p>
+              この場合は古いツイートの削除をすぐに始めることができません。これは全世界共通のツイッターの制限です。
+              残りの古いツイートも完全に削除するには、えごったー有料プランをご活用ください。
+              <a href="%{url}" target="_blank">料金を見る</a>
+            </p>
           internal_server_error: 'エラーが起きました。5〜30分後に再度アクセスしてください。'
         destroy:
           failed_html: '<a href="%{url}" target="_blank">このツイート</a>の削除に失敗しました。5〜30分後に再度アクセスしてください。'

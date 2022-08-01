@@ -1,0 +1,42 @@
+<%= modal_dialog(id: modal_id, title: t('.title'), button: {positive: t('.close'), category: 'outline-secondary'}) do %>
+  <a href="#" id="show-search-tab" class="text-body">
+    <div class="d-flex align-items-center">
+      <div>
+        <div class="font-weight-bold mb-2"><%= t('delete_tweets.search.title') %></div>
+        <div><%= t('.body.search', count: 100) %></div>
+      </div>
+      <div class="pl-2"><i class="fas fa-arrow-right"></i></div>
+    </div>
+  </a>
+  <hr>
+  <a href="#" id="show-free-tab" class="text-body">
+    <div class="d-flex align-items-center">
+      <div>
+        <div class="font-weight-bold mb-2"><%= t('delete_tweets.free.title') %></div>
+        <div><%= t('.body.free', count: DeleteTweetsRequest::DESTROY_LIMIT) %></div>
+      </div>
+      <div class="pl-2"><i class="fas fa-arrow-right"></i></div>
+    </div>
+  </a>
+  <hr>
+  <a href="#" id="show-premium-tab" class="text-body">
+    <div class="d-flex align-items-center">
+      <div>
+        <div class="font-weight-bold mb-2"><%= t('delete_tweets.premium.title') %></div>
+        <div><%= t('.body.premium') %></div>
+      </div>
+      <div class="pl-2"><i class="fas fa-arrow-right"></i></div>
+    </div>
+  </a>
+  <hr>
+  <a href="<%= delete_tweets_faq_path(via: current_via('modal')) %>" target="_blank" id="show-faq-tab" class="text-body">
+    <div class="d-flex align-items-center">
+      <div>
+        <div class="font-weight-bold mb-2"><%= t('delete_tweets.faq.tab_title') %></div>
+        <div><%= t('.body.faq') %></div>
+      </div>
+      <div class="pl-2"><i class="fas fa-arrow-right"></i></div>
+    </div>
+  </a>
+<% end %>
+

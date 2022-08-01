@@ -1,6 +1,6 @@
 <div id="delete-tweets-uploader" class="my-5"><%= t('.description', user: current_user.screen_name) %></div>
 
-<div class="card my-3">
+<div class="card my-5">
   <div class="card-body">
     <div class="card-text">
 
@@ -104,7 +104,7 @@
             identity_pool_id: S3::ArchiveData.delete_tweets_identity_pool_id} %>
         <% end %>
       <% else %>
-        <div class="text-center mt-3">
+        <div class="mt-3">
           <%= link_to pricing_path(via: current_via('button')), id: 'btn-delete-tweets-uploader', class: 'btn btn-outline-primary' do %>
             <img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
             <%= t('.button') %>

@@ -1,34 +1,29 @@
-<div class="my-5"><%= t('.description') %></div>
+<%= modal_dialog(id: modal_id, title: t('.title'), button: {positive: t('.ok'), category: 'outline-secondary'}) do %>
+  <div id="delete-tweets-history-container">
+    <div class="loading my-5">
+      <%= image_tag '/ajax-loader.gif', size: '16x16' %>
+      <%= t('.loading') %>
+    </div>
 
-<div id="delete-tweets-history-container">
-  <div class="loading my-5">
-    <%= image_tag '/ajax-loader.gif', size: '16x16' %>
-    <%= t('.loading') %>
+    <div class="error-message-container" style="display: none;">
+      <%= alert_box category: 'danger', class: 'error-message mt-2 mb-4' do %>
+      <% end %>
+    </div>
+
+    <table class="table table-sm small" style="display: none;">
+      <tr>
+        <td><%= t('.date') %></td>
+        <td><%= t('.type') %></td>
+        <td><%= t('.reservations') %></td>
+        <td><%= t('.deletions') %></td>
+      </tr>
+    </table>
   </div>
-
-  <div class="error-message-container" style="display: none;">
-    <%= alert_box category: 'danger', class: 'error-message my-5' do %>
-    <% end %>
-  </div>
-
-  <table class="table small my-3" style="display: none;">
-    <tr>
-      <td><%= t('.date') %></td>
-      <td><%= t('.type') %></td>
-      <td><%= t('.reservations') %></td>
-      <td><%= t('.deletions') %></td>
-    </tr>
-  </table>
-</div>
+<% end %>
 
 <script>
   $(function () {
-    var historyTabShown = <%= delete_tweets_history_tab? %>;
-    if (historyTabShown) {
-      loadHistory();
-    }
-
-    $('#delete-tweets-history-tab').on('shown.bs.tab', loadHistory);
+    $('#<%= modal_id %>').on('shown.bs.modal', loadHistory);
 
     function loadHistory() {
       var url = '<%= raw api_v1_delete_tweets_histories_path %>';

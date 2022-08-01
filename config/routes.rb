@@ -141,7 +141,6 @@ Rails.application.routes.draw do
   get 'delete_tweets/mypage', to: 'delete_tweets#show', as: :delete_tweets_mypage
   get 'delete_tweets/mypage/search', to: 'delete_tweets#show', as: :delete_tweets_mypage_search
   get 'delete_tweets/mypage/premium', to: 'delete_tweets#show', as: :delete_tweets_mypage_premium
-  get 'delete_tweets/mypage/history', to: 'delete_tweets#show', as: :delete_tweets_mypage_history
 
   get 'delete_favorites', to: 'delete_favorites#index'
   get 'delete_favorites/faq', to: 'delete_favorites#faq', as: :delete_favorites_faq

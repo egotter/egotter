@@ -114,6 +114,13 @@
       <%= t('.loading') %>
     </div>
   </div>
+
+  <div id="deletable-tweets-error-container" style="display: none;">
+    <div class="card">
+      <div class="card-body">
+      </div>
+    </div>
+  </div>
 </div>
 
 <%= render partial: 'bottom_menu', locals: {open_event: 'open-deletable-tweets-menu', close_event: 'close-deletable-tweets-menu'} %>
@@ -317,12 +324,14 @@
       var filters = collectFilterParams();
       var retry = (options && options.hasOwnProperty('retry')) ? options['retry'] : 10;
       var container = $('#deletable-tweets-container');
+      var errorContainer = $('#deletable-tweets-error-container');
       logger.log('Load tweets', {filters: filters, retry: retry});
 
       $.get(url, filters).done(function (res) {
         logger.log('Tweets loaded', {tweets: res.tweets});
         lastResponse = res;
-        container.empty();
+        container.show().empty();
+        errorContainer.hide().find('.card-body').empty();
 
         if (res.tweets.length > 0) {
           var template = window.templates['deletableTweet'];
@@ -354,7 +363,8 @@
               loadDeletableTweets({retry: retry});
             }, 5000);
           } else {
-            container.empty().html(res['message']);
+            container.hide().empty();
+            errorContainer.show().find('.card-body').empty().html(res['message']);
           }
         } catch (e) {
           showErrorMessage(xhr, textStatus, errorThrown);
