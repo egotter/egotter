@@ -14,7 +14,7 @@ class DeleteTweetWorker
 
     if request.last_tweet == tweet_id || options['last_tweet']
       request.update(finished_at: Time.zone.now)
-      SendDeleteTweetsFinishedMessageWorker.perform_in(5.seconds, request.id)
+      SendDeleteTweetsFinishedMessageWorker.perform_in(10.seconds, request.id)
     end
   rescue => e
     if TwitterApiStatus.retry_timeout?(e)

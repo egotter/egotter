@@ -26,7 +26,7 @@ RSpec.describe DeleteTweetWorker do
       it do
         expect(worker).to receive(:destroy_status!).with(client, tweet_id, request)
         expect(request).to receive(:update).with(finished_at: instance_of(ActiveSupport::TimeWithZone))
-        expect(SendDeleteTweetsFinishedMessageWorker).to receive(:perform_in).with(5.seconds, request.id)
+        expect(SendDeleteTweetsFinishedMessageWorker).to receive(:perform_in).with(10.seconds, request.id)
         subject
       end
     end
