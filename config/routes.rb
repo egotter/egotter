@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  mount Ahoy::Engine => '/ahoy'
+  post 'ahoy/events', to: 'ahoy_events#create'
+  post 'ahoy/visits', to: 'ahoy_visits#create'
 
   if ENV['MAINTENANCE'] == '1'
     root 'misc#maintenance'
