@@ -39,16 +39,23 @@
         </div>
 
         <div class="mb-4">
-          <%= check_box_tag('multiple-retry', '1', false) %>
+          <%= check_box_tag('checkbox-limit-3200', '1', false) %>
           <span class="text-danger"><%= t('.required') %></span>
-          <label class="d-inline" for="multiple-retry"><%= t('.multiple_retry') %></label>
+          <label class="d-inline" for="checkbox-limit-3200"><%= t('.confirmation_checkboxes.limit_3200_html', count: max_count) %></label>
           <span class="small"><%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %></span>
         </div>
 
         <div class="mb-4">
-          <%= check_box_tag('too-old-tweets', '1', false) %>
+          <%= check_box_tag('checkbox-cannot-reach-zero', '1', false) %>
           <span class="text-danger"><%= t('.required') %></span>
-          <label class="d-inline" for="too-old-tweets"><%= t('.too_old_tweets') %></label>
+          <label class="d-inline" for="checkbox-cannot-reach-zero"><%= t('.confirmation_checkboxes.cannot_reach_zero_html') %></label>
+          <span class="small"><%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %></span>
+        </div>
+
+        <div class="mb-4">
+          <%= check_box_tag('checkbox-multiple-retry', '1', false) %>
+          <span class="text-danger"><%= t('.required') %></span>
+          <label class="d-inline" for="checkbox-multiple-retry"><%= t('.confirmation_checkboxes.multiple_retry_html', count: max_count) %></label>
           <span class="small"><%= link_to t('.reason'), delete_tweets_faq_path(anchor: 'reason-of-3200'), target: '_blank' %></span>
         </div>
 
@@ -98,14 +105,16 @@
     var datesAreInvalid = '<%= t('.dates_are_invalid') %>';
     var checkIsRequired = '<%= t('.check_is_required') %>';
     var datesSelector = new DeleteTweetsDatesSelector('since_date', 'until_date', 'dates_error_message');
-    var multipleRetryCheckbox = new DeleteTweetsRequiredCheckbox('multiple-retry');
-    var tooOldTweetsCheckbox = new DeleteTweetsRequiredCheckbox('too-old-tweets');
+    var limit3200Checkbox = new DeleteTweetsRequiredCheckbox('checkbox-limit-3200');
+    var cannotReachZeroCheckbox = new DeleteTweetsRequiredCheckbox('checkbox-cannot-reach-zero');
+    var multipleRetryCheckbox = new DeleteTweetsRequiredCheckbox('checkbox-multiple-retry');
 
     $('#open-delete-tweets-modal').on('click', function () {
       var validated = [
         datesSelector.validate(),
-        multipleRetryCheckbox.validate(),
-        tooOldTweetsCheckbox.validate()
+        limit3200Checkbox.validate(),
+        cannotReachZeroCheckbox.validate(),
+        multipleRetryCheckbox.validate()
       ];
 
       if (!validated[0]) {
@@ -113,7 +122,7 @@
         return false;
       }
 
-      if (!validated[1] || !validated[2]) {
+      if (!validated[1] || !validated[2] || !validated[3]) {
         window.alert(checkIsRequired);
         return false;
       }

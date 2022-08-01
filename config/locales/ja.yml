@@ -1647,8 +1647,10 @@ ja:
       how_to_html: '必ず事前に <a href="%{url}">ツイート削除のよくある質問</a> をご確認ください。'
       since_date: 'この日付から'
       until_date: 'この日付まで'
-      multiple_retry: '短い時間で複数回実行しても意味がないことを理解しました'
-      too_old_tweets: '古すぎるツイートは削除出来ないことを理解しました'
+      confirmation_checkboxes:
+        limit_3200_html: 'ツイート総数がどれだけ多くても <span class="text-danger">%{count}件 までしか削除できない制限</span>があり、これは世界中で共通であることを理解しました'
+        cannot_reach_zero_html: '全てのツイートを削除しても、<span class="text-danger">ツイート数が0にならない場合がある</span>ことを理解しました'
+        multiple_retry_html: '「一括で削除」を実行して %{count}件 のツイートを削除した後は、数時間から数日は残りのツイートを <span class="text-danger">見れない、削除できない、ただしツイート数は0より多い</span> という状態になる場合があることを理解しました'
       send_dm: '完了後に自分へDM'
       send_test_message: 'DMのテスト送信'
       test_message_reason: '事前に一度DMを送っておくことで通知が届きやすくなります。'
