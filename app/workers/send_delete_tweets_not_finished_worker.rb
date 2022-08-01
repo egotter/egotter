@@ -6,7 +6,7 @@ class SendDeleteTweetsNotFinishedWorker
   #   user_id
   def perform(request_id, options = {})
     request = DeleteTweetsRequest.find(request_id)
-    unless request.finished?
+    if !request.stopped_at && !request.finished_at
       SendMessageToSlackWorker.perform_async(:monit_delete_tweets, "`Not finished` #{request.to_message}")
     end
   rescue => e
