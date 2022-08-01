@@ -66,6 +66,7 @@ class DeleteTweetsRequest < ApplicationRecord
     end
   end
 
+  # TODO Remove later
   def finished!
     if finished_at.nil?
       update!(finished_at: Time.zone.now)
@@ -74,24 +75,20 @@ class DeleteTweetsRequest < ApplicationRecord
     end
   end
 
-  def started?
-    !started_at.nil?
-  end
-
-  def stopped?
-    !stopped_at.nil?
-  end
-
+  # TODO Remove later
   def finished?
     !finished_at.nil?
   end
 
   def processing?
-    !finished? && created_at > 1.hour.ago
+    !finished_at && created_at > 1.hour.ago
   end
 
-  def perform!
+  def perform
+    return if started_at || stopped_at || finished_at
+
     @retries = 5
+    update(started_at: Time.zone.now)
 
     verify_credentials!
     tweets_exist!
@@ -100,6 +97,21 @@ class DeleteTweetsRequest < ApplicationRecord
     update!(reservations_count: tweets.size)
     filtered_tweets_exist!(tweets)
     destroy_statuses!(tweets)
+
+    # Not finished yet
+  rescue TweetsNotFound => e
+    update(finished_at: Time.zone.now, error_class: e.class, error_message: e.message)
+    SendDeleteTweetsFinishedMessageWorker.perform_async(id)
+  rescue => e
+    update(stopped_at: Time.zone.now, error_class: e.class, error_message: e.message)
+
+    unless [Unauthorized, InvalidToken, TemporarilyLocked].include?(e.class)
+      send_error_message
+    end
+
+    unless [Unauthorized, InvalidToken, TemporarilyLocked, TooManyRequests].include?(e.class)
+      raise
+    end
   end
 
   def verify_credentials!
@@ -116,7 +128,7 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def tweets_exist!
-    if api_client.user(user.uid).statuses_count == 0
+    if api_client.user.statuses_count == 0
       raise TweetsNotFound
     end
   rescue => e
@@ -221,7 +233,7 @@ class DeleteTweetsRequest < ApplicationRecord
       DeleteTweetsReport.finished_message_from_user(user).deliver!
     end
   rescue => e
-    Airbag.warn "#{self.class}##{__method__}: #{e.inspect} request_id=#{id}"
+    Airbag.warn "#{self.class}##{__method__}: #{e.inspect}", request_id: id
   end
 
   def send_result_message
@@ -269,6 +281,7 @@ class DeleteTweetsRequest < ApplicationRecord
   class Error < StandardError
   end
 
+  # TODO Remove later
   class AlreadyFinished < Error; end
 
   class Unauthorized < Error; end

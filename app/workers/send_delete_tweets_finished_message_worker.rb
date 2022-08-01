@@ -5,7 +5,8 @@ class SendDeleteTweetsFinishedMessageWorker
   # options:
   def perform(request_id, options = {})
     request = DeleteTweetsRequest.find(request_id)
-    request.finished!
+    request.tweet_finished_message if request.tweet
+    request.send_finished_message if request.send_dm
   rescue => e
     Airbag.exception e, request_id: request_id, options: options
   end

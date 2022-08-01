@@ -16,9 +16,9 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     end
   end
 
-  describe '#perform!' do
+  describe '#perform' do
     let(:tweets) { 'tweets' }
-    let(:subject) { request.perform! }
+    let(:subject) { request.perform }
 
     it do
       expect(request).to receive(:verify_credentials!)
@@ -28,6 +28,43 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       expect(request).to receive(:filtered_tweets_exist!).with(tweets)
       expect(request).to receive(:destroy_statuses!).with(tweets)
       subject
+    end
+
+    context 'rescue block' do
+      before do
+        allow(request).to receive(:update).with(started_at: instance_of(ActiveSupport::TimeWithZone))
+        allow(request).to receive(:verify_credentials!).and_raise(error)
+      end
+
+      context 'TweetsNotFound is raised' do
+        let(:error) { described_class::TweetsNotFound.new }
+        it do
+          expect(request).to receive(:update).
+              with(finished_at: instance_of(ActiveSupport::TimeWithZone), error_class: error.class, error_message: error.message)
+          expect(SendDeleteTweetsFinishedMessageWorker).to receive(:perform_async).with(request.id)
+          subject
+        end
+      end
+
+      context 'Unauthorized is raised' do
+        let(:error) { described_class::Unauthorized.new }
+        it do
+          expect(request).to receive(:update).
+              with(stopped_at: instance_of(ActiveSupport::TimeWithZone), error_class: error.class, error_message: error.message)
+          expect(request).not_to receive(:send_error_message)
+          subject
+        end
+      end
+
+      context 'Unknown is raised' do
+        let(:error) { described_class::Unknown.new }
+        it do
+          expect(request).to receive(:update).
+              with(stopped_at: instance_of(ActiveSupport::TimeWithZone), error_class: error.class, error_message: error.message)
+          expect(request).to receive(:send_error_message)
+          expect { subject }.to raise_error(error)
+        end
+      end
     end
   end
 
@@ -71,7 +108,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     let(:subject) { request.tweets_exist! }
     before { request.instance_variable_set(:@retries, 1) }
 
-    before { allow(request).to receive_message_chain(:api_client, :user).with(user.uid).and_return(user_response) }
+    before { allow(request).to receive_message_chain(:api_client, :user).and_return(user_response) }
 
     context 'statuses_count is 0' do
       let(:count) { 0 }

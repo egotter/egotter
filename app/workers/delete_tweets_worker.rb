@@ -11,10 +11,9 @@ class DeleteTweetsWorker
   end
 
   # options:
-  #   user_id
   def perform(request_id, options = {})
     request = DeleteTweetsRequest.find(request_id)
-    DeleteTweetsTask.new(request, options).start!
+    request.perform
   rescue => e
     Airbag.exception e, request_id: request_id, options: options
   end

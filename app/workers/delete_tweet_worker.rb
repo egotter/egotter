@@ -13,6 +13,7 @@ class DeleteTweetWorker
     destroy_status!(client, tweet_id, request)
 
     if request.last_tweet == tweet_id || options['last_tweet']
+      request.update(finished_at: Time.zone.now)
       SendDeleteTweetsFinishedMessageWorker.perform_in(5.seconds, request.id)
     end
   rescue => e

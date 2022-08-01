@@ -9,7 +9,7 @@ RSpec.describe DeleteTweetsWorker do
     subject { worker.perform(request.id) }
     before { allow(DeleteTweetsRequest).to receive(:find).with(request.id).and_return(request) }
     it do
-      expect(DeleteTweetsTask).to receive_message_chain(:new, :start!).with(request, {}).with(no_args)
+      expect(request).to receive(:perform)
       subject
     end
   end
