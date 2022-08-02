@@ -1,6 +1,8 @@
+require 'timeout'
+
 # Ahoy::EventsController
 class AhoyEventsController < Ahoy::BaseController
-  include RequestErrorHandler
+  # include RequestErrorHandler
 
   def create
     timeout = 5
@@ -17,10 +19,22 @@ class AhoyEventsController < Ahoy::BaseController
               if params[:events_json]
                 request.params[:events_json]
               else
-                request.body.read
+                begin
+                  Timeout.timeout(timeout) do
+                    request.body.read
+                  end
+                rescue Timeout::Error => e
+                  log 'Timeout while reading request.body'
+                  '[]'
+                end
               end
           begin
-            ActiveSupport::JSON.decode(data)
+            Timeout.timeout(timeout) do
+              ActiveSupport::JSON.decode(data)
+            end
+          rescue Timeout::Error => e
+            log "Timeout while decoding data size=#{data.size}"
+            []
           rescue ActiveSupport::JSON.parse_error
             # do nothing
             []
@@ -28,7 +42,7 @@ class AhoyEventsController < Ahoy::BaseController
         end
 
     if Time.zone.now - start > timeout
-      Airbag.warn "AhoyEventsController: Timeout before creating events total=#{events.size}"
+      log "Timeout before creating events total=#{events.size}"
       render json: {}
       return
     end
@@ -46,10 +60,14 @@ class AhoyEventsController < Ahoy::BaseController
       ahoy.track event["name"], event["properties"], options
 
       if Time.zone.now - start > timeout
-        Airbag.warn "AhoyEventsController: Timeout while creating events created=#{i + 1} total=#{events.size} max=#{Ahoy.max_events_per_request}"
+        log "Timeout while creating events created=#{i + 1} total=#{events.size} max=#{Ahoy.max_events_per_request}"
         break
       end
     end
     render json: {}
+  end
+
+  def log(message)
+    Airbag.warn "AhoyEventsController: #{message}"
   end
 end
