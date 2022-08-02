@@ -8,14 +8,7 @@ def main(name)
     return
   end
 
-  LogUploader.new(name).
-      add('log/production.log').
-      add('log/puma.log').
-      add('log/sidekiq.log').
-      add('log/sidekiq_misc.log').
-      add('log/airbag.log').
-      add('log/cron.log').
-      upload
+  LogUploader.new(name).add_all.upload
 end
 
 if __FILE__ == $0

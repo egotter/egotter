@@ -59,14 +59,7 @@ module Tasks
       end
 
       def upload_logs(instance)
-        LogUploader.new(instance.name).with_ssh.
-            add('log/production.log').
-            add('log/puma.log').
-            add('log/sidekiq.log').
-            add('log/sidekiq_misc.log').
-            add('log/airbag.log').
-            add('log/cron.log').
-            upload
+        LogUploader.new(instance.name).with_ssh.add_all.upload
       end
 
       def logger
