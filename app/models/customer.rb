@@ -16,4 +16,8 @@
 class Customer < ApplicationRecord
   validates :user_id, presence: true
   validates :stripe_customer_id, presence: true
+
+  def stripe_customer
+    Stripe::Customer.retrieve(stripe_customer_id)
+  end
 end
