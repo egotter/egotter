@@ -4,8 +4,46 @@ require 'timeout'
 class AhoyEventsController < Ahoy::BaseController
   # include RequestErrorHandler
 
+  TIMEOUT = 5
+
+  skip_before_action :verify_request_size
+  skip_before_action :check_params
+  skip_before_action :renew_cookies
+
+  before_action do
+    begin
+      Timeout.timeout(TIMEOUT) do
+        verify_request_size
+      end
+    rescue Timeout::Error => e
+      log 'Timeout while executing :verify_request_size'
+      head :request_timeout
+    end
+  end
+
+  before_action do
+    begin
+      Timeout.timeout(TIMEOUT) do
+        check_params
+      end
+    rescue Timeout::Error => e
+      log 'Timeout while executing :check_params'
+      head :request_timeout
+    end
+  end
+
+  before_action do
+    begin
+      Timeout.timeout(TIMEOUT) do
+        renew_cookies
+      end
+    rescue Timeout::Error => e
+      log 'Timeout while executing :renew_cookies'
+      head :request_timeout
+    end
+  end
+
   def create
-    timeout = 5
     start = Time.zone.now
 
     events =
@@ -20,7 +58,7 @@ class AhoyEventsController < Ahoy::BaseController
                 request.params[:events_json]
               else
                 begin
-                  Timeout.timeout(timeout) do
+                  Timeout.timeout(TIMEOUT) do
                     request.body.read
                   end
                 rescue Timeout::Error => e
@@ -29,7 +67,7 @@ class AhoyEventsController < Ahoy::BaseController
                 end
               end
           begin
-            Timeout.timeout(timeout) do
+            Timeout.timeout(TIMEOUT) do
               ActiveSupport::JSON.decode(data)
             end
           rescue Timeout::Error => e
@@ -41,7 +79,7 @@ class AhoyEventsController < Ahoy::BaseController
           end
         end
 
-    if Time.zone.now - start > timeout
+    if Time.zone.now - start > TIMEOUT
       log "Timeout before creating events total=#{events.size}"
       render json: {}
       return
@@ -59,7 +97,7 @@ class AhoyEventsController < Ahoy::BaseController
       }
       ahoy.track event["name"], event["properties"], options
 
-      if Time.zone.now - start > timeout
+      if Time.zone.now - start > TIMEOUT
         log "Timeout while creating events created=#{i + 1} total=#{events.size} max=#{Ahoy.max_events_per_request}"
         break
       end
