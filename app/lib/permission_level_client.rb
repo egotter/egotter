@@ -13,6 +13,4 @@ class PermissionLevelClient
       http_client.headers(@headers).public_send(@request_method, @uri.to_s, @options_key => @options).headers
     end
   end
-
-  class RetryExhausted < StandardError; end
 end

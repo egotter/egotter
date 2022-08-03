@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ApiClient, type: :model do
   let(:user) { create(:user) }
   let(:credential_token) { create(:credential_token, user_id: user.id) }
-  let(:client) { double('client', access_token: credential_token.token, access_token_secret: credential_token.secret) }
+  let(:client) { double('auto_pagination_client', access_token: credential_token.token, access_token_secret: credential_token.secret) }
   let(:instance) { ApiClient.new(client, user) }
 
   describe '#create_direct_message' do
@@ -89,6 +89,26 @@ RSpec.describe ApiClient, type: :model do
     it do
       expect(CreateReportMessageWorker).to receive(:perform_async).with(instance_of(Integer))
       subject
+    end
+  end
+
+  describe '#can_send_dm?' do
+    subject { instance.can_send_dm?(1) }
+    it do
+      expect(client).to receive_message_chain(:twitter, :friendship, :source, :can_dm?).
+          with(user.uid, 1).with(no_args).with(no_args).and_return(true)
+      is_expected.to be_truthy
+    end
+  end
+
+  describe '#permission_level' do
+    let(:twitter) { double('twitter') }
+    subject { instance.permission_level }
+    before { allow(instance).to receive(:twitter).and_return(twitter) }
+    it do
+      expect(PermissionLevelClient).to receive_message_chain(:new, :permission_level).
+          with(twitter).with(no_args).and_return('result')
+      is_expected.to eq('result')
     end
   end
 

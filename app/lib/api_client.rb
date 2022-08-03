@@ -75,6 +75,16 @@ class ApiClient
     twitter.friendship(@user.uid, uid).source.can_dm?
   end
 
+  def permission_level
+    TwitterRequest.new(__method__).perform do
+      PermissionLevelClient.new(twitter).permission_level
+    end
+  rescue => e
+    update_authorization_status(e)
+    update_lock_status(e)
+    raise
+  end
+
   [:verify_credentials, :user, :users, :user_timeline, :mentions_timeline, :search,
    :favorites, :friendship?].each do |method|
     define_method(method) do |*args, **kwargs, &blk|
