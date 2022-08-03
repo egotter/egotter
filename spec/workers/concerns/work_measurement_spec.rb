@@ -20,7 +20,10 @@ RSpec.describe WorkMeasurement do
   describe '#measure_time' do
     let(:instance) { TestWorkMeasurement.new }
     subject { instance.measure_time('a') }
-    before { allow(instance).to receive(:timeout?).with(1).and_return(true) }
+    before do
+      instance.instance_variable_set(:@start, Time.zone.now)
+      allow(instance).to receive(:timeout?).with(1).and_return(true)
+    end
 
     it do
       expect(Airbag).to receive(:warn).with(instance_of(String), anything)
