@@ -8,31 +8,30 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   skip_before_action :validate_dm_permission!
   skip_before_action :current_user_not_blocker?
 
+  before_action :create_or_update_user, only: :twitter
   after_action :delete_tracking_params
 
   def twitter
-    user, save_context = create_or_update_user
-    return if performed?
+    sign_in @user, event: :authentication
+    ahoy.authenticate(@user)
+    context = detect_context(@user)
 
-    sign_in user, event: :authentication
-    ahoy.authenticate(user)
-
-    click_id = session[:sign_in_click_id]
-    track_registration_event(
-        save_context,
-        via: session[:sign_in_via],
-        click_id: click_id
-    )
-    if save_context == :create && click_id.present?
-      track_invitation_event(click_id)
+    if context == :create
+      # CreateWelcomeMessageWorker.perform_async(user.id)
+      ImportBlockingRelationshipsWorker.perform_async(@user.id)
+      ImportMutingRelationshipsWorker.perform_async(@user.id)
+      track_invitation_event
+    else
+      UpdatePermissionLevelWorker.perform_async(@user.id)
     end
 
-    update_search_histories_when_signing_in(user)
-    update_twitter_db_user(user.uid)
-    request_creating_twitter_user(user.uid)
-    follow_egotter(user)
+    track_registration_event(context)
+    update_search_histories_when_signing_in(@user)
+    update_twitter_db_user(@user.uid)
+    request_creating_twitter_user(@user.uid)
+    follow_egotter(@user)
 
-    redirect_to after_callback_path(user, save_context)
+    redirect_to after_callback_path(@user, context)
   end
 
   def failure
@@ -44,23 +43,14 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   private
 
   def create_or_update_user
-    context = nil
-
-    user = User.update_or_create_with_token!(user_params) do |user, ctx|
-      if ctx == :create
-        # CreateWelcomeMessageWorker.perform_async(user.id)
-        ImportBlockingRelationshipsWorker.perform_async(user.id)
-        ImportMutingRelationshipsWorker.perform_async(user.id)
-      end
-      UpdatePermissionLevelWorker.perform_async(user.id)
-      context = ctx
-    end
-
-    [user, context]
+    @user = User.update_or_create_with_token!(user_params)
   rescue => e
-    Airbag.exception e, params: params
+    Airbag.exception e, user_params: user_params
     redirect_to error_pages_omniauth_failure_path(via: current_via('save_error'))
-    [nil, nil]
+  end
+
+  def detect_context(user)
+    user.created_at == user.updated_at ? :create : :update
   end
 
   def follow_egotter(user)
@@ -85,13 +75,17 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     ).each { |key| session.delete(key) }
   end
 
-  def track_registration_event(context, via:, click_id: nil)
+  def track_registration_event(context)
     name = context == :create ? 'Sign up' : 'Sign in'
-    ahoy.track(name, {via: via, click_id: click_id}.compact.presence)
+    props = {via: session[:sign_in_via], click_id: session[:sign_in_click_id]}.compact.presence
+    ahoy.track(name, props)
   end
 
-  def track_invitation_event(click_id)
-    ahoy.track('Invitation', {click_id: click_id, inviter_uid: click_id.split('-')[1]}.compact.presence)
+  def track_invitation_event
+    if (click_id = session[:sign_in_click_id]).present?
+      props = {click_id: click_id, inviter_uid: click_id.split('-')[1]}.compact.presence
+      ahoy.track('Invitation', props)
+    end
   end
 
   def after_callback_path(user, save_context)
