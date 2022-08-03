@@ -11,7 +11,7 @@ stdout_redirect "#{Dir.pwd}/log/puma.log", "#{Dir.pwd}/log/puma.log", true
 preload_app!
 
 lowlevel_error_handler do |e, env, status|
-  Airbag.exception e, location: 'Puma.lowlevel_error_handler', status: status, REQUEST_URI: env&.fetch('REQUEST_URI', nil), HTTP_USER_AGENT: env&.fetch('HTTP_USER_AGENT', nil)
+  Airbag.exception e, location: 'Puma.lowlevel_error_handler', status: status, env: env.inspect.truncate(1000)
   [500, {}, ["An error has occurred.\n"]]
 rescue => ee
   Rails.logger.error "Puma.lowlevel_error_handler: #{ee.inspect}"
