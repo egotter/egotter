@@ -22,6 +22,6 @@ module SearchHistoriesConcern
 
   def create_search_history(twitter_user)
     return if from_crawler?
-    CreateSearchHistoryWorker.new.perform(twitter_user.uid, session_id: egotter_visit_id, user_id: current_user_id, ahoy_visit_id: current_visit&.id, via: params[:via])
+    CreateSearchHistoryWorker.new.perform(twitter_user.uid, session_id: egotter_visit_id, user_id: current_user_id, ahoy_visit_id: current_visit&.id, via: safe_via)
   end
 end
