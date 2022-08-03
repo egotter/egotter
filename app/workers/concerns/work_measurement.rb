@@ -17,7 +17,7 @@ module WorkMeasurement
         end
       end
 
-      # CreateSidekiqLogWorker.perform_async(nil, 'WorkMeasurement', {elapsed: Time.zone.now - @start, class: self.class}, Time.zone.now)
+      CreateSidekiqLogWorker.perform_async(nil, 'WorkMeasurement', {elapsed: Time.zone.now - @start, class: self.class}, Time.zone.now)
     end
   end
 

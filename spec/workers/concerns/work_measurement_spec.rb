@@ -27,6 +27,7 @@ RSpec.describe WorkMeasurement do
 
     it do
       expect(Airbag).to receive(:warn).with(instance_of(String), anything)
+      expect(CreateSidekiqLogWorker).to receive(:perform_async).with(nil, 'WorkMeasurement', any_args)
       subject
     end
 
