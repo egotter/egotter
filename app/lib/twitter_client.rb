@@ -7,8 +7,13 @@ class TwitterClient
     @api_name = nil
   end
 
-  [:user_agent, :user_token?, :credentials, :proxy, :timeouts,
-   :friend_ids, :follower_ids, :friendship?, :destroy_status, :unfavorite!,
+  [:user_agent, :user_token?, :credentials, :proxy, :timeouts].each do |method|
+    define_method(method) do |*args, **kwargs, &blk|
+      @twitter.send(method, *args, **kwargs, &blk)
+    end
+  end
+
+  [:friend_ids, :follower_ids, :friendship?, :destroy_status, :unfavorite!,
    :user, :users, :user?, :status, :friendships_outgoing, :muted_ids, :blocked_ids,
    :favorites, :update, :update!, :verify_credentials, :follow!, :unfollow, :user_timeline].each do |method|
     define_method(method) do |*args, **kwargs, &blk|

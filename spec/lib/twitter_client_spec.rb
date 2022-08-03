@@ -5,16 +5,26 @@ RSpec.describe TwitterClient, type: :model do
   let(:twitter) { double('twitter') }
   let(:instance) { described_class.new(api_client, twitter) }
 
-  [:user_agent, :user_token?, :credentials, :proxy, :timeouts,
-   :friend_ids, :follower_ids, :friendship?, :destroy_status, :unfavorite!,
+  [:user_agent, :user_token?, :credentials, :proxy, :timeouts].each do |method|
+    describe "##{method}" do
+      let(:args) { [] }
+      let(:kwargs) { {} }
+      it do
+        expect(twitter).to receive(method).with(*args, **kwargs)
+        instance.send(method, *args, **kwargs)
+      end
+    end
+  end
+
+  [:friend_ids, :follower_ids, :friendship?, :destroy_status, :unfavorite!,
    :user, :users, :user?, :status, :friendships_outgoing, :muted_ids, :blocked_ids,
    :favorites, :update, :update!, :verify_credentials, :follow!, :unfollow, :user_timeline].each do |method|
     describe "##{method}" do
       let(:args) { [] }
       let(:kwargs) { {} }
       it do
-        expect(instance).to receive(:call_api).with(method, args)
-        instance.send(method, args, kwargs)
+        expect(instance).to receive(:call_api).with(method, *args, **kwargs)
+        instance.send(method, *args, kwargs)
       end
     end
   end
