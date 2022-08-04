@@ -31,10 +31,12 @@ class NotificationSetting < ApplicationRecord
 
   PROPER_PERMISSION = 'read-write-directmessages'
 
+  # TODO Remove later
   def sync_permission_level
     update(permission_level: fetch_permission_level)
   end
 
+  # TODO Remove later
   def fetch_permission_level
     PermissionLevelClient.new(user.api_client.twitter).permission_level
   end

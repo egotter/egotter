@@ -21,17 +21,11 @@ class UpdatePermissionLevelWorker
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
-    user.notification_setting.sync_permission_level
-  rescue => e
-    if TwitterApiStatus.unauthorized?(e)
-      user.update!(authorized: false)
-    elsif TwitterApiStatus.not_found?(e) ||
-        TwitterApiStatus.suspended?(e) ||
-        TwitterApiStatus.too_many_requests?(e) ||
-        ServiceStatus.http_timeout?(e)
-      # Do nothing
-    else
-      Airbag.exception e, user_id: user_id, options: options
+    level = user.api_client.permission_level
+    if level != user.notification_setting.permission_level
+      user.notification_setting.update(permission_level: level)
     end
+  rescue => e
+    Airbag.exception e, user_id: user_id, options: options
   end
 end
