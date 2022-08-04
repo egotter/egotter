@@ -149,7 +149,7 @@ module Tasks
         [
             "sudo #{dir}/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop",
             "sudo rm #{dir}/logs/amazon-cloudwatch-agent.log",
-            'wget https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm',
+            'wget --quiet https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm',
             'sudo yum localinstall --quiet -y amazon-cloudwatch-agent.rpm',
             'sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc/',
         ].each do |cmd|
@@ -218,7 +218,7 @@ module Tasks
 
       def restart_processes
         [
-            'sudo restart datadog-agent',
+            'sudo stop datadog-agent',
             'sudo service td-agent restart',
             'sudo service nginx restart',
             'sudo start puma && sleep 10',
