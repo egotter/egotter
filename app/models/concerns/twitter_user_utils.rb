@@ -48,6 +48,13 @@ module TwitterUserUtils
     def too_short_create_interval?(uid)
       exists?(uid: uid, created_at: CREATE_RECORD_INTERVAL.ago..Time.zone.now)
     end
+
+    def where_mod(n1, n2)
+      num = 10 * n1 + n2
+      records = order(created_at: :desc).select(:id, :uid).where('created_at > ?', 1.day.ago)
+      ids = records.uniq(&:uid).select { |r| r.uid % num == 0 }
+      where(id: ids)
+    end
   end
 
   def to_summary

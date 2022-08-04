@@ -104,4 +104,21 @@ RSpec.describe TwitterUserUtils do
       it { is_expected.to be_truthy }
     end
   end
+
+  describe '.where_mod' do
+    let(:n1) { 10 }
+    let(:n2) { 5 }
+    subject { TwitterUser.where_mod(n1, n2) }
+    it do
+      records = [
+          create(:twitter_user, uid: 105, created_at: 1.minute.ago),
+          create(:twitter_user, uid: 105, created_at: Time.zone.now),
+          create(:twitter_user, uid: 210, created_at: 1.minute.ago),
+          create(:twitter_user, uid: 210, created_at: Time.zone.now),
+          create(:twitter_user, uid: 211, created_at: 1.minute.ago),
+          create(:twitter_user, uid: 211, created_at: Time.zone.now),
+      ]
+      expect(subject.pluck(:id)).to eq([records[1].id, records[3].id])
+    end
+  end
 end
