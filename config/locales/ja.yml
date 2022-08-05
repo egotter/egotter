@@ -616,7 +616,10 @@ ja:
         'yes': '解約する'
         'no': 'そのままにする'
       canceling_html: '解約処理中です。<img src="/ajax-loader.gif?a=1">'
-      has_not_purchased: "まだ購入していません"
+      has_not_purchased_html:
+        <p>まだ購入していません。</p>
+        <div class="font-weight-bold bt-1">固定期間プランを購入済みの場合</div>
+        <p>固定期間プランは購入してから有効になるまでに2〜3日かかります。詳しくは固定期間プランの商品説明をご覧になってください。</p>
   pricing:
     index:
       meta_title: '料金プラン'
