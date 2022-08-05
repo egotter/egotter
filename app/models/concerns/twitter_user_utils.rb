@@ -49,8 +49,11 @@ module TwitterUserUtils
       exists?(uid: uid, created_at: CREATE_RECORD_INTERVAL.ago..Time.zone.now)
     end
 
+    # n1: 0..999
+    # n2: 0..999
     def where_mod(n1, n2)
       num = 1000 * n1 + n2
+      num = 1000000 if num == 0
       records = order(created_at: :desc).select(:id, :uid).where('created_at > ?', 1.day.ago)
       ids = records.uniq(&:uid).select { |r| r.uid % num == 0 }
       where(id: ids)
