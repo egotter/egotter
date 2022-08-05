@@ -1,7 +1,7 @@
 .directory-profiles
   %h2.text-center.my-5= t('.title')
   .d-flex.flex-wrap
-    - 100.times.each_slice(3) do |n1, n2, n3|
+    - 1000.times.each_slice(3) do |n1, n2, n3|
       .m-3= link_to n1, directory_profile_path(id1: n1)
       .m-3= link_to n2, directory_profile_path(id1: n2) unless n2.nil?
       .m-3= link_to n3, directory_profile_path(id1: n3) unless n3.nil?
