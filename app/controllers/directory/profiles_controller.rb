@@ -1,12 +1,7 @@
 module Directory
   class ProfilesController < ApplicationController
 
-    rescue_from Rack::Timeout::RequestTimeoutException do |e|
-      Airbag.exception e, request_details
-      head :request_timeout unless performed?
-    end
-
-    NUM_REGEXP = /\A\d{1,3}\z/
+    NUM_REGEXP = TwitterUser::WHERE_MOD_REGEXP
 
     def show
       id1 = params[:id1]

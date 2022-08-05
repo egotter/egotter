@@ -44,6 +44,8 @@ module TwitterUserUtils
     CREATE_RECORD_INTERVAL.seconds.ago < created_at
   end
 
+  WHERE_MOD_REGEXP = /\A\d{1,3}\z/
+
   class_methods do
     def too_short_create_interval?(uid)
       exists?(uid: uid, created_at: CREATE_RECORD_INTERVAL.ago..Time.zone.now)
