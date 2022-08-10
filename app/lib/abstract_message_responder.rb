@@ -15,7 +15,7 @@ class AbstractMessageResponder
 
     false
   rescue => e
-    Airbag.exception e
+    Airbag.exception e, processor: @processor.inspect
     false
   end
 
