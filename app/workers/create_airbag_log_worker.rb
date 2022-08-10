@@ -6,8 +6,6 @@ class CreateAirbagLogWorker
 
   def perform(severity, message, properties, time)
     AirbagLog.create!(severity: severity, message: message, properties: properties, time: time)
-  rescue ActiveRecord::StatementInvalid => e
-    logger.warn "#{e.inspect.truncate(1000)} severity=#{severity} message=#{message.truncate(1000)} properties=#{properties.except(*KEYS)} time=#{time}"
   rescue => e
     logger.error "#{e.inspect.truncate(1000)} severity=#{severity} message=#{message.truncate(1000)} properties=#{properties.except(*KEYS)} time=#{time}"
   end

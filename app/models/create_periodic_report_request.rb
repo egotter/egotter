@@ -169,7 +169,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       record = PeriodicReport.create!(user_id: @request.user.id, token: PeriodicReport.generate_token, message_id: '', properties: properties)
 
       if record.id.nil?
-        Airbag.warn "Invalid record of PeriodicReport is found report=#{record} request=#{@request}"
+        Airbag.warn "Invalid record of PeriodicReport is found report=#{record.inspect} request=#{@request.inspect}"
       end
 
       {periodic_report_id: record.id, request_id: @request.id}

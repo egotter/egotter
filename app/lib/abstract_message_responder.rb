@@ -15,7 +15,7 @@ class AbstractMessageResponder
 
     false
   rescue => e
-    Airbag.warn e.inspect
+    Airbag.exception e
     false
   end
 
