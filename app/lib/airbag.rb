@@ -135,7 +135,13 @@ class Airbag
   end
 
   def ensure_utf8(str)
-    str.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '') if str
+    if str
+      if str.encoding.name == 'UTF-8'
+        str
+      else
+        str.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+      end
+    end
   end
 
   class << self
