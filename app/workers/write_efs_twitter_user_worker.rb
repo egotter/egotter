@@ -6,6 +6,12 @@ class WriteEfsTwitterUserWorker
   #   twitter_user_id
   def perform(data, options = {})
     hash = decompress(data)
+
+    unless hash['twitter_user_id']
+      Airbag.warn 'twitter_user_id is nil', hash.slice('twitter_user_id', 'uid', 'screen_name')
+      return
+    end
+
     Efs::TwitterUser.import_from!(
         hash['twitter_user_id'],
         hash['uid'],
