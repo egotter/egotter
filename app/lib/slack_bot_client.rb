@@ -16,9 +16,9 @@ class SlackBotClient
     @client.conversations_list.channels.find { |c| c.name == @channel.slice(1..-1) }
   end
 
-  def messages(count: 100)
+  def messages(count: 100, latest: nil)
     collection = []
-    options = {channel: channel.id, count: 100}
+    options = {channel: channel.id, limit: 100, latest: latest}.compact
 
     while collection.size < count
       response = @client.conversations_history(options)
@@ -28,7 +28,12 @@ class SlackBotClient
       end
 
       collection.concat(response.messages)
-      options[:cursor] = response.next_cursor
+
+      if options[:latest]
+        options[:latest] = response.messages.last.ts
+      else
+        options[:cursor] = response.next_cursor
+      end
     end
 
     collection.take(count)
