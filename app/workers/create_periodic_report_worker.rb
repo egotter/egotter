@@ -5,7 +5,7 @@ class CreatePeriodicReportWorker
   sidekiq_options queue: 'report_low', retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
-    CreatePeriodicReportRequest.find(request_id).user_id
+    request_id
   end
 
   UNIQUE_IN = 5.seconds
@@ -14,25 +14,12 @@ class CreatePeriodicReportWorker
     UNIQUE_IN
   end
 
-  def after_skip(request_id, options = {})
-    request = CreatePeriodicReportRequest.find(request_id)
-    request.update(status: 'job_skipped')
-
-    if user_requested_job?
-      waiting_time = CreatePeriodicReportMessageWorker::UNIQUE_IN + 3.seconds
-      CreatePeriodicReportRequestIntervalTooShortMessageWorker.perform_in(waiting_time, request.user_id)
-    end
-
-    Airbag.info "The job of #{self.class} is skipped request_id=#{request_id} options=#{options.inspect}"
-  end
-
   def timeout_in
     60.seconds
   end
 
   def after_timeout(request_id, options = {})
-    Airbag.warn "The job of #{self.class} timed out elapsed=#{sprintf("%.3f", elapsed_time)} request_id=#{request_id} options=#{options.inspect}"
-    CreatePeriodicReportRequest.find(request_id).append_status('timeout').save
+    Airbag.warn 'Job timed out', request_id: request_id, options: options
   end
 
   # options:
@@ -41,6 +28,11 @@ class CreatePeriodicReportWorker
     request = CreatePeriodicReportRequest.find(request_id)
     return unless request.user.authorized?
     return if request.user.banned?
+
+    if user_requested_job? && CreatePeriodicReportRequest.where(user_id: request.user_id).where(created_at: (request.created_at - 10.seconds)..request.created_at).exists?
+      request.update(status: 'job_skipped')
+      return
+    end
 
     if PeriodicReport.send_report_limited?(request.user.uid)
       retry_current_report(request_id, options)

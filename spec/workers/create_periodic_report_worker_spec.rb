@@ -6,56 +6,33 @@ RSpec.describe CreatePeriodicReportWorker do
   let(:worker) { described_class.new }
 
   before do
-    allow(request).to receive(:perform)
     allow(CreatePeriodicReportRequest).to receive(:find).with(request.id).and_return(request)
   end
 
   describe '#unique_key' do
     subject { worker.unique_key(request.id) }
-    it { is_expected.to eq(request.user_id) }
-  end
-
-  describe '#after_skip' do
-    subject { worker.after_skip(request.id) }
-
-    before do
-      allow(CreatePeriodicReportRequest).to receive(:find).with(request.id).and_return(request)
-    end
-
-    it do
-      expect(request).to receive(:update).with(status: 'job_skipped')
-      subject
-    end
-
-    context 'user_requested_job? returns true' do
-      let(:waiting_time) { CreatePeriodicReportMessageWorker::UNIQUE_IN + 3.seconds }
-
-      before do
-        allow(worker).to receive(:user_requested_job?).and_return(true)
-      end
-
-      it do
-        expect(CreatePeriodicReportRequestIntervalTooShortMessageWorker).to receive(:perform_in).with(waiting_time, request.user_id)
-        subject
-      end
-    end
-  end
-
-  describe '#after_timeout' do
-    subject { worker.after_timeout(request.id) }
-    it do
-      subject
-      expect(request.reload.status).to eq('timeout')
-    end
+    it { is_expected.to eq(request.id) }
   end
 
   describe '#perform' do
     subject { worker.perform(request.id, {}) }
-    before { allow(PeriodicReport).to receive(:send_report_limited?).with(user.uid).and_return(false) }
 
     it do
+      expect(PeriodicReport).to receive(:send_report_limited?).with(user.uid).and_return(false)
       expect(worker).to receive(:do_perform).with(request, {})
       subject
+    end
+
+    context 'duplicate job' do
+      before do
+        allow(worker).to receive(:user_requested_job?).and_return(true)
+        create(:create_periodic_report_request, user: user, created_at: request.created_at - 3.seconds)
+      end
+      it do
+        expect(request).to receive(:update).with(status: 'job_skipped')
+        expect(worker).not_to receive(:do_perform)
+        subject
+      end
     end
 
     context 'sending DM is rate-limited' do
@@ -87,6 +64,7 @@ RSpec.describe CreatePeriodicReportWorker do
         allow(worker).to receive(:user_requested_job?).and_return(true)
       end
       it do
+        expect(request).to receive(:perform)
         subject
         expect(request.check_interval).to be_truthy
         expect(request.check_following_status).to be_truthy
@@ -98,6 +76,7 @@ RSpec.describe CreatePeriodicReportWorker do
         allow(worker).to receive(:batch_requested_job?).and_return(true)
       end
       it do
+        expect(request).to receive(:perform)
         subject
         expect(request.check_allotted_messages_count).to be_truthy
       end
