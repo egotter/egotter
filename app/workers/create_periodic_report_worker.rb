@@ -29,7 +29,8 @@ class CreatePeriodicReportWorker
     return unless request.user.authorized?
     return if request.user.banned?
 
-    if user_requested_job? && CreatePeriodicReportRequest.where(user_id: request.user_id).where(created_at: (request.created_at - 10.seconds)..request.created_at).exists?
+    if user_requested_job? &&
+        CreatePeriodicReportRequest.where(user_id: request.user_id).where.not(id: request.id).where(created_at: (request.created_at - 10.seconds)..request.created_at).exists?
       request.update(status: 'job_skipped')
       return
     end
