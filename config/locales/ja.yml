@@ -1703,7 +1703,8 @@ ja:
       support_message_html:
         <p>何度も起きる場合は、このメッセージのスクリーンショットを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
       invalid_filename_html:
-        <p>ファイル名(twitter-長い文字.zip)が間違っています。<span class="text-danger">Twitterから取得したアーカイブデータをそのまま指定してください。</span></p>
+        <p>ファイル名の形式が間違っています。Twitterから取得したアーカイブデータのファイル名は<span class="text-danger">変更しないで</span>ください。
+        また、ファイル名に <span class="text-danger">空白 や (1) など</span> が含まれていないか確認してください。</p>
         %{support_message}
         %{debug_message}
       too_old_file_html:
@@ -1711,7 +1712,7 @@ ja:
         %{support_message}
         %{debug_message}
       invalid_content_type_html:
-        <p>ファイルの形式(zip)が違います。<span class="text-danger">Twitterから取得したアーカイブデータをそのまま指定してください。</span></p>
+        <p>ファイルの形式(zip)が違います。Twitterから取得したアーカイブデータは<span class="text-danger">編集しないで</span>ください。</p>
         %{support_message}
         %{debug_message}
       filesize_too_small_html:
