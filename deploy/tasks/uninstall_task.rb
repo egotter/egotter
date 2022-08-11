@@ -58,7 +58,6 @@ module Tasks
       def stop_processes
         [
             'sudo stop sidekiq && tail -n 6 log/sidekiq.log || :',
-            'sudo stop sidekiq_workers && tail -n 6 log/sidekiq.log || :',
             'sudo stop sidekiq_misc && tail -n 6 log/sidekiq_misc.log || :',
         ].each do |cmd|
           exec_command(cmd)

@@ -32,16 +32,10 @@ class LogUploader
 
   def upload
     @files.each do |file|
-      unless File.exist?(file)
-        logger.info "#{file} not found"
-        next
-      end
-
       key = "#{@name}/#{File.basename(file)}"
-      cmd = "aws s3 cp #{file} s3://#{BUCKET}/#{key}"
-      cmd = "ssh #{@name} #{cmd}" if @ssh
-      `#{cmd}`
-      logger.info "File uploaded: file=#{file}"
+      cmd = "aws s3 cp #{file} s3://#{BUCKET}/#{key} 2>&1"
+      cmd = %Q(ssh #{@name} "#{cmd}") if @ssh
+      logger.info `#{cmd}`.gsub("\n", '')
     rescue => e
       logger.warn "Uploading failed: #{e.inspect} file=#{file}"
     end
