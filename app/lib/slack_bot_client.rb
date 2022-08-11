@@ -32,7 +32,7 @@ class SlackBotClient
       if options[:latest]
         options[:latest] = response.messages.last.ts
       else
-        options[:cursor] = response.next_cursor
+        options[:cursor] = response.response_metadata.next_cursor
       end
     end
 
