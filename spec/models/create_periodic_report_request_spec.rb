@@ -13,12 +13,14 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
   end
 
   describe '#perform' do
+    let(:report) { double('report') }
     subject { request.perform }
 
     it do
       expect(request).to receive(:validate_report!).and_return(true)
       expect(request).to receive(:create_new_twitter_user_record)
-      expect(request).to receive(:send_report!)
+      expect(request).to receive(:create_report).and_return(report)
+      expect(request).to receive(:create_job).with(report)
       subject
     end
 
@@ -26,17 +28,41 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
       before { allow(request).to receive(:validate_report!).and_return(false) }
       it do
         expect(request).not_to receive(:create_new_twitter_user_record)
-        expect(request).not_to receive(:send_report!)
+        expect(request).not_to receive(:create_report)
         subject
       end
     end
   end
 
-  describe '#send_report!' do
-    subject { request.send_report! }
-    before { allow(request).to receive_message_chain(:report_options_builder, :build).and_return('options') }
+  describe '#create_report' do
+    let(:props) { double('props') }
+    let(:report) { build(:periodic_report, id: 1, user_id: user.id) }
+    subject { request.create_report }
     it do
-      expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, 'options').and_return('jid')
+      expect(request).to receive_message_chain(:report_options_builder, :build).and_return(props)
+      expect(PeriodicReport).to receive(:create!).
+          with(user_id: request.user_id, token: instance_of(String), message_id: '', properties: props).and_return(report)
+      is_expected.to eq(report)
+    end
+
+    context 'save! failed' do
+      let(:report) { build(:periodic_report, id: nil, user_id: user.id) }
+      before do
+        allow(request).to receive_message_chain(:report_options_builder, :build).and_return(props)
+        expect(PeriodicReport).to receive(:create!).with(any_args).and_return(report)
+      end
+      it do
+        expect { subject }.to raise_error(described_class::SaveFailed)
+      end
+    end
+  end
+
+  describe '#create_job' do
+    let(:report) { create(:periodic_report, user_id: user.id) }
+    subject { request.create_job(report) }
+    it do
+      expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
+          with(user.id, periodic_report_id: report.id, request_id: request.id).and_return('jid')
       subject
     end
   end

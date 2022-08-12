@@ -66,7 +66,9 @@ class CreatePeriodicReportRequest < ApplicationRecord
       create_new_twitter_user_record
     end
 
-    send_report!
+    report = create_report
+    create_job(report)
+
     update(finished_at: Time.zone.now)
   rescue => e
     update(failed_at: Time.zone.now, status: e.inspect.truncate(150))
@@ -86,9 +88,20 @@ class CreatePeriodicReportRequest < ApplicationRecord
     true
   end
 
-  def send_report!
+  def create_report
+    props = report_options_builder.build
+    record = PeriodicReport.create!(user_id: user_id, token: PeriodicReport.generate_token, message_id: '', properties: props)
+
+    if record.id.nil?
+      raise SaveFailed.new("report=#{record.inspect} request=#{inspect}")
+    end
+
+    record
+  end
+
+  def create_job(report)
     # If an administrator makes a request immediately after processing a user's request, it may be skipped
-    jid = CreatePeriodicReportMessageWorker.perform_async(user_id, report_options_builder.build)
+    jid = CreatePeriodicReportMessageWorker.perform_async(user_id, periodic_report_id: report.id, request_id: id)
     update(status: 'message_skipped') unless jid
   end
 
@@ -143,7 +156,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       new_follower_uids = TwitterUser.calc_total_new_follower_uids(@target_users).uniq.take(10)
       new_followers = TwitterDB::User.order_by_field(new_follower_uids).where(uid: new_follower_uids).map { |user| user.slice(:uid, :screen_name) }
 
-      properties = {
+      {
           version: 1,
           request_id: @request.id,
           twitter_user_ids: @target_users.map(&:id),
@@ -165,14 +178,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
           new_followers: new_followers,
           worker_context: @request.worker_context.to_s,
       }
-
-      record = PeriodicReport.create!(user_id: @request.user.id, token: PeriodicReport.generate_token, message_id: '', properties: properties)
-
-      if record.id.nil?
-        Airbag.warn "Invalid record of PeriodicReport is found report=#{record.inspect} request=#{@request.inspect}"
-      end
-
-      {periodic_report_id: record.id, request_id: @request.id}
     end
 
     private
@@ -294,5 +299,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
     def correctly_completed
       where(status: '').where.not(finished_at: nil)
     end
+  end
+
+  class SaveFailed < StandardError
   end
 end
