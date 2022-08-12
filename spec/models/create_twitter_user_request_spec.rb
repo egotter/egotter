@@ -226,16 +226,29 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   describe '#save_twitter_user' do
     let(:snapshot) { TwitterSnapshot.new(nil) }
     let(:attributes) { double('attributes') }
-    let(:twitter_user) { double('twitter_user', id: 1) }
+    let(:twitter_user) { build(:twitter_user, id: 1) }
     subject { request.send(:save_twitter_user, snapshot) }
-    before { allow(TwitterUser).to receive(:new).with(attributes).and_return(twitter_user) }
     it do
       expect(snapshot).to receive(:attributes).and_return(attributes)
+      expect(TwitterUser).to receive(:new).with(attributes).and_return(twitter_user)
       expect(twitter_user).to receive(:perform_before_transaction)
       expect(twitter_user).to receive(:save!)
       expect(twitter_user).to receive(:perform_after_commit)
       expect(request).to receive(:update).with(twitter_user_id: 1)
       is_expected.to eq(twitter_user)
+    end
+
+    context 'save! failed' do
+      let(:twitter_user) { build(:twitter_user, id: nil, uid: 11, screen_name: 'sn') }
+      before do
+        allow(snapshot).to receive(:attributes).and_return(attributes)
+        allow(TwitterUser).to receive(:new).with(attributes).and_return(twitter_user)
+        allow(twitter_user).to receive(:perform_before_transaction)
+        allow(twitter_user).to receive(:save!)
+      end
+      it do
+        expect { subject }.to raise_error(described_class::SaveFailed, 'uid=11 screen_name=sn')
+      end
     end
   end
 

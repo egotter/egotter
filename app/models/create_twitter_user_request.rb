@@ -172,6 +172,11 @@ class CreateTwitterUserRequest < ApplicationRecord
     twitter_user = TwitterUser.new(snapshot.attributes)
     twitter_user.perform_before_transaction
     twitter_user.save!
+
+    if twitter_user.id.nil?
+      raise SaveFailed.new("uid=#{twitter_user.uid} screen_name=#{twitter_user.screen_name}")
+    end
+
     twitter_user.perform_after_commit
     update(twitter_user_id: twitter_user.id)
     twitter_user
@@ -287,6 +292,8 @@ class CreateTwitterUserRequest < ApplicationRecord
   class TimeoutError < Error; end
 
   class HttpTimeout < Error; end
+
+  class SaveFailed < Error; end
 
   class Unknown < StandardError; end
 end
