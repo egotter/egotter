@@ -1,6 +1,6 @@
 class SendAirbagMessageToSlackWorker
   include Sidekiq::Worker
-  sidekiq_options queue: 'logging', retry: 0, backtrace: false
+  sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   # options:
   def perform(text, options = {})

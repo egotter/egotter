@@ -1,5 +1,6 @@
 class CreateAccessDayWorker
   include Sidekiq::Worker
+  prepend LoggingWrapper
   sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -14,9 +15,7 @@ class CreateAccessDayWorker
     user = User.find(user_id)
     create_record(user)
   rescue ActiveRecord::RecordNotUnique => e
-    Airbag.info e.message.truncate(100)
-  rescue => e
-    Airbag.exception e, user_id: user_id, options: options
+    Airbag.info e.inspect
   end
 
   def create_record(user)
