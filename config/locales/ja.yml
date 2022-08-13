@@ -1975,8 +1975,8 @@ ja:
     inquiry_response_reports:
       label1: '解決しました'
       description1: '回答が不要な場合は押してください'
-      label2: '回答を待ってます'
-      description2: '回答が必要な場合は押してください'
+      label2: '無理のない範囲でご回答をお願いいたします'
+      description2: 'よくある質問を読んだ上で、回答が必要な場合のみ押してください'
     shared:
       label1: 'DM届きました'
       description1: 'このボタンを押しておくと、DM通知が届きやすくなります'
