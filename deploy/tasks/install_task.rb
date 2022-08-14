@@ -173,6 +173,11 @@ module Tasks
             'sudo rm -rf /var/tmp/aws-mon/*',
             'sudo rm -rf /var/egotter/tmp/cache/*',
             'sudo rm -rf /var/egotter/log/*',
+            'touch /var/egotter/log/airbag.log',
+            'touch /var/egotter/log/production.log',
+            'touch /var/egotter/log/puma.log',
+            'touch /var/egotter/log/sidekiq.log',
+            'touch /var/egotter/log/sidekiq_misc.log',
         ].each do |cmd|
           backend(cmd)
         end
