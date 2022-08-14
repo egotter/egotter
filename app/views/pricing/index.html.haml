@@ -202,7 +202,7 @@
   .my-3= t('.payment_method.modal.description')
   %strong.d-block.mt-5.mb-1= t('.payment_method.modal.1_month.title')
   .mb-1= t('.payment_method.modal.1_month.price', value: Order::BASIC_PLAN_MONTHLY_BASIS_TAX_INCLUDED['monthly-basis-1'])
-  .mt-2= link_to t('.payment_method.modal.1_month.purchase'), base_shop_1_month_url, id: 'base-shop-1-month-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+  .mt-2= link_to t('.payment_method.modal.1_month.purchase'), redirect_page_path(name: 'baseshop_1'), id: 'base-shop-1-month-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
   .text-center.small.mt-5.mb-3
     = link_to t('.payment_method.modal.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank'
     &middot;
@@ -216,19 +216,19 @@
     .mb-1
       = t('.bulk_purchase.modal.3_month.price', value: Order::BASIC_PLAN_MONTHLY_BASIS_TAX_INCLUDED['monthly-basis-3'])
       = t('.bulk_purchase.modal.3_month.discount_rate', value: 3)
-    .mt-2= link_to t('.bulk_purchase.modal.3_month.purchase'), base_shop_3_months_url, id: 'base-shop-3-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+    .mt-2= link_to t('.bulk_purchase.modal.3_month.purchase'), redirect_page_path(name: 'baseshop_3'), id: 'base-shop-3-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
   .my-5
     %strong.mb-1= t('.bulk_purchase.modal.6_month.title')
     .mb-1
       = t('.bulk_purchase.modal.6_month.price', value: Order::BASIC_PLAN_MONTHLY_BASIS_TAX_INCLUDED['monthly-basis-6'])
       = t('.bulk_purchase.modal.6_month.discount_rate', value: 5)
-    .mt-2= link_to t('.bulk_purchase.modal.6_month.purchase'), base_shop_6_months_url, id: 'base-shop-6-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+    .mt-2= link_to t('.bulk_purchase.modal.6_month.purchase'), redirect_page_path(name: 'baseshop_6'), id: 'base-shop-6-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
   .my-5
     %strong.mb-1= t('.bulk_purchase.modal.12_month.title')
     .mb-1
       = t('.bulk_purchase.modal.6_month.price', value: Order::BASIC_PLAN_MONTHLY_BASIS_TAX_INCLUDED['monthly-basis-12'])
       = t('.bulk_purchase.modal.6_month.discount_rate', value: 10)
-    .mt-2= link_to t('.bulk_purchase.modal.12_month.purchase'), base_shop_12_months_url, id: 'base-shop-12-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+    .mt-2= link_to t('.bulk_purchase.modal.12_month.purchase'), redirect_page_path(name: 'baseshop_12'), id: 'base-shop-12-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
   .text-center.small.mt-5.mb-3
     = link_to t('.bulk_purchase.modal.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank'
     &middot;

@@ -225,26 +225,6 @@ module PathsHelper
     'https://twitter.com/settings/applications/185425'
   end
 
-  def base_shop_1_month_url
-    user_id = user_signed_in? ? current_user.id : nil
-    "https://egotter.thebase.in/items/44366397?via_id=#{user_id}"
-  end
-
-  def base_shop_3_months_url
-    user_id = user_signed_in? ? current_user.id : nil
-    "https://egotter.thebase.in/items/44709062?via_id=#{user_id}"
-  end
-
-  def base_shop_6_months_url
-    user_id = user_signed_in? ? current_user.id : nil
-    "https://egotter.thebase.in/items/44708302?via_id=#{user_id}"
-  end
-
-  def base_shop_12_months_url
-    user_id = user_signed_in? ? current_user.id : nil
-    "https://egotter.thebase.in/items/44708346?via_id=#{user_id}"
-  end
-
   def force_sign_in_path(options)
     sign_in_path(options.merge(force_login: true))
   end
