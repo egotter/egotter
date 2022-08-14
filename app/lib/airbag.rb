@@ -72,7 +72,6 @@ class Airbag
           pid: ::Process.pid,
           tid: Thread.current["sidekiq_tid"],
           class: (Thread.current[:sidekiq_context][:class] rescue nil),
-
       }
     else
       {
