@@ -135,6 +135,7 @@ Rails.application.routes.draw do
   get 'error_pages/csrf_error', to: 'error_pages#csrf_error'
 
   get 'l/:name', to: 'landing_pages#new'
+  get 'r/:name', to: 'redirect_pages#new', as: :redirect_page
 
   get 'delete_tweets', to: 'delete_tweets#index'
   get 'delete_tweets/faq', to: 'delete_tweets#faq', as: :delete_tweets_faq

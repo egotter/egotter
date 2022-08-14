@@ -1,0 +1,12 @@
+<script>
+  function pageViewCallback() {
+    window.location.href = '<%= @redirect_path.html_safe %>';
+  }
+
+  setTimeout(pageViewCallback, 3000);
+</script>
+<div class="container" style="min-height: 300px;">
+  <div class="my-5">
+    <%= image_tag '/ajax-loader.gif' %>&nbsp;<span style="font-size: 24px;"><%= t('.loading') %></span>
+  </div>
+</div>
