@@ -18,7 +18,7 @@ class TwitterUserFetcher
       fetch_in_threads
     end
   rescue ThreadError => e
-    Airbag.warn 'TwitterUserFetcher#fetch: ThreadError is detected and retry without threads', exception: e.inspect, thread: Thread.current.inspect, backtrace: e.backtrace
+    Airbag.warn 'TwitterUserFetcher#fetch: ThreadError is detected and retry without threads', exception: e.inspect, current: Thread.current.inspect, main: Thread.main.inspect, backtrace: e.backtrace
     fetch_without_threads
   end
 
