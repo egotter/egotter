@@ -303,6 +303,8 @@ Rails.application.routes.draw do
   post 'webhook/twitter', to: 'webhook#twitter'
   post 'webhook/stripe', to: 'stripe_webhook#index'
 
+  get 'customer_portal', to: 'customer_portal#index'
+
   get 'adsense', to: 'adsense#new'
   get 'search_histories', to: 'search_histories#new'
   get 'load_public_tweets', to: 'public_tweets#load', as: :load_public_tweets

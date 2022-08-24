@@ -8,7 +8,7 @@ module Api
 
       def create
         order = current_user.orders.find_by(id: params[:order_id])
-        session = Stripe::BillingPortal::Session.create(customer: order.customer_id, return_url: settings_url(via: 'customer_portal'))
+        session = BillingPortalSessionWrapper.new(order.customer_id)
         render json: {url: session.url}
       end
 
