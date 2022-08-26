@@ -1,0 +1,41 @@
+<h2 class="h4 my-3"><%= t('.title') %></h2>
+<p class="mb-5"><%= t('.description') %></p>
+
+<form id="payment-form">
+  <div id="payment-element"></div>
+  <button id="payment-submit" class="btn btn-outline-primary my-3" type="submit" style="display: none;"><%= t('.submit') %></button>
+  <div id="payment-error" class="text-danger mb-3"></div>
+</form>
+
+<p id="payment-notice" class="text-muted small my-3" style="display: none;"><%= t('.notice') %></p>
+
+<script>
+  $(function () {
+    var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
+    var elements = stripe.elements({clientSecret: '<%= @client_secret %>', appearance: {theme: 'stripe'}});
+    var element = elements.create('payment');
+
+    element.mount('#payment-element');
+    element.on('ready', function () {
+      $('#payment-notice').show();
+      $('#payment-submit').show();
+    });
+
+    $('#payment-form').on('submit', function (e) {
+      e.preventDefault();
+      stripe.confirmSetup({
+        elements: elements,
+        confirmParams: {return_url: '<%= cards_path %>'}
+      }).then(function (result) {
+        if (result.error) {
+          logger.log(result.error.message);
+          $('#payment-error').text('<%= t('.error') %>');
+        } else {
+          $('#payment-error').text('');
+        }
+      }, function (result) {
+        console.log('err', result);
+      });
+    });
+  });
+</script>

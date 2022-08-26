@@ -305,6 +305,9 @@ Rails.application.routes.draw do
 
   get 'customer_portal', to: 'customer_portal#index'
 
+  get 'cards', to: 'cards#index'
+  get 'cards/new', to: 'cards#new'
+
   get 'adsense', to: 'adsense#new'
   get 'search_histories', to: 'search_histories#new'
   get 'load_public_tweets', to: 'public_tweets#load', as: :load_public_tweets
