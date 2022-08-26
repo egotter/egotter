@@ -6,9 +6,12 @@ class CardsController < ApplicationController
 
   before_action :set_intent, only: :index
 
+  TIME_LIMIT_MINUTES = 10
+
   def new
     intent = Stripe::SetupIntent.create(customer: current_customer_id, payment_method_types: ['card'])
     @client_secret = intent.client_secret
+    @time_limit = TIME_LIMIT_MINUTES
   end
 
   def index
@@ -25,7 +28,7 @@ class CardsController < ApplicationController
   def set_intent
     if params[:setup_intent]
       intent = Stripe::SetupIntent.retrieve(params[:setup_intent])
-      if Time.zone.at(intent.created) > 30.seconds.ago
+      if Time.zone.at(intent.created) > TIME_LIMIT_MINUTES.minutes.ago
         @intent = intent
       else
         redirect_to cards_new_path(via: 'setup_intent_outdated')

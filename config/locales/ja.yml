@@ -624,6 +624,7 @@ ja:
     new:
       title: 'クレジットカードの変更'
       description: 'このページでは、定期購読プランの支払いに利用するクレジットカード情報を変更することができます。'
+      time_limit_html: 'このページが表示されてから <span class="text-primary">%{count}分以内</span> に入力を終えてください。'
       submit: '送信する'
       error: '入力した情報に間違いがあります。修正してください。'
       setup_intent_client_secret_not_found: '先ほど入力された情報の誤りがあります。修正してください。'
