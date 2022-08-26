@@ -7,8 +7,6 @@
   <div id="payment-error" class="text-danger mb-3"></div>
 </form>
 
-<p id="payment-notice" class="text-muted small my-3" style="display: none;"><%= t('.notice') %></p>
-
 <script>
   $(function () {
     var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
@@ -17,7 +15,6 @@
 
     element.mount('#payment-element');
     element.on('ready', function () {
-      $('#payment-notice').show();
       $('#payment-submit').show();
     });
 
@@ -25,7 +22,7 @@
       e.preventDefault();
       stripe.confirmSetup({
         elements: elements,
-        confirmParams: {return_url: '<%= cards_path %>'}
+        confirmParams: {return_url: '<%= cards_url %>'}
       }).then(function (result) {
         if (result.error) {
           $('#payment-error').text(result.error.message);
