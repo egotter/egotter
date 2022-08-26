@@ -28,8 +28,7 @@
         confirmParams: {return_url: '<%= cards_path %>'}
       }).then(function (result) {
         if (result.error) {
-          logger.log(result.error.message);
-          $('#payment-error').text('<%= t('.error') %>');
+          $('#payment-error').text(result.error.message);
         } else {
           $('#payment-error').text('');
         }
