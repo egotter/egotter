@@ -2451,7 +2451,7 @@ ja:
           success_html: '<img src="/ajax-loader.gif?a=1"> ページを更新します。'
       delete_tweets_presigned_urls:
         create:
-          fail: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをそのまま指定してください。'
+          fail: 'ファイルのアップロードに失敗しました。Twitterから取得したアーカイブデータをファイル名を変えずにそのまま指定してください。'
       friend_insights:
         profiles_count:
           description: '@%{user} のフォローのプロフィールには [%{words}] とよく書かれています。'
