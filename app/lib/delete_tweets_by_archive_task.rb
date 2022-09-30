@@ -36,7 +36,7 @@ class DeleteTweetsByArchiveTask
 
   def load_tweets(paths)
     files = paths.include?(',') ? paths.split(',') : [paths]
-    files.reject! { |f| f.include?('tweetdeck.js') }
+    files.reject! { |f| f.match?(/tweetdeck.js|tweet-headers.js/) }
 
     files.map do |file|
       data = File.read(file).remove(/\Awindow\.YTD\.tweet\.part\d+ =/)
