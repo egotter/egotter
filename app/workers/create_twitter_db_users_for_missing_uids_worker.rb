@@ -12,6 +12,7 @@ class CreateTwitterDBUsersForMissingUidsWorker
   end
 
   class << self
+    # Multiple jobs with the same :enqueued_by may be pushed
     def push_bulk(uids, user_id, options = {})
       uids.uniq.sort.each_slice(100).with_index do |group, i|
         perform_in((0.1 * i).floor, compress(group), user_id, options)
