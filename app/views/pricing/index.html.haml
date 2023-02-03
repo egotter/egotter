@@ -35,8 +35,13 @@
 %hr
 
 %h2.h4.text-center.my-5= t('.not_included.title')
-%p= t('.not_included.description_html', faq_url: support_path(via: current_via), delete_tweets_faq_url: delete_tweets_faq_path(via: current_via))
-%p= t('.not_included.custom_support_html', url: '#enterprise-plan')
+%p=t('.not_included.description')
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.not_included.answering.title')
+%p= t('.not_included.answering.description_html', user: 'egotter_cs', faq_url: support_path(via: current_via), delete_tweets_faq_url: delete_tweets_faq_path(via: current_via), custom_support_url: '#enterprise-plan')
+
+%h3.h5.font-weight-bold.mt-5.mb-3= t('.not_included.platform_bugs.title')
+%p= t('.not_included.platform_bugs.description_html')
 
 %hr
 

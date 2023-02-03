@@ -662,12 +662,18 @@ ja:
         note_html: '<strong>ヒント</strong><br>「いいね」の削除は全て無料です。有料プランを購入せずに利用できます。'
       not_included:
         title: '有料プランに含まれない要素'
-        description_html:
-          <p>各種の質問への回答は有料プランに含まれません。質問はいつでも送って大丈夫ですが、回答があるとは限らないことにご注意ください。</p>
-          えごったーに関する質問は <a href="%{faq_url}">よくある質問</a> または <a href="%{delete_tweets_faq_url}">ツイート削除のよくある質問</a> をご覧になってください。
-        custom_support_html:
-          有料プランを購入していても、<span class="egotter-pink">質問の回答が必ずあるとは限りません</span>。
-          それでもどうしても質問の回答がほしいという方は、通常の有料プランとは別に用意している <a href="%{url}">有償サポート</a> をご購入ください。
+        description: '有料プランを購入しても、これらの要素は提供されません。'
+        answering:
+          title: '質問への回答は保証できません'
+          description_html:
+            各種の質問への回答は有料プランに<span class="egotter-pink">含まれません</span>。えごったーの分からない点の質問はいつでも歓迎します。ですが、回答が常にあるとは限らないことにご注意ください。<br>
+            えごったーの基本的な使い方は <a href="%{faq_url}">よくある質問</a> または <a href="%{delete_tweets_faq_url}">ツイート削除のよくある質問</a> をご覧になってください。<br>
+            回答がなくてもかまわないので質問したいという場合は <a href="https://twitter.com/%{user}" target="_blank">@%{user}</a> までご連絡ください。<br>
+            必ず質問の回答がほしいという方は、通常の有料プランとは別に用意している <a href="%{custom_support_url}">有償サポート</a> をご購入ください。
+        platform_bugs:
+          title: 'ツイッターの不具合への保証はできません'
+          description_html:
+            2023年1月時点で、ツイッターの運営体制は非常に不安定になっています。この不安定さが原因で起きる不具合については恐れ入りますが <span class="egotter-pink">返金の対象外</span> となります。
       type:
         title: 'プランの種類'
         description_html: |
@@ -963,6 +969,10 @@ ja:
     refund_policy:
       title: '返金ポリシー'
       description_html: 'えごったーの有料プランは、特別な事情がある場合は返金を行っています。気になることがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
+      platform_bugs:
+        title: 'ツイッターの不具合について'
+        description_html:
+          2023年1月時点で、ツイッターの運営体制は非常に不安定になっています。この不安定さが原因で起きる不具合については恐れ入りますが <span class="egotter-pink">返金の対象外</span> となります。
       trial:
         title: 'お試し期間中の場合'
         description_html:
