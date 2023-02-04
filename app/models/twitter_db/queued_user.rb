@@ -56,15 +56,19 @@ class TwitterDB::QueuedUser < ApplicationRecord
       query = select(:id, :uid).where('created_at < ?', 6.hours.ago)
       processed_records = query.processed.find_in_batches.map { |records| records }.flatten
       unprocessed_records = query.unprocessed.find_in_batches.map { |records| records }.flatten
+      call_count = 0
 
       (processed_records + unprocessed_records).each_slice(100) do |records|
         uids = records.map(&:uid)
         if TwitterDB::User.where(uid: uids).size != records.size
-          puts "Not persisted records found uids=#{uids}"
+          puts "delete_stale_records: Not persisted records found uids=#{uids}"
         end
+        call_count += 1
 
         where(id: records.map(&:id)).delete_all
       end
+
+      puts "delete_stale_records: The 'select count(*) from twitter_db_users' is called #{call_count} times"
     end
   end
 end
