@@ -17,7 +17,7 @@
 #
 #  index_webhook_logs_on_created_at  (created_at)
 #
-class WebhookLog < ApplicationRecord
+class WebhookLog < ApplicationLogRecord
   class << self
     # For debugging
     def messages_from_egotter
