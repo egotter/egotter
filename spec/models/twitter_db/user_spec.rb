@@ -12,6 +12,12 @@ RSpec.describe TwitterDB::User, type: :model do
     it { expect { subject }.to change { TwitterDB::User.all.size }.by(t_users.size) }
   end
 
+  describe '.persisted_uids_count' do
+    let(:users) { 3.times.map { create(:twitter_db_user) } }
+    subject { TwitterDB::User.persisted_uids_count(users.map(&:uid)) }
+    it { is_expected.to eq(3) }
+  end
+
   describe '.order_by_field' do
     let(:users) { 3.times.map { create(:twitter_db_user) }.shuffle }
     subject { TwitterDB::User.order_by_field(users.map(&:uid)) }

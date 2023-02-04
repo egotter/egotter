@@ -74,6 +74,11 @@ module TwitterDB
 
         import columns, values, on_duplicate_key_update: columns, batch_size: 500, validate: false
       end
+
+      def persisted_uids_count(uids)
+        Airbag.info '#persisted_uids_count called', size: uids.size, hash: Digest::MD5.hexdigest(uids.sort.to_json)
+        where(uid: uids).annotate('In #persisted_uids_count').size
+      end
     end
 
     scope :order_by_field, -> (uids) { order(Arel.sql("field(uid, #{uids.join(',')})")) }

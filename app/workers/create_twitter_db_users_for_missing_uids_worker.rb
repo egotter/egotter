@@ -37,7 +37,7 @@ class CreateTwitterDBUsersForMissingUidsWorker
 
     uids -= TwitterDB::QueuedUser.where(uid: uids).pluck(:uid)
 
-    if uids.size == TwitterDB::User.where(uid: uids).size
+    if uids.size == TwitterDB::User.persisted_uids_count(uids)
       return []
     end
 
