@@ -31,12 +31,26 @@ default_log: &default_log
   password: <%= ENV['EGOTTER_DATABASE_LOG_PASSWORD'] %>
   socket: <%= ENV['EGOTTER_DATABASE_LOG_SOCKET'] %>
 
+default_twitter: &default_twitter
+  adapter: mysql2
+  encoding: utf8mb4
+  charset: utf8mb4
+  collation: utf8mb4_unicode_ci
+  pool: <%= ENV['EGOTTER_DATABASE_POOL'] %>
+  host: <%= ENV['EGOTTER_DATABASE_TWITTER_HOST'] %>
+  username: <%= ENV['EGOTTER_DATABASE_TWITTER_USERNAME'] %>
+  password: <%= ENV['EGOTTER_DATABASE_TWITTER_PASSWORD'] %>
+  socket: <%= ENV['EGOTTER_DATABASE_TWITTER_SOCKET'] %>
+
 development:
   primary:
     <<: *default
     database: egotter_development
   log:
     <<: *default_log
+    database: egotter_development
+  twitter:
+    <<: *default_twitter
     database: egotter_development
 
 # Warning: The database defined as "test" will be erased and
@@ -48,6 +62,9 @@ test:
     database: egotter_test
   log:
     <<: *default_log
+    database: egotter_test
+  twitter:
+    <<: *default_twitter
     database: egotter_test
 
 # As with config/secrets.yml, you never want to store sensitive information,
@@ -75,4 +92,7 @@ production:
     database: egotter_production
   log:
     <<: *default_log
+    database: egotter_production
+  twitter:
+    <<: *default_twitter
     database: egotter_production

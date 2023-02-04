@@ -13,7 +13,7 @@
 #
 
 module TwitterDB
-  class UserId < ApplicationRecord
+  class UserId < ApplicationTwitterRecord
     validates :uid, presence: true, uniqueness: true
   end
 end
