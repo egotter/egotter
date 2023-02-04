@@ -10,6 +10,33 @@ class TwitterV2Client
     @client = user.api_client.twitter
   end
 
+  def friends
+    # TODO
+  end
+
+  def followers(uid, count: 1000, call_limit: 3)
+    collection = []
+    res = nil
+    call_count = 0
+
+    while collection.size < count
+      next_token = nil
+      if res && res[:meta] && res[:meta][:next_token]
+        next_token = res[:meta][:next_token]
+      end
+
+      res = fetch_followers(uid, count: [count, 1000].min, pagination_token: next_token)
+      collection.concat(build_users_from_response(res))
+      call_count += 1
+
+      if (call_count >= call_limit) || (res[:meta] && res[:meta][:next_token].blank?)
+        break
+      end
+    end
+
+    collection.take(count)
+  end
+
   def tweets(tweet_ids)
     res = fetch_tweets(tweet_ids)
     build_tweets_from_response(res)
@@ -45,6 +72,17 @@ class TwitterV2Client
   end
 
   private
+
+  def fetch_followers(uid, count: 1000, pagination_token: nil)
+    path = "/2/users/#{uid}/followers?" + {
+        'max_results' => count,
+        'user.fields' => User::FIELDS.join(','),
+    }.to_query
+    if pagination_token
+      path += '&pagination_token=' + pagination_token
+    end
+    http_get(path)
+  end
 
   def fetch_tweets(tweet_ids)
     path = "/2/tweets?" + {
@@ -112,21 +150,33 @@ class TwitterV2Client
   end
 
   class User
-    attr_reader :id, :name, :username
+    attr_reader :id, :name, :screen_name, :description, :entities, :location, :profile_image_url, :protected, :friends_count, :followers_count, :statuses_count, :listed_count, :url, :verified, :created_at
 
-    def initialize(id:, name:, username:)
-      @id = id
-      @name = name
-      @username = username
+    FIELDS = %w(id name username description entities location profile_image_url protected public_metrics url verified created_at)
+
+    def initialize(hash)
+      hash.each do |key, value|
+        if key == :username
+          @screen_name = value
+        elsif key == :public_metrics
+          @friends_count = value[:following_count]
+          @followers_count = value[:followers_count]
+          @statuses_count = value[:tweet_count]
+          @listed_count = value[:listed_count]
+        else
+          instance_variable_set("@#{key}", value)
+        end
+      end
     end
 
-    def screen_name
-      @username
+    # Deprecated
+    def profile_image_url_https
+      @profile_image_url
     end
 
     class << self
       def from_hash(hash)
-        new(id: hash[:id], name: hash[:name], username: hash[:username])
+        new(hash)
       end
     end
   end
