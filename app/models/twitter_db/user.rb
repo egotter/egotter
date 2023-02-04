@@ -76,7 +76,6 @@ module TwitterDB
       end
 
       def persisted_uids_count(uids)
-        Airbag.info '#persisted_uids_count called', size: uids.size, hash: Digest::MD5.hexdigest(uids.sort.to_json)
         where(uid: uids).annotate('In #persisted_uids_count').size
       end
     end
