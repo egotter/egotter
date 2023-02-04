@@ -35,5 +35,5 @@
 #  index_search_logs_on_user_id     (user_id)
 #
 
-class SearchLog < ApplicationRecord
+class SearchLog < ApplicationLogRecord
 end
