@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_20_112830) do
+ActiveRecord::Schema.define(version: 2023_02_04_122639) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1458,6 +1458,13 @@ ActiveRecord::Schema.define(version: 2022_07_20_112830) do
     t.index ["created_at"], name: "index_twitter_db_statuses_on_created_at"
     t.index ["screen_name"], name: "index_twitter_db_statuses_on_screen_name"
     t.index ["uid"], name: "index_twitter_db_statuses_on_uid"
+  end
+
+  create_table "twitter_db_user_ids", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "uid", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["uid"], name: "index_twitter_db_user_ids_on_uid", unique: true
   end
 
   create_table "twitter_db_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
