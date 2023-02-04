@@ -20,16 +20,35 @@ default: &default
   password: <%= ENV['EGOTTER_DATABASE_PASSWORD'] %>
   socket: <%= ENV['EGOTTER_DATABASE_SOCKET'] %>
 
+default_log: &default_log
+  adapter: mysql2
+  encoding: utf8mb4
+  charset: utf8mb4
+  collation: utf8mb4_unicode_ci
+  pool: <%= ENV['EGOTTER_DATABASE_POOL'] %>
+  host: <%= ENV['EGOTTER_DATABASE_LOG_HOST'] %>
+  username: <%= ENV['EGOTTER_DATABASE_LOG_USERNAME'] %>
+  password: <%= ENV['EGOTTER_DATABASE_LOG_PASSWORD'] %>
+  socket: <%= ENV['EGOTTER_DATABASE_LOG_SOCKET'] %>
+
 development:
-  <<: *default
-  database: egotter_development
+  primary:
+    <<: *default
+    database: egotter_development
+  log:
+    <<: *default_log
+    database: egotter_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: egotter_test
+  primary:
+    <<: *default
+    database: egotter_test
+  log:
+    <<: *default_log
+    database: egotter_test
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -51,5 +70,9 @@ test:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  <<: *default
-  database: egotter_production
+  primary:
+    <<: *default
+    database: egotter_production
+  log:
+    <<: *default_log
+    database: egotter_production

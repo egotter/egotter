@@ -34,7 +34,7 @@
 #  index_search_error_logs_on_user_id      (user_id)
 #
 
-class SearchErrorLog < ApplicationRecord
+class SearchErrorLog < ApplicationLogRecord
   belongs_to :user, optional: true
   def user_found?
     user_id != -1
