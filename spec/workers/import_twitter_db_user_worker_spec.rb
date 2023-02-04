@@ -46,10 +46,11 @@ RSpec.describe ImportTwitterDBUserWorker do
   end
 
   describe '#import_users' do
-    let(:users) { double('users') }
+    let(:users) { [{id: 1}, {id: 2}] }
     subject { worker.send(:import_users, users) }
     it do
       expect(TwitterDB::User).to receive(:import_by!).with(users: users)
+      expect(ImportTwitterDBUserIdWorker).to receive(:perform_async).with([1, 2])
       subject
     end
   end

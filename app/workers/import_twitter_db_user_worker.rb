@@ -39,6 +39,7 @@ class ImportTwitterDBUserWorker
 
   def import_users(users)
     TwitterDB::User.import_by!(users: users)
+    ImportTwitterDBUserIdWorker.perform_async(users.map { |u| u[:id] })
   rescue => e
     if deadlock_error?(e)
       raise Deadlocked
