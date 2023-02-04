@@ -13,5 +13,5 @@
 #  index_airbag_logs_on_time               (time)
 #  index_airbag_logs_on_time_and_severity  (time,severity)
 #
-class AirbagLog < ApplicationRecord
+class AirbagLog < ApplicationLogRecord
 end
