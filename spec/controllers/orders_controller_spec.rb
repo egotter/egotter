@@ -5,18 +5,41 @@ RSpec.describe OrdersController, type: :controller do
   let(:order) { create(:order, user_id: user.id) }
 
   describe 'GET #success' do
-    let(:checkout_session) { double('checkout session', id: 'cs_xxx', subscription: 'sub_xxx') }
-    subject { get :success, params: {stripe_session_id: checkout_session.id} }
-    before do
-      allow(controller).to receive(:current_user).and_return(user)
-      user.orders.create!(name: 'Test', customer_id: 'cus_xxx', subscription_id: checkout_session.subscription)
-      allow(Stripe::Checkout::Session).to receive(:retrieve).with(checkout_session.id).and_return(checkout_session)
+    context 'Checkout session is not passed' do
+      subject { get :success }
+      it { is_expected.to redirect_to(settings_order_history_path(via: 'orders/success/stripe_session_id_not_found')) }
     end
-    it { is_expected.to have_http_status(:ok) }
 
-    context 'An exception is raised' do
-      before { allow(user).to receive(:orders).and_raise }
-      it { is_expected.to redirect_to(orders_failure_path(via: 'internal_error', stripe_session_id: checkout_session.id)) }
+    context 'Checkout session is passed' do
+      let(:checkout_session) { double('checkout session', id: 'cs_xxx', subscription: 'sub_xxx') }
+      subject { get :success, params: {stripe_session_id: checkout_session.id} }
+      before do
+        allow(Stripe::Checkout::Session).to receive(:retrieve).with(checkout_session.id).and_return(checkout_session)
+      end
+
+      context '1 order found' do
+        before do
+          create(:order, user_id: user.id, name: 'Test', customer_id: 'cus_xxx', subscription_id: checkout_session.subscription)
+        end
+        it { is_expected.to have_http_status(:ok) }
+      end
+
+      context '0 order found' do
+        it { is_expected.to redirect_to(orders_failure_path(via: 'order_not_found', stripe_session_id: checkout_session.id)) }
+      end
+
+      context 'More than 2 orders found' do
+        before do
+          create(:order, user_id: user.id, name: 'Test1', customer_id: 'cus_xxx', subscription_id: checkout_session.subscription)
+          create(:order, user_id: user.id, name: 'Test2', customer_id: 'cus_xxx', subscription_id: checkout_session.subscription)
+        end
+        it { is_expected.to redirect_to(orders_failure_path(via: 'too_many_orders', stripe_session_id: checkout_session.id)) }
+      end
+
+      context 'An exception is raised' do
+        before { allow(Stripe::Checkout::Session).to receive(:retrieve).and_raise }
+        it { is_expected.to redirect_to(orders_failure_path(via: 'internal_error', stripe_session_id: checkout_session.id)) }
+      end
     end
   end
 

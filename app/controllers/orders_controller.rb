@@ -3,16 +3,30 @@ class OrdersController < ApplicationController
   skip_before_action :current_user_not_blocker?
   skip_before_action :verify_authenticity_token, only: :checkout_session_completed
 
-  before_action :reject_crawler, only: %i(failure)
-  before_action :require_login!, only: %i(success end_trial_failure cancel)
-  before_action :set_stripe_checkout_session, only: :success
+  before_action :reject_crawler, only: %i(success failure)
+  before_action :require_login!, only: %i(end_trial_failure cancel)
 
   after_action(only: %i(success failure end_trial_failure cancel)) { track_page_order_activity(stripe_session_id: params[:stripe_session_id]) }
   after_action :track_webhook_order_activity, only: :checkout_session_completed
 
   def success
-    unless current_user.orders.where(subscription_id: @checkout_session.subscription).exists?
-      redirect_to orders_failure_path(via: 'order_not_found', stripe_session_id: params[:stripe_session_id])
+    if params[:stripe_session_id]
+      checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
+      orders = Order.where(subscription_id: checkout_session.subscription).to_a
+
+      if orders.size == 1
+        if orders[0].created_at >= 10.minutes.ago
+          # Success
+        else
+          redirect_to settings_order_history_path(via: current_via('already_succeeded'))
+        end
+      elsif orders.size == 0
+        redirect_to orders_failure_path(via: 'order_not_found', stripe_session_id: params[:stripe_session_id])
+      else
+        redirect_to orders_failure_path(via: 'too_many_orders', stripe_session_id: params[:stripe_session_id])
+      end
+    else
+      redirect_to settings_order_history_path(via: current_via('stripe_session_id_not_found'))
     end
   rescue => e
     Airbag.warn "#{controller_name}##{action_name}: #{e.inspect} checkout_session_id=#{params[:stripe_session_id]}"
@@ -98,13 +112,5 @@ class OrdersController < ApplicationController
     SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{message}")
   rescue => e
     Airbag.warn "#{action_name}##{__method__}: #{e.inspect} channel=#{channel} options=#{options.inspect}"
-  end
-
-  def set_stripe_checkout_session
-    if params[:stripe_session_id]
-      @checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
-    else
-      redirect_to settings_order_history_path(via: current_via('stripe_session_id_not_found'))
-    end
   end
 end
