@@ -13,7 +13,7 @@
 #  index_direct_message_event_logs_on_name_and_time  (name,time)
 #  index_direct_message_event_logs_on_time           (time)
 #
-class DirectMessageEventLog < ApplicationRecord
+class DirectMessageEventLog < ApplicationLogRecord
   class << self
     def total_dm
       where(name: 'Send DM')
