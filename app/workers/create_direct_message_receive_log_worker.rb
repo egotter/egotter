@@ -8,5 +8,6 @@ class CreateDirectMessageReceiveLogWorker
     attrs.stringify_keys! # This worker could be run synchronously
     attrs['automated'] = !!attrs['message']&.include?('#egotter')
     DirectMessageReceiveLog.create!(attrs)
+    DirectMessageReceiveTmpLog.create!(attrs)
   end
 end
