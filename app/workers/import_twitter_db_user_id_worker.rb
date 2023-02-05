@@ -19,7 +19,7 @@ class ImportTwitterDBUserIdWorker
   # options:
   def perform(data, options = {})
     uids = decompress(data)
-    TwitterDB::UserId.import %w(uid), uids.map { |id| [id] }, on_duplicate_key_update: %w(uid), batch_size: 100, validate: false
+    TwitterDB::UserId.import_uids(uids)
   rescue => e
     Airbag.exception e, options: options
   end
