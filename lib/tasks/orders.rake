@@ -23,6 +23,16 @@ namespace :orders do
     Airbag.info "#{task.name}: Finished total=#{order_ids.size} processed=#{processed_count} elapsed=#{Time.zone.now - start}"
   end
 
+  task check_not_persisted_subscriptions: :environment do |task|
+    sessions = Stripe::Checkout::Session.list(limit: 100).data
+    subscription_ids = sessions.select { |s| s.status == 'complete' }.map(&:subscription)
+    orders = Order.where(subscription_id: subscription_ids)
+    unless orders.size == subscription_ids.size
+      not_persisted_ids = subscription_ids - orders.pluck(:subscription_id)
+      SlackBotClient.channel(:orders_sub).post_message("`#{Rails.env}` Not persisted subscriptions are found ids=#{not_persisted_ids}")
+    end
+  end
+
   task print_statuses: :environment do
     Order.unexpired.find_each do |order|
       customer = Stripe::Customer.retrieve(order.customer_id)
