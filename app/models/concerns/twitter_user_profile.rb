@@ -139,8 +139,10 @@ module TwitterUserProfile
 
     if data.blank?
       Airbag.warn 'Fetching profile failed', twitter_user_id: id, uid: uid, created_at: created_at.to_s(:db), exceptions: exceptions.inspect, caller: caller
+    else
+      Airbag.info 'Fetching profile succeeded', twitter_user_id: id, uid: uid, source: source, elapsed: (Time.zone.now - start) if Rails.env.development?
     end
-    Airbag.info 'Fetching profile succeeded', twitter_user_id: id, uid: uid, source: source, elapsed: (Time.zone.now - start) if Rails.env.development?
+
     data
   end
 end
