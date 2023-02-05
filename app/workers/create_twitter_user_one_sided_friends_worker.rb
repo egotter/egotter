@@ -49,8 +49,6 @@ class CreateTwitterUserOneSidedFriendsWorker
     OneSidedFriendsCountPoint.create(uid: twitter_user.uid, value: one_sided_friend_uids.size)
     OneSidedFollowersCountPoint.create(uid: twitter_user.uid, value: one_sided_follower_uids.size)
     MutualFriendsCountPoint.create(uid: twitter_user.uid, value: mutual_friend_uids.size)
-
-    DeleteOneSidedFriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
     Airbag.exception e, twitter_user_id: twitter_user_id, options: options
   end
