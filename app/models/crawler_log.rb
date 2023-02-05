@@ -21,5 +21,5 @@
 #  index_crawler_logs_on_created_at  (created_at)
 #
 
-class CrawlerLog < ApplicationRecord
+class CrawlerLog < ApplicationLogRecord
 end
