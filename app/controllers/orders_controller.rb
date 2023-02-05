@@ -3,7 +3,8 @@ class OrdersController < ApplicationController
   skip_before_action :current_user_not_blocker?
   skip_before_action :verify_authenticity_token, only: :checkout_session_completed
 
-  before_action :require_login!, only: %i(success failure end_trial_failure cancel)
+  before_action :reject_crawler, only: %i(failure)
+  before_action :require_login!, only: %i(success end_trial_failure cancel)
   before_action :set_stripe_checkout_session, only: :success
 
   after_action(only: %i(success failure end_trial_failure cancel)) { track_page_order_activity(stripe_session_id: params[:stripe_session_id]) }
