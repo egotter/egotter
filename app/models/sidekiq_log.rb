@@ -11,5 +11,5 @@
 #
 #  index_sidekiq_logs_on_time  (time)
 #
-class SidekiqLog < ApplicationRecord
+class SidekiqLog < ApplicationLogRecord
 end
