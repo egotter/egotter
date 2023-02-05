@@ -8,7 +8,7 @@ RSpec.describe TwitterUserAssociations do
     subject { twitter_user.mutual_friendships }
     it do
       expect(S3::MutualFriendship).to receive(:where).with(uid: uid)
-      expect(MutualFriendship).to receive_message_chain(:where, :order).with(from_uid: uid).with(sequence: :asc)
+      expect(MutualFriendship).to receive(:none)
       subject
     end
   end
@@ -17,7 +17,7 @@ RSpec.describe TwitterUserAssociations do
     subject { twitter_user.one_sided_friendships }
     it do
       expect(S3::OneSidedFriendship).to receive(:where).with(uid: uid)
-      expect(OneSidedFriendship).to receive_message_chain(:where, :order).with(from_uid: uid).with(sequence: :asc)
+      expect(OneSidedFriendship).to receive(:none)
       subject
     end
   end
@@ -26,7 +26,7 @@ RSpec.describe TwitterUserAssociations do
     subject { twitter_user.one_sided_followerships }
     it do
       expect(S3::OneSidedFollowership).to receive(:where).with(uid: uid)
-      expect(OneSidedFollowership).to receive_message_chain(:where, :order).with(from_uid: uid).with(sequence: :asc)
+      expect(OneSidedFollowership).to receive(:none)
       subject
     end
   end

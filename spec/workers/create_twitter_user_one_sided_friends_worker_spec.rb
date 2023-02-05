@@ -20,8 +20,6 @@ RSpec.describe CreateTwitterUserOneSidedFriendsWorker do
       expect(OneSidedFriendsCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 2)
       expect(OneSidedFollowersCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 3)
       expect(MutualFriendsCountPoint).to receive(:create).with(uid: twitter_user.uid, value: 1)
-
-      expect(DeleteOneSidedFriendshipsWorker).to receive(:perform_async).with(twitter_user.uid)
       subject
     end
   end

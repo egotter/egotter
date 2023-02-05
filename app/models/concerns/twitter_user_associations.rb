@@ -70,8 +70,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::MutualFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info 'Fetch records from outdated table', method: __method__, twitter_user_id: id, uid: uid, created_at: created_at.to_s, caller: caller
-      MutualFriendship.where(from_uid: uid).order(sequence: :asc)
+      MutualFriendship.none
     end
   end
 
@@ -79,8 +78,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::OneSidedFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info 'Fetch records from outdated table', method: __method__, twitter_user_id: id, uid: uid, created_at: created_at.to_s, caller: caller
-      OneSidedFriendship.where(from_uid: uid).order(sequence: :asc)
+      OneSidedFriendship.none
     end
   end
 
@@ -88,8 +86,7 @@ module TwitterUserAssociations
     if (from_s3 = S3::OneSidedFollowership.where(uid: uid))
       RelationshipProxy.new(from_s3)
     else
-      Airbag.info 'Fetch records from outdated table', method: __method__, twitter_user_id: id, uid: uid, created_at: created_at.to_s, caller: caller
-      OneSidedFollowership.where(from_uid: uid).order(sequence: :asc)
+      OneSidedFollowership.none
     end
   end
 
