@@ -21,6 +21,16 @@ module TwitterDB
     class << self
       def import_uids(uids)
         import COLUMNS, uids.map { |id| [id] }, on_duplicate_key_update: %w(uid), batch_size: 100, validate: false
+      rescue => e
+        if deadlock_error?(e)
+          uids.each { |uid| create(uid: uid) }
+        else
+          raise
+        end
+      end
+
+      def deadlock_error?(e)
+        e.class.name.include?('Deadlocked') || e.message.include?('try restarting transaction') || e.message.include?('Deadlock found')
       end
     end
   end
