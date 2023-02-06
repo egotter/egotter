@@ -26,17 +26,9 @@ module Api
       end
 
       def send_message(session_id)
-        message = tracking_params.merge(checkout_session_id: session_id)
+        message = {user_id: current_user.id, via: params[:via], checkout_session_id: session_id}
         SlackMessage.create(channel: 'orders_cs_created', message: message)
         SendMessageToSlackWorker.perform_async(:orders_cs_created, "`#{Rails.env}` #{message}")
-      end
-
-      def tracking_params
-        {
-            user_id: current_user.id,
-            via: params[:via],
-            referer: request.referer.to_s.truncate(200),
-        }
       end
     end
   end
