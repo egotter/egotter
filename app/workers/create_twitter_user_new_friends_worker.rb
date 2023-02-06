@@ -1,6 +1,7 @@
 class CreateTwitterUserNewFriendsWorker
   include Sidekiq::Worker
   prepend WorkMeasurement
+  prepend WorkExpiry
   sidekiq_options queue: 'creating_low', retry: 0, backtrace: false
 
   def unique_key(twitter_user_id, options = {})
@@ -13,10 +14,6 @@ class CreateTwitterUserNewFriendsWorker
 
   def expire_in
     10.minutes
-  end
-
-  def after_expire(*args)
-    Airbag.warn "The job of #{self.class} is expired args=#{args.inspect}"
   end
 
   def timeout_in

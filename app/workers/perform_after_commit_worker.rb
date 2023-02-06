@@ -1,6 +1,7 @@
 class PerformAfterCommitWorker
   include Sidekiq::Worker
   prepend WorkMeasurement
+  prepend WorkExpiry
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(twitter_user_id, data, options = {})
@@ -18,10 +19,6 @@ class PerformAfterCommitWorker
   # TODO Don't expire this job
   def expire_in
     1.hour
-  end
-
-  def after_expire(twitter_user_id, data, options = {})
-    Airbag.warn "The job of #{self.class} is expired twitter_user_id=#{twitter_user_id}"
   end
 
   def timeout_in
