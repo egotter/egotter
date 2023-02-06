@@ -41,8 +41,6 @@ class CreateTwitterUserInactiveFriendsWorker
 
     InactiveFriendsCountPoint.create(uid: twitter_user.uid, value: inactive_friend_uids.size)
     InactiveFollowersCountPoint.create(uid: twitter_user.uid, value: inactive_follower_uids.size)
-
-    DeleteInactiveFriendshipsWorker.perform_async(twitter_user.uid)
   rescue => e
     Airbag.exception e, twitter_user_id: twitter_user_id, options: options
   end
