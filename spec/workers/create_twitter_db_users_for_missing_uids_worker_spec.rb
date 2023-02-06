@@ -68,8 +68,25 @@ RSpec.describe CreateTwitterDBUsersForMissingUidsWorker do
     context 'all uids are persisted to TwitterDB::QueuedUser' do
       before { uids.each { |uid| create(:twitter_db_queued_user, uid: uid) } }
       it do
-        expect(TwitterDB::QueuedUser).to receive(:where).with(anything).and_call_original
+        expect(TwitterDB::QueuedUser).to receive(:where).with(uid: uids).and_call_original
+        expect(TwitterDB::UserId).not_to receive(:where)
+        is_expected.to eq([])
+      end
+    end
+
+    context 'all uids are persisted to TwitterDB::UserId' do
+      before { uids.each { |uid| create(:twitter_db_user_id, uid: uid) } }
+      it do
+        expect(TwitterDB::UserId).to receive(:where).with(uid: uids).and_call_original
         expect(TwitterDB::User).not_to receive(:where)
+        is_expected.to eq([])
+      end
+    end
+
+    context 'all uids are persisted to TwitterDB::User' do
+      before { uids.each { |uid| create(:twitter_db_user, uid: uid) } }
+      it do
+        expect(TwitterDB::User).to receive(:where).with(uid: uids).and_call_original
         is_expected.to eq([])
       end
     end

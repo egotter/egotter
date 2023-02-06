@@ -31,16 +31,15 @@ class CreateTwitterDBUsersForMissingUidsWorker
   end
 
   def filter_missing_uids(uids)
-    if uids.size == TwitterDB::QueuedUser.where(uid: uids).size
-      return []
-    end
+    uids.sort!
 
+    return [] if uids.size == TwitterDB::QueuedUser.where(uid: uids).size
     uids -= TwitterDB::QueuedUser.where(uid: uids).pluck(:uid)
 
-    if uids.size == TwitterDB::User.persisted_uids_count(uids)
-      return []
-    end
+    return [] if uids.size == TwitterDB::UserId.where(uid: uids).size
+    uids -= TwitterDB::UserId.where(uid: uids).pluck(:uid)
 
+    return [] if uids.size == TwitterDB::User.persisted_uids_count(uids)
     uids - TwitterDB::User.where(uid: uids).pluck(:uid)
   end
 end
