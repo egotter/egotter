@@ -63,10 +63,10 @@ module Api
 
       render json: {name: controller_name, max_sequence: result[:offset] + users.size - 1, limit: result[:limit], users: users}
     rescue TwitterDB::Sort::TooManySortTargets => e
-      Airbag.warn e.inspect, request_details.except(:referer)
+      SendMessageToSlackWorker.perform_async(:monit_sort, "#{e.inspect} #{request_details.except(:referer)}")
       render json: {name: controller_name, message: t('api.base.list.too_many_sort_targets_html')}, status: :bad_request
     rescue TwitterDB::Sort::SafeTimeout, TwitterDB::Sort::CreatingCache => e
-      Airbag.warn e.inspect, request_details.except(:referer)
+      SendMessageToSlackWorker.perform_async(:monit_sort, "#{e.inspect} #{request_details.except(:referer)}")
       render json: {name: controller_name, message: t('api.base.list.timeout')}, status: :request_timeout
     end
 

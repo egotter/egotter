@@ -16,7 +16,7 @@ module WorkMeasurement
           after_timeout(*args)
         end
         CreateSidekiqLogWorker.perform_async(nil, 'Job timed out', log_props.merge!(args: args), Time.zone.now)
-        SlackBotClient.channel(:job_timeout).post_message("Job timed out #{log_props}")
+        SendMessageToSlackWorker.perform_async(:job_timeout, "Job timed out #{log_props}")
       else
         CreateSidekiqLogWorker.perform_async(nil, 'WorkMeasurement', log_props, Time.zone.now)
       end

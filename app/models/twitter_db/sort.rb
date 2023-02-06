@@ -58,30 +58,30 @@ module TwitterDB
       end
 
       if uids.size > @limit
-        Airbag.info 'TwitterDB::Sort: There are too many uids to sort', value: @value
+        Airbag.info 'TwitterDB::Sort: There are too many uids to sort', value: @value if Rails.env.development?
         raise TooManySortTargets
       end
 
       if @without_cache
-        Airbag.info 'TwitterDB::Sort: Sort uids because :without_cache is specified', value: @value
+        Airbag.info 'TwitterDB::Sort: Sort uids because :without_cache is specified', value: @value if Rails.env.development?
       else
         if uids.size > @threshold
           cache = SortCache.instance
 
           if cache.exists?(@value, uids)
-            Airbag.info 'TwitterDB::Sort: a cache found', value: @value
+            Airbag.info 'TwitterDB::Sort: a cache found', value: @value if Rails.env.development?
             return cache.read(@value, uids)
           else
             if (jid = CreateTwitterDBSortCacheWorker.perform_async(@value, uids))
-              Airbag.info 'TwitterDB::Sort: Start creating a cache', value: @value, jid: jid
+              Airbag.info 'TwitterDB::Sort: Start creating a cache', value: @value, jid: jid if Rails.env.development?
               raise CreatingCacheStarted
             else
-              Airbag.info 'TwitterDB::Sort: Already creating a cache', value: @value
+              Airbag.info 'TwitterDB::Sort: Already creating a cache', value: @value if Rails.env.development?
               raise AlreadyCreatingCache
             end
           end
         else
-          Airbag.info 'TwitterDB::Sort: Sort uids because the size is small enough', value: @value
+          Airbag.info 'TwitterDB::Sort: Sort uids because the size is small enough', value: @value if Rails.env.development?
         end
       end
 
