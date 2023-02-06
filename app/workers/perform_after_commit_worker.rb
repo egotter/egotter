@@ -18,7 +18,7 @@ class PerformAfterCommitWorker
 
   # TODO Don't expire this job
   def expire_in
-    1.hour
+    12.hours
   end
 
   def timeout_in
