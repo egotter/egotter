@@ -18,10 +18,6 @@ class CreatePeriodicReportWorker
     60.seconds
   end
 
-  def after_timeout(request_id, options = {})
-    Airbag.warn 'Job timed out', request_id: request_id, options: options
-  end
-
   # options:
   #   user_id
   def perform(request_id, options = {})

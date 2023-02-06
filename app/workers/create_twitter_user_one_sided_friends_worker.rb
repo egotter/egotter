@@ -27,10 +27,6 @@ class CreateTwitterUserOneSidedFriendsWorker
     30.seconds
   end
 
-  def after_timeout(*args)
-    Airbag.warn 'Job timed out', job_details(*args)
-  end
-
   def job_details(twitter_user_id, options = {})
     user = TwitterUser.find(twitter_user_id)
     {class: self.class, twitter_user_id: twitter_user_id, friends_count: user.friends_count, followers_count: user.followers_count}

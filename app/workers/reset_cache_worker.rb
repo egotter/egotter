@@ -12,10 +12,6 @@ class ResetCacheWorker
     30.seconds
   end
 
-  def after_timeout(request_id, options = {})
-    Airbag.warn "Timeout #{timeout_in} #{request_id}"
-  end
-
   def perform(request_id, options = {})
     request = ResetCacheRequest.find(request_id)
     request.perform!
