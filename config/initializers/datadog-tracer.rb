@@ -2,6 +2,7 @@ if Rails.env.production?
   require 'datadog/statsd'
   require 'ddtrace'
 
+  # Datadog APM
   Datadog.configure do |c|
     c.logger = ::Logger.new('log/datadog-tracer.log')
     c.logger.level = ::Logger::INFO
