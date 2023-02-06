@@ -17,7 +17,7 @@
 #  index_direct_message_receive_logs_on_sender_id     (sender_id)
 #  index_direct_message_receive_logs_on_srac          (sender_id,recipient_id,automated,created_at)
 #
-class DirectMessageReceiveLog < ApplicationRecord
+class DirectMessageReceiveLog < ApplicationLogRecord
   class << self
     # Index: index_direct_message_receive_logs_on_srac
     def message_received?(uid)
