@@ -91,6 +91,10 @@ gem 'aws-sdk-s3'
 gem 'aws-sdk-ec2', require: false
 gem 'aws-sdk-elasticloadbalancingv2', require: false
 
+# Datadog APM
+gem 'dogstatsd-ruby', require: false
+gem 'ddtrace', require: false
+
 # Slack
 gem 'slack-ruby-client', require: false
 
