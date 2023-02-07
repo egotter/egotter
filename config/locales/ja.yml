@@ -413,7 +413,7 @@ ja:
   settings:
     index:
       settings: '設定'
-      others: 'その他'
+      others: 'その他のツール'
       account: 'アカウント'
       periodic_report: 'リムられ通知'
       block_report: 'ブロック通知'
@@ -421,12 +421,10 @@ ja:
       search_report: '検索通知'
       sneak_search: 'こっそり検索'
       private_mode: 'データ非公開'
-      premium_only: '有料プラン限定'
       delete_tweets: 'ツイートの一括削除'
       delete_favorites: 'いいねの一括削除'
       order_history:
         title: '購入履歴'
-        free: '無料プランを利用中'
         basic: '有料プランを利用中'
     order:
       no_payment_guranteed: '※ トライアル期間中は支払いは発生しません。'
