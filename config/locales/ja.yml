@@ -14,6 +14,8 @@ ja:
       title: '@%{user} の分析'
       app_name: 'えごったー'
       sign_in: 'ログイン'
+    setting_header:
+      title: '設定'
     meta_tags:
       title: 'えごったー スマホでかんたん ツイッターのフォロー整理'
       description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
@@ -481,7 +483,7 @@ ja:
         name: '夜のリムられ通知'
         desc: '21〜22時頃に届きます'
     account:
-      return: '← 設定ページ'
+      header_name: '設定 > アカウント'
       screen_name:
         title: 'Twitter ID'
         display: '@%{name}'
@@ -524,75 +526,61 @@ ja:
         remaining: '（残り %{count} 回）'
         note: '直近の %{days} 日が対象'
     periodic_report:
-      return: '← 設定ページ'
-      title: 'リムられ通知'
-      description_html: |
-        <p>フォロワーの増減を定期的にお知らせする通知です。</p>
-        リムられ通知の詳細は、<a href="%{url}">よくある質問 &gt; リムられ通知</a> をご覧になってください。
+      header_name: '設定 > リムられ通知'
+      description: 'フォロワーの増減を定期的にお知らせする通知です。'
+      faq_html: 'リムられ通知の詳細は、<a href="%{url}">よくある質問 &gt; リムられ通知</a> をご覧になってください。'
       stopped: 'この通知は停止中です。'
       restart: '通知を再開する'
       receive: '通知を受け取る'
       stop: '通知を停止する'
     block_report:
-      return: '← 設定ページ'
-      title: 'ブロック通知'
-      description_html: |
-        <p>ブロックされているユーザーが見付かったときに届く通知です。</p>
-        ブロック通知の詳細は、<a href="%{url}">よくある質問</a> をご覧になってください。
+      header_name: '設定 > ブロック通知'
+      description: 'ブロックされているユーザーが見付かったときに届く通知です。'
+      faq_html: 'ブロック通知の詳細は、<a href="%{url}">よくある質問 &gt; ブロック通知</a> をご覧になってください。'
       stopped: 'この通知は停止中です。'
       restart: '通知を再開する'
       receive: '通知を受け取る'
       stop: '通知を停止する'
     mute_report:
-      return: '← 設定ページ'
-      title: 'ミュート通知'
-      description_html: |
-        <p>ミュートされているユーザーが見付かったときに届く通知です。</p>
-        ミュート通知の詳細は、<a href="%{url}">よくある質問</a> をご覧になってください。
+      header_name: '設定 > ミュート通知'
+      description: 'ミュートされているユーザーが見付かったときに届く通知です。'
+      faq_html: 'ミュート通知の詳細は、<a href="%{url}">よくある質問 &gt; ミュート通知</a> をご覧になってください。'
       stopped: 'この通知は停止中です。'
       restart: '通知を再開する'
       receive: '通知を受け取る'
       stop: '通知を停止する'
     search_report:
-      return: '← 設定ページ'
-      title: '検索通知'
-      description_html: |
-        <p>あなたが検索されたときに届く通知です。</p>
-        検索通知の詳細は、<a href="%{url}">よくある質問</a> をご覧になってください。
+      header_name: '設定 > 検索通知'
+      description: 'あなたが検索されたときに届く通知です。'
+      faq_html: '検索通知の詳細は、<a href="%{url}">よくある質問 &gt; 検索通知</a> をご覧になってください。'
       stopped: 'この通知は停止中です。'
       restart: '通知を再開する'
       receive: '通知を受け取る'
       stop: '通知を停止する'
+      note: 'この設定に関わらず、検索通知には「誰が検索したのか」は書かれませんのでご安心ください。'
     sneak_search:
-      return: '← 設定ページ'
-      title: 'こっそり検索'
+      header_name: '設定 > こっそり検索'
       description: 'オンにすると、誰かを検索したときに「検索通知」が相手に届かなくなります。'
       premium_only: '有料プラン限定機能です。'
       purchase: '購入する'
+      already_purchased: '購入済み'
       checkbox:
-        title: 'こっそり検索'
-        on_html: '<span class="text-primary">有効</span> になっています。'
-        off_html: '<span class="text-danger">無効</span> になっています。'
-      note_html: |
-        <p>この設定がどうなっているかに関わらず、検索通知には「誰が検索したのか」は書かれませんのでご安心ください。</p>
-        <p>検索通知の詳細は、<a href="%{url1}">よくある質問 &gt; 検索通知</a> をご覧になってください。</p>
-        こっそり検索の詳細は、<a href="%{url2}">よくある質問 &gt; こっそり検索</a> をご覧になってください。
+        on_html: 'こっそり検索は <span class="text-primary">有効</span> になっています。'
+        off_html: 'こっそり検索は <span class="text-danger">無効</span> になっています。'
+      note: 'この設定に関わらず、検索通知には「誰が検索したのか」は書かれませんのでご安心ください。'
+      search_report_faq_html: '検索通知の詳細は、<a href="%{url}">よくある質問 &gt; 検索通知</a> をご覧になってください。'
     private_mode:
-      return: '← 設定ページ'
-      title: 'データ非公開'
+      header_name: '設定 > データ非公開'
       description: 'オンにすると、えごったーのあなたのデータが非公開になります。'
       premium_only: '有料プラン限定機能です。'
       purchase: '購入する'
+      already_purchased: '購入済み'
       checkbox:
-        title: 'データ非公開'
-        on_html: '<span class="text-primary">有効</span> になっています。'
-        off_html: '<span class="text-danger">無効</span> になっています。'
-      note_html: |
-        <p>この設定は「えごったーの中」での表示の設定です。Google検索の非表示についてはGoogleにお問い合わせください。</p>
-        データ非公開の詳細は、<a href="%{url}">よくある質問 &gt; データ非公開</a> をご覧になってください。
+        on_html: 'データ非公開は <span class="text-primary">有効</span> になっています。'
+        off_html: 'データ非公開は <span class="text-danger">無効</span> になっています。'
+      note: 'この設定は「えごったーの中」での表示の設定です。Google検索の非表示についてはGoogleにお問い合わせください。'
     order_history:
-      return: '← 設定ページ'
-      title: '購入履歴'
+      header_name: '設定 > 購入履歴'
       about_bulk_purchase: 'コンビニ決済や一括購入割引をご希望される方はこちらをご覧ください。'
       see_plans: '料金プラン'
       about_purchase: 'お試し期間（初回限定）付きのプランをクレジットカードで購入するにはこちらです。'

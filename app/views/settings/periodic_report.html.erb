@@ -1,11 +1,8 @@
-<div>
-  <%= link_to t('.return'), settings_path(via: current_via), class: 'text-body' %>
-</div>
+<%= content_for :setting_title, t('.header_name') %>
 
-<hr>
+<p class="my-3"><%= t('.description') %></p>
+<p class="my-3"><%= t('.faq_html', url: support_path(anchor: 'what_is_periodic_report')) %></p>
 
-<div class="text-primary my-3"><%= t('.title') %></div>
-<div class="text-muted my-3"><%= t('.description_html', url: support_path(anchor: 'what_is_periodic_report')) %></div>
 <hr>
 
 <% if StopPeriodicReportRequest.exists?(user_id: current_user.id) %>

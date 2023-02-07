@@ -84,6 +84,10 @@ module ApplicationHelper
     controller_name == 'delete_tweets'
   end
 
+  def settings_page?
+    controller_name == 'settings'
+  end
+
   def show_header?
     !top_page?
   end

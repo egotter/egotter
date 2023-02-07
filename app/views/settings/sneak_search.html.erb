@@ -1,17 +1,16 @@
-<div>
-  <%= link_to t('.return'), settings_path(via: current_via), class: 'text-body' %>
-</div>
+<%= content_for :setting_title, t('.header_name') %>
 
-<hr>
+<p class="my-3"><%= t('.description') %></p>
 
-<div class="text-primary my-3"><%= t('.title') %></div>
-<div class="text-muted my-3">
-  <p>
-    <%= t('.premium_only') %>
+<p class="my-3">
+  <%= t('.premium_only') %>
+  <% if current_user.has_valid_subscription? %>
+    <%= link_to t('.already_purchased'), '#', class: 'btn btn-outline-primary disabled btn-sm' %>
+  <% else %>
     <%= link_to t('.purchase'), pricing_path(via: current_via), class: 'btn btn-outline-primary btn-sm' %>
-  </p>
-  <%= t('.description') %>
-</div>
+  <% end %>
+</p>
+
 <hr>
 
 <div class="d-flex">
@@ -21,19 +20,18 @@
   </div>
 
   <div class="flex-grow-1">
-    <h6><%= t('.checkbox.title') %></h6>
-    <div class="text-muted">
-      <div id="sneak-search-on" class="text-muted" style="display: <%= @sneak_search_request ? 'block' : 'none' %>;"><%= t('.checkbox.on_html') %></div>
-      <div id="sneak-search-off" class="text-muted" style="display: <%= @sneak_search_request ? 'none' : 'block' %>;"><%= t('.checkbox.off_html') %></div>
+    <div>
+      <div id="sneak-search-on" style="display: <%= @sneak_search_request ? 'block' : 'none' %>;"><%= t('.checkbox.on_html') %></div>
+      <div id="sneak-search-off" style="display: <%= @sneak_search_request ? 'none' : 'block' %>;"><%= t('.checkbox.off_html') %></div>
     </div>
   </div>
 </div>
 
 <hr>
 
-<div class="text-muted small my-3">
-  <%= t('.note_html', url1: support_path(anchor: 'what_is_search_report'), url2: support_path(anchor: 'what_is_sneak_search')) %>
-</div>
+<p class="my-3"><%= t('.note') %></p>
+
+<p class="my-3"><%= t('.search_report_faq_html', url: support_path(anchor: 'what_is_search_report')) %></p>
 
 <% if current_user.has_valid_subscription? %>
   <% if current_user.has_trial_subscription? %>

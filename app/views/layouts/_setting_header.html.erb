@@ -1,0 +1,22 @@
+<div class="p-3" style="height: 60px; background-color: #343a40 !important;">
+  <div class="d-flex justify-content-between">
+    <div>
+      <%= link_to settings_path(via: current_via('return-arrow')), class: 'text-white' do %>
+        <span class="mr-3"><i class="fas fa-arrow-left"></i></span>
+      <% end %>
+    </div>
+    <div class="text-white" style="overflow-x: hidden; white-space: nowrap;">
+      <% if content_for?(:setting_title) %>
+        <%= yield(:setting_title) %>
+      <% else %>
+        <%= t('.title') %>
+      <% end %>
+    </div>
+    <div>
+      <%= link_to '#', class: 'text-white pl-3' do %>
+        <img class="rounded-circle btn-sidemenu" src="<%= current_user_icon %>" width="22" height="22">
+      <% end %>
+      <%= render partial: 'layouts/sidemenu', locals: {button_class: 'btn-sidemenu'} %>
+    </div>
+  </div>
+</div>

@@ -1,10 +1,4 @@
-<div>
-  <%= link_to t('.return'), settings_path(via: current_via), class: 'text-body' %>
-</div>
-
-<hr>
-
-<div class="text-primary my-3"><%= t('.title') %></div>
+<%= content_for :setting_title, t('.header_name') %>
 
 <%= render partial: 'shared/about_plan' %>
 

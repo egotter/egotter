@@ -1,10 +1,6 @@
-<div>
-  <%= link_to t('.return'), settings_path(via: current_via), class: 'text-body' %>
-</div>
+<%= content_for :setting_title, t('.header_name') %>
 
-<hr>
-
-<div class="row">
+<div class="row mt-3">
   <div class="col-4"><%= t('.screen_name.title') %></div>
   <div class="col-8">
     <span class="mr-2"><%= t('.screen_name.display', name: current_user.screen_name) %></span>
