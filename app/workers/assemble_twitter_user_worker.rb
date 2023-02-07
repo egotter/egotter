@@ -1,6 +1,7 @@
 class AssembleTwitterUserWorker
   include Sidekiq::Worker
   prepend WorkMeasurement
+  prepend WorkExpiry
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
