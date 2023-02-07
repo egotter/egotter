@@ -81,6 +81,7 @@ class ProcessWebhookEventWorker
     processed = QuestionMessageResponder.from_dm(dm).respond unless processed
     processed = AnonymousMessageResponder.from_dm(dm).respond unless processed
     processed = GreetingMessageResponder.from_dm(dm).respond unless processed
+    processed = LoginMessageResponder.from_dm(dm).respond unless processed
     processed = MemoMessageResponder.from_dm(dm).respond unless processed
 
     unless processed

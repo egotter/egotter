@@ -23,7 +23,8 @@ class CreateLoginMessageWorker
 
   # options:
   def perform(uid, options = {})
-    User.egotter.api_client.create_direct_message(uid, MESSAGE)
+    user = options['from_cs'] ? User.egotter_cs : User.egotter
+    user.api_client.create_direct_message(uid, MESSAGE)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.exception e, uid: uid, options: options
