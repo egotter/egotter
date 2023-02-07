@@ -23,7 +23,7 @@ module TwitterDB
         import COLUMNS, uids.map { |id| [id] }, on_duplicate_key_update: COLUMNS, batch_size: 100, validate: false
       rescue => e
         if deadlock_error?(e)
-          uids.each { |uid| create(uid: uid) }
+          uids.each { |uid| create(uid: uid) } # TODO Touch :updated_at
           SendMessageToSlackWorker.perform_async(:job_deadlock, "#{self}##{__method__}: #{uids}")
         else
           raise
