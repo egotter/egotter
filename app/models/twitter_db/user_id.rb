@@ -20,10 +20,11 @@ module TwitterDB
 
     class << self
       def import_uids(uids)
-        import COLUMNS, uids.map { |id| [id] }, on_duplicate_key_update: %w(uid), batch_size: 100, validate: false
+        import COLUMNS, uids.map { |id| [id] }, on_duplicate_key_update: COLUMNS, batch_size: 100, validate: false
       rescue => e
         if deadlock_error?(e)
           uids.each { |uid| create(uid: uid) }
+          SendMessageToSlackWorker.perform_async(:job_deadlock, "#{self}##{__method__}: #{uids}")
         else
           raise
         end
