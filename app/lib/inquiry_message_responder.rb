@@ -18,7 +18,7 @@ class InquiryMessageResponder < AbstractMessageResponder
         @inquiry = true
       elsif @text.match?(login_regexp)
         @login = true
-      elsif @fav.match?(delete_favorites_regexp)
+      elsif @text.match?(delete_favorites_regexp)
         @fav = true
       end
     end
