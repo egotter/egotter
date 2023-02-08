@@ -1570,7 +1570,10 @@ ja:
     routing_error:
       message_html: 'お探しのページが見つかりませんでした。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     internal_server_error:
-      message_html: '一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      login_html: '一時的なエラーが起きました。もしログインしていない場合は、<a href="%{url}">ログイン</a> してからご利用ください。'
+      message_html:
+        大半のエラーは時間が経つと解決します。現在起きている障害については <a href="https://twitter.com/%{user1}" target="_blank">@%{user1}</a> または
+        <a href="https://twitter.com/%{user2}" target="_blank">@%{user2}</a> のツイートをご確認ください。
     request_timeout_error:
       user_message_html: 'アクセスが多すぎてリクエストがタイムアウトしました。アクセスの少ない時間帯に再度お試しください。'
       visitor_message_html: 'アクセスが多すぎてリクエストがタイムアウトしました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
