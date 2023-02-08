@@ -1,22 +1,40 @@
 <% modal_id = "#{controller_name}_#{action_name}_redirection_modal" %>
-<% modal_body = t(
-  '.body_html',
-  page_name: redirection_modal_page_name,
-  icon: current_user_icon,
-  user: current_user.screen_name,
-  positive_url: positive_url,
-  settings_url: settings_url(via: current_via('redirection_modal')),
-  switch_account_url: force_sign_in_path(via: current_via('redirection_modal')),
-) %>
-<%= modal_dialog(id: modal_id, title: t('.title', user: current_user.screen_name), body: modal_body, button: {positive: t('.yes'), negative: t('.no')}) %>
+<%= modal_dialog(id: modal_id, title: t('.title'), button: {positive: t('.close'), category: 'outline-secondary'}) do %>
+  <div class="mb-3">
+    <%= link_to positive_url, class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+          @<%= current_user.screen_name %> の<%= redirection_modal_page_name %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr class="mx-n3">
+
+  <div class="my-3">
+    <%= link_to settings_url(via: current_via('redirection_modal')), class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><i class="fas fa-cog"></i> <%= t('.config') %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr class="mx-n3">
+
+  <div class="mt-3">
+    <%= link_to force_sign_in_path(via: current_via('redirection_modal')), class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><i class="fas fa-random"></i> <%= t('.switch_account') %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
 <script>
   $(function () {
-    var url = '<%= raw positive_url %>';
     var $modal = $('#<%= modal_id %>');
-
-    $modal.find('.positive').on('click', function () {
-      window.location.href = url;
-    });
 
     $modal.show = function () {
       $modal.modal('show');
