@@ -25,7 +25,7 @@ ja:
       close: 'メニューを閉じる'
       logged_in: '@%{user} でログイン中'
       sign_in: 'ログイン'
-      config: '設定'
+      config: '設定と購入履歴'
       search: '検索する'
       start: '使い方'
       pricing: '料金プラン'

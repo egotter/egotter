@@ -28,13 +28,17 @@
         height: 100vh;
         z-index: 9998;
     }
+
+    .sidemenu-item {
+      margin-left: 32px;
+    }
 </style>
 
 <%# Set a background color and enable to close a menu by tapping anywhere %>
 <div class="fade-sidemenu"></div>
 
 <div class="sidemenu shadow bg-white">
-  <div class="<%= button_class %> text-center py-3">
+  <div class="<%= button_class %> sidemenu-item py-3">
     <%= link_to '#' do %>
       <i class="fas fa-times"></i>
       <%= t('.close') %>
@@ -43,32 +47,28 @@
   <hr class="p-0 m-0">
 
   <% if user_signed_in? %>
-    <div class="text-center py-3">
+    <div class="sidemenu-item py-3">
       <%= link_to t('.logged_in', user: current_user.screen_name), timeline_path(current_user, via: current_via('navmenu')) %>
     </div>
     <hr class="p-0 m-0">
 
-    <div class="text-center py-3">
+    <div class="sidemenu-item py-3">
       <%= link_to settings_path(via: current_via('navmenu')) do %>
-        <% if current_user.has_valid_subscription? %>
-          <i class="fas fa-trophy"></i>
-        <% else %>
-          <i class="fas fa-cog"></i>
-        <% end %>
+        <i class="fas fa-cog"></i>
         <%= t('.config') %>
       <% end %>
     </div>
     <hr class="p-0 m-0">
 
-    <div class="text-center py-3">
+    <div class="sidemenu-item py-3">
       <%= link_to t('.switch_account'), force_sign_in_path(via: current_via('navmenu')) %>
     </div>
   <% else %>
-    <div class="text-center py-3"><%= link_to t('.sign_in'), sign_in_path(via: current_via('navmenu')) %></div>
+    <div class="sidemenu-item py-3"><%= link_to t('.sign_in'), sign_in_path(via: current_via('navmenu')) %></div>
   <% end %>
   <hr class="p-0 m-0">
 
-  <div class="text-center py-3">
+  <div class="sidemenu-item py-3">
     <%= link_to '#', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do %>
       <i class="fas fa-search"></i>
       <%= t('.search') %>
@@ -76,7 +76,7 @@
   </div>
   <hr class="p-0 m-0">
 
-  <div class="text-center py-3">
+  <div class="sidemenu-item py-3">
     <%= link_to direct_messages_url('ego_tter'), target: '_blank' do %>
       <i class="far fa-envelope"></i>
       <%= t('.notification') %>
@@ -84,7 +84,7 @@
   </div>
   <hr class="p-0 m-0">
 
-  <div class="text-center py-3">
+  <div class="sidemenu-item py-3">
     <%= link_to start_path(via: current_via('navmenu')) do %>
       <i class="far fa-question-circle"></i>
       <%= t('.start') %>
@@ -92,7 +92,7 @@
   </div>
   <hr class="p-0 m-0">
 
-  <div class="text-center py-3">
+  <div class="sidemenu-item py-3">
     <%= link_to pricing_path(via: current_via('navmenu')) do %>
       <i class="fas fa-yen-sign"></i>
       <%= t('.pricing') %>
@@ -102,7 +102,7 @@
   <% if user_signed_in? %>
     <hr class="p-0 m-0">
 
-    <div class="text-center py-3">
+    <div class="sidemenu-item py-3">
       <%= link_to t('.sign_out'), goodbye_path(via: current_via('navmenu')) %>
     </div>
   <% end %>
