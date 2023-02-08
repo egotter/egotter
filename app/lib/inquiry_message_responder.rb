@@ -18,6 +18,8 @@ class InquiryMessageResponder < AbstractMessageResponder
         @inquiry = true
       elsif @text.match?(login_regexp)
         @login = true
+      elsif @fav.match?(delete_favorites_regexp)
+        @fav = true
       end
     end
 
@@ -29,11 +31,17 @@ class InquiryMessageResponder < AbstractMessageResponder
       /ログイン/
     end
 
+    def delete_favorites_regexp
+      /いいねクリーナー|いいね削除/
+    end
+
     def send_message
       if @inquiry
         CreateInquiryMessageWorker.perform_async(@uid)
       elsif @login
         CreateLoginMessageWorker.perform_async(@uid, from_cs: true)
+      elsif @fav
+        CreateDeleteFavoritesMessageWorker.perform_async(@uid)
       end
     end
   end
