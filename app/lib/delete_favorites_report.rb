@@ -25,10 +25,6 @@ class DeleteFavoritesReport
       super(default_url_options.merge(via: via))
     end
 
-    def twitter_feedback_url
-      twitter_developer_feedback_fix_unlike_path
-    end
-
     def default_url_options
       {og_tag: false}
     end
@@ -87,7 +83,6 @@ class DeleteFavoritesReport
     def upload_completed_message(user, options = {})
       template = Rails.root.join('app/views/delete_favorites/upload_completed.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          twitter_feedback_url: twitter_feedback_url,
           url: delete_favorites_url('upload_completed'),
           since_date: options['since'],
           until_date: options['until'],

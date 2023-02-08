@@ -7,9 +7,14 @@ class CreateDeleteFavoritesMessageWorker
     いいねクリーナーのお問い合わせありがとうございます。よくある質問に回答します。
     (ᐡ _   _ ᐡ)
 
-    いいねクリーナーを使っても、すべての「いいね」を一度で削除することはできません。ツイッターにいいね取得のバグがあるためです。
+    ・一度に何件まで削除できますか？
+    約#{DeleteFavoritesRequest::DESTROY_LIMIT}件まで一度に削除できます。
 
-    例えば、1万件のいいねを削除したかったとしても、約#{DeleteFavoritesRequest::DESTROY_LIMIT}件を削除した後はしばらく残りのいいねが取得できなくなります。残りのいいねは一定期間後に取得できるようになるので、そのときに改めて残りのいいねを削除する必要があります。「一定期間後」がいつになるのかは分かりません。経験上は数日から2週間ほどかかります。
+    ・もっとたくさんのいいねを削除できますか？
+    一括削除を一定時間ごとに何回か繰り返せば削除できます。
+
+    ・削除にどれくらい時間がかかりますか？
+    削除処理が混み合っていなければ1〜10分ほどで削除は完了します。
 
     さらに詳細については いいねクリーナー > よくある質問 をご覧になってください。
 
@@ -26,7 +31,8 @@ class CreateDeleteFavoritesMessageWorker
 
   # options:
   def perform(uid, options = {})
-    User.egotter_cs.api_client.create_direct_message(uid, MESSAGE)
+    buttons = [InquiryResponseReport::QUICK_REPLY_RESOLVED, InquiryResponseReport::QUICK_REPLY_WAITING]
+    User.egotter_cs.api_client.send_report(uid, MESSAGE, buttons)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.exception e, uid: uid, options: options
