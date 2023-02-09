@@ -33,28 +33,37 @@
     $(function () {
       var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
 
-      function redirectToCheckout(buttonId) {
-        var url = '<%= raw api_v1_checkout_sessions_path(via: current_via('__BUTTON__')) %>';
-        if (buttonId) {
-          url = url.replace('__BUTTON__', buttonId);
-        } else {
-          url = url.replace('/__BUTTON__', '');
-        }
+      function redirectToCheckout(session_id) {
+        stripe.redirectToCheckout({sessionId: session_id}).then(function (result) {
+          logger.log(result.error.message);
+        });
+      }
 
+      function createCheckoutSession() {
+        var url = '<%= raw api_v1_checkout_sessions_path(via: current_via) %>';
         $.post(url).done(function (res) {
-          stripe.redirectToCheckout({sessionId: res.session_id}).then(function (result) {
-            logger.log(result.error.message);
-          });
+          redirectToCheckout(res.session_id);
+        }).fail(showErrorMessage);
+      }
+
+      function createOneTimeCheckoutSession(item_id) {
+        var url = '<%= raw api_v1_checkout_sessions_path(via: current_via) %>' + '&item_id=' + item_id;
+        $.post(url).done(function (res) {
+          redirectToCheckout(res.session_id);
         }).fail(showErrorMessage);
       }
 
       $(document).on('click', '.btn-checkout', function () {
-        var buttonId = $(this).attr('id');
-        var text = $(this).text().trim();
-        ahoy.track('CheckoutButton clicked', {page: window.location.href, id: buttonId, text: text});
+        var $btn = $(this);
+        ahoy.track('Checkout clicked', {page: window.location.href, id: $btn.attr('id'), text: $btn.text().trim()});
+        createCheckoutSession();
+        return false;
+      });
 
-        redirectToCheckout(buttonId);
-
+      $(document).on('click', '.btn-one-time-checkout', function () {
+        var $btn = $(this);
+        ahoy.track('OneTimeCheckout clicked', {page: window.location.href, id: $btn.attr('id'), text: $btn.text().trim(), item_id: $btn.data('item_id')});
+        createOneTimeCheckoutSession($btn.data('item_id'));
         return false;
       });
     });
