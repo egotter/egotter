@@ -8,25 +8,28 @@
 <%= alert_box category: 'primary', class: 'my-5' do %>
   <%= t('.login_bug_html', url: '#how-to-fix-platform-bugs') %>
 <% end %>
-</script>
 
-<div>
-  <%= link_to sign_in_path(via: current_via), class: 'btn btn-primary' do %>
-    <i class="fab fa-twitter"></i>
-    <%= t('.login.title') %>
-  <% end %>
+<div class="card">
+  <div class="card-body">
+    <div>
+      <%= link_to '/users/auth/twitter', class: 'btn btn-primary' do %>
+        <i class="fab fa-twitter"></i>
+        <%= t('.login.title') %>
+      <% end %>
+    </div>
+
+    <div class="mt-2 mb-5"><%= t('.login.description') %></div>
+
+    <div>
+      <%= link_to '/users/auth/twitter?force_login=true', class: 'btn btn-outline-primary' do %>
+        <i class="fab fa-twitter"></i>
+        <%= t('.force_login.title') %>
+      <% end %>
+    </div>
+
+    <div class="mt-2"><%= t('.force_login.description') %></div>
+  </div>
 </div>
-
-<div class="mt-2 mb-5"><%= t('.login.description') %></div>
-
-<div>
-  <%= link_to force_sign_in_path(via: current_via), class: 'btn btn-outline-primary' do %>
-    <i class="fab fa-twitter"></i>
-    <%= t('.force_login.title') %>
-  <% end %>
-</div>
-
-<div class="mt-2 mb-5"><%= t('.force_login.description') %></div>
 
 <div id="how-to-fix-platform-bugs" style="padding-top: 40px; margin-top: -40px;"></div>
 <h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.how_to_fix_login_bug.title') %></h3>

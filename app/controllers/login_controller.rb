@@ -15,15 +15,7 @@ class LoginController < ApplicationController
   end
 
   def sign_in
-    if params['ab_test']
-      session[:sign_in_ab_test] = params['ab_test']
-    end
-
-    session[:sign_in_via] = params[:via]
-    session[:sign_in_follow] = 'true' == params[:follow] ? 'true' : 'false'
-    session[:redirect_path] = params[:redirect_path]
-
-    redirect_to "/users/auth/twitter?force_login=#{params[:force_login] == 'true'}"
+    redirect_to login_path
   end
 
   # This action is created for conversion tracking.
