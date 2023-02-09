@@ -28,7 +28,27 @@
 
 <div class="mt-2 mb-5"><%= t('.force_login.description') %></div>
 
+<div id="how-to-fix-platform-bugs" style="padding-top: 40px; margin-top: -40px;"></div>
 <h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.how_to_fix_login_bug.title') %></h3>
-<p id="how-to-fix-platform-bugs"><%= t('.how_to_fix_login_bug.description_html') %></p>
+<p class="my-3"><%= t('.how_to_fix_login_bug.description_html') %></p>
+
+<% if @consecutive_access %>
+  <%= modal_dialog id: 'how-to-fix-platform-bugs-modal', title: t('.modal.title'), button: {positive: t('.modal.close'), category: 'outline-secondary'} do %>
+    <%= t('.modal.description_html', url: '#how-to-fix-platform-bugs') %>
+  <% end %>
+
+  <script>
+    $(function () {
+      var $modal = $('#how-to-fix-platform-bugs-modal');
+      $modal.modal();
+      $modal.find('a').on('click', function () {
+        $modal.modal('hide');
+      });
+      $modal.on('hidden.bs.modal', function (e) {
+        window.location.href = '#how-to-fix-platform-bugs';
+      });
+    });
+  </script>
+<% end %>
 
 <blockquote class="twitter-tweet"><p lang="ja" dir="ltr">「ツイッターでログイン」に失敗する場合の対処法を作りました。<br>( ˶ｰ̀֊ｰ́ )੭&quot;<br><br>ポイントはブラウザの「プライベートモード」を使うことです。<br><br>手順通りにやれば、えごったーも含めて世界中の全ての連携アプリで成功します。<br><br>（続く） <a href="https://t.co/9TN24zpq8H">pic.twitter.com/9TN24zpq8H</a></p>&mdash; えごったーサポート (@egotter_cs) <a href="https://twitter.com/egotter_cs/status/1608747667332689920?ref_src=twsrc%5Etfw">December 30, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
