@@ -12,7 +12,12 @@ class OrdersController < ApplicationController
   def success
     if params[:stripe_session_id]
       checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
-      orders = Order.where(subscription_id: checkout_session.subscription).to_a
+
+      if checkout_session.mode == 'payment'
+        orders = Order.where(checkout_session_id: checkout_session.id).to_a
+      else
+        orders = Order.where(subscription_id: checkout_session.subscription).to_a
+      end
 
       if orders.size == 1
         if orders[0].created_at >= 10.minutes.ago

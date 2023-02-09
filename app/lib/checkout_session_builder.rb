@@ -1,12 +1,6 @@
 class CheckoutSessionBuilder
   class << self
-    def build(user)
-      build_subscription(user)
-    end
-
-    private
-
-    def build_subscription(user)
+    def monthly_subscription(user)
       attrs = {
           client_reference_id: user.id,
           mode: 'subscription',
@@ -26,6 +20,38 @@ class CheckoutSessionBuilder
 
       attrs
     end
+
+    def monthly_basis(user, item_id)
+      price = Order::BASIC_PLAN_MONTHLY_BASIS[item_id]
+      months_count = item_id.split('-')[-1]
+
+      name = I18n.t('stripe.monthly_basis.name',count: months_count)
+      item = {
+          price_data: {
+              currency: 'jpy',
+              product_data: {name: name},
+              unit_amount: price,
+          },
+          description: I18n.t('stripe.monthly_basis.description'),
+          tax_rates: [Order::TAX_RATE_ID],
+          quantity: 1,
+      }
+      attrs = {
+          client_reference_id: user.id,
+          payment_method_types: ['card'],
+          mode: 'payment',
+          line_items: [item],
+          metadata: {user_id: user.id, name: name, price: price, months_count: months_count},
+          success_url: ENV['STRIPE_SUCCESS_URL'],
+          cancel_url: ENV['STRIPE_CANCEL_URL'],
+      }
+
+      attrs[:customer] = find_or_create_customer(user)
+
+      attrs
+    end
+
+    private
 
     def find_or_create_customer(user)
       unless (customer = Customer.order(created_at: :desc).find_by(user_id: user.id))

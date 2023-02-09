@@ -11,10 +11,25 @@ RSpec.describe OrdersController, type: :controller do
     end
 
     context 'Checkout session is passed' do
-      let(:checkout_session) { double('checkout session', id: 'cs_xxx', subscription: 'sub_xxx') }
+      let(:checkout_session) { double('checkout session', id: 'cs_xxx', mode: nil, subscription: 'sub_xxx') }
       subject { get :success, params: {stripe_session_id: checkout_session.id} }
       before do
         allow(Stripe::Checkout::Session).to receive(:retrieve).with(checkout_session.id).and_return(checkout_session)
+      end
+
+      context 'mode is payment' do
+        let(:checkout_session) { double('checkout session', id: 'cs_xxx', mode: 'payment', subscription: 'sub_xxx') }
+        it do
+          expect(Order).to receive(:where).with(checkout_session_id: 'cs_xxx').and_return([])
+          subject
+        end
+      end
+
+      context 'mode is not payment' do
+        it do
+          expect(Order).to receive(:where).with(subscription_id: 'sub_xxx').and_return([])
+          subject
+        end
       end
 
       context '1 order found' do

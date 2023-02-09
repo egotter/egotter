@@ -2087,6 +2087,10 @@ ja:
         title: タイムラインディレクトリ
       second_layer:
         title: タイムラインディレクトリ
+  stripe:
+    monthly_basis:
+      name: 'えごったー ベーシック %{count}ヶ月分（AT）'
+      description: '今回限りの請求。購入すると、検索回数の増加と使える機能の追加が適用されます。この購入にお試し期間は無く、返金の対象外です。'
   shared:
     templates:
       statuses: 'ツイート'

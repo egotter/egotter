@@ -17,7 +17,12 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
       return
     end
 
-    order = Order.create_by_checkout_session(checkout_session)
+    if checkout_session.mode == 'payment'
+      order = Order.create_by_monthly_basis(checkout_session)
+    else
+      order = Order.create_by_checkout_session(checkout_session)
+    end
+
     update_trial_end_and_email(order)
 
     send_message(:orders_cs_completed, '', checkout_session_id, user_id: user.id, order_id: order.id, order_name: order.name)

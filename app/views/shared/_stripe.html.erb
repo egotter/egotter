@@ -13,10 +13,10 @@
         return false;
       }
 
-      $('.btn-checkout').each(function () {
+      $('.btn-checkout, .btn-one-time-checkout').each(function () {
         disableButton($(this));
       })
-      $(document).on('click', '.btn-checkout', function () {
+      $(document).on('click', '.btn-checkout, .btn-one-time-checkout', function () {
         return disableButton($(this));
       });
 
@@ -62,8 +62,8 @@
 
       $(document).on('click', '.btn-one-time-checkout', function () {
         var $btn = $(this);
-        ahoy.track('OneTimeCheckout clicked', {page: window.location.href, id: $btn.attr('id'), text: $btn.text().trim(), item_id: $btn.data('item_id')});
-        createOneTimeCheckoutSession($btn.data('item_id'));
+        ahoy.track('OneTimeCheckout clicked', {page: window.location.href, id: $btn.attr('id'), text: $btn.text().trim(), item_id: $btn.data('item-id')});
+        createOneTimeCheckoutSession($btn.data('item-id'));
         return false;
       });
     });
