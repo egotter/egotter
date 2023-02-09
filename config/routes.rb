@@ -312,6 +312,8 @@ Rails.application.routes.draw do
   get 'search_histories', to: 'search_histories#new'
   get 'load_public_tweets', to: 'public_tweets#load', as: :load_public_tweets
 
+  get 'login', to: 'sessions#new'
+
   %i(sign_in after_sign_in after_sign_up goodbye).each do |name|
     get name, to: "login##{name}", as: name
   end
