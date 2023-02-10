@@ -198,12 +198,12 @@ module TwitterUserCalculator
     end.flatten
   end
 
-  def calc_unfriend_uids
-    self.class.calc_total_new_unfriend_uids(unfriends_target)
+  def calc_unfriend_uids(limit = 50)
+    self.class.calc_total_new_unfriend_uids(unfriends_target(limit))
   end
 
-  def calc_unfollower_uids
-    self.class.calc_total_new_unfollower_uids(unfriends_target)
+  def calc_unfollower_uids(limit = 50)
+    self.class.calc_total_new_unfollower_uids(unfriends_target(limit))
   end
 
   def calc_mutual_unfriend_uids
@@ -257,13 +257,15 @@ module TwitterUserCalculator
 
   private
 
-  def unfriends_target
+  def unfriends_target(limit = 50)
     # Want to decrease limit
     @unfriends_target ||= TwitterUser.select(:id, :uid, :screen_name, :created_at).
         creation_completed.
         where(uid: uid).
         where('created_at <= ?', created_at).
-        order(created_at: :desc).limit(90).reverse
+        order(created_at: :desc).
+        limit(limit).
+        reverse
   end
 
   def sort_by_count_desc(ids)
