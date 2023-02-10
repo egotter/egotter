@@ -12,18 +12,22 @@
 <div class="card">
   <div class="card-body">
     <div>
-      <%= link_to '/users/auth/twitter', class: 'btn btn-primary' do %>
-        <i class="fab fa-twitter"></i>
-        <%= t('.login.title') %>
+      <%= form_tag '/users/auth/twitter', method: :post do %>
+        <%= button_tag type: 'submit', class: 'btn btn-primary' do %>
+          <i class="fab fa-twitter"></i>
+          <%= t('.login.title') %>
+        <% end %>
       <% end %>
     </div>
 
     <div class="mt-2 mb-5"><%= t('.login.description') %></div>
 
     <div>
-      <%= link_to '/users/auth/twitter?force_login=true', class: 'btn btn-outline-primary' do %>
-        <i class="fab fa-twitter"></i>
-        <%= t('.force_login.title') %>
+      <%= form_tag '/users/auth/twitter?force_login=true', method: :post do %>
+        <%= button_tag type: 'submit', class: 'btn btn-outline-primary' do %>
+          <i class="fab fa-twitter"></i>
+          <%= t('.force_login.title') %>
+        <% end %>
       <% end %>
     </div>
 
@@ -46,9 +50,6 @@
       $modal.modal();
       $modal.find('a').on('click', function () {
         $modal.modal('hide');
-      });
-      $modal.on('hidden.bs.modal', function (e) {
-        window.location.href = '#how-to-fix-platform-bugs';
       });
     });
   </script>

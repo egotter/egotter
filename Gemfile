@@ -69,6 +69,7 @@ gem 'sitemap_generator'
 # Authentication
 gem 'devise'
 gem 'omniauth-twitter'
+gem 'omniauth-rails_csrf_protection'
 
 # Sidekiq
 gem 'sidekiq', '6.5.1'
