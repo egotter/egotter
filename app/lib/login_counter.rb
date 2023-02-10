@@ -1,27 +1,33 @@
+require 'forwardable'
+require 'singleton'
+
 class LoginCounter
-  def initialize(id)
-    @key = "LoginCounter:#{id || Time.zone.now.to_f }"
-    @redis = self.class.redis
+  include Singleton
+
+  def initialize
+    @redis = RedisClient.new
   end
 
-  def value
-    @redis.get(@key)&.to_i || 0
+  def value(id)
+    @redis.get(key(id))&.to_i || 0
   end
 
-  def increment
+  def increment(id)
+    k = key(id)
     @redis.multi do |r|
-      r.incr(@key)
-      r.expire(@key, 200)
+      r.incr(k)
+      r.expire(k, 200)
     end
   end
 
-  LOCK = Mutex.new
+  private
+
+  def key(id)
+    "LoginCounter:#{id || Time.zone.now.to_f }"
+  end
 
   class << self
-    def redis
-      LOCK.synchronize do
-        @redis ||= RedisClient.new
-      end
-    end
+    extend Forwardable
+    def_delegators :instance, :value, :increment
   end
 end

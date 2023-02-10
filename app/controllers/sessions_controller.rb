@@ -17,12 +17,13 @@ class SessionsController < ApplicationController
   private
 
   def check_counter
-    counter = LoginCounter.new(current_visit.visitor_token)
-    if counter.value > 0
+    id = current_visit.visitor_token
+    if LoginCounter.value(id) > 0
       @consecutive_access = true
-      Airbag.info 'Consecutive access found', count: counter.value, visitor_token: current_visit.visitor_token
+      Airbag.info 'Consecutive access found', count: LoginCounter.value(id), visitor_token: id
     end
-    counter.increment
+    LoginCounter.increment(id)
   rescue => e
+    Airbag.exception e
   end
 end
