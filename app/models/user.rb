@@ -26,7 +26,6 @@ class User < ApplicationRecord
   devise :rememberable, :omniauthable
 
   has_one :credential_token
-  has_many :visits, class_name: 'Ahoy::Visit'
 
   include CredentialsApi
 
