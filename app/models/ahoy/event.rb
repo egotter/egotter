@@ -17,7 +17,7 @@
 #  index_ahoy_events_on_visit_id       (visit_id)
 #
 
-class Ahoy::Event < ApplicationRecord
+class Ahoy::Event < ApplicationLogRecord
   include Ahoy::QueryMethods
 
   self.table_name = "ahoy_events"
