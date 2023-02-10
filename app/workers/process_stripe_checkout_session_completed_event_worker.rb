@@ -20,7 +20,7 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
     order = Order.create_by_checkout_session(checkout_session)
     update_trial_end_and_email(order)
 
-    send_message(:orders_cs_completed, '', checkout_session_id, user_id: user.id, order_id: order.id)
+    send_message(:orders_cs_completed, '', checkout_session_id, user_id: user.id, order_id: order.id, order_name: order.name)
   rescue => e
     Airbag.exception e, checkout_session_id: checkout_session_id
     send_message(:orders_cs_failed, e.inspect, checkout_session_id, user_id: user&.id, order_id: order&.id)
