@@ -6,6 +6,7 @@ class OmniauthLogger < ::Logger
 
   def error(*args)
     if session_expired?(args[0]) || invalid_credentials?(args[0])
+      Airbag.info args[0]
       info(*args)
     else
       super
