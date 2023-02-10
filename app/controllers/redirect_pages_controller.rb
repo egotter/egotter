@@ -1,4 +1,6 @@
 class RedirectPagesController < ApplicationController
+  skip_before_action :current_user_not_blocker?
+
   after_action do
     if user_signed_in? && @redirect_path.to_s.match?(/\Abaseshop_(1|3|6|12)\z/)
       BaseshopAccessedFlag.on(current_user.id)

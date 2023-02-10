@@ -1,5 +1,6 @@
-<div class="my-3"><%= t('.message_html', user: @screen_name, url: sign_out_path(via: current_via)) %></div>
-<div class="text-muted small my-3"><%= t('.note') %></div>
+<p class="my-3"><%= t('.message', user: @screen_name, user2: 'ego_tter') %></p>
+<p class="my-3"><%= t('.logout_html', url: sign_out_path(via: current_via)) %></p>
+<p class="my-3"><%= t('.purchase_html', url: pricing_path(via: current_via)) %></p>
 
 <%= render partial: 'ad_section', locals: {screen_name: @screen_name} %>
 
