@@ -2,6 +2,7 @@ class OmniauthLogger < ::Logger
   def initialize(*args)
     super
     self.formatter = ::Logger::Formatter.new
+    self.level = ::Logger::INFO
   end
 
   def error(*args)
