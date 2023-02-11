@@ -15,6 +15,17 @@ module TwitterUserQueryMethods
     end
   end
 
+  # TODO Decrease limit
+  def unfriends_target(limit = 50)
+    TwitterUser.select(:id, :uid, :screen_name, :created_at).
+        creation_completed.
+        where(uid: uid).
+        where('created_at <= ?', created_at).
+        order(created_at: :desc).
+        limit(limit).
+        reverse
+  end
+
   included do
     scope :creation_completed, -> do
       where.not('friends_size = 0 and followers_size = 0')

@@ -31,4 +31,15 @@ RSpec.describe TwitterUserQueryMethods do
     subject { TwitterUser.with_delay }
     it { is_expected.to satisfy { |q| q.order(created_at: :desc).first.id == record1.id } }
   end
+
+  describe '#unfriends_target' do
+    let(:twitter_user) { create(:twitter_user) }
+    subject { twitter_user.unfriends_target }
+    it do
+      expect(TwitterUser).to receive_message_chain(:select, :creation_completed, :where, :where, :order, :limit, :reverse).
+          with(:id, :uid, :screen_name, :created_at).with(no_args).with(uid: twitter_user.uid).
+          with('created_at <= ?', twitter_user.created_at).with(created_at: :desc).with(50).with(no_args)
+      subject
+    end
+  end
 end

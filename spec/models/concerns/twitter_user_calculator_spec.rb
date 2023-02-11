@@ -338,20 +338,10 @@ RSpec.describe TwitterUserCalculator do
     it { expect(subject.id).to eq(record1.id) }
   end
 
-  describe '#unfriends_target' do
-    let(:users) do
-      [
-          create(:twitter_user, uid: twitter_user.uid, created_at: twitter_user.created_at - 1.second),
-          create(:twitter_user, uid: twitter_user.uid, created_at: twitter_user.created_at + 1.second),
-      ]
-    end
-    subject { twitter_user.send(:unfriends_target) }
-    before { users }
-    it do
-      result = subject
-      expect(result.size).to eq(2)
-      expect(result[0].id).to eq(users[0].id)
-      expect(result[1].id).to eq(twitter_user.id)
-    end
+  describe '#unfriends_target_cache' do
+    let(:users) { [create(:twitter_user), create(:twitter_user)] }
+    subject { twitter_user.send(:unfriends_target_cache) }
+    before { allow(twitter_user).to receive(:unfriends_target).and_return(users) }
+    it { expect(subject.size).to eq(2) }
   end
 end
