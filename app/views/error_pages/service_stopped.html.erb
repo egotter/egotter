@@ -1,0 +1,6 @@
+<p class="my-3"><%= t('.message') %></p>
+<p class="my-3"><%= t('.note_html', user1: 'ego_tter', user2: 'egotter_cs') %></p>
+
+<%= render(partial: 'profiles/profile_section', locals: {user: @user}) if @user %>
+
+<%= render partial: 'ad_section', locals: {screen_name: @screen_name} %>
