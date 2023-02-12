@@ -100,6 +100,10 @@ class ErrorPagesController < ApplicationController
     @screen_name = current_user&.screen_name
   end
 
+  def service_stopped
+    @screen_name = current_user&.screen_name
+  end
+
   private
 
   def validate_request_format

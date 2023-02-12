@@ -1598,10 +1598,9 @@ ja:
       visitor_message_html: 'アクセスが多すぎてリクエストがタイムアウトしました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
     csrf_error:
       message_html: 'ページの有効期限が切れました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
-    trends_section:
-      title: 'ツイッタートレンド'
-      rank: '%{n}位'
-      link: 'ツイッターで見る'
+    service_stopped:
+      message: '一時的に検索が速度制限されています。一定時間後に再度お試しください。'
+      note_html: '最新のお知らせは <a href="https://twitter.com/%{user1}" target="_blank">@%{user1}</a> または <a href="https://twitter.com/%{user2}" target="_blank">@%{user2}</a> のツイートをご覧になってください。'
   delete_tweets:
     index:
       navbar_title: 'ツイートクリーナー'

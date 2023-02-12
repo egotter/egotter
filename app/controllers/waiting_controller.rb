@@ -28,6 +28,12 @@ class WaitingController < ApplicationController
     set_user(@uid)
     set_redirect_path(@screen_name)
   end
+  before_action do
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: WaitingController is stopped'
+      redirect_to error_pages_service_stopped_path(uid: @uid, screen_name: @screen_name)
+    end
+  end
 
   def index
   end

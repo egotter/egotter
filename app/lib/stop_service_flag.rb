@@ -4,7 +4,7 @@ require 'singleton'
 class StopServiceFlag
   include Singleton
 
-  TTL = 3600
+  TTL = 259200 # 3 days
 
   def initialize
     @key = "#{Rails.env}:StopServiceFlag"

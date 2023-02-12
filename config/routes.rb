@@ -133,6 +133,7 @@ Rails.application.routes.draw do
   get 'error_pages/internal_server_error', to: 'error_pages#internal_server_error'
   get 'error_pages/request_timeout_error', to: 'error_pages#request_timeout_error'
   get 'error_pages/csrf_error', to: 'error_pages#csrf_error'
+  get 'error_pages/service_stopped', to: 'error_pages#service_stopped'
 
   get 'l/:name', to: 'landing_pages#new'
   get 'r/:name', to: 'redirect_pages#new', as: :redirect_page
