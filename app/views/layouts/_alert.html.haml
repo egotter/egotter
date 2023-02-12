@@ -6,7 +6,7 @@
 
   - if GlobalMessage.message_found?
     .alert.alert-dark.mt-3{role: "alert"}
-      = raw GlobalMessage.latest_message
+      = raw GlobalMessage.current_message
 
   - if alert
     .alert.alert-warning.alert-dismissible.mt-3{role: "alert"}

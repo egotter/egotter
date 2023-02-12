@@ -18,19 +18,46 @@ class GlobalMessage < ApplicationRecord
 
   class << self
     def message_found?
-      if instance_variable_defined?(:@message_found)
-        @message_found
-      else
-        @message_found = exists?(expires_at: nil)
-      end
+      Cache.get
+    rescue
+      nil
     end
 
-    def latest_message
-      if instance_variable_defined?(:@message)
-        @message
-      else
-        @message = order(created_at: :desc).find_by(expires_at: nil)&.text
-      end
+    def current_message
+      Cache.get
+    rescue
+      nil
+    end
+  end
+
+  require 'forwardable'
+  require 'singleton'
+
+  class Cache
+    include Singleton
+
+    TTL = 259200 # 3 days
+
+    def initialize
+      @key = "#{Rails.env}:GlobalMessage::Cache"
+      @redis = RedisClient.new
+    end
+
+    def set(value)
+      @redis.setex(@key, TTL, value)
+    end
+
+    def get
+      @redis.get(@key)
+    end
+
+    def del
+      @redis.del(@key)
+    end
+
+    class << self
+      extend Forwardable
+      def_delegators :instance, :set, :get, :del
     end
   end
 end
