@@ -38,6 +38,11 @@ class CreateTwitterUserWorker
   #   uid
   #   ahoy_visit_id
   def perform(request_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: CreateTwitterUserWorker is stopped', request_id: request_id
+      return
+    end
+
     request = CreateTwitterUserRequest.find(request_id)
     context = options['context'] == :reporting ? :reporting : nil
     twitter_user = request.perform(context)

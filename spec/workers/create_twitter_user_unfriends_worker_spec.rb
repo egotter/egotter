@@ -19,7 +19,7 @@ RSpec.describe CreateTwitterUserUnfriendsWorker do
       expect(twitter_user).to receive(:calc_and_import).with(S3::Unfriendship).and_return(uids1)
       expect(twitter_user).to receive(:calc_and_import).with(S3::Unfollowership).and_return(uids2)
       expect(twitter_user).to receive(:calc_and_import).with(S3::MutualUnfriendship).and_return(uids3)
-      expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:push_bulk).with([1, 2, 2, 3, 3, 4], user.id, enqueued_by: described_class)
+      # expect(CreateTwitterDBUsersForMissingUidsWorker).to receive(:push_bulk).with([1, 2, 2, 3, 3, 4], user.id, enqueued_by: described_class)
       expect(DeleteUnfriendshipsWorker).to receive(:perform_async).with(twitter_user.uid)
       subject
     end

@@ -23,7 +23,7 @@ class LoginCounter
   private
 
   def key(id)
-    "LoginCounter:#{id || Time.zone.now.to_f }"
+    "#{Rails.env}:LoginCounter:#{id || Time.zone.now.to_f }"
   end
 
   class << self

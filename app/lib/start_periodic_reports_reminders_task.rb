@@ -4,6 +4,11 @@ class StartPeriodicReportsRemindersTask
   end
 
   def start
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: StartPeriodicReportsRemindersTask is stopped'
+      return
+    end
+
     response = SlackBotClient.channel('cron').post_message('Start sending reminders') rescue {}
 
     if @user_ids.any?

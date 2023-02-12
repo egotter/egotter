@@ -7,7 +7,7 @@ class StopServiceFlag
   TTL = 3600
 
   def initialize
-    @key = 'StopServiceFlag'
+    @key = "#{Rails.env}:StopServiceFlag"
     @redis = RedisClient.new
   end
 

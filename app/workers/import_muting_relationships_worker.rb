@@ -16,6 +16,11 @@ class ImportMutingRelationshipsWorker
 
   # options:
   def perform(user_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: ImportMutingRelationshipsWorker is stopped', user_id: user_id
+      return
+    end
+
     user = User.find(user_id)
     collected_uids = MutingRelationship.update_all_mutes(user)
     return if collected_uids.blank?

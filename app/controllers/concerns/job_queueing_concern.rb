@@ -4,6 +4,10 @@ module JobQueueingConcern
   extend ActiveSupport::Concern
 
   def request_creating_twitter_user(uid)
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: #request_creating_twitter_user is stopped', uid: uid
+      return
+    end
     return unless user_signed_in?
     return if RateLimitExceededFlag.on?(current_user.id)
     return if TooManyFriendsSearchedFlag.on?(current_user.id)
@@ -20,6 +24,10 @@ module JobQueueingConcern
   end
 
   def request_assembling_twitter_user(twitter_user)
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: #request_assembling_twitter_user is stopped', twitter_user_id: twitter_user.id
+      return
+    end
     return unless user_signed_in?
     return if TwitterUserAssembledFlag.on?(twitter_user.uid)
     return if twitter_user.created_at > 30.seconds.ago

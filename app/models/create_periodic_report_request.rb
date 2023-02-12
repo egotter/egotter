@@ -138,7 +138,9 @@ class CreatePeriodicReportRequest < ApplicationRecord
           creation_completed.
           where(uid: request.user.uid).
           where(created_at: @start_date..@end_date).
-          order(created_at: :desc).limit(10).reverse
+          order(created_at: :desc).
+          limit(10).
+          reverse
     end
 
     def build

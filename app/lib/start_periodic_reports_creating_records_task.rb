@@ -22,6 +22,11 @@ class StartPeriodicReportsCreatingRecordsTask
   end
 
   def start
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: StartPeriodicReportsCreatingRecordsTask is stopped', period: @period
+      return
+    end
+
     @start_time = Time.zone.now
     @last_response = @slack.post_message("Start creating records period=#{@period} threads=#{@threads}") rescue {}
 
