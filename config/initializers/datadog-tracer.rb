@@ -4,8 +4,9 @@ if Rails.env.production?
 
   # Datadog APM
   Datadog.configure do |c|
-    c.logger.instance = ::Logger.new('log/datadog-tracer.log')
-    c.logger.instance.level = ::Logger::INFO
+    logger = ::Logger.new('log/datadog-tracer.log')
+    logger.level = ::Logger::INFO
+    c.logger.instance = logger
 
     c.tracing.instrument :rails, service_name: 'egotter'
     c.tracing.instrument :sidekiq
