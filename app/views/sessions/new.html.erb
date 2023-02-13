@@ -31,7 +31,9 @@
       <% end %>
     </div>
 
-    <div class="mt-2"><%= t('.force_login.description') %></div>
+    <div class="mt-2 mb-5"><%= t('.force_login.description') %></div>
+
+    <div class="small"><%= t('.consent_html', url: terms_of_service_path(via: current_via)) %></div>
   </div>
 </div>
 
