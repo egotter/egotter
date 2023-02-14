@@ -689,7 +689,7 @@ ja:
             button: '定期購読で購入する'
         one_purchase:
           title: '1ヶ月分の単体購入'
-          description: 'クレジットカードが無い方向けの購入方法です。コンビニ払い、キャリア決済、Amazon Pay、銀行振込に対応しています。'
+          description: '1ヶ月だけ使いたい、ただし定期購読はしたくないという方向けの購入方法です。割引はありませんが、1回支払えばその後の支払いは発生しません。'
           card:
             title: '1ヶ月プラン'
             price_html: '%{value} <span class="small">円/月</span>'
@@ -739,7 +739,10 @@ ja:
           1_month:
             title: '1ヶ月分の購入'
             price: '%{value}円 (税込)'
-            purchase: '購入する'
+            purchase_by_card: 'クレジットカードで購入する'
+            purchase_by_card_note: 'クレジットカードで支払えます。購入後すぐに有効になります。'
+            purchase: '他の決済方法で購入する'
+            purchase_note: 'コンビニ払い、キャリア決済、Amazon Payで支払えます。購入から有効になるまでに数日かかります。'
           note_html: |
             ※ 決済手数料は購入者のご負担となります<br>
             ※ 支払いの完了後、5営業日以内に有効になります<br>
