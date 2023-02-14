@@ -19,9 +19,13 @@ module Api
       private
 
       def create_session(user)
-        attrs = CheckoutSessionBuilder.build(user)
+        if params.has_key?(:item_id) && Order::BASIC_PLAN_MONTHLY_BASIS.has_key?(params[:item_id])
+          attrs = CheckoutSessionBuilder.monthly_basis(user, params[:item_id])
+        else
+          attrs = CheckoutSessionBuilder.monthly_subscription(user)
+        end
         stripe_session = Stripe::Checkout::Session.create(attrs)
-        CheckoutSession.create!(user_id: user.id, stripe_checkout_session_id: stripe_session.id, properties: {via: params[:via]})
+        CheckoutSession.create!(user_id: user.id, stripe_checkout_session_id: stripe_session.id, properties: {via: params[:via], item_id: params[:item_id]}.compact)
         stripe_session
       end
 

@@ -4,17 +4,8 @@ RSpec.describe CheckoutSessionBuilder, type: :model do
   let(:user) { create(:user, email: 'a@b.com') }
   let(:stripe_customer) { double('stripe customer', id: 'cus_xxx') }
 
-  describe '.build' do
-    subject { described_class.build(user) }
-
-    it do
-      expect(described_class).to receive(:build_subscription).with(user).and_return('result')
-      is_expected.to eq('result')
-    end
-  end
-
-  describe '.build_subscription' do
-    subject { described_class.send(:build_subscription, user) }
+  describe '.monthly_subscription' do
+    subject { described_class.monthly_subscription(user) }
 
     it do
       expect(described_class).to receive(:find_or_create_customer).with(user).and_return('cus_xxx')
@@ -26,6 +17,20 @@ RSpec.describe CheckoutSessionBuilder, type: :model do
                                subscription_data: {trial_period_days: Order::TRIAL_DAYS, default_tax_rates: [Order::TAX_RATE_ID]},
                                metadata: {user_id: user.id, price: 123})
                      )
+    end
+  end
+
+  describe '.monthly_basis' do
+    let(:item_id) { 'monthly-basis-1' }
+    let(:name) { I18n.t('stripe.monthly_basis.name', count: 1) }
+    subject { described_class.monthly_basis(user, item_id) }
+
+    it do
+      expect(described_class).to receive(:find_or_create_customer).with(user).and_return('cus_xxx')
+      result = subject
+      expect(result[:customer]).to eq('cus_xxx')
+      expect(result[:line_items][0][:price_data]).to eq({currency: 'jpy', product_data: {name: name}, unit_amount: 600})
+      expect(result[:metadata]).to eq({user_id: user.id, name: name, price: 600, months_count: '1'})
     end
   end
 
