@@ -26,17 +26,29 @@ namespace :orders do
   task check_not_persisted_subscriptions: :environment do |task|
     verbose = ENV['VERBOSE']
 
-    sessions = Stripe::Checkout::Session.list(limit: 100).data
-    subscription_ids = sessions.select { |s| s.status == 'complete' }.map(&:subscription)
-    orders = Order.where(subscription_id: subscription_ids)
+    sessions = Stripe::Checkout::Session.list(limit: 100).data.select { |s| s.status == 'complete' }
+    result = []
 
-    if orders.size == subscription_ids.size
+    sessions.each do |session|
+      if session.mode == 'payment'
+        orders = Order.where(checkout_session_id: session.id)
+      else
+        orders = Order.where(subscription_id: session.subscription)
+      end
+
+      if orders.size == 1
+        # OK
+      else
+        result << "checkout_session_id=#{session.id} order_ids=#{orders.pluck(:id)}"
+      end
+    end
+
+    if result.any?
+      SlackBotClient.channel(:orders_sub).post_message("`#{Rails.env}` Invalid data #{result}")
+    else
       if verbose
         SlackBotClient.channel(:orders_sub).post_message("`#{Rails.env}` OK")
       end
-    else
-      not_persisted_ids = subscription_ids - orders.pluck(:subscription_id)
-      SlackBotClient.channel(:orders_sub).post_message("`#{Rails.env}` Not persisted subscriptions are found ids=#{not_persisted_ids}")
     end
   end
 
