@@ -13,6 +13,7 @@
 #
 #  index_slack_messages_on_created_at  (created_at)
 #
+# TODO Stop using this class and re-implement as SlackLog
 class SlackMessage < ApplicationRecord
   before_validation do
     self.channel.remove!(/^#/) if channel

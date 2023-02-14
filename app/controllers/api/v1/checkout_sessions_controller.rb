@@ -8,8 +8,8 @@ module Api
       before_action :require_login!
       before_action :doesnt_have_valid_subscription!
 
-      after_action { track_page_order_activity(stripe_session_id: @stripe_session&.id) }
-      after_action { send_message(@stripe_session&.id) }
+      after_action { track_page_order_activity(stripe_session_id: @stripe_session.id) }
+      after_action { send_message(@stripe_session) }
 
       def create
         @stripe_session = create_session(current_user)
@@ -29,9 +29,8 @@ module Api
         stripe_session
       end
 
-      def send_message(session_id)
-        message = {user_id: current_user.id, via: params[:via], checkout_session_id: session_id}
-        SlackMessage.create(channel: 'orders_cs_created', message: message)
+      def send_message(stripe_session)
+        message = {user_id: current_user.id, via: params[:via], checkout_session_id: stripe_session.id, mode: stripe_session.mode}
         SendMessageToSlackWorker.perform_async(:orders_cs_created, "`#{Rails.env}` #{message}")
       end
     end
