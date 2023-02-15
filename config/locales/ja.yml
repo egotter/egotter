@@ -1506,7 +1506,7 @@ ja:
       success: '@%{user} のフォローに成功しました。残りのフォロー回数は %{count}回 です。'
       retry_later: '@%{user} のフォローをリクエストしました。凍結を防ぐために一定時間後にフォローします。'
   error_pages:
-    support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
+    support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。連絡の際、できればスクリーンショットも一緒に送ってください。'
     api_not_authorized:
       consecutive_access_message_html: 'このエラーは <a href="%{url}">ログイン</a> することで直ります。書いている内容をよく読んで、<a href="%{url}">ログイン</a> をクリックしてください。'
       message_html: '@%{user} のツイッター連携（API）が無効になっています。間違いの場合は <a href="%{url}">ログイン</a> すればすぐに元に戻ります。'
