@@ -1508,13 +1508,21 @@ ja:
   error_pages:
     support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。連絡の際、できればスクリーンショットも一緒に送ってください。'
     api_not_authorized:
-      consecutive_access_message_html: 'このエラーは <a href="%{url}">ログイン</a> することで直ります。書いている内容をよく読んで、<a href="%{url}">ログイン</a> をクリックしてください。'
-      message_html: '@%{user} のツイッター連携（API）が無効になっています。間違いの場合は <a href="%{url}">ログイン</a> すればすぐに元に戻ります。'
-      reason_html: 'ログイン連携の取り消しや、<span class="text-danger">アカウントの削除</span>をするとこの状態になります。'
-      solution: '解決策 %{n}'
-      sign_in_html: 'ログインしたいアカウントは @%{user} で合っていますか？ 合っているなら <a href="%{url}">ログイン</a> してください。'
-      switch_account_html: '他のアカウントでログインしたいですか？ もしそうなら <a href="%{url}">アカウントの切り替え</a> をしてください。'
-      authentication_html: '上記の手順で解決しない場合は、えごったーの認証を一度取り消して、その後に再度認証してください。'
+      page_description: '@%{user} のツイッター連携ログインが無効になっています。再度ログインを行うと、このエラーは起きなくなります。'
+      login_bug_html: '2023年1月時点で、ツイッター側のログイン機能にバグがあります。ログインに失敗する場合はブラウザのプライベートモードをお試しください。<a href="%{url}">もっと詳しく</a>'
+      reauthorization:
+        title: 'ログイン連携を取り消した場合'
+        description_html: '再度 <a href="%{url}">ログイン</a> すれば元に戻ります。もし失敗する場合はブラウザのプライベートモードをお試しください。詳細はログインページに書いています。'
+      multiple_accounts:
+        title: '他のアカウントでログインしたい場合'
+        description: '2023年1月時点で、ツイッター側のアカウント切り替え機能にバグがあります。詳細はログインページに書いています。'
+      account_deleted:
+        title: 'アカウントを削除した場合'
+        description: 'ツイッターアカウントを削除してしまった場合は、もうえごったーにログインすることはできません。'
+      modal:
+        title: 'ログイン失敗の解決方法'
+        description_html: '何度もログインに失敗する場合は、ログインページに書かれている <a href="%{url}">ログイン失敗の解決方法</a> をご覧になってください。'
+        close: '閉じる'
       faq:
         q1: '「ツイッター連携が無効」とは何ですか？'
         a1_html: 'ログイン連携の取り消しや、<span class="text-danger">アカウントの削除</span>をするとこの状態になります。'

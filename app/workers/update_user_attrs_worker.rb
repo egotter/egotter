@@ -8,7 +8,7 @@ class UpdateUserAttrsWorker
   end
 
   def unique_in
-    1.minute
+    10.seconds
   end
 
   def expire_in

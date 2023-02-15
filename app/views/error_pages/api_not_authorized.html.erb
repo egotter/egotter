@@ -1,25 +1,17 @@
-<% if @consecutive_access %>
-  <%= alert_box category: 'primary', class: 'my-4' do %>
-    <%= t('.consecutive_access_message_html', url: sign_in_path(via: current_via('consecutive_access'))) %>
-  <% end %>
-  <script>
-    setTimeout(function () {
-      window.alert('<%= strip_tags(t('.consecutive_access_message_html', url: '')) %>');
-    }, 1000);
-  </script>
+<p class="mt-3"><%= t('.page_description', user: @screen_name) %></p>
+
+<%= alert_box category: 'primary', class: 'my-5' do %>
+  <%= t('.login_bug_html', url: login_path(anchor: 'how-to-fix-platform-bugs', via: current_via)) %>
 <% end %>
 
-<p class="mt-3"><%= t('.message_html', user: @screen_name, url: sign_in_path(via: current_via)) %></p>
-<p><%= t('.reason_html') %></p>
+<h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.reauthorization.title') %></h3>
+<p class="my-3"><%= t('.reauthorization.description_html', url: login_path(via: current_via)) %></p>
 
-<div><%= t('.solution', n: 1) %></div>
-<p><%= t('.sign_in_html', user: @screen_name, url: sign_in_path(via: current_via)) %></p>
+<h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.multiple_accounts.title') %></h3>
+<p class="my-3"><%= t('.multiple_accounts.description') %></p>
 
-<div><%= t('.solution', n: 2) %></div>
-<p><%= t('.switch_account_html', user: @screen_name, url: force_sign_in_path(via: current_via)) %></p>
-
-<div><%= t('.solution', n: 3) %></div>
-<p><%= t('.authentication_html') %></p>
+<h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.account_deleted.title') %></h3>
+<p class="my-3"><%= t('.account_deleted.description') %></p>
 
 <%= render partial: 'ad_section', locals: {screen_name: @screen_name} %>
 
@@ -33,3 +25,19 @@
 <p class="mb-5"><%= t('.faq.a3_html') %></p>
 
 <p><%= t('error_pages.support_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></p>
+
+<% if @consecutive_access %>
+  <%= modal_dialog id: 'how-to-fix-platform-bugs-modal', title: t('.modal.title'), button: {positive: t('.modal.close'), category: 'outline-secondary'} do %>
+    <%= t('.modal.description_html', url: login_path(anchor: 'how-to-fix-platform-bugs', via: current_via)) %>
+  <% end %>
+
+  <script>
+    $(function () {
+      var $modal = $('#how-to-fix-platform-bugs-modal');
+      $modal.modal();
+      $modal.find('a').on('click', function () {
+        $modal.modal('hide');
+      });
+    });
+  </script>
+<% end %>

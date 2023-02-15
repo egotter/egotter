@@ -24,6 +24,8 @@ class ErrorPagesController < ApplicationController
       @screen_name = user.screen_name
       @consecutive_access = ConsecutiveApiNotAuthorizedFlag.on?(user.id)
       ConsecutiveApiNotAuthorizedFlag.on(user.id)
+    else
+      @screen_name = 'user'
     end
   end
 
