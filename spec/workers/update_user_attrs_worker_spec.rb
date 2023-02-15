@@ -8,7 +8,7 @@ RSpec.describe UpdateUserAttrsWorker do
   end
 
   describe '#unique_in' do
-    it { expect(worker.unique_in).to eq(1.minute) }
+    it { expect(worker.unique_in).to eq(10.seconds) }
   end
 
   describe '#expire_in' do

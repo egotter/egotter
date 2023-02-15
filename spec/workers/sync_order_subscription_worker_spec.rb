@@ -23,14 +23,15 @@ RSpec.describe SyncOrderSubscriptionWorker do
 
   describe '#cancel_order' do
     let(:timestamp) { 1.second.ago.to_i }
-    let(:subscription) { double('subscription', canceled_at: timestamp) }
+    let(:subscription) { double('subscription', id: 'sub_xxx', canceled_at: timestamp) }
     subject { worker.send(:cancel_order, order, subscription) }
     it do
-      expect(worker).to receive(:send_message).
-          with('cancel_order', order, hash_including('canceled_at' => instance_of(Array)))
+      # expect(worker).to receive(:send_message).
+      #     with('cancel_order', order, hash_including('canceled_at' => instance_of(Array)))
+      expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders_z_error, /Order to be deleted/)
       subject
-      order.reload
-      expect(order.canceled_at).to eq(Time.zone.at(timestamp))
+      # order.reload
+      # expect(order.canceled_at).to eq(Time.zone.at(timestamp))
     end
   end
 

@@ -28,14 +28,15 @@ class SyncOrderSubscriptionWorker
   end
 
   def cancel_order(order, subscription)
-    if (timestamp = subscription.canceled_at)
-      order.assign_attributes(canceled_at: Time.zone.at(timestamp))
-      if order.changed?
-        order.save!
-        send_message('cancel_order', order, order.saved_changes)
-      else
-        send_message('cancel_order', order, 'none')
-      end
+    if (timestamp = subscription.canceled_at) && order.canceled_at.nil?
+      SendMessageToSlackWorker.perform_async(:orders_z_error, "Order to be deleted order_id=#{order.id} subscription_id=#{subscription.id}")
+      # order.assign_attributes(canceled_at: Time.zone.at(timestamp))
+      # if order.changed?
+      #   order.save!
+      #   send_message('cancel_order', order, order.saved_changes)
+      # else
+      #   send_message('cancel_order', order, 'none')
+      # end
     end
   end
 
