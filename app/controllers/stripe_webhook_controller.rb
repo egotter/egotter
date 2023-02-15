@@ -42,7 +42,7 @@ class StripeWebhookController < ApplicationController
 
   def process_charge_succeeded(event)
     customer_id = event.data.object.customer
-    ProcessStripeChargeSucceededEventWorker.perform_async(customer_id)
+    ProcessStripeChargeSucceededEventWorker.perform_in(5, customer_id)
   end
 
   def process_charge_failed(event)

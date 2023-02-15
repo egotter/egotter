@@ -9,7 +9,7 @@ RSpec.describe Api::V1::CheckoutSessionsController, type: :controller do
   end
 
   describe 'POST #create' do
-    let(:stripe_session) { double('stripe_session', id: 1) }
+    let(:stripe_session) { double('stripe_session', id: 1, mode: nil) }
     it do
       expect(controller).to receive(:create_session).with(user).and_return(stripe_session)
       post :create

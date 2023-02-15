@@ -4,11 +4,22 @@ class ProcessStripeChargeSucceededEventWorker
 
   # options:
   def perform(customer_id, options = {})
-    if (order = Order.find_by_customer_id(customer_id))
-      order.charge_succeeded!
-      send_message("Success user_id=#{order.user_id} order_id=#{order.id}")
+    orders = Order.select(:id, :user_id).where(customer_id: customer_id)
+
+    if orders.size >= 1
+      user = orders[0].user
+      props = {user_id: user.id, customer_id: customer_id}
+
+      if user.has_valid_subscription?
+        send_message("Success #{props}")
+      else
+        send_message("User doesn't have a valid subscription #{props}")
+        SendMessageToSlackWorker.perform_async(:orders_warning, "User doesn't have a valid subscription type=charge.succeeded #{props}")
+      end
     else
-      send_message("Order not found customer_id=#{customer_id}")
+      props = {customer_id: customer_id}
+      send_message("Order not found #{props}")
+      SendMessageToSlackWorker.perform_async(:orders_warning, "Order not found type=charge.succeeded #{props}")
     end
   rescue => e
     Airbag.exception e, customer_id: customer_id

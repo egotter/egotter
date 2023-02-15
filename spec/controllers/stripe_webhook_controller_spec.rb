@@ -62,7 +62,7 @@ RSpec.describe StripeWebhookController, type: :controller do
       allow(event).to receive_message_chain(:data, :object, :customer).and_return('cus_xxxx')
     end
     it do
-      expect(ProcessStripeChargeSucceededEventWorker).to receive(:perform_async).with('cus_xxxx')
+      expect(ProcessStripeChargeSucceededEventWorker).to receive(:perform_in).with(5, 'cus_xxxx')
       subject
     end
   end

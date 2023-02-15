@@ -74,6 +74,7 @@ class Order < ApplicationRecord
   end
 
   class << self
+    # TODO Remove later
     def find_by_customer_id(customer_id)
       order(created_at: :desc).find_by(customer_id: customer_id)
     end
@@ -228,6 +229,7 @@ class Order < ApplicationRecord
     end
   end
 
+  # TODO Remove later
   def charge_succeeded!
     if charge_failed_at.nil?
       # Do nothing

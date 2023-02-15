@@ -31,9 +31,9 @@ namespace :orders do
 
     sessions.each do |session|
       if session.mode == 'payment'
-        orders = Order.where(checkout_session_id: session.id)
+        orders = Order.select(:id).where(checkout_session_id: session.id)
       else
-        orders = Order.where(subscription_id: session.subscription)
+        orders = Order.select(:id).where(subscription_id: session.subscription)
       end
 
       if orders.size == 1
