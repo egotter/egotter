@@ -148,7 +148,7 @@ module Tasks
 
         [
             "sudo #{dir}/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop",
-            "sudo rm #{dir}/logs/amazon-cloudwatch-agent.log",
+            "sudo rm -rf #{dir}/logs/amazon-cloudwatch-agent.log",
             'wget --quiet https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm',
             'sudo yum localinstall --quiet -y amazon-cloudwatch-agent.rpm',
             'sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc/',
@@ -159,7 +159,7 @@ module Tasks
         copy("./setup#{dir}/etc/amazon-cloudwatch-agent.json", "#{dir}/etc/amazon-cloudwatch-agent.json")
 
         [
-            "sudo rm #{dir}/etc/amazon-cloudwatch-agent.d/default",
+            "sudo rm -rf #{dir}/etc/amazon-cloudwatch-agent.d/default",
             "sudo #{dir}/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start",
             'rm amazon-cloudwatch-agent.rpm',
         ].each do |cmd|
