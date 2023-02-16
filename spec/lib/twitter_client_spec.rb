@@ -7,7 +7,7 @@ RSpec.describe TwitterClient, type: :model do
 
   [:user_agent, :user_token?, :credentials, :proxy, :timeouts].each do |method|
     describe "##{method}" do
-      let(:args) { [] }
+      let(:args) { [1] }
       let(:kwargs) { {} }
       it do
         expect(twitter).to receive(method).with(*args, **kwargs)
@@ -23,7 +23,7 @@ RSpec.describe TwitterClient, type: :model do
       let(:args) { [] }
       let(:kwargs) { {} }
       it do
-        expect(instance).to receive(:call_api).with(method, *args, **kwargs)
+        expect(instance).to receive(:call_api).with(method, *args, kwargs)
         instance.send(method, *args, kwargs)
       end
     end

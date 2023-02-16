@@ -118,7 +118,7 @@ RSpec.describe ApiClient, type: :model do
       let(:args) { [] }
       let(:kwargs) { {} }
       it do
-        expect(instance).to receive(:call_api).with(method, args)
+        expect(instance).to receive(:call_api).with(method, args, kwargs)
         instance.send(method, args, kwargs)
       end
     end
