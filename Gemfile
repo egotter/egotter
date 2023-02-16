@@ -99,6 +99,9 @@ gem 'ddtrace', require: false
 # Slack
 gem 'slack-ruby-client', require: false
 
+# Avoid "Psych::BadAlias: Unknown alias: default"
+gem 'psych', '~> 3.1'
+
 group :development do
   gem 'annotate'
 end

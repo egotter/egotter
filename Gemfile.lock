@@ -128,6 +128,7 @@ GEM
     concurrent-ruby (1.2.0)
     connection_pool (2.3.0)
     crass (1.0.6)
+    date (3.3.3)
     ddtrace (1.9.0)
       debase-ruby_core_source (>= 0.10.16, <= 3.2.0)
       libdatadog (~> 1.0.1.1.0)
@@ -263,8 +264,11 @@ GEM
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
-    mail (2.7.1)
+    mail (2.8.1)
       mini_mime (>= 0.1.1)
+      net-imap
+      net-pop
+      net-smtp
     marcel (1.0.2)
     mecab (0.996)
     memoist (0.16.2)
@@ -285,6 +289,15 @@ GEM
     natto (1.2.0)
       ffi (>= 1.9.0)
     naught (1.1.0)
+    net-imap (0.3.4)
+      date
+      net-protocol
+    net-pop (0.1.2)
+      net-protocol
+    net-protocol (0.2.1)
+      timeout
+    net-smtp (0.3.3)
+      net-protocol
     nio4r (2.5.8)
     nokogiri (1.14.2)
       mini_portile2 (~> 2.8.0)
@@ -312,6 +325,7 @@ GEM
     orm_adapter (0.5.0)
     os (1.1.4)
     parallel (1.22.1)
+    psych (3.3.4)
     public_suffix (4.0.6)
     puma (5.6.4)
       nio4r (~> 2.0)
@@ -438,6 +452,7 @@ GEM
     thor (1.2.1)
     thread_safe (0.3.6)
     tilt (2.0.11)
+    timeout (0.3.1)
     trailblazer-option (0.1.2)
     twitter-text (3.1.0)
       idn-ruby
@@ -502,6 +517,7 @@ DEPENDENCIES
   oj
   omniauth-rails_csrf_protection
   omniauth-twitter
+  psych (~> 3.1)
   puma (~> 5.0)
   rack-timeout
   rack-user_agent
