@@ -2170,8 +2170,12 @@ ja:
       arrow_down: '↓'
       click_button: '%{arrow} アクセス履歴を確認するにはクリック'
       click_button_follow: '%{arrow} @ego_tter をフォロー後にクリック'
-      notice: 'えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
-      support_html: '分からないことがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。'
+      sign_in_with_twitter:
+        title: 'ツイッターログイン連携について'
+        description: 'えごったーのログインはツイッター連携を利用しています。そのため、ツイッターのIDとパスワードの入力を求められることがあります。'
+      support_account:
+        title: '解決しない場合'
+        description_html: '分からないことがある場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。連絡の際、できればスクリーンショットも一緒に送ってください。'
       loading_html: 'アクセス履歴を確認中です。<img src="/ajax-loader.gif?a=1">'
       loading_follow_html: 'フォロー履歴を確認中です。<img src="/ajax-loader.gif?a=1">'
     users_section:

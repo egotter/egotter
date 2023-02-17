@@ -36,7 +36,7 @@
     <%= follow_confirmations_page? ? t('.button_follow') : t('.button') %>
   <% end %>
   <div class="text-center mt-1">
-    <%= follow_confirmations_page? ? t('.click_button_follow', arrow: t('.arrow_down')) : t('.click_button', arrow: t('.arrow_down')) %>
+    <%= follow_confirmations_page? ? t('.click_button_follow', arrow: t('.arrow_up')) : t('.click_button', arrow: t('.arrow_up')) %>
   </div>
 </div>
 
@@ -48,8 +48,11 @@
   <% end %>
 </div>
 
-<div class="text-muted small my-3"><%= t('.notice') %></div>
-<div class="text-muted small my-3"><%= t('.support_html', url: twitter_web_url('egotter_cs')) %></div>
+<h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.sign_in_with_twitter.title') %></h3>
+<p class="my-3"><%= t('.sign_in_with_twitter.description') %></p>
+
+<h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.support_account.title') %></h3>
+<p class="my-3"><%= t('.support_account.description_html', url: twitter_web_url('egotter_cs')) %></p>
 
 <% if sign_in_as_confirmation_user? && confirmation_specified? %>
   <script>
