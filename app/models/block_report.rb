@@ -78,6 +78,7 @@ class BlockReport < ApplicationRecord
 
     def access_interval_too_long_message(user)
       has_subscription = user.has_valid_subscription?
+      recipient_name = (MessageEncryptor.new.encrypt(user.screen_name) rescue nil)
       blocked_user = fetch_blocked_users(user, limit: 1)[0]
       url_options = dialog_params.merge(campaign_params('block_report_access_interval_too_long'))
 
@@ -86,7 +87,7 @@ class BlockReport < ApplicationRecord
           has_subscription: has_subscription,
           first_name: mask_name(blocked_user&.screen_name, has_subscription),
           total_count: BlockingRelationship.where(to_uid: user.uid).size,
-          access_url: url_helper.access_confirmations_url(url_options.except(:sign_in_dialog).merge(user_token: user.user_token)),
+          access_url: url_helper.access_confirmations_url(url_options.except(:sign_in_dialog).merge(user_token: user.user_token, recipient_name: recipient_name)),
           pricing_url: url_helper.pricing_url(url_options),
           support_url: url_helper.support_url(url_options),
       )

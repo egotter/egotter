@@ -77,6 +77,7 @@ class MuteReport < ApplicationRecord
 
     def access_interval_too_long_message(user)
       has_subscription = user.has_valid_subscription?
+      recipient_name = (MessageEncryptor.new.encrypt(user.screen_name) rescue nil)
       muted_user = fetch_muted_users(user, limit: 1)[0]
       url_options = dialog_params.merge(og_tag: false).merge(campaign_params('mute_report_access_interval_too_long'))
 
@@ -85,7 +86,7 @@ class MuteReport < ApplicationRecord
           has_subscription: has_subscription,
           first_name: mask_name(muted_user&.screen_name),
           users_count: MutingRelationship.where(to_uid: user.uid).size,
-          access_url: url_helper.access_confirmations_url(url_options.except(:sign_in_dialog).merge(user_token: user.user_token)),
+          access_url: url_helper.access_confirmations_url(url_options.except(:sign_in_dialog).merge(user_token: user.user_token, recipient_name: recipient_name)),
           pricing_url: url_helper.pricing_url(url_options),
           faq_url: url_helper.support_url(url_options),
       )

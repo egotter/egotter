@@ -221,11 +221,12 @@ class PeriodicReport < ApplicationRecord
 
     def access_interval_too_long_message(user_id)
       user = User.find(user_id)
+      recipient_name = (MessageEncryptor.new.encrypt(user.screen_name) rescue nil)
       dialog_params = {follow_dialog: 1, sign_in_dialog: 1, share_dialog: 1, purchase_dialog: 1}.merge(campaign_params('web_access_hard_limited'))
       template = Rails.root.join('app/views/periodic_reports/web_access_hard_limited.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           access_day: user.access_days.order(date: :desc).first,
-          access_url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(user_token: user.user_token)),
+          access_url: access_confirmations_url(dialog_params.except(:sign_in_dialog).merge(user_token: user.user_token, recipient_name: recipient_name)),
           screen_name: user.screen_name,
           support_url: support_url(dialog_params),
           pricing_url: pricing_url(dialog_params),
