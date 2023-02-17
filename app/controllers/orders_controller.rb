@@ -106,15 +106,20 @@ class OrdersController < ApplicationController
   end
 
   def send_message(channel, options = {})
-    options.merge!(
-        user_id: current_user&.id,
-        via: params[:via],
-        referer: request.referer.to_s.truncate(200)
-    )
-    message = options.map { |k, v| "#{k}=#{v}" }.join(' ')
+    if user_signed_in?
+      props = {
+          user_id: current_user.id,
+          customer_id: Customer.order(created_at: :desc).find_by(user_id: current_user.id).stripe_customer_id,
+          via: params[:via],
+      }
+    else
+      props = {via: params[:via]}
+    end
 
-    SlackMessage.create(channel: channel, message: message)
-    SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{message}")
+    props.merge!(options)
+
+    SlackMessage.create(channel: channel, message: props.inspect)
+    SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{props}")
   rescue => e
     Airbag.warn "#{action_name}##{__method__}: #{e.inspect} channel=#{channel} options=#{options.inspect}"
   end

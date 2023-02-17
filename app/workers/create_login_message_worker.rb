@@ -30,7 +30,7 @@ class CreateLoginMessageWorker
   end
 
   def unique_in(*args)
-    3.seconds
+    10.minutes
   end
 
   # options:

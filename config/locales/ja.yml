@@ -2535,8 +2535,8 @@ ja:
           error: '検索された @%{user} のデータ取得に失敗しました。ページを更新してみてください。'
       orders:
         index:
-          success_html: 'トライアル期間の更新に 成功 しました。そのままでお待ちください。%{count}秒後に自動的に移動します。<img src="/ajax-loader.gif?a=1">'
-          fail_html: 'トライアル期間の更新に <span class="text-danger">失敗</span> しました。そのままでお待ちください。%{count}秒後に自動的に移動します。<img src="/ajax-loader.gif?a=1">'
+          success_html: 'トライアル期間の更新に 成功 しました。自動的に移動します。<img src="/ajax-loader.gif?a=1">'
+          fail_html: 'トライアル期間の更新に <span class="text-danger">失敗</span> しました。自動的に移動します。<img src="/ajax-loader.gif?a=1">'
         end_trial:
           success_html: 'トライアル期間の更新中です。そのままでお待ちください。<img src="/ajax-loader.gif?a=1">'
           fail: 'トライアル期間の更新に失敗しましたお手数ですが、@egotter_cs までご連絡ください'

@@ -8,6 +8,26 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
     allow(controller).to receive(:current_user).and_return(user)
   end
 
+  describe 'GET #index' do
+    subject { get :index, params: {} }
+
+    context 'User has a valid subscription' do
+      before { allow(user).to receive(:has_valid_subscription?).and_return(true) }
+      it do
+        is_expected.to have_http_status(:ok)
+        expect(JSON.parse(response.body)['subscription']).to be_truthy
+      end
+    end
+
+    context 'User does not have a valid subscription' do
+      before { allow(user).to receive(:has_valid_subscription?).and_return(false) }
+      it do
+        is_expected.to have_http_status(:ok)
+        expect(JSON.parse(response.body)['subscription']).to be_falsey
+      end
+    end
+  end
+
   describe 'POST #end_trial' do
     subject { post :end_trial, params: {} }
     before do

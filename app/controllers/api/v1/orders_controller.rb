@@ -10,15 +10,14 @@ module Api
 
       after_action { track_page_order_activity(order_id: params[:id]) }
 
-      INTERVAL = 3
+      INTERVAL = 5
 
       def index
-        if (subscription = current_user.has_valid_subscription?)
-          message = t('.success_html', count: INTERVAL)
+        if current_user.has_valid_subscription?
+          render json: {message: t('.success_html'), subscription: true, interval: INTERVAL}
         else
-          message = t('.fail_html', count: INTERVAL)
+          render json: {message: t('.fail_html'), subscription: false, interval: INTERVAL}
         end
-        render json: {message: message, subscription: subscription}
       end
 
       def end_trial
@@ -45,13 +44,13 @@ module Api
 
       def send_slack_message(order)
         channel = tracking_channel
-        message = {
+        props = {
             user_id: current_user.id,
             order_id: order.id,
-            button_id: params[:button_id] || "#{controller_name}/#{action_name}",
+            via: params[:via],
         }
-        SlackMessage.create(channel: channel, message: message)
-        SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{message}")
+        SlackMessage.create(channel: channel, message: props.inspect)
+        SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{props}")
       end
 
       def tracking_channel
