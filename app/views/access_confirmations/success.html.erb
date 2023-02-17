@@ -1,0 +1,23 @@
+<h2 class="h4 text-center my-5">
+  <%= t('.page_title') %>
+</h2>
+
+<div class="my-5">
+  <%= t('.page_description', user1: @recipient_name, user2: 'ego_tter') %>
+</div>
+
+<div class="mt-3 mb-1">
+  <%= link_to direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), target: '_blank', class: 'btn btn-primary btn-block' do %>
+    <%= image_tag(image_path('/logo_transparent_96x96.png'), class: 'rounded', size: '20x20') %>
+    <%= t('.button', user: 'ego_tter') %>
+  <% end %>
+</div>
+
+<%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top, user: @recipient_name}) %>
+
+<div class="mt-1 mb-3">
+  <%= link_to direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), target: '_blank', class: 'btn btn-primary btn-block' do %>
+    <%= image_tag(image_path('/logo_transparent_96x96.png'), class: 'rounded', size: '20x20') %>
+    <%= t('.button', user: 'ego_tter') %>
+  <% end %>
+</div>

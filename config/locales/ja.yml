@@ -1505,6 +1505,11 @@ ja:
       cannot_follow_yourself: '自分をフォローすることはできません。'
       success: '@%{user} のフォローに成功しました。残りのフォロー回数は %{count}回 です。'
       retry_later: '@%{user} のフォローをリクエストしました。凍結を防ぐために一定時間後にフォローします。'
+  access_confirmations:
+    success:
+      page_title: 'アクセス履歴が確認できました'
+      page_description: '@%{user1} でのアクセス履歴が確認できました。定期的な通知は次の時刻に @%{user2} から届きます。'
+      button: '@%{user} のDMを開く'
   error_pages:
     support_html: '何度も起きる/どうしても解決しない場合は <a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。連絡の際、できればスクリーンショットも一緒に送ってください。'
     api_not_authorized:

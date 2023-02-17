@@ -187,6 +187,7 @@ Rails.application.routes.draw do
     resources controller_name, only: %i(show), param: :screen_name
   end
   resources 'access_confirmations', only: %i(index)
+  get "access_confirmations/success", to: "access_confirmations#success", as: :access_confirmations_success
   resources 'follow_confirmations', only: %i(index)
   resources 'interval_confirmations', only: %i(index)
   resources 'blockers', only: %i(index)
