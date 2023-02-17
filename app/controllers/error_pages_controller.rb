@@ -34,7 +34,6 @@ class ErrorPagesController < ApplicationController
       UpdateUserAttrsWorker.perform_async(current_user.id)
       @screen_name = current_user.screen_name
     end
-    set_trends
   end
 
   def too_many_searches; end
@@ -45,9 +44,7 @@ class ErrorPagesController < ApplicationController
 
   def soft_limited; end
 
-  def not_found_user
-    set_trends
-  end
+  def not_found_user; end
 
   def forbidden_user; end
 
@@ -126,11 +123,5 @@ class ErrorPagesController < ApplicationController
       @user = TwitterUser.latest_by(screen_name: @screen_name) unless @user
       @user = TwitterUserDecorator.new(@user) if @user
     end
-  end
-
-  def set_trends
-    @trends = Trend.japan.top_n(50).where(time: Time.zone.now.change(min: 0, sec: 0)).limit(50)
-  rescue => e
-    Airbag.warn "#{controller_name}##{action_name}: ##{__method__} failed #{e.inspect}"
   end
 end

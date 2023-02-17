@@ -5,5 +5,3 @@
 <%= render partial: 'ad_section', locals: {screen_name: @screen_name} %>
 
 <%= render template: 'messages/not_found_reason', locals: {expanded: true} %>
-
-<%= render partial: 'trends_section', locals: {trends: @trends} if @trends.any? %>
