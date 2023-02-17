@@ -77,8 +77,6 @@ class ErrorPagesController < ApplicationController
   # TODO Remove later
   def too_many_api_requests; end
 
-  def twitter_error; end
-
   def twitter_error_not_found; end
 
   def twitter_error_suspended; end

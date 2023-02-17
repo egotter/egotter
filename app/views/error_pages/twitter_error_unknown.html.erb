@@ -1,7 +1,1 @@
-<p><%= t('.message_html', url: sign_in_path(via: current_via)) %></p>
-<p><%= t('error_pages.support_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></p>
-
-<div class="text-center">
-  <a class="twitter-timeline" data-width="600" href="https://twitter.com/ego_tter?ref_src=twsrc%5Etfw">Tweets by ego_tter</a>
-  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-</div>
+<%= render partial: 'twitter_error', locals: {error_name: 'Unknown'} %>

@@ -1580,27 +1580,27 @@ ja:
       message1: 'これまでに検索したユーザーのフォロー・フォロワーがとても多いため、検索を一時的にお休み中です。%{kaomoji}'
       message2: '次の検索まで最大で 15分 ほどお待ちください。'
     twitter_error:
-      message_html: 'Twitterの一時的なエラーが起きました。<a href="%{url}">ログイン</a> してからご利用ください。'
+      message1_html: 'Twitterの %{name} エラーが起きました。もしログインしていない場合は、<a href="%{url}">ログイン</a> してからご利用ください。'
+      message2_html:
+        大半のエラーは時間が経つと解決します。現在起きている障害については <a href="https://twitter.com/%{user1}" target="_blank">@%{user1}</a> または
+        <a href="https://twitter.com/%{user2}" target="_blank">@%{user2}</a> のツイートをご確認ください。
     twitter_error_not_found:
-      message_html: 'Twitterの NotFound エラーが起きました。<a href="%{url}">ログイン</a> してからご利用ください。'
+      message_html: 'Twitterの NotFound エラーが起きました。もしログインしていない場合は、<a href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_suspended:
-      message_html: 'Twitterの Suspended エラーが起きました。<a href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_unauthorized:
-      message_html: 'Twitterの Unauthorized エラーが起きました。<a href="%{url}">ログイン</a> してからご利用ください。'
     permission_level_not_enough:
       message_html: |
-        <p class="text-danger">ログインに失敗しました。Permission level not enough</p>
-        <p>このエラーは、えごったーをかなり昔から使っているユーザーの一部で起きます。</p>
-        <p>このエラーを起きなくするためには、まず、<a href="https://twitter.com/settings/applications/185425" target="_blank">連携アプリ</a> からえごったーを削除してください。</p>
-        <p>その後に、えごったーに <a href="%{url}">ログイン</a> すればエラーは解消されます。</p>
+        <p class="my-3">Twitterの Permission level not enough エラーが起きました。</p>
+        <p class="my-3">このエラーは、えごったーをかなり昔から使っているユーザーの一部で起きます。</p>
+        <p class="my-3">このエラーを起きなくするためには、まず、<a href="https://twitter.com/settings/applications/185425" target="_blank">連携アプリ</a> からえごったーを削除してください。</p>
+        <p class="my-3">その後に、えごったーに <a href="%{url}">ログイン</a> すればエラーは解消されます。</p>
     twitter_error_temporarily_locked:
       message_html: |
-        <p class="text-danger">ログインに失敗しました。Temporarily locked</p>
-        <p>このエラーは、ツイッターから「動作が怪しいアカウント」と判定されているときに起きます。</p>
-        <p>このエラーを起きなくするためには、まず、<a href="https://twitter.com" target="_blank">twitter.com</a> にアクセスしてこの判定を解除してください。</p>
-        <p>その後に、えごったーに <a href="%{url}">ログイン</a> すればエラーは解消されます。</p>
+        <p class="my-3">Twitterの Temporarily locked エラーが起きました。</p>
+        <p class="my-3">このエラーは、ツイッターから「動作が怪しいアカウント」と判定されているときに起きます。</p>
+        <p class="my-3">このエラーを起きなくするためには、まず、<a href="https://twitter.com" target="_blank">twitter.com</a> にアクセスしてこの判定を解除してください。</p>
+        <p class="my-3">その後に、えごったーに <a href="%{url}">ログイン</a> すればエラーは解消されます。</p>
     twitter_error_unknown:
-      message_html: 'Twitterの Unknown エラーが起きました。<a href="%{url}">ログイン</a> してからご利用ください。'
     routing_error:
       message_html: 'お探しのページが見つかりませんでした。<a href="%{url}">ログイン</a> してからご利用ください。'
     internal_server_error:

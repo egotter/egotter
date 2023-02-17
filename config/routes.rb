@@ -123,7 +123,6 @@ Rails.application.routes.draw do
   get 'error_pages/secret_mode_detected', to: 'error_pages#secret_mode_detected'
   get 'error_pages/omniauth_failure', to: 'error_pages#omniauth_failure'
   get 'error_pages/too_many_api_requests', to: 'error_pages#too_many_api_requests'
-  get 'error_pages/twitter_error', to: 'error_pages#twitter_error'
   get 'error_pages/twitter_error_not_found', to: 'error_pages#twitter_error_not_found'
   get 'error_pages/twitter_error_suspended', to: 'error_pages#twitter_error_suspended'
   get 'error_pages/twitter_error_unauthorized', to: 'error_pages#twitter_error_unauthorized'
