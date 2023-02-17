@@ -13,7 +13,7 @@
   <% end %>
 </div>
 
-<%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top, user: @recipient_name}) %>
+<%= render(partial: 'adsense/responsive', locals: {controller: controller_name, action: action_name, vertical: :top, user: @user}) %>
 
 <div class="mt-1 mb-3">
   <%= link_to direct_message_url(User::EGOTTER_UID, t('quick_replies.prompt_reports.label3')), target: '_blank', class: 'btn btn-primary btn-block' do %>

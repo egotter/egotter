@@ -11,6 +11,10 @@ class AccessConfirmationsController < ApplicationController
 
   def success
     @recipient_name = decrypted_recipient_name || 'user'
+    if @recipient_name != 'user'
+      @user = TwitterDB::User.find_by(screen_name: @recipient_name)
+      @user = TwitterUser.latest_by(screen_name: @recipient_name) unless @user
+    end
   end
 
   private
