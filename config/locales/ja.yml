@@ -1567,7 +1567,7 @@ ja:
       message2_html: '普通のアクセスでこのメッセージが表示されている場合は、<a href="%{url}" target="_blank">@%{user}</a> までご連絡ください。'
     suspicious_access_detected:
       message1_html: '不審なアクセスが検出されました。<a href="%{url}">ログイン</a> してからご利用ください。'
-      message2_html: '普通のアクセスでこのメッセージが表示されている場合は、@egotter_cs までご連絡ください。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">連絡する</a>'
+      message2_html: '普通のアクセスでこのメッセージが表示されている場合は、<a href="%{url}" target="_blank">@%{user}</a> までご連絡ください。'
     twitter_user_not_persisted:
       message_html: 'ログインしていないため @%{user} のTwitterデータ取得に失敗しました。<a href="%{url}">ログイン</a> してからご利用ください。'
     too_many_api_requests:
