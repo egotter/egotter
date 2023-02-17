@@ -1561,15 +1561,15 @@ ja:
     blockers_not_permitted:
       message_html: 'このページを見るには <a href="%{url}" class="btn btn-primary btn-sm">ログイン</a> と <a href="%{pricing_url}" class="btn btn-primary btn-sm">有料プラン</a> の購入と トライアル期間の終了 が必要です。'
     soft_limited:
-      message_html: '検索された @%{user} はフォローとフォロワーが多いため、<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> した後のみ検索できます。'
+      message_html: '検索された @%{user} はフォローとフォロワーが多いため、<a href="%{url}">ログイン</a> した後のみ検索できます。'
     spam_ip_detected:
-      message1_html: 'スパム報告されているアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
-      message2_html: '普通のアクセスでこのメッセージが表示されている場合は、@egotter_cs までご連絡ください。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">連絡する</a>'
+      message1_html: 'スパム報告されているアクセスが検出されました。<a href="%{url}">ログイン</a> してからご利用ください。'
+      message2_html: '普通のアクセスでこのメッセージが表示されている場合は、<a href="%{url}" target="_blank">@%{user}</a> までご連絡ください。'
     suspicious_access_detected:
-      message1_html: '不審なアクセスが検出されました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message1_html: '不審なアクセスが検出されました。<a href="%{url}">ログイン</a> してからご利用ください。'
       message2_html: '普通のアクセスでこのメッセージが表示されている場合は、@egotter_cs までご連絡ください。<a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">連絡する</a>'
     twitter_user_not_persisted:
-      message_html: 'ログインしていないため @%{user} のTwitterデータ取得に失敗しました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message_html: 'ログインしていないため @%{user} のTwitterデータ取得に失敗しました。<a href="%{url}">ログイン</a> してからご利用ください。'
     too_many_api_requests:
       message1: '検索数が多いため、一時的にツイッターAPIがお休み中です。最大で 15分 ほどお待ちください。%{kaomoji}'
       message2: '次の検索まで最大で 15分 ほどお待ちください。'
@@ -1580,29 +1580,29 @@ ja:
       message1: 'これまでに検索したユーザーのフォロー・フォロワーがとても多いため、検索を一時的にお休み中です。%{kaomoji}'
       message2: '次の検索まで最大で 15分 ほどお待ちください。'
     twitter_error:
-      message_html: 'Twitterの一時的なエラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message_html: 'Twitterの一時的なエラーが起きました。<a href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_not_found:
-      message_html: 'Twitterの NotFound エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message_html: 'Twitterの NotFound エラーが起きました。<a href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_suspended:
-      message_html: 'Twitterの Suspended エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message_html: 'Twitterの Suspended エラーが起きました。<a href="%{url}">ログイン</a> してからご利用ください。'
     twitter_error_unauthorized:
-      message_html: 'Twitterの Unauthorized エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message_html: 'Twitterの Unauthorized エラーが起きました。<a href="%{url}">ログイン</a> してからご利用ください。'
     permission_level_not_enough:
       message_html: |
         <p class="text-danger">ログインに失敗しました。Permission level not enough</p>
         <p>このエラーは、えごったーをかなり昔から使っているユーザーの一部で起きます。</p>
         <p>このエラーを起きなくするためには、まず、<a href="https://twitter.com/settings/applications/185425" target="_blank">連携アプリ</a> からえごったーを削除してください。</p>
-        <p>その後に、えごったーに <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> すればエラーは解消されます。</p>
+        <p>その後に、えごったーに <a href="%{url}">ログイン</a> すればエラーは解消されます。</p>
     twitter_error_temporarily_locked:
       message_html: |
         <p class="text-danger">ログインに失敗しました。Temporarily locked</p>
         <p>このエラーは、ツイッターから「動作が怪しいアカウント」と判定されているときに起きます。</p>
         <p>このエラーを起きなくするためには、まず、<a href="https://twitter.com" target="_blank">twitter.com</a> にアクセスしてこの判定を解除してください。</p>
-        <p>その後に、えごったーに <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> すればエラーは解消されます。</p>
+        <p>その後に、えごったーに <a href="%{url}">ログイン</a> すればエラーは解消されます。</p>
     twitter_error_unknown:
-      message_html: 'Twitterの Unknown エラーが起きました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message_html: 'Twitterの Unknown エラーが起きました。<a href="%{url}">ログイン</a> してからご利用ください。'
     routing_error:
-      message_html: 'お探しのページが見つかりませんでした。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message_html: 'お探しのページが見つかりませんでした。<a href="%{url}">ログイン</a> してからご利用ください。'
     internal_server_error:
       login_html: '一時的なエラーが起きました。もしログインしていない場合は、<a href="%{url}">ログイン</a> してからご利用ください。'
       message_html:
@@ -1610,9 +1610,9 @@ ja:
         <a href="https://twitter.com/%{user2}" target="_blank">@%{user2}</a> のツイートをご確認ください。
     request_timeout_error:
       user_message_html: 'アクセスが多すぎてリクエストがタイムアウトしました。アクセスの少ない時間帯に再度お試しください。'
-      visitor_message_html: 'アクセスが多すぎてリクエストがタイムアウトしました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      visitor_message_html: 'アクセスが多すぎてリクエストがタイムアウトしました。<a href="%{url}">ログイン</a> してからご利用ください。'
     csrf_error:
-      message_html: 'ページの有効期限が切れました。<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してからご利用ください。'
+      message_html: 'ページの有効期限が切れました。<a href="%{url}">ログイン</a> してからご利用ください。'
     service_stopped:
       message: '一時的に検索が速度制限されています。一定時間後に再度お試しください。'
       note_html: '最新のお知らせは <a href="https://twitter.com/%{user1}" target="_blank">@%{user1}</a> または <a href="https://twitter.com/%{user2}" target="_blank">@%{user2}</a> のツイートをご覧になってください。'
@@ -2720,7 +2720,7 @@ ja:
     honorific: "さん"
   before_sign_in:
     ajax:
-      need_login_html: 'この操作を行うためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
+      need_login_html: 'この操作を行うためには <a href="%{url}">ログイン</a> が必要です。'
     secret_mode_detected_with_count: 'えごったーはシークレットモードではご利用いただけません。%{count}秒後にトップページへ移動します。'
     ad_blocker_detected_with_count: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。%{seconds}秒後にトップページへ移動します。'
     private_mode_specified: 'データが見付かりませんでした。'
