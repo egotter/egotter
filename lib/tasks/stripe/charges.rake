@@ -2,6 +2,7 @@ namespace :stripe do
   namespace :charges do
     task verify: :environment do
       verbose = ENV['VERBOSE']
+      channel = :orders_charge_warn
 
       charges = Stripe::Charge.list(limit: 100).data.select { |s| s.status == 'succeeded' }
       result = []
@@ -18,10 +19,10 @@ namespace :stripe do
       end
 
       if result.any?
-        SlackBotClient.channel(:orders_charge_warn).post_message("`#{Rails.env}` Invalid data #{result}")
+        SlackBotClient.channel(channel).post_message("`#{Rails.env}` Invalid data #{result}")
       else
         if verbose
-          SlackBotClient.channel(:orders_charge_warn).post_message("`#{Rails.env}` OK")
+          SlackBotClient.channel(channel).post_message("`#{Rails.env}` OK")
         end
       end
     end
