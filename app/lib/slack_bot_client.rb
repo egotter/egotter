@@ -45,6 +45,8 @@ class SlackBotClient
 
   def post_message(text, options = {})
     @client.chat_postMessage({channel: @channel, text: text}.merge(options))
+  ensure
+    SlackLog.create(channel: @channel, message: text, time: Time.zone.now) rescue nil
   end
 
   def post_context_message(text, screen_name, icon_url, urls)
