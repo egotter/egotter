@@ -50,7 +50,7 @@ RSpec.describe ImportTwitterDBUserWorker do
     subject { worker.send(:import_users, users) }
     it do
       expect(TwitterDB::User).to receive(:import_by!).with(users: users)
-      expect(ImportTwitterDBUserIdWorker).to receive(:perform_async).with([1, 2])
+      expect(ImportTwitterDBUserIdWorker).to receive(:perform_in).with(instance_of(Integer), [1, 2])
       subject
     end
   end

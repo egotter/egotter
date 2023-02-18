@@ -24,8 +24,8 @@ class JobConsumer
         @errors_count += 1
       end
 
-      if Time.zone.now - start_time > @timeout
-        logger.info "#{self.class}: Timeout"
+      if (elapsed_time = Time.zone.now - start_time) > @timeout
+        logger.info "#{self.class}: Timeout #{elapsed_time}"
         break
       end
 
@@ -35,7 +35,7 @@ class JobConsumer
   end
 
   def format_progress
-    "looped=#{@looped_count} processed=#{@processed_count}#{" errors=#{@errors_count}" if @errors_count > 0}"
+    "looped=#{@looped_count}/#{@loop} processed=#{@processed_count}#{" errors=#{@errors_count}" if @errors_count > 0}"
   end
 
   private

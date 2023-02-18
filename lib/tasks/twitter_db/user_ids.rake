@@ -1,5 +1,16 @@
 namespace :twitter_db do
   namespace :user_ids do
+    task consume_jobs: :environment do |task|
+      limit = ENV['LIMIT']&.to_i || 100
+      loop = ENV['LOOP']&.to_i || 300
+      timeout = ENV['TIMEOUT']&.to_i || 100
+
+      consumer = JobConsumer.new(ImportTwitterDBUserIdWorker, loop: loop, limit: limit, timeout: timeout)
+      consumer.start
+
+      puts "#{task.name}: #{consumer.format_progress}"
+    end
+
     task import: :environment do |task|
       start = ENV['START']&.to_i || 1
       limit = ENV['LIMIT']&.to_i || 10000
