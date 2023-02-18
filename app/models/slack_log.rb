@@ -12,5 +12,5 @@
 #
 #  index_slack_logs_on_time  (time)
 #
-class SlackLog < ApplicationRecord
+class SlackLog < ApplicationLogRecord
 end
