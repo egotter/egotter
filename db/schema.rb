@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_04_122639) do
+ActiveRecord::Schema.define(version: 2023_02_18_094012) do
 
   create_table "access_days", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -1240,6 +1240,14 @@ ActiveRecord::Schema.define(version: 2023_02_04_122639) do
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_sign_in_logs_on_created_at"
     t.index ["user_id"], name: "index_sign_in_logs_on_user_id"
+  end
+
+  create_table "slack_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "channel"
+    t.text "message"
+    t.json "properties"
+    t.timestamp "time", null: false
+    t.index ["time"], name: "index_slack_logs_on_time"
   end
 
   create_table "slack_messages", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
