@@ -49,7 +49,6 @@ module Api
             order_id: order.id,
             via: params[:via],
         }
-        SlackMessage.create(channel: channel, message: props.inspect)
         SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{props}")
       end
 

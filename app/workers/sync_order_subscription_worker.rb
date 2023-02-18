@@ -53,9 +53,7 @@ class SyncOrderSubscriptionWorker
   end
 
   def send_message(reason, order, changes)
-    channel = 'orders_sync'
     message = "#{self.class}: reason=#{reason} order_id=#{order.id} user_id=#{order.user_id} subscription_id=#{order.subscription_id} changes=#{changes}"
-    SlackMessage.create(channel: channel, message: message)
-    SlackBotClient.channel(channel).post_message(message)
+    SlackBotClient.channel(:orders_sync).post_message(message)
   end
 end

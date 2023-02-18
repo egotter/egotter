@@ -51,7 +51,6 @@ RSpec.describe SyncOrderSubscriptionWorker do
   describe '#send_message' do
     subject { worker.send(:send_message, 'location', order, {}) }
     it do
-      expect(SlackMessage).to receive(:create).with(channel: 'orders_sync', message: instance_of(String))
       expect(SlackBotClient).to receive_message_chain(:channel, :post_message).with('orders_sync').with(instance_of(String))
       subject
     end

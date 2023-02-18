@@ -41,7 +41,6 @@ module Api
       def send_message
         if @intent
           message = "user_id=#{current_user.id} payment_intent_id=#{@intent.id}"
-          SlackMessage.create(channel: 'orders_pi_created', message: message)
           SendMessageToSlackWorker.perform_async(:orders_pi_created, "`#{Rails.env}` #{message}")
         else
           Airbag.warn "#{controller_name}##{action_name}: StripePaymentIntent is not found user_id=#{current_user.id}"

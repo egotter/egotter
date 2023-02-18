@@ -117,8 +117,6 @@ class OrdersController < ApplicationController
     end
 
     props.merge!(options)
-
-    SlackMessage.create(channel: channel, message: props.inspect)
     SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{props}")
   rescue => e
     Airbag.warn "#{action_name}##{__method__}: #{e.inspect} channel=#{channel} options=#{options.inspect}"

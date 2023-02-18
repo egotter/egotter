@@ -46,7 +46,6 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
 
   def send_message(channel, msg, checkout_session_id, options = {})
     message = "#{msg} #{checkout_session_id} #{options}"
-    SlackMessage.create(channel: channel, message: message)
     SlackBotClient.channel(channel).post_message("`#{Rails.env}` #{message}")
   rescue => e
     Airbag.warn "##{__method__} failed #{e.inspect} message=#{message}"

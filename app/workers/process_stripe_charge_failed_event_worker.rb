@@ -18,7 +18,6 @@ class ProcessStripeChargeFailedEventWorker
   private
 
   def send_message(message)
-    SlackMessage.create(channel: 'orders_charge_failed', message: message)
     SlackBotClient.channel('orders_charge_failed').post_message("`#{Rails.env}` #{message}")
   rescue => e
     Airbag.exception e, message: message
