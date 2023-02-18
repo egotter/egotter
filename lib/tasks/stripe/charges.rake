@@ -5,24 +5,28 @@ namespace :stripe do
       channel = :orders_charge_warn
 
       charges = Stripe::Charge.list(limit: 100).data.select { |s| s.status == 'succeeded' }
-      result = []
+      result = {succeeded: [], failed: []}
 
       charges.each do |charge|
         customer = Customer.order(created_at: :desc).find_by(stripe_customer_id: charge.customer)
         user = User.find(customer.user_id)
 
-        if user.has_valid_subscription?
-          # OK
-        else
-          result << "user_id=#{user.id} customer_id=#{charge.customer}"
+        if charge.status == 'succeeded' && !user.has_valid_subscription?
+          result[:succeeded] << "user_id=#{user.id} customer_id=#{charge.customer}"
+        elsif charge.status == 'failed' && user.has_valid_subscription?
+          result[:failed] << "user_id=#{user.id} customer_id=#{charge.customer}"
         end
       end
 
-      if result.any?
-        SlackBotClient.channel(channel).post_message("`#{Rails.env}` Invalid data #{result}")
-      else
-        if verbose
-          SlackBotClient.channel(channel).post_message("`#{Rails.env}` OK")
+      slack = SlackBotClient.channel(channel)
+
+      result.each do |status, ary|
+        if ary.any?
+          slack.post_message("`#{Rails.env}` Invalid data status=#{status} #{ary}")
+        else
+          if verbose
+            slack.post_message("`#{Rails.env}` OK status=#{status}")
+          end
         end
       end
     end
