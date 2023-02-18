@@ -21,16 +21,16 @@ namespace :stripe do
       end
 
       if result.any?
-        SlackBotClient.channel(:orders_sub).post_message("`#{Rails.env}` Invalid data #{result}")
+        SlackBotClient.channel(:orders_sub_warn).post_message("`#{Rails.env}` Invalid data #{result}")
       else
         if verbose
-          SlackBotClient.channel(:orders_sub).post_message("`#{Rails.env}` OK")
+          SlackBotClient.channel(:orders_sub_warn).post_message("`#{Rails.env}` OK")
         end
       end
     end
 
     task invalidate: :environment do
-      slack = SlackBotClient.channel(:orders_sub_expired)
+      slack = SlackBotClient.channel(:orders_sub_warn)
 
       [1, 3, 6, 12, 24].each do |months_count|
         regexp = '^' + I18n.t('stripe.monthly_basis.name_prefix', count: months_count)
