@@ -28,7 +28,7 @@ class InquiryMessageResponder < AbstractMessageResponder
     end
 
     def login_regexp
-      /ログイン/
+      /ログイン|切り替え/
     end
 
     def delete_favorites_regexp
