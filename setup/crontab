@@ -10,6 +10,7 @@ RUBY='/var/egotter/bin/cron/ruby.sh'
 30 * * * * $RAKE orders:update_stripe_attributes
 35 * * * * $RAKE stripe:subscriptions:verify
 20 19 * * * $RAKE stripe:subscriptions:invalidate
+38 * * * * $RAKE stripe:charges:verify
 45 * * * * $RAKE periodic_reports:send_remind_messages
 50 * * * * $RAKE twitter_db:queued_users:delete
 25 * * * * $RUNNER 'UpdateEgotterFollowersWorker.perform_async'
