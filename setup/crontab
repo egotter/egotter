@@ -8,7 +8,7 @@ RUBY='/var/egotter/bin/cron/ruby.sh'
 */5 * * * * $RUBY bin/delete_not_found_users.rb
 */5 * * * * $RUBY bin/delete_forbidden_users.rb
 30 * * * * $RAKE orders:update_stripe_attributes
-35 * * * * $RAKE orders:check_not_persisted_subscriptions
+35 * * * * $RAKE stripe:subscriptions:verify
 20 19 * * * $RAKE orders:cancel_expired_subscriptions
 45 * * * * $RAKE periodic_reports:send_remind_messages
 50 * * * * $RAKE twitter_db:queued_users:delete
