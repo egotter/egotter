@@ -16,7 +16,7 @@ RSpec.describe ProcessStripeChargeFailedEventWorker do
       allow(Order).to receive(:find_by_customer_id).with(customer_id).and_return(order)
     end
     it do
-      expect(order).to receive(:charge_failed!)
+      expect(order).to receive(:update!).with(charge_failed_at: instance_of(ActiveSupport::TimeWithZone))
       expect(order).to receive(:cancel!).with('webhook')
       subject
     end

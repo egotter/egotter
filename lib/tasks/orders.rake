@@ -5,7 +5,7 @@ namespace :orders do
     orders.find_each(batch_size: 10) do |order|
       subscription = Stripe::Subscription.retrieve(order.subscription_id)
       if subscription.canceled_at
-        SendMessageToSlackWorker.perform_async(:orders_z_error, "Order to be deleted order_id=#{order.id} subscription_id=#{order.subscription_id}")
+        SendMessageToSlackWorker.perform_async(:orders_warning, "Order to be deleted order_id=#{order.id} subscription_id=#{order.subscription_id}")
       end
     end
 

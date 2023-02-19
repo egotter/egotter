@@ -5,7 +5,7 @@ class ProcessStripeChargeFailedEventWorker
   # options:
   def perform(customer_id, options = {})
     if (order = Order.find_by_customer_id(customer_id))
-      order.charge_failed!
+      order.update!(charge_failed_at: Time.zone.now)
       order.cancel!('webhook')
       send_message("Success user_id=#{order.user_id} order_id=#{order.id} customer_id=#{customer_id}")
     else
