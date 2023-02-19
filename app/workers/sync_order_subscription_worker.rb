@@ -13,7 +13,7 @@ class SyncOrderSubscriptionWorker
 
     if (subscription = fetch_subscription(order.subscription_id))
       cancel_order(order, subscription)
-      end_trial_period(order, subscription)
+      # end_trial_period(order, subscription)
     else
       send_message('subscription not found', order, 'none')
     end

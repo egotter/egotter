@@ -25,9 +25,28 @@ namespace :orders do
 
   task update_email: :environment do |task|
     # This task is divided as there are not many records
-    Order.select(:id).where(canceled_at: nil).where('created_at > ?', (1.hour + 5.minutes).ago).find_each do |order|
+    orders = Order.select(:id).where(canceled_at: nil).where('created_at > ?', (1.hour + 5.minutes).ago)
+
+    orders.find_each do |order|
       SyncOrderEmailWorker.new.perform(order.id)
     end
+
+    puts "#{Time.zone.now.to_s(:db)} task=#{task.name} total=#{orders.size}"
+  end
+
+  task update_trial_end: :environment do |task|
+    # This task is divided as there are not many records
+    orders = Order.select(:id, :trial_end, :subscription_id).where(canceled_at: nil).where(trial_end: nil).where('created_at > ?', 15.days.ago)
+
+    orders.find_each do |order|
+      subscription = Stripe::Subscription.retrieve(order.subscription_id)
+      if (trial_end = subscription.trial_end)
+        order.update(trial_end: trial_end)
+        SlackBotClient.channel(:orders_sync).post_message("Updated changes=#{order.saved_changes.except('updated_at')}")
+      end
+    end
+
+    puts "#{Time.zone.now.to_s(:db)} task=#{task.name} total=#{orders.size}"
   end
 
   task print_statuses: :environment do
