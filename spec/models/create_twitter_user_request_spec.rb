@@ -159,11 +159,11 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   end
 
   describe '#validate_twitter_user!' do
-    let(:twitter_user) { TwitterSnapshot.new({friends_count: 100, followers_count: 200}) }
-    subject { request.send(:validate_twitter_user!, twitter_user) }
+    let(:snapshot) { TwitterSnapshot.new({friends_count: 100, followers_count: 200}) }
+    subject { request.send(:validate_twitter_user!, snapshot) }
     before do
-      twitter_user.friend_uids = [1, 2]
-      twitter_user.follower_uids = [3, 4]
+      snapshot.friend_uids = [1, 2]
+      snapshot.follower_uids = [3, 4]
     end
 
     shared_context 'twitter_user is persisted' do
@@ -172,31 +172,31 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
 
     context 'there is no friends and followers' do
       include_context 'twitter_user is persisted'
-      before { allow(twitter_user).to receive(:too_little_friends?).and_return(true) }
+      before { allow(snapshot).to receive(:too_little_friends?).and_return(true) }
       it { expect { subject }.to raise_error(described_class::TooLittleFriends) }
     end
 
     context 'there are too many friends and followers' do
       include_context 'twitter_user is persisted'
-      before { allow(SearchLimitation).to receive(:hard_limited?).with(twitter_user).and_return(true) }
+      before { allow(SearchLimitation).to receive(:hard_limited?).with(snapshot).and_return(true) }
       it { expect { subject }.to raise_error(described_class::TooManyFriends) }
     end
 
     context 'no_need_to_import_friendships? returns true' do
       include_context 'twitter_user is persisted'
-      before { allow(twitter_user).to receive(:no_need_to_import_friendships?).and_return(true) }
+      before { allow(snapshot).to receive(:no_need_to_import_friendships?).and_return(true) }
       it { expect { subject }.to raise_error(described_class::TooManyFriends) }
     end
 
     context 'diff_values_empty? returns true' do
       include_context 'twitter_user is persisted'
-      before { allow(request).to receive(:diff_values_empty?).with(twitter_user).and_return(true) }
+      before { allow(request).to receive(:diff_values_empty?).with(snapshot).and_return(true) }
       it { expect { subject }.to raise_error(described_class::NotChanged) }
     end
 
     context 'else' do
       include_context 'twitter_user is persisted'
-      before { allow(request).to receive(:diff_values_empty?).with(twitter_user).and_return(false) }
+      before { allow(request).to receive(:diff_values_empty?).with(snapshot).and_return(false) }
       it { expect { subject }.not_to raise_error }
     end
 

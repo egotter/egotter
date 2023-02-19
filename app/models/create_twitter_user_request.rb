@@ -122,31 +122,31 @@ class CreateTwitterUserRequest < ApplicationRecord
     retry
   end
 
-  def validate_twitter_user!(twitter_user)
-    if twitter_user.friend_uids.any? { |uid| uid.nil? || uid == 0 }
+  def validate_twitter_user!(snapshot)
+    if snapshot.friend_uids.any? { |uid| uid.nil? || uid == 0 }
       Airbag.warn 'validate_twitter_user!: friend_uids includes nil or 0', user_id: user_id, uid: uid
     end
 
-    if twitter_user.follower_uids.any? { |uid| uid.nil? || uid == 0 }
+    if snapshot.follower_uids.any? { |uid| uid.nil? || uid == 0 }
       Airbag.warn 'validate_twitter_user!: follower_uids includes nil or 0', user_id: user_id, uid: uid
     end
 
     if TwitterUser.exists?(uid: uid)
-      if twitter_user.too_little_friends?
-        raise TooLittleFriends.new("no_friends_and_followers screen_name=#{twitter_user.screen_name}")
+      if snapshot.too_little_friends?
+        raise TooLittleFriends.new("no_friends_and_followers screen_name=#{snapshot.screen_name}")
       end
 
-      if SearchLimitation.hard_limited?(twitter_user)
-        raise TooManyFriends.new("hard_limited screen_name=#{twitter_user.screen_name}")
+      if SearchLimitation.hard_limited?(snapshot)
+        raise TooManyFriends.new("hard_limited screen_name=#{snapshot.screen_name}")
       end
 
       # TODO Implement #no_need_to_import_friendships? as class method
-      if twitter_user.no_need_to_import_friendships?
-        raise TooManyFriends.new("already_exists screen_name=#{twitter_user.screen_name}")
+      if snapshot.no_need_to_import_friendships?
+        raise TooManyFriends.new("already_exists screen_name=#{snapshot.screen_name}")
       end
 
-      if diff_values_empty?(twitter_user)
-        raise NotChanged.new("empty_diff screen_name=#{twitter_user.screen_name}")
+      if diff_values_empty?(snapshot)
+        raise NotChanged.new("empty_diff screen_name=#{snapshot.screen_name}")
       end
     end
   end
