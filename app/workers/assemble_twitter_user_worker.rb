@@ -19,7 +19,7 @@ class AssembleTwitterUserWorker
   end
 
   def expire_in
-    30.seconds
+    1.minute
   end
 
   def after_expire(request_id, options = {})

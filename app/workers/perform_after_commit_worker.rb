@@ -12,10 +12,6 @@ class PerformAfterCommitWorker
     1.minute
   end
 
-  def after_skip(twitter_user_id, data, options = {})
-    Airbag.warn "The job of #{self.class} is skipped twitter_user_id=#{twitter_user_id}"
-  end
-
   # TODO Don't expire this job
   def expire_in
     12.hours
@@ -27,18 +23,29 @@ class PerformAfterCommitWorker
 
   # options:
   def perform(twitter_user_id, data, options = {})
+    twitter_user = TwitterUser.find(twitter_user_id)
+    if TwitterUser.where(uid: twitter_user.uid).where('created_at > ?', twitter_user.created_at).exists?
+      Airbag.warn "Duplicate TwitterUser found worker=#{self.class} twitter_user_id=#{twitter_user_id} uid=#{twitter_user.uid}"
+    end
+
     data = JSON.parse(Zlib::Inflate.inflate(Base64.decode64(data)))
 
-    id = twitter_user_id
-    uid = data['uid']
-    screen_name = data['screen_name']
-    profile = data['profile']
-    friend_uids = data['friend_uids']
-    follower_uids = data['follower_uids']
-    status_tweets = data['status_tweets']
-    favorite_tweets = data['favorite_tweets']
-    mention_tweets = data['mention_tweets']
+    do_perform(
+        twitter_user_id,
+        data['uid'],
+        data['screen_name'],
+        data['profile'],
+        data['friend_uids'],
+        data['follower_uids'],
+        data['status_tweets'],
+        data['favorite_tweets'],
+        data['mention_tweets']
+    )
+  end
 
+  private
+
+  def do_perform(id, uid, screen_name, profile, friend_uids, follower_uids, status_tweets, favorite_tweets, mention_tweets)
     begin
       WriteEfsTwitterUserWorker.perform_async(
           {twitter_user_id: id, uid: uid, screen_name: screen_name, profile: profile,
@@ -117,8 +124,8 @@ class PerformAfterCommitWorker
       end
     end
 
-    TwitterUser.find(twitter_user_id).update(cache_created_at: Time.zone.now)
+    TwitterUser.find(id).update(cache_created_at: Time.zone.now)
   rescue => e
-    Airbag.exception e, twitter_user_id: twitter_user_id
+    Airbag.exception e, twitter_user_id: id
   end
 end
