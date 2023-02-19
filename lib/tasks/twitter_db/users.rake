@@ -8,7 +8,7 @@ namespace :twitter_db do
       consumer = JobConsumer.new(ImportTwitterDBUserWorker, loop: loop, limit: limit, timeout: timeout)
       consumer.start
 
-      puts "#{task.name}: #{consumer.format_progress}"
+      puts "#{Time.zone.now.to_s(:db)} task=#{task.name} #{consumer.format_progress}"
     end
   end
 end
