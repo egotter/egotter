@@ -9,8 +9,10 @@ namespace :orders do
       order_ids.concat(orders.map(&:id))
     end
 
-    order_ids.each.with_index do |id, i|
-      order = Order.select(:id, :created_at).find(id)
+    order_ids.each do |id|
+      order = Order.select(:id, :canceled_at, :created_at).find(id)
+      next if order.canceled_at.present?
+
       SyncOrderEmailWorker.new.perform(order.id) if order.created_at > check_email_time
       SyncOrderSubscriptionWorker.new.perform(order.id)
       processed_count += 1
