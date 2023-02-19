@@ -1,29 +1,4 @@
 namespace :orders do
-  # TODO Remove later
-  task update_stripe_attributes: :environment do |task|
-    processed_count = 0
-    order_ids = []
-    start = Time.zone.now
-
-    Order.select(:id).where(canceled_at: nil).find_in_batches do |orders|
-      order_ids.concat(orders.map(&:id))
-    end
-
-    order_ids.each do |id|
-      order = Order.select(:id, :canceled_at, :created_at).find(id)
-      next if order.canceled_at.present?
-
-      SyncOrderSubscriptionWorker.new.perform(order.id)
-      processed_count += 1
-
-      if Time.zone.now - start > 50.minutes
-        raise "#{task.name}: Timeout total=#{order_ids.size} processed=#{processed_count} elapsed=#{Time.zone.now - start}"
-      end
-    end
-
-    Airbag.info "#{task.name}: Finished total=#{order_ids.size} processed=#{processed_count} elapsed=#{Time.zone.now - start}"
-  end
-
   task verify: :environment do |task|
     orders = Order.select(:id, :canceled_at, :subscription_id).where(canceled_at: nil)
 
