@@ -23,11 +23,24 @@ namespace :orders do
     Airbag.info "#{task.name}: Finished total=#{order_ids.size} processed=#{processed_count} elapsed=#{Time.zone.now - start}"
   end
 
+  task verify: :environment do |task|
+    orders = Order.select(:id, :canceled_at, :subscription_id).where(canceled_at: nil)
+
+    orders.find_each(batch_size: 10) do |order|
+      subscription = Stripe::Subscription.retrieve(order.subscription_id)
+      if subscription.canceled_at
+        SendMessageToSlackWorker.perform_async(:orders_z_error, "Order to be deleted order_id=#{order.id} subscription_id=#{order.subscription_id}")
+      end
+    end
+
+    puts "#{Time.zone.now.to_s(:db)} task=#{task.name} total=#{orders.size}"
+  end
+
   task update_email: :environment do |task|
     # This task is divided as there are not many records
     orders = Order.select(:id).where(canceled_at: nil).where('created_at > ?', (1.hour + 5.minutes).ago)
 
-    orders.find_each do |order|
+    orders.find_each(batch_size: 10) do |order|
       SyncOrderEmailWorker.new.perform(order.id)
     end
 
@@ -38,7 +51,7 @@ namespace :orders do
     # This task is divided as there are not many records
     orders = Order.select(:id, :trial_end, :subscription_id).where(canceled_at: nil).where(trial_end: nil).where('created_at > ?', 15.days.ago)
 
-    orders.find_each do |order|
+    orders.find_each(batch_size: 10) do |order|
       subscription = Stripe::Subscription.retrieve(order.subscription_id)
       if (trial_end = subscription.trial_end)
         order.update(trial_end: trial_end)

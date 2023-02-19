@@ -8,8 +8,9 @@ RUBY='/var/egotter/bin/cron/ruby.sh'
 */5 * * * * $RUBY bin/invalidate_expired_credentials.rb
 */5 * * * * $RUBY bin/delete_not_found_users.rb
 */5 * * * * $RUBY bin/delete_forbidden_users.rb
-30 * * * * $RAKE orders:update_stripe_attributes
+30 * * * * $RAKE orders:verify
 31 * * * * $RAKE orders:update_email
+32 * * * * $RAKE orders:update_trial_end
 35 * * * * $RAKE stripe:checkout:sessions:verify
 20 19 * * * $RAKE stripe:subscriptions:invalidate
 38 * * * * $RAKE stripe:charges:verify
