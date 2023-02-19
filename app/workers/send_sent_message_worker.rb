@@ -19,17 +19,14 @@ class SendSentMessageWorker
   end
 
   def send_message(recipient_uid, text)
-    screen_name = fetch_screen_name(recipient_uid)
-    # text = dm_url(screen_name) + "\n" + text
-    SlackBotClient.channel('messages_sent').post_message("#{screen_name} #{recipient_uid}\n#{text}")
-  end
+    client = SlackBotClient.channel('messages_sent')
 
-  def fetch_screen_name(uid)
-    user = User.find_by(uid: uid)
-    user ? user.screen_name : (Bot.api_client.user(uid)[:screen_name] rescue uid)
-  end
-
-  def dm_url(screen_name)
-    "https://twitter.com/direct_messages/create/#{screen_name}"
+    if (user = TwitterDB::User.find_by(uid: recipient_uid))
+      screen_name = user.screen_name
+      icon_url = user.profile_image_url_https
+      client.post_context_message("#{recipient_uid} #{screen_name} #{text}", screen_name, icon_url, [])
+    else
+      client.post_message("#{recipient_uid} #{text}")
+    end
   end
 end
