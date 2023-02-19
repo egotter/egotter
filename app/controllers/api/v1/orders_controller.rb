@@ -34,7 +34,7 @@ module Api
         order = current_user.orders.find_by(id: params[:id])
         order.cancel!('user') unless order.canceled?
         send_slack_message(order)
-        render json: {message: t('.success_html', count: INTERVAL), interval: INTERVAL}
+        render json: {message: t('.success_html'), interval: INTERVAL}
       rescue => e
         Airbag.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
         render json: {error: true, message: t('.fail')}, status: :unprocessable_entity
@@ -45,6 +45,7 @@ module Api
       def send_slack_message(order)
         channel = tracking_channel
         props = {
+            api: true,
             user_id: current_user.id,
             order_id: order.id,
             via: params[:via],
