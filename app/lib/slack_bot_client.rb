@@ -61,10 +61,11 @@ class SlackBotClient
     @client.chat_postMessage(channel: @channel, blocks: [block])
   end
 
+  # upload_media(IO.binread('xxx.jpg'))
   def upload_media(media, initial_comment: '')
     @client.files_upload(
         channels: @channel,
-        content: media.content,
+        content: media.respond_to?(:content) ? media.content : media,
         initial_comment: initial_comment,
     )
   end
