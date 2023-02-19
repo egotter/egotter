@@ -27,10 +27,10 @@ class ImportTwitterDBUserWorker
     import_users(users)
     TwitterDB::QueuedUser.mark_uids_as_processed(users.map { |u| u[:id] })
   rescue Deadlocked => e
-    delay = rand(20) + 15
-    ImportTwitterDBUserForRetryingDeadlockWorker.perform_in(delay, data, options.merge(debug_options(e)))
-    Airbag.info "#{e.class} found", options: options
-    SendMessageToSlackWorker.perform_async(:job_deadlock, "#{self.class}##{__method__}: #{options}")
+    opt = options.merge(debug_options(e))
+    ImportTwitterDBUserForRetryingDeadlockWorker.perform_in(rand(20) + 15, data, opt)
+    Airbag.info "#{e.class} found", options: opt
+    SendMessageToSlackWorker.perform_async(:job_deadlock, "#{self.class}##{__method__}: #{opt}")
   rescue => e
     Airbag.exception e, options: options
     FailedImportTwitterDBUserWorker.perform_async(data, options.merge(debug_options(e)))
