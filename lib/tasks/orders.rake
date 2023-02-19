@@ -1,4 +1,5 @@
 namespace :orders do
+  # TODO Remove later
   task update_stripe_attributes: :environment do |task|
     processed_count = 0
     order_ids = []
@@ -38,10 +39,14 @@ namespace :orders do
 
   task update_email: :environment do |task|
     # This task is divided as there are not many records
-    orders = Order.select(:id).where(canceled_at: nil).where('created_at > ?', (1.hour + 5.minutes).ago)
+    orders = Order.select(:id, :email).where(canceled_at: nil).where(email: nil).where('created_at > ?', (1.hour + 5.minutes).ago)
 
     orders.find_each(batch_size: 10) do |order|
-      SyncOrderEmailWorker.new.perform(order.id)
+      customer = Stripe::Customer.retrieve(order.customer_id)
+      if (email = customer.email)
+        order.update(email: email)
+        SlackBotClient.channel(:orders_sync).post_message("Updated changes=#{order.saved_changes.except('updated_at')}")
+      end
     end
 
     puts "#{Time.zone.now.to_s(:db)} task=#{task.name} total=#{orders.size}"
