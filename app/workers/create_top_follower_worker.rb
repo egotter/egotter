@@ -17,6 +17,10 @@ class CreateTopFollowerWorker
   # options:
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
+    if TwitterUser.where(uid: twitter_user.uid).where('created_at > ?', twitter_user.created_at).exists?
+      Airbag.warn "Duplicate TwitterUser found worker=#{self.class} twitter_user_id=#{twitter_user_id} uid=#{twitter_user.uid}"
+    end
+
     if (top_follower = find_top_follower(twitter_user.follower_uids))
       twitter_user.update(top_follower_uid: top_follower.uid)
     end

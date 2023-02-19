@@ -23,6 +23,10 @@ class CreateTwitterUserCloseFriendsWorker
   # options:
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
+    if TwitterUser.where(uid: twitter_user.uid).where('created_at > ?', twitter_user.created_at).exists?
+      Airbag.warn "Duplicate TwitterUser found worker=#{self.class} twitter_user_id=#{twitter_user_id} uid=#{twitter_user.uid}"
+    end
+
     user = User.find_by(id: twitter_user.user_id)
 
     if (close_friend_uids = twitter_user.calc_uids_for(S3::CloseFriendship, login_user: user))

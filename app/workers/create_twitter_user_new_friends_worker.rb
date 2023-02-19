@@ -23,6 +23,9 @@ class CreateTwitterUserNewFriendsWorker
   # options:
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
+    if TwitterUser.where(uid: twitter_user.uid).where('created_at > ?', twitter_user.created_at).exists?
+      Airbag.warn "Duplicate TwitterUser found worker=#{self.class} twitter_user_id=#{twitter_user_id} uid=#{twitter_user.uid}"
+    end
 
     if (new_friend_uids = twitter_user.calc_new_friend_uids)
       twitter_user.update(new_friends_size: new_friend_uids.size)

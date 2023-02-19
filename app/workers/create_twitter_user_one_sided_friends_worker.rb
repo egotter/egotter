@@ -23,6 +23,9 @@ class CreateTwitterUserOneSidedFriendsWorker
   # options:
   def perform(twitter_user_id, options = {})
     twitter_user = TwitterUser.find(twitter_user_id)
+    if TwitterUser.where(uid: twitter_user.uid).where('created_at > ?', twitter_user.created_at).exists?
+      Airbag.warn "Duplicate TwitterUser found worker=#{self.class} twitter_user_id=#{twitter_user_id} uid=#{twitter_user.uid}"
+    end
 
     one_sided_friend_uids = twitter_user.calc_and_import(S3::OneSidedFriendship)
     one_sided_follower_uids = twitter_user.calc_and_import(S3::OneSidedFollowership)
