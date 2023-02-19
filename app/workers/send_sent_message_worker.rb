@@ -20,8 +20,8 @@ class SendSentMessageWorker
 
   def send_message(recipient_uid, text)
     screen_name = fetch_screen_name(recipient_uid)
-    text = dm_url(screen_name) + "\n" + text
-    SlackBotClient.channel('messages_sent').post_message("`#{screen_name}` `#{recipient_uid}`\n#{text}")
+    # text = dm_url(screen_name) + "\n" + text
+    SlackBotClient.channel('messages_sent').post_message("#{screen_name} #{recipient_uid}\n#{text}")
   end
 
   def fetch_screen_name(uid)
