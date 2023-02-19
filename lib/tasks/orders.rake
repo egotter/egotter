@@ -2,7 +2,6 @@ namespace :orders do
   task update_stripe_attributes: :environment do |task|
     processed_count = 0
     order_ids = []
-    check_email_time = (1.hour + 5.minutes).ago
     start = Time.zone.now
 
     Order.select(:id).where(canceled_at: nil).find_in_batches do |orders|
@@ -13,7 +12,6 @@ namespace :orders do
       order = Order.select(:id, :canceled_at, :created_at).find(id)
       next if order.canceled_at.present?
 
-      SyncOrderEmailWorker.new.perform(order.id) if order.created_at > check_email_time
       SyncOrderSubscriptionWorker.new.perform(order.id)
       processed_count += 1
 
@@ -23,6 +21,13 @@ namespace :orders do
     end
 
     Airbag.info "#{task.name}: Finished total=#{order_ids.size} processed=#{processed_count} elapsed=#{Time.zone.now - start}"
+  end
+
+  task update_email: :environment do |task|
+    # This task is divided as there are not many records
+    Order.select(:id).where(canceled_at: nil).where('created_at > ?', (1.hour + 5.minutes).ago).find_each do |order|
+      SyncOrderEmailWorker.new.perform(order.id)
+    end
   end
 
   task print_statuses: :environment do
