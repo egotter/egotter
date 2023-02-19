@@ -23,7 +23,7 @@ module RequestErrorHandler
   end
 
   def handle_request_timeout(ex)
-    Airbag.exception ex, request_details
+    SendMessageToSlackWorker.perform_async(:web_timeout, "#{ex.inspect} #{request_details}") rescue nil
 
     if request.xhr?
       head :request_timeout

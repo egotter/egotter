@@ -8,7 +8,7 @@ module FriendsCountPointsConcern
     before_action { :validate_search_request_by_uid! }
 
     rescue_from Rack::Timeout::RequestTimeoutException do |e|
-      Airbag.exception e, request_details
+      SendMessageToSlackWorker.perform_async(:web_timeout, "#{e.inspect} #{request_details}") rescue nil
       head :request_timeout unless performed?
     end
   end
