@@ -50,11 +50,12 @@ class SendReceivedMessageWorker
     urls = [dm_url(screen_name), dm_url_by_uid(sender_uid)]
 
     client = SlackBotClient.channel('messages_received')
-    begin
-      client.post_context_message(text, screen_name, icon_url, urls)
-    rescue => e
-      client.post_message("sender_uid=#{sender_uid} text=#{text}")
-    end
+    client.post_context_message("#{sender_uid} #{screen_name} #{text}", screen_name, icon_url, [])
+    # begin
+    #   client.post_context_message(text, screen_name, icon_url, urls)
+    # rescue => e
+    #   client.post_message("sender_uid=#{sender_uid} text=#{text}")
+    # end
   end
 
   def dm_url(screen_name)

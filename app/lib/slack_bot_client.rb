@@ -50,7 +50,12 @@ class SlackBotClient
   end
 
   def post_context_message(text, screen_name, icon_url, urls)
-    mrkdwn_text = urls.map.with_index { |url, i| "<#{url}|url#{i + 1}>" }.join(' ') + ' ' + text
+    if urls.any?
+      mrkdwn_text = urls.map.with_index { |url, i| "<#{url}|url#{i + 1}>" }.join(' ') + ' ' + text
+    else
+      mrkdwn_text = text
+    end
+
     block = {
         type: 'context',
         elements: [
@@ -58,6 +63,7 @@ class SlackBotClient
             {type: 'mrkdwn', text: mrkdwn_text}
         ],
     }
+
     @client.chat_postMessage(channel: @channel, blocks: [block])
   end
 
