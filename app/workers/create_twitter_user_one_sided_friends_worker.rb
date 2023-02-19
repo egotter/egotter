@@ -12,23 +12,12 @@ class CreateTwitterUserOneSidedFriendsWorker
     10.minutes
   end
 
-  def after_skip(*args)
-    Airbag.warn 'Job skipped', job_details(*args)
-  end
-
   def expire_in
     10.minutes
   end
 
   def timeout_in
     30.seconds
-  end
-
-  def job_details(twitter_user_id, options = {})
-    user = TwitterUser.find(twitter_user_id)
-    {class: self.class, twitter_user_id: twitter_user_id, friends_count: user.friends_count, followers_count: user.followers_count}
-  rescue
-    {class: self.class, twitter_user_id: twitter_user_id}
   end
 
   # options:
