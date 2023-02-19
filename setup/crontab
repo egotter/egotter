@@ -3,7 +3,8 @@ RUNNER='/var/egotter/bin/cron/runner.sh'
 RUBY='/var/egotter/bin/cron/ruby.sh'
 
  * * * * * $RUBY bin/send_metrics_to_cloudwatch.rb
-*/2 * * * * $RAKE 'twitter_db:users:consume_scheduled_jobs'
+*/2 * * * * $RAKE 'twitter_db:users:consume_jobs'
+*/2 * * * * $RAKE 'twitter_db:user_ids:consume_jobs'
 */5 * * * * $RUBY bin/invalidate_expired_credentials.rb
 */5 * * * * $RUBY bin/delete_not_found_users.rb
 */5 * * * * $RUBY bin/delete_forbidden_users.rb

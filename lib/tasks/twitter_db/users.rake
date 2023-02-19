@@ -1,6 +1,6 @@
 namespace :twitter_db do
   namespace :users do
-    task consume_scheduled_jobs: :environment do |task|
+    task consume_jobs: :environment do |task|
       limit = ENV['LIMIT']&.to_i || 100
       loop = ENV['LOOP']&.to_i || 300
       timeout = ENV['TIMEOUT']&.to_i || 100
