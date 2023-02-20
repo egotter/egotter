@@ -32,6 +32,7 @@ class SendReceivedMessageWorker
         DeleteTweetsMessageResponder::Processor.new(nil, text).received? ||
         WelcomeReportResponder::Processor.new(nil, text).received? ||
         SpamMessageResponder::Processor.new(nil, text).received? ||
+        StopAllReportsResponder::Processor.new(nil, text).received? ||
         QUICK_REPLIES.any? { |regexp| regexp.match?(text) } ||
         text.include?('DM送信テスト ※そのまま送信') ||
         text.include?('送信】をDMにコピペして送ってください') ||

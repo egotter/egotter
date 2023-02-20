@@ -14,6 +14,8 @@
 #  index_customers_on_user_id_and_stripe_customer_id  (user_id,stripe_customer_id) UNIQUE
 #
 class Customer < ApplicationRecord
+  belongs_to :user
+
   validates :user_id, presence: true
   validates :stripe_customer_id, presence: true
 

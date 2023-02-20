@@ -6,6 +6,7 @@ RSpec.describe SendReceivedMessageWorker do
   describe '#ignore?' do
     [
         I18n.t('quick_replies.continue.label'),
+        I18n.t('quick_replies.all_report.stop_label'),
         'リムられ通知',
         'リムられ通知 今すぐ',
         'リムられ通知送信',
