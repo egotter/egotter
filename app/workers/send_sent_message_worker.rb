@@ -15,6 +15,7 @@ class SendSentMessageWorker
 
   def static_message?(text)
     text == I18n.t('quick_replies.prompt_reports.label3') ||
+        text.match?(/\A#{CreateGreetingOkMessageWorker::MESSAGE}/) ||
         text.include?('#egotter')
   end
 
