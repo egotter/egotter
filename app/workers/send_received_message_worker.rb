@@ -44,18 +44,15 @@ class SendReceivedMessageWorker
   private
 
   def send_message(sender_uid, text)
-    user = TwitterDB::User.find_by(uid: sender_uid)
-    screen_name = user&.screen_name
-    icon_url = user&.profile_image_url_https
-    urls = [dm_url(screen_name), dm_url_by_uid(sender_uid)]
-
     client = SlackBotClient.channel('messages_received')
-    client.post_context_message("#{sender_uid} #{screen_name} #{text}", screen_name, icon_url, [])
-    # begin
-    #   client.post_context_message(text, screen_name, icon_url, urls)
-    # rescue => e
-    #   client.post_message("sender_uid=#{sender_uid} text=#{text}")
-    # end
+
+    if (user = TwitterDB::User.find_by(uid: sender_uid))
+      screen_name = user.screen_name
+      icon_url = user.profile_image_url_https
+      client.post_context_message("#{sender_uid} #{screen_name} #{text}", screen_name, icon_url, [])
+    else
+      client.post_message("#{sender_uid} #{text}")
+    end
   end
 
   def dm_url(screen_name)

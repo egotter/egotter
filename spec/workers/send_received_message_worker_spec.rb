@@ -38,15 +38,27 @@ RSpec.describe SendReceivedMessageWorker do
 
   describe '#send_message' do
     let(:uid) { 1 }
-    let(:name) { 'name' }
+    let(:screen_name) { 'name' }
+    let(:text) { 'text' }
     let(:client) { double('client') }
-    subject { worker.send(:send_message, uid, 'text') }
+    subject { worker.send(:send_message, uid, text) }
     before do
       allow(SlackBotClient).to receive(:channel).with('messages_received').and_return(client)
     end
-    it do
-      expect(client).to receive(:post_context_message).with(any_args)
-      subject
+
+    context 'User is found' do
+      before { create(:twitter_db_user, uid: uid, screen_name: screen_name, profile_image_url_https: 'https://example.com/image.jpg') }
+      it do
+        expect(client).to receive(:post_context_message).with("#{uid} #{screen_name} #{text}", screen_name, instance_of(String), [])
+        subject
+      end
+    end
+
+    context 'User is NOT found' do
+      it do
+        expect(client).to receive(:post_message).with("#{uid} #{text}")
+        subject
+      end
     end
   end
 end
