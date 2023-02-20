@@ -4,7 +4,7 @@ namespace :stripe do
       verbose = ENV['VERBOSE']
       channel = :orders_charge_warn
 
-      charges = Stripe::Charge.list(limit: 100).data.select { |s| s.status == 'succeeded' }
+      charges = Stripe::Charge.list(limit: 100).data
       result = {succeeded: [], failed: []}
 
       charges.each do |charge|
