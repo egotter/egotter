@@ -4,7 +4,7 @@ class ProcessStripeChargeFailedEventWorker
 
   # options:
   def perform(customer_id, options = {})
-    orders = Order.select(:id, :user_id).where(customer_id: customer_id, canceled_at: nil, charge_failed_at: nil)
+    orders = Order.select(:id, :user_id, :charge_failed_at).where(customer_id: customer_id, canceled_at: nil, charge_failed_at: nil)
 
     if orders.size == 1
       order = orders[0]
