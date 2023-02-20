@@ -2,6 +2,7 @@ require 'digest/md5'
 
 class ImportTwitterDBUserWorker
   include Sidekiq::Worker
+  prepend WorkUniqueness
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(data, options = {})

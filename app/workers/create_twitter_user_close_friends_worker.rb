@@ -2,6 +2,7 @@ class CreateTwitterUserCloseFriendsWorker
   include Sidekiq::Worker
   prepend WorkMeasurement
   prepend WorkExpiry
+  prepend WorkUniqueness
   sidekiq_options queue: 'creating_low', retry: 0, backtrace: false
 
   def unique_key(twitter_user_id, options = {})
