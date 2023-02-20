@@ -6,10 +6,16 @@ RSpec.describe TwitterDB::User, type: :model do
     let(:rest_users) { users - [users[0]] }
   end
 
+  describe '.import_data' do
+    let(:t_users) { 3.times.map { build(:t_user) } }
+    subject { described_class.import_data(t_users) }
+    it { expect { subject }.to change { described_class.all.size }.by(t_users.size) }
+  end
+
   describe '.import_by!' do
     let(:t_users) { 3.times.map { build(:t_user) } }
-    subject { TwitterDB::User.import_by!(users: t_users) }
-    it { expect { subject }.to change { TwitterDB::User.all.size }.by(t_users.size) }
+    subject { described_class.import_by!(users: t_users) }
+    it { expect { subject }.to change { described_class.all.size }.by(t_users.size) }
   end
 
   describe '.persisted_uids_count' do

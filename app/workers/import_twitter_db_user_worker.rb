@@ -35,7 +35,7 @@ class ImportTwitterDBUserWorker
   private
 
   def import_users(users)
-    TwitterDB::User.import_by!(users: users)
+    TwitterDB::User.import_data(users)
     ImportTwitterDBUserIdWorker.perform_in(rand(10) + 3, users.map { |u| u[:id] })
   rescue => e
     if deadlock_error?(e)
