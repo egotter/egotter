@@ -9,8 +9,7 @@ RSpec.describe ProcessStripeChargeFailedEventWorker do
   describe '#perform' do
     subject { worker.perform(customer_id) }
     before do
-      allow(Order).to receive_message_chain(:select, :where).with(:id, :user_id, :customer_id).
-          with(customer_id: customer_id, canceled_at: nil, charge_failed_at: nil).and_return([order])
+      allow(Order).to receive(:where).with(customer_id: customer_id, canceled_at: nil, charge_failed_at: nil).and_return([order])
     end
     it do
       expect(order).to receive(:update!).with(charge_failed_at: instance_of(ActiveSupport::TimeWithZone))

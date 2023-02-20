@@ -9,8 +9,7 @@ RSpec.describe ProcessStripeChargeSucceededEventWorker do
   describe '#perform' do
     subject { worker.perform(customer_id) }
     before do
-      allow(Order).to receive_message_chain(:select, :where).with(:id, :user_id).
-          with(customer_id: customer_id).and_return([order])
+      allow(Order).to receive(:where).with(customer_id: customer_id).and_return([order])
     end
     it do
       expect(worker).to receive(:send_message).with(/Success/)

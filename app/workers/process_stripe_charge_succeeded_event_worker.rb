@@ -4,7 +4,7 @@ class ProcessStripeChargeSucceededEventWorker
 
   # options:
   def perform(customer_id, options = {})
-    orders = Order.select(:id, :user_id).where(customer_id: customer_id)
+    orders = Order.where(customer_id: customer_id)
 
     if orders.size >= 1
       user = orders[0].user
