@@ -28,7 +28,6 @@
 
 class Order < ApplicationRecord
   belongs_to :user
-  visitable :ahoy_visit
 
   validates :user_id, presence: true
   validates :name, presence: true
