@@ -7,30 +7,60 @@ RSpec.describe CheckoutSessionBuilder, type: :model do
   describe '.monthly_subscription' do
     subject { described_class.monthly_subscription(user) }
 
-    it do
-      expect(described_class).to receive(:find_or_create_customer).with(user).and_return('cus_xxx')
-      expect(described_class).to receive(:apply_trial_days?).with(user).and_return(true)
-      expect(described_class).to receive(:available_discounts).with(user).and_return('discount')
+    before do
+      allow(described_class).to receive(:find_or_create_customer).with(user).and_return('cus_xxx')
+      allow(described_class).to receive(:apply_trial_days?).with(user).and_return(true)
+      allow(described_class).to receive(:available_discounts).with(user).and_return('discount')
       expect(described_class).to receive(:calculate_price).with(anything).and_return(123)
-      is_expected.to match(a_hash_including(
-                               customer: 'cus_xxx',
-                               subscription_data: {trial_period_days: Order::TRIAL_DAYS, default_tax_rates: [Order::TAX_RATE_ID]},
-                               metadata: {user_id: user.id, price: 123})
-                     )
+    end
+
+    it do
+      is_expected.to eq(client_reference_id: user.id,
+                        mode: 'subscription',
+                        line_items: [{quantity: 1, price: Order::BASIC_PLAN_PRICE_ID}],
+                        subscription_data: {default_tax_rates: [Order::TAX_RATE_ID], trial_period_days: Order::TRIAL_DAYS},
+                        metadata: {user_id: user.id, price: 123},
+                        success_url: ENV['STRIPE_SUCCESS_URL'],
+                        cancel_url: ENV['STRIPE_CANCEL_URL'],
+                        expires_at: 31.minutes.since.to_i,
+                        customer: 'cus_xxx',
+                        discounts: 'discount')
     end
   end
 
   describe '.monthly_basis' do
     let(:item_id) { 'monthly-basis-1' }
+    let(:price) { Order::BASIC_PLAN_MONTHLY_BASIS[item_id] }
     let(:name) { I18n.t('stripe.monthly_basis.name', count: 1) }
+    let(:item) {
+      {
+          price_data: {
+              currency: 'jpy',
+              product_data: {name: name},
+              unit_amount: price,
+          },
+          description: I18n.t('stripe.monthly_basis.description'),
+          tax_rates: [Order::TAX_RATE_ID],
+          quantity: 1,
+      }
+    }
     subject { described_class.monthly_basis(user, item_id) }
 
+    before do
+      allow(described_class).to receive(:find_or_create_customer).with(user).and_return('cus_xxx')
+    end
+
     it do
-      expect(described_class).to receive(:find_or_create_customer).with(user).and_return('cus_xxx')
-      result = subject
-      expect(result[:customer]).to eq('cus_xxx')
-      expect(result[:line_items][0][:price_data]).to eq({currency: 'jpy', product_data: {name: name}, unit_amount: 600})
-      expect(result[:metadata]).to eq({user_id: user.id, name: name, price: 600, months_count: '1'})
+      is_expected.to eq(client_reference_id: user.id,
+                        payment_method_types: ['card'],
+                        mode: 'payment',
+                        line_items: [item],
+                        metadata: {user_id: user.id, name: name, price: price, months_count: '1'},
+                        success_url: ENV['STRIPE_SUCCESS_URL'],
+                        cancel_url: ENV['STRIPE_CANCEL_URL'],
+                        expires_at: 31.minutes.since.to_i,
+                        customer: 'cus_xxx',
+                     )
     end
   end
 

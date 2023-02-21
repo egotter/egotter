@@ -9,6 +9,7 @@ class CheckoutSessionBuilder
           metadata: {user_id: user.id},
           success_url: ENV['STRIPE_SUCCESS_URL'],
           cancel_url: ENV['STRIPE_CANCEL_URL'],
+          expires_at: 31.minutes.since.to_i,
       }
 
       attrs[:customer] = find_or_create_customer(user)
@@ -25,7 +26,7 @@ class CheckoutSessionBuilder
       price = Order::BASIC_PLAN_MONTHLY_BASIS[item_id]
       months_count = item_id.split('-')[-1]
 
-      name = I18n.t('stripe.monthly_basis.name',count: months_count)
+      name = I18n.t('stripe.monthly_basis.name', count: months_count)
       item = {
           price_data: {
               currency: 'jpy',
@@ -44,6 +45,7 @@ class CheckoutSessionBuilder
           metadata: {user_id: user.id, name: name, price: price, months_count: months_count},
           success_url: ENV['STRIPE_SUCCESS_URL'],
           cancel_url: ENV['STRIPE_CANCEL_URL'],
+          expires_at: 31.minutes.since.to_i,
       }
 
       attrs[:customer] = find_or_create_customer(user)
