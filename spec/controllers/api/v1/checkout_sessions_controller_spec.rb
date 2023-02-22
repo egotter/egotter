@@ -25,6 +25,7 @@ RSpec.describe Api::V1::CheckoutSessionsController, type: :controller do
       before { allow(controller).to receive(:params).and_return(via: 'via', item_id: 'monthly-basis-1') }
       it do
         expect(CheckoutSessionBuilder).to receive(:monthly_basis).with(user, 'monthly-basis-1').and_return('hash')
+        expect(CheckoutSession).to receive(:expire_all).with(user.id)
         expect(Stripe::Checkout::Session).to receive(:create).with('hash').and_return(stripe_session)
         expect(CheckoutSession).to receive(:create!).with(user_id: user.id, stripe_checkout_session_id: stripe_session.id, properties: {via: 'via', item_id: 'monthly-basis-1'})
         is_expected.to eq(stripe_session)
@@ -35,6 +36,7 @@ RSpec.describe Api::V1::CheckoutSessionsController, type: :controller do
       before { allow(controller).to receive(:params).and_return(via: 'via') }
       it do
         expect(CheckoutSessionBuilder).to receive(:monthly_subscription).with(user).and_return('hash')
+        expect(CheckoutSession).to receive(:expire_all).with(user.id)
         expect(Stripe::Checkout::Session).to receive(:create).with('hash').and_return(stripe_session)
         expect(CheckoutSession).to receive(:create!).with(user_id: user.id, stripe_checkout_session_id: stripe_session.id, properties: {via: 'via'})
         is_expected.to eq(stripe_session)

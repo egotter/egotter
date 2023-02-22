@@ -24,8 +24,12 @@ module Api
         else
           attrs = CheckoutSessionBuilder.monthly_subscription(user)
         end
+
+        CheckoutSession.expire_all(user.id)
+
         stripe_session = Stripe::Checkout::Session.create(attrs)
         CheckoutSession.create!(user_id: user.id, stripe_checkout_session_id: stripe_session.id, properties: {via: params[:via], item_id: params[:item_id]}.compact)
+
         stripe_session
       end
 
