@@ -14,7 +14,7 @@ namespace :orders do
 
   task update_email: :environment do |task|
     # This task is divided as there are not many records
-    orders = Order.select(:id, :email).where(canceled_at: nil).where(email: nil).where('created_at > ?', (1.hour + 5.minutes).ago)
+    orders = Order.where(canceled_at: nil).where(email: nil).where('created_at > ?', (1.hour + 5.minutes).ago)
 
     orders.find_each(batch_size: 10) do |order|
       customer = Stripe::Customer.retrieve(order.customer_id)
@@ -29,7 +29,7 @@ namespace :orders do
 
   task update_trial_end: :environment do |task|
     # This task is divided as there are not many records
-    orders = Order.select(:id, :trial_end, :subscription_id).where(canceled_at: nil).where(trial_end: nil).where('created_at > ?', 15.days.ago)
+    orders = Order.where(canceled_at: nil).where(trial_end: nil).where('created_at > ?', 15.days.ago)
 
     orders.find_each(batch_size: 10) do |order|
       subscription = Stripe::Subscription.retrieve(order.subscription_id)
