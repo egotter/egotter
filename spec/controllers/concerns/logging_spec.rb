@@ -71,9 +71,22 @@ RSpec.describe Logging do
   end
 
   describe '#create_stripe_webhook_log' do
-    subject { controller.create_stripe_webhook_log('eid', 'etype', 'edata') }
+    subject { controller.create_stripe_webhook_log('key', 'eid', 'etype', 'edata') }
     it do
-      expect(CreateStripeWebhookLogWorker).to receive(:perform_async).with(anything)
+      hash = {
+          controller: instance_of(String),
+          action: nil,
+          path: instance_of(String),
+          idempotency_key: 'key',
+          event_id: 'eid',
+          event_type: 'etype',
+          event_data: 'edata',
+          ip: instance_of(String),
+          method: instance_of(String),
+          status: instance_of(Integer),
+          user_agent: instance_of(String),
+      }
+      expect(CreateStripeWebhookLogWorker).to receive(:perform_async).with(hash)
       subject
     end
   end

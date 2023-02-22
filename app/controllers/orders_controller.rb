@@ -81,7 +81,7 @@ class OrdersController < ApplicationController
       Airbag.info "Unhandled stripe webhook event type=#{event.type} value=#{event.inspect}"
     end
   ensure
-    create_stripe_webhook_log(event.id, event.type, event.data.object) rescue nil
+    create_stripe_webhook_log((event.request.idempotency_key rescue nil), event.id, event.type, event.data.object) rescue nil
   end
 
   # As a user is waiting to finish the checkout, this process MUST be executed synchronously

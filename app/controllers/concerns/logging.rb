@@ -169,23 +169,24 @@ module Logging
     Airbag.exception e, path: request.path, user_agent: request.user_agent.inspect
   end
 
-  def create_stripe_webhook_log(event_id, event_type, event_data)
+  def create_stripe_webhook_log(idempotency_key, event_id, event_type, event_data)
     attrs = {
-        controller:  controller_name,
-        action:      action_name,
-        path:        request.path.to_s.truncate(180),
-        event_id:    event_id,
-        event_type:  event_type,
-        event_data:  event_data,
-        ip:          request.ip,
-        method:      request.method,
-        status:      response.status,
-        user_agent:  safe_user_agent,
+        controller:      controller_name,
+        action:          action_name,
+        path:            request.path.to_s.truncate(180),
+        idempotency_key: idempotency_key,
+        event_id:        event_id,
+        event_type:      event_type,
+        event_data:      event_data,
+        ip:              request.ip,
+        method:          request.method,
+        status:          response.status,
+        user_agent:      safe_user_agent,
     }
 
     CreateStripeWebhookLogWorker.perform_async(attrs)
   rescue => e
-    Airbag.exception e, event_id: event_id, event_type: event_type, event_data: event_data
+    Airbag.exception e, idempotency_key: idempotency_key, event_id: event_id, event_type: event_type, event_data: event_data
   end
 
   def track_page_order_activity(options = {})
