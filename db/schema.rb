@@ -1315,6 +1315,7 @@ ActiveRecord::Schema.define(version: 2023_02_18_094012) do
     t.string "controller"
     t.string "action"
     t.string "path"
+    t.string "idempotency_key"
     t.string "event_id"
     t.string "event_type"
     t.json "event_data"
