@@ -12,11 +12,16 @@ class SendReceivedMediaToSlackWorker
     user = TwitterDB::User.find_by(uid: dm.sender_id)
     text = "uid=#{dm.sender_id} screen_name=#{user&.screen_name} text=#{dm.text}"
 
+    slack = SlackBotClient.channel('general')
+
     if media.present?
-      SlackBotClient.channel('general').upload_media(media, initial_comment: text)
+      begin
+        slack.upload_media(media, initial_comment: text)
+      rescue => e
+        slack.post_message(text + ' media=something_error')
+      end
     else
-      text += " media=error"
-      SlackBotClient.channel('general').post_message(text)
+      slack.post_message(text + ' media=fetching_failed')
     end
   rescue => e
     Airbag.exception e, json: json
