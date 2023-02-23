@@ -2735,6 +2735,7 @@ ja:
     messages:
       forbidden: '一時的なエラーが起きました。ページを再読込してください。'
       timeout: '一時的なエラーが起きました。ページを再読込してください。'
+      ise: '一時的なエラーが起きました。ページを再読込してください。'
   dm:
     searchNotification:
       relationship:
