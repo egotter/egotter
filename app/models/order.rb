@@ -16,6 +16,7 @@
 #  checkout_session_id     :string(191)
 #  customer_id             :string(191)
 #  subscription_id         :string(191)
+#  cancel_source           :string(191)
 #  canceled_at             :datetime
 #  charge_failed_at        :datetime
 #  created_at              :datetime         not null

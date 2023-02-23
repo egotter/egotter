@@ -984,6 +984,7 @@ ActiveRecord::Schema.define(version: 2023_02_18_094012) do
     t.string "checkout_session_id"
     t.string "customer_id"
     t.string "subscription_id"
+    t.string "cancel_source"
     t.datetime "canceled_at"
     t.datetime "charge_failed_at"
     t.datetime "created_at", null: false

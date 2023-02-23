@@ -14,6 +14,7 @@ class CreateOrders < ActiveRecord::Migration[5.1]
       t.string  :checkout_session_id,     null: true
       t.string  :customer_id,             null: true
       t.string  :subscription_id,         null: true
+      t.string  :cancel_source,           null: true
       t.datetime :canceled_at,            null: true,  default: nil
       t.datetime :charge_failed_at,       null: true,  default: nil
 
