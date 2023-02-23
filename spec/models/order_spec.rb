@@ -65,9 +65,4 @@ RSpec.describe Order, type: :model do
       end
     end
   end
-
-  describe '#charge_failed!' do
-    subject { order.charge_failed! }
-    it { is_expected.to be_truthy }
-  end
 end

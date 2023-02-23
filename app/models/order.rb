@@ -229,9 +229,4 @@ class Order < ApplicationRecord
       raise
     end
   end
-
-  # TODO Remove later
-  def charge_failed!
-    update!(charge_failed_at: Time.zone.now)
-  end
 end
