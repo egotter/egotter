@@ -46,7 +46,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       it do
         expect(order).not_to receive(:end_trial!)
         expect(controller).to receive(:send_message).with('Not trialing', order_id: order.id)
-        is_expected.to have_http_status(:ok)
+        is_expected.to have_http_status(:bad_request)
       end
     end
 
@@ -63,19 +63,43 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
 
   describe 'POST #cancel' do
     subject { post :cancel, params: {id: order.id} }
-    before do
-      allow(user.orders).to receive(:find_by).with(id: order.id.to_s).and_return(order)
-      allow(order).to receive(:canceled?).and_return(false)
+    before { allow(user.orders).to receive(:find_by).with(id: order.id.to_s).and_return(order) }
+
+    context 'The order is already canceled' do
+      before { allow(order).to receive(:canceled?).and_return(true) }
+      it do
+        expect(order).not_to receive(:cancel!)
+        expect(controller).to receive(:send_message).with('Already canceled', order_id: order.id)
+        is_expected.to have_http_status(:bad_request)
+      end
     end
-    it do
-      expect(order).to receive(:cancel!)
-      expect(controller).to receive(:send_slack_message).with(order)
-      is_expected.to have_http_status(:ok)
+
+    context 'The order is NOT canceled' do
+      before { allow(order).to receive(:canceled?).and_return(false) }
+      it do
+        expect(order).to receive(:cancel!).with('user')
+        expect(controller).to receive(:send_message).with('Success', order_id: order.id)
+        is_expected.to have_http_status(:ok)
+      end
+    end
+
+    context 'An error is raised' do
+      let(:error) { RuntimeError.new }
+      before { allow(order).to receive(:canceled?).and_raise(error) }
+      it do
+        expect(Airbag).to receive(:exception).with(error, user_id: user.id)
+        is_expected.to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)['error']).to be_truthy
+      end
     end
   end
 
-  describe '#send_slack_message' do
-    subject { controller.send(:send_slack_message, order) }
-    it { is_expected.to be_truthy }
+  describe '#send_message' do
+    subject { controller.send(:send_message, 'msg', order_id: 1) }
+    before { allow(controller).to receive(:tracking_channel).and_return('channel') }
+    it do
+      expect(SendMessageToSlackWorker).to receive(:perform_async).with('channel', /msg/)
+      subject
+    end
   end
 end

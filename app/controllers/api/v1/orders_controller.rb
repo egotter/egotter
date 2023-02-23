@@ -29,7 +29,7 @@ module Api
           render json: {message: t('.success_html'), interval: INTERVAL}
         else
           send_message('Not trialing', order_id: order.id)
-          render json: {message: t('.not_trial_html'), interval: INTERVAL}
+          render json: {message: t('.not_trial_html')}, status: :bad_request
         end
       rescue => e
         Airbag.exception e, user_id: current_user.id
@@ -38,12 +38,18 @@ module Api
 
       def cancel
         order = current_user.orders.find_by(id: params[:id])
-        order.cancel!('user') unless order.canceled?
-        send_slack_message(order)
-        render json: {message: t('.success_html'), interval: INTERVAL}
+
+        if order.canceled?
+          send_message('Already canceled', order_id: order.id)
+          render json: {message: t('.already_canceled')}, status: :bad_request
+        else
+          order.cancel!('user')
+          send_message('Success', order_id: order.id)
+          render json: {message: t('.success_html'), interval: INTERVAL}
+        end
       rescue => e
-        Airbag.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
-        render json: {error: true, message: t('.fail')}, status: :unprocessable_entity
+        Airbag.exception e, user_id: current_user.id
+        render json: {error: true, message: t('.fail_html')}, status: :unprocessable_entity
       end
 
       private
@@ -51,16 +57,6 @@ module Api
       def send_message(message, order_id: nil)
         props = {api: true, user_id: current_user.id, order_id: order_id, via: params[:via]}.compact
         SendMessageToSlackWorker.perform_async(tracking_channel, "`#{Rails.env}` #{message} #{props}")
-      end
-
-      def send_slack_message(order)
-        props = {
-            api: true,
-            user_id: current_user.id,
-            order_id: order.id,
-            via: params[:via],
-        }
-        SendMessageToSlackWorker.perform_async(tracking_channel, "`#{Rails.env}` #{props}")
       end
 
       def tracking_channel

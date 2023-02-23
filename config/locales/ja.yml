@@ -2552,7 +2552,8 @@ ja:
           fail_html: 'トライアル期間の更新に <span class="text-danger">失敗</span> しました。お手数ですが、@egotter_cs までご連絡ください。'
         cancel:
           success_html: '有料プランを 解約 しました。自動的に移動します。<img src="/ajax-loader.gif?a=1">'
-          fail: '有料プランのキャンセルに失敗しました。お手数ですが、@egotter_cs までご連絡ください。'
+          already_canceled: '有料プランは既にキャンセル済みです。'
+          fail_html: '有料プランの解約に <span class="text-danger">失敗</span> しました。お手数ですが、@egotter_cs までご連絡ください。'
   modal:
     welcome_modal:
       continuous_sign_in:

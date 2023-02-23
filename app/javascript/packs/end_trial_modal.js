@@ -6,7 +6,6 @@ class EndTrialModal {
   }
 
   init() {
-    var i18n = this.i18n;
     var self = this;
 
     this.$el.on('show.bs.modal', function (e) {
@@ -22,8 +21,6 @@ class EndTrialModal {
         $(self.button).addClass('disabled').attr('disabled', 'disabled').prop("disabled", true);
       }
 
-      ToastMessage.info(i18n['processing']);
-
       self.postEndTrial(function (res) {
         setTimeout(function () {
           self.redirectOrReloadPage();
@@ -38,10 +35,17 @@ class EndTrialModal {
       url += '?via=' + this.button.id;
     }
 
+    var messageId = ToastMessage.info(this.i18n['processing']);
+
     $.post(url).done(function (res) {
       ToastMessage.info(res.message);
       callback(res);
-    }).fail(showErrorMessage);
+    }).fail(function (xhr, textStatus, errorThrown) {
+      setTimeout(function () {
+        ToastMessage.hide(messageId);
+        showErrorMessage(xhr, textStatus, errorThrown);
+      }, 500);
+    });
   }
 
   redirectOrReloadPage() {
