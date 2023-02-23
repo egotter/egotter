@@ -30,10 +30,9 @@ class CheckoutSessionBuilder
       item = {
           price_data: {
               currency: 'jpy',
-              product_data: {name: name},
+              product_data: {name: name, description: I18n.t('stripe.monthly_basis.description')},
               unit_amount: price,
           },
-          description: I18n.t('stripe.monthly_basis.description'),
           tax_rates: [Order::TAX_RATE_ID],
           quantity: 1,
       }
