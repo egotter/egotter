@@ -66,19 +66,6 @@ RSpec.describe Order, type: :model do
     end
   end
 
-  describe '#charge_succeeded!' do
-    subject { order.charge_succeeded! }
-    it { is_expected.to be_falsey }
-
-    context '#charge_failed_at is present' do
-      before { order.update(charge_failed_at: Time.zone.now) }
-      it do
-        expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders_warning, instance_of(String))
-        is_expected.to be_truthy
-      end
-    end
-  end
-
   describe '#charge_failed!' do
     subject { order.charge_failed! }
     it { is_expected.to be_truthy }

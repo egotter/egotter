@@ -231,16 +231,6 @@ class Order < ApplicationRecord
   end
 
   # TODO Remove later
-  def charge_succeeded!
-    if charge_failed_at.nil?
-      # Do nothing
-    else
-      SendMessageToSlackWorker.perform_async(:orders_warning, "Subscription has already failed to charge order_id=#{id} subscription_id=#{subscription_id}")
-      update!(charge_failed_at: nil)
-    end
-  end
-
-  # TODO Remove later
   def charge_failed!
     update!(charge_failed_at: Time.zone.now)
   end
