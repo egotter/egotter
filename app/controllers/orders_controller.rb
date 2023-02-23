@@ -96,8 +96,8 @@ class OrdersController < ApplicationController
   end
 
   def process_charge_failed(event)
-    customer_id = event.data.object.customer
-    ProcessStripeChargeFailedEventWorker.perform_async(customer_id)
+    charge = event.data.object
+    ProcessStripeChargeFailedEventWorker.perform_async(charge.customer, event_id: event.id, charge_id: charge.id)
   end
 
   def process_payment_intent_succeeded(event)

@@ -145,13 +145,12 @@ RSpec.describe OrdersController, type: :controller do
   end
 
   describe '#process_charge_failed' do
-    let(:event) { double('event') }
+    let(:event) { double('event', id: 'eid') }
+    let(:charge) { double('charge', id: 'cid', customer: 'cus_xxx') }
     subject { controller.send(:process_charge_failed, event) }
-    before do
-      allow(event).to receive_message_chain(:data, :object, :customer).and_return('cus_xxxx')
-    end
+    before { allow(event).to receive_message_chain(:data, :object).and_return(charge) }
     it do
-      expect(ProcessStripeChargeFailedEventWorker).to receive(:perform_async).with('cus_xxxx')
+      expect(ProcessStripeChargeFailedEventWorker).to receive(:perform_async).with('cus_xxx', event_id: event.id, charge_id: charge.id)
       subject
     end
   end
