@@ -208,18 +208,23 @@ class Order < ApplicationRecord
 
   # If payment fails on the checkout page for a second or subsequent purchase, this method may be called for a previous order.
   def cancel!(source = nil)
+    if canceled_at.present?
+      Airbag.warn '#cancel! is called for an already canceled order', order_id: id, source: source
+    end
+
     subscription = Stripe::Subscription.retrieve(subscription_id)
+
     if subscription.status == 'canceled'
       SendMessageToSlackWorker.perform_async(:orders_warning, "Subscription has already been canceled order_id=#{id} subscription_id=#{subscription_id} source=#{source}")
-      update!(canceled_at: Time.zone.now) if canceled_at.nil?
+      update!(cancel_source: source, canceled_at: Time.zone.now)
     else
       subscription = Stripe::Subscription.delete(subscription_id)
-      update!(canceled_at: Time.zone.at(subscription.canceled_at))
+      update!(cancel_source: source, canceled_at: Time.zone.at(subscription.canceled_at))
     end
   rescue Stripe::InvalidRequestError => e
     if e.message&.include?('No such subscription')
       SendMessageToSlackWorker.perform_async(:orders_warning, "Subscription not found but OK exception=#{e.inspect} order_id=#{id} source=#{source}")
-      update!(canceled_at: Time.zone.now) if canceled_at.nil?
+      update!(cancel_source: source, canceled_at: Time.zone.now)
     else
       raise
     end

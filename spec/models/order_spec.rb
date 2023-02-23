@@ -25,15 +25,17 @@ RSpec.describe Order, type: :model do
     let(:canceled_at) { Time.zone.at(Time.zone.now.to_i) }
     let(:subscription) { double('subscription', status: 'active') }
     let(:canceled_subscription) { double('subscription', status: 'canceled', canceled_at: canceled_at.to_i) }
-    subject { order.cancel! }
+    subject { order.cancel!('test') }
     before do
       allow(Stripe::Subscription).to receive(:retrieve).with(order.subscription_id).and_return(subscription)
     end
 
     it do
       expect(Stripe::Subscription).to receive(:delete).with(order.subscription_id).and_return(canceled_subscription)
+      expect(order).to receive(:update!).with(cancel_source: 'test', canceled_at: instance_of(ActiveSupport::TimeWithZone)).and_call_original
       subject
       order.reload
+      expect(order.cancel_source).to eq('test')
       expect(order.canceled_at).to eq(canceled_at)
     end
 
@@ -45,8 +47,10 @@ RSpec.describe Order, type: :model do
       it do
         expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders_warning, instance_of(String))
         expect(Stripe::Subscription).not_to receive(:delete)
+        expect(order).to receive(:update!).with(cancel_source: 'test', canceled_at: instance_of(ActiveSupport::TimeWithZone)).and_call_original
         subject
         order.reload
+        expect(order.cancel_source).to eq('test')
         expect(order.canceled_at).to eq(canceled_at)
       end
     end
@@ -59,8 +63,10 @@ RSpec.describe Order, type: :model do
 
       it do
         expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders_warning, instance_of(String))
+        expect(order).to receive(:update!).with(cancel_source: 'test', canceled_at: instance_of(ActiveSupport::TimeWithZone)).and_call_original
         subject
         order.reload
+        expect(order.cancel_source).to eq('test')
         expect(order.canceled_at).to eq(canceled_at)
       end
     end
