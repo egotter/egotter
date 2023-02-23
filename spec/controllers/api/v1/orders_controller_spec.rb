@@ -30,14 +30,34 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
 
   describe 'POST #end_trial' do
     subject { post :end_trial, params: {} }
-    before do
-      allow(user).to receive(:valid_order).and_return(order)
-      allow(order).to receive(:trial?).and_return(true)
+    before { allow(user).to receive(:valid_order).and_return(order) }
+
+    context 'The order is trialing' do
+      before { allow(order).to receive(:trial?).and_return(true) }
+      it do
+        expect(order).to receive(:end_trial!)
+        expect(controller).to receive(:send_message).with('Success', order_id: order.id)
+        is_expected.to have_http_status(:ok)
+      end
     end
-    it do
-      expect(order).to receive(:end_trial!)
-      expect(controller).to receive(:send_slack_message).with(order)
-      is_expected.to have_http_status(:ok)
+
+    context 'The order is NOT trialing' do
+      before { allow(order).to receive(:trial?).and_return(false) }
+      it do
+        expect(order).not_to receive(:end_trial!)
+        expect(controller).to receive(:send_message).with('Not trialing', order_id: order.id)
+        is_expected.to have_http_status(:ok)
+      end
+    end
+
+    context 'An error is raised' do
+      let(:error) { RuntimeError.new }
+      before { allow(order).to receive(:trial?).and_raise(error) }
+      it do
+        expect(Airbag).to receive(:exception).with(error, user_id: user.id)
+        is_expected.to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)['error']).to be_truthy
+      end
     end
   end
 

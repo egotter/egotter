@@ -202,7 +202,7 @@ class Order < ApplicationRecord
   end
 
   def end_trial!
-    ::Stripe::Subscription.update(subscription_id, trial_end: 'now')
+    Stripe::Subscription.update(subscription_id, trial_end: 'now')
     update!(trial_end: Time.zone.now.to_i)
   end
 

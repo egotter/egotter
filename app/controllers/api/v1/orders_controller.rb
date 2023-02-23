@@ -22,12 +22,18 @@ module Api
 
       def end_trial
         order = current_user.valid_order
-        order.end_trial! if order.trial?
-        send_slack_message(order)
-        render json: {message: t('.success_html'), interval: INTERVAL}
+
+        if order.trial?
+          order.end_trial!
+          send_message('Success', order_id: order.id)
+          render json: {message: t('.success_html'), interval: INTERVAL}
+        else
+          send_message('Not trialing', order_id: order.id)
+          render json: {message: t('.not_trial_html'), interval: INTERVAL}
+        end
       rescue => e
-        Airbag.warn "#{self.class}##{__method__} #{e.inspect} user_id=#{current_user.id}"
-        render json: {error: true, message: t('.fail')}, status: :unprocessable_entity
+        Airbag.exception e, user_id: current_user.id
+        render json: {error: true, message: t('.fail_html')}, status: :unprocessable_entity
       end
 
       def cancel
@@ -42,15 +48,19 @@ module Api
 
       private
 
+      def send_message(message, order_id: nil)
+        props = {api: true, user_id: current_user.id, order_id: order_id, via: params[:via]}.compact
+        SendMessageToSlackWorker.perform_async(tracking_channel, "`#{Rails.env}` #{message} #{props}")
+      end
+
       def send_slack_message(order)
-        channel = tracking_channel
         props = {
             api: true,
             user_id: current_user.id,
             order_id: order.id,
             via: params[:via],
         }
-        SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{props}")
+        SendMessageToSlackWorker.perform_async(tracking_channel, "`#{Rails.env}` #{props}")
       end
 
       def tracking_channel
