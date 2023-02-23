@@ -18,15 +18,25 @@ class CheckoutSession < ApplicationRecord
   validates :user_id, presence: true
   validates :stripe_checkout_session_id, presence: true
 
+  VALID_PERIOD = 1800 # 30 minutes
+
+  def valid_period?
+    created_at > VALID_PERIOD.seconds.ago
+  end
+
   class << self
     def expire_all(user_id)
-      where(user_id: user_id).where('created_at > ?', 30.minutes.ago).order(created_at: :desc).limit(3).each do |cs|
+      where(user_id: user_id).where('created_at > ?', VALID_PERIOD.seconds.ago).order(created_at: :desc).limit(3).each do |cs|
         if Stripe::Checkout::Session.retrieve(cs.stripe_checkout_session_id).status == 'open'
           Stripe::Checkout::Session.expire(cs.stripe_checkout_session_id)
         end
       end
     rescue => e
       Airbag.exception e, user_id: user_id
+    end
+
+    def latest_by(condition)
+      order(created_at: :desc).find_by(condition)
     end
   end
 end

@@ -22,4 +22,10 @@ class Customer < ApplicationRecord
   def stripe_customer
     Stripe::Customer.retrieve(stripe_customer_id)
   end
+
+  class << self
+    def latest_by(condition)
+      order(created_at: :desc).find_by(condition)
+    end
+  end
 end
