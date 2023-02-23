@@ -11,15 +11,13 @@ class ProcessStripeChargeSucceededEventWorker
       props = {user_id: user.id, customer_id: customer_id}
 
       if user.has_valid_subscription?
-        send_message("Success #{props}")
+        send_message('Success', props)
       else
-        send_message("User doesn't have a valid subscription #{props}")
-        SendMessageToSlackWorker.perform_async(:orders_warning, "User doesn't have a valid subscription type=charge.succeeded #{props}")
+        send_error_message("User doesn't have a valid subscription", props)
       end
     else
       props = {customer_id: customer_id}
-      send_message("Order not found #{props}")
-      SendMessageToSlackWorker.perform_async(:orders_warning, "Order not found type=charge.succeeded #{props}")
+      send_error_message('Order not found', props)
     end
   rescue => e
     Airbag.exception e, customer_id: customer_id
@@ -27,9 +25,14 @@ class ProcessStripeChargeSucceededEventWorker
 
   private
 
-  def send_message(message)
-    SlackBotClient.channel('orders_charge_succeeded').post_message("`#{Rails.env}` #{message}")
+  def send_message(message, props)
+    SlackBotClient.channel('orders_charge_succeeded').post_message("`#{Rails.env}` #{message} #{props}")
   rescue => e
-    Airbag.warn "##{__method__} failed #{e.inspect} message=#{message}"
+    Airbag.exception e, message: message, props: props
+  end
+
+  def send_error_message(message, props)
+    send_message(message, props)
+    SendMessageToSlackWorker.perform_async(:orders_warning, "#{message} type=charge.succeeded #{props}")
   end
 end
