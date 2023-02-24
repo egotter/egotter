@@ -31,6 +31,7 @@ class ProcessStripeChargeFailedEventWorker
     end
   rescue => e
     Airbag.exception e, customer_id: customer_id, options: options
+    send_error_message('[To Be Fixed] A fatal error occurred', customer_id: customer_id, options: options)
   end
 
   private
@@ -44,5 +45,7 @@ class ProcessStripeChargeFailedEventWorker
   def send_error_message(message, props)
     send_message(message, props)
     SendMessageToSlackWorker.perform_async(:orders_warning, "#{message} type=charge.failed #{props}")
+  rescue => e
+    Airbag.exception e, message: message, props: props
   end
 end
