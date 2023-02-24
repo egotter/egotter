@@ -4,16 +4,15 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
 
   # options:
   def perform(checkout_session_id, options = {})
-    user = order = nil
     checkout_session = Stripe::Checkout::Session.retrieve(checkout_session_id)
 
     unless (user = User.find_by(id: checkout_session.client_reference_id))
-      send_message(:orders_cs_failed, 'User not found', checkout_session_id)
+      send_error_message('[To Be Fixed] User not found', checkout_session_id)
       return
     end
 
     if user.has_valid_subscription?
-      send_message(:orders_cs_failed, 'User already has a subscription', checkout_session_id, user_id: user.id)
+      send_error_message('[To Be Fixed] User already has a subscription', checkout_session_id, user_id: user.id)
       return
     end
 
@@ -25,10 +24,10 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
 
     update_trial_end_and_email(order)
 
-    send_message(:orders_cs_completed, '', checkout_session_id, user_id: user.id, order_id: order.id, order_name: order.name)
+    send_message('Success', checkout_session_id, user_id: user.id, order_id: order.id, order_name: order.name)
   rescue => e
     Airbag.exception e, checkout_session_id: checkout_session_id
-    send_message(:orders_cs_failed, e.inspect, checkout_session_id, user_id: user&.id, order_id: order&.id)
+    send_error_message('[To Be Fixed] A fatal error occurred', checkout_session_id)
   end
 
   private
@@ -44,10 +43,16 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
     order.save if order.changed?
   end
 
-  def send_message(channel, msg, checkout_session_id, options = {})
-    message = "#{msg} #{checkout_session_id} #{options}"
-    SlackBotClient.channel(channel).post_message("`#{Rails.env}` #{message}")
+  def send_message(message, checkout_session_id, props = {})
+    SlackBotClient.channel('orders_cs_completed').post_message("`#{Rails.env}` #{message} #{checkout_session_id} #{props}")
   rescue => e
-    Airbag.warn "##{__method__} failed #{e.inspect} message=#{message}"
+    Airbag.exception e, message: message, checkout_session_id: checkout_session_id, props: props
+  end
+
+  def send_error_message(message, checkout_session_id, props = {})
+    send_message(message, checkout_session_id, props)
+    SendMessageToSlackWorker.perform_async(:orders_warning, "#{message} #{checkout_session_id} type=checkout.session.completed #{props}")
+  rescue => e
+    Airbag.exception e, message: message, checkout_session_id: checkout_session_id, props: props
   end
 end
