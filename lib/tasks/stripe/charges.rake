@@ -11,10 +11,12 @@ namespace :stripe do
         customer = Customer.latest_by(stripe_customer_id: charge.customer)
         user = User.find(customer.user_id)
 
-        if charge.status == 'succeeded' && !user.has_valid_subscription?
-          result[:succeeded] << "user_id=#{user.id} customer_id=#{charge.customer}"
+        if charge.status == 'succeeded'
+          if !user.has_valid_subscription? && (user.orders.any? && user.orders.last.cancel_source != 'user')
+            result[:succeeded] << {user_id: user.id, customer_id: charge.customer}
+          end
         elsif charge.status == 'failed' && user.has_valid_subscription?
-          result[:failed] << "user_id=#{user.id} customer_id=#{charge.customer}"
+          result[:failed] << {user_id: user.id, customer_id: charge.customer}
         end
       end
 
@@ -22,7 +24,7 @@ namespace :stripe do
 
       result.each do |status, ary|
         if ary.any?
-          slack.post_message("`#{Rails.env}` Invalid data status=#{status} #{ary}")
+          slack.post_message("`#{Rails.env}` Inconsistent data status=#{status} #{ary}")
         else
           if verbose
             slack.post_message("`#{Rails.env}` OK status=#{status}")
