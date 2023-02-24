@@ -15,7 +15,7 @@ RSpec.describe ProcessStripeChargeSucceededEventWorker do
     context 'No order' do
       let(:orders) { [] }
       it do
-        expect(worker).to receive(:send_error_message).with(/^\[To Be Fixed\] Cannot find/, anything)
+        expect(worker).to receive(:send_error_message).with('[To Be Fixed] There is not a order for to be charged', anything)
         subject
       end
     end
@@ -35,7 +35,7 @@ RSpec.describe ProcessStripeChargeSucceededEventWorker do
       context 'The user does not have a valid subscription' do
         before { allow(user).to receive(:has_valid_subscription?).and_return(false) }
         it do
-          expect(worker).to receive(:send_error_message).with(/\[To Be Fixed\] The customer doesn't/, anything)
+          expect(worker).to receive(:send_error_message).with("[To Be Fixed] The customer doesn't have a valid subscription", anything)
           subject
         end
       end
@@ -44,7 +44,7 @@ RSpec.describe ProcessStripeChargeSucceededEventWorker do
     context 'More than two order' do
       let(:orders) { [order, order] }
       it do
-        expect(worker).to receive(:send_error_message).with(/^\[To Be Fixed\] More than/, anything)
+        expect(worker).to receive(:send_error_message).with('[To Be Fixed] There are more than two orders for to be charged', anything)
         subject
       end
     end

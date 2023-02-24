@@ -8,7 +8,7 @@ class ProcessStripeChargeSucceededEventWorker
     props = {customer_id: customer_id, options: options}
 
     if orders.size == 0
-      send_error_message('[To Be Fixed] Cannot find the order to be charged', props)
+      send_error_message('[To Be Fixed] There is not a order for to be charged', props)
     elsif orders.size == 1
       user = orders[0].user
       props.merge!(user_id: user.id)
@@ -20,7 +20,7 @@ class ProcessStripeChargeSucceededEventWorker
       end
     else
       props.merge!(order_ids: orders.map(&:id))
-      send_error_message('[To Be Fixed] More than two orders are found', props)
+      send_error_message('[To Be Fixed] There are more than two orders for to be charged', props)
     end
   rescue => e
     Airbag.exception e, customer_id: customer_id, options: options

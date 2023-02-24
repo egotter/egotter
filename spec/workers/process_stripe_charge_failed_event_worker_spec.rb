@@ -25,7 +25,7 @@ RSpec.describe ProcessStripeChargeFailedEventWorker do
       context 'The checkout session is valid' do
         before { allow(checkout_session).to receive(:valid_period?).and_return(true) }
         it do
-          expect(worker).to receive(:send_message).with(/^The customer probably/, anything)
+          expect(worker).to receive(:send_message).with('The customer probably failed to enter card details on the checkout page', anything)
           subject
         end
       end
@@ -33,7 +33,7 @@ RSpec.describe ProcessStripeChargeFailedEventWorker do
       context 'The checkout session is NOT valid' do
         before { allow(checkout_session).to receive(:valid_period?).and_return(false) }
         it do
-          expect(worker).to receive(:send_error_message).with(/^\[To Be Fixed\] Cannot find/, anything)
+          expect(worker).to receive(:send_error_message).with('[To Be Fixed] There is not a order for to be canceled', anything)
           subject
         end
       end
@@ -52,7 +52,7 @@ RSpec.describe ProcessStripeChargeFailedEventWorker do
     context 'More than two order' do
       let(:orders) { [order, order] }
       it do
-        expect(worker).to receive(:send_error_message).with(/^\[To Be Fixed\] More than/, anything)
+        expect(worker).to receive(:send_error_message).with('[To Be Fixed] There are more than two orders for to be canceled', anything)
         subject
       end
     end

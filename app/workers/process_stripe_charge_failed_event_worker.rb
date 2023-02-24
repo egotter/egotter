@@ -16,7 +16,7 @@ class ProcessStripeChargeFailedEventWorker
       if checkout_session.valid_period?
         send_message('The customer probably failed to enter card details on the checkout page', props)
       else
-        send_error_message('[To Be Fixed] Cannot find the order to be cancelled', props)
+        send_error_message('[To Be Fixed] There is not a order for to be canceled', props)
       end
     elsif orders.size == 1
       order = orders[0]
@@ -27,7 +27,7 @@ class ProcessStripeChargeFailedEventWorker
       send_message('Success', props)
     else
       props.merge!(order_ids: orders.map(&:id))
-      send_error_message('[To Be Fixed] More than two orders are found', props)
+      send_error_message('[To Be Fixed] There are more than two orders for to be canceled', props)
     end
   rescue => e
     Airbag.exception e, customer_id: customer_id, options: options
