@@ -4,11 +4,11 @@ namespace :stripe do
       verbose = ENV['VERBOSE']
       channel = :orders_charge_warn
 
-      charges = Stripe::Charge.list(limit: 100).data
+      charges = Stripe::Charge.list(limit: 100).data.uniq { |c| "#{c.status}-#{c.customer}" }
       result = {succeeded: [], failed: []}
 
       charges.each do |charge|
-        customer = Customer.order(created_at: :desc).find_by(stripe_customer_id: charge.customer)
+        customer = Customer.latest_by(stripe_customer_id: charge.customer)
         user = User.find(customer.user_id)
 
         if charge.status == 'succeeded' && !user.has_valid_subscription?
