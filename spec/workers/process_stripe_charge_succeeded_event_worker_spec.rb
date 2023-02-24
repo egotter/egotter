@@ -48,6 +48,19 @@ RSpec.describe ProcessStripeChargeSucceededEventWorker do
         subject
       end
     end
+
+    context 'An error is raised' do
+      let(:orders) { nil }
+      let(:error) { RuntimeError.new }
+      before do
+        allow(Order).to receive(:where).with(anything).and_raise(error)
+      end
+      it do
+        expect(Airbag).to receive(:exception).with(error, customer_id: customer_id, options: {})
+        expect(worker).to receive(:send_error_message).with('[To Be Fixed] A fatal error occurred', customer_id: customer_id, options: {})
+        subject
+      end
+    end
   end
 
   describe '#send_message' do
