@@ -4,23 +4,26 @@ class ProcessStripeChargeSucceededEventWorker
 
   # options:
   def perform(customer_id, options = {})
-    orders = Order.where(customer_id: customer_id)
+    orders = Order.where(customer_id: customer_id, canceled_at: nil, charge_failed_at: nil)
+    props = {customer_id: customer_id, options: options}
 
-    if orders.size >= 1
+    if orders.size == 0
+      send_error_message('[To Be Fixed] Cannot find the order to be charged', props)
+    elsif orders.size == 1
       user = orders[0].user
-      props = {user_id: user.id, customer_id: customer_id}
+      props.merge!(user_id: user.id)
 
       if user.has_valid_subscription?
         send_message('Success', props)
       else
-        send_error_message("User doesn't have a valid subscription", props)
+        send_error_message("[To Be Fixed] The customer doesn't have a valid subscription", props)
       end
     else
-      props = {customer_id: customer_id}
-      send_error_message('Order not found', props)
+      props.merge!(order_ids: orders.map(&:id))
+      send_error_message('[To Be Fixed] More than two orders are found', props)
     end
   rescue => e
-    Airbag.exception e, customer_id: customer_id
+    Airbag.exception e, customer_id: customer_id, options: options
   end
 
   private
