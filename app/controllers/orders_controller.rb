@@ -34,7 +34,7 @@ class OrdersController < ApplicationController
       redirect_to settings_order_history_path(via: current_via('stripe_session_id_not_found'))
     end
   rescue => e
-    Airbag.warn "#{controller_name}##{action_name}: #{e.inspect} checkout_session_id=#{params[:stripe_session_id]}"
+    Airbag.exception e, stripe_session_id: params[:stripe_session_id]
     redirect_to orders_failure_path(via: 'internal_error', stripe_session_id: params[:stripe_session_id])
   end
 
@@ -55,7 +55,7 @@ class OrdersController < ApplicationController
     process_webhook_event(event)
     head :ok
   rescue => e
-    Airbag.warn "#{controller_name}##{action_name} #{e.inspect} event_id=#{event.data}"
+    Airbag.exception e
     head :bad_request
   end
 
@@ -78,10 +78,11 @@ class OrdersController < ApplicationController
     when 'payment_intent.succeeded'
       process_payment_intent_succeeded(event)
     else
-      Airbag.info "Unhandled stripe webhook event type=#{event.type} value=#{event.inspect}"
+      Airbag.info 'Unhandled stripe webhook event', event_id: event.id, event_type: event.type
     end
   ensure
-    create_stripe_webhook_log((event.request.idempotency_key rescue nil), event.id, event.type, event.data.object) rescue nil
+    idempotency_key = (event.request.idempotency_key rescue nil)
+    create_stripe_webhook_log(idempotency_key, event.id, event.type, event.data.object) rescue nil
   end
 
   # As a user is waiting to finish the checkout, this process MUST be executed synchronously
@@ -106,19 +107,9 @@ class OrdersController < ApplicationController
   end
 
   def send_message(channel, options = {})
-    if user_signed_in?
-      props = {
-          user_id: current_user.id,
-          customer_id: Customer.order(created_at: :desc).find_by(user_id: current_user.id).stripe_customer_id,
-          via: params[:via],
-      }
-    else
-      props = {via: params[:via]}
-    end
-
-    props.merge!(options)
+    props = {user_id: user_signed_in? ? current_user.id : nil, via: params[:via]}.merge(options)
     SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{props}")
   rescue => e
-    Airbag.warn "#{action_name}##{__method__}: #{e.inspect} channel=#{channel} options=#{options.inspect}"
+    Airbag.exception e, channel: channel, options: options
   end
 end

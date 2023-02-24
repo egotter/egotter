@@ -52,8 +52,12 @@ RSpec.describe OrdersController, type: :controller do
       end
 
       context 'An exception is raised' do
-        before { allow(Stripe::Checkout::Session).to receive(:retrieve).and_raise }
-        it { is_expected.to redirect_to(orders_failure_path(via: 'internal_error', stripe_session_id: checkout_session.id)) }
+        let(:error) { RuntimeError.new }
+        before { allow(Stripe::Checkout::Session).to receive(:retrieve).and_raise(error) }
+        it do
+          expect(Airbag).to receive(:exception).with(error, stripe_session_id: checkout_session.id)
+          is_expected.to redirect_to(orders_failure_path(via: 'internal_error', stripe_session_id: checkout_session.id))
+        end
       end
     end
   end
@@ -82,6 +86,15 @@ RSpec.describe OrdersController, type: :controller do
       expect(controller).to receive(:construct_webhook_event).and_return('event')
       expect(controller).to receive(:process_webhook_event).with('event')
       is_expected.to have_http_status(:ok)
+    end
+
+    context 'An exception is raised' do
+      let(:error) { RuntimeError.new }
+      before { allow(controller).to receive(:construct_webhook_event).and_raise(error) }
+      it do
+        expect(Airbag).to receive(:exception).with(error)
+        is_expected.to have_http_status(:bad_request)
+      end
     end
   end
 
@@ -113,6 +126,19 @@ RSpec.describe OrdersController, type: :controller do
         let(:type) { event_type }
         it do
           expect(controller).to receive(method_name).with(event)
+          expect(controller).to receive(:create_stripe_webhook_log).with('key', 'eid', type, {data: true})
+          subject
+        end
+      end
+    end
+
+    [
+        ['other.event'],
+    ].each do |event_type|
+      context "type is #{event_type}" do
+        let(:type) { event_type }
+        it do
+          expect(Airbag).to receive(:info).with('Unhandled stripe webhook event', event_id: 'eid', event_type: type)
           expect(controller).to receive(:create_stripe_webhook_log).with('key', 'eid', type, {data: true})
           subject
         end
@@ -164,6 +190,41 @@ RSpec.describe OrdersController, type: :controller do
     it do
       expect(ProcessStripePaymentIntentSucceededEventWorker).to receive(:perform_async).with('pi_xxxx')
       subject
+    end
+  end
+
+  describe '#send_message' do
+    subject { controller.send(:send_message, 'channel', opt: true) }
+    before { allow(controller).to receive(:params).and_return(via: 'via') }
+
+    context 'The user is signed in' do
+      before do
+        allow(controller).to receive(:user_signed_in?).and_return(true)
+        allow(controller).to receive(:current_user).and_return(user)
+      end
+      it do
+        expect(SendMessageToSlackWorker).to receive(:perform_async).with('channel', instance_of(String))
+        subject
+      end
+    end
+
+    context 'The user is NOT signed in' do
+      before do
+        allow(controller).to receive(:user_signed_in?).and_return(false)
+      end
+      it do
+        expect(SendMessageToSlackWorker).to receive(:perform_async).with('channel', instance_of(String))
+        subject
+      end
+    end
+
+    context 'An exception is raised' do
+      let(:error) { RuntimeError.new }
+      before { allow(controller).to receive(:user_signed_in?).and_raise(error) }
+      it do
+        expect(Airbag).to receive(:exception).with(error, channel: 'channel', options: {opt: true})
+        subject
+      end
     end
   end
 end
