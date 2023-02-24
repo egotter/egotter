@@ -218,7 +218,7 @@ class Order < ApplicationRecord
       SendMessageToSlackWorker.perform_async(:orders_warning, "Subscription has already been canceled order_id=#{id} subscription_id=#{subscription_id} source=#{source}")
       update!(cancel_source: source, canceled_at: Time.zone.now)
     else
-      subscription = Stripe::Subscription.delete(subscription_id)
+      subscription = Stripe::Subscription.cancel(subscription_id)
       update!(cancel_source: source, canceled_at: Time.zone.at(subscription.canceled_at))
     end
   rescue Stripe::InvalidRequestError => e

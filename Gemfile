@@ -62,7 +62,7 @@ gem 'haml-rails'
 gem 'twitter-text'
 gem 'draper'
 gem 'oj'
-gem 'stripe', '5.55.0'
+gem 'stripe', '8.3.0'
 gem 'webpacker', '~> 5.0'
 gem 'sitemap_generator'
 
