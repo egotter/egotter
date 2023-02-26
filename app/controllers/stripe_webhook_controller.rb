@@ -7,7 +7,7 @@ class StripeWebhookController < ApplicationController
     process_event(event)
     head :ok
   rescue => e
-    Airbag.warn "#{controller_name}##{action_name} #{e.inspect} event_id=#{event.id}"
+    Airbag.exception e
     head :bad_request
   end
 

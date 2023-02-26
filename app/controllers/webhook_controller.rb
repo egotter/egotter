@@ -34,12 +34,12 @@ class WebhookController < ApplicationController
         ProcessWebhookEventForTweetCleanerWorker.perform_async(to_hash(event))
       end
     else
-      Airbag.debug "#{controller_name}##{action_name}: Unhandled webhook event=#{params.keys.grep(/event/)} for_user_id=#{params[:for_user_id]}"
+      Airbag.debug "Unhandled twitter webhook event=#{params.keys.grep(/event/)} for_user_id=#{params[:for_user_id]}"
     end
 
     head :ok
   rescue => e
-    Airbag.warn "#{controller_name}##{action_name}: #{e.inspect}"
+    Airbag.exception e
     head :ok
   end
 
