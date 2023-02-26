@@ -1603,7 +1603,10 @@ ja:
         <p class="my-3">その後に、えごったーに <a href="%{url}">ログイン</a> すればエラーは解消されます。</p>
     twitter_error_unknown:
     routing_error:
-      message_html: 'お探しのページが見つかりませんでした。<a href="%{url}">ログイン</a> してからご利用ください。'
+      login_html: '一時的なエラーが起きました。もしログインしていない場合は、<a href="%{url}">ログイン</a> してからご利用ください。'
+      message_html:
+        大半のエラーは時間が経つと解決します。現在起きている障害については <a href="https://twitter.com/%{user1}" target="_blank">@%{user1}</a> または
+        <a href="https://twitter.com/%{user2}" target="_blank">@%{user2}</a> のツイートをご確認ください。
     internal_server_error:
       login_html: '一時的なエラーが起きました。もしログインしていない場合は、<a href="%{url}">ログイン</a> してからご利用ください。'
       message_html:

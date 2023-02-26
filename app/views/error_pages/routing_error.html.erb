@@ -1,4 +1,5 @@
-<p><%= t('.message_html', url: sign_in_path(via: current_via)) %></p>
+<p class="my-3"><%= t('.login_html', url: sign_in_path(via: current_via)) %></p>
+<p class="my-3"><%= t('.message_html', user1: 'ego_tter', user2: 'egotter_cs') %></p>
 <p><%= t('error_pages.support_html', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.error_inquiry', name: action_name))) %></p>
 
 <div class="text-center">
