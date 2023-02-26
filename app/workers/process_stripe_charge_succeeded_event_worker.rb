@@ -10,8 +10,9 @@ class ProcessStripeChargeSucceededEventWorker
     if orders.size == 0
       send_error_message('[To Be Fixed] There is not a order for to be charged', props)
     elsif orders.size == 1
-      user = orders[0].user
-      props.merge!(user_id: user.id)
+      order = orders[0]
+      user = order.user
+      props.merge!(user_id: user.id, order_id: order.id, order_name: order.name)
 
       if user.has_valid_subscription?
         send_message('Success', props)

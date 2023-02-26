@@ -20,7 +20,7 @@ class ProcessStripeChargeFailedEventWorker
       end
     elsif orders.size == 1
       order = orders[0]
-      props.merge!(user_id: order.user_id, order_id: order.id)
+      props.merge!(user_id: order.user_id, order_id: order.id, order_name: order.name)
 
       order.update!(charge_failed_at: Time.zone.now)
       order.cancel!('webhook')
