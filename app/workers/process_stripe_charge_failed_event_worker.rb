@@ -36,6 +36,10 @@ class ProcessStripeChargeFailedEventWorker
       order.update!(charge_failed_at: Time.zone.now)
       order.cancel!('webhook')
       send_message('Success', props)
+
+      if order.created_at < (Order::TRIAL_DAYS - 1).days.ago
+        send_remind_message(customer_id, order)
+      end
     else
       props.merge!(order_ids: orders.map(&:id))
       send_error_message('[To Be Fixed] There are more than two orders for to be canceled', props)
@@ -58,5 +62,16 @@ class ProcessStripeChargeFailedEventWorker
     SendOrderMessageToSlackWorker.perform_async(:orders_warning, "#{message} type=charge.failed #{props}")
   rescue => e
     Airbag.exception e, message: message, props: props
+  end
+
+  def send_remind_message(customer_id, order)
+    customer = Stripe::Customer.retrieve(customer_id)
+    if (to_address = customer.email || order.email)
+      subject = I18n.t('workers.charge_failed_reminder.subject')
+      body = I18n.t('workers.charge_failed_reminder.body')
+      SendOrderMessageToSlackWorker.perform_async(:orders_warning, "#{to_address}\n\n#{subject}\n\n#{body}".truncate(150))
+    end
+  rescue => e
+    Airbag.exception e, customer_id: customer_id, order_id: order.id
   end
 end
