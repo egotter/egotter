@@ -25,10 +25,10 @@ module Api
 
         if order.trial?
           order.end_trial!
-          send_message('Success', order_id: order.id)
+          send_message('Success', order)
           render json: {message: t('.success_html'), interval: INTERVAL}
         else
-          send_message('Not trialing', order_id: order.id)
+          send_message('Not trialing', order)
           render json: {message: t('.not_trial_html')}, status: :bad_request
         end
       rescue => e
@@ -40,11 +40,11 @@ module Api
         order = current_user.orders.find_by(id: params[:id])
 
         if order.canceled?
-          send_message('Already canceled', order_id: order.id)
+          send_message('Already canceled', order)
           render json: {message: t('.already_canceled')}, status: :bad_request
         else
           order.cancel!('user')
-          send_message('Success', order_id: order.id)
+          send_message('Success', order)
           render json: {message: t('.success_html'), interval: INTERVAL}
         end
       rescue => e
@@ -54,9 +54,11 @@ module Api
 
       private
 
-      def send_message(message, order_id: nil)
-        props = {api: true, user_id: current_user.id, order_id: order_id, via: params[:via]}.compact
+      def send_message(message, order)
+        props = {api: true, user_id: current_user.id, order_id: order.id, order_name: order.name, via: params[:via]}.compact
         SendOrderMessageToSlackWorker.perform_async(tracking_channel, "`#{Rails.env}` #{message} #{props}")
+      rescue => e
+        Airbag.exception e, message: message, order_id: order.id
       end
 
       def tracking_channel

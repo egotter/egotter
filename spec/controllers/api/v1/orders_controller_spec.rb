@@ -36,7 +36,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       before { allow(order).to receive(:trial?).and_return(true) }
       it do
         expect(order).to receive(:end_trial!)
-        expect(controller).to receive(:send_message).with('Success', order_id: order.id)
+        expect(controller).to receive(:send_message).with('Success', order)
         is_expected.to have_http_status(:ok)
       end
     end
@@ -45,7 +45,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       before { allow(order).to receive(:trial?).and_return(false) }
       it do
         expect(order).not_to receive(:end_trial!)
-        expect(controller).to receive(:send_message).with('Not trialing', order_id: order.id)
+        expect(controller).to receive(:send_message).with('Not trialing', order)
         is_expected.to have_http_status(:bad_request)
       end
     end
@@ -69,7 +69,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       before { allow(order).to receive(:canceled?).and_return(true) }
       it do
         expect(order).not_to receive(:cancel!)
-        expect(controller).to receive(:send_message).with('Already canceled', order_id: order.id)
+        expect(controller).to receive(:send_message).with('Already canceled', order)
         is_expected.to have_http_status(:bad_request)
       end
     end
@@ -78,7 +78,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       before { allow(order).to receive(:canceled?).and_return(false) }
       it do
         expect(order).to receive(:cancel!).with('user')
-        expect(controller).to receive(:send_message).with('Success', order_id: order.id)
+        expect(controller).to receive(:send_message).with('Success', order)
         is_expected.to have_http_status(:ok)
       end
     end
@@ -95,7 +95,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
   end
 
   describe '#send_message' do
-    subject { controller.send(:send_message, 'msg', order_id: 1) }
+    subject { controller.send(:send_message, 'msg', order) }
     before { allow(controller).to receive(:tracking_channel).and_return('channel') }
     it do
       expect(SendOrderMessageToSlackWorker).to receive(:perform_async).with('channel', /msg/)
