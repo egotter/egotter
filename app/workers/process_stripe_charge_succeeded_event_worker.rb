@@ -31,14 +31,14 @@ class ProcessStripeChargeSucceededEventWorker
   private
 
   def send_message(message, props)
-    SlackBotClient.channel('orders_charge_succeeded').post_message("`#{Rails.env}` #{message} #{props}")
+    SendOrderMessageToSlackWorker.perform_async(:orders_charge_succeeded, "`#{Rails.env}` #{message} #{props}")
   rescue => e
     Airbag.exception e, message: message, props: props
   end
 
   def send_error_message(message, props)
     send_message(message, props)
-    SendMessageToSlackWorker.perform_async(:orders_warning, "#{message} type=charge.succeeded #{props}")
+    SendOrderMessageToSlackWorker.perform_async(:orders_warning, "#{message} type=charge.succeeded #{props}")
   rescue => e
     Airbag.exception e, message: message, props: props
   end

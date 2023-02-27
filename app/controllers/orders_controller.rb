@@ -108,7 +108,7 @@ class OrdersController < ApplicationController
 
   def send_message(channel, options = {})
     props = {user_id: user_signed_in? ? current_user.id : nil, via: params[:via]}.merge(options)
-    SendMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{props}")
+    SendOrderMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{props}")
   rescue => e
     Airbag.exception e, channel: channel, options: options
   end

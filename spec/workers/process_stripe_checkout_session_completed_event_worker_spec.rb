@@ -75,8 +75,7 @@ RSpec.describe ProcessStripeCheckoutSessionCompletedEventWorker do
   describe '#send_message' do
     subject { worker.send(:send_message, 'msg', 'cs_xxx', {props: true}) }
     it do
-      expect(SlackBotClient).to receive_message_chain(:channel, :post_message).
-          with('orders_cs_completed').with(/msg/)
+      expect(SendOrderMessageToSlackWorker).to receive(:perform_async).with(:orders_cs_completed, /msg/)
       subject
     end
   end
@@ -85,7 +84,7 @@ RSpec.describe ProcessStripeCheckoutSessionCompletedEventWorker do
     subject { worker.send(:send_error_message, 'msg', 'cs_xxx', {props: true}) }
     it do
       expect(worker).to receive(:send_message).with('msg', 'cs_xxx', {props: true})
-      expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders_warning, /msg/)
+      expect(SendOrderMessageToSlackWorker).to receive(:perform_async).with(:orders_warning, /msg/)
       subject
     end
   end

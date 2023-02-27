@@ -98,7 +98,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
     subject { controller.send(:send_message, 'msg', order_id: 1) }
     before { allow(controller).to receive(:tracking_channel).and_return('channel') }
     it do
-      expect(SendMessageToSlackWorker).to receive(:perform_async).with('channel', /msg/)
+      expect(SendOrderMessageToSlackWorker).to receive(:perform_async).with('channel', /msg/)
       subject
     end
   end

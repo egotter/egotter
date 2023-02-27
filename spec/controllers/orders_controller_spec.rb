@@ -203,7 +203,7 @@ RSpec.describe OrdersController, type: :controller do
         allow(controller).to receive(:current_user).and_return(user)
       end
       it do
-        expect(SendMessageToSlackWorker).to receive(:perform_async).with('channel', instance_of(String))
+        expect(SendOrderMessageToSlackWorker).to receive(:perform_async).with('channel', instance_of(String))
         subject
       end
     end
@@ -213,7 +213,7 @@ RSpec.describe OrdersController, type: :controller do
         allow(controller).to receive(:user_signed_in?).and_return(false)
       end
       it do
-        expect(SendMessageToSlackWorker).to receive(:perform_async).with('channel', instance_of(String))
+        expect(SendOrderMessageToSlackWorker).to receive(:perform_async).with('channel', instance_of(String))
         subject
       end
     end

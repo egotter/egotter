@@ -44,14 +44,14 @@ class ProcessStripeCheckoutSessionCompletedEventWorker
   end
 
   def send_message(message, checkout_session_id, props = {})
-    SlackBotClient.channel('orders_cs_completed').post_message("`#{Rails.env}` #{message} #{checkout_session_id} #{props}")
+    SendOrderMessageToSlackWorker.perform_async(:orders_cs_completed, "`#{Rails.env}` #{message} #{checkout_session_id} #{props}")
   rescue => e
     Airbag.exception e, message: message, checkout_session_id: checkout_session_id, props: props
   end
 
   def send_error_message(message, checkout_session_id, props = {})
     send_message(message, checkout_session_id, props)
-    SendMessageToSlackWorker.perform_async(:orders_warning, "#{message} #{checkout_session_id} type=checkout.session.completed #{props}")
+    SendOrderMessageToSlackWorker.perform_async(:orders_warning, "#{message} #{checkout_session_id} type=checkout.session.completed #{props}")
   rescue => e
     Airbag.exception e, message: message, checkout_session_id: checkout_session_id, props: props
   end

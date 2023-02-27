@@ -74,8 +74,7 @@ RSpec.describe ProcessStripeChargeFailedEventWorker do
   describe '#send_message' do
     subject { worker.send(:send_message, 'msg', {props: true}) }
     it do
-      expect(SlackBotClient).to receive_message_chain(:channel, :post_message).
-          with('orders_charge_failed').with(/msg/)
+      expect(SendOrderMessageToSlackWorker).to receive(:perform_async).with(:orders_charge_failed, /msg/)
       subject
     end
   end
@@ -84,7 +83,7 @@ RSpec.describe ProcessStripeChargeFailedEventWorker do
     subject { worker.send(:send_error_message, 'msg', {props: true}) }
     it do
       expect(worker).to receive(:send_message).with('msg', {props: true})
-      expect(SendMessageToSlackWorker).to receive(:perform_async).with(:orders_warning, /msg/)
+      expect(SendOrderMessageToSlackWorker).to receive(:perform_async).with(:orders_warning, /msg/)
       subject
     end
   end

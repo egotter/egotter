@@ -56,7 +56,7 @@ module Api
 
       def send_message(message, order_id: nil)
         props = {api: true, user_id: current_user.id, order_id: order_id, via: params[:via]}.compact
-        SendMessageToSlackWorker.perform_async(tracking_channel, "`#{Rails.env}` #{message} #{props}")
+        SendOrderMessageToSlackWorker.perform_async(tracking_channel, "`#{Rails.env}` #{message} #{props}")
       end
 
       def tracking_channel

@@ -4,7 +4,10 @@ class SendOrderMessageToSlackWorker
 
   # options:
   def perform(channel, text, options = {})
-    channel = 'orders_dev' if Rails.env.development?
+    if Rails.env.development?
+      text = "`#{channel}` #{text}"
+      channel = 'orders_dev'
+    end
     SlackBotClient.channel(channel).post_message(text)
   rescue Slack::Web::Api::Errors::TooManyRequestsError => e
     logger.error "#{e.class} channel=#{channel} text=#{text} options=#{options}"

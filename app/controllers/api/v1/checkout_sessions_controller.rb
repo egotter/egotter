@@ -35,7 +35,7 @@ module Api
 
       def send_message(stripe_session)
         message = {user_id: current_user.id, via: params[:via], checkout_session_id: stripe_session.id, mode: stripe_session.mode}
-        SendMessageToSlackWorker.perform_async(:orders_cs_created, "`#{Rails.env}` #{message}")
+        SendOrderMessageToSlackWorker.perform_async(:orders_cs_created, "`#{Rails.env}` #{message}")
       end
     end
   end
