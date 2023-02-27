@@ -1,0 +1,16 @@
+<% content_for :canonical_url do %>
+  <link href="<%= pricing_url %>" rel="canonical">
+<% end %>
+
+<% set_meta_tags title: t('.meta_title'), description: t('.meta_description') %>
+
+<div class="container">
+  <h2 class="h4 text-center my-5"><%= t('.page_title') %></h2>
+  <p><%= t('.page_description') %></p>
+  <p><%= t('.page_description_note_html', url: twitter_web_url('egotter_cs')) %></p>
+
+  <%= render partial: 'shared/about_plan' %>
+
+  <div class="my-3"><%= render partial: 'plans', locals: {selected_plan: nil} %></div>
+  <div class="my-3"><%= render partial: 'faq' %></div>
+</div>

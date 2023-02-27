@@ -621,6 +621,97 @@ ja:
         requires_payment_method: 'クレジットカード情報の更新に失敗しました。再度お試しください。'
         error: 'クレジットカード情報の更新に失敗しました。再度お試しください。'
   pricing:
+    index2:
+      meta_title: '料金プラン'
+      meta_description: 'えごったーの料金プランです。'
+      page_title: '料金プラン'
+      page_description: 'えごったーの料金はほとんど無料です。勝手に課金されることはありませんのでご安心ください。'
+      page_description_note_html: '分からないことや気になることは、<a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご質問ください。'
+    plan:
+      meta_title: '料金プラン'
+      meta_description: 'えごったーの料金プランです。'
+      page_title: '料金プラン'
+      page_description: 'えごったーの料金はほとんど無料です。勝手に課金されることはありませんのでご安心ください。'
+      page_description_note_html: '分からないことや気になることは、<a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご質問ください。'
+      tax_included: '（税込）'
+      purchase: '購入画面へ進む'
+    plans:
+      items: '販売中のプラン'
+      subscription: '定期購読プラン'
+      month1: '1ヶ月プラン'
+      month3: '3ヶ月プラン'
+      month6: '6ヶ月プラン'
+      month12: '12ヶ月プラン'
+      price_html: '<span class="font-weight-bold">%{value}円</span>'
+      subscription_price_html: '<del style="color: darkgray;">%{regular}</del> <span class="font-weight-bold">%{discount}円</span> <span style="color: darkgray;">/月</span>'
+      discounted_price_html: '<del style="color: darkgray;">%{regular}</del> <span class="font-weight-bold">%{discount}円</span>'
+      descriptions:
+        subscription_html:
+          えごったー ベーシックプランの 定期購読 です。毎月自動更新されます。<br>
+          <br>
+          <span class="font-weight-bold">初回購入のみ、お試し期間（%{trial_days}日間）</span>が付きます。この期間内に解約すれば支払いは発生しません。<br>
+          <br>
+          <span class="font-weight-bold">初回の購入のみ、50%の割引</span>があります。
+        one_month_html:
+          えごったー ベーシックプランの %{num}ヶ月分 です。<br>
+          <br>
+          この商品は期間固定です。記載の期間が過ぎると自動で解約されます。<br>
+          <br>
+          このプランにお試し期間は無く、返金の対象外です。
+        multiple_months_html:
+          えごったー ベーシックプランの %{num}ヶ月分 です。一括購入で%{discount_percent}%割引になります。<br>
+          <br>
+          この商品は期間固定です。記載の期間が過ぎると自動で解約されます。<br>
+          <br>
+          このプランにお試し期間は無く、返金の対象外です。
+        common_html:
+          ユーザー検索回数の増加、リムられ通知のリアルタイム更新、ブロック通知のデータの充実、ミュート通知のデータの充実、ツイートの完全な削除が含まれています。<a href="#premium-functions-details">詳しく</a><br>
+          <br>
+          サポートへの質問の回答やツイッター不具合の保証は含まれていません。<a href="#not-included-features-details">詳しく</a><br>
+          <br>
+          売上の一部は社会貢献活動に寄付しています。<a href="#donation-details">詳しく</a>
+    purchase_one_month_modal:
+      title: '単月購入の期間を選択する'
+      description: '注意事項をご確認の上、同意する方のみご購入ください。'
+      1_month:
+        title: '1ヶ月分の購入'
+        price: '%{value}円 (税込)'
+        purchase_by_card: 'クレジットカードで購入する'
+        purchase_by_card_note: 'クレジットカードで支払えます。購入後すぐに有効になります。'
+        purchase: '他の決済方法で購入する'
+        purchase_note: 'コンビニ払い、キャリア決済、Amazon Payで支払えます。購入から有効になるまでに数日かかります。'
+      note_html: |
+        ※ 決済手数料は購入者のご負担となります<br>
+        ※ 支払いの完了後、5営業日以内に有効になります<br>
+        <span class="text-danger">※ 固定期間のプランにお試し期間は無く、返金の対象外です</span>
+      specified_commercial_transactions: '特定商取引法に基づく表記'
+      refund_policy: '返金ポリシー'
+      'yes': '閉じる'
+    purchase_multiple_months_modal:
+      title: '一括購入の期間を選択する'
+      description: '注意事項をご確認の上、同意する方のみご購入ください。'
+      3_month:
+        title: '3ヶ月分の一括購入'
+        price: '%{value}円 (税込)'
+        discount_rate: '割引率：%{value}%'
+        purchase: '3ヶ月分を購入する'
+      6_month:
+        title: '6ヶ月分の一括購入'
+        price: '%{value}円 (税込)'
+        discount_rate: '割引率：%{value}%'
+        purchase: '6ヶ月分を購入する'
+      12_month:
+        title: '12ヶ月分の一括購入'
+        price: '%{value}円 (税込)'
+        discount_rate: '割引率：%{value}%'
+        purchase: '12ヶ月分を購入する'
+      note_html: |
+        ※ 決済手数料は購入者のご負担となります<br>
+        ※ 支払いの完了後、5営業日以内に有効になります<br>
+        <span class="text-danger">※ 固定期間のプランにお試し期間は無く、返金の対象外です</span>
+      specified_commercial_transactions: '特定商取引法に基づく表記'
+      refund_policy: '返金ポリシー'
+      'yes': '閉じる'
     index:
       meta_title: '料金プラン'
       meta_description: 'えごったーの料金プランです。'

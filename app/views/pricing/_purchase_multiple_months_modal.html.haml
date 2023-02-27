@@ -1,0 +1,25 @@
+= modal_dialog id: modal_id, title: t('.title'), button: {positive: t('.yes'), category: 'outline-secondary'} do
+  .my-3= t('.description')
+  .my-5
+    %strong.mb-1= t('.3_month.title')
+    .mb-1
+      = t('.3_month.price', value: Order::BASIC_PLAN_MONTHLY_BASIS_TAX_INCLUDED['monthly-basis-3'])
+      = t('.3_month.discount_rate', value: 3)
+    .mt-2= link_to t('.3_month.purchase'), redirect_page_path(name: 'baseshop_3'), id: 'base-shop-3-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+  .my-5
+    %strong.mb-1= t('.6_month.title')
+    .mb-1
+      = t('.6_month.price', value: Order::BASIC_PLAN_MONTHLY_BASIS_TAX_INCLUDED['monthly-basis-6'])
+      = t('.6_month.discount_rate', value: 5)
+    .mt-2= link_to t('.6_month.purchase'), redirect_page_path(name: 'baseshop_6'), id: 'base-shop-6-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+  .my-5
+    %strong.mb-1= t('.12_month.title')
+    .mb-1
+      = t('.6_month.price', value: Order::BASIC_PLAN_MONTHLY_BASIS_TAX_INCLUDED['monthly-basis-12'])
+      = t('.6_month.discount_rate', value: 10)
+    .mt-2= link_to t('.12_month.purchase'), redirect_page_path(name: 'baseshop_12'), id: 'base-shop-12-months-item', class: 'btn btn-outline-primary btn-sm', target: '_blank'
+  .text-center.small.mt-5.mb-3
+    = link_to t('.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank'
+    &middot;
+    = link_to t('.refund_policy'), refund_policy_path(via: current_via), target: '_blank'
+  .my-3.small.text-muted= t('.note_html')

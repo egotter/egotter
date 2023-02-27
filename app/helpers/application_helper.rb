@@ -118,9 +118,10 @@ module ApplicationHelper
 
   def wrap_in_container?
     settings = controller_name == 'settings' && action_name == 'index'
+    pricing = controller_name == 'pricing'
     trend_media = controller_name == 'trends' && action_name == 'media'
     slack_messages = controller_name == 'slack_messages'
-    !top_page? && !waiting_page? && !delete_tweets_top_page? && !settings && !trend_media && !slack_messages
+    !top_page? && !waiting_page? && !delete_tweets_top_page? && !settings && !pricing && !trend_media && !slack_messages
   end
 
   def show_common_friends?(twitter_user)

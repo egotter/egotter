@@ -54,6 +54,12 @@ class Order < ApplicationRecord
       'monthly-basis-6' => 1880,
       'monthly-basis-12' => 3560,
   }
+  BASIC_PLAN_MONTHLY_BASIS_REGULAR_TAX_INCLUDED = {
+      'monthly-basis-1' => 660,
+      'monthly-basis-3' => 660 * 3,
+      'monthly-basis-6' => 660 * 6,
+      'monthly-basis-12' => 660 * 12,
+  }
   BASIC_PLAN_MONTHLY_BASIS_1_PRICE_ID = ENV['STRIPE_BASIC_PLAN_MONTHLY_BASIS_1_PRICE_ID']
   TAX_RATE_ID = ENV['STRIPE_TAX_RATE_ID']
   TAX_RATE = 0.1

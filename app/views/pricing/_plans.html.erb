@@ -1,0 +1,39 @@
+<h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.items') %></h3>
+
+<div class="row">
+  <div class="col-6 col-md-3 p-3 <%= 'selected-plan' if selected_plan == 'subscription' %>">
+    <a href="<%= pricing_plan_path(id: 'subscription', via: current_via) %>" class="text-body">
+      <div><%= image_tag plan_display_image('subscription'), class: 'img-fluid', loading: 'lazy' %></div>
+      <div class="text-muted"><%= t('.subscription') %></div>
+      <div><%= plan_display_price('subscription') %></div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 p-3 <%= 'selected-plan' if selected_plan == 'monthly-basis-1' %>">
+    <a href="<%= pricing_plan_path(id: 'monthly-basis-1', via: current_via) %>" class="text-body">
+      <div><%= image_tag plan_display_image('monthly-basis-1'), class: 'img-fluid', loading: 'lazy' %></div>
+      <div class="text-muted"><%= t('.month1') %></div>
+      <div><%= plan_display_price('monthly-basis-1') %></div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 p-3 <%= 'selected-plan' if selected_plan == 'monthly-basis-3' %>">
+    <a href="<%= pricing_plan_path(id: 'monthly-basis-3', via: current_via) %>" class="text-body">
+      <div><%= image_tag plan_display_image('monthly-basis-3'), class: 'img-fluid', loading: 'lazy' %></div>
+      <div class="text-muted"><%= t('.month3') %></div>
+      <div><%= plan_display_price('monthly-basis-3') %></div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 p-3 <%= 'selected-plan' if selected_plan == 'monthly-basis-6' %>">
+    <a href="<%= pricing_plan_path(id: 'monthly-basis-6', via: current_via) %>" class="text-body">
+      <div><%= image_tag plan_display_image('monthly-basis-6'), class: 'img-fluid', loading: 'lazy' %></div>
+      <div class="text-muted"><%= t('.month6') %></div>
+      <div><%= plan_display_price('monthly-basis-6') %></div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 p-3 <%= 'selected-plan' if selected_plan == 'monthly-basis-12' %>">
+    <a href="<%= pricing_plan_path(id: 'monthly-basis-12', via: current_via) %>" class="text-body">
+      <div><%= image_tag plan_display_image('monthly-basis-12'), class: 'img-fluid', loading: 'lazy' %></div>
+      <div class="text-muted"><%= t('.month12') %></div>
+      <div><%= plan_display_price('monthly-basis-12') %></div>
+    </a>
+  </div>
+</div>

@@ -293,6 +293,7 @@ Rails.application.routes.draw do
   resources :diagnosis, only: :index
 
   get 'pricing', to: "pricing#index"
+  get 'pricing/:id', to: "pricing#plan", as: :pricing_plan
   resources :orders, only: %i(create)
   get 'orders/success', to: "orders#success"
   get 'orders/failure', to: "orders#failure"

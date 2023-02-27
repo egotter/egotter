@@ -38,9 +38,15 @@ a, a:hover, a:focus {
   width: 60%;
 }
 
+/* Header height + fixed padding */
 .anchor-offset {
   margin-top: -90px;
   padding-top: 90px;
+}
+
+.minimum-anchor-offset {
+  margin-top: -40px;
+  padding-top: 40px;
 }
 
 .uploader-debug-message {
