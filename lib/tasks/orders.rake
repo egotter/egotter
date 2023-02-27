@@ -42,6 +42,19 @@ namespace :orders do
     puts "#{Time.zone.now.to_s(:db)} task=#{task.name} total=#{orders.size}"
   end
 
+  task send_charge_failed_message: :environment do
+    from = ENV['FROM']
+    to_addresses = ENV['TO'].split(',')
+
+    to_addresses.each do |to|
+      subject = I18n.t('workers.charge_failed_reminder.subject')
+      body = I18n.t('workers.charge_failed_reminder.body')
+      GmailClient.new(from).send_message(from, to, subject, body)
+      puts body
+      puts '----------------------------------------------------'
+    end
+  end
+
   task print_statuses: :environment do
     Order.unexpired.find_each do |order|
       customer = Stripe::Customer.retrieve(order.customer_id)
