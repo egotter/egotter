@@ -19,10 +19,10 @@ RSpec.describe CheckoutSessionBuilder, type: :model do
                         mode: 'subscription',
                         line_items: [{quantity: 1, price: Order::BASIC_PLAN_PRICE_ID}],
                         subscription_data: {default_tax_rates: [Order::TAX_RATE_ID], trial_period_days: Order::TRIAL_DAYS},
-                        metadata: {user_id: user.id, price: 123},
+                        metadata: {user_id: user.id, price: 123, item_id: 'subscription'},
                         success_url: ENV['STRIPE_SUCCESS_URL'],
                         cancel_url: ENV['STRIPE_CANCEL_URL'],
-                        expires_at: 31.minutes.since.to_i,
+                        expires_at: 30.minutes.since.to_i,
                         customer: 'cus_xxx',
                         discounts: 'discount')
     end
@@ -54,10 +54,10 @@ RSpec.describe CheckoutSessionBuilder, type: :model do
                         payment_method_types: ['card'],
                         mode: 'payment',
                         line_items: [item],
-                        metadata: {user_id: user.id, name: name, price: price, months_count: '1'},
+                        metadata: {user_id: user.id, name: name, price: price, months_count: '1', item_id: item_id},
                         success_url: ENV['STRIPE_SUCCESS_URL'],
                         cancel_url: ENV['STRIPE_CANCEL_URL'],
-                        expires_at: 31.minutes.since.to_i,
+                        expires_at: 30.minutes.since.to_i,
                         customer: 'cus_xxx',
                      )
     end

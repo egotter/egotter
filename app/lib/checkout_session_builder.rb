@@ -9,7 +9,7 @@ class CheckoutSessionBuilder
           metadata: {user_id: user.id},
           success_url: ENV['STRIPE_SUCCESS_URL'],
           cancel_url: ENV['STRIPE_CANCEL_URL'],
-          expires_at: 31.minutes.since.to_i,
+          expires_at: Time.zone.now.to_i + CheckoutSession::VALID_PERIOD,
       }
 
       attrs[:customer] = find_or_create_customer(user)
@@ -18,6 +18,7 @@ class CheckoutSessionBuilder
       end
       attrs[:discounts] = available_discounts(user)
       attrs[:metadata][:price] = calculate_price(attrs)
+      attrs[:metadata][:item_id] = 'subscription'
 
       attrs
     end
@@ -41,10 +42,10 @@ class CheckoutSessionBuilder
           payment_method_types: ['card'],
           mode: 'payment',
           line_items: [item],
-          metadata: {user_id: user.id, name: name, price: price, months_count: months_count},
+          metadata: {user_id: user.id, name: name, price: price, months_count: months_count, item_id: item_id},
           success_url: ENV['STRIPE_SUCCESS_URL'],
           cancel_url: ENV['STRIPE_CANCEL_URL'],
-          expires_at: 31.minutes.since.to_i,
+          expires_at: Time.zone.now.to_i + CheckoutSession::VALID_PERIOD,
       }
 
       attrs[:customer] = find_or_create_customer(user)
