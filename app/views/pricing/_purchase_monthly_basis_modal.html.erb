@@ -1,20 +1,95 @@
 <%= modal_dialog id: modal_id, title: t('.title'), button: {positive: t('.yes'), category: 'outline-secondary'} do %>
   <div class="my-3"><%= t('.description') %></div>
-  <h3 class="h4"><%= plan_display_name(plan_id) %></h3>
+  <h3 class="h4 mt-5"><%= plan_display_name(plan_id) %></h3>
   <div class="my-3" style="font-size: 24px;"><%= plan_display_price(plan_id) %> <span class="text-muted"><%= t('.tax_included') %></span></div>
 
-  <div class="my-4">
-    <div><%= link_to t('.purchase_by_card'), '#', class: 'btn btn-outline-primary btn-one-time-checkout', data: {item_id: plan_id} %></div>
-    <div class="small"><%= t('.purchase_by_card_note') %></div>
+  <div class="font-weight-bold mt-5 mb-3"><%= t('.payment_method') %></div>
+
+  <div class="border mb-2 p-3">
+    <div class="custom-control custom-radio custom-control-inline">
+      <input type="radio" id="customRadioInline1" name="paymentMethodsRadio" value="card" class="custom-control-input" checked>
+      <label class="custom-control-label" for="customRadioInline1"><%= t('.payment_methods.card') %></label>
+    </div>
+    <div id="card-desc" class="small mt-2" style="display: none;">
+      <div class="text-muted"><%= t('.activate_immediately') %></div>
+      <div class="mt-2"><%= link_to t('.purchase'), '#', class: 'btn btn-outline-primary btn-one-time-checkout', data: {item_id: plan_id} %></div>
+    </div>
   </div>
-  <div class="my-4">
-    <div><%= link_to t('.purchase'), redirect_page_path(name: plan_id), id: "base-shop-#{plan_id}", class: 'btn btn-outline-primary', target: '_blank' %></div>
-    <div class="small"><%= t('.purchase_note_html') %></div>
+  <div class="border mb-2 p-3">
+    <div class="custom-control custom-radio custom-control-inline">
+      <input type="radio" id="customRadioInline2" name="paymentMethodsRadio" value="keitai" class="custom-control-input">
+      <label class="custom-control-label" for="customRadioInline2"><%= t('.payment_methods.keitai') %></label>
+    </div>
+    <div id="keitai-desc" class="small mt-2" style="display: none;">
+      <div class="text-muted"><%= t('.take_time_html') %></div>
+      <div class="mt-2"><%= link_to t('.purchase'), redirect_page_path(name: plan_id), id: "base-shop-#{plan_id}", class: 'btn btn-outline-primary', target: '_blank' %></div>
+    </div>
   </div>
-  <div class="text-center small mt-5 mb-3">
-    <%= link_to t('.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank' %>
-    &middot;
-    <%= link_to t('.refund_policy'), refund_policy_path(via: current_via), target: '_blank' %>
+  <div class="border mb-2 p-3">
+    <div class="custom-control custom-radio custom-control-inline">
+      <input type="radio" id="customRadioInline3" name="paymentMethodsRadio" value="konbini" class="custom-control-input">
+      <label class="custom-control-label" for="customRadioInline3"><%= t('.payment_methods.konbini') %></label>
+    </div>
+    <div id="konbini-desc" class="small mt-2" style="display: none;">
+      <div class="text-muted"><%= t('.take_time_html') %></div>
+      <div class="mt-2"><%= link_to t('.purchase'), redirect_page_path(name: plan_id), id: "base-shop-#{plan_id}", class: 'btn btn-outline-primary', target: '_blank' %></div>
+    </div>
   </div>
-  <div class="small text-muted mt-3 mb-5"><%= t('.note_html') %></div>
+  <div class="border p-3">
+    <div class="custom-control custom-radio custom-control-inline">
+      <input type="radio" id="customRadioInline4" name="paymentMethodsRadio" value="amazon" class="custom-control-input">
+      <label class="custom-control-label" for="customRadioInline4"><%= t('.payment_methods.amazon') %></label>
+    </div>
+    <div id="amazon-desc" class="small mt-2" style="display: none;">
+      <div class="text-muted"><%= t('.take_time_html') %></div>
+      <div class="mt-2"><%= link_to t('.purchase'), redirect_page_path(name: plan_id), id: "base-shop-#{plan_id}", class: 'btn btn-outline-primary', target: '_blank' %></div>
+    </div>
+  </div>
+
+  <script>
+    $(function () {
+      function updatePaymentMethod(val) {
+        var desc = {
+          card: $('#card-desc'),
+          keitai: $('#keitai-desc'),
+          konbini: $('#konbini-desc'),
+          amazon: $('#amazon-desc')
+        };
+
+        if (val === 'card') {
+          desc['card'].show();
+          desc['keitai'].hide();
+          desc['konbini'].hide();
+          desc['amazon'].hide();
+        } else if (val === 'keitai') {
+          desc['card'].hide();
+          desc['keitai'].show();
+          desc['konbini'].hide();
+          desc['amazon'].hide();
+        } else if (val === 'konbini') {
+          desc['card'].hide();
+          desc['keitai'].hide();
+          desc['konbini'].show();
+          desc['amazon'].hide();
+        } else if (val === 'amazon') {
+          desc['card'].hide();
+          desc['keitai'].hide();
+          desc['konbini'].hide();
+          desc['amazon'].show();
+        }
+      }
+
+      $('input[name="paymentMethodsRadio"]').on('change', function () {
+        updatePaymentMethod($(this).val());
+      })
+
+      updatePaymentMethod('card');
+    });
+  </script>
+
+  <div class="small mt-3 mb-2">
+    <div><%= link_to t('.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank' %></div>
+    <div><%= link_to t('.refund_policy'), refund_policy_path(via: current_via), target: '_blank' %></div>
+  </div>
+  <div class="text-danger small my-2"><%= t('.no_refund') %></div>
 <% end %>

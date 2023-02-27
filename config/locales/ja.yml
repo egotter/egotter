@@ -633,7 +633,7 @@ ja:
       page_title: '料金プラン'
       page_description: 'えごったーの料金はほとんど無料です。勝手に課金されることはありませんのでご安心ください。'
       page_description_note_html: '分からないことや気になることは、<a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご質問ください。'
-      tax_included: '（税込）'
+      tax_included: '税込'
       purchase: '購入画面へ進む'
     plans:
       items: '販売中のプラン'
@@ -672,16 +672,18 @@ ja:
           売上の一部は社会貢献活動に寄付しています。<a href="#donation-details">詳しく</a>
     purchase_monthly_basis_modal:
       title: '購入前の確認'
-      description: '注意事項をご確認の上、同意する方のみご購入ください。'
-      tax_included: '（税込）'
-      purchase_by_card: 'クレジットカードで購入する'
-      purchase_by_card_note: '購入後すぐに有効になります。'
-      purchase: '他の決済方法で購入する'
-      purchase_note_html: '購入から有効になるまでに数日かかります。<br>コンビニ払い、キャリア決済、Amazon Payに対応'
-      note_html: |
-        ※ 決済手数料は購入者のご負担となります<br>
-        ※ 支払いの完了後、5営業日以内に有効になります<br>
-        <span class="text-danger">※ 固定期間のプランにお試し期間は無く、返金の対象外です</span>
+      description: '注意事項をご確認の上、同意する場合のみご購入ください。'
+      tax_included: '税込'
+      payment_method: 'お支払い方法'
+      payment_methods:
+        card: 'クレジットカード'
+        keitai: 'キャリア決済'
+        konbini: 'コンビニ決済'
+        amazon: 'Amazon Pay'
+      purchase: 'この方法で購入する'
+      activate_immediately: '購入後すぐに有効になります。'
+      take_time_html: '購入の確認と有効化に数日かかります。<br>決済手数料は購入者のご負担となります。'
+      no_refund: 'このプランにお試し期間は無く、返金の対象外です。'
       specified_commercial_transactions: '特定商取引法に基づく表記'
       refund_policy: '返金ポリシー'
       'yes': '閉じる'
