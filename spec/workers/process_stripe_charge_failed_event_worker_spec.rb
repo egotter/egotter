@@ -25,7 +25,7 @@ RSpec.describe ProcessStripeChargeFailedEventWorker do
       context 'The checkout session is valid' do
         before { allow(checkout_session).to receive(:valid_period?).and_return(true) }
         it do
-          expect(worker).to receive(:send_message).with('The customer probably failed to enter card details on the checkout page', anything)
+          expect(worker).to receive(:send_message).with('The customer probably failed to enter card details', anything)
           subject
         end
       end
