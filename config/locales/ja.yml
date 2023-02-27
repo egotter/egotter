@@ -2753,7 +2753,7 @@ ja:
         delete_favorites: 'いいね削除マイページ'
         personality_insights: 'ツイッター性格診断'
         default: '分析結果'
-      config: '通知設定の変更'
+      config: '通知の停止や再開'
       switch_account: 'アカウントの切り替え'
       close: '閉じる'
     open_twitter_modal:
