@@ -16,16 +16,8 @@
       <p class="my-3"><%= t('pricing.plans.descriptions.common_html') %></p>
       <% if @plan_id == 'subscription' %>
         <a href="#" class="btn btn-outline-primary btn-lg btn-block btn-checkout"><%= t('.purchase') %></a>
-      <% elsif @plan_id == 'monthly-basis-1' %>
-        <a href="#" class="btn btn-outline-primary btn-lg btn-block" data-target="#purchase-one-month-modal" data-toggle="modal"><%= t('.purchase') %></a>
-        <% if user_signed_in? && current_user.admin? %>
-          <a href="#" class="btn btn-outline-warning btn-lg btn-block" data-target="#purchase-monthly-basis-modal" data-toggle="modal"><%= t('.purchase') %></a>
-        <% end %>
       <% else %>
-        <a href="#" class="btn btn-outline-primary btn-lg btn-block" data-target="#purchase-multiple-months-modal" data-toggle="modal"><%= t('.purchase') %></a>
-        <% if user_signed_in? && current_user.admin? %>
-          <a href="#" class="btn btn-outline-warning btn-lg btn-block" data-target="#purchase-monthly-basis-modal" data-toggle="modal"><%= t('.purchase') %></a>
-        <% end %>
+        <a href="#" class="btn btn-outline-primary btn-lg btn-block" data-target="#purchase-monthly-basis-modal" data-toggle="modal"><%= t('.purchase') %></a>
       <% end %>
     </div>
   </div>
