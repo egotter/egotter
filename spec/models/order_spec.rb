@@ -6,9 +6,25 @@ RSpec.describe Order, type: :model do
 
   describe '.create_by_checkout_session' do
     let(:metadata) { double('metadata', price: 123) }
-    let(:checkout_session) { double('checkout_session', id: 'cs_111', client_reference_id: user.id, customer_email: 'a@b.com', metadata: metadata, customer: 'cus_222', subscription: 'sub_333') }
+    let(:checkout_session) { double('checkout_session', id: 'cs_111', client_reference_id: user.id, metadata: metadata, customer: 'cus_222', subscription: 'sub_333') }
     subject { described_class.create_by_checkout_session(checkout_session) }
     it { expect { subject }.to change { Order.all.size }.by(1) }
+  end
+
+  describe '.create_by_monthly_basis' do
+    let(:metadata) { double('metadata', name: 'test plan', price: 123, months_count: 1, item_id: 'monthly-basis-1') }
+    let(:customer_details) { double('customer_details', email: nil) }
+    let(:checkout_session) { double('checkout_session', id: 'cs_111', client_reference_id: user.id, customer_details: customer_details, metadata: metadata, customer: 'cus_222') }
+    let(:subscription) { double('subscription', id: 'sub_xxx') }
+    subject { described_class.create_by_monthly_basis(checkout_session) }
+    it do
+      expect(Stripe::Subscription).to receive(:create).with(
+          customer: 'cus_222',
+          items: [{price: Order::BASIC_PLAN_MONTHLY_BASIS_PRICE_IDS['monthly-basis-1']}],
+          metadata: {user_id: user.id, price: 0, months_count: 1, item_id: 'monthly-basis-1'}
+      ).and_return(subscription)
+      expect { subject }.to change { Order.all.size }.by(1)
+    end
   end
 
   describe '.create_by_shop_item' do

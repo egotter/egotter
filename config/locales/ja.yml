@@ -670,6 +670,21 @@ ja:
           サポートへの質問の回答やツイッター不具合の保証は含まれていません。<a href="#not-included-features-details">詳しく</a><br>
           <br>
           売上の一部は社会貢献活動に寄付しています。<a href="#donation-details">詳しく</a>
+    purchase_monthly_basis_modal:
+      title: '購入前の確認'
+      description: '注意事項をご確認の上、同意する方のみご購入ください。'
+      tax_included: '（税込）'
+      purchase_by_card: 'クレジットカードで購入する'
+      purchase_by_card_note: '購入後すぐに有効になります。'
+      purchase: '他の決済方法で購入する'
+      purchase_note_html: '購入から有効になるまでに数日かかります。<br>コンビニ払い、キャリア決済、Amazon Payに対応'
+      note_html: |
+        ※ 決済手数料は購入者のご負担となります<br>
+        ※ 支払いの完了後、5営業日以内に有効になります<br>
+        <span class="text-danger">※ 固定期間のプランにお試し期間は無く、返金の対象外です</span>
+      specified_commercial_transactions: '特定商取引法に基づく表記'
+      refund_policy: '返金ポリシー'
+      'yes': '閉じる'
     purchase_one_month_modal:
       title: '単月購入の期間を選択する'
       description: '注意事項をご確認の上、同意する方のみご購入ください。'

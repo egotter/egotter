@@ -1,0 +1,20 @@
+<%= modal_dialog id: modal_id, title: t('.title'), button: {positive: t('.yes'), category: 'outline-secondary'} do %>
+  <div class="my-3"><%= t('.description') %></div>
+  <h3 class="h4"><%= plan_display_name(plan_id) %></h3>
+  <div class="my-3" style="font-size: 24px;"><%= plan_display_price(plan_id) %> <span class="text-muted"><%= t('.tax_included') %></span></div>
+
+  <div class="my-4">
+    <div><%= link_to t('.purchase_by_card'), '#', class: 'btn btn-outline-primary btn-one-time-checkout', data: {item_id: plan_id} %></div>
+    <div class="small"><%= t('.purchase_by_card_note') %></div>
+  </div>
+  <div class="my-4">
+    <div><%= link_to t('.purchase'), redirect_page_path(name: plan_id), id: "base-shop-#{plan_id}", class: 'btn btn-outline-primary', target: '_blank' %></div>
+    <div class="small"><%= t('.purchase_note_html') %></div>
+  </div>
+  <div class="text-center small mt-5 mb-3">
+    <%= link_to t('.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank' %>
+    &middot;
+    <%= link_to t('.refund_policy'), refund_policy_path(via: current_via), target: '_blank' %>
+  </div>
+  <div class="small text-muted mt-3 mb-5"><%= t('.note_html') %></div>
+<% end %>

@@ -61,6 +61,12 @@ class Order < ApplicationRecord
       'monthly-basis-12' => 660 * 12,
   }
   BASIC_PLAN_MONTHLY_BASIS_1_PRICE_ID = ENV['STRIPE_BASIC_PLAN_MONTHLY_BASIS_1_PRICE_ID']
+  BASIC_PLAN_MONTHLY_BASIS_PRICE_IDS = {
+      'monthly-basis-1' => ENV['STRIPE_BASIC_PLAN_MONTHLY_BASIS_1_PRICE_ID'],
+      'monthly-basis-3' => ENV['STRIPE_BASIC_PLAN_MONTHLY_BASIS_3_PRICE_ID'],
+      'monthly-basis-6' => ENV['STRIPE_BASIC_PLAN_MONTHLY_BASIS_6_PRICE_ID'],
+      'monthly-basis-12' => ENV['STRIPE_BASIC_PLAN_MONTHLY_BASIS_12_PRICE_ID'],
+  }
   TAX_RATE_ID = ENV['STRIPE_TAX_RATE_ID']
   TAX_RATE = 0.1
   PRICE = 300
@@ -103,18 +109,17 @@ class Order < ApplicationRecord
 
     def create_by_monthly_basis(checkout_session)
       months_count = checkout_session.metadata.months_count
+      item_id = checkout_session.metadata.item_id
+      price_id = BASIC_PLAN_MONTHLY_BASIS_PRICE_IDS[item_id]
 
-      if months_count == '1'
-        price_id = BASIC_PLAN_MONTHLY_BASIS_1_PRICE_ID
-      else
-        price_id = BASIC_PLAN_MONTHLY_BASIS_1_PRICE_ID
-        Airbag.warn 'Invalid months_count', months_count: months_count
+      if price_id.blank?
+        raise "price_id is blank checkout_session_id=#{checkout_session.id} months_count=#{months_count} item_id=#{item_id}"
       end
 
       subscription = Stripe::Subscription.create(
           customer: checkout_session.customer,
           items: [{price: price_id}],
-          metadata: {user_id: checkout_session.client_reference_id, price: 0, months_count: months_count},
+          metadata: {user_id: checkout_session.client_reference_id, price: 0, months_count: months_count, item_id: item_id},
       )
 
       create!(

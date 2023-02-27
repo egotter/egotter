@@ -18,8 +18,14 @@
         <a href="#" class="btn btn-outline-primary btn-lg btn-block btn-checkout"><%= t('.purchase') %></a>
       <% elsif @plan_id == 'monthly-basis-1' %>
         <a href="#" class="btn btn-outline-primary btn-lg btn-block" data-target="#purchase-one-month-modal" data-toggle="modal"><%= t('.purchase') %></a>
+        <% if user_signed_in? && current_user.admin? %>
+          <a href="#" class="btn btn-outline-warning btn-lg btn-block" data-target="#purchase-monthly-basis-modal" data-toggle="modal"><%= t('.purchase') %></a>
+        <% end %>
       <% else %>
         <a href="#" class="btn btn-outline-primary btn-lg btn-block" data-target="#purchase-multiple-months-modal" data-toggle="modal"><%= t('.purchase') %></a>
+        <% if user_signed_in? && current_user.admin? %>
+          <a href="#" class="btn btn-outline-warning btn-lg btn-block" data-target="#purchase-monthly-basis-modal" data-toggle="modal"><%= t('.purchase') %></a>
+        <% end %>
       <% end %>
     </div>
   </div>
@@ -29,6 +35,7 @@
 </div>
 
 <% unless @plan_id == 'subscription' %>
+  <%= render partial: 'purchase_monthly_basis_modal', locals: {modal_id: 'purchase-monthly-basis-modal', plan_id: @plan_id} %>
   <%= render partial: 'purchase_one_month_modal', locals: {modal_id: 'purchase-one-month-modal'} %>
   <%= render partial: 'purchase_multiple_months_modal', locals: {modal_id: 'purchase-multiple-months-modal', months_count: plan_months_count(@plan_id)} %>
 <% end %>
