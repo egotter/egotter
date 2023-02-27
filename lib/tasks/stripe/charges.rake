@@ -13,10 +13,16 @@ namespace :stripe do
 
         if charge.status == 'succeeded'
           if !user.has_valid_subscription? && (user.orders.any? && user.orders.last.cancel_source != 'user')
-            result[:succeeded] << {user_id: user.id, customer_id: charge.customer}
+            result[:succeeded] << charge.customer
           end
-        elsif charge.status == 'failed' && user.has_valid_subscription?
-          result[:failed] << {user_id: user.id, customer_id: charge.customer}
+        elsif charge.status == 'failed'
+          if user.has_valid_subscription?
+            payment_intent = Stripe::PaymentIntent.retrieve(charge.payment_intent)
+            latest_charge = Stripe::Charge.retrieve(payment_intent.latest_charge)
+            if latest_charge.status == 'failed'
+              result[:failed] << charge.customer
+            end
+          end
         end
       end
 
