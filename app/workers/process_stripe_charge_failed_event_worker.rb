@@ -13,6 +13,17 @@ class ProcessStripeChargeFailedEventWorker
       customer = Customer.latest_by(stripe_customer_id: customer_id)
       checkout_session = CheckoutSession.latest_by(user_id: customer.user_id)
 
+      begin
+        # The billing_reason can only be retrieved if this payment is linked to a subscription
+        charge = Stripe::Charge.retrieve(options['charge_id'])
+        if charge.invoice
+          invoice = Stripe::Invoice.retrieve(charge.invoice)
+          props.merge!(billing_reason: invoice.billing_reason) if invoice.billing_reason
+        end
+      rescue => e
+        Airbag.exception e, customer_id: customer_id, options: options
+      end
+
       if checkout_session.valid_period?
         send_message('The customer probably failed to enter card details on the checkout page', props)
       else
