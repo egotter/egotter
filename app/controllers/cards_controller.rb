@@ -2,7 +2,7 @@ class CardsController < ApplicationController
 
   before_action :require_login!
   before_action :has_valid_subscription!
-  before_action { self.footer_disabled = true }
+  before_action(only: :index) { self.footer_disabled = true }
 
   before_action :set_intent, only: :index
 
@@ -12,11 +12,13 @@ class CardsController < ApplicationController
     intent = Stripe::SetupIntent.create(customer: current_customer_id, payment_method_types: ['card'])
     @client_secret = intent.client_secret
     @time_limit = TIME_LIMIT_MINUTES
+    send_message('orders_card')
   end
 
   def index
     Stripe::Customer.update(current_customer_id, invoice_settings: {default_payment_method: @intent.payment_method})
     @message = intent_message(@intent.status)
+    send_message('orders_card', setup_intent: params[:setup_intent])
   end
 
   private
@@ -52,5 +54,12 @@ class CardsController < ApplicationController
     else
       t('cards.index.messages.error')
     end
+  end
+
+  def send_message(channel, options = {})
+    props = {user_id: current_user.id, action_name: action_name}.merge(options)
+    SendOrderMessageToSlackWorker.perform_async(channel, "`#{Rails.env}` #{props}")
+  rescue => e
+    Airbag.exception e, channel: channel, options: options
   end
 end

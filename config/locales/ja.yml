@@ -615,6 +615,7 @@ ja:
       error: '入力した情報に間違いがあります。修正してください。'
       setup_intent_client_secret_not_found: '先ほど入力された情報の誤りがあります。修正してください。'
     index:
+      close: 'このページは閉じて大丈夫です。'
       messages:
         succeeded: '定期購読プランの支払いに利用するクレジットカード情報の更新に成功しました。'
         processing: 'クレジットカード情報の更新中です。'
