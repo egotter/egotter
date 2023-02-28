@@ -1863,6 +1863,7 @@ ja:
       debug_message_html:
         <div class="uploader-debug-message">
           name={name}<br>
+          <br>
           type={type}<br>
           size={size}<br>
           device_type=%{device_type}<br>
@@ -1872,12 +1873,15 @@ ja:
       support_message_html:
         <p>何度も起きる場合は、このメッセージのスクリーンショットを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
       invalid_filename_html:
-        <p>ファイル名の形式が間違っています。Twitterから取得したアーカイブデータのファイル名は<span class="text-danger">変更しないで</span>ください。
-        また、ファイル名に <span class="text-danger">空白 や (1) など</span> が含まれていないか確認してください。</p>
+        <p>ファイル名の形式が間違っています。Twitterから取得したアーカイブデータのファイル名は<span class="text-danger">変更しないで</span>ください。<br>
+        <br>
+        正しいファイル名は一例として twitter-0000-00-00-[英数字の長い文字列].zip になります。<br>
+        <br>
+        ファイル名に <span class="text-danger">空白 や (1) など</span> が含まれていないか確認してください。</p>
         %{support_message}
         %{debug_message}
       too_old_file_html:
-        <p>ファイルが古すぎます。<span class="text-danger">アーカイブデータの作成から1週間以内にアップロードしてください。</span></p>
+        <p>ファイルが古すぎます。<span class="text-danger">アーカイブデータの作成から1週間以内</span>にアップロードしてください。</p>
         %{support_message}
         %{debug_message}
       invalid_content_type_html:
@@ -1893,7 +1897,7 @@ ja:
         <p>個別に対応しますので このメッセージのスクリーンショットを <a href="%{url}" target="_blank">@egotter_cs</a> まで送ってください。</p>
         %{debug_message}
       broken_file_html:
-        <p>壊れたファイルが指定されています。<span class="text-danger">自分で編集していないこと、パソコンでダブルクリックして開けることの両方を確認してください。</span></p>
+        <p>壊れたファイルが指定されています。<span class="text-danger">自分で編集していないこと、パソコンでダブルクリックして開けることの両方</span>を確認してください。</p>
         %{support_message}
         <div>reason={reason}</div>
         %{debug_message}

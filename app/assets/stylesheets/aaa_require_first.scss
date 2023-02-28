@@ -50,6 +50,7 @@ a, a:hover, a:focus {
 }
 
 .uploader-debug-message {
+  word-break: break-all;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
