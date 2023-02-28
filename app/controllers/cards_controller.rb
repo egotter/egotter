@@ -16,8 +16,8 @@ class CardsController < ApplicationController
   end
 
   def index
-    Stripe::Customer.update(current_customer_id, invoice_settings: {default_payment_method: @intent.payment_method})
-    @message = intent_message(@intent.status)
+    update_payment_method(@intent)
+    @message = select_intent_message(@intent.status)
     send_message('orders_card', setup_intent: params[:setup_intent])
   end
 
@@ -43,7 +43,12 @@ class CardsController < ApplicationController
     redirect_to cards_new_path(via: 'retrieving_setup_intent_failed')
   end
 
-  def intent_message(status)
+  def update_payment_method(intent)
+    Stripe::Customer.update(current_customer_id, invoice_settings: {default_payment_method: intent.payment_method})
+    Stripe::Subscription.update(current_user.valid_order.subscription_id, default_payment_method: intent.payment_method)
+  end
+
+  def select_intent_message(status)
     case status
     when 'succeeded'
       t('cards.index.messages.succeeded')
