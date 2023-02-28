@@ -1,6 +1,6 @@
 class CheckoutSessionBuilder
   class << self
-    def monthly_subscription(user)
+    def monthly_subscription(user, cancel_url)
       attrs = {
           client_reference_id: user.id,
           mode: 'subscription',
@@ -8,7 +8,7 @@ class CheckoutSessionBuilder
           subscription_data: {default_tax_rates: [Order::TAX_RATE_ID]},
           metadata: {user_id: user.id},
           success_url: ENV['STRIPE_SUCCESS_URL'],
-          cancel_url: ENV['STRIPE_CANCEL_URL'],
+          cancel_url: cancel_url,
           expires_at: Time.zone.now.to_i + CheckoutSession::VALID_PERIOD,
       }
 
@@ -23,7 +23,7 @@ class CheckoutSessionBuilder
       attrs
     end
 
-    def monthly_basis(user, item_id)
+    def monthly_basis(user, item_id, cancel_url)
       price = Order::BASIC_PLAN_MONTHLY_BASIS[item_id]
       months_count = item_id.split('-')[-1]
 
@@ -44,7 +44,7 @@ class CheckoutSessionBuilder
           line_items: [item],
           metadata: {user_id: user.id, name: name, price: price, months_count: months_count, item_id: item_id},
           success_url: ENV['STRIPE_SUCCESS_URL'],
-          cancel_url: ENV['STRIPE_CANCEL_URL'],
+          cancel_url: cancel_url,
           expires_at: Time.zone.now.to_i + CheckoutSession::VALID_PERIOD,
       }
 

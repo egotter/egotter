@@ -5,7 +5,7 @@ RSpec.describe CheckoutSessionBuilder, type: :model do
   let(:stripe_customer) { double('stripe customer', id: 'cus_xxx') }
 
   describe '.monthly_subscription' do
-    subject { described_class.monthly_subscription(user) }
+    subject { described_class.monthly_subscription(user, 'cancel_url') }
 
     before do
       allow(described_class).to receive(:find_or_create_customer).with(user).and_return('cus_xxx')
@@ -21,7 +21,7 @@ RSpec.describe CheckoutSessionBuilder, type: :model do
                         subscription_data: {default_tax_rates: [Order::TAX_RATE_ID], trial_period_days: Order::TRIAL_DAYS},
                         metadata: {user_id: user.id, price: 123, item_id: 'subscription'},
                         success_url: ENV['STRIPE_SUCCESS_URL'],
-                        cancel_url: ENV['STRIPE_CANCEL_URL'],
+                        cancel_url: 'cancel_url',
                         expires_at: 30.minutes.since.to_i,
                         customer: 'cus_xxx',
                         discounts: 'discount')
@@ -43,7 +43,7 @@ RSpec.describe CheckoutSessionBuilder, type: :model do
           quantity: 1,
       }
     }
-    subject { described_class.monthly_basis(user, item_id) }
+    subject { described_class.monthly_basis(user, item_id, 'cancel_url') }
 
     before do
       allow(described_class).to receive(:find_or_create_customer).with(user).and_return('cus_xxx')
@@ -56,7 +56,7 @@ RSpec.describe CheckoutSessionBuilder, type: :model do
                         line_items: [item],
                         metadata: {user_id: user.id, name: name, price: price, months_count: '1', item_id: item_id},
                         success_url: ENV['STRIPE_SUCCESS_URL'],
-                        cancel_url: ENV['STRIPE_CANCEL_URL'],
+                        cancel_url: 'cancel_url',
                         expires_at: 30.minutes.since.to_i,
                         customer: 'cus_xxx',
                      )

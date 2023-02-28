@@ -1,23 +1,25 @@
 <script src='https://js.stripe.com/v3'></script>
 
+<script>
+  function disableCheckoutButton($btn) {
+    if (!$btn.data('btn-disabled')) {
+      $btn.data('btn-disabled', true)
+          .attr('disabled', 'disabled')
+          .addClass('disabled')
+          .text('<%= t('.already_purchased') %>');
+    }
+    return false;
+  }
+</script>
+
 <% if user_signed_in? && current_user.has_valid_subscription? %>
   <script>
     $(function () {
-      function disableButton(button) {
-        if (!button.data('btn-disabled')) {
-          button.data('btn-disabled', true);
-          button.attr('disabled', 'disabled');
-          button.addClass('disabled');
-          button.text('<%= t('.already_purchased') %>');
-        }
-        return false;
-      }
-
       $('.btn-checkout, .btn-one-time-checkout').each(function () {
-        disableButton($(this));
+        disableCheckoutButton($(this));
       })
       $(document).on('click', '.btn-checkout, .btn-one-time-checkout', function () {
-        return disableButton($(this));
+        return disableCheckoutButton($(this));
       });
 
       $(document).on('click', '.btn-end-trial', function () {
@@ -39,14 +41,7 @@
         });
       }
 
-      function createCheckoutSession() {
-        var url = '<%= raw api_v1_checkout_sessions_path(via: current_via) %>';
-        $.post(url).done(function (res) {
-          redirectToCheckout(res.session_id);
-        }).fail(showErrorMessage);
-      }
-
-      function createOneTimeCheckoutSession(item_id) {
+      function createCheckoutSession(item_id) {
         var url = '<%= raw api_v1_checkout_sessions_path(via: current_via) %>' + '&item_id=' + item_id;
         $.post(url).done(function (res) {
           redirectToCheckout(res.session_id);
@@ -56,18 +51,24 @@
       $(document).on('click', '.btn-checkout', function () {
         var $btn = $(this);
         ahoy.track('Checkout clicked', {page: window.location.href, id: $btn.attr('id'), text: $btn.text().trim()});
-        createCheckoutSession();
+        createCheckoutSession('subscription');
         return false;
       });
 
       $(document).on('click', '.btn-one-time-checkout', function () {
         var $btn = $(this);
         ahoy.track('OneTimeCheckout clicked', {page: window.location.href, id: $btn.attr('id'), text: $btn.text().trim(), item_id: $btn.data('item-id')});
-        createOneTimeCheckoutSession($btn.data('item-id'));
+        createCheckoutSession($btn.data('item-id'));
         return false;
       });
     });
   </script>
 <% else %>
-  <%# TODO Redirect to pricing page %>
+  <script>
+    $(document).on('click', '.btn-checkout, .btn-one-time-checkout', function () {
+      var url = '/login?via=btn_checkout'; // login_path
+      window.location.href = url;
+      return false;
+    });
+  </script>
 <% end %>
