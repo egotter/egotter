@@ -960,11 +960,17 @@ ja:
         title: 'その他の気になることがある'
         description_html: '分からないことや気になることがありますか？ <a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。'
     end_trial_failure:
-      title: 'お試し期間の更新に失敗'
-      message: 'お試し期間の更新と初回の支払いに失敗したため、購入済みのプランは無効になりました。'
-      description_html: |
-        プリペイドカードやデビットカードの残高不足による支払い失敗が増えています。事前に残高をご確認ください。
-        カードに問題がないのに支払いに失敗した場合は、<a href="%{url}" target="_blank">@egotter_cs</a> までご連絡ください。
+      title: 'お試し期間の更新に失敗しました'
+      message: '初回の支払いに失敗したため、購入済みのプランは無効になりました。'
+      coupon:
+        title: 'プランの継続をご希望の場合'
+        description_html: '定期購読プランの継続をご希望する場合は、<a href="%{url}" target="_blank">%{user}</a> へご連絡ください。定期購読プランを初回と同じ割引価格で購入できるクーポンを付与します。'
+      prepaid_card:
+        title: 'プリペイドカードをお使いの場合'
+        description_html: 'プリペイドカードやデビットカードの残高不足で支払いに失敗した場合は、残高のチャージ後に <a href="%{url}" target="_blank">%{user}</a> へご連絡ください。クーポンを付与します。'
+      foreign_card:
+        title: '海外発行のカードをお使いの場合'
+        description_html: 'Amexカード のように海外で発行したカードを日本で使うと、理由なく支払いが失敗することがあります。その場合は <a href="%{url}" target="_blank">%{user}</a> へご連絡ください。クーポンを付与します。'
       history_html: 'これまでの購入履歴は <a href="%{url}">設定 &gt; 購入履歴</a> から確認できます。'
       support_html: '分からないことや気になることがありますか？ <a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。'
     cancel:
@@ -2175,6 +2181,7 @@ ja:
     delete_tweets_max_deletion: '%{count}万件以上のツイート削除を希望します'
     delete_favorites_inquiry: 'いいね削除のお問い合わせ：お問い合わせ内容をここに書いてください'
     charge_failed_inquiry: 'カードに問題が無いのに支払いに失敗しました。定期購読の継続を希望します。'
+    recover_card_failure_inquiry: 'カードの支払い失敗の問題を解決しました。定期購読の継続を希望します。'
     error_inquiry: '%{name} エラーが複数回起きています。（スクリーンショットも送ってください）'
     starting_message: 'レポートの送信を開始します。通常は30秒以内にレポートが届きます。このメッセージはレポートの開始時に自動で送信されます。#egotter'
     recovery_message: 'リクエストの処理に失敗しました…！お手数ですが再度お試しください。3回以上連続して起きる場合は @egotter_cs にご連絡ください。#egotter'

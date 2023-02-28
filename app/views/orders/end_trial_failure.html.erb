@@ -1,10 +1,16 @@
-<h2 class="h4 text-center my-5"><%= t('.title') %></h2>
+<h2 class="h5 text-center my-5"><%= t('.title') %></h2>
+<p class="my-3"><%= t('.message') %></p>
 
-<p class="mt-3"><%= t('.message') %></p>
+<p class="my-3"><%= t('.history_html', url: settings_order_history_path(via: current_via('message'))) %></p>
+<p class="my-3"><%= t('.support_html', url: twitter_web_url('egotter_cs')) %></p>
 
-<%= alert_box class: 'my-4' do %>
-  <%= t('.description_html', url: twitter_web_url('egotter_cs')) %>
-<% end %>
+<% message_options = {user: 'egotter_cs', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.recover_card_failure_inquiry'))} %>
 
-<p><%= t('.history_html', url: settings_order_history_path(via: current_via('message'))) %></p>
-<p><%= t('.support_html', url: twitter_web_url('egotter_cs')) %></p>
+<h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.coupon.title') %></h3>
+<p class="my-3"><%= t('.coupon.description_html', message_options) %></p>
+
+<h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.prepaid_card.title') %></h3>
+<p class="my-3"><%= t('.prepaid_card.description_html', message_options) %></p>
+
+<h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.foreign_card.title') %></h3>
+<p class="my-3"><%= t('.foreign_card.description_html', message_options) %></p>
