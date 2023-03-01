@@ -13,6 +13,8 @@ class ErrorPagesController < ApplicationController
     twitter_user_not_persisted
   )
 
+  skip_before_action :set_search_count_limitation, only: :database_error
+
   before_action :validate_request_format
   before_action :set_screen_name, only: SET_USER_ACTIONS
   before_action :set_user, only: SET_USER_ACTIONS
@@ -95,6 +97,10 @@ class ErrorPagesController < ApplicationController
 
   def csrf_error
     @screen_name = current_user&.screen_name
+  end
+
+  def database_error
+    render file: "#{Rails.root}/public/500.html", layout: false
   end
 
   def service_stopped

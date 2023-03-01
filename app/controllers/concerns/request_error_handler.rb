@@ -8,6 +8,7 @@ module RequestErrorHandler
     rescue_from StandardError, with: :handle_general_error
     rescue_from Rack::Timeout::RequestTimeoutException, with: :handle_request_timeout
     rescue_from ActionController::InvalidAuthenticityToken, with: :handle_csrf_error
+    rescue_from ActiveRecord::ConnectionNotEstablished, with: :handle_database_error
   end
 
   private
@@ -33,12 +34,22 @@ module RequestErrorHandler
   end
 
   def handle_csrf_error(ex)
-    Airbag.info "handle_csrf_error: #{ex.inspect}", request_details
+    Airbag.info ex.inspect, request_details
 
     if request.xhr?
       head :bad_request
     else
       redirect_to error_pages_csrf_error_path(via: current_via) unless performed?
+    end
+  end
+
+  def handle_database_error(ex)
+    Airbag.exception ex
+
+    if request.xhr?
+      head :internal_server_error
+    else
+      redirect_to error_pages_database_error_path(via: current_via) unless performed?
     end
   end
 
