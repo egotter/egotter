@@ -44,19 +44,29 @@ namespace :orders do
 
   task send_charge_failed_message: :environment do
     from = ENV['FROM']
-    to_addresses = ENV['TO'].split(',')
 
-    to_addresses.each do |to|
-      subject = I18n.t('workers.charge_failed_reminder.subject')
-      body = I18n.t('workers.charge_failed_reminder.body')
-      GmailClient.new(from).send_message(from, to, subject, body)
-      puts body
+    if ENV['CUSTOMER_ID']
+      customer = Stripe::Customer.retrieve(ENV['CUSTOMER_ID'])
+      address = customer.email
+      user_id = customer.metadata['user_id']
+    else
+      address = ENV['TO']
+      user_id = nil
+    end
 
-      if ENV['USER_ID']
-        user = User.find(ENV['USER_ID'])
-        User.egotter.api_client.create_direct_message(user.uid, I18n.t('workers.charge_failed_reminder.dm'))
-      end
+    subject = I18n.t('workers.charge_failed_reminder.subject')
+    body = I18n.t('workers.charge_failed_reminder.body')
+    GmailClient.new(from).send_message(from, address, subject, body)
+    puts address
+    puts body
+
+    if user_id
       puts '----------------------------------------------------'
+      user = User.find(user_id)
+      message = I18n.t('workers.charge_failed_reminder.dm')
+      User.egotter.api_client.create_direct_message(user.uid, message)
+      puts "#{user.id} #{user.screen_name}"
+      puts message
     end
   end
 
