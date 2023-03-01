@@ -4,8 +4,8 @@ module ConnectionChecker
   extend ActiveSupport::Concern
 
   included do
-    before_action :check_database_connection
-    before_action :check_redis_connection
+    before_action :check_database_connection, if: -> { !twitter_webhook? && !stripe_webhook? }
+    before_action :check_redis_connection, if: -> { !twitter_webhook? && !stripe_webhook? }
   end
 
   def check_database_connection
