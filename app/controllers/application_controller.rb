@@ -48,11 +48,6 @@ class ApplicationController < ActionController::Base
     super
   end
 
-  def redirect_to(options = {}, response_options = {})
-    create_error_log("Redirect path: #{options}", '') if options.is_a?(String) && options.match?(/\A\/error_pages\//)
-    super
-  end
-
   # https://github.com/plataformatec/devise/issues/1390
   def new_session_path(scope)
     root_path(via: current_via('new_session'))
