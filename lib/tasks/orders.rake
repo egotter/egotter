@@ -51,6 +51,11 @@ namespace :orders do
       body = I18n.t('workers.charge_failed_reminder.body')
       GmailClient.new(from).send_message(from, to, subject, body)
       puts body
+
+      if ENV['USER_ID']
+        user = User.find(ENV['USER_ID'])
+        User.egotter.api_client.create_direct_message(user.uid, I18n.t('workers.charge_failed_reminder.dm'))
+      end
       puts '----------------------------------------------------'
     end
   end
