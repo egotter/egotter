@@ -1,6 +1,10 @@
 <h2 class="h5 text-center my-5"><%= t('.title') %></h2>
 <p class="my-3"><%= t('.message') %></p>
 
+<%= alert_box category: 'primary', class: 'my-5' do %>
+  <%= t('.coupon_message_html', user: 'egotter_cs', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.charge_failed_inquiry'))) %>
+<% end %>
+
 <p class="my-3"><%= t('.history_html', url: settings_order_history_path(via: current_via('message'))) %></p>
 <p class="my-3"><%= t('.support_html', url: twitter_web_url('egotter_cs')) %></p>
 
