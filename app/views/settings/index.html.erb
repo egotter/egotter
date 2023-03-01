@@ -1,120 +1,122 @@
-<div class="text-primary m-3"><%= t('.settings') %></div>
+<div class="settings-container">
+  <div class="text-primary m-3"><%= t('.settings') %></div>
 
-<div class="m-3">
-  <%= link_to settings_account_path, class: 'text-body' do %>
-    <div class="d-flex">
-      <div class="flex-grow-1"><%= t('.account') %></div>
-      <div>&gt;</div>
-    </div>
-  <% end %>
-</div>
-
-<hr>
-
-<div class="m-3">
-  <%= link_to settings_periodic_report_path, class: 'text-body' do %>
-    <div class="d-flex">
-      <div class="flex-grow-1"><%= t('.periodic_report') %></div>
-      <div>&gt;</div>
-    </div>
-  <% end %>
-</div>
-
-<hr>
-
-<div class="m-3">
-  <%= link_to settings_block_report_path, class: 'text-body' do %>
-    <div class="d-flex">
-      <div class="flex-grow-1"><%= t('.block_report') %></div>
-      <div>&gt;</div>
-    </div>
-  <% end %>
-</div>
-
-<hr>
-
-<div class="m-3">
-  <%= link_to settings_mute_report_path, class: 'text-body' do %>
-    <div class="d-flex">
-      <div class="flex-grow-1"><%= t('.mute_report') %></div>
-      <div>&gt;</div>
-    </div>
-  <% end %>
-</div>
-
-<hr>
-
-<div class="m-3">
-  <%= link_to settings_search_report_path, class: 'text-body' do %>
-    <div class="d-flex">
-      <div class="flex-grow-1"><%= t('.search_report') %></div>
-      <div>&gt;</div>
-    </div>
-  <% end %>
-</div>
-
-<hr>
-
-<div class="m-3">
-  <%= link_to settings_sneak_search_path, class: 'text-body' do %>
-    <div class="d-flex">
-      <div class="flex-grow-1"><%= t('.sneak_search') %></div>
-      <div>&gt;</div>
-    </div>
-  <% end %>
-</div>
-
-<hr>
-
-<div class="m-3">
-  <%= link_to settings_private_mode_path, class: 'text-body' do %>
-    <div class="d-flex">
-      <div class="flex-grow-1"><%= t('.private_mode') %></div>
-      <div>&gt;</div>
-    </div>
-  <% end %>
-</div>
-
-<hr>
-
-<div class="m-3">
-  <%= link_to settings_order_history_path, class: 'text-body' do %>
-    <div class="d-flex">
-      <div class="flex-grow-1">
-        <%= t('.order_history.title') %>
-        <% if current_user.has_valid_subscription? %>
-          <span class="egotter-pink small"><%= t('.order_history.basic') %></span>
-        <% end %>
+  <div class="m-3">
+    <%= link_to settings_account_path, class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><%= t('.account') %></div>
+        <div>&gt;</div>
       </div>
-      <div>&gt;</div>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <div class="m-3">
+    <%= link_to settings_periodic_report_path, class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><%= t('.periodic_report') %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <div class="m-3">
+    <%= link_to settings_block_report_path, class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><%= t('.block_report') %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <div class="m-3">
+    <%= link_to settings_mute_report_path, class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><%= t('.mute_report') %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <div class="m-3">
+    <%= link_to settings_search_report_path, class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><%= t('.search_report') %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <div class="m-3">
+    <%= link_to settings_sneak_search_path, class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><%= t('.sneak_search') %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <div class="m-3">
+    <%= link_to settings_private_mode_path, class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><%= t('.private_mode') %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <div class="m-3">
+    <%= link_to settings_order_history_path, class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1">
+          <%= t('.order_history.title') %>
+          <% if current_user.has_valid_subscription? %>
+            <span class="egotter-pink small"><%= t('.order_history.basic') %></span>
+          <% end %>
+        </div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <div class="text-primary m-3"><%= t('.others') %></div>
+
+  <div class="m-3">
+    <%= link_to delete_tweets_path(via: current_via), class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><%= t('.delete_tweets') %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <div class="m-3">
+    <%= link_to delete_favorites_path(via: current_via), class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><%= t('.delete_favorites') %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <%= render partial: 'data' %>
 </div>
-
-<hr>
-
-<div class="text-primary m-3"><%= t('.others') %></div>
-
-<div class="m-3">
-  <%= link_to delete_tweets_path(via: current_via), class: 'text-body' do %>
-    <div class="d-flex">
-      <div class="flex-grow-1"><%= t('.delete_tweets') %></div>
-      <div>&gt;</div>
-    </div>
-  <% end %>
-</div>
-
-<hr>
-
-<div class="m-3">
-  <%= link_to delete_favorites_path(via: current_via), class: 'text-body' do %>
-    <div class="d-flex">
-      <div class="flex-grow-1"><%= t('.delete_favorites') %></div>
-      <div>&gt;</div>
-    </div>
-  <% end %>
-</div>
-
-<hr>
-
-<%= render partial: 'data' %>
