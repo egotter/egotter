@@ -63,12 +63,7 @@ class ProcessStripeChargeFailedEventWorker
   end
 
   def send_remind_message(customer_id, order)
-    customer = Stripe::Customer.retrieve(customer_id)
-    if (to_address = customer.email || order.email)
-      subject = I18n.t('workers.charge_failed_reminder.subject')
-      body = I18n.t('workers.charge_failed_reminder.body')
-      SendOrderMessageToSlackWorker.perform_async(:orders_warning, "#{to_address}\n\n#{subject}\n\n#{body}".truncate(150))
-    end
+    SendOrderMessageToSlackWorker.perform_async(:orders_warning, customer_id)
   rescue => e
     Airbag.exception e, customer_id: customer_id, order_id: order.id
   end
