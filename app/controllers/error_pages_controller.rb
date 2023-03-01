@@ -14,6 +14,8 @@ class ErrorPagesController < ApplicationController
   )
 
   skip_before_action :set_search_count_limitation, only: :database_error
+  skip_before_action :check_database_connection, only: %i(database_error redis_error)
+  skip_before_action :check_redis_connection, only: %i(database_error redis_error)
 
   before_action :validate_request_format
   before_action :set_screen_name, only: SET_USER_ACTIONS
@@ -100,6 +102,12 @@ class ErrorPagesController < ApplicationController
   end
 
   def database_error
+    logger.error 'database_error called'
+    render file: "#{Rails.root}/public/500.html", layout: false
+  end
+
+  def redis_error
+    logger.error 'redis_error called'
     render file: "#{Rails.root}/public/500.html", layout: false
   end
 

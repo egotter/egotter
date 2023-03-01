@@ -7,7 +7,7 @@ Rails.application.reloader.to_prepare do
           Airbag.format_severity(level), message.to_s.truncate(50000), Airbag.truncate_hash(ctx.merge(props)), Time.zone.now)
     end
   rescue => e
-    Rails.logger.error "CreateAirbagLogWorker: #{e.inspect}"
+    Rails.logger.error "broadcasting failed: #{e.inspect} worker=CreateAirbagLogWorker message=#{message}"
     Rails.logger.error e.backtrace.join("\n")
   end
 
@@ -17,7 +17,7 @@ Rails.application.reloader.to_prepare do
       SendAirbagMessageToSlackWorker.perform_in(10, message)
     end
   rescue => e
-    Rails.logger.error "initializers/airbag.rb: target=slack #{e.inspect}"
+    Rails.logger.error "broadcasting failed: #{e.inspect} worker=SendAirbagMessageToSlackWorker message=#{message}"
     Rails.logger.error e.backtrace.join("\n")
   end
 

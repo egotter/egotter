@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include ConnectionChecker
   include SearchCountLimitationConcern
   include ApplicationHelper
   include RequestErrorHandler
