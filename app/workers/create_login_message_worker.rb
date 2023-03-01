@@ -23,6 +23,8 @@ class CreateLoginMessageWorker
     7. ツイッターの ID/PASS は絶対に合っていますか？
 
     ※ 連絡先は @egotter_cs です。ego_tter ではないです。
+
+    #egotter
   TEXT
 
   def unique_key(uid, options = {})

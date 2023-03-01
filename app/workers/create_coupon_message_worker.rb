@@ -9,6 +9,8 @@ class CreateCouponMessageWorker
      もしそうであれば、@egotter_cs にご連絡ください。
 
     ※ 連絡先は @egotter_cs です。ego_tter ではないです。
+
+    #egotter
   TEXT
 
   def unique_key(uid, options = {})
