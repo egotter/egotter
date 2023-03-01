@@ -9,7 +9,7 @@ module ConnectionChecker
   end
 
   def check_database_connection
-    ActiveRecord::Base.connection.execute('')
+    ActiveRecord::Base.connection.execute('select 1')
   rescue => e
     redirect_to error_pages_database_error_path(via: current_via)
   end
