@@ -1,74 +1,26 @@
 <script src='https://js.stripe.com/v3'></script>
-
-<script>
-  function disableCheckoutButton($btn) {
-    if (!$btn.data('btn-disabled')) {
-      $btn.data('btn-disabled', true)
-          .attr('disabled', 'disabled')
-          .addClass('disabled')
-          .text('<%= t('.already_purchased') %>');
-    }
-    return false;
-  }
-</script>
+<%= javascript_pack_tag 'checkout' %>
 
 <% if user_signed_in? && current_user.has_valid_subscription? %>
   <script>
     $(function () {
-      $('.btn-checkout, .btn-one-time-checkout').each(function () {
-        disableCheckoutButton($(this));
-      })
-      $(document).on('click', '.btn-checkout, .btn-one-time-checkout', function () {
-        return disableCheckoutButton($(this));
-      });
-
-      $(document).on('click', '.btn-end-trial', function () {
-        if (window.endTrialModal) {
-          window.endTrialModal.show(this);
-          return false;
-        }
-      });
+      var checkout = new Checkout('', '', {alreadyPurchased: '<%= t('.already_purchased') %>'});
+      checkout.disableCheckoutButtons();
+      checkout.enableEndTrialButton();
     });
   </script>
 <% elsif user_signed_in? %>
   <script>
     $(function () {
-      var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
-
-      function redirectToCheckout(session_id) {
-        stripe.redirectToCheckout({sessionId: session_id}).then(function (result) {
-          logger.log(result.error.message);
-        });
-      }
-
-      function createCheckoutSession(item_id) {
-        var url = '<%= raw api_v1_checkout_sessions_path(via: current_via) %>' + '&item_id=' + item_id;
-        $.post(url).done(function (res) {
-          redirectToCheckout(res.session_id);
-        }).fail(showErrorMessage);
-      }
-
-      $(document).on('click', '.btn-checkout', function () {
-        var $btn = $(this);
-        ahoy.track('Checkout clicked', {page: window.location.href, id: $btn.attr('id'), text: $btn.text().trim()});
-        createCheckoutSession('subscription');
-        return false;
-      });
-
-      $(document).on('click', '.btn-one-time-checkout', function () {
-        var $btn = $(this);
-        ahoy.track('OneTimeCheckout clicked', {page: window.location.href, id: $btn.attr('id'), text: $btn.text().trim(), item_id: $btn.data('item-id')});
-        createCheckoutSession($btn.data('item-id'));
-        return false;
-      });
+      var key = "<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>";
+      var url = '<%= raw api_v1_checkout_sessions_path(via: current_via) %>';
+      new Checkout(key, url, {}).enableCheckoutButtons();
     });
   </script>
 <% else %>
   <script>
-    $(document).on('click', '.btn-checkout, .btn-one-time-checkout', function () {
-      var url = '/login?via=btn_checkout'; // login_path
-      window.location.href = url;
-      return false;
+    $(function () {
+      new Checkout().enableRedirectingToLogin();
     });
   </script>
 <% end %>

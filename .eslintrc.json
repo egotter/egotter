@@ -28,7 +28,8 @@
     "Egotter": true,
     "ToastMessage": true,
     "Mustache": true,
-    "AsyncLoader": true
+    "AsyncLoader": true,
+    "Stripe": true
   },
   "rules": {
     "semi": "error"
