@@ -16,7 +16,7 @@ class PrettyIconMessageResponder < AbstractMessageResponder
     end
 
     def send_message
-      CreatePrettyIconMessageWorker.perform_async(@uid)
+      CreatePrettyIconMessageWorker.perform_async(@uid, text: @text)
     end
   end
 end
