@@ -1,7 +1,7 @@
 class OpenAiClient
   def chat(text)
     messages = [
-        {role: 'system', content: I18n.t('ai.pretty_content')},
+        {role: 'system', content: I18n.t('ai.system_content')},
         {role: 'user', content: text},
     ]
     res = OpenAI::Client.new.chat(parameters: {model: 'gpt-3.5-turbo', messages: messages})
