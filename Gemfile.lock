@@ -197,7 +197,7 @@ GEM
       rake
     gems (1.2.0)
     gli (2.21.0)
-    globalid (0.5.2)
+    globalid (1.1.0)
       activesupport (>= 5.0)
     google-api-client (0.53.0)
       google-apis-core (~> 0.1)
