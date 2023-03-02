@@ -16,7 +16,7 @@ class QuestionMessageResponder < AbstractMessageResponder
     end
 
     def send_message
-      CreateQuestionMessageWorker.perform_async(@uid)
+      CreateQuestionMessageWorker.perform_async(@uid, text: @text)
     end
   end
 end
