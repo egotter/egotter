@@ -19,6 +19,7 @@ class CreateGreetingOkMessageWorker
   # options:
   #   text
   def perform(uid, options = {})
+    options['text'] = I18n.t('workers.tell_me')
     message = generate_chat(options['text'], default: MESSAGE + Kaomoji::KAWAII.sample)
     User.egotter.api_client.create_direct_message(uid, message)
   rescue => e
