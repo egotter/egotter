@@ -26,6 +26,7 @@ class CreatePeriodicReportReceivedMessageWorker
     <%= message %>
 
     通知の送信回数が回復しました。
+
     ・残り送信回数：4回
     ・有効期限：24時間
 
@@ -62,6 +63,6 @@ class CreatePeriodicReportReceivedMessageWorker
   private
 
   def short_message(uid)
-    ERB.new(SIMPLE_MESSAGE).result_with_hash(message: MessageOfTheDay.new(uid))
+    ERB.new(SIMPLE_MESSAGE).result_with_hash(message: MessageOfTheDay.message(uid))
   end
 end

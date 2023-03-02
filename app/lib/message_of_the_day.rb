@@ -1,33 +1,19 @@
+require 'forwardable'
+require 'singleton'
+
 class MessageOfTheDay
-  def initialize(uid)
-    @seed = uid + Time.zone.now.strftime('%Y%m%d').to_i
-  end
+  include Singleton
 
-  def to_s
-    type = :color
-    "#{title(type)}: #{send(type, @seed)}"
-  end
+  COLORS = File.read(Rails.root.join('config/lucky_colors.txt')).split("\n")
 
-  private
-
-  def title(type)
-    case type
-    when :color
-      I18n.t('message_of_the_day.color.title')
-    else
-      raise "Invalid type value=#{type}"
-    end
-  end
-
-  def color(seed)
-    self.class.colors.sample(random: Random.new(seed))
-  rescue => e
-    I18n.t('message_of_the_day.color.default')
+  def message(uid)
+    seed = uid + Time.zone.now.strftime('%Y%m%d').to_i
+    color = COLORS.sample(random: Random.new(seed))
+    I18n.t('message_of_the_day.messages', color: color).sample(random: Random.new(seed))
   end
 
   class << self
-    def colors
-      @colors ||= File.read(Rails.root.join('config/lucky_colors.txt')).split("\n")
-    end
+    extend Forwardable
+    def_delegators :instance, :message
   end
 end
