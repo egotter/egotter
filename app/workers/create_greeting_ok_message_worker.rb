@@ -1,5 +1,6 @@
 class CreateGreetingOkMessageWorker
   include Sidekiq::Worker
+  include ChatUtil
   include ReportErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
@@ -18,7 +19,8 @@ class CreateGreetingOkMessageWorker
   # options:
   #   text
   def perform(uid, options = {})
-    User.egotter.api_client.create_direct_message(uid, MESSAGE + Kaomoji::KAWAII.sample)
+    message = generate_chat(options['text'], default: MESSAGE + Kaomoji::KAWAII.sample)
+    User.egotter.api_client.create_direct_message(uid, message)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.exception e, uid: uid, options: options

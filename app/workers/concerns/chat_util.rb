@@ -3,7 +3,7 @@ module ChatUtil
     res = OpenAiClient.new.chat(text)
   rescue => e
     Airbag.exception e, text: text
-    res = options['default']
+    res = options[:default]
   ensure
     Airbag.info 'OpenAI response', input: text, output: res
   end
