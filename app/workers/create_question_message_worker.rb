@@ -8,11 +8,7 @@ class CreateQuestionMessageWorker
 
     ------------------------------------
 
-    何かご質問でしょうか？ お返事が必要な場合は @egotter_cs までご連絡ください。
-
-    お返事が必要な質問は @ego_tter ではなく @egotter_cs にお送りください。
-
-    #egotter
+    本当のご質問でしょうか？ もしそうであれば @egotter_cs までご連絡ください。
   TEXT
 
   def unique_key(uid, options = {})
