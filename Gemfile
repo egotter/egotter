@@ -99,6 +99,9 @@ gem 'ddtrace', require: false
 # Slack
 gem 'slack-ruby-client', require: false
 
+# OpenAI
+gem 'ruby-openai'
+
 group :development do
   gem 'annotate'
 end

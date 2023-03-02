@@ -248,6 +248,9 @@ GEM
     http-parser (1.2.3)
       ffi-compiler (>= 1.0, < 2.0)
     http_parser.rb (0.6.0)
+    httparty (0.21.0)
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
     httpclient (2.8.3)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
@@ -282,6 +285,7 @@ GEM
     minitest (5.17.0)
     msgpack (1.6.0)
     multi_json (1.15.0)
+    multi_xml (0.6.0)
     multipart-post (2.3.0)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
@@ -390,6 +394,8 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.11.0)
+    ruby-openai (3.4.0)
+      httparty (>= 0.18.1)
     ruby2_keywords (0.0.5)
     safely_block (0.3.0)
       errbase (>= 0.1.1)
@@ -512,6 +518,7 @@ DEPENDENCIES
   rails (~> 6.1)
   redis
   rspec-rails
+  ruby-openai
   sass-rails (>= 6)
   sidekiq (= 6.5.1)
   sinatra
