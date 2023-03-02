@@ -1,5 +1,4 @@
 class OpenAiClient
-
   def chat(text)
     messages = [
         {role: 'system', content: I18n.t('ai.pretty_content')},
