@@ -84,6 +84,7 @@ class ProcessWebhookEventWorker
     processed = LoginMessageResponder.from_dm(dm).respond unless processed
     processed = CouponMessageResponder.from_dm(dm).respond unless processed
     processed = MemoMessageResponder.from_dm(dm).respond unless processed
+    processed = ChatMessageResponder.from_dm(dm).respond unless processed
 
     unless processed
       Airbag.info "#{__method__} DM is ignored sender_id=#{dm.sender_id} text=#{dm.text}"
