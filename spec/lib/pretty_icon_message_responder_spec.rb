@@ -27,7 +27,7 @@ describe PrettyIconMessageResponder::Processor do
     subject { instance.send_message }
 
     it do
-      expect(CreatePrettyIconMessageWorker).to receive(:perform_async).with(uid)
+      expect(CreatePrettyIconMessageWorker).to receive(:perform_async).with(uid, text: 'text')
       subject
     end
   end
