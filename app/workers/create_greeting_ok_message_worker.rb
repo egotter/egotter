@@ -16,6 +16,7 @@ class CreateGreetingOkMessageWorker
   end
 
   # options:
+  #   text
   def perform(uid, options = {})
     User.egotter.api_client.create_direct_message(uid, MESSAGE + Kaomoji::KAWAII.sample)
   rescue => e

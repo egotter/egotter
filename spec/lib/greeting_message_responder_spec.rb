@@ -159,7 +159,7 @@ describe GreetingMessageResponder::Processor do
     context '@morning is true' do
       before { instance.instance_variable_set(:@morning, true) }
       it do
-        expect(CreateGreetingGoodMorningMessageWorker).to receive(:perform_async).with(uid)
+        expect(CreateGreetingGoodMorningMessageWorker).to receive(:perform_async).with(uid, text: 'text')
         subject
       end
     end
@@ -167,7 +167,7 @@ describe GreetingMessageResponder::Processor do
     context '@afternoon is true' do
       before { instance.instance_variable_set(:@afternoon, true) }
       it do
-        expect(CreateGreetingGoodAfternoonMessageWorker).to receive(:perform_async).with(uid)
+        expect(CreateGreetingGoodAfternoonMessageWorker).to receive(:perform_async).with(uid, text: 'text')
         subject
       end
     end
@@ -175,7 +175,7 @@ describe GreetingMessageResponder::Processor do
     context '@evening is true' do
       before { instance.instance_variable_set(:@evening, true) }
       it do
-        expect(CreateGreetingGoodEveningMessageWorker).to receive(:perform_async).with(uid)
+        expect(CreateGreetingGoodEveningMessageWorker).to receive(:perform_async).with(uid, text: 'text')
         subject
       end
     end
@@ -183,7 +183,7 @@ describe GreetingMessageResponder::Processor do
     context '@night is true' do
       before { instance.instance_variable_set(:@night, true) }
       it do
-        expect(CreateGreetingGoodNightMessageWorker).to receive(:perform_async).with(uid)
+        expect(CreateGreetingGoodNightMessageWorker).to receive(:perform_async).with(uid, text: 'text')
         subject
       end
     end
@@ -191,7 +191,7 @@ describe GreetingMessageResponder::Processor do
     context '@talk is true' do
       before { instance.instance_variable_set(:@talk, true) }
       it do
-        expect(CreateGreetingTalkMessageWorker).to receive(:perform_async).with(uid)
+        expect(CreateGreetingTalkMessageWorker).to receive(:perform_async).with(uid, text: 'text')
         subject
       end
     end
@@ -199,7 +199,7 @@ describe GreetingMessageResponder::Processor do
     context '@yes is true' do
       before { instance.instance_variable_set(:@yes, true) }
       it do
-        expect(CreateGreetingYesMessageWorker).to receive(:perform_async).with(uid)
+        expect(CreateGreetingYesMessageWorker).to receive(:perform_async).with(uid, text: 'text')
         subject
       end
     end
@@ -207,7 +207,7 @@ describe GreetingMessageResponder::Processor do
     context '@sorry is true' do
       before { instance.instance_variable_set(:@sorry, true) }
       it do
-        expect(CreateGreetingSorryMessageWorker).to receive(:perform_async).with(uid)
+        expect(CreateGreetingSorryMessageWorker).to receive(:perform_async).with(uid, text: 'text')
         subject
       end
     end
@@ -215,7 +215,7 @@ describe GreetingMessageResponder::Processor do
     context '@ok is true' do
       before { instance.instance_variable_set(:@ok, true) }
       it do
-        expect(CreateGreetingOkMessageWorker).to receive(:perform_async).with(uid)
+        expect(CreateGreetingOkMessageWorker).to receive(:perform_async).with(uid, text: 'text')
         subject
       end
     end

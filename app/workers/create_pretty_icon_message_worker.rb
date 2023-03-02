@@ -17,6 +17,7 @@ class CreatePrettyIconMessageWorker
   end
 
   # options:
+  #   text
   def perform(uid, options = {})
     message = generate_message(options['text'])
     User.egotter.api_client.create_direct_message(uid, message)
@@ -27,6 +28,8 @@ class CreatePrettyIconMessageWorker
   ensure
     Airbag.info 'OpenAI response', worker: self.class, input: options['text'], output: message
   end
+
+  private
 
   def generate_message(text)
     OpenAiClient.new.chat(text)

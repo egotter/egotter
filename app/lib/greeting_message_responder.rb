@@ -73,23 +73,23 @@ class GreetingMessageResponder < AbstractMessageResponder
 
     def send_message
       if @morning
-        CreateGreetingGoodMorningMessageWorker.perform_async(@uid)
+        CreateGreetingGoodMorningMessageWorker.perform_async(@uid, text: @text)
       elsif @afternoon
-        CreateGreetingGoodAfternoonMessageWorker.perform_async(@uid)
+        CreateGreetingGoodAfternoonMessageWorker.perform_async(@uid, text: @text)
       elsif @evening
-        CreateGreetingGoodEveningMessageWorker.perform_async(@uid)
+        CreateGreetingGoodEveningMessageWorker.perform_async(@uid, text: @text)
       elsif @night
-        CreateGreetingGoodNightMessageWorker.perform_async(@uid)
+        CreateGreetingGoodNightMessageWorker.perform_async(@uid, text: @text)
       elsif @talk
-        CreateGreetingTalkMessageWorker.perform_async(@uid)
+        CreateGreetingTalkMessageWorker.perform_async(@uid, text: @text)
       elsif @yes
-        CreateGreetingYesMessageWorker.perform_async(@uid)
+        CreateGreetingYesMessageWorker.perform_async(@uid, text: @text)
       elsif @sorry
-        CreateGreetingSorryMessageWorker.perform_async(@uid)
+        CreateGreetingSorryMessageWorker.perform_async(@uid, text: @text)
       elsif @ok
-        CreateGreetingOkMessageWorker.perform_async(@uid)
+        CreateGreetingOkMessageWorker.perform_async(@uid, text: @text)
       elsif @test
-        CreateGreetingOkMessageWorker.perform_async(@uid)
+        CreateGreetingOkMessageWorker.perform_async(@uid, text: @text)
       end
     end
   end
