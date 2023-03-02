@@ -34,7 +34,7 @@ describe QuestionMessageResponder::Processor do
     subject { instance.send_message }
 
     it do
-      expect(CreateQuestionMessageWorker).to receive(:perform_async).with(uid)
+      expect(CreateQuestionMessageWorker).to receive(:perform_async).with(uid, text: 'text')
       subject
     end
   end
