@@ -1,5 +1,9 @@
 class OpenAiClient
   def chat(text)
+    if text.match?(/\A[\p{Hiragana}|\p{Katakana}|A-Za-z0-9]\z/)
+      text = I18n.t('ai.hello')
+    end
+
     messages = [
         {role: 'system', content: I18n.t('ai.system_content')},
         {role: 'user', content: text},
