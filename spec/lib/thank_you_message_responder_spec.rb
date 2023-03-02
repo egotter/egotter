@@ -38,7 +38,7 @@ describe ThankYouMessageResponder::Processor do
     subject { instance.send_message }
 
     it do
-      expect(CreateThankYouMessageWorker).to receive(:perform_async).with(uid)
+      expect(CreateThankYouMessageWorker).to receive(:perform_async).with(uid, text: 'text')
       subject
     end
   end

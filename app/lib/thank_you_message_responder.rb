@@ -18,7 +18,7 @@ class ThankYouMessageResponder < AbstractMessageResponder
     end
 
     def send_message
-      CreateThankYouMessageWorker.perform_async(@uid)
+      CreateThankYouMessageWorker.perform_async(@uid, text: @text)
     end
   end
 end
