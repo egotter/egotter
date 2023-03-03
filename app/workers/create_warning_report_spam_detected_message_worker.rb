@@ -16,7 +16,6 @@ class CreateWarningReportSpamDetectedMessageWorker
     message = WarningReport.spam_detected_message
     event = WarningReport.build_direct_message_event(uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)
-
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.exception e, uid: uid, options: options

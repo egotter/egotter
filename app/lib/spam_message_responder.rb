@@ -16,6 +16,8 @@ class SpamMessageResponder < AbstractMessageResponder
 
       if spam_received?(@text)
         @spam = true
+      elsif (user = User.find_by(uid: @uid)) && user.banned?
+        @banned = true
       end
     end
 
@@ -40,6 +42,8 @@ class SpamMessageResponder < AbstractMessageResponder
         if (user = User.find_by(uid: @uid))
           CreateViolationEventWorker.perform_async(user.id, 'Spam message', text: @text)
         end
+        CreateWarningReportSpamDetectedMessageWorker.perform_async(@uid)
+      elsif @banned
         CreateWarningReportSpamDetectedMessageWorker.perform_async(@uid)
       end
     end
