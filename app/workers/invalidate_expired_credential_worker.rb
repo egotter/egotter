@@ -1,3 +1,4 @@
+# TODO Remove later
 class InvalidateExpiredCredentialWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc_low', retry: 0, backtrace: false

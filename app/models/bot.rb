@@ -39,13 +39,38 @@ class Bot < ApplicationRecord
     }
   end
 
+  def invalidate_credentials
+    user = api_client.twitter.verify_credentials
+    assign_attributes(authorized: true, screen_name: user.screen_name)
+
+    if changed?
+      save
+      SlackBotClient.channel('monit_bot').post_message("Bot is updated id=#{id} changes=#{saved_changes.except('updated_at')}")
+    end
+  rescue => e
+    if TwitterApiStatus.retry_timeout?(e)
+      # Do nothing
+    elsif TwitterApiStatus.unauthorized?(e)
+      update(authorized: false)
+    elsif TwitterApiStatus.temporarily_locked?(e)
+      update(locked: true)
+    else
+      Airbag.exception e, bot_id: id
+    end
+  end
+
   class << self
-    def current_ids
-      where(authorized: true, locked: false).pluck(:id)
+    def available_ids
+      where(enabled: true, authorized: true, locked: false).pluck(:id)
     end
 
+    def agent
+      select(:token, :secret).find(available_ids.sample)
+    end
+
+    # TODO Remove later
     def api_client(options = {})
-      select(:token, :secret).find(current_ids.sample).api_client(options)
+      agent.api_client(options)
     end
 
     def load(path = 'bots.json')

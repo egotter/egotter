@@ -1,3 +1,4 @@
+# TODO Remove later
 module Api
   module V1
     class BotsController < ApplicationController
