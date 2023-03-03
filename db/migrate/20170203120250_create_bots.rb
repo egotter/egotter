@@ -3,6 +3,7 @@ class CreateBots < ActiveRecord::Migration[4.2]
     create_table :bots do |t|
       t.bigint  :uid,         null: false
       t.string  :screen_name, null: false
+      t.boolean :enabled,     null: false, default: true
       t.boolean :authorized,  null: false, default: true
       t.boolean :locked,      null: false, default: false
       t.string  :secret,      null: false

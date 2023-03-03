@@ -5,6 +5,7 @@
 #  id          :integer          not null, primary key
 #  uid         :bigint(8)        not null
 #  screen_name :string(191)      not null
+#  enabled     :boolean          default(TRUE), not null
 #  authorized  :boolean          default(TRUE), not null
 #  locked      :boolean          default(FALSE), not null
 #  secret      :string(191)      not null

@@ -205,6 +205,7 @@ ActiveRecord::Schema.define(version: 2023_02_18_094012) do
   create_table "bots", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "uid", null: false
     t.string "screen_name", null: false
+    t.boolean "enabled", default: true, null: false
     t.boolean "authorized", default: true, null: false
     t.boolean "locked", default: false, null: false
     t.string "secret", null: false
