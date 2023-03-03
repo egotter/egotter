@@ -13,7 +13,8 @@ class OpenAiClient
     res = OpenAI::Client.new.chat(parameters: {model: 'gpt-3.5-turbo', messages: messages})
     message = res['choices'][0]['message']['content']
 
-    if SpamMessageResponder::Processor.new(nil, nil).spam_received?(text)
+    if SpamMessageResponder::Processor.new(nil, nil).spam_received?(text) ||
+        I18n.t('ai.system_content').split(/[、。]/).any? { |content| message.include?(content) }
       return
     end
 
