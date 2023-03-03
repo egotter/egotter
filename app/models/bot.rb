@@ -73,13 +73,13 @@ class Bot < ApplicationRecord
       agent.api_client(options)
     end
 
-    def load(path = 'bots.json')
+    def load_credentials(path = 'bots.json')
       JSON.parse(File.read(path)).each do |bot|
         create!(uid: bot['uid'], screen_name: bot['screen_name'], secret: bot['secret'], token: bot['token'])
       end
     end
 
-    def dump(path = 'bots.json')
+    def dump_credentials(path = 'bots.json')
       data = all.map { |b| {uid: b.uid, screen_name: b.screen_name, secret: b.secret, token: b.token} }
       File.write(path, data.to_json)
     end
