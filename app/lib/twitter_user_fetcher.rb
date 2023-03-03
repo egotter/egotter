@@ -137,7 +137,7 @@ class TwitterUserFetcher
           if client_reloadable?(e, uid)
             @twitter_client = Bot.api_client.twitter
             calls_count = 0
-            Airbag.info "TwitterUserFetcher::ClientWrapper: Reloaded uid=#{uid} message=#{e.message}"
+            Airbag.info 'TwitterUserFetcher: Client reloaded', uid: uid, message: e.message
             retry
           else
             raise
