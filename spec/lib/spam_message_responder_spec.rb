@@ -22,10 +22,17 @@ describe SpamMessageResponder::Processor do
   describe '#received_regexp1' do
     subject { text.match?(instance.received_regexp1) }
 
-    ['死ね', '殺す', '黙れ'].each do |word|
+    ['死ね', '殺す', '黙れ', 'セックスしたい'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
+      end
+    end
+
+    ['セックスレス'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_falsey }
       end
     end
   end

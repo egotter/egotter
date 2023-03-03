@@ -25,10 +25,11 @@ class CreateQuestionMessageWorker
     if options['inquiry']
       User.egotter.api_client.create_direct_message(uid, MESSAGE)
     elsif options['question']
-      message = generate_chat(options['text'])
-      replies = [PeriodicReport::QUICK_REPLY_INQUIRY]
-      event = DirectMessageEvent.build_with_replies(uid, message, replies)
-      User.egotter.api_client.create_direct_message_event(event: event)
+      if (message = generate_chat(options['text']))
+        replies = [PeriodicReport::QUICK_REPLY_INQUIRY]
+        event = DirectMessageEvent.build_with_replies(uid, message, replies)
+        User.egotter.api_client.create_direct_message_event(event: event)
+      end
     end
   rescue => e
     unless ignorable_report_error?(e)
