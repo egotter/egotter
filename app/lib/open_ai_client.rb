@@ -2,7 +2,7 @@ class OpenAiClient
   def chat(text)
     if text.match?(/\A[\p{Hiragana}|\p{Katakana}|A-Za-z0-9]\z/) ||
         text.match?(/prompt|プロンプト/) ||
-        SpamMessageResponder::Processor.new(nil, text).received?
+        SpamMessageResponder::Processor.new(nil, nil).spam_received?(text)
       return
     end
 
@@ -13,7 +13,7 @@ class OpenAiClient
     res = OpenAI::Client.new.chat(parameters: {model: 'gpt-3.5-turbo', messages: messages})
     message = res['choices'][0]['message']['content']
 
-    if SpamMessageResponder::Processor.new(nil, message).received?
+    if SpamMessageResponder::Processor.new(nil, nil).spam_received?(text)
       return
     end
 
