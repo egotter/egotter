@@ -571,6 +571,11 @@ class PeriodicReport < ApplicationRecord
       description: I18n.t('quick_replies.shared.description3')
   }
 
+  QUICK_REPLY_INQUIRY = {
+      label: I18n.t('quick_replies.shared.label5'),
+      description: I18n.t('quick_replies.shared.description5')
+  }
+
   class << self
     # TODO Remove later
     def messages_allotted?(user)

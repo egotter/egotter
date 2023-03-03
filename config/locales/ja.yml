@@ -2200,6 +2200,8 @@ ja:
       description3: 'フォローした後に押してください'
       label4: '会話を閉じる（次の通知を待つ）'
       description4: 'このボタンを押しておくと、DM通知が届きやすくなります'
+      label5: '通常の質問です'
+      description5: '雑談ではなくお問い合わせの場合は押してください'
   short_messages:
     receive_periodic_reports: 'リムられ通知 送信'
     stop_periodic_reports: 'リムられ通知 停止'

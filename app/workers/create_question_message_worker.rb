@@ -5,10 +5,9 @@ class CreateQuestionMessageWorker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   MESSAGE = <<~TEXT
+    ご連絡ありがとうございます。回答が必要なお問い合わせでしょうか？ もしそうであれば、@egotter_cs へご連絡ください。
 
-    ------------------------------------
-
-    本当のご質問でしょうか？ もしそうであれば @egotter_cs までご連絡ください。
+    #egotter
   TEXT
 
   def unique_key(uid, options = {})
@@ -21,9 +20,16 @@ class CreateQuestionMessageWorker
 
   # options:
   #   text
+  #   inquiry or question
   def perform(uid, options = {})
-    message = generate_chat(options['text']) + "\n\n" + MESSAGE
-    User.egotter.api_client.create_direct_message(uid, message)
+    if options['inquiry']
+      User.egotter.api_client.create_direct_message(uid, MESSAGE)
+    elsif options['question']
+      message = generate_chat(options['text'])
+      replies = [PeriodicReport::QUICK_REPLY_INQUIRY]
+      event = DirectMessageEvent.build_with_replies(uid, message, replies)
+      User.egotter.api_client.create_direct_message_event(event: event)
+    end
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.exception e, uid: uid, options: options
