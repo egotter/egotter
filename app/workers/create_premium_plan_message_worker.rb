@@ -19,6 +19,9 @@ class CreatePremiumPlanMessageWorker
     ・有料プランの解約
     設定 > 購入履歴 から行えます。<%= order_history_url %>
 
+    ・ツイッターIDを削除済みで有料プランを解約できない
+    「 ツイッターIDを削除済みの場合のプラン解約窓口 」からご連絡ください。<%= refund_policy_url %>
+
     ・有料プランの返金
     返金ポリシー をご覧になってください。<%= refund_policy_url %>
 

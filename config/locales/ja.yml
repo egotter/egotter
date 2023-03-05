@@ -2398,7 +2398,7 @@ ja:
       visitor: 'まだログインしていません。'
       description: '購入済みの有料プランについてお問い合わせをする際は、購入したアカウントでログインしているかを事前にご確認ください。'
       canceling_html: 'プランの解約は <a href="%{url}">設定 &gt; 購入履歴</a> から行うことができます。'
-      cancel_form_html: '既にツイッターIDを削除済みでえごったーWebサイトにログインできない場合は <a href="%{url}" target="_blank">ツイッターIDが削除済みの場合のプラン解約窓口</a> からご連絡ください。'
+      cancel_form_html: '既にツイッターIDを削除済みでえごったーWebサイトにログインできない場合は <a href="%{url}" target="_blank">ツイッターIDを削除済みの場合のプラン解約窓口</a> からご連絡ください。'
     announcement:
       title: "お知らせ"
     features:
