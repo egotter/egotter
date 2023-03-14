@@ -622,7 +622,7 @@ ja:
         requires_payment_method: 'クレジットカード情報の更新に失敗しました。再度お試しください。'
         error: 'クレジットカード情報の更新に失敗しました。再度お試しください。'
   pricing:
-    index2:
+    index:
       meta_title: '料金プラン'
       meta_description: 'えごったーの料金プランです。'
       page_title: '料金プラン'

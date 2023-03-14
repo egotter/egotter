@@ -3,7 +3,6 @@ class PricingController < ApplicationController
   skip_before_action :current_user_not_blocker?
 
   def index
-    render 'index2'
   end
 
   def plan
