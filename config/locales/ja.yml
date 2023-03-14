@@ -626,14 +626,13 @@ ja:
       meta_title: '料金プラン'
       meta_description: 'えごったーの料金プランです。'
       page_title: '料金プラン'
-      page_description: 'えごったーの料金はほとんど無料です。勝手に課金されることはありませんのでご安心ください。'
-      page_description_note_html: '分からないことや気になることは、<a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご質問ください。'
+      page_description_html:
+        えごったーの料金はほとんど無料です。勝手に課金されることはありませんのでご安心ください。<br>
+        <br>
+        えごったーの利用や有料プランの購入には <a href="%{terms_of_service_url}">利用規約</a> への同意が必須です。必ず事前にご覧になってください。<br>
+        <br>
+        分からないことや気になることは、<a href="%{cs_url}" target="_blank">@%{cs_user}</a> までお気軽にご質問ください。
     plan:
-      meta_title: '料金プラン'
-      meta_description: 'えごったーの料金プランです。'
-      page_title: '料金プラン'
-      page_description: 'えごったーの料金はほとんど無料です。勝手に課金されることはありませんのでご安心ください。'
-      page_description_note_html: '分からないことや気になることは、<a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご質問ください。'
       tax_included: '税込'
       purchase: '購入画面へ進む'
     plans:

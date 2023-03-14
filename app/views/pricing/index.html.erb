@@ -6,8 +6,7 @@
 
 <div class="container">
   <h2 class="h4 text-center my-5"><%= t('.page_title') %></h2>
-  <p><%= t('.page_description') %></p>
-  <p><%= t('.page_description_note_html', url: twitter_web_url('egotter_cs')) %></p>
+  <p class="my-3"><%= t('.page_description_html', terms_of_service_url: terms_of_service_path(via: current_via), cs_url: twitter_web_url('egotter_cs'), cs_user: 'egotter_cs') %></p>
 
   <%= render partial: 'shared/about_plan' %>
 
