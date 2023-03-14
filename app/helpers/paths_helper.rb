@@ -213,10 +213,6 @@ module PathsHelper
     "https://searchfollowers.com/?via=egotter_#{via}"
   end
 
-  def egotter_ads_form_url
-    'https://docs.google.com/forms/d/e/1FAIpQLSdZc8a6tS0OhddM_c_XKljYm4hSCSwLx3iIiymVqOFs_40qiw/viewform'
-  end
-
   def custom_support_form_url
     'https://docs.google.com/forms/d/e/1FAIpQLScGxNuSm1na2yQeUwuoHoS37T3zLDMwnOpccZV4R1S_Ac3zLw/viewform'
   end
