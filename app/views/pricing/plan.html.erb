@@ -28,6 +28,4 @@
 
 <% unless @plan_id == 'subscription' %>
   <%= render partial: 'purchase_monthly_basis_modal', locals: {modal_id: 'purchase-monthly-basis-modal', plan_id: @plan_id} %>
-  <%= render partial: 'purchase_one_month_modal', locals: {modal_id: 'purchase-one-month-modal'} %>
-  <%= render partial: 'purchase_multiple_months_modal', locals: {modal_id: 'purchase-multiple-months-modal', months_count: plan_months_count(@plan_id)} %>
 <% end %>

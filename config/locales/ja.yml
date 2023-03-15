@@ -687,48 +687,6 @@ ja:
       specified_commercial_transactions: '特定商取引法に基づく表記'
       refund_policy: '返金ポリシー'
       'yes': '閉じる'
-    purchase_one_month_modal:
-      title: '単月購入の期間を選択する'
-      description: '注意事項をご確認の上、同意する方のみご購入ください。'
-      1_month:
-        title: '1ヶ月分の購入'
-        price: '%{value}円 (税込)'
-        purchase_by_card: 'クレジットカードで購入する'
-        purchase_by_card_note: 'クレジットカードで支払えます。購入後すぐに有効になります。'
-        purchase: '他の決済方法で購入する'
-        purchase_note: 'コンビニ払い、キャリア決済、Amazon Payで支払えます。購入から有効になるまでに数日かかります。'
-      note_html: |
-        ※ 決済手数料は購入者のご負担となります<br>
-        ※ 支払いの完了後、5営業日以内に有効になります<br>
-        <span class="text-danger">※ 固定期間のプランにお試し期間は無く、返金の対象外です</span>
-      specified_commercial_transactions: '特定商取引法に基づく表記'
-      refund_policy: '返金ポリシー'
-      'yes': '閉じる'
-    purchase_multiple_months_modal:
-      title: '一括購入の期間を選択する'
-      description: '注意事項をご確認の上、同意する方のみご購入ください。'
-      3_month:
-        title: '3ヶ月分の一括購入'
-        price: '%{value}円 (税込)'
-        discount_rate: '割引率：%{value}%'
-        purchase: '3ヶ月分を購入する'
-      6_month:
-        title: '6ヶ月分の一括購入'
-        price: '%{value}円 (税込)'
-        discount_rate: '割引率：%{value}%'
-        purchase: '6ヶ月分を購入する'
-      12_month:
-        title: '12ヶ月分の一括購入'
-        price: '%{value}円 (税込)'
-        discount_rate: '割引率：%{value}%'
-        purchase: '12ヶ月分を購入する'
-      note_html: |
-        ※ 決済手数料は購入者のご負担となります<br>
-        ※ 支払いの完了後、5営業日以内に有効になります<br>
-        <span class="text-danger">※ 固定期間のプランにお試し期間は無く、返金の対象外です</span>
-      specified_commercial_transactions: '特定商取引法に基づく表記'
-      refund_policy: '返金ポリシー'
-      'yes': '閉じる'
   orders:
     success:
       title: 'プランの購入が完了しました'
