@@ -1,5 +1,5 @@
 <%= modal_dialog id: modal_id, title: t('.title'), button: {positive: t('.yes'), category: 'outline-secondary'} do %>
-  <div class="my-3"><%= t('.description') %></div>
+  <div class="my-3"><%= t('.description_html', url: terms_of_service_path(via: current_via)) %></div>
   <h3 class="h4 mt-5"><%= plan_display_name(plan_id) %></h3>
   <div class="my-3" style="font-size: 24px;"><%= plan_display_price(plan_id) %> <span class="text-muted"><%= t('.tax_included') %></span></div>
 
@@ -88,8 +88,10 @@
   </script>
 
   <div class="small mt-3 mb-2">
-    <div><%= link_to t('.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank' %></div>
+    <div class="mb-1"><%= link_to t('.terms_of_service'), terms_of_service_path(via: current_via), target: '_blank' %></div>
+    <div class="mb-1"><%= link_to t('.privacy_policy'), privacy_policy_path(via: current_via), target: '_blank' %></div>
+    <div class="mb-1"><%= link_to t('.specified_commercial_transactions'), specified_commercial_transactions_path(via: current_via), target: '_blank' %></div>
     <div><%= link_to t('.refund_policy'), refund_policy_path(via: current_via), target: '_blank' %></div>
   </div>
-  <div class="text-danger small my-2"><%= t('.no_refund') %></div>
+  <div class="text-danger small my-2"><%= t('.no_refund', name: plan_display_name(plan_id)) %></div>
 <% end %>
