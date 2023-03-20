@@ -1,4 +1,12 @@
 GIT
+  remote: https://github.com/egotter/ruby-openai.git
+  revision: 8ae6075c52e3b849279552b7af5e0408bf1c4079
+  branch: v3.4.0-with-timeouts
+  specs:
+    ruby-openai (3.4.0)
+      httparty (>= 0.18.1)
+
+GIT
   remote: https://github.com/egotter/twitter.git
   revision: 7411e9bb8f2dda6a16e2e145074f8fd2c57478ea
   specs:
@@ -394,8 +402,6 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.11.0)
-    ruby-openai (3.4.0)
-      httparty (>= 0.18.1)
     ruby2_keywords (0.0.5)
     safely_block (0.3.0)
       errbase (>= 0.1.1)
@@ -518,7 +524,7 @@ DEPENDENCIES
   rails (~> 6.1)
   redis
   rspec-rails
-  ruby-openai
+  ruby-openai!
   sass-rails (>= 6)
   sidekiq (= 6.5.1)
   sinatra
