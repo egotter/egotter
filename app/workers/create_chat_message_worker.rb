@@ -15,7 +15,7 @@ class CreateChatMessageWorker
   # options:
   #   text
   def perform(uid, options = {})
-    if (message = generate_chat(options['text']))
+    if (message = generate_chat(options['text'], uid: uid))
       User.egotter.api_client.create_direct_message(uid, message)
     end
   rescue => e

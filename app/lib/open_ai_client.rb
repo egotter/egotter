@@ -1,5 +1,5 @@
 class OpenAiClient
-  def chat(text)
+  def chat!(text)
     if text.match?(/\A[\p{Hiragana}|\p{Katakana}|A-Za-z0-9]\z/) ||
         text.match?(/prompt|プロンプト/) ||
         SpamMessageResponder::Processor.new(nil, nil).spam_received?(text)
@@ -19,6 +19,10 @@ class OpenAiClient
     end
 
     message
+  end
+
+  def chat(text)
+    chat!(text)
   rescue => e
     Airbag.exception e, text: text, res: @res
     Kaomoji::KAWAII.sample

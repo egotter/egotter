@@ -19,7 +19,7 @@ class CreateGreetingSorryMessageWorker
   # options:
   #   text
   def perform(uid, options = {})
-    message = generate_chat(options['text'], default: MESSAGE + Kaomoji::KAWAII.sample)
+    message = generate_chat(options['text'])
     User.egotter.api_client.create_direct_message(uid, message)
   rescue => e
     unless ignorable_report_error?(e)
