@@ -14,6 +14,7 @@ class DirectMessageWrapper
       new(JSON.parse(json, symbolize_names: true))
     end
 
+    # args: [recipient_id, text]
     def from_args(args, kwargs)
       if kwargs.empty?
         new(event: DirectMessageEvent.build(args[0], args[1]))
