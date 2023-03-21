@@ -21,7 +21,7 @@ class CreateThankYouMessageWorker
   # options:
   #   text
   def perform(uid, options = {})
-    message = generate_chat(options['text'])
+    message = generate_chat(options['text'], uid: uid)
     User.egotter.api_client.create_direct_message(uid, message)
   rescue => e
     unless ignorable_report_error?(e)
