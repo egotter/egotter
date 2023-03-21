@@ -360,20 +360,6 @@ ActiveRecord::Schema.define(version: 2023_02_18_094012) do
     t.index ["user_id"], name: "index_create_test_report_requests_on_user_id"
   end
 
-  create_table "create_twitter_user_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "request_id"
-    t.bigint "uid"
-    t.boolean "status", default: false, null: false
-    t.string "error_class"
-    t.string "error_message"
-    t.datetime "created_at", null: false
-    t.index ["created_at"], name: "index_create_twitter_user_logs_on_created_at"
-    t.index ["request_id"], name: "index_create_twitter_user_logs_on_request_id"
-    t.index ["uid"], name: "index_create_twitter_user_logs_on_uid"
-    t.index ["user_id"], name: "index_create_twitter_user_logs_on_user_id"
-  end
-
   create_table "create_twitter_user_requests", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "session_id"
     t.integer "user_id", null: false

@@ -14,6 +14,7 @@
 #
 
 class MutualFriendship < ApplicationRecord
+  # TODO Remove later
 
   with_options(primary_key: :uid, optional: true) do |obj|
     obj.belongs_to :twitter_user, foreign_key: :from_uid
