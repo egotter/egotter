@@ -100,7 +100,7 @@ gem 'ddtrace', require: false
 gem 'slack-ruby-client', require: false
 
 # OpenAI
-gem 'ruby-openai', github: 'egotter/ruby-openai', branch: 'v3.4.0-with-timeouts'
+gem 'ruby-openai', github: 'egotter/ruby-openai', branch: 'v3.4.0-with-configurable-timeouts'
 
 group :development do
   gem 'annotate'

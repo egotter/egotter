@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/egotter/ruby-openai.git
-  revision: 8ae6075c52e3b849279552b7af5e0408bf1c4079
-  branch: v3.4.0-with-timeouts
+  revision: 07d7ab3767016ac13ea63dbabbc7678557aecba5
+  branch: v3.4.0-with-configurable-timeouts
   specs:
     ruby-openai (3.4.0)
       httparty (>= 0.18.1)
