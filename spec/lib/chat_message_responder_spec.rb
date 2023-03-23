@@ -15,7 +15,7 @@ describe ChatMessageResponder::Processor do
       end
     end
 
-    ['https://t.co/12345'].each do |word|
+    ['https://t.co/xxx123', '@user'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_falsey }

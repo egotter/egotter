@@ -14,6 +14,7 @@ class ChatMessageResponder < AbstractMessageResponder
     def received?
       return false if @text.length > message_length
       return false if @text.match?(%r(\Ahttps?://t\.co/\w+\z))
+      return false if @text.match?(%r(\A@\w+\z))
 
       @chat = true
     end
