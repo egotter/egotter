@@ -19,8 +19,10 @@ class ChatMessageResponder < AbstractMessageResponder
       return false if @text.match?(URL_REGEXP)
       return false if @text.match?(USERNAME_REGEXP)
 
-      if @text.match?(THANKS_REGEXP)
+      if @text.match?(thanks_regexp)
         @thanks = true
+      elsif @text.match?(pretty_regexp)
+        @pretty = true
       else
         @chat = true
       end
@@ -32,9 +34,17 @@ class ChatMessageResponder < AbstractMessageResponder
       THANKS_REGEXP
     end
 
+    PRETTY_REGEXP = /アイコン|可愛い|かわいい|カワイイ/
+
+    def pretty_regexp
+      PRETTY_REGEXP
+    end
+
     def send_message
       if @thanks
         CreateThankYouMessageWorker.perform_async(@uid, text: @text)
+      elsif @pretty
+        CreatePrettyIconMessageWorker.perform_async(@uid, text: @text)
       elsif @chat
         CreateChatMessageWorker.perform_async(@uid, text: @text)
       end

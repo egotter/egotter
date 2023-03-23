@@ -108,7 +108,6 @@ RSpec.describe ProcessWebhookEventWorker do
           StopMessageResponder,
           DeleteTweetsMessageResponder,
           CloseFriendsMessageResponder,
-          PrettyIconMessageResponder,
           SpamMessageResponder,
           QuestionMessageResponder,
           AnonymousMessageResponder,
