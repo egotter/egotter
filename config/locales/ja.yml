@@ -1999,7 +1999,6 @@ ja:
 
       えごったーサポート
   workers:
-    tell_me: 'このメッセージが届いていたら教えてください'
     charge_failed_reminder:
       subject: '【えごったーショップ】定期購読プラン 半額クーポンのお知らせ'
       body: |
