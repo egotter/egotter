@@ -111,8 +111,8 @@ describe ChatMessageResponder::Processor do
 
   describe '#test_regexp' do
     subject { text.match?(instance.test_regexp) }
-    @allow_list = ['DM送信テスト']
-    @deny_list = ['DMテスト']
+    @allow_list = ['DM送信テスト', 'DM届きました']
+    @deny_list = ['DMテスト', 'DM届きましたよ']
     include_context 'it matches the regexp'
   end
 

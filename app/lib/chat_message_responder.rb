@@ -90,8 +90,10 @@ class ChatMessageResponder < AbstractMessageResponder
       /\A(おけ|おう|OK|ok)\z/
     end
 
+    TEST_REGEXP = Regexp.union(/DM送信テスト/, /^(DM届きました)$/)
+
     def test_regexp
-      /DM送信テスト/
+      TEST_REGEXP
     end
 
     def send_message
