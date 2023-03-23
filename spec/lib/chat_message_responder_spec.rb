@@ -81,13 +81,6 @@ describe ChatMessageResponder::Processor do
     include_context 'it matches the regexp'
   end
 
-  describe '#talk_regexp' do
-    subject { text.match?(instance.talk_regexp) }
-    @allow_list = ['えごったー']
-    @deny_list = ['やっほー']
-    include_context 'it matches the regexp'
-  end
-
   describe '#yes_regexp' do
     subject { text.match?(instance.yes_regexp) }
     @allow_list = ['はい']
@@ -126,7 +119,6 @@ describe ChatMessageResponder::Processor do
         ['afternoon', CreateGreetingGoodAfternoonMessageWorker],
         ['evening', CreateGreetingGoodEveningMessageWorker],
         ['night', CreateGreetingGoodNightMessageWorker],
-        ['talk', CreateGreetingTalkMessageWorker],
         ['yes', CreateGreetingYesMessageWorker],
         ['sorry', CreateGreetingSorryMessageWorker],
         ['ok', CreateGreetingOkMessageWorker],
