@@ -4,10 +4,6 @@ class CreateGreetingGoodAfternoonMessageWorker
   include ReportErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
-  MESSAGE = <<~TEXT
-    こんにちは。
-  TEXT
-
   def unique_key(uid, options = {})
     uid
   end
@@ -19,8 +15,7 @@ class CreateGreetingGoodAfternoonMessageWorker
   # options:
   #   text
   def perform(uid, options = {})
-    message = generate_chat(options['text'], uid: uid)
-    User.egotter.api_client.create_direct_message(uid, message)
+    User.egotter.api_client.create_direct_message(uid, I18n.t('workers.chat_messages.good_afternoon').sample)
   rescue => e
     unless ignorable_report_error?(e)
       Airbag.exception e, uid: uid, options: options
