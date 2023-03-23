@@ -33,7 +33,7 @@ describe ChatMessageResponder::Processor do
       end
     end
 
-    ['とんかつ'].each do |word|
+    ['おつかれんこん'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_falsey }
