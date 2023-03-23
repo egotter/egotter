@@ -111,7 +111,6 @@ RSpec.describe ProcessWebhookEventWorker do
           SpamMessageResponder,
           QuestionMessageResponder,
           AnonymousMessageResponder,
-          GreetingMessageResponder,
           MemoMessageResponder
       ].each do |klass|
         expect(klass).to receive_message_chain(:from_dm, :respond).with(dm).with(no_args)
