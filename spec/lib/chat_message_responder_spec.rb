@@ -23,6 +23,24 @@ describe ChatMessageResponder::Processor do
     end
   end
 
+  describe '#thanks_regexp' do
+    subject { text.match?(instance.thanks_regexp) }
+
+    ['ありがと', 'おつかれ'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    ['とんかつ'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_falsey }
+      end
+    end
+  end
+
   describe '#send_message' do
     subject { instance.send_message }
     before { instance.instance_variable_set(:@chat, true) }

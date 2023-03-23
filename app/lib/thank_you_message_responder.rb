@@ -1,3 +1,4 @@
+# TODO Remove later
 class ThankYouMessageResponder < AbstractMessageResponder
 
   def processor_class
