@@ -14,8 +14,7 @@ class SendSentMessageWorker
   end
 
   def static_message?(text)
-    text == I18n.t('quick_replies.prompt_reports.label3') ||
-        text.include?('#egotter')
+    text.include?('#egotter')
   end
 
   def send_message(recipient_uid, text)

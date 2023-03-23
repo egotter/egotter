@@ -37,9 +37,7 @@ class SendReceivedMessageWorker
         text.include?('DM送信テスト ※そのまま送信') ||
         text.include?('送信】をDMにコピペして送ってください') ||
         text.include?('送ると、今すぐリムられ通知を受信することができます') ||
-        text == 'あ' ||
-        text == 'は' ||
-        text == 'り'
+        text.match?(/^(\p{hiragana})$/)
   end
 
   private
