@@ -7,39 +7,38 @@ class ChatMessageResponder < AbstractMessageResponder
   class Processor
     include AbstractReportProcessor
 
-    def message_length
-      100
-    end
-
     URL_REGEXP = %r(\Ahttps?://t\.co/\w+\z)
     USERNAME_REGEXP = %r(\A@\w+\z)
 
     def received?
-      return false if @text.length > message_length
       return false if @text.match?(URL_REGEXP)
       return false if @text.match?(USERNAME_REGEXP)
 
-      if @text.match?(thanks_regexp)
-        @thanks = true
-      elsif @text.match?(pretty_regexp)
-        @pretty = true
-      elsif @text.match?(morning_regexp)
-        @morning = true
-      elsif @text.match?(afternoon_regexp)
-        @afternoon = true
-      elsif @text.match?(evening_regexp)
-        @evening = true
-      elsif @text.match?(night_regexp)
-        @night = true
-      elsif @text.match?(yes_regexp)
-        @yes = true
-      elsif @text.match?(sorry_regexp)
-        @sorry = true
-      elsif @text.match?(ok_regexp)
-        @ok = true
-      elsif @text.match?(test_regexp)
-        @test = true
-      else
+      if @text.length < 50
+        if @text.match?(thanks_regexp)
+          @thanks = true
+        elsif @text.match?(pretty_regexp)
+          @pretty = true
+        elsif @text.match?(morning_regexp)
+          @morning = true
+        elsif @text.match?(afternoon_regexp)
+          @afternoon = true
+        elsif @text.match?(evening_regexp)
+          @evening = true
+        elsif @text.match?(night_regexp)
+          @night = true
+        elsif @text.match?(yes_regexp)
+          @yes = true
+        elsif @text.match?(sorry_regexp)
+          @sorry = true
+        elsif @text.match?(ok_regexp)
+          @ok = true
+        elsif @text.match?(test_regexp)
+          @test = true
+        else
+          @chat = true
+        end
+      elsif @text.length < 200
         @chat = true
       end
     end
