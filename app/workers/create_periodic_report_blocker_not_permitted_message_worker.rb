@@ -9,6 +9,9 @@ class CreatePeriodicReportBlockerNotPermittedMessageWorker
     Webサイトを今後も利用する場合は、有料プランの購入とブロックの解除が必要です。詳細はこちらのページをご覧ください。<%= url %>
 
     ※ 利用制限の解除のために購入された売上は、全額を特定公益増進法人（例：日本赤十字社）に寄付します。
+
+    もし間違いでスパムと判定されている場合は @egotter_cs までご連絡ください。確認した後に解除いたします。
+
     #egotter
   ERB
 
