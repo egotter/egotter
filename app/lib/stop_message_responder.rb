@@ -20,7 +20,7 @@ class StopMessageResponder < AbstractMessageResponder
     end
 
     def received_regexp
-      /停止|ストップ|オフ|勝手に|使わない|止めて|止まれ|止めろ|止めたい|送らないで|おくらないで|やめて|いらない|辞める|辞めたい|退会|解除|解約|無効|終了/
+      /停止|ストップ|オフ|勝手に|使わない|止めて|止まれ|止めろ|止めたい|送らないで|おくらないで|やめて|いらない|辞める|辞めたい|退会|解除|無効|終了/
     end
 
     def send_message

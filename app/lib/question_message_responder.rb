@@ -22,7 +22,7 @@ class QuestionMessageResponder < AbstractMessageResponder
     end
 
     def inquiry_regexp
-      /(^#{PeriodicReport::QUICK_REPLY_INQUIRY[:label]}$)|プラン|お試し|トライアル|有料|有償|購入|返金/
+      /(^#{PeriodicReport::QUICK_REPLY_INQUIRY[:label]}$)|プラン|お試し|トライアル|有料|有償|購入|解約|返金/
     end
 
     def question_regexp
