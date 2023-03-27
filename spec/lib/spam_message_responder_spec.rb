@@ -8,13 +8,34 @@ describe SpamMessageResponder::Processor do
   describe '#received?' do
     subject { instance.received? }
 
+    context 'the user is already banned' do
+      let(:user) { create(:user, uid: uid) }
+      before do
+        allow(User).to receive(:find_by).with(uid: uid).and_return(user)
+        allow(user).to receive(:banned?).and_return(true)
+      end
+      it do
+        is_expected.to be_truthy
+        expect(instance.instance_variable_get(:@banned)).to be_truthy
+      end
+    end
+
+    context 'the user is not banned' do
+      let(:text) { '死ね' }
+      it do
+        is_expected.to be_truthy
+        expect(instance.instance_variable_get(:@spam)).to be_truthy
+      end
+    end
+  end
+
+  describe '#spam_received?' do
+    subject { instance.spam_received?(text) }
+
     ['死ね', 'しね'].each do |word|
       context "text is #{word}" do
         let(:text) { word }
-        it do
-          is_expected.to be_truthy
-          expect(instance.instance_variable_get(:@spam)).to be_truthy
-        end
+        it { is_expected.to be_truthy }
       end
     end
   end
