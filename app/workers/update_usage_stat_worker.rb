@@ -14,6 +14,8 @@ class UpdateUsageStatWorker
   #   user_id
   #   location
   def perform(uid, options = {})
+    return # Stopped at 2023/03/29
+
     stat = UsageStat.find_by(uid: uid)
     return if stat&.fresh?
 
