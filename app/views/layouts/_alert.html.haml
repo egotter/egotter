@@ -5,7 +5,7 @@
       = link_to t('.open'), direct_messages_url('ego_tter'), target: '_blank'
 
   - if GlobalMessage.message_found?
-    .alert.alert-dark.mt-3{role: "alert"}
+    = alert_box category: 'primary', class: 'my-3' do
       = raw GlobalMessage.current_message
 
   - if alert
