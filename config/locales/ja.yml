@@ -646,6 +646,23 @@ ja:
       subscription_price_html: '<del style="color: darkgray;">%{regular}</del> <span class="font-weight-bold">%{discount}円</span> <span style="color: darkgray;">/月</span>'
       discounted_price_html: '<del style="color: darkgray;">%{regular}</del> <span class="font-weight-bold">%{discount}円</span>'
       descriptions:
+        new_plan_note_html:
+          <div class="text-danger">ツイッターAPIの大幅な値上げ（560〜2,800万円/月）により、えごったーが今後も継続して運営できるかどうかは不透明な状況です。下記の注意事項を必ず読み、それでもよい場合のみご購入ください。</div>
+          <br>
+          <div>えごったーの最新の状況については <a href="https://twitter.com/ego_tter" target="_blank">@ego_tterの最新ツイート</a> をご覧になってください。</div>
+          <br>
+          <div class="font-weight-bold mb-1">4月30日までは今まで通り利用できます</div>
+          少なくとも4月30日まではこれまで通りの機能をご利用いただけます。データ分析やツイート一括削除をご利用する場合は通常通りご購入ください。<br>
+          <br>
+          <div class="font-weight-bold mb-1">4月30日以降は未定です</div>
+          4月30日以降は少なくとも閲覧専用は残す予定です。もし、新プランの購入者がえごったー維持の最低ラインを超えた場合は、この日付以降もこれまで通りデータの更新を継続していきます。<br>
+          <br>
+          <div class="font-weight-bold mb-1">新プランの購入を希望する場合</div>
+          新しい価格の新プランの購入希望総額が560万円/月のえごったー維持最低ラインを超える場合は、4月30日以降もえごったーのデータ更新を継続できます。
+          新プランの購入をご希望する場合は <a href="https://docs.google.com/forms/d/e/1FAIpQLSdam6DTWuC4INNgxTKyOnmkOKzp7DlxaxndggTC76IQVvoTPQ/viewform" target="_blank">4月30日以降の新プラン購入予約</a> から購入の予約を行ってください。<br>
+          <br>
+          --------<br>
+          <br>
         subscription_html:
           えごったー ベーシックプランの 定期購読 です。毎月自動更新されます。<br>
           <br>
