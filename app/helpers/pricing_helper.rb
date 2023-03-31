@@ -74,4 +74,8 @@ module PricingHelper
       raise "invalid id value=#{id}"
     end
   end
+
+  def new_plan_preorder_url
+    'https://egotter.com/l/new_plan'
+  end
 end

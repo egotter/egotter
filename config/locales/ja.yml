@@ -659,7 +659,7 @@ ja:
           <br>
           <div class="font-weight-bold mb-1">新プランの購入を希望する場合</div>
           新しい価格の新プランの購入希望総額が560万円/月のえごったー維持最低ラインを超える場合は、4月30日以降もえごったーのデータ更新を継続できます。
-          新プランの購入をご希望する場合は <a href="https://docs.google.com/forms/d/e/1FAIpQLSdam6DTWuC4INNgxTKyOnmkOKzp7DlxaxndggTC76IQVvoTPQ/viewform" target="_blank">4月30日以降の新プラン購入予約</a> から購入の予約を行ってください。<br>
+          新プランの購入をご希望する場合は <a href="%{form_url}" target="_blank">4月30日以降の新プラン購入予約</a> から購入の予約を行ってください。<br>
           <br>
           --------<br>
           <br>

@@ -10,6 +10,8 @@ class LandingPagesController < ApplicationController
           'https://bit.ly/egotter_top2'
         when 'tweet'
           'https://bit.ly/egotter_tweet'
+        when 'new_plan'
+          'https://bit.ly/new_plan0430'
         else
           'https://egotter.com?via=lp_unknown_name'
         end
