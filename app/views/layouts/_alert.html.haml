@@ -4,8 +4,11 @@
       = t('.dm_confirmation')
       = link_to t('.open'), direct_messages_url('ego_tter'), target: '_blank'
 
+  = alert_box category: 'primary', class: 'small my-3' do
+    = render template: 'messages/updating_data_will_be_stopped'
+
   - if GlobalMessage.message_found?
-    = alert_box category: 'primary', class: 'my-3' do
+    = alert_box category: 'primary', class: 'small my-3' do
       = raw GlobalMessage.current_message
 
   - if alert

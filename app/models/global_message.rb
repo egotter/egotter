@@ -28,6 +28,10 @@ class GlobalMessage < ApplicationRecord
     rescue
       nil
     end
+
+    def delete_message
+      Cache.del
+    end
   end
 
   require 'forwardable'
@@ -36,7 +40,7 @@ class GlobalMessage < ApplicationRecord
   class Cache
     include Singleton
 
-    TTL = 259200 # 3 days
+    TTL = 2629746 # 1 month
 
     def initialize
       @key = "#{Rails.env}:GlobalMessage::Cache"
