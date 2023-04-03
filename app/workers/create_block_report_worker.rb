@@ -15,6 +15,11 @@ class CreateBlockReportWorker
 
   # options:
   def perform(user_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: CreateBlockReportWorker is stopped', user_id: user_id
+      return
+    end
+
     user = User.find(user_id)
     return unless user.authorized?
     return if already_stop_requested?(user)

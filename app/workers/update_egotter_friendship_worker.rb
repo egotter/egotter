@@ -20,6 +20,11 @@ class UpdateEgotterFriendshipWorker
 
   # options:
   def perform(user_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: UpdateEgotterFriendshipWorker is stopped', user_id: user_id
+      return
+    end
+
     user = client = nil
     user = User.find(user_id)
 
