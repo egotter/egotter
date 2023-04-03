@@ -4,7 +4,7 @@ namespace :bots do
 
     if StopServiceFlag.on?
       Airbag.info 'StopServiceFlag: bots:invalidate_credentials is stopped'
-      break
+      next
     end
 
     Bot.where(enabled: true).find_each do |bot|
