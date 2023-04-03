@@ -698,6 +698,7 @@ ja:
         konbini: 'コンビニ決済'
         amazon: 'Amazon Pay'
       purchase: 'この方法で購入する'
+      delay_html: 'この支払い方法は購入の確認に<span class="egotter-pink">数日かかります</span>。お急ぎの方はクレジットカードでお支払いください。'
       activate_immediately: '購入後すぐに有効になります。'
       take_time_html: '購入の確認と有効化に数日かかります。<br>決済手数料は購入者のご負担となります。'
       no_refund: '%{name}にお試し期間は無く、返金の対象外です。'
