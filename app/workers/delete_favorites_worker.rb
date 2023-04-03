@@ -7,6 +7,11 @@ class DeleteFavoritesWorker
   # options:
   #   user_id
   def perform(request_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: DeleteFavoritesWorker is stopped', request_id: request_id
+      return
+    end
+
     request = DeleteFavoritesRequest.find(request_id)
     DeleteFavoritesTask.new(request, options).start!
   rescue => e

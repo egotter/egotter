@@ -6,6 +6,11 @@ class DeleteTweetWorker
   #   request_id
   #   last_tweet
   def perform(user_id, tweet_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: DeleteTweetWorker is stopped', user_id: user_id
+      return
+    end
+
     request = DeleteTweetsRequest.find(options['request_id'])
     return if request.stopped_at
 

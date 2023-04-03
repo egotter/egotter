@@ -6,6 +6,11 @@ class DeleteFavoriteWorker
   #   request_id
   #   last_tweet
   def perform(user_id, tweet_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: DeleteFavoriteWorker is stopped', user_id: user_id
+      return
+    end
+
     request = DeleteFavoritesRequest.find(options['request_id'])
     return if request.stopped_at
 
