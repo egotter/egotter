@@ -12,7 +12,7 @@
 <div class="card">
   <div class="card-body">
     <div>
-      <%= form_tag '/users/auth/twitter', method: :post do %>
+      <%= form_tag '/users/auth/twitter', class: 'login-forms', method: :post do %>
         <%= button_tag type: 'submit', class: 'btn btn-primary' do %>
           <i class="fab fa-twitter"></i>
           <%= t('.login.title') %>
@@ -23,7 +23,7 @@
     <div class="mt-2 mb-5"><%= t('.login.description') %></div>
 
     <div>
-      <%= form_tag '/users/auth/twitter?force_login=true', method: :post do %>
+      <%= form_tag '/users/auth/twitter?force_login=true', class: 'login-forms', method: :post do %>
         <%= button_tag type: 'submit', class: 'btn btn-outline-primary' do %>
           <i class="fab fa-twitter"></i>
           <%= t('.force_login.title') %>
@@ -36,6 +36,17 @@
     <div class="text-muted"><%= t('.consent_html', url1: terms_of_service_path(via: current_via), url2: privacy_policy_path(via: current_via)) %></div>
   </div>
 </div>
+
+<% if StopServiceFlag.on? %>
+  <script>
+    $(function () {
+      $('.login-forms').on('submit', function () {
+        window.alert('<%= t('.service_stopped') %>');
+        return false;
+      });
+    });
+  </script>
+<% end %>
 
 <div id="how-to-fix-platform-bugs" class="minimum-anchor-offset"></div>
 <h3 class="h5 font-weight-bold mt-5 mb-3"><%= t('.how_to_fix_login_bug.title') %></h3>
