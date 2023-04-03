@@ -22,6 +22,11 @@ class CreateTwitterDBUserWorker
   #   user_id
   #   enqueued_by
   def perform(data, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: CreateTwitterDBUserWorker is stopped', user_id: user_id
+      return
+    end
+
     uids = decompress(data)
 
     if uids.empty?

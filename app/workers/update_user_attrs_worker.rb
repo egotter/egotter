@@ -21,6 +21,11 @@ class UpdateUserAttrsWorker
 
   # options:
   def perform(user_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: UpdateUserAttrsWorker is stopped', user_id: user_id
+      return
+    end
+
     user = User.find(user_id)
     api_user = user.api_client.twitter.verify_credentials
     user.assign_attributes(authorized: true, locked: false, screen_name: api_user.screen_name)
