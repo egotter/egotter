@@ -22,6 +22,11 @@ class UpdateEgotterFollowersWorker
 
   # options:
   def perform(options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: UpdateEgotterFollowersWorker is stopped'
+      return
+    end
+
     EgotterFollower.update_all_uids
   rescue => e
     handle_worker_error(e, **options)

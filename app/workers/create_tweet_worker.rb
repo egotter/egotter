@@ -14,6 +14,11 @@ class CreateTweetWorker
   # options:
   #   requested_by
   def perform(request_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: CreateTweetWorker is stopped', request_id: request_id
+      return
+    end
+
     request = TweetRequest.find(request_id)
     request.perform!
     request.finished!
