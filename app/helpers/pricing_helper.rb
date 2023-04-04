@@ -78,4 +78,8 @@ module PricingHelper
   def new_plan_preorder_url
     'https://egotter.com/l/new_plan'
   end
+
+  def cancel_plan_url
+    'https://egotter.com/l/cancel_plan'
+  end
 end

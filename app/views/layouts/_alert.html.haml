@@ -8,6 +8,9 @@
     = alert_box category: 'danger', class: 'small my-3' do
       = raw GlobalMessage.current_message
 
+  = alert_box category: 'danger', class: 'small my-3' do
+    = render template: 'messages/cancellation_of_plans'
+
   = alert_box category: 'primary', class: 'small my-3' do
     = render template: 'messages/updating_data_will_be_stopped'
 
