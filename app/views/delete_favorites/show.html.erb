@@ -19,18 +19,27 @@
 
 <div class="tab-content">
   <div id="free-tab" class="tab-pane <%= class_names(active: delete_favorites_free_tab?) %>">
-    <%= render partial: 'free', locals: {request: @delete_favorites_request, max_count: DeleteFavoritesRequest::DESTROY_LIMIT} %>
+    <%#= render partial: 'free', locals: {request: @delete_favorites_request, max_count: DeleteFavoritesRequest::DESTROY_LIMIT} %>
+    <div style="min-height: 200px;">
+      <p class="mb-3 pt-3" style="margin-top: 100px;"><%= t('.service_stopped') %></p>
+    </div>
   </div>
   <div id="premium-tab" class="tab-pane <%= class_names(active: delete_favorites_premium_tab?) %>">
-    <%= render partial: 'premium' %>
+    <%#= render partial: 'premium' %>
+    <div style="min-height: 200px;">
+      <p class="mb-3 pt-3" style="margin-top: 100px;"><%= t('.service_stopped') %></p>
+    </div>
   </div>
   <div id="history-tab" class="tab-pane <%= class_names(active: delete_favorites_history_tab?) %>">
-    <%= render partial: 'history' %>
+    <%#= render partial: 'history' %>
+    <div style="min-height: 200px;">
+      <p class="mb-3 pt-3" style="margin-top: 100px;"><%= t('.service_stopped') %></p>
+    </div>
   </div>
 </div>
 
-<p class="small"><%= t('.support_html', user: 'egotter_cs', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_favorites_inquiry'))) %></p>
-<p class="small"><%= t('.faq_html', url: delete_favorites_faq_path(via: current_via)) %></p>
+<!--<p class="small"><%#= t('.support_html', user: 'egotter_cs', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_favorites_inquiry'))) %></p>-->
+<!--<p class="small"><%#= t('.faq_html', url: delete_favorites_faq_path(via: current_via)) %></p>-->
 
 <% if delete_favorites_history_tab? %>
   <script>

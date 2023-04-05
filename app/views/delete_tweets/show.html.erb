@@ -16,19 +16,28 @@
 
 <div class="tab-content">
   <div id="search-tab" class="tab-pane <%= class_names(active: delete_tweets_search_tab?) %>">
-    <%= render partial: 'search' %>
+    <%#= render partial: 'search' %>
+    <div style="min-height: 200px;">
+      <p class="mb-3 pt-3" style="margin-top: 100px;"><%= t('.service_stopped') %></p>
+    </div>
   </div>
   <div id="free-tab" class="tab-pane <%= class_names(active: delete_tweets_free_tab?) %>">
-    <%= render partial: 'free', locals: {request: @delete_tweets_request, max_count: DeleteTweetsRequest::DESTROY_LIMIT} %>
+    <%#= render partial: 'free', locals: {request: @delete_tweets_request, max_count: DeleteTweetsRequest::DESTROY_LIMIT} %>
+    <div style="min-height: 200px;">
+      <p class="mb-3 pt-3" style="margin-top: 100px;"><%= t('.service_stopped') %></p>
+    </div>
   </div>
   <div id="premium-tab" class="tab-pane <%= class_names(active: delete_tweets_premium_tab?) %>">
-    <%= render partial: 'premium' %>
+    <%#= render partial: 'premium' %>
+    <div style="min-height: 200px;">
+      <p class="mb-3 pt-3" style="margin-top: 100px;"><%= t('.service_stopped') %></p>
+    </div>
   </div>
 </div>
 
-<p><%= t('.history_html', modal_id: 'delete-tweets-history-modal') %></p>
-<p><%= t('.faq_html', url: delete_tweets_faq_path(via: current_via)) %></p>
-<p><%= t('.support_html', user: 'egotter_cs', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_tweets_inquiry'))) %></p>
+<!--<p><%#= t('.history_html', modal_id: 'delete-tweets-history-modal') %></p>-->
+<!--<p><%#= t('.faq_html', url: delete_tweets_faq_path(via: current_via)) %></p>-->
+<!--<p><%#= t('.support_html', user: 'egotter_cs', url: direct_message_url(User::EGOTTER_CS_UID, t('short_messages.delete_tweets_inquiry'))) %></p>-->
 
 <%= render partial: 'menu_selector_modal', locals: {modal_id: 'delete-tweets-menu-selector-modal'} %>
 <%= render partial: 'history_modal', locals: {modal_id: 'delete-tweets-history-modal'} %>
@@ -73,7 +82,7 @@
 
   $(function () {
     initializeTabs();
-    initializeModal();
+    // initializeModal();
   });
 </script>
 
