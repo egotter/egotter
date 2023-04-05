@@ -3,4 +3,27 @@ ter" target="_blank">@ego_tterの最新ツイート</a> をご覧になってく
 
 <div class="font-weight-bold mb-1">定期購読プランの更新と解約について</div>
 <p class="mb-3">定期購読プランは今後のデータ閲覧に必要なため、自動的に停止されることはありません。定期購読プランをお持ちで今後使う予定のない方は <a href="<%= settings_order_history_path(via: current_via) %>">設定 &gt; 購入履歴</a> からご自身でプランの解約を行ってください。
-えごったーへのログインができない方は <a href="<%= cancel_plan_url %>" target="_blank">定期購読プランの解約フォーム</a> からプランの解約を申請してください。</p>
+えごったーへのログインができない方は <a id="cancel-plan-link" href="<%= cancel_plan_url %>" target="_blank">定期購読プランの解約フォーム</a> からプランの解約を申請してください。</p>
+
+<% if user_signed_in? && current_user.has_valid_subscription? %>
+  <%= modal_dialog id: 'cancel-plan-modal', title: 'プラン解約の申請', button: {positive: '自分で解約する', category: 'primary'} do %>
+    あなたはログインしているため、<a href="<%= settings_order_history_path(via: current_via) %>">自分で解約</a> をすることができます。
+    <a href="<%= cancel_plan_url %>" target="_blank">定期購読プランの解約フォーム</a> からプランの解約を申請すると、確認に時間がかかります。
+    定期購読プランの更新時期が近い場合は <a href="<%= settings_order_history_path(via: current_via) %>">自分で解約</a> をお選びください。
+  <% end %>
+
+  <script>
+    $(function () {
+      $('#cancel-plan-modal').find('button.positive').on('click', function () {
+        window.location.href = '<%= raw settings_order_history_path(via: current_via) %>';
+      });
+
+      $('#cancel-plan-link').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#cancel-plan-modal').modal();
+        return false;
+      });
+    });
+  </script>
+<% end %>
