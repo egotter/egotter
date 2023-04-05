@@ -13,6 +13,11 @@ class CreateDeletableTweetsWorker
 
   # options:
   def perform(request_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: CreateDeletableTweetsWorker is stopped', request_id: request_id
+      return
+    end
+
     CreateDeletableTweetsRequest.find(request_id).perform
   rescue => e
     handle_worker_error(e, request_id: request_id, options: options)
