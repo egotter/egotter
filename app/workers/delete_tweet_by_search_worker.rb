@@ -4,6 +4,11 @@ class DeleteTweetBySearchWorker
 
   # options:
   def perform(request_id, tweet_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: DeleteTweetBySearchWorker is stopped', request_id: request_id
+      return
+    end
+
     request = DeleteTweetsBySearchRequest.find(request_id)
     return if request.stopped_at
 
