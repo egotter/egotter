@@ -13,7 +13,7 @@
       <h3 class="h4"><%= plan_display_name(@plan_id) %></h3>
       <div class="my-3" style="font-size: 24px;"><%= plan_display_price(@plan_id) %> <span class="text-muted"><%= t('.tax_included') %></span></div>
       <p class="my-3">
-        <%= t('pricing.plans.descriptions.new_plan_note_html', form_url: new_plan_preorder_url) %>
+        <%= t('pricing.plans.descriptions.new_plan_note_html') %>
         <%= plan_description(@plan_id) %>
       </p>
       <p class="my-3"><%= t('pricing.plans.descriptions.common_html') %></p>

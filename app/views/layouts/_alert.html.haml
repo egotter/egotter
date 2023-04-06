@@ -9,10 +9,7 @@
       = raw GlobalMessage.current_message
 
   = alert_box category: 'danger', class: 'small my-3' do
-    = render template: 'messages/cancellation_of_plans'
-
-  = alert_box category: 'primary', class: 'small my-3' do
-    = render template: 'messages/updating_data_will_be_stopped'
+    = render template: 'messages/tentative_plan'
 
   - if alert
     .alert.alert-warning.alert-dismissible.mt-3{role: "alert"}

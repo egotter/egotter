@@ -1,0 +1,58 @@
+<p class="mb-3">4月6日10時頃記載：えごったーは過去データの閲覧専用になります。理由は、ツイッターAPIの大幅な値上げ（560〜2,800万円/月）とツイッターの連携アプリ一斉停止です。
+  最新の情報は <a href="https://twitter.com/ego_tter" target="_blank">@ego_tterの最新ツイート</a> をご覧になってください。</p>
+
+<div class="font-weight-bold mb-1">定期購読プランの更新と解約について</div>
+<p class="mb-3">定期購読プランは今後のデータ閲覧に必要なため、自動的に停止されることはありません。定期購読プランをお持ちで今後使う予定のない方は <a href="<%= settings_order_history_path(via: current_via) %>">設定 &gt; 購入履歴</a> からご自身でプランの解約を行ってください。
+  えごったーへのログインができない方は <a id="cancel-plan-link" href="<%= cancel_plan_url %>" target="_blank">定期購読プランの解約フォーム</a> からプランの解約を申請してください。</p>
+
+<% if user_signed_in? && current_user.has_valid_subscription? %>
+  <%= modal_dialog id: 'cancel-plan-modal', title: 'プラン解約の申請', button: {positive: '自分で解約する', category: 'primary'} do %>
+    あなたはログインしているため、<a href="<%= settings_order_history_path(via: current_via) %>">自分で解約</a> をすることができます。
+    <a href="<%= cancel_plan_url %>" target="_blank">定期購読プランの解約フォーム</a> からプランの解約を申請すると、確認に時間がかかります。
+    定期購読プランの更新時期が近い場合は <a href="<%= settings_order_history_path(via: current_via) %>">自分で解約</a> をお選びください。
+  <% end %>
+
+  <script>
+    $(function () {
+      $('#cancel-plan-modal').find('button.positive').on('click', function () {
+        window.location.href = '<%= raw settings_order_history_path(via: current_via) %>';
+      });
+
+      $('#cancel-plan-link').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#cancel-plan-modal').modal();
+        return false;
+      });
+    });
+  </script>
+<% end %>
+
+<div class="font-weight-bold mb-1">「値上げして存続」の可能性について</div>
+<p class="mb-3">「えごったープランの料金を値上げしてデータ更新を継続する」件については取りやめることを決定いたしました。新プランの購入を希望してくださった皆さん大変ありがとうござました。</p>
+
+<div class="font-weight-bold mb-1">今後の流れ</div>
+
+<a onclick="$('#global-important-message').show(); $(this).hide(); return false;" href="#">続きを読む</a>
+
+<div id="global-important-message" style="display: none;">
+  <p class="mb-3">
+    えごったーは既に過去データの閲覧専用となっています。長期的にいつまで閲覧が可能かはまだ決まっていません。<br>
+    <br>
+    4月4日頃：ツイッター連携アプリ一斉停止でえごったーも停止<br>
+    5月1日頃：条件を満たす方へ返金受付を開始（後述）<br>
+    5月2日以降：閲覧専用としてWebサイトは継続
+  </p>
+
+  <div class="font-weight-bold mb-1">「定期購読プラン」を購入済みの方へ</div>
+  <p class="mb-3">使わなくなった時点でご自身で解約を行ってください。定期購読プランはご自身で解約しない限り継続されます。4月30日以降も定期購読プランは継続し、過去に蓄積されたブロック通知、ミュート通知のデータはプラン購入者のみの限定公開になります。</p>
+
+  <div class="font-weight-bold mb-1">「1ヶ月プラン」を購入済みの方へ</div>
+  <p class="mb-3">期間が切れた時点で自動的に解約されます。追加の支払いは発生しません。</p>
+
+  <div class="font-weight-bold mb-1">「3〜12ヶ月プラン」を購入済みの方へ</div>
+  <p class="mb-3">期間が切れた時点で自動的に解約されます。さらに、「4月1日より前に購入済みで、5月1日時点で1ヶ月よりも多くの期間が残っている購入者」を対象に、残っている期間分の返金を行います。</p>
+
+  <div class="font-weight-bold mb-1">「閲覧専用」「更新が止まる」の意味</div>
+  <p class="mb-3">閲覧専用になると、フォロー・フォロワーのデータを新しく更新することやツイートの削除ができなくなります。過去に蓄積されたデータを見ることはできます。リムられ通知、ブロック通知、ミュート通知はデータ更新が止まった時点までのデータを見る専用になります。</p>
+</div>
