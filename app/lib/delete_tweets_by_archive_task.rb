@@ -38,11 +38,46 @@ class DeleteTweetsByArchiveTask
     files = paths.include?(',') ? paths.split(',') : [paths]
     files.reject! { |f| f.match?(/tweetdeck.js|tweet-headers.js/) }
 
-    files.map do |file|
-      data = File.read(file).remove(/\Awindow\.YTD\.tweet\.part\d+ =/)
-      JSON.load(data).map { |hash| Tweet.from_hash(hash) }
-    end.flatten.sort_by(&:created_at)
+    tweets = files.map do |file|
+      puts "Load #{file}"
+      parse_file(file)
+    end.flatten
+
+    errors = []
+
+    tweets.each do |tweet|
+      tweet.created_at
+    rescue => e
+      puts "A tweet with missing :created_at field data=#{tweet.inspect}"
+      errors << e
+    end
+
+    if errors.any?
+      raise MissingDataError
+    end
+
+    tweets.sort_by(&:created_at)
   end
+
+  def parse_file(file)
+    text = File.read(file)
+    regexp = /\Awindow\.YTD\.tweets?\.part\d+ =/
+
+    if text.match?(regexp)
+      text.gsub!(regexp, '')
+      JSON.load(text).map { |hash| Tweet.from_hash(hash) }
+    else
+      raise PrefixNotMatchError.new("file=#{file} text=#{text.slice(0, 100)}")
+    end
+  rescue JSON::ParserError => e
+    raise JsonParseError.new("error=#{e.class} file=#{file} text=#{text.slice(0, 100)}")
+  end
+
+  class MissingDataError < StandardError; end
+
+  class PrefixNotMatchError < StandardError; end
+
+  class JsonParseError < StandardError; end
 
   def validate_task
     unless user
@@ -150,11 +185,11 @@ class DeleteTweetsByArchiveTask
     end
 
     def id
-      @attrs['id'].to_i
+      @id ||= @attrs['id'].to_i
     end
 
     def created_at
-      Time.zone.parse(@attrs['created_at'])
+      @created_at ||= Time.zone.parse(@attrs['created_at'])
     end
   end
 end
