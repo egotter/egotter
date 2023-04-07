@@ -114,14 +114,14 @@ class User < ApplicationRecord
 
     def create_with_token(uid, screen_name, email, token, secret)
       user = new(uid: uid, screen_name: screen_name, email: email)
-      user.token = token if user.respond_to?(:token)
-      user.secret = secret if user.respond_to?(:secret)
+      # user.token = token if user.respond_to?(:token)
+      # user.secret = secret if user.respond_to?(:secret)
 
       transaction do
         user.save!
         user.create_notification_setting!(report_interval: 12.hours, permission_level: NotificationSetting::PROPER_PERMISSION)
         user.create_periodic_report_setting!
-        user.create_credential_token!(token: token, secret: secret)
+        user.create_credential_token!(version: 2, token: token, secret: secret)
       end
 
       user
@@ -131,8 +131,8 @@ class User < ApplicationRecord
       user = find_by(uid: uid)
       user.authorized = true
       user.locked = false
-      user.token = token if user.respond_to?(:token)
-      user.secret = secret if user.respond_to?(:secret)
+      # user.token = token if user.respond_to?(:token)
+      # user.secret = secret if user.respond_to?(:secret)
 
       # In extremely rare cases, the values may be nil.
       user.screen_name = screen_name if screen_name.present?
@@ -140,7 +140,7 @@ class User < ApplicationRecord
 
       transaction do
         user.save! if user.changed?
-        user.credential_token.update!(token: token, secret: secret)
+        user.credential_token.update!(version: 2, token: token, secret: secret)
       end
 
       user
