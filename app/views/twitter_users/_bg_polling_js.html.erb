@@ -11,6 +11,7 @@
   var periodicReportStopped = <%= user_signed_in? && !PeriodicReport.messages_allotted?(current_user) && !StopPeriodicReportRequest.exists?(user_id: current_user.id) %>;
   var isPremium = <%= user_signed_in? && current_user.has_valid_subscription? %>;
   var eventCategory = '<%= "#{controller_name}/#{action_name}" %>';
+  var serviceStopped = <%= StopServiceFlag.on? %>;
 
   var urls = {
     twitter_users_changes: '<%= raw twitter_users_changes_path(uid: twitter_user.uid) %>',
@@ -28,6 +29,10 @@
   // The credentials are verified in the controller.
 
   $(function () {
+    if (serviceStopped) {
+      return;
+    }
+
     if (profileNotFound) {
       ToastMessage.info('<%= t('twitter_users.in_background.profile_not_found_html', url: timeline_path(twitter_user, via: current_via('profile_not_found'))) %>');
       return;
