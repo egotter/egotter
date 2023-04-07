@@ -50,6 +50,11 @@ module JobQueueingConcern
   end
 
   def update_twitter_db_user(uid)
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: #update_twitter_db_user is stopped', uid: uid
+      return
+    end
+
     if user_signed_in?
       CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, enqueued_by: current_via(__method__))
     end

@@ -17,6 +17,11 @@ class CreateFollowWorker
   # options:
   #   enqueue_location
   def perform(request_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: CreateFollowWorker is stopped', request_id: request_id
+      return
+    end
+
     if GlobalFollowLimitation.new.limited?
       CreateFollowWorker.perform_in(retry_in, request_id, options)
     else

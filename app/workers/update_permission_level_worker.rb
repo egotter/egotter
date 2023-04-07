@@ -20,6 +20,11 @@ class UpdatePermissionLevelWorker
 
   # options:
   def perform(user_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: UpdatePermissionLevelWorker is stopped', user_id: user_id
+      return
+    end
+
     user = User.find(user_id)
     level = user.api_client.permission_level
     if level != user.notification_setting.permission_level
