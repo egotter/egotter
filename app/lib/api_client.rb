@@ -7,6 +7,11 @@ class ApiClient
   end
 
   def create_direct_message(recipient_id, message, async: false)
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: ApiClient#create_direct_message is stopped', recipient_id: recipient_id, message: message
+      return
+    end
+
     if async
       # TODO Remove later
       raise NotImplementedError
@@ -31,6 +36,11 @@ class ApiClient
   end
 
   def create_direct_message_event(event:)
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: ApiClient#create_direct_message_event is stopped', event: event
+      return
+    end
+
     resp = twitter.create_direct_message_event(event: event).to_h
     dm = DirectMessageWrapper.from_event(resp)
     DirectMessageSendCounter.increment(dm.recipient_id) if dm.recipient_id != User::EGOTTER_UID
@@ -103,6 +113,11 @@ class ApiClient
   end
 
   def call_api(method, *args, **kwargs, &block)
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: ApiClient#call_api is stopped', method: method, args: args, kwargs: kwargs
+      return
+    end
+
     TwitterRequest.new(method).perform do
       # TODO This conditional branch may not be needed on Ruby30
       if kwargs.empty?

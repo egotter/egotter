@@ -82,6 +82,11 @@ class TwitterClient
   end
 
   def call_api(method, *args, **kwargs, &block)
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: TwitterClient#call_api is stopped', method: method, args: args, kwargs: kwargs
+      return
+    end
+
     @api_name = method
 
     TwitterRequest.new(method).perform do
