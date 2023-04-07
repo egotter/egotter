@@ -2,6 +2,7 @@ class CreateCredentialTokens < ActiveRecord::Migration[5.2]
   def change
     create_table :credential_tokens do |t|
       t.integer :user_id, null: false
+      t.string :version, null: true
       t.string :token, null: true
       t.string :secret, null: true
       t.string :instance_id, null: true

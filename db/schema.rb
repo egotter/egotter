@@ -408,6 +408,7 @@ ActiveRecord::Schema.define(version: 2023_02_18_094012) do
 
   create_table "credential_tokens", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
+    t.string "version"
     t.string "token"
     t.string "secret"
     t.string "instance_id"
