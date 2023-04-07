@@ -14,7 +14,7 @@ Rails.application.reloader.to_prepare do
   Airbag.broadcast do |level, message, props, ctx|
     if level >= Logger::WARN
       message = "#{Airbag.format_hash(ctx)} #{Airbag.format_severity(level)}: #{message.truncate(1000)} #{Airbag.format_hash(props)}"
-      SendAirbagMessageToSlackWorker.perform_in(10, message)
+      SendAirbagMessageToSlackWorker.perform_in(1, message)
     end
   rescue => e
     Rails.logger.error "broadcasting failed: #{e.inspect} worker=SendAirbagMessageToSlackWorker message=#{message}"
