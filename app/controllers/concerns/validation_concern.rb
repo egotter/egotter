@@ -122,6 +122,7 @@ module ValidationConcern
   end
 
   def validate_dm_permission!
+    return true if StopServiceFlag.on?
     return true unless user_signed_in?
     return true if current_user.enough_permission_level?
 
