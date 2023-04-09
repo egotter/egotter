@@ -117,6 +117,8 @@ class User < ApplicationRecord
       # user.token = token if user.respond_to?(:token)
       # user.secret = secret if user.respond_to?(:secret)
 
+      user.email = '' if user.email.blank?
+
       transaction do
         user.save!
         user.create_notification_setting!(report_interval: 12.hours, permission_level: NotificationSetting::PROPER_PERMISSION)
