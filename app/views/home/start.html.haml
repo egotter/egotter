@@ -10,24 +10,15 @@
 
 = render partial: 'misc/q', locals: {text: t('.q1')}
 .mt-3.mb-5
-  - if user_signed_in?
-    = t('.a1_html', url: direct_messages_url('ego_tter'))
-  - else
-    = t('.a1_anonymous_html', url: sign_in_url(via: current_via('question1')))
+  = t('.a1_html')
 
 = render partial: 'misc/q', locals: {text: t('.q2')}
 .mt-3.mb-5
-  - if user_signed_in?
-    = t('.a2_html', url: direct_messages_url('ego_tter'))
-  - else
-    = t('.a2_anonymous_html', url: sign_in_url(via: current_via('question2')))
+  = t('.a2_html')
 
 = render partial: 'misc/q', locals: {text: t('.q3')}
 .mt-3.mb-5
-  - if user_signed_in?
-    = t('.a3_html', user: current_user.screen_name, url: favorite_friend_path(current_user, via: current_via('question3')))
-  - else
-    = t('.a3_anonymous_html', url: sign_in_url(via: current_via('question3'), redirect_path: favorite_friend_path(screen_name: ':screen_name', via: current_via('question3'))))
+  = t('.a3_html')
 
 = render partial: 'misc/q', locals: {text: t('.q4')}
 .mt-3.mb-5
@@ -37,4 +28,4 @@
     = t('.a4_anonymous_html', url: sign_in_url(via: current_via('question4'), redirect_path: timeline_path(screen_name: ':screen_name', via: current_via('question4'))))
 
 = render partial: 'misc/q', locals: {text: t('.q5')}
-.mt-3.mb-5= t('.a5_html', egotter_link: twitter_web_link('ego_tter'), url: support_path(via: current_via('question5')))
+.mt-3.mb-5= t('.a5_html', support_account: 'egotter_cs', official_account: 'ego_tter', url: support_path(via: current_via('question5')))

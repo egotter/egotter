@@ -1,76 +1,63 @@
-<% timeline_url = timeline_path(current_user, via: current_via(context)) %>
-
-<div class="card">
-  <div class="card-body">
-    <div class="mb-4">
-      <% if user_signed_in? %>
-        えごったーに <img class="rounded-circle" src="<%= current_user_icon %>" width="24" height="24"> @<%= current_user.screen_name %> としてログイン中です。
-        <a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">分析結果を見る</a><br>
-        <br>
-        @<%= current_user.screen_name %> の仲良しランキングはこちらです。
-        <a href="<%= timeline_url %>" class="btn btn-outline-primary btn-sm" target="_blank">仲良しランキングを見る</a><br>
-        <br>
-      <% end %>
-
-      <div class="mt-3">
-        リムられ通知は @ego_tter からDMで届きます。<span class="egotter-pink">リムられ通知 送信</span> とDMしてください。
-        <a href="<%= direct_message_url(User::EGOTTER_UID, 'リムられ通知 送信') %>" class="btn btn-outline-primary btn-sm" target="_blank">リムられ通知を見る</a>
+<% modal_id = "#{controller_name}_#{action_name}_redirection_modal" %>
+<%= modal_dialog(id: modal_id, title: 'ショートカット', button: {positive: '閉じる', category: 'outline-secondary'}) do %>
+  <div class="mb-3">
+    <%= link_to timeline_path(current_user, via: current_via(context)), class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><img class="rounded-circle" src="<%= current_user_icon %>" width="28" height="28">
+          @<%= current_user.screen_name %> の<%= redirection_modal_page_name %></div>
+        <div>&gt;</div>
       </div>
-
-      <div class="mt-3">
-        ブロック通知は @ego_tter からDMで届きます。<span class="egotter-pink">ブロック通知 送信</span> とDMしてください。
-        <a href="<%= direct_message_url(User::EGOTTER_UID, 'ブロック通知 送信') %>" class="btn btn-outline-primary btn-sm" target="_blank">ブロック通知を見る</a>
-      </div>
-
-      <div class="mt-3">
-        ミュート通知は @ego_tter からDMで届きます。<span class="egotter-pink">ミュート通知 送信</span> とDMしてください。
-        <a href="<%= direct_message_url(User::EGOTTER_UID, 'ミュート通知 送信') %>" class="btn btn-outline-primary btn-sm" target="_blank">ミュート通知を見る</a>
-      </div>
-    </div>
-
-    <div class="text-right">
-      <a class="btn btn-outline-primary btn-sm" data-toggle="collapse" aria-expanded="false" href="#current-periodic-report-details">えごったーとは
-        <i class="far fa-question-circle"></i></a>
-    </div>
-
-    <div id="current-periodic-report-details" class="collapse">
-      <hr>
-      <div>1. えごったーとは何ですか？</div>
-      <div class="mb-4">
-        これまでに<span class="egotter-pink"><%= usage_count / 10000 %>万回</span>以上利用されたツイッター分析アプリです。<br>
-        仲良しランキング、片思いチェック、リムられチェックなどの機能があります。
-      </div>
-
-      <div>2. リムられ通知とは何ですか？</div>
-      <div class="mb-4">誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。</div>
-
-      <div>3. リムられ通知はどのように届きますか？</div>
-      <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> からDMで届きます。
-        <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image1">サンプル画像を見る</a>
-        <div id="sample_image1" class="collapse">
-          <img src="<%= image_path('/egotter_screenshot_prompt_report_828x739.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像1" loading="lazy">
-        </div>
-      </div>
-
-      <div>4. リムられ通知をすぐに受け取ることはできますか？</div>
-      <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に「<span class="egotter-pink">リムられ通知 今すぐ送信</span>」とDMすればすぐに届きます。
-        <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image2">サンプル画像を見る</a>
-        <div id="sample_image2" class="collapse">
-          <img src="<%= image_path('/egotter_screenshot_prompt_report_1165x318.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像2" loading="lazy">
-        </div>
-      </div>
-
-      <div>5. リムられ通知を停止することはできますか？</div>
-      <div class="mb-4"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に「<span class="egotter-pink">リムられ通知 停止</span>」とDMすればすぐに止めることができます。
-        <a class="small text-primary" data-toggle="collapse" aria-expanded="false" href="#sample_image3">サンプル画像を見る</a>
-        <div id="sample_image3" class="collapse">
-          <img src="<%= image_path('/egotter_screenshot_prompt_report_1156x422.png') %>" style="width: 100%; max-width: 600px;" alt="サンプル画像3" loading="lazy">
-        </div>
-      </div>
-
-      <div>6. @ego_tter にDMを送ることができません</div>
-      <div>「すべてのユーザーからメッセージを受信する」の設定をオンにしてください。これは<span cllass="egotter-pink">ツイッター公式の設定</span>です。
-        <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/settings/safety" target="_blank">公式設定を開く</a></div>
-    </div>
+    <% end %>
   </div>
-</div>
+
+  <hr class="mx-n3">
+
+  <div class="my-3">
+    <%= link_to timeline_path(current_user, via: current_via(context)), class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1"><%= '仲良しランキング' %></div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr class="mx-n3">
+
+  <div class="mb-3">
+    <%= link_to timeline_path(current_user, via: current_via(context)), class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1">
+          ブロック通知のデータ閲覧</div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr class="mx-n3">
+
+  <div>
+    <%= link_to timeline_path(current_user, via: current_via(context)), class: 'text-body' do %>
+      <div class="d-flex">
+        <div class="flex-grow-1">
+          ミュート通知のデータ閲覧</div>
+        <div>&gt;</div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+<script>
+  $(function () {
+    var $modal = $('#<%= modal_id %>');
+
+    $modal.show = function () {
+      $modal.modal('show');
+    }
+
+    if (window.modalsQueue) {
+      window.modalsQueue.add($modal);
+      window.modalsQueue.start();
+    } else {
+      window.modalsQueue = [$modal];
+    }
+  });
+</script>

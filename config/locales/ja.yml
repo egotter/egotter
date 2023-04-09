@@ -101,30 +101,23 @@ ja:
     start:
       page_title: "えごったーの使い方"
       meta_description: "@%{user}さん えごったーへようこそ！"
-      desc1_html: 'このページでは、えごったーの使い方を説明しています。えごったーには、リムられ通知や仲良し分析などたくさんの機能があります。<br><br>自分に合った機能を見付けて、えごったーを便利に活用しましょう。'
+      desc1_html:
+        <span class="text-danger">2023年4月追記：ツイッター連携アプリの世界的な停止に伴い、各種の通知とデータの新しい更新は終了しています。今後は過去のデータの閲覧のみ行うことができます。</span><br>
+        <br>
+        このページでは、えごったーの使い方を説明しています。えごったーには、リムられ通知や仲良し分析などたくさんの機能があります。<br>
+        <br>
+        自分に合った機能を見付けて、えごったーを便利に活用しましょう。
       q1: 'リムられ通知はどうやって見ればいいですか？'
       q2: 'リムられ通知をすぐに受け取るにはどうすればいいですか？'
       q3: '仲良し分析を見るにはどうすればいいですか？'
       q4: '片思いフォローや他の分析を見るにはどうすればいいですか？'
       q5: '分からないことは誰に質問すればいいですか？'
-      a1_html: |
-        リムられ通知はえごったーでもっとも人気な機能の1つです。リムられ通知は @ego_tter からDMで届きます。
-        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">リムられ通知DMを見る</a>
-      a1_anonymous_html: |
-        リムられ通知はえごったーでもっとも人気な機能の1つです。リムられ通知は @ego_tter からDMで届きます。えごったーにログインすればリムられ通知は設定完了です。
-        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">ログインして通知を受け取る</a>
-      a2_html: |
-        @ego_tter に「リムられ通知 今すぐ送信」とDMすることで、リムられ通知をすぐに受け取ることができます。
-        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">リムられ通知をすぐに受け取る</a>
-      a2_anonymous_html: |
-        @ego_tter に「リムられ通知 今すぐ送信」とDMすることで、リムられ通知をすぐに受け取ることができます。まずはえごったーにログインしてください。
-        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">ログインして通知を受け取る</a>
-      a3_html: |
-        仲良し分析では、@%{user} がいいね した/された ツイートから仲良しのユーザーを見付けます。
-        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">@%{user} の仲良し分析を見る</a>
-      a3_anonymous_html: |
-        仲良し分析では、いいね した/された ツイートから仲良しのユーザーを見付けます。
-        ログインして分析結果を見てみましょう。<a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">仲良し分析を見る</a>
+      a1_html:
+        ツイッター連携アプリの世界的な停止に伴い、リムられ通知の送信は終了しました。過去データは分析結果から見ることが出来ます。
+      a2_html:
+        ツイッター連携アプリの世界的な停止に伴い、リムられ通知の送信終了しました。過去データは分析結果から見ることが出来ます。
+      a3_html:
+        ツイッター連携アプリの世界的な停止に伴い、仲良し分析は閲覧専用となりました。過去データは分析結果から見ることが出来ます。
       a4_html: |
         えごったーでは、@%{user} の片思いフォローやクラスタ分析など、たくさんの分析結果を見ることができます。
         <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">@%{user} の分析一覧を見る</a>
@@ -132,11 +125,11 @@ ja:
         えごったーでは、片思いフォローやクラスタ分析など、たくさんの分析結果を見ることができます。
         ログインして分析結果を見てみましょう。<a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">ログインして分析する</a>
       a5_html: |
-        公式アカウントは %{egotter_link} です。分からないことは何でもご質問ください。
-        <a href="https://twitter.com/ego_tter" target="_blank" class="btn btn-outline-primary btn-sm">@ego_tter をツイッターで見る</a><br>
+        回答が必要な質問は <a href="https://twitter.com/%{support_account}" target="_blank">%{support_account}</a> にお送りください。<br>
         <br>
-        よくある質問はこちらにまとまっています。
-        <a href="%{url}" target="_blank" class="btn btn-outline-primary btn-sm">よくある質問を見る</a>
+        公式アカウントは <a href="https://twitter.com/%{official_account}" target="_blank">%{official_account}</a> もありますが、こちらはお知らせ用になります。<br>
+        <br>
+        お急ぎの場合は <a href="%{url}" target="_blank">よくある質問</a> もご覧になってください。大半の質問には既に回答しています。
   timelines:
     show:
       navbar_title: '@%{user} の分析'
