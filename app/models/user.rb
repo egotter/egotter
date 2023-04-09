@@ -136,7 +136,9 @@ class User < ApplicationRecord
 
       # In extremely rare cases, the values may be nil.
       user.screen_name = screen_name if screen_name.present?
+
       user.email = email if email.present?
+      user.email = '' if user.email.blank?
 
       transaction do
         user.save! if user.changed?
