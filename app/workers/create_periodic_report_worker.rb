@@ -21,6 +21,11 @@ class CreatePeriodicReportWorker
   # options:
   #   user_id
   def perform(request_id, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: CreatePeriodicReportWorker is stopped', request_id: request_id
+      return
+    end
+
     request = CreatePeriodicReportRequest.find(request_id)
     return unless request.user.authorized?
     return if request.user.banned?

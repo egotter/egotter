@@ -7,6 +7,12 @@ module Api
 
       # Android
       def update_instance_id
+        if StopServiceFlag.on?
+          Airbag.info 'StopServiceFlag: #update_instance_id is stopped'
+          render json: {found: false}, status: :not_found
+          return
+        end
+
         if verified_android_request?
           @user.credential_token.update!(instance_id: params[:instance_id])
           jid = enqueue_create_periodic_report_job(@user, request.device_type)
@@ -62,6 +68,11 @@ module Api
       end
 
       def enqueue_create_periodic_report_job(user, device_type)
+        if StopServiceFlag.on?
+          Airbag.info 'StopServiceFlag: #enqueue_create_periodic_report_job is stopped'
+          return
+        end
+
         request = CreatePeriodicReportRequest.create!(user_id: user.id, requested_by: device_type)
         CreateAndroidRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, requested_by: 'android_app')
       end
