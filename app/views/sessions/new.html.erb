@@ -39,12 +39,12 @@
 
 <% if StopServiceFlag.on? %>
   <script>
-    $(function () {
-      $('.login-forms').on('submit', function () {
-        window.alert('<%= t('.service_stopped') %>');
-        return false;
-      });
-    });
+    // $(function () {
+    //   $('.login-forms').on('submit', function () {
+    //     window.alert('<%= t('.service_stopped') %>');
+    //     return false;
+    //   });
+    // });
   </script>
 <% end %>
 
@@ -57,14 +57,17 @@
     <%= t('.modal.description_html', url: '#how-to-fix-platform-bugs') %>
   <% end %>
 
+  <%= modal_dialog id: 'resume-login-modal', title: t('.resume_login_modal.title'), button: {positive: t('.resume_login_modal.close'), category: 'outline-secondary'} do %>
+    <%= t('.resume_login_modal.description_html', url: '#how-to-fix-platform-bugs') %>
+  <% end %>
+
   <script>
     $(function () {
-      window.alert('<%= t('.service_stopped') %>');
-      // var $modal = $('#how-to-fix-platform-bugs-modal');
-      // $modal.modal();
-      // $modal.find('a').on('click', function () {
-      //   $modal.modal('hide');
-      // });
+      var $modal = $('#resume-login-modal');
+      $modal.modal();
+      $modal.find('a').on('click', function () {
+        $modal.modal('hide');
+      });
     });
   </script>
 <% end %>
