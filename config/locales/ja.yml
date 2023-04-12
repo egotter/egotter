@@ -743,9 +743,12 @@ ja:
           <a href="%{url}" class="btn btn-outline-primary btn-sm" target="_blank">問い合わせ</a>
     cancel:
       title: 'プランを解約しました'
-      message: 'えごったーのほとんどの機能は無料のままでも使えます。今後ともぜひご利用ください。'
-      history_html: 'これまでの購入履歴は <a href="%{url}">設定 &gt; 購入履歴</a> から確認できます。'
-      support_html: '分からないことや気になることがありますか？ <a href="%{url}" target="_blank">@egotter_cs</a> までお気軽にご連絡ください。'
+      message_html:
+        これまで長い間えごったーをご利用いただき誠にありがとうございました。<br>
+        <br>
+        このような形で突然に皆さんとお別れすることを大変残念に思っています。<br>
+        <br>
+        またどこかでお会いすることがありましたら、その際はよろしくお願いいたします。
   login:
     goodbye:
       page_title: 'ログアウト'
