@@ -38,11 +38,6 @@
   <div class="flex-fill"><%= link_to t('.confirmation.no'), root_path(via: current_via('cancel_sign_out')), class: 'btn btn-primary' %></div>
 </div>
 
-<div class="text-muted small">
-  <div class="my-3"><%= t('.note1') %></div>
-  <div class="my-3"><%= t('.note2') %></div>
-</div>
-
 <script>
   $(function () {
     var url = '<%= raw sign_out_path(via: current_via) %>';
