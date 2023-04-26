@@ -114,7 +114,7 @@ class App
     if @role == 'web'
       instance_type = 't3.medium'
     elsif @role == 'sidekiq'
-      instance_type = 't3.medium'
+      instance_type = 't3.small'
     else
       raise "Invalid role value=#{@role}"
     end
