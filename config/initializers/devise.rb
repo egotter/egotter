@@ -240,6 +240,7 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
   config.omniauth :twitter, ENV['TWITTER_API_KEY_CS'], ENV['TWITTER_API_SECRET_CS'], display: 'popup', open_timeout: 8, read_timeout: 8
+  config.omniauth :twitter2, ENV['TWITTER_OAUTH2_CLIENT_ID_CS'], ENV['TWITTER_OAUTH2_CLIENT_SECRET_CS'], scope: 'tweet.read users.read offline.access'
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

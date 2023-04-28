@@ -276,6 +276,14 @@ module PathsHelper
     'https://forms.gle/vJ2gidD6s6kr6b3T8'
   end
 
+  def twitter_oauth_path(force: false)
+    "/users/auth/twitter?force_login=#{force}"
+  end
+
+  def twitter_oauth2_path(*)
+    '/users/auth/twitter2'
+  end
+
   def personality_insight_path(*args)
     personality_insights_top_path
   end

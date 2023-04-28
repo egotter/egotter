@@ -8,10 +8,27 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   skip_before_action :validate_dm_permission!
   skip_before_action :current_user_not_blocker?
 
-  before_action :create_or_update_user, only: :twitter
+  before_action :create_or_update_user, only: [:twitter, :twitter2]
   after_action :delete_tracking_params
 
+
   def twitter
+    callback_from(:twitter)
+  end
+
+  def twitter2
+    callback_from(:twitter2)
+  end
+
+  def failure
+    # invalid_credentials csrf_detected session_expired service_unavailable timeout
+    error_name = request.env['omniauth.error.type'].to_s
+    redirect_to error_pages_omniauth_failure_path(via: current_via(error_name))
+  end
+
+  private
+
+  def callback_from(provider)
     sign_in @user, event: :authentication
     ahoy.authenticate(@user)
     context = detect_context(@user)
@@ -33,14 +50,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     redirect_to after_callback_path(@user, context)
   end
-
-  def failure
-    # invalid_credentials session_expired service_unavailable timeout
-    error_name = request.env['omniauth.error.type'].to_s
-    redirect_to error_pages_omniauth_failure_path(via: current_via(error_name))
-  end
-
-  private
 
   def create_or_update_user
     @user = User.update_or_create_with_token!(user_params)
@@ -127,7 +136,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     {
         uid: values.uid,
         screen_name: values.info.nickname,
-        secret: values.credentials.secret,
+        secret: values.credentials.secret || 'blank-secret',
         token: values.credentials.token,
         email: values.info.email,
     }.compact
