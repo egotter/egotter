@@ -14,6 +14,8 @@ class LandingPagesController < ApplicationController
           'https://bit.ly/new_plan0430'
         when 'cancel_plan'
           'https://bit.ly/cancel_plan'
+        when 'refund'
+          'https://bit.ly/refund_plan'
         else
           'https://egotter.com?via=lp_unknown_name'
         end
