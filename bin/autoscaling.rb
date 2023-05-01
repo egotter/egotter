@@ -112,7 +112,7 @@ class App
     market_type ||= 'spot'
 
     if @role == 'web'
-      instance_type = 't3.medium'
+      instance_type = 't3.small'
     elsif @role == 'sidekiq'
       instance_type = 't3.small'
     else
