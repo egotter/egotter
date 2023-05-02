@@ -17,6 +17,11 @@ class CreateFriendInsightWorker
   # options:
   #   location
   def perform(uid, options = {})
+    if StopServiceFlag.on?
+      Airbag.info 'StopServiceFlag: CreateFriendInsightWorker is stopped', uid: uid
+      return
+    end
+
     unless FriendInsight.find_or_initialize_by(uid: uid).fresh?
       FriendInsight.builder(uid).build&.save!
     end
