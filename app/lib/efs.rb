@@ -6,6 +6,7 @@ module Efs
   module_function
 
   def enabled?
-    ENV['DISABLE_EFS_TWITTER_USER'] != '1'
+    # ENV['DISABLE_EFS_TWITTER_USER'] != '1'
+    false
   end
 end
