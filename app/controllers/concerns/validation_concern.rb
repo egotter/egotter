@@ -41,7 +41,7 @@ module ValidationConcern
   end
 
   def reject_spam_access!
-    if !user_signed_in? && (suspicious_user_agent? || suspicious_referer?)
+    if !user_signed_in? && (suspicious_user_agent? || suspicious_referer? || suspicious_ip?)
       if request.xhr?
         head :forbidden
       else

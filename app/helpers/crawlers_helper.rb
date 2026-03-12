@@ -137,4 +137,10 @@ module CrawlersHelper
   def suspicious_referer?
     request.referer.to_s.blank? && request.device_type == :pc
   end
+
+  require 'ipaddr'
+
+  def suspicious_ip?
+    IPAddr.new('202.46.62.0/24').include?(request.ip)
+  end
 end
