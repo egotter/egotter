@@ -48,6 +48,7 @@ module CrawlersHelper
   private
 
   CRAWLER_WORDS = [
+      'GPTBot',
       'Applebot',
       'Jooblebot',
       'SBooksNet',
