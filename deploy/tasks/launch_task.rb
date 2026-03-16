@@ -45,11 +45,11 @@ module Tasks
         Dashboard.new('egotter-linux-system').remove_all(role, instance_id).update
       end
 
-      def append_to_ssh_config(id, host, public_ip)
+      def append_to_ssh_config(id, host, public_ip, private_ip)
         text = <<~"TEXT"
           # #{Date.today} #{id}
           Host #{host}
-            HostName     #{public_ip}
+            HostName     #{private_ip}
             IdentityFile ~/.ssh/egotter.pem
             User         ec2-user
         TEXT
@@ -84,7 +84,7 @@ module Tasks
           launch_instance
         end
 
-        append_to_ssh_config(@server.id, @server.host, @server.public_ip)
+        append_to_ssh_config(@server.id, @server.host, @server.public_ip, @server.private_ip)
         Tasks::InstallTask::Web.new(@server.id).install
 
         @target_group.register(@server.id)
@@ -122,7 +122,7 @@ module Tasks
           launch_instance
         end
 
-        append_to_ssh_config(@server.id, @server.host, @server.public_ip)
+        append_to_ssh_config(@server.id, @server.host, @server.public_ip, @server.private_ip)
         Tasks::InstallTask::Sidekiq.new(@server.id).install
 
         @instance = @server
@@ -149,7 +149,7 @@ module Tasks
           launch_instance
         end
 
-        append_to_ssh_config(@server.id, @server.host, @server.public_ip)
+        append_to_ssh_config(@server.id, @server.host, @server.public_ip, @server.private_ip)
         Tasks::InstallTask::Plain.new(@server.id).install
 
         @instance = @server
