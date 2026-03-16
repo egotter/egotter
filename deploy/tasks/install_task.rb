@@ -299,7 +299,7 @@ module Tasks
       def initialize(id)
         @id = id
         @instance = ::Deploy::Aws::Instance.retrieve(id)
-        super(@instance.name, @instance.public_ip)
+        super(@instance.name, @instance.private_ip)
       end
 
       def sync
