@@ -17,7 +17,7 @@ module Deploy
         wait_until(instance.id, :instance_status_ok)
 
         instance = retrieve_instance(instance.id)
-        test_ssh_connection(instance.public_ip_address)
+        test_ssh_connection(instance.public_ip_address, instance.private_ip_address)
 
         instance.create_tags(tags: [{key: 'App', value: 'egotter'}, {key: 'Name', value: name}, {key: 'Role', value: params['role']}])
         instance.volumes.first.create_tags(tags: [{key: 'App', value: 'egotter'}, {key: 'Name', value: name}])
@@ -65,12 +65,12 @@ module Deploy
         @ec2_resource.instances(filters: filters)
       end
 
-      def test_ssh_connection(public_ip)
+      def test_ssh_connection(public_ip, private_ip)
         max_retries = 60
-        cmd = "ssh -q -i ~/.ssh/egotter.pem ec2-user@#{public_ip} exit"
+        cmd = "ssh -q -i ~/.ssh/egotter.pem ec2-user@#{private_ip} exit"
 
         max_retries.times do |n|
-          logger.info "waiting for test_ssh_connection #{public_ip}#{"(attempts left #{max_retries - n}/#{max_retries})" if n > 0}"
+          logger.info "waiting for test_ssh_connection #{private_ip}#{"(attempts left #{max_retries - n}/#{max_retries})" if n > 0}"
           if system(cmd, exception: false)
             break
           else
