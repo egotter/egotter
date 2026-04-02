@@ -23,7 +23,7 @@ class CreateTwitterDBUserWorker
   #   enqueued_by
   def perform(data, options = {})
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: CreateTwitterDBUserWorker is stopped'
+      Airbag.debug 'StopServiceFlag: CreateTwitterDBUserWorker is stopped'
       return
     end
 

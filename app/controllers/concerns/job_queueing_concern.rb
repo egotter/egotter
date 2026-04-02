@@ -5,7 +5,7 @@ module JobQueueingConcern
 
   def request_creating_twitter_user(uid)
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: #request_creating_twitter_user is stopped', uid: uid
+      Airbag.debug 'StopServiceFlag: #request_creating_twitter_user is stopped', uid: uid
       return
     end
     return unless user_signed_in?
@@ -25,7 +25,7 @@ module JobQueueingConcern
 
   def request_assembling_twitter_user(twitter_user)
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: #request_assembling_twitter_user is stopped', twitter_user_id: twitter_user.id
+      Airbag.debug 'StopServiceFlag: #request_assembling_twitter_user is stopped', twitter_user_id: twitter_user.id
       return
     end
     return unless user_signed_in?
@@ -51,7 +51,7 @@ module JobQueueingConcern
 
   def update_twitter_db_user(uid)
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: #update_twitter_db_user is stopped', uid: uid
+      Airbag.debug 'StopServiceFlag: #update_twitter_db_user is stopped', uid: uid
       return
     end
 

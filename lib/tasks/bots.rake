@@ -3,7 +3,7 @@ namespace :bots do
     verbose = ENV['VERBOSE']
 
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: bots:invalidate_credentials is stopped'
+      Airbag.debug 'StopServiceFlag: bots:invalidate_credentials is stopped'
       next
     end
 

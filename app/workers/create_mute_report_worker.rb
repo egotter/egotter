@@ -15,7 +15,7 @@ class CreateMuteReportWorker
   # options:
   def perform(user_id, options = {})
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: CreateMuteReportWorker is stopped', user_id: user_id
+      Airbag.debug 'StopServiceFlag: CreateMuteReportWorker is stopped', user_id: user_id
       return
     end
 

@@ -18,7 +18,7 @@ class CreateFriendInsightWorker
   #   location
   def perform(uid, options = {})
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: CreateFriendInsightWorker is stopped', uid: uid
+      Airbag.debug 'StopServiceFlag: CreateFriendInsightWorker is stopped', uid: uid
       return
     end
 

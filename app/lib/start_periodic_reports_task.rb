@@ -19,7 +19,7 @@ class StartPeriodicReportsTask
 
   def start
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: StartPeriodicReportsTask is stopped', period: @period
+      Airbag.debug 'StopServiceFlag: StartPeriodicReportsTask is stopped', period: @period
       return
     end
 

@@ -6,7 +6,7 @@ class SendCreateTweetStartedWorker
   #   via
   def perform(request_id, options = {})
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: SendCreateTweetStartedWorker is stopped', request_id: request_id
+      Airbag.debug 'StopServiceFlag: SendCreateTweetStartedWorker is stopped', request_id: request_id
       return
     end
 

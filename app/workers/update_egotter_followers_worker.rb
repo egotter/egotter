@@ -23,7 +23,7 @@ class UpdateEgotterFollowersWorker
   # options:
   def perform(options = {})
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: UpdateEgotterFollowersWorker is stopped'
+      Airbag.debug 'StopServiceFlag: UpdateEgotterFollowersWorker is stopped'
       return
     end
 

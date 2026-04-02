@@ -4,7 +4,7 @@ class CreateTweetsWorker
 
   def perform(keyword)
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: CreateTweetsWorker is stopped'
+      Airbag.debug 'StopServiceFlag: CreateTweetsWorker is stopped'
       return
     end
 

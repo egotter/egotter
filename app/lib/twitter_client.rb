@@ -83,7 +83,7 @@ class TwitterClient
 
   def call_api(method, *args, **kwargs, &block)
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: TwitterClient#call_api is stopped', method: method, args: args, kwargs: kwargs
+      Airbag.debug 'StopServiceFlag: TwitterClient#call_api is stopped', method: method, args: args, kwargs: kwargs
       return
     end
 

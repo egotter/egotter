@@ -7,7 +7,7 @@ class DeleteFavoriteWorker
   #   last_tweet
   def perform(user_id, tweet_id, options = {})
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: DeleteFavoriteWorker is stopped', user_id: user_id
+      Airbag.debug 'StopServiceFlag: DeleteFavoriteWorker is stopped', user_id: user_id
       return
     end
 

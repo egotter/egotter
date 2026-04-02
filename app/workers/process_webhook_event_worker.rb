@@ -26,7 +26,7 @@ class ProcessWebhookEventWorker
   # options:
   def perform(event, options = {})
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: ProcessWebhookEventWorker is stopped', event_type: event['type']
+      Airbag.debug 'StopServiceFlag: ProcessWebhookEventWorker is stopped', event_type: event['type']
       return
     end
 

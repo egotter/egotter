@@ -17,7 +17,7 @@ class ImportMutingRelationshipsWorker
   # options:
   def perform(user_id, options = {})
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: ImportMutingRelationshipsWorker is stopped', user_id: user_id
+      Airbag.debug 'StopServiceFlag: ImportMutingRelationshipsWorker is stopped', user_id: user_id
       return
     end
 

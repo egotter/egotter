@@ -8,7 +8,7 @@ module Api
       # Android
       def update_instance_id
         if StopServiceFlag.on?
-          Airbag.info 'StopServiceFlag: #update_instance_id is stopped'
+          Airbag.debug 'StopServiceFlag: #update_instance_id is stopped'
           render json: {found: false}, status: :not_found
           return
         end
@@ -69,7 +69,7 @@ module Api
 
       def enqueue_create_periodic_report_job(user, device_type)
         if StopServiceFlag.on?
-          Airbag.info 'StopServiceFlag: #enqueue_create_periodic_report_job is stopped'
+          Airbag.debug 'StopServiceFlag: #enqueue_create_periodic_report_job is stopped'
           return
         end
 

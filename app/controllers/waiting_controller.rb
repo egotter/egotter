@@ -30,7 +30,7 @@ class WaitingController < ApplicationController
   end
   before_action do
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: WaitingController is stopped'
+      Airbag.debug 'StopServiceFlag: WaitingController is stopped'
       redirect_to error_pages_service_stopped_path(uid: @uid, screen_name: @screen_name)
     end
   end

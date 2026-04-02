@@ -1,7 +1,7 @@
 module WelcomeReportsHelper
   def show_dm_confirmation_announcement?
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: #show_dm_confirmation_announcement? is stopped'
+      Airbag.debug 'StopServiceFlag: #show_dm_confirmation_announcement? is stopped'
       return false
     end
 

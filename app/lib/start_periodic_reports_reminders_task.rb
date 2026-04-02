@@ -5,7 +5,7 @@ class StartPeriodicReportsRemindersTask
 
   def start
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: StartPeriodicReportsRemindersTask is stopped'
+      Airbag.debug 'StopServiceFlag: StartPeriodicReportsRemindersTask is stopped'
       return
     end
 

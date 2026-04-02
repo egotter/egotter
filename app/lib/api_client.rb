@@ -8,7 +8,7 @@ class ApiClient
 
   def create_direct_message(recipient_id, message, async: false)
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: ApiClient#create_direct_message is stopped', recipient_id: recipient_id, message: message
+      Airbag.debug 'StopServiceFlag: ApiClient#create_direct_message is stopped', recipient_id: recipient_id, message: message
       return
     end
 
@@ -37,7 +37,7 @@ class ApiClient
 
   def create_direct_message_event(event:)
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: ApiClient#create_direct_message_event is stopped', event: event
+      Airbag.debug 'StopServiceFlag: ApiClient#create_direct_message_event is stopped', event: event
       return
     end
 
@@ -114,7 +114,7 @@ class ApiClient
 
   def call_api(method, *args, **kwargs, &block)
     if StopServiceFlag.on?
-      Airbag.info 'StopServiceFlag: ApiClient#call_api is stopped', method: method, args: args, kwargs: kwargs
+      Airbag.debug 'StopServiceFlag: ApiClient#call_api is stopped', method: method, args: args, kwargs: kwargs
       return
     end
 
