@@ -22,6 +22,12 @@ module ValidationConcern
     end
   end
 
+  def require_directory_login!
+    return if user_signed_in? && current_user.authorized?
+
+    redirect_to error_pages_not_signed_in_path(via: current_via(__method__))
+  end
+
   DENY_IPV4_PREFIXES = File.read(Rails.root.join('config/deny_ipv4_prefixes.txt')).split("\n").uniq.map { |str| IPAddr.new(str) }
 
   def deny_ip?(ip)

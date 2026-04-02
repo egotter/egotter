@@ -47,19 +47,19 @@ do_create = Proc.new do
     end
   end
 
-  with_options(priority: 0.3, changefreq: 'weekly') do |obj|
-    obj.add directory_profile_path
-    obj.add directory_timeline_path
-
-    100.times do |n|
-      obj.add directory_profile_path(id1: n)
-      obj.add directory_timeline_path(id1: n)
-      10.times do |nn|
-        obj.add directory_profile_path(id1: n, id2: nn)
-        obj.add directory_timeline_path(id1: n, id2: nn)
-      end
-    end
-  end
+  # with_options(priority: 0.3, changefreq: 'weekly') do |obj|
+  #   obj.add directory_profile_path
+  #   obj.add directory_timeline_path
+  #
+  #   100.times do |n|
+  #     obj.add directory_profile_path(id1: n)
+  #     obj.add directory_timeline_path(id1: n)
+  #     10.times do |nn|
+  #       obj.add directory_profile_path(id1: n, id2: nn)
+  #       obj.add directory_timeline_path(id1: n, id2: nn)
+  #     end
+  #   end
+  # end
 
   with_options(priority: 0.1, changefreq: 'monthly') do |obj|
     obj.add support_path

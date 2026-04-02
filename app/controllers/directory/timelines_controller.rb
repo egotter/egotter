@@ -1,6 +1,8 @@
 module Directory
   class TimelinesController < ApplicationController
 
+    before_action :require_directory_login!, only: :show
+
     NUM_REGEXP = TwitterUser::WHERE_MOD_REGEXP
 
     def show
