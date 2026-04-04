@@ -46,8 +46,16 @@ module ValidationConcern
     end
   end
 
+  SPAM_USER_IDS = [528867]
+
+  def blocked_spam_user?
+    user_signed_in? && SPAM_USER_IDS.include?(current_user.id)
+  end
+
   def reject_spam_access!
-    if !user_signed_in? && (suspicious_user_agent? || suspicious_referer? || suspicious_ip?)
+    spam_access = !user_signed_in? && (suspicious_user_agent? || suspicious_referer? || suspicious_ip?)
+
+    if spam_access || blocked_spam_user?
       if request.xhr?
         head :forbidden
       else
