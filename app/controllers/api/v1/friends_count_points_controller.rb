@@ -3,6 +3,8 @@ module Api
     class FriendsCountPointsController < ApplicationController
       include FriendsCountPointsConcern
 
+      before_action :reject_spam_access!
+
       def index
         render json: generate_chart_data(FriendsCountPoint, params[:uid])
       end

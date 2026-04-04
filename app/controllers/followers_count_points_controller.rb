@@ -2,6 +2,7 @@ class FollowersCountPointsController < ApplicationController
   include FriendsCountPointsConcern
 
   before_action :require_login!
+  before_action :reject_spam_access!
   before_action { head :forbidden if request.referer.to_s.blank? }
 
   def download
