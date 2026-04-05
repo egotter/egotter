@@ -244,7 +244,7 @@ module Logging
   end
 
   def safe_referer
-    params[:referer].to_s.truncate(180)
+    request.referer.to_s.truncate(180)
   end
 
   def ensure_utf8(str)
